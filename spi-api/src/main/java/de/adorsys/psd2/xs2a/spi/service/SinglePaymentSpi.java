@@ -50,6 +50,12 @@ public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiSingle
 
     @Override
     @NotNull
+    default SpiResponse<VoidResponse> executePaymentWithSca(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    }
+
+    @Override
+    @NotNull
     default SpiResponse<SpiSinglePayment> getPaymentById(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
         return SpiResponse.<SpiSinglePayment>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
@@ -61,13 +67,11 @@ public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiSingle
     }
 
     @Override
-    @NotNull
     default SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return SpiResponse.<SpiAuthorisationStatus>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
-    @NotNull
     default SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return SpiResponse.<List<SpiScaMethod>>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }

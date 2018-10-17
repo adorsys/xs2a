@@ -45,6 +45,12 @@ public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPe
 
     @Override
     @NotNull
+    default SpiResponse<VoidResponse> executePaymentWithSca(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    }
+
+    @Override
+    @NotNull
     default SpiResponse<VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
