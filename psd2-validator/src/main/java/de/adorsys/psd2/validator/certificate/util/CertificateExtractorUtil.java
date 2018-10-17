@@ -20,8 +20,10 @@ import java.util.List;
 
 @Slf4j
 public class CertificateExtractorUtil {
+    private CertificateExtractorUtil() {
+    }
 
-	public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
+    public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
 
