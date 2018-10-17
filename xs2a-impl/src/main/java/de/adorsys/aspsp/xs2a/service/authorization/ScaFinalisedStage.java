@@ -27,7 +27,8 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResp
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static de.adorsys.psd2.consent.api.CmsScaStatus.FINALISED;
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.FINALISED;
+
 
 @Slf4j
 @Service("FINALISED")

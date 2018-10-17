@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.server.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.server.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.server.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.server.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -202,13 +203,13 @@ public class AisConsentService {
 
         AisConsentAuthorization aisConsentAuthorization = aisConsentAuthorizationOptional.get();
 
-        if (CmsScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
+        if (ScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
             aisConsentAuthorization.setPsuId(request.getPsuId());
             // TODO refactor logic and don't save tan and password data in plain text https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/390
             aisConsentAuthorization.setPassword(request.getPassword());
         }
 
-        if (CmsScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
+        if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
             // TODO refactor logic and don't save tan and password data in plain text https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/390
             aisConsentAuthorization.setAuthenticationMethodId(request.getAuthenticationMethodId());
         }
