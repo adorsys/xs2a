@@ -27,19 +27,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PARAMETER_NOT_SUPPORTED;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PRODUCT_UNKNOWN;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,9 +54,9 @@ public class RequestValidatorServiceTest {
     private PaymentController paymentController;
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
+    @Spy
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    @Mock
-    private Validator validator;
 
     @Before
     public void setUp() {
@@ -68,7 +69,6 @@ public class RequestValidatorServiceTest {
 
     @Test
     public void getRequestHeaderViolationMap() throws Exception {
-        when(validator.validate(any())).thenReturn(new HashSet<>());
         //Given:
         HttpServletRequest request = getCorrectRequest();
         HandlerMethod handler = getHandler();
@@ -158,6 +158,20 @@ public class RequestValidatorServiceTest {
         assertThat(actualViolations.get(PARAMETER_NOT_SUPPORTED.getName())).contains("Wrong payment type: periodic");
     }
 
+    @Test
+    public void failOnWrongIpAddress() throws Exception {
+        //Given:
+        HttpServletRequest request = getRequestWithWrongIpAddress();
+        HandlerMethod handler = getPeriodicPaymentsControllerHandler();
+
+        //When:
+        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+
+        //Then:
+        assertThat(actualViolations.size()).isEqualTo(1);
+        assertThat(actualViolations.get("psuIpAddress")).isNotNull();
+    }
+
     private HttpServletRequest getWrongRequestNoTppRequestId() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
@@ -193,6 +207,17 @@ public class RequestValidatorServiceTest {
         request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
         request.addHeader("x-request-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
         request.addHeader("psu-ip-address", "192.168.8.78");
+
+        return request;
+    }
+
+    private HttpServletRequest getRequestWithWrongIpAddress() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Content-Type", "application/json");
+        request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
+        request.addHeader("x-request-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
+        request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
+        request.addHeader("psu-ip-address", "wrong ip");
 
         return request;
     }

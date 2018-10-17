@@ -23,10 +23,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Pattern;
+
 @Data
 @ApiModel(description = "Payment initiation request header", value = "PaymentInitiationRequestHeader")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentInitiationRequestHeader extends CommonRequestHeader {
+    private final static String IP_PATTERN = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
 
     @ApiModelProperty(value = "Content type", example = "application/json")
     @JsonProperty(value = "content-type")
@@ -58,7 +61,7 @@ public class PaymentInitiationRequestHeader extends CommonRequestHeader {
 
     @ApiModelProperty(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP", required = true, example = "192.168.8.78 example")
     @JsonProperty(value = "psu-ip-address")
-//  @NotNull TODO Add check whether psu-ip-address is present in payment initiation request header https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/341
+    @Pattern(regexp = IP_PATTERN)
     private String psuIpAddress;
 
     @ApiModelProperty(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP", required = false, example = "GEO:52.506931,13.144558")
