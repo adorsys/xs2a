@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
 
-//TODO javadocs!
+// TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
 interface PaymentSpi<T extends SpiPayment, R> {
 
     @NotNull
@@ -49,5 +49,5 @@ interface PaymentSpi<T extends SpiPayment, R> {
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
-    SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
 }

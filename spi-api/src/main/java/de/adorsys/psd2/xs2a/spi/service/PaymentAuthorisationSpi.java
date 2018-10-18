@@ -16,5 +16,6 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+// TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
 public interface PaymentAuthorisationSpi extends AuthorisationSpi<SpiPayment> {
 }

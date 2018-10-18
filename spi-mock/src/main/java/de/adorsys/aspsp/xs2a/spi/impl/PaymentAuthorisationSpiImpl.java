@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.exception.RestException;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
-import de.adorsys.aspsp.xs2a.spi.mapper.SpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
@@ -54,7 +53,6 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
     private final AspspRemoteUrls aspspRemoteUrls;
-    private final SpiPeriodicPaymentMapper spiPeriodicPaymentMapper;
     private final KeycloakInvokerService keycloakInvokerService;
     private final JsonConverter jsonConverter;
 

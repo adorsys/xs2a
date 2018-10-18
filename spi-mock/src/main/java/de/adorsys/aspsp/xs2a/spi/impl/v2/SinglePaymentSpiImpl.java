@@ -76,7 +76,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData aspspConsentData) {
         try {
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
 

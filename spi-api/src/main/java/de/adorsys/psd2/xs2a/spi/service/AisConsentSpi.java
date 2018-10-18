@@ -29,8 +29,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
 
+    // TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
     SpiResponse<VoidResponse> initiateAisConsent(@NotNull SpiPsuData psuData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData);
 
+    // TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
     SpiResponse<VoidResponse> revokeAisConsent(@NotNull SpiPsuData psuData, SpiAccountConsent accountConsent, AspspConsentData aspspConsentData);
 
     /**
