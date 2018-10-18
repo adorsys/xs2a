@@ -1,20 +1,9 @@
 # Roadmap
 
 
-## version 1.9 (planned date: 12.10.2018)
-- Confirmation of funds request. Add interface on side of SPI.
-- Add validation of TPP data
-- Update of Payment cancellation request according to specification 1.2
-- Change logic of implicit/explicit method of authorisation
-- Update AspspConsentData field in the Consent. Support bytearray and base64 encoding.
-- Validation of Consent (expiration date).
-- Get list of reachable accounts. Embedded approach.
-- Get balances for a given account. Embedded approach.
-- Migration to package and Maven GroupId "de.adorsys.psd2": Consent Management
-- Extend cms-client to work with AspspConsentData endpoints
-
 ## version 1.10 (Planned date: 26.10.2018) 
 - version 2.0 of SPI-API
+- Payment cancellation request according to specification 1.2
 - SCA methods, make extendable list of authorisation methods
 - Embedable Consent Management System
 - Remove delayed payments,  use single payments
@@ -27,5 +16,14 @@
 - Migration to package and Maven GroupId "de.adorsys.psd2": XS2A
 
 
-
+## version 1.11 (Planned date: 09.11.2018)
+- Get list of consents by psu-id in Consent Management System.
+- PIIS Consent. Post, Get, Put. Read aspspConsentData.
+- PIS Support a matrix payment-product/payment-type in aspsp-profile and corresponding services.
+- Support of Berlin Group XS2A Specification 1.3
+- Support delta access for transaction list
+- Consent access Validator
+- Support of multicurrency account
+- Multitier support in Consent Manager
+- Change logic of Getting a confirmation on the availability of funds. 
 
