@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
+import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
@@ -28,7 +29,7 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static de.adorsys.psd2.consent.api.CmsScaStatus.SCAMETHODSELECTED;
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 
 @Slf4j
 @Service("PIS_PSUAUTHENTICATED")

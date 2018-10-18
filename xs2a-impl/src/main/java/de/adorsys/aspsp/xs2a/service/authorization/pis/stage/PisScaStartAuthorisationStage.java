@@ -32,7 +32,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static de.adorsys.psd2.consent.api.CmsScaStatus.*;
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
+
 
 @Service("PIS_STARTED")
 public class PisScaStartAuthorisationStage extends PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {

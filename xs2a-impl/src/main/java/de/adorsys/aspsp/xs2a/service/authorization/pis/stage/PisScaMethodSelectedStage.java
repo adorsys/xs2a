@@ -26,7 +26,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResp
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import org.springframework.stereotype.Service;
 
-import static de.adorsys.psd2.consent.api.CmsScaStatus.FINALISED;
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.FINALISED;
 
 @Service("PIS_SCAMETHODSELECTED")
 public class PisScaMethodSelectedStage extends PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.server.domain.account;
 
-import de.adorsys.psd2.consent.api.CmsScaStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -42,7 +42,7 @@ public class AisConsentAuthorization {
 
     @Column(name = "sca_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private CmsScaStatus scaStatus;
+    private ScaStatus scaStatus;
 
     @Column(name = "authentication_method_id")
     private String authenticationMethodId;

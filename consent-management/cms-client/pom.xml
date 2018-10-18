@@ -26,7 +26,7 @@
     </parent>
 
     <properties>
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <commons.logging.version>1.2</commons.logging.version>
         <ruleset.basedir>../..</ruleset.basedir>
     </properties>

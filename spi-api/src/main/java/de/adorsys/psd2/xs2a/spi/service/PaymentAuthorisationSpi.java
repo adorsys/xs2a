@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.domain.spi.consent;
+package de.adorsys.psd2.xs2a.spi.service;
 
-public enum SpiScaStatus {
-    RECEIVED,
-    PSUIDENTIFIED,
-    PSUAUTHENTICATED,
-    SCAMETHODSELECTED,
-    STARTED,
-    FINALISED,
-    FAILED,
-    EXEMPTED;
+// TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
+public interface PaymentAuthorisationSpi extends AuthorisationSpi<SpiPayment> {
 }

@@ -84,7 +84,7 @@ public class RequestValidatorService {
         return getViolationMessagesMap(validator.validate(parameterImpl));
     }
 
-    Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request) {
+    private Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request) {
         Map<String, String> requestPathViolationMap = new HashMap<>();
         requestPathViolationMap.putAll(checkPaymentProductByRequest(request));
         requestPathViolationMap.putAll(getPaymentTypeViolationMap(request));
@@ -92,7 +92,7 @@ public class RequestValidatorService {
         return requestPathViolationMap;
     }
 
-    Map<String, String> getPaymentTypeViolationMap(HttpServletRequest request) {
+    private Map<String, String> getPaymentTypeViolationMap(HttpServletRequest request) {
         Map<String, String> pathVariableMap = getPathVariableMap(request);
         return Optional.ofNullable(pathVariableMap)
                    .map(m -> m.get(PAYMENT_SERVICE_PATH_VAR))
@@ -101,7 +101,7 @@ public class RequestValidatorService {
                    .orElseGet(Collections::emptyMap);
     }
 
-    Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, HandlerMethod handler) {
+    private Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, HandlerMethod handler) {
 
         Map<String, String> requestHeadersMap = getRequestHeadersMap(request);
 
