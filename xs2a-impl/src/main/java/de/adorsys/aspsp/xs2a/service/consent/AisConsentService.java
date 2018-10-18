@@ -68,6 +68,7 @@ public class AisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent
      */
+    // TODO don't use Spi models here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/431
     public SpiAccountConsent getAccountConsentById(String consentId) {
         return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentById(), SpiAccountConsent.class, consentId).getBody();
     }
@@ -78,6 +79,7 @@ public class AisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent Status
      */
+    // TODO don't use Spi models here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/431
     public SpiConsentStatus getAccountConsentStatusById(String consentId) {
         AisConsentStatusResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), AisConsentStatusResponse.class, consentId).getBody();
         return aisConsentMapper.mapToSpiConsentStatus(response.getConsentStatus())

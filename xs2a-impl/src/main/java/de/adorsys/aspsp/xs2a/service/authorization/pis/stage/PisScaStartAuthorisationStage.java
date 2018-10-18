@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.authorization;
+package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
-import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
@@ -36,10 +35,10 @@ import java.util.List;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 
 
-@Service("STARTED")
-public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {
+@Service("PIS_STARTED")
+public class PisScaStartAuthorisationStage extends PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {
 
-    public ScaStartAuthorisationStage(PaymentSpi paymentSpi, PisAuthorisationService pisAuthorisationService, SpiCmsPisMapper spiCmsPisMapper, PisConsentDataService pisConsentDataService) {
+    public PisScaStartAuthorisationStage(PaymentSpi paymentSpi, PisAuthorisationService pisAuthorisationService, SpiCmsPisMapper spiCmsPisMapper, PisConsentDataService pisConsentDataService) {
         super(paymentSpi, pisAuthorisationService, spiCmsPisMapper, pisConsentDataService);
     }
 
