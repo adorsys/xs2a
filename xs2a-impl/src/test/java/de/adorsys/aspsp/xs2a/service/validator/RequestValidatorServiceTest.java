@@ -159,9 +159,9 @@ public class RequestValidatorServiceTest {
     }
 
     @Test
-    public void failOnWrongIpAddress() throws Exception {
+    public void getRequestHeaderViolationMap_wrongIpAddressV4() throws Exception {
         //Given:
-        HttpServletRequest request = getRequestWithWrongIpAddress();
+        HttpServletRequest request = getRequestWithIpAddress("wrong ip");
         HandlerMethod handler = getPeriodicPaymentsControllerHandler();
 
         //When:
@@ -170,6 +170,33 @@ public class RequestValidatorServiceTest {
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
         assertThat(actualViolations.get("psuIpAddress")).isNotNull();
+    }
+
+    @Test
+    public void getRequestHeaderViolationMap_wrongIpAddressV6() throws Exception {
+        //Given:
+        HttpServletRequest request = getRequestWithIpAddress("1200::AB00:1234::2552:7777:1313");
+        HandlerMethod handler = getPeriodicPaymentsControllerHandler();
+
+        //When:
+        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+
+        //Then:
+        assertThat(actualViolations.size()).isEqualTo(1);
+        assertThat(actualViolations.get("psuIpAddress")).isNotNull();
+    }
+
+    @Test
+    public void getRequestHeaderViolationMap_correctIpAddressV6() throws Exception {
+        //Given:
+        HttpServletRequest request = getRequestWithIpAddress("1200:0000:AB00:1234:0000:2552:7777:1313");
+        HandlerMethod handler = getPeriodicPaymentsControllerHandler();
+
+        //When:
+        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+
+        //Then:
+        assertThat(actualViolations.isEmpty()).isTrue();
     }
 
     private HttpServletRequest getWrongRequestNoTppRequestId() {
@@ -211,13 +238,13 @@ public class RequestValidatorServiceTest {
         return request;
     }
 
-    private HttpServletRequest getRequestWithWrongIpAddress() {
+    private HttpServletRequest getRequestWithIpAddress(String ip) {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
         request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
         request.addHeader("x-request-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
         request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
-        request.addHeader("psu-ip-address", "wrong ip");
+        request.addHeader("psu-ip-address", ip);
 
         return request;
     }
