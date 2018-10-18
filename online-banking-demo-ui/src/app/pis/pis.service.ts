@@ -19,8 +19,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Banking } from '../model/banking.model';
 import { SinglePayment } from '../model/singlePayment';
-import { ConfigService } from './config.service';
 import { KeycloakService } from 'keycloak-angular';
+import { ConfigService } from '../service/config.service';
 
 @Injectable({
   providedIn: 'root'
