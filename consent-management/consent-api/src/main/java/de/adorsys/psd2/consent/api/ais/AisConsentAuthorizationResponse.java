@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
-import de.adorsys.psd2.consent.api.CmsScaStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -35,7 +35,7 @@ public class AisConsentAuthorizationResponse {
     private String consentId;
 
     @ApiModelProperty(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
-    private CmsScaStatus scaStatus;
+    private ScaStatus scaStatus;
 
     @ApiModelProperty(value = "An identification provided by the ASPSP for the later identification of the authentication method selection.")
     private String authenticationMethodId;

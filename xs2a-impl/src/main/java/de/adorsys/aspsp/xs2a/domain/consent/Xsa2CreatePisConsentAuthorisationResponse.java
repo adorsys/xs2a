@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -24,11 +25,11 @@ import lombok.Data;
 @AllArgsConstructor
 public class Xsa2CreatePisConsentAuthorisationResponse {
     private String authorizationId;
-    private String scaStatus;
+    private ScaStatus scaStatus;
     private String paymentType;
     private Links links = new Links();
 
-    public Xsa2CreatePisConsentAuthorisationResponse(String authorizationId, String scaStatus, String paymentType) {
+    public Xsa2CreatePisConsentAuthorisationResponse(String authorizationId, ScaStatus scaStatus, String paymentType) {
         this.authorizationId = authorizationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;
