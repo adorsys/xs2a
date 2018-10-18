@@ -119,19 +119,6 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void addBulkPayments() {
-        //Given
-        List<SpiSinglePayment> expectedPayments = new ArrayList<>();
-        expectedPayments.add(getSpiSinglePayment(50));
-
-        //When
-        List<SpiSinglePayment> actualPayments = paymentService.addBulkPayments(expectedPayments);
-
-        //Then
-        assertThat(actualPayments).isNotNull();
-    }
-
-    @Test
     public void cancelPaymentSuccess() {
         //Given
         Optional<SpiCancelPayment> given = buildSpiCancelPayment();

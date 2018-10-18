@@ -113,11 +113,6 @@ public class PaymentServiceTest {
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, SpiPaymentType.SINGLE, ASPSP_CONSENT_DATA))
             .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
 
-        when(scaPaymentService.createBulkPayment(BULK_PAYMENT_OK, TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RCVD, null)));
-        when(scaPaymentService.createBulkPayment(getBulkPayment(SINGLE_PAYMENT_NOK_AMOUNT, WRONG_IBAN), TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RJCT, PAYMENT_FAILED)));
-
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
         when(pisConsentDataService.getAspspConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
     }
@@ -143,41 +138,6 @@ public class PaymentServiceTest {
         assertThat(response.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
-    //Bulk Tests
-    @Test
-    public void createBulkPayments() {
-        BulkPayment payment = BULK_PAYMENT_OK;
-        //When
-        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment,TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getBody().get(0).getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().get(1).getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().get(0).getTransactionStatus()).isEqualTo(RCVD);
-        assertThat(actualResponse.getBody().get(1).getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void createBulkPayments_Failure_null_payments() {
-        BulkPayment payment = null;
-        createBulkFailureTest(payment, FORMAT_ERROR);
-    }
-
-    @Test
-    public void createBulkPayments_Failure_Validation() {
-        BulkPayment payment = BULK_PAYMENT_NOT_OK;
-        payment.setPayments(Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_NOK_AMOUNT));
-        createBulkFailureTest(payment, PAYMENT_FAILED);
-    }
-
-    private void createBulkFailureTest(BulkPayment payment, MessageErrorCode errorCode) {
-        //When
-        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(errorCode);
-        assertThat(actualResponse.getError().getTransactionStatus()).isEqualTo(RJCT);
-    }
 
     @Test
     public void getPaymentById() {

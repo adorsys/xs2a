@@ -61,7 +61,7 @@ public class PisConsentService {
      * Creates PIS consent
      *
      * @param parameters Payment request parameters to get needed payment info
-     * @param tppInfo information about TPP
+     * @param tppInfo    information about TPP
      * @return String consentId
      */
     // TODO rename method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/409
@@ -79,7 +79,7 @@ public class PisConsentService {
     }
 
     public void updateBulkPaymentInPisConsent(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {
-        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequest(bulkPayment, paymentInitiationParameters.getPaymentProduct());
+        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsBulkPisConsentRequest(bulkPayment, paymentInitiationParameters.getPaymentProduct());
         consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
     }
 
