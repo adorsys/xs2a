@@ -23,7 +23,6 @@ import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
@@ -32,6 +31,7 @@ import de.adorsys.psd2.consent.client.cms.model.ais.*;
 import de.adorsys.psd2.consent.client.cms.model.pis.*;
 import de.adorsys.psd2.consent.client.core.Configuration;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -306,7 +306,7 @@ public class CmsExecutor {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(singletonList(buildPisPayment()));
         request.setPaymentProduct(PisPaymentProduct.SCT);
-        request.setPaymentType(PisPaymentType.SINGLE);
+        request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
             Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
             "authority id", "authority name", "Germany", "Organisation",
