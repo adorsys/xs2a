@@ -130,10 +130,7 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     }
 
     @Override
-    public @NotNull SpiResponse<VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiPsuData psuData,
-                                                                         @NotNull SpiScaConfirmation spiScaConfirmation,
-                                                                         @NotNull SpiAccountConsent businessObject,
-                                                                         @NotNull AspspConsentData aspspConsentData) {
+    public @NotNull SpiResponse<VoidResponse> verifyScaAuthorisation(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
             aspspRestTemplate.exchange(remoteSpiUrls.applyStrongUserAuthorisationForAis(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), Void.class);
             return SpiResponse.<VoidResponse>builder()
