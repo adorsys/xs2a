@@ -23,10 +23,9 @@ import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.springframework.stereotype.Service;
-
-import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aScaStatus.FINALISED;
 
 @Service("AIS_FINALISED")
 public class AisScaFinalisedStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
@@ -43,6 +42,6 @@ public class AisScaFinalisedStage extends AisScaStage<UpdateConsentPsuDataReq, U
     // Needed to prevent error in case of trying to update consent PSU data, that already has FINALISED Sca status.
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
-        return new UpdateConsentPsuDataResponse(FINALISED);
+        return new UpdateConsentPsuDataResponse(ScaStatus.FINALISED);
     }
 }

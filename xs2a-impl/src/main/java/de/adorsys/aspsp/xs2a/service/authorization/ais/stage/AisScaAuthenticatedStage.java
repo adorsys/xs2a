@@ -18,13 +18,13 @@ package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aScaStatus;
 import de.adorsys.aspsp.xs2a.domain.psu.Xs2aPsuData;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -58,7 +58,7 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
         SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
         Xs2aPsuData psuData = new Xs2aPsuData(null, null, null, null);    // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = aisConsentSpi.verifyAuthorisationCodeAndExecuteRequest(psuDataMapper.mapToSpiPsuData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<SpiResponse.VoidResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(psuDataMapper.mapToSpiPsuData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -71,7 +71,7 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setScaAuthenticationData(request.getScaAuthenticationData());
-        response.setScaStatus(Xs2aScaStatus.FINALISED);
+        response.setScaStatus(ScaStatus.FINALISED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
         return response;
     }

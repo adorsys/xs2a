@@ -42,7 +42,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
-     * See {@link AisConsentService#createAisConsentAuthorization(String, Xs2aScaStatus, String)} for details
+     * See {@link AisConsentService#createAisConsentAuthorization(String, ScaStatus, String)} for details
      *
      * @param psuId     String identification of PSU
      * @param consentId String identification of consent
@@ -50,7 +50,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
-        return aisConsentService.createAisConsentAuthorization(consentId, Xs2aScaStatus.valueOf(ScaStatus.STARTED.name()), psuId)
+        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.valueOf(ScaStatus.STARTED.name()), psuId)
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 

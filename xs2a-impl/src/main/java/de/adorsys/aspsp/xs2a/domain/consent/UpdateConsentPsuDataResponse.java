@@ -46,7 +46,7 @@ public class UpdateConsentPsuDataResponse {
 
     private MessageErrorCode errorCode;
 
-    public UpdateConsentPsuDataResponse(Xs2aScaStatus scaStatus) {
+    public UpdateConsentPsuDataResponse(ScaStatus scaStatus) {
         this.scaStatus = scaStatus;
     }
 

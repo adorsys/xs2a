@@ -19,13 +19,13 @@ package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aScaStatus;
 import de.adorsys.aspsp.xs2a.domain.psu.Xs2aPsuData;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
@@ -71,7 +71,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
 
         if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
             UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-            response.setScaStatus(Xs2aScaStatus.FAILED);
+            response.setScaStatus(ScaStatus.FAILED);
             return response;
         }
 
@@ -96,7 +96,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setPsuId(psuData.getPsuId());
         response.setAvailableScaMethods(aisConsentMapper.mapToCmsScaMethods(availableScaMethods));
-        response.setScaStatus(Xs2aScaStatus.PSUAUTHENTICATED);
+        response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
         return response;
     }
@@ -114,7 +114,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setPsuId(psuData.getPsuId());
         response.setChosenScaMethod(scaMethod.name());
-        response.setScaStatus(Xs2aScaStatus.SCAMETHODSELECTED);
+        response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
         return response;
     }
@@ -122,7 +122,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
     private UpdateConsentPsuDataResponse createResponseForNoneAvailableScaMethod(Xs2aPsuData psuData) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setPsuId(psuData.getPsuId());
-        response.setScaStatus(Xs2aScaStatus.FAILED);
+        response.setScaStatus(ScaStatus.FAILED);
         response.setErrorCode(MessageErrorCode.SCA_METHOD_UNKNOWN);
         return response;
     }

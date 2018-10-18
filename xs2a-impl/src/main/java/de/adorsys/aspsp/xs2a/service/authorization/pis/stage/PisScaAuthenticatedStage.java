@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
-import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;

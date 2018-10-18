@@ -17,11 +17,14 @@
 package de.adorsys.aspsp.xs2a.service.authorization.ais;
 
 import de.adorsys.aspsp.xs2a.config.factory.AisScaStageAuthorisationFactory;
-import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.stage.AisScaStartAuthorisationStage;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.model.ScaStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +43,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class EmbeddedAisAuthorizationServiceTest {
     private static final ScaStatus STARTED_SCA_STATUS = ScaStatus.STARTED;
-    private static final Xs2aScaStatus STARTED_XS2A_SCA_STATUS = Xs2aScaStatus.STARTED;
+    private static final ScaStatus STARTED_XS2A_SCA_STATUS = ScaStatus.STARTED;
     private static final String PSU_ID = "Test psuId";
     private static final String CONSENT_ID = "Test consentId";
     private static final String AUTHORISATION_ID = "Test authorisationId";
