@@ -76,6 +76,11 @@ public class PisConsentService {
         consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
     }
 
+    public void updateBulkPaymentInPisConsent(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {
+        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequest(bulkPayment, paymentInitiationParameters.getPaymentProduct());
+        consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
+    }
+
     /**
      * @deprecated since 1.8. Will be removed in 1.10
      * {@link de.adorsys.aspsp.xs2a.service.consent.PisConsentService#createPisConsent(PaymentInitiationParameters)}

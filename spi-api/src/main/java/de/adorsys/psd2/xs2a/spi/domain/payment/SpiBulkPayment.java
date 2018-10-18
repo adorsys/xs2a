@@ -28,6 +28,7 @@ import static de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType.BULK;
 
 @Data
 public class SpiBulkPayment implements SpiPayment {
+    private String paymentId;
     private Boolean batchBookingPreferred;
     private SpiAccountReference debtorAccount;
     private LocalDate requestedExecutionDate;

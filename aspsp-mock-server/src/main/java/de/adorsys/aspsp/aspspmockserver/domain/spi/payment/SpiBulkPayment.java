@@ -28,6 +28,9 @@ import java.util.List;
 @Data
 @ApiModel(description = "BulkPayment Initialisation Request", value = "SpiBulkPayment")
 public class SpiBulkPayment {
+    @ApiModelProperty(value = "The unique identifier of the payment", required = true)
+    private String paymentId;
+
     @ApiModelProperty(value = "If this element equals \"true\", the PSU prefers only one booking entry. If this element equals \"false\", the PSU prefers individual booking of all contained individual transactions. The ASPSP will follow this preference according to contracts agreed on with the PSU.", example = "true")
     private Boolean batchBookingPreferred;
 

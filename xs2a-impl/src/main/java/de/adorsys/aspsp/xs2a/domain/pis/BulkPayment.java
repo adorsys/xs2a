@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -29,6 +29,9 @@ import java.util.List;
 @Data
 @ApiModel(description = "BulkPayment Initialisation Request", value = "BulkPayment")
 public class BulkPayment {
+    @ApiModelProperty(value = "The unique identifier of the payment", required = true)
+    private String paymentId;
+
     @ApiModelProperty(value = "If this element equals \"true\", the PSU prefers only one booking entry. If this element equals \"false\", the PSU prefers individual booking of all contained individual transactions. The ASPSP will follow this preference according to contracts agreed on with the PSU.", example = "true")
     private Boolean batchBookingPreferred;
 

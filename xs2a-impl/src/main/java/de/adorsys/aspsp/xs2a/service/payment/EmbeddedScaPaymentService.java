@@ -17,18 +17,18 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmbeddedScaPaymentService extends RedirectAndEmbeddedPaymentService {
-    public EmbeddedScaPaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper, SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, PisConsentDataService pisConsentDataService) {
-        super(paymentSpi, paymentMapper, singlePaymentSpi, periodicPaymentSpi, xs2aToSpiPaymentMapper, xs2aToSpiPeriodicPaymentMapper, spiToXs2aPaymentMapper, pisConsentDataService);
+    public EmbeddedScaPaymentService(SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, BulkPaymentSpi bulkPaymentSpi, Xs2aToSpiSinglePaymentMapper xs2AToSpiSinglePaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, PisConsentDataService pisConsentDataService) {
+        super(singlePaymentSpi, periodicPaymentSpi, bulkPaymentSpi, xs2AToSpiSinglePaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiBulkPaymentMapper, spiToXs2aPaymentMapper, pisConsentDataService);
     }
 }

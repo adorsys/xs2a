@@ -26,8 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
-import static de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus.RJCT;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -65,13 +65,11 @@ public class PaymentController {
         @ApiResponse(code = 201, message = "Created", response = List.class),
         @ApiResponse(code = 204, message = "Payment Failed")})
     @PostMapping(path = "/bulk-payments")
-    public ResponseEntity<List<SpiSinglePayment>> createBulkPayments(
+    public ResponseEntity<SpiBulkPayment> createBulkPayments(
         @RequestBody SpiBulkPayment bulkPayment) {
-        List<SpiSinglePayment> saved = paymentService.addBulkPayments(bulkPayment.getPayments());
-        return saved.stream()
-                   .anyMatch(p -> p.getPaymentStatus() != RJCT)
-                   ? new ResponseEntity<>(saved, CREATED)
-                   : ResponseEntity.noContent().build();
+        return paymentService.addBulkPayments(bulkPayment)
+                   .map(saved -> new ResponseEntity<>(saved, CREATED))
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

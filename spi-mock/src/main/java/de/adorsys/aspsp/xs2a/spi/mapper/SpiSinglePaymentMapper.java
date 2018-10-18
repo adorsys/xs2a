@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +26,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class SpiSinglePaymentMapper {
 
-    public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment mapToSpiSinglePayment(@NotNull SpiSinglePayment payment) {
+    public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment mapToAspspSpiSinglePayment(@NotNull SpiSinglePayment payment) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment single = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment();
+        single.setEndToEndIdentification(payment.getEndToEndIdentification());
+        single.setDebtorAccount(payment.getDebtorAccount());
+        single.setInstructedAmount(payment.getInstructedAmount());
+        single.setCreditorAccount(payment.getCreditorAccount());
+        single.setCreditorAgent(payment.getCreditorAgent());
+        single.setCreditorName(payment.getCreditorName());
+        single.setCreditorAddress(payment.getCreditorAddress());
+        single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        single.setPaymentStatus(SpiTransactionStatus.RCVD);
+        return single;
+    }
+
+    public SpiSinglePayment mapToSpiSinglePayment(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment payment, SpiPaymentProduct paymentProduct) {
+        SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
         single.setEndToEndIdentification(payment.getEndToEndIdentification());
         single.setDebtorAccount(payment.getDebtorAccount());
         single.setInstructedAmount(payment.getInstructedAmount());
