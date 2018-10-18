@@ -16,9 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service.validator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.ConsentController;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
@@ -56,7 +58,8 @@ public class RequestValidatorServiceTest {
     private AspspProfileServiceWrapper aspspProfileService;
     @Spy
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-
+    @Spy
+    private ParametersFactory parametersFactory = new ParametersFactory(new ObjectMapper());
 
     @Before
     public void setUp() {
@@ -71,37 +74,37 @@ public class RequestValidatorServiceTest {
     public void getRequestHeaderViolationMap() throws Exception {
         //Given:
         HttpServletRequest request = getCorrectRequest();
-        HandlerMethod handler = getHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.isEmpty()).isTrue();
     }
 
-    /*@Test //TODO To be refactored to work appropriately with Mockito or completely removed
+    @Test
     public void shouldFail_getRequestHeaderViolationMap_wrongRequest() throws Exception {
-        when(validator.validate(any())).thenReturn(new HashSet<>());
         //Given:
-        HttpServletRequest request = getWrongRequestNoTppRequestId();
-        Object handler = getHandler();
+        HttpServletRequest request = getWrongRequestNoXRequestId();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
-    }*/
+        assertThat(actualViolations.get("xRequestId")).isNotNull();
+    }
 
     @Test
     public void shouldFail_getRequestHeaderViolationMap_wrongRequestHeaderFormat() throws Exception {
         //Given:
         HttpServletRequest request = getWrongRequestWrongTppRequestIdFormat();
-        HandlerMethod handler = getHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -116,7 +119,7 @@ public class RequestValidatorServiceTest {
         HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -134,7 +137,7 @@ public class RequestValidatorServiceTest {
         HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.isEmpty()).isTrue();
@@ -148,10 +151,10 @@ public class RequestValidatorServiceTest {
         templates.put("payment-product", PaymentProduct.SCT.getCode());
         templates.put("payment-service", PaymentType.PERIODIC.getValue());
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
-        HandlerMethod handler = getPeriodicPaymentsControllerHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getPaymentTypeViolationMap(request);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -162,10 +165,10 @@ public class RequestValidatorServiceTest {
     public void getRequestHeaderViolationMap_wrongIpAddressV4() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("wrong ip");
-        HandlerMethod handler = getPeriodicPaymentsControllerHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -176,10 +179,10 @@ public class RequestValidatorServiceTest {
     public void getRequestHeaderViolationMap_wrongIpAddressV6() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("1200::AB00:1234::2552:7777:1313");
-        HandlerMethod handler = getPeriodicPaymentsControllerHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -190,16 +193,16 @@ public class RequestValidatorServiceTest {
     public void getRequestHeaderViolationMap_correctIpAddressV6() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("1200:0000:AB00:1234:0000:2552:7777:1313");
-        HandlerMethod handler = getPeriodicPaymentsControllerHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
         assertThat(actualViolations.isEmpty()).isTrue();
     }
 
-    private HttpServletRequest getWrongRequestNoTppRequestId() {
+    private HttpServletRequest getWrongRequestNoXRequestId() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
         request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
@@ -263,7 +266,7 @@ public class RequestValidatorServiceTest {
         return new HandlerMethod(paymentController, "getPaymentInitiationStatus", params);
     }
 
-    private HandlerMethod getPeriodicPaymentsControllerHandler() throws NoSuchMethodException {
+    private HandlerMethod getPaymentsControllerHandler() throws NoSuchMethodException {
         Class<?>[] params = new Class<?>[]{Object.class, String.class, String.class, UUID.class, String.class,
             String.class, String.class, byte[].class, String.class, String.class, String.class, String.class,
             String.class, Boolean.class, String.class, String.class, Boolean.class, Object.class, String.class,
