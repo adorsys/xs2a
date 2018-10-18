@@ -154,11 +154,11 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     private UpdateConsentPsuDataResponse proceedAuthorizationStage(UpdateConsentPsuDataReq request) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
 
+        SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
         SpiPsuData psuData = new SpiPsuData(null, null, null, null);    // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 
-        SpiResponse<VoidResponse> spiResponse = aisConsentSpi.verifyAuthorisationCodeAndExecuteRequest(psuData, aisConsentMapper.mapToSpiScaConfirmation(request), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<VoidResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(psuData, aisConsentMapper.mapToSpiScaConfirmation(request), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
