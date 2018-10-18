@@ -20,9 +20,10 @@ import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.server.domain.payment.PisPaymentData;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PisPaymentDataRepository extends CrudRepository<PisPaymentData, Long> {
-    Optional<PisPaymentData> findByPaymentIdAndConsent_ConsentStatus(String paymentId, CmsConsentStatus cmsConsentStatus);
+    Optional<List<PisPaymentData>> findByPaymentIdAndConsent_ConsentStatus(String paymentId, CmsConsentStatus cmsConsentStatus);
     Optional<PisPaymentData> findByPaymentId(String paymentId);
 }

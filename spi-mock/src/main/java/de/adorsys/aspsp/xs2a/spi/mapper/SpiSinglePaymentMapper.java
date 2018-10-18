@@ -42,6 +42,7 @@ public class SpiSinglePaymentMapper {
 
     public SpiSinglePayment mapToSpiSinglePayment(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment payment, SpiPaymentProduct paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
+        single.setPaymentId(payment.getPaymentId());
         single.setEndToEndIdentification(payment.getEndToEndIdentification());
         single.setDebtorAccount(payment.getDebtorAccount());
         single.setInstructedAmount(payment.getInstructedAmount());

@@ -18,19 +18,15 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.EnumSet;
-import java.util.List;
-
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     private AuthorisationMethodService authorisationMethodService;
@@ -43,13 +39,8 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     @SuppressWarnings("unchecked")
     protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentInitiationParameters paymentRequestParameters) {
         Object body = result.getBody();
+        doEnrichLink(paymentRequestParameters, (PaymentInitiationResponse) body);
 
-        if (EnumSet.of(SINGLE, PERIODIC).contains(paymentRequestParameters.getPaymentType())) {
-            doEnrichLink(paymentRequestParameters, (PaymentInitiationResponse) body);
-        } else {
-            ((List<PaymentInitiationResponse>) body)
-                .forEach(r -> doEnrichLink(paymentRequestParameters, r));
-        }
         return result;
     }
 

@@ -21,10 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.BulkPaymentInitiationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
@@ -32,6 +29,7 @@ import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,6 +56,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
 
         bulkPayment.setPaymentId(response.getPaymentId());
         bulkPayment.setTransactionStatus(response.getTransactionStatus());
+        updateBulkPaymentIds(bulkPayment.getPayments(), response.getPaymentId());
 
         pisConsentService.updateBulkPaymentInPisConsent(bulkPayment, paymentInitiationParameters, pisConsent.getConsentId());
 
@@ -76,5 +75,9 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
         return ResponseObject.<BulkPaymentInitiationResponse>builder()
                    .body(response)
                    .build();
+    }
+
+    private void updateBulkPaymentIds(List<SinglePayment> payments, String paymentId) {
+        payments.forEach(p -> p.setPaymentId(paymentId));
     }
 }
