@@ -16,16 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl.v2;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.exception.RestException;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
-import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPeriodicPaymentMapper;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -38,20 +32,13 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-
-import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
-import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
-import static de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 
 @Service
 @AllArgsConstructor
@@ -62,8 +49,6 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     private final RestTemplate aspspRestTemplate;
     private final SpiPeriodicPaymentMapper spiPeriodicPaymentMapper;
     private final AspspRemoteUrls aspspRemoteUrls;
-    private final KeycloakInvokerService keycloakInvokerService;
-    private final JsonConverter jsonConverter;
 
     @Override
     @NotNull
@@ -87,33 +72,6 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
             }
             return SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
                        .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
-        }
-    }
-
-    @Override
-    @NotNull
-    public SpiResponse<VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = spiPeriodicPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
-
-        try {
-            aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment.class);
-
-            return SpiResponse.<VoidResponse>builder()
-                       .aspspConsentData(aspspConsentData)
-                       .success();
-
-        } catch (RestException e) {
-
-            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-
-                return SpiResponse.<VoidResponse>builder()
-                           .aspspConsentData(aspspConsentData)
-                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
-            }
-
-            return SpiResponse.<VoidResponse>builder()
-                       .aspspConsentData(aspspConsentData)
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
@@ -176,81 +134,33 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    @NotNull
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
-        Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuData.getPsuId(), password);
-        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
-                                                            .orElse(FAILURE);
-        byte[] payload = accessToken.flatMap(jsonConverter::toJson)
-                             .map(String::getBytes)
-                             .orElse(null);
+    public @NotNull SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
+        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = spiPeriodicPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
 
-        return SpiResponse.<SpiAuthorisationStatus>builder()
-                   .aspspConsentData(aspspConsentData.respondWith(payload))
-                   .payload(spiAuthorisationStatus)
-                   .success();
-    }
-
-    @Override
-    @NotNull
-    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
-        ResponseEntity<List<SpiScaMethod>> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
-        }, psuData.getPsuId());
-
-        List<SpiScaMethod> spiScaMethods = Optional.ofNullable(aspspResponse.getBody())
-                                               .orElseGet(Collections::emptyList);
-
-        return SpiResponse.<List<SpiScaMethod>>builder()
-                   .aspspConsentData(aspspConsentData)
-                   .payload(spiScaMethods)
-                   .success();
-    }
-
-    @Override
-    @NotNull
-    public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiPsuData psuData, @NotNull SpiScaMethod scaMethod, @NotNull SpiPeriodicPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
         try {
-            aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuData.getPsuId(), scaMethod);
+            aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment.class);
 
-            return SpiResponse.<SpiAuthorizationCodeResult>builder()
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData)
                        .success();
 
         } catch (RestException e) {
+
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
 
-                return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                return SpiResponse.<SpiResponse.VoidResponse>builder()
                            .aspspConsentData(aspspConsentData)
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
-            return SpiResponse.<SpiAuthorizationCodeResult>builder()
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData)
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
 
     @Override
-    @NotNull
-    public SpiResponse<VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPeriodicPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
-        try {
-            aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
-
-            return SpiResponse.<VoidResponse>builder()
-                       .aspspConsentData(aspspConsentData)
-                       .success();
-
-        } catch (RestException e) {
-            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-
-                return SpiResponse.<VoidResponse>builder()
-                           .aspspConsentData(aspspConsentData)
-                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
-            }
-
-            return SpiResponse.<VoidResponse>builder()
-                       .aspspConsentData(aspspConsentData)
-                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
-        }
+    public @NotNull SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
+        return SpiResponse.<SpiResponse.VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }
