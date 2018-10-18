@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
-import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -136,11 +135,32 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
 
     @Override
     public @NotNull SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiResponse.VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = spiPeriodicPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
+
+        try {
+            aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment.class);
+
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData)
+                       .success();
+
+        } catch (RestException e) {
+
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+
+                return SpiResponse.<SpiResponse.VoidResponse>builder()
+                           .aspspConsentData(aspspConsentData)
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData)
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 
     @Override
-    public @NotNull SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    public @NotNull SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         return SpiResponse.<SpiResponse.VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }
