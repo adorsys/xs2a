@@ -24,7 +24,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -113,9 +112,8 @@ public class AisConsent {
     private List<AisConsentAuthorization> authorizations = new ArrayList<>();
 
     @Lob
-    @Column(name = "aspsp_consent_data")
-    @Type(type = "org.hibernate.type.BinaryType")
     @JsonIgnore
+    @Column(name = "aspsp_consent_data")
     private byte[] aspspConsentData;
 
     @Column(name = "ais_consent_request_type", nullable = false)

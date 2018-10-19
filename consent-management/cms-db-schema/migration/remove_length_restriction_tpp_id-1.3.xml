@@ -20,15 +20,25 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet author="iku@adorsys.com.ua" id="2018-09-21-1">
-        <comment>Remove length restriction tppId  .</comment>
+        <comment>Remove length restriction tppId</comment>
         <modifyDataType
             columnName="tpp_id"
-            newDataType="varchar()"
+            newDataType="CLOB"
             tableName="ais_consent_action"/>
+        <!--
+            [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
+            Use <sql> and re-specify all configuration if this is the case
+         -->
+        <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY tpp_id LONGTEXT NOT NULL</sql>
         <modifyDataType
             columnName="tpp_id"
-            newDataType="varchar()"
+            newDataType="CLOB"
             tableName="ais_consent"/>
+        <!--
+            [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
+            Use <sql> and re-specify all configuration if this is the case
+        -->
+        <sql dbms="mariadb">ALTER TABLE ais_consent MODIFY tpp_id LONGTEXT NOT NULL</sql>
     </changeSet>
 
 </databaseChangeLog>
