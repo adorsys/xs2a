@@ -36,6 +36,7 @@ public class ReadSinglePayment extends ReadPayment<SinglePayment> {
     public SinglePayment getPayment(String paymentId, String paymentProduct) {
         SpiSinglePayment payment = new SpiSinglePayment(SpiPaymentProduct.getByValue(paymentProduct));
         payment.setPaymentId(paymentId);
+        payment.setPaymentProduct(SpiPaymentProduct.getByValue(paymentProduct));
         SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(psuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());

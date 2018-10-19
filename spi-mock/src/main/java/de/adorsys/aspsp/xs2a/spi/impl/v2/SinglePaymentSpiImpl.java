@@ -84,7 +84,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
         try {
             ResponseEntity<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment>> aspspResponse =
                 aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment>>() {
-                }, payment.getPaymentType(), payment.getPaymentProduct(), payment.getPaymentId());
+                }, payment.getPaymentType().getValue(), payment.getPaymentProduct().getValue(), payment.getPaymentId());
             de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment single = aspspResponse.getBody().get(0);
             SpiSinglePayment spiPeriodicPayment = spiSinglePaymentMapper.mapToSpiSinglePayment(single, payment.getPaymentProduct());
 

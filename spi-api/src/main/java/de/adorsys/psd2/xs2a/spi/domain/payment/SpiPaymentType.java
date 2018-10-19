@@ -35,4 +35,8 @@ public enum SpiPaymentType {
     public String getSpiPaymentType() {
         return paymentType;
     }
+
+    public String getValue() {
+        return paymentType;
+    }
 }

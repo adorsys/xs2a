@@ -105,7 +105,7 @@ public class PaymentService {
      */
     public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentId) {
         ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
-        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, "TMP")); //NOT USED IN 1.2
+        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, "sepa-credit-transfers")); //TODO Add actual value https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/441
         return payment.map(p -> ResponseObject.builder()
                                     .body(p)
                                     .build())
