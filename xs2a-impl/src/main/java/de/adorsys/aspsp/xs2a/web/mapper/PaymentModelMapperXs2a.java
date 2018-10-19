@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.mapper;
+package de.adorsys.aspsp.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.model.*;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 
 @Component
 @RequiredArgsConstructor

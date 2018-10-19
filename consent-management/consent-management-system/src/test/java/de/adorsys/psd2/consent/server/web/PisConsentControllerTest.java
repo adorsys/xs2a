@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.server.web;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.PisConsentStatusResponse;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -27,6 +26,7 @@ import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.server.service.PisConsentService;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -264,7 +264,7 @@ public class PisConsentControllerTest {
         response.setConsentId(CONSENT_ID);
         response.setPassword(PASSWORD);
         response.setPayments(Collections.emptyList());
-        response.setPaymentType(PisPaymentType.SINGLE);
+        response.setPaymentType(PaymentType.SINGLE);
         return response;
     }
 

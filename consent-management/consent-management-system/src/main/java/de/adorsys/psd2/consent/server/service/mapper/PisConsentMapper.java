@@ -45,7 +45,7 @@ public class PisConsentMapper {
         PisConsent consent = new PisConsent();
         consent.setPayments(mapToPisPaymentDataList(request.getPayments(), consent));
         consent.setTppInfo(consentMapper.mapToTppInfo(request.getTppInfo()));
-        consent.setPisPaymentType(request.getPaymentType());
+        consent.setPaymentType(request.getPaymentType());
         consent.setPisPaymentProduct(request.getPaymentProduct());
         consent.setConsentType(ConsentType.PIS);
         consent.setConsentStatus(CmsConsentStatus.RECEIVED);
@@ -95,7 +95,7 @@ public class PisConsentMapper {
     public GetPisConsentAuthorisationResponse mapToGetPisConsentAuthorizationResponse(PisConsentAuthorization pis) {
         GetPisConsentAuthorisationResponse response = new GetPisConsentAuthorisationResponse();
         response.setPayments(mapToPisPaymentList(pis.getConsent().getPayments()));
-        response.setPaymentType(pis.getConsent().getPisPaymentType());
+        response.setPaymentType(pis.getConsent().getPaymentType());
         response.setScaStatus(pis.getScaStatus());
         response.setConsentId(pis.getConsent().getExternalId());
         return response;
@@ -112,7 +112,7 @@ public class PisConsentMapper {
                        response.setPayments(mapToPisPaymentList(pc.getPayments()));
                        response.setExternalId(pc.getExternalId());
                        response.setConsentStatus(pc.getConsentStatus());
-                       response.setPaymentType(pc.getPisPaymentType());
+                       response.setPaymentType(pc.getPaymentType());
                        response.setPaymentProduct(pc.getPisPaymentProduct());
                        response.setTppInfo(consentMapper.mapToCmsTppInfo(pc.getTppInfo()));
                        return response;

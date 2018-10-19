@@ -14,25 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.payment;
+package de.adorsys.psd2.xs2a.core.profile;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum SpiPaymentType {
-    SINGLE("payments"),
-    BULK("bulk-payments"),
-    PERIODIC("periodic-payments");
-
-    private String paymentType;
-
-    @JsonCreator
-    SpiPaymentType(String paymentType) {
-        this.paymentType = paymentType;
-    }
-
-    public String getSpiPaymentType() {
-        return paymentType;
-    }
+public enum ScaApproach {
+    REDIRECT,
+    OAUTH,
+    DECOUPLED,
+    EMBEDDED
 }
