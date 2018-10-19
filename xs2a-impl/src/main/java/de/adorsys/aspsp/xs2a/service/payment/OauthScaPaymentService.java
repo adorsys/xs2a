@@ -21,8 +21,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class OauthScaPaymentService implements ScaPaymentService {
 
@@ -32,7 +30,7 @@ public class OauthScaPaymentService implements ScaPaymentService {
     }
 
     @Override
-    public List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct) {
+    public BulkPaymentInitiationResponse createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 

@@ -158,7 +158,7 @@ public class PisConsentService {
     @Transactional
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
-                   .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent(), authorizationType))
+                   .map(list -> saveNewAuthorization(list.get(0).getConsent(), authorizationType))
                    .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
 
@@ -200,7 +200,7 @@ public class PisConsentService {
 
     public Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
-                   .flatMap(paymentData -> pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(paymentData.getConsent().getId(), authorizationType))
+                   .flatMap(list -> pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(list.get(0).getConsent().getId(), authorizationType))
                    .filter(CollectionUtils::isNotEmpty)
                    .map(lst -> lst.get(0).getExternalId());
     }

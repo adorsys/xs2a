@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class Xs2aToSpiPaymentMapper {
+public class Xs2aToSpiSinglePaymentMapper {
     private final Xs2aToSpiAmountMapper xs2aToSpiAmountMapper;
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;

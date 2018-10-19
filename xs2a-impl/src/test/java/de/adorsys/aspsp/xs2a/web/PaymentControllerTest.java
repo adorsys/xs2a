@@ -110,9 +110,6 @@ public class PaymentControllerTest {
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPayment(any(), any()))
             .thenReturn(readResponseObject());
-
-        when(paymentService.createBulkPayments(any(), any(), any()))
-            .thenReturn(readListOfXs2aPaymentInitialisationResponses());
         when(aspspProfileService.getPisRedirectUrlToAspsp())
             .thenReturn(REDIRECT_LINK);
         when(referenceValidationService.validateAccountReferences(any()))
@@ -215,10 +212,10 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse =
             (ResponseEntity<PaymentInitiationStatusResponse200Json>) paymentController.getPaymentInitiationStatus(
-            PaymentType.SINGLE.getValue(), WRONG_PAYMENT_ID, null, null, null,
-            null, null, null, null, null,
-            null, null, null, null, null,
-            null );
+                PaymentType.SINGLE.getValue(), WRONG_PAYMENT_ID, null, null, null,
+                null, null, null, null, null,
+                null, null, null, null, null,
+                null);
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedHttpStatus);
@@ -239,11 +236,11 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<PaymentInitialisationResponse> actualResult =
             (ResponseEntity<PaymentInitialisationResponse>) paymentController.initiatePayment(payment,
-                                                                                              PaymentType.SINGLE.getValue(), paymentProduct.getCode(), null, null, null,
-                                                                                              null, null, null, null, null,
-                                                                                              null, null, null, null, null,
-                                                                                              null, null, null, null, null,
-                                                                                              null , null, null, null, null);
+                PaymentType.SINGLE.getValue(), paymentProduct.getCode(), null, null, null,
+                null, null, null, null, null,
+                null, null, null, null, null,
+                null, null, null, null, null,
+                null, null, null, null, null);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -283,9 +280,9 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<PaymentInitialisationResponse> result =
             (ResponseEntity<PaymentInitialisationResponse>) paymentController.initiatePayment(periodicPayment,
-            PERIODIC.getValue(), paymentProduct.getCode(), null,null, null, null,
-            null, null, null, null, null,
-                null ,null, null, null,
+                PERIODIC.getValue(), paymentProduct.getCode(), null, null, null, null,
+                null, null, null, null, null,
+                null, null, null, null,
                 null, null, null, null,
                 null, null, null, null, null,
                 null);
@@ -321,11 +318,11 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<List<PaymentInitationRequestResponse201>> actualResult =
             (ResponseEntity<List<PaymentInitationRequestResponse201>>) paymentController.initiatePayment(payments,
-                PaymentType.BULK.getValue(), PaymentProduct.SCT.getCode(), null,null, null,
+                PaymentType.BULK.getValue(), PaymentProduct.SCT.getCode(), null, null, null,
                 null, null, null, null, null,
-                null, null ,null, null, null,
-            null, null, null, null, null,
-            null, null, null, null, null);
+                null, null, null, null, null,
+                null, null, null, null, null,
+                null, null, null, null, null);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());

@@ -98,30 +98,19 @@ public class PaymentModelMapperPsd2 {
         return TransactionStatus.valueOf(responseObject.name());
     }
 
-    public Object mapToPaymentInitiationResponse12(Object response, PaymentInitiationParameters requestParameters) {
+    public Object mapToPaymentInitiationResponse12(Object response) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
-        if (EnumSet.of(SINGLE, PERIODIC).contains(requestParameters.getPaymentType())) {
-            PaymentInitiationResponse specificResponse = (PaymentInitiationResponse) response;
-            response201.setTransactionStatus(mapToTransactionStatus12(specificResponse.getTransactionStatus()));
-            response201.setPaymentId(specificResponse.getPaymentId());
-            response201.setTransactionFees(mapToAmount(specificResponse.getTransactionFees()));
-            response201.setTransactionFeeIndicator(specificResponse.isTransactionFeeIndicator());
-            response201.setScaMethods(mapToScaMethods(specificResponse.getScaMethods()));
-            response201.setChallengeData(mapToChallengeData(specificResponse.getChallengeData()));
-            response201.setLinks(mapper.convertValue(((PaymentInitiationResponse) response).getLinks(), Map.class));
-            response201.setPsuMessage(specificResponse.getPsuMessage());
-            response201.setTppMessages(messageErrorMapper.mapToTppMessages(specificResponse.getTppMessages()));
-            return response201;
-        } else {
-            List<PaymentInitiationResponse> specificResponse = (List<PaymentInitiationResponse>) response;
-            return specificResponse.stream()
-                       .peek(r -> {
-                           PaymentInitiationParameters parameters = new PaymentInitiationParameters();
-                           parameters.setPaymentType(SINGLE);
-                           mapToPaymentInitiationResponse12(r, parameters);
-                       })
-                       .collect(Collectors.toList());
-        }
+        PaymentInitiationResponse specificResponse = (PaymentInitiationResponse) response;
+        response201.setTransactionStatus(mapToTransactionStatus12(specificResponse.getTransactionStatus()));
+        response201.setPaymentId(specificResponse.getPaymentId());
+        response201.setTransactionFees(mapToAmount(specificResponse.getTransactionFees()));
+        response201.setTransactionFeeIndicator(specificResponse.isTransactionFeeIndicator());
+        response201.setScaMethods(mapToScaMethods(specificResponse.getScaMethods()));
+        response201.setChallengeData(mapToChallengeData(specificResponse.getChallengeData()));
+        response201.setLinks(mapper.convertValue(((PaymentInitiationResponse) response).getLinks(), Map.class));
+        response201.setPsuMessage(specificResponse.getPsuMessage());
+        response201.setTppMessages(messageErrorMapper.mapToTppMessages(specificResponse.getTppMessages()));
+        return response201;
     }
 
     private List<PaymentInitiationTarget2Json> mapToBulkPartList12(List<SinglePayment> payments) {
