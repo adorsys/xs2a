@@ -37,6 +37,7 @@ public class Xs2aToSpiBulkPaymentMapper {
 
     public SpiBulkPayment mapToSpiBulkPayment(BulkPayment payment, PaymentProduct paymentProduct) {
         SpiBulkPayment bulk = new SpiBulkPayment();
+        bulk.setPaymentId(payment.getPaymentId());
         bulk.setBatchBookingPreferred(payment.getBatchBookingPreferred());
         bulk.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
         bulk.setPaymentProduct(SpiPaymentProduct.getByValue(paymentProduct.getCode()));

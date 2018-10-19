@@ -59,7 +59,7 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
         singlePayment.setPaymentId(response.getPaymentId());
         singlePayment.setTransactionStatus(response.getTransactionStatus());
 
-        pisConsentService.updatePaymentInPisConsent(singlePayment, paymentInitiationParameters, pisConsent.getConsentId());
+        pisConsentService.updateSinglePaymentInPisConsent(singlePayment, paymentInitiationParameters, pisConsent.getConsentId());
 
         boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {

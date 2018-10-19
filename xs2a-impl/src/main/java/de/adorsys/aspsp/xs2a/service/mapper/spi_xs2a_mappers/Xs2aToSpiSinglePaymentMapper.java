@@ -33,6 +33,7 @@ public class Xs2aToSpiSinglePaymentMapper {
 
     public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, PaymentProduct paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(SpiPaymentProduct.getByValue(paymentProduct.getCode()));
+        single.setPaymentId(payment.getPaymentId());
         single.setEndToEndIdentification(payment.getEndToEndIdentification());
         single.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
         single.setInstructedAmount(xs2aToSpiAmountMapper.mapToSpiAmount(payment.getInstructedAmount()));

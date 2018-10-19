@@ -78,6 +78,8 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     @NotNull
     public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData aspspConsentData) {
         try {
+
+            // TODO call payment execution method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/444
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()

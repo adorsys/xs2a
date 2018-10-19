@@ -34,6 +34,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
 
     public SpiPeriodicPayment mapToSpiPeriodicPayment(PeriodicPayment payment, PaymentProduct paymentProduct) {
         SpiPeriodicPayment periodic = new SpiPeriodicPayment(SpiPaymentProduct.getByValue(paymentProduct.getCode()));
+        periodic.setPaymentId(payment.getPaymentId());
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
         periodic.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
         periodic.setInstructedAmount(xs2aToSpiAmountMapper.mapToSpiAmount(payment.getInstructedAmount()));
