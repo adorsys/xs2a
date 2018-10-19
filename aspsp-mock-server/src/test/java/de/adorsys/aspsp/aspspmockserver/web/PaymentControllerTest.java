@@ -54,10 +54,12 @@ public class PaymentControllerTest {
     public void setUpPaymentServiceMock() {
         SpiSinglePayment response = getSpiSinglePayment();
         response.setPaymentId(PAYMENT_ID);
-        List<SpiSinglePayment> responseList = new ArrayList<>();
-        responseList.add(response);
+        SpiBulkPayment bulkResponse = new SpiBulkPayment();
+        bulkResponse.setPaymentId(PAYMENT_ID);
         when(paymentService.addPayment(getSpiSinglePayment()))
             .thenReturn(Optional.of(response));
+        when(paymentService.addBulkPayments(any()))
+            .thenReturn(Optional.of(bulkResponse));
         when(paymentService.isPaymentExist(PAYMENT_ID))
             .thenReturn(true);
         when(paymentService.isPaymentExist(WRONG_PAYMENT_ID))
@@ -81,6 +83,21 @@ public class PaymentControllerTest {
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody().getPaymentId()).isNotNull();
+    }
+
+    @Test
+    public void createBulkPayments() {
+        //Given
+        HttpStatus expectedStatus = HttpStatus.CREATED;
+        SpiBulkPayment expectedRequest = getSpiBulkPayment();
+        //When
+        ResponseEntity<SpiBulkPayment> actualResponse = paymentController.createBulkPayments(expectedRequest);
+
+        //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
+        assertThat(actualStatus).isEqualTo(expectedStatus);
+        assertThat(actualResponse.getBody()).isNotNull();
+        assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
     }
 
     @Test

@@ -106,7 +106,6 @@ public class PaymentControllerTest {
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPayment(any(), any()))
             .thenReturn(readResponseObject());
-
         when(aspspProfileService.getPisRedirectUrlToAspsp())
             .thenReturn(REDIRECT_LINK);
         when(referenceValidationService.validateAccountReferences(any()))

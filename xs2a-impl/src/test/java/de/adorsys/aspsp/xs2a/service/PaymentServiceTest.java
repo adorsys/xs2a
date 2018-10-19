@@ -19,17 +19,20 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.ReadSinglePayment;
-import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,13 +42,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_400;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
@@ -66,6 +67,7 @@ public class PaymentServiceTest {
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
     private static final TppInfo TPP_INFO = getTppInfo();
+    private static final PaymentProduct SCT_PAYMENT_PRODUCT = PaymentProduct.SCT;
 
     private final PeriodicPayment PERIODIC_PAYMENT_OK = getPeriodicPayment(IBAN, AMOUNT);
     private final PeriodicPayment PERIODIC_PAYMENT_NOK_AMOUNT = getPeriodicPayment(IBAN, EXCESSIVE_AMOUNT);
@@ -82,17 +84,21 @@ public class PaymentServiceTest {
     @Mock
     private PaymentMapper paymentMapper;
     @Mock
-    private ScaPaymentService scaPaymentService;
-    @Mock
     private PaymentSpi paymentSpi;
     @Mock
     private ReadPaymentFactory readPaymentFactory;
     @Mock
     private ReadSinglePayment readSinglePayment;
     @Mock
-    private AccountReferenceValidationService referenceValidationService;
-    @Mock
     private PisConsentDataService pisConsentDataService;
+    @Mock
+    private TppService tppService;
+    @Mock
+    private Xs2aPisConsentMapper xs2aPisConsentMapper;
+    @Mock
+    private PisConsentService pisConsentService;
+    @Mock
+    private CreateBulkPaymentService createBulkPaymentService;
 
     @Before
     public void setUp() {
@@ -106,15 +112,18 @@ public class PaymentServiceTest {
         when(paymentMapper.mapToSpiPaymentType(PaymentType.BULK)).thenReturn(SpiPaymentType.BULK);
         when(paymentMapper.mapToPaymentInitResponseFailedPayment(SINGLE_PAYMENT_NOK_IBAN, RESOURCE_UNKNOWN_400))
             .thenReturn(getPaymentResponse(RJCT, RESOURCE_UNKNOWN_400));
+        when(xs2aPisConsentMapper.mapToXs2aPisConsent(any())).thenReturn(getXs2aPisConsent());
 
         //Status by ID
         when(paymentSpi.getPaymentStatusById(PAYMENT_ID, SpiPaymentType.SINGLE, ASPSP_CONSENT_DATA))
             .thenReturn(new SpiResponse<>(SpiTransactionStatus.ACCP, ASPSP_CONSENT_DATA));
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, SpiPaymentType.SINGLE, ASPSP_CONSENT_DATA))
             .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
+        when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters(), getTppInfoServiceModified(), getXs2aPisConsent()))
+            .thenReturn(getValidResponse());
 
-        when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
         when(pisConsentDataService.getAspspConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
@@ -138,6 +147,17 @@ public class PaymentServiceTest {
         assertThat(response.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
+    //Bulk Tests
+    @Test
+    public void createBulkPayments() {
+        BulkPayment payment = BULK_PAYMENT_OK;
+        //When
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(payment, getBulkPaymentInitiationParameters());
+        //Then
+        assertThat(actualResponse.hasError()).isFalse();
+        assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
+        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
+    }
 
     @Test
     public void getPaymentById() {
@@ -219,8 +239,15 @@ public class PaymentServiceTest {
         return payment;
     }
 
-    private List<PaymentInitialisationResponse> getBulkResponses(PaymentInitialisationResponse... response) {
-        return Arrays.stream(response).collect(Collectors.toList());
+    private BulkPaymentInitiationResponse getBulkResponses(Xs2aTransactionStatus status, MessageErrorCode errorCode) {
+        BulkPaymentInitiationResponse response = new BulkPaymentInitiationResponse();
+        response.setTransactionStatus(status);
+
+        response.setPaymentId(status == RJCT ? null : PAYMENT_ID);
+        if (status == RJCT) {
+            response.setTppMessages(new MessageErrorCode[]{errorCode});
+        }
+        return response;
     }
 
     private static TppInfo getTppInfo() {
@@ -240,6 +267,22 @@ public class PaymentServiceTest {
         return tppInfo;
     }
 
+    private static TppInfo getTppInfoServiceModified() {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber("registrationNumber");
+        tppInfo.setTppName("tppName");
+        tppInfo.setTppRoles(Collections.singletonList(Xs2aTppRole.PISP));
+        tppInfo.setAuthorityId("authorityId");
+        tppInfo.setAuthorityName("authorityName");
+        tppInfo.setCountry("country");
+        tppInfo.setOrganisation("organisation");
+        tppInfo.setOrganisationUnit("organisationUnit");
+        tppInfo.setCity("city");
+        tppInfo.setState("state");
+
+        return tppInfo;
+    }
+
     private BulkPayment getBulkPayment(SinglePayment singlePayment1, String iban) {
         BulkPayment bulkPayment = new BulkPayment();
         bulkPayment.setPayments(Collections.singletonList(singlePayment1));
@@ -250,10 +293,19 @@ public class PaymentServiceTest {
         return bulkPayment;
     }
 
+    private Xs2aPisConsent getXs2aPisConsent() {
+        return new Xs2aPisConsent("TEST");
+    }
 
-    private PaymentInitiationParameters getRequestParameters(){
+
+    private PaymentInitiationParameters getBulkPaymentInitiationParameters() {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
+        requestParameters.setPaymentType(PaymentType.BULK);
 
         return requestParameters;
+    }
+
+    private ResponseObject<BulkPaymentInitiationResponse> getValidResponse() {
+        return ResponseObject.<BulkPaymentInitiationResponse>builder().body(getBulkResponses(RCVD, null)).build();
     }
 }

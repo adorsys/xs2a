@@ -101,7 +101,7 @@ public class PaymentController implements PaymentApi {
                    ? responseMapper.created(serviceResponse)
                    : responseMapper.created(ResponseObject
                                                 .builder()
-                                                .body(paymentModelMapperPsd2.mapToPaymentInitiationResponse12(serviceResponse.getBody(), paymentInitiationParameters))
+                                                .body(paymentModelMapperPsd2.mapToPaymentInitiationResponse12(serviceResponse.getBody()))
                                                 .build());
     }
 

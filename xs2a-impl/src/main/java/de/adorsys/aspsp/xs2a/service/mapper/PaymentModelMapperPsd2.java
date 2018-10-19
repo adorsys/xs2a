@@ -95,7 +95,7 @@ public class PaymentModelMapperPsd2 {
         return TransactionStatus.valueOf(responseObject.name());
     }
 
-    public Object mapToPaymentInitiationResponse12(Object response, PaymentInitiationParameters requestParameters) {
+    public Object mapToPaymentInitiationResponse12(Object response) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
         PaymentInitiationResponse specificResponse = (PaymentInitiationResponse) response;
         response201.setTransactionStatus(mapToTransactionStatus12(specificResponse.getTransactionStatus()));

@@ -49,9 +49,7 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 public class PaymentService {
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
-    private final ScaPaymentService scaPaymentService;
     private final ReadPaymentFactory readPaymentFactory;
-    private final AccountReferenceValidationService referenceValidationService;
     private final PisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
     private final TppService tppService;
