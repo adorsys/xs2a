@@ -95,7 +95,9 @@ public class PaymentModelMapperPsd2 {
     }
 
     public static TransactionStatus mapToTransactionStatus12(Xs2aTransactionStatus responseObject) {
-        return TransactionStatus.valueOf(responseObject.name());
+        return Optional.ofNullable(responseObject)
+                   .map(r -> TransactionStatus.valueOf(r.name()))
+                   .orElse(null);
     }
 
     public Object mapToPaymentInitiationResponse12(Object response) {
