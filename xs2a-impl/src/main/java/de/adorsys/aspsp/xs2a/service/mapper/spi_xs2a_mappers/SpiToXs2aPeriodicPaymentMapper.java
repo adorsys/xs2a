@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,8 +31,9 @@ public class SpiToXs2aPeriodicPaymentMapper {
     private final SpiToXs2aAmountMapper spiToXs2aAmountMapper;
     private final SpiToXs2aAddressMapper spiToXs2aAddressMapper;
 
-    public PeriodicPayment mapToXs2aPeriodicPayment(SpiPeriodicPayment payment) {
+    public PeriodicPayment mapToXs2aPeriodicPayment(@NotNull SpiPeriodicPayment payment) {
         PeriodicPayment periodic = new PeriodicPayment();
+        periodic.setPaymentId(payment.getPaymentId());
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
         periodic.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()));
         periodic.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(payment.getInstructedAmount()));

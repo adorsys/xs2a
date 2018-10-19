@@ -17,19 +17,30 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aSinglePaymentMapper;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
-
 @Service("payments")
+@RequiredArgsConstructor
 public class ReadSinglePayment extends ReadPayment<SinglePayment> {
+    private final SinglePaymentSpi singlePaymentSpi;
+    private final SpiToXs2aSinglePaymentMapper xs2aPeriodicPaymentMapper;
+
     @Override
     public SinglePayment getPayment(String paymentId, String paymentProduct) {
-        SpiResponse<SpiSinglePayment> spiResponse = paymentSpi.getSinglePaymentById(paymentMapper.mapToSpiPaymentType(SINGLE), paymentProduct, paymentId, pisConsentDataService.getAspspConsentDataByConsentId(paymentId));
+        SpiSinglePayment payment = new SpiSinglePayment(SpiPaymentProduct.getByValue(paymentProduct));
+        payment.setPaymentId(paymentId);
+        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(psuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
-        SpiSinglePayment singlePayment = spiResponse.getPayload();
-        return paymentMapper.mapToSinglePayment(singlePayment);
+        SpiSinglePayment responsePayment = spiResponse.getPayload();
+
+        return xs2aPeriodicPaymentMapper.mapToXs2aSinglePayment(responsePayment);
     }
 }

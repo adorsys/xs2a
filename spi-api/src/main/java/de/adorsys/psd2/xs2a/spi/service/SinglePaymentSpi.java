@@ -31,19 +31,19 @@ import org.jetbrains.annotations.NotNull;
 public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiSinglePaymentInitiationResponse> {
     @Override
     @NotNull
-    default SpiResponse<SpiSinglePaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiSinglePaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         return SpiResponse.<SpiSinglePaymentInitiationResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     @NotNull
-    default SpiResponse<SpiSinglePayment> getPaymentById(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiSinglePayment> getPaymentById(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         return SpiResponse.<SpiSinglePayment>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     @NotNull
-    default SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         return SpiResponse.<SpiTransactionStatus>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }

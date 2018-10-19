@@ -22,23 +22,25 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service("periodic-payments")
 @RequiredArgsConstructor
 public class ReadPeriodicPayment extends ReadPayment<PeriodicPayment> {
+    private final PeriodicPaymentSpi periodicPaymentSpi;
     private final SpiToXs2aPeriodicPaymentMapper xs2aPeriodicPaymentMapper;
 
     @Override
     public PeriodicPayment getPayment(String paymentId, String paymentProduct) {
-        SpiPeriodicPayment request = new SpiPeriodicPayment(SpiPaymentProduct.getByValue(paymentProduct));
-        request.setPaymentId(paymentId);
+        SpiPeriodicPayment payment = new SpiPeriodicPayment(SpiPaymentProduct.getByValue(paymentProduct));
+        payment.setPaymentId(paymentId);
         SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(psuData, request, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
+        SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(psuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
-        SpiPeriodicPayment periodicPayment = spiResponse.getPayload();
+        SpiPeriodicPayment responsePayment = spiResponse.getPayload();
 
-        return xs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(periodicPayment);
+        return xs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(responsePayment);
     }
 }

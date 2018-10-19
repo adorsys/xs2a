@@ -60,9 +60,9 @@ public class PaymentController implements PaymentApi {
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         ResponseObject<Xs2aTransactionStatus> response = PaymentType.getByValue(paymentService)
-                                                             .map(pt -> xs2aPaymentService.getPaymentStatusById(paymentId, pt))
-                                                             .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
-                                                                            .fail(new MessageError(FORMAT_ERROR))::build);
+            .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId))
+            .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
+                .fail(new MessageError(FORMAT_ERROR))::build);
 
         return responseMapper.ok(response, PaymentModelMapperPsd2::mapToStatusResponse12);
     }

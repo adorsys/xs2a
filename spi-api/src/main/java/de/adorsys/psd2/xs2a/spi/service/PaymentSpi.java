@@ -30,13 +30,13 @@ interface PaymentSpi<T extends SpiPayment, R> {
     SpiResponse<R> initiatePayment(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
 
     @NotNull
-    SpiResponse<T> getPaymentById(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<T> getPaymentById(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
 
     @NotNull
-    SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
 
     @NotNull
-    SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
 
     /**
      * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation executes payment at ASPSP. Used only with embedded SCA Approach.
@@ -44,10 +44,10 @@ interface PaymentSpi<T extends SpiPayment, R> {
      * @param psuData            ASPSP identifier(s) of the psu
      * @param spiScaConfirmation payment confirmation information
      * @param payment            payment object
-     * @param aspspConsentData   Encrypted data that may stored in the consent management system in the consent linked to a request.
+     * @param initialAspspConsentData   Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                           May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
-    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
 }
