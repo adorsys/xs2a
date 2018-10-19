@@ -29,6 +29,7 @@
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
         <postgresql.version>42.2.4</postgresql.version>
+        <propertyFile>liquibase.properties</propertyFile>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -44,13 +45,18 @@
                         <artifactId>postgresql</artifactId>
                         <version>${postgresql.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.mariadb.jdbc</groupId>
+                        <artifactId>mariadb-java-client</artifactId>
+                        <version>2.3.0</version>
+                    </dependency>
                 </dependencies>
 
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
                 <version>${liquibase.version}</version>
                 <configuration>
-                    <propertyFile>liquibase.properties</propertyFile>
+                    <propertyFile>${propertyFile}</propertyFile>
                 </configuration>
             </plugin>
         </plugins>
