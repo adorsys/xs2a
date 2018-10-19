@@ -17,15 +17,11 @@
 package de.adorsys.psd2.consent.api.ais;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
-@Data
-@ApiModel(description = "Ais consent aspsp data response", value = "AisConsentAspspDataResponse")
-public class AisConsentAspspDataResponse {
-
-    @ApiModelProperty(value = "Consent ID", required = true, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
-    private String consentId;
-    @ApiModelProperty(value = "ASPSP consent data Base64", required = true, example = "zdxcvvzzzxcvzzzz")
-    private String aspspConsentDataBase64;
+@ApiModel(description = "Type of the ais consent request", value = "AisConsentRequestType")
+public enum AisConsentRequestType {
+    GLOBAL,
+    ALL_AVAILABLE_ACCOUNTS,
+    BANK_OFFERED,
+    DEDICATED_ACCOUNTS
 }

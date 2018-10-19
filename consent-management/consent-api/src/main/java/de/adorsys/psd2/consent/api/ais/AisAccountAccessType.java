@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.api.ais;
 
-import lombok.Data;
+import io.swagger.annotations.ApiModel;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-@Data
-public class AvailableAccessRequest {
-    private String consentId;
-    private Map<String, Set<AccessAccountInfo>> accountsAccesses = new HashMap<>();
+@ApiModel(description = "AccountAccess type", value = "AisAccountAccessType")
+public enum AisAccountAccessType {
+    ALL_ACCOUNTS,
+    ALL_ACCOUNTS_WITH_BALANCES
 }

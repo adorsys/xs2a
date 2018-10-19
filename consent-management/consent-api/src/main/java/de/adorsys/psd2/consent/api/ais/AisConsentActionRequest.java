@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.api.ais;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Ais/Pis consent aspsp data update request", value = "UpdateConsentAspspDataRequest")
-public class UpdateConsentAspspDataRequest {
-
-    @ApiModelProperty(value = "Consent ID", required = true, example = "3e18d032-ee06-4670-b043-9d43ba367db3")
+@AllArgsConstructor
+public class AisConsentActionRequest {
+    private String tppId;
     private String consentId;
-    @ApiModelProperty(value = "ASPSP consent data Base64", required = true, example = "zdxcvvzzzxcvzzzz")
-    private String aspspConsentDataBase64;
+    private ActionStatus actionStatus;
 }

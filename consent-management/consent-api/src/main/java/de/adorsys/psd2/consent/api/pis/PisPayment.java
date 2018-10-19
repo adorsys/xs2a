@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.api.pis;
 
 import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.CmsRemittance;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

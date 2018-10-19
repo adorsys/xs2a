@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.client.cms.model.ais;
 
-import de.adorsys.psd2.consent.api.AisConsentStatusResponse;
+import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
 import de.adorsys.psd2.consent.client.core.HttpMethod;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;

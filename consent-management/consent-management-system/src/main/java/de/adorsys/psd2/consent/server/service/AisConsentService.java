@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.consent.server.service;
 
-import de.adorsys.psd2.consent.api.*;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.server.account.AccountAccessHolder;
 import de.adorsys.psd2.consent.server.domain.account.AccountAccess;
@@ -110,7 +112,7 @@ public class AisConsentService {
      * @param request needed parameters for logging usage AIS consent
      */
     @Transactional
-    public void checkConsentAndSaveActionLog(ConsentActionRequest request) {
+    public void checkConsentAndSaveActionLog(AisConsentActionRequest request) {
         AisConsent consent = getAisConsentById(request.getConsentId())
                                  .orElse(null);
         checkAndUpdateOnExpiration(consent);
@@ -141,7 +143,7 @@ public class AisConsentService {
      * @param consentId id of the consent
      * @return Response containing aspsp consent data
      */
-    public Optional<AisConsentAspspDataResponse> getAspspConsentData(String consentId) {
+    public Optional<CmsAspspConsentDataBase64> getAspspConsentData(String consentId) {
         return getActualAisConsent(consentId)
                    .map(this::getConsentAspspData);
     }
@@ -154,9 +156,9 @@ public class AisConsentService {
      * @return String   consent id
      */
     @Transactional
-    public Optional<String> updateAspspConsentData(String consentId, UpdateConsentAspspDataRequest request) {
+    public Optional<String> saveAspspConsentDataInAisConsent(String consentId, CmsAspspConsentDataBase64 request) {
         return getActualAisConsent(consentId)
-                   .map(cons -> updateAspspConsentData(request, cons));
+                   .map(cons -> saveAspspConsentDataInAisConsent(request, cons));
     }
 
     /**
@@ -229,8 +231,8 @@ public class AisConsentService {
         return holder.getAccountAccesses();
     }
 
-    private AisConsentAspspDataResponse getConsentAspspData(AisConsent consent) {
-        AisConsentAspspDataResponse response = new AisConsentAspspDataResponse();
+    private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent) {
+        CmsAspspConsentDataBase64 response = new CmsAspspConsentDataBase64();
         String aspspConsentDataBase64 = Optional.ofNullable(consent.getAspspConsentData())
                                             .map(bytes -> Base64.getEncoder().encodeToString(bytes))
                                             .orElse(null);
@@ -239,7 +241,7 @@ public class AisConsentService {
         return response;
     }
 
-    private String updateAspspConsentData(UpdateConsentAspspDataRequest request, AisConsent consent) {
+    private String saveAspspConsentDataInAisConsent(CmsAspspConsentDataBase64 request, AisConsent consent) {
         byte[] aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
                                       .map(aspspConsentDataBase64 -> Base64.getDecoder().decode(aspspConsentDataBase64))
                                       .orElse(null);
@@ -269,9 +271,9 @@ public class AisConsentService {
     }
 
     private AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
-        if (accessInfo.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
+        if (accessInfo.getAllPsd2() == AisAccountAccessType.ALL_ACCOUNTS) {
             return AisConsentRequestType.GLOBAL;
-        } else if (EnumSet.of(AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
+        } else if (EnumSet.of(AisAccountAccessType.ALL_ACCOUNTS, AisAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
         } else if (isEmptyAccess(accessInfo)) {
             return AisConsentRequestType.BANK_OFFERED;
@@ -285,7 +287,7 @@ public class AisConsentService {
                    && CollectionUtils.isEmpty(accessInfo.getTransactions());
     }
 
-    private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, AisConsent consent) {
+    private ActionStatus resolveConsentActionStatus(AisConsentActionRequest request, AisConsent consent) {
         return consent == null
                    ? ActionStatus.BAD_PAYLOAD
                    : request.getActionStatus();

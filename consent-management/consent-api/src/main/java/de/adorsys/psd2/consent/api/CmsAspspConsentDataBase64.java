@@ -21,14 +21,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Remittance in cms", value = "CmsRemittance")
-public class CmsRemittance {
-    @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
-    private String reference;
+@ApiModel(description = "ASPSP Consent data", value = "CmsAspspConsentDataBase64")
+public class CmsAspspConsentDataBase64 {
 
-    @ApiModelProperty(value = "reference type", example = "reference type")
-    private String referenceType;
-
-    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
-    private String referenceIssuer;
+    @ApiModelProperty(value = "Consent ID", required = true, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
+    private String consentId;
+    @ApiModelProperty(value = "ASPSP consent data Base64", required = true, example = "zdxcvvzzzxcvzzzz")
+    private String aspspConsentDataBase64;
 }

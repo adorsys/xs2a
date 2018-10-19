@@ -63,7 +63,7 @@ public class AisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
     /**
      * @return VOID
      * Method: POST
-     * PathVariables: ConsentActionRequest consentActionRequest
+     * PathVariables: AisConsentActionRequest consentActionRequest
      */
     public String consentActionLog() {
         return consentServiceBaseUrl + "/ais/consent/action";

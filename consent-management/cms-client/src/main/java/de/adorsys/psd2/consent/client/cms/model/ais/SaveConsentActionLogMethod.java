@@ -16,14 +16,14 @@
 
 package de.adorsys.psd2.consent.client.cms.model.ais;
 
-import de.adorsys.psd2.consent.api.ConsentActionRequest;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
 import de.adorsys.psd2.consent.client.core.HttpMethod;
 
-public class SaveConsentActionLogMethod extends RestCmsRequestMethod<ConsentActionRequest, Void> {
+public class SaveConsentActionLogMethod extends RestCmsRequestMethod<AisConsentActionRequest, Void> {
     private static final String SAVE_CONSENT_ACTION_LOG_URI = "api/v1/ais/consent/action";
 
-    public SaveConsentActionLogMethod(final ConsentActionRequest request) {
+    public SaveConsentActionLogMethod(final AisConsentActionRequest request) {
         super(request, HttpMethod.POST, SAVE_CONSENT_ACTION_LOG_URI);
     }
 }
