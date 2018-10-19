@@ -90,7 +90,8 @@ public class RequestValidatorServiceTest {
         HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
+
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMapInitiatePayment(request);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -104,11 +105,11 @@ public class RequestValidatorServiceTest {
         HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMapInitiatePayment(request);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
-        assertThat(actualViolations.get("Wrong header arguments: ")).contains("Can not deserialize value");
+        assertThat(actualViolations.get("Wrong header arguments: ")).isNotNull();
     }
 
     @Test
@@ -165,10 +166,9 @@ public class RequestValidatorServiceTest {
     public void getRequestHeaderViolationMap_wrongIpAddressV4() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("wrong ip");
-        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMapInitiatePayment(request);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -179,10 +179,9 @@ public class RequestValidatorServiceTest {
     public void getRequestHeaderViolationMap_wrongIpAddressV6() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("1200::AB00:1234::2552:7777:1313");
-        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMapInitiatePayment(request);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -193,10 +192,9 @@ public class RequestValidatorServiceTest {
     public void getRequestHeaderViolationMap_correctIpAddressV6() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("1200:0000:AB00:1234:0000:2552:7777:1313");
-        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMapInitiatePayment(request);
 
         //Then:
         assertThat(actualViolations.isEmpty()).isTrue();

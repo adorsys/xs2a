@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
 import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImpl;
+import de.adorsys.aspsp.xs2a.service.validator.header.impl.PaymentInitiationRequestHeader;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
@@ -69,6 +70,24 @@ public class RequestValidatorService {
         }
 
         return violationMap;
+    }
+
+    public Map<String, String> getRequestViolationMapInitiatePayment(Map<String, String> requestHeadersMap) {
+
+        RequestHeader headerImpl = HeadersFactory.getHeadersImplByRequestHeaderClass(requestHeadersMap, PaymentInitiationRequestHeader.class);
+
+        if (headerImpl instanceof ErrorMessageHeaderImpl) {
+            return Collections.singletonMap("Wrong header arguments: ",
+                ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
+            );
+        }
+
+        return getViolationMessagesMap(validator.validate(headerImpl));
+    }
+
+    public Map<String, String> getRequestViolationMapInitiatePayment(HttpServletRequest request) {
+        Map<String, String> requestHeadersMap = getRequestHeadersMap(request);
+        return getRequestViolationMapInitiatePayment(requestHeadersMap);
     }
 
     private Map<String, String> getRequestParametersViolationMap(HttpServletRequest request, HandlerMethod handler) {

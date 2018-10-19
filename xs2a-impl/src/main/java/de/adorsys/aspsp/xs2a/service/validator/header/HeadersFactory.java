@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.service.validator.header.impl.*;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import de.adorsys.aspsp.xs2a.web.ConsentController;
 import de.adorsys.aspsp.xs2a.web.FundsConfirmationController;
-import de.adorsys.aspsp.xs2a.web.PaymentController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +37,13 @@ public class HeadersFactory {
         controllerClassMap.put(AccountController.class, AccountRequestHeader.class);
         controllerClassMap.put(ConsentController.class, ConsentRequestHeader.class);
         controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
-        controllerClassMap.put(PaymentController.class, PaymentInitiationRequestHeader.class);
-    }
+   }
 
     public static RequestHeader getHeadersImpl(Map<String, String> requestHeadersMap, Class controllerClass) {
-        Class<? extends RequestHeader> headerClass = controllerClassMap.get(controllerClass);
+        return getHeadersImplByRequestHeaderClass(requestHeadersMap, controllerClassMap.get(controllerClass));
+    }
+
+    public static RequestHeader getHeadersImplByRequestHeaderClass(Map<String, String> requestHeadersMap, Class<? extends RequestHeader> headerClass) {
 
         if (headerClass == null) {
             return new NotMatchedHeaderImpl();

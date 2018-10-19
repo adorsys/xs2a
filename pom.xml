@@ -129,7 +129,7 @@
         <commons-validator.version>1.6</commons-validator.version>
         <swagger.annotations.version>1.5.20</swagger.annotations.version>
         <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
-
+        <jackson.version>2.9.6</jackson.version>
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
     </properties>
