@@ -58,6 +58,17 @@ public class Xs2aPisConsentMapper {
         return request;
     }
 
+    public PisConsentRequest mapToCmsBulkPisConsentRequest(BulkPayment bulkPayment, PaymentProduct paymentProduct) {
+        PisConsentRequest request = new PisConsentRequest();
+        request.setPayments(mapToListPisPayment(bulkPayment.getPayments()));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct.getCode()).orElse(null));
+        request.setPaymentType(PaymentType.BULK);
+        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
+        request.setTppInfo(new CmsTppInfo());
+        return request;
+
+    }
+
     public PisConsentRequest mapToCmsPisConsentRequestForPeriodicPayment(CreatePisConsentData createPisConsentData) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createPisConsentData.getPeriodicPayment())));
@@ -118,6 +129,12 @@ public class Xs2aPisConsentMapper {
 
                        return tppInfo;
                    }).orElse(null);
+    }
+
+    private List<PisPayment> mapToListPisPayment(List<SinglePayment> payments) {
+        return payments.stream()
+                   .map(this::mapToPisPaymentForSinglePayment)
+                   .collect(Collectors.toList());
     }
 
     private List<CmsTppRole> mapToCmsTppRoles(List<Xs2aTppRole> tppRoles) {

@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.payment;
+package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.time.LocalDate;
 import java.util.List;
 
-/**
- * @deprecated since 1.8. Will be removed in 1.10
- * @see de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment
- */
 @Data
-public class SpiBulkPayment {
-    private String paymentId;
-
-    private Boolean batchBookingPreferred;
-
-    private SpiAccountReference debtorAccount;
-
-    private LocalDate requestedExecutionDate;
-
-    List<SpiSinglePayment> payments;
-
-    private SpiTransactionStatus paymentStatus;
+@EqualsAndHashCode(callSuper = true)
+public class SpiBulkPaymentInitiationResponse extends SpiPaymentInitiationResponse {
+    private List<SpiSinglePayment> payments;
 }
