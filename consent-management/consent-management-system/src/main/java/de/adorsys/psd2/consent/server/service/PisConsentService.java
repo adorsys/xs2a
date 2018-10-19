@@ -48,8 +48,8 @@ import java.util.UUID;
 
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
-import static de.adorsys.psd2.consent.api.CmsScaStatus.SCAMETHODSELECTED;
-import static de.adorsys.psd2.consent.api.CmsScaStatus.STARTED;
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 
 @Service
 @RequiredArgsConstructor

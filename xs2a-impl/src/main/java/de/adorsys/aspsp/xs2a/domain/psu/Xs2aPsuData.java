@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.consent;
+package de.adorsys.aspsp.xs2a.domain.psu;
 
-public enum SpiScaStatus {
-    RECEIVED,
-    PSUIDENTIFIED,
-    PSUAUTHENTICATED,
-    SCAMETHODSELECTED,
-    STARTED,
-    FINALISED,
-    FAILED,
-    EXEMPTED;
+import lombok.Value;
+
+/**
+ * Contains data about PSU
+ */
+@Value
+public class Xs2aPsuData {
+    private String psuId;
+    private String psuIdType;
+    private String psuCorporateId;
+    private String psuCorporateIdType;
 }

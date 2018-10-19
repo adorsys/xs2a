@@ -30,10 +30,29 @@ public class ServiceLocatorFactoryConfiguration {
         return serviceLocatorFactoryBean;
     }
 
+    /**
+     * Configuration of ServiceLocatorFactoryBean bean to be used as a factory for PIS SCA authorisation stages through Service locator interface.
+     * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
+     *
+     * @return ServiceLocatorFactoryBean
+     */
     @Bean
-    public ServiceLocatorFactoryBean scaUpdateAuthorisationFactory() {
+    public ServiceLocatorFactoryBean pisScaUpdateAuthorisationFactory() {
         ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
-        serviceLocatorFactoryBean.setServiceLocatorInterface(ScaStageAuthorisationFactory.class);
+        serviceLocatorFactoryBean.setServiceLocatorInterface(PisScaStageAuthorisationFactory.class);
+        return serviceLocatorFactoryBean;
+    }
+
+    /**
+     * Configuration of ServiceLocatorFactoryBean bean to be used as a factory for AIS SCA authorisation stages through Service locator interface.
+     * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
+     *
+     * @return ServiceLocatorFactoryBean
+     */
+    @Bean
+    public ServiceLocatorFactoryBean aisScaUpdateAuthorisationFactory() {
+        ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
+        serviceLocatorFactoryBean.setServiceLocatorInterface(AisScaStageAuthorisationFactory.class);
         return serviceLocatorFactoryBean;
     }
 }

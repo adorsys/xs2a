@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.domain.spi.consent;
+package de.adorsys.aspsp.xs2a.config.factory;
 
-public enum SpiScaStatus {
-    RECEIVED,
-    PSUIDENTIFIED,
-    PSUAUTHENTICATED,
-    SCAMETHODSELECTED,
-    STARTED,
-    FINALISED,
-    FAILED,
-    EXEMPTED;
+/**
+ * This is specific factory intended to retrieve specific, stage-dependent SCA update authorisation services for AIS.
+ * It is used ServiceLocatorFactoryBean for implementing a factory pattern.
+ * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
+ */
+public interface AisScaStageAuthorisationFactory extends ServiceFactory {
+    String SERVICE_PREFIX = "AIS_";
 }
