@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.ais;
+package de.adorsys.psd2.consent.api.pis;
 
-import io.swagger.annotations.ApiModel;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@ApiModel(description = "AccountAccess type", value = "AccountAccessType")
-public enum AccountAccessType {
-    ALL_ACCOUNTS,
-    ALL_ACCOUNTS_WITH_BALANCES
+@Data
+@AllArgsConstructor
+public class PisConsentStatusResponse {
+    private CmsConsentStatus consentStatus;
 }

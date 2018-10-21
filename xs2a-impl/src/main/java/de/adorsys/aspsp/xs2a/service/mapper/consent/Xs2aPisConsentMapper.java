@@ -24,14 +24,18 @@ import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
-import de.adorsys.psd2.consent.api.*;
+import de.adorsys.psd2.consent.api.CmsAccountReference;
+import de.adorsys.psd2.consent.api.CmsAddress;
+import de.adorsys.psd2.consent.api.CmsTppInfo;
+import de.adorsys.psd2.consent.api.CmsTppRole;
+import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +62,7 @@ public class Xs2aPisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(mapToListPisPayment(bulkPayment.getPayments()));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct.getCode()).orElse(null));
-        request.setPaymentType(PisPaymentType.BULK);
+        request.setPaymentType(PaymentType.BULK);
         // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
         request.setTppInfo(new CmsTppInfo());
         return request;
@@ -69,7 +73,7 @@ public class Xs2aPisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createPisConsentData.getPeriodicPayment())));
         request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
-        request.setPaymentType(PisPaymentType.PERIODIC);
+        request.setPaymentType(PaymentType.PERIODIC);
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         return request;
     }
@@ -78,18 +82,18 @@ public class Xs2aPisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(mapToPisPaymentForBulkPayment(createPisConsentData.getPaymentIdentifierMap()));
         request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
-        request.setPaymentType(PisPaymentType.BULK);
+        request.setPaymentType(PaymentType.BULK);
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         return request;
 
     }
 
     public Optional<Xsa2CreatePisConsentAuthorisationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.of(new Xsa2CreatePisConsentAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType.getValue()));
+        return Optional.of(new Xsa2CreatePisConsentAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType));
     }
 
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> mapToXs2aCreatePisConsentCancellationAuthorisationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.of(new Xs2aCreatePisConsentCancellationAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType.getValue()));
+        return Optional.of(new Xs2aCreatePisConsentCancellationAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType));
     }
 
     public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource(String authorisationId) {

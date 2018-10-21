@@ -18,12 +18,11 @@ package de.adorsys.aspsp.xs2a.service.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.ConsentController;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +66,7 @@ public class RequestValidatorServiceTest {
             .thenReturn(Arrays.asList(PaymentProduct.ISCT, PaymentProduct.SCT));
 
         when(aspspProfileService.getAvailablePaymentTypes())
-            .thenReturn(Arrays.asList(PisPaymentType.SINGLE, PisPaymentType.BULK));
+            .thenReturn(Arrays.asList(PaymentType.SINGLE, PaymentType.BULK));
     }
 
     @Test

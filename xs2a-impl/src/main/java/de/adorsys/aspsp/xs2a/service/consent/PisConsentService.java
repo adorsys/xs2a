@@ -26,10 +26,10 @@ import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.*;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +69,7 @@ public class PisConsentService {
         PisConsentRequest request = new PisConsentRequest();
         request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));
         request.setPaymentProduct(PisPaymentProduct.getByCode(parameters.getPaymentProduct().getCode()).orElse(null));
-        request.setPaymentType(PisPaymentType.valueOf(parameters.getPaymentType().name()));
+        request.setPaymentType(parameters.getPaymentType());
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
     }
 

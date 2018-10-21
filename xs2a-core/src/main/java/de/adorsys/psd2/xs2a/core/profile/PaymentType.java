@@ -14,37 +14,43 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.pis;
+package de.adorsys.psd2.xs2a.core.profile;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum PisPaymentType {
-    BULK("bulk"),
-    PERIODIC("periodic"),
-    SINGLE("single");
+@ApiModel(description = "PaymentType", value = "Payment types of ASPSP")
+public enum PaymentType {
+    SINGLE("payments"),
+    BULK("bulk-payments"),
+    PERIODIC("periodic-payments");
 
-    private static final Map<String, PisPaymentType> container = new HashMap<>();
+    private final static Map<String, PaymentType> container = new HashMap<>();
+
+    private String value;
 
     static {
-        for (PisPaymentType type : values()) {
+        for (PaymentType type : values()) {
             container.put(type.getValue(), type);
         }
     }
 
-    private String value;
-
-    PisPaymentType(String value) {
+    @JsonCreator
+    PaymentType(String value) {
         this.value = value;
     }
 
+    @JsonValue
     public String getValue() {
         return value;
     }
 
-    public static Optional<PisPaymentType> getByValue(String value){
-        return Optional.ofNullable(container.get(value));
+    public static Optional<PaymentType> getByValue(String name) {
+        return Optional.ofNullable(container.get(name));
     }
-
 }

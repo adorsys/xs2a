@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.spi.impl;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
 import de.adorsys.aspsp.xs2a.spi.component.SpiMockJsonConverter;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -27,14 +28,12 @@ import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -110,19 +109,19 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#getPaymentStatusById(String, SpiPaymentType, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#getPaymentStatusById(String, PaymentType, AspspConsentData)}
      */
     @Override
-    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiPaymentType paymentType, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, PaymentType paymentType, AspspConsentData aspspConsentData) {
         SpiTransactionStatus response = aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), SpiTransactionStatus.class, paymentId).getBody();
         return new SpiResponse<>(response, aspspConsentData);
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#getSinglePaymentById(SpiPaymentType, String, String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#getSinglePaymentById(PaymentType, String, String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<SpiSinglePayment> getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiSinglePayment> getSinglePaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiSinglePayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
             HttpMethod.GET,
             null,
@@ -134,10 +133,10 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#getPeriodicPaymentById(SpiPaymentType, String, String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#getPeriodicPaymentById(PaymentType, String, String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiPeriodicPayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
             HttpMethod.GET,
             null,
@@ -150,10 +149,10 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#getBulkPaymentById(SpiPaymentType, String, String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#getBulkPaymentById(PaymentType, String, String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiSinglePayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
             HttpMethod.GET,
             null,
@@ -191,17 +190,17 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#executePayment(PisPaymentType, List, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#executePayment(PaymentType, List, AspspConsentData)}
      */
     @Override
-    public SpiResponse<String> executePayment(PisPaymentType paymentType, List<PisPayment> payments, AspspConsentData aspspConsentData) {
+    public SpiResponse<String> executePayment(PaymentType paymentType, List<PisPayment> payments, AspspConsentData aspspConsentData) {
         //TODO get rid of Cms dependent models shall be done in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         String paymentId;
-        if (PisPaymentType.SINGLE == paymentType) {
+        if (PaymentType.SINGLE == paymentType) {
             SpiPaymentInitialisationResponse paymentInitiation = createPaymentInitiation(spiCmsPisMapper.mapToSpiSinglePayment(payments.get(0)), aspspConsentData)
                                                                      .getPayload();
             paymentId = paymentInitiation.getPaymentId();
-        } else if (PisPaymentType.PERIODIC == paymentType) {
+        } else if (PaymentType.PERIODIC == paymentType) {
             SpiPaymentInitialisationResponse paymentInitiation = initiatePeriodicPayment(spiCmsPisMapper.mapToSpiPeriodicPayment(payments.get(0)), aspspConsentData)
                                                                      .getPayload();
             paymentId = paymentInitiation.getPaymentId();

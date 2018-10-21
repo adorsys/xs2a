@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.mapper;
+package de.adorsys.aspsp.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +32,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 import static de.adorsys.aspsp.xs2a.service.mapper.AmountModelMapper.mapToAmount;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 
 @Component
 @RequiredArgsConstructor
@@ -92,7 +95,9 @@ public class PaymentModelMapperPsd2 {
     }
 
     public static TransactionStatus mapToTransactionStatus12(Xs2aTransactionStatus responseObject) {
-        return TransactionStatus.valueOf(responseObject.name());
+        return Optional.ofNullable(responseObject)
+                   .map(r -> TransactionStatus.valueOf(r.name()))
+                   .orElse(null);
     }
 
     public Object mapToPaymentInitiationResponse12(Object response) {

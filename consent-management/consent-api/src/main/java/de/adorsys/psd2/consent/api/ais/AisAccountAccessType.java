@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.api.ais;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
-@Data
-@ApiModel(description = "Remittance in cms", value = "CmsRemittance")
-public class CmsRemittance {
-    @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
-    private String reference;
-
-    @ApiModelProperty(value = "reference type", example = "reference type")
-    private String referenceType;
-
-    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
-    private String referenceIssuer;
+@ApiModel(description = "AccountAccess type", value = "AisAccountAccessType")
+public enum AisAccountAccessType {
+    ALL_ACCOUNTS,
+    ALL_ACCOUNTS_WITH_BALANCES
 }

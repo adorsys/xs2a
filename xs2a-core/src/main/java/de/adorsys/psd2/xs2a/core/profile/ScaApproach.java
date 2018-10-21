@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.xs2a.core.profile;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
-public class ConsentActionRequest {
-    private String tppId;
-    private String consentId;
-    private ActionStatus actionStatus;
+public enum ScaApproach {
+    REDIRECT,
+    OAUTH,
+    DECOUPLED,
+    EMBEDDED
 }

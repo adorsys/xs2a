@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.aspsp.profile.domain;
 
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Value;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class AspspSettings {
     private int frequencyPerDay;
     private boolean combinedServiceIndicator;
     private List<String> availablePaymentProducts;
-    private List<String> availablePaymentTypes;
+    private List<PaymentType> availablePaymentTypes;
     private boolean tppSignatureRequired;
     private String pisRedirectUrlToAspsp;
     private String aisRedirectUrlToAspsp;

@@ -21,8 +21,9 @@ import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -31,23 +32,25 @@ public class SpiToXs2aPeriodicPaymentMapper {
     private final SpiToXs2aAmountMapper spiToXs2aAmountMapper;
     private final SpiToXs2aAddressMapper spiToXs2aAddressMapper;
 
-    public PeriodicPayment mapToXs2aPeriodicPayment(@NotNull SpiPeriodicPayment payment) {
-        PeriodicPayment periodic = new PeriodicPayment();
-        periodic.setPaymentId(payment.getPaymentId());
-        periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
-        periodic.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()));
-        periodic.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(payment.getInstructedAmount()));
-        periodic.setCreditorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getCreditorAccount()));
-        periodic.setCreditorAgent(payment.getCreditorAgent());
-        periodic.setCreditorName(payment.getCreditorName());
-        periodic.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));
-        periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        periodic.setTransactionStatus(Xs2aTransactionStatus.RCVD);
-        periodic.setStartDate(payment.getStartDate());
-        periodic.setEndDate(payment.getEndDate());
-        periodic.setExecutionRule(payment.getExecutionRule());
-        periodic.setFrequency(Xs2aFrequencyCode.valueOf(payment.getFrequency().name()));
-        periodic.setDayOfExecution(payment.getDayOfExecution());
-        return periodic;
+    public PeriodicPayment mapToXs2aPeriodicPayment(SpiPeriodicPayment payment) {
+        return Optional.ofNullable(payment)
+                   .map(p -> {
+                       PeriodicPayment periodic = new PeriodicPayment();
+                       periodic.setEndToEndIdentification(p.getEndToEndIdentification());
+                       periodic.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(p.getDebtorAccount()));
+                       periodic.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(p.getInstructedAmount()));
+                       periodic.setCreditorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(p.getCreditorAccount()));
+                       periodic.setCreditorAgent(p.getCreditorAgent());
+                       periodic.setCreditorName(p.getCreditorName());
+                       periodic.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(p.getCreditorAddress()));
+                       periodic.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
+                       periodic.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+                       periodic.setStartDate(p.getStartDate());
+                       periodic.setEndDate(p.getEndDate());
+                       periodic.setExecutionRule(p.getExecutionRule());
+                       periodic.setFrequency(Xs2aFrequencyCode.valueOf(p.getFrequency().name()));
+                       periodic.setDayOfExecution(p.getDayOfExecution());
+                       return periodic;
+                   }).orElse(null);
     }
 }

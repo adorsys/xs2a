@@ -18,19 +18,14 @@ package de.adorsys.psd2.consent.api;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ApiModel(description = "Access account information", value = "AccessAccountInfo")
-public class AccessAccountInfo {
+@ApiModel(description = "ASPSP Consent data", value = "CmsAspspConsentDataBase64")
+public class CmsAspspConsentDataBase64 {
 
-    @ApiModelProperty(value = "ISO 4217 currency code", example = "EUR")
-    private String currency;
-
-    @ApiModelProperty(value = "Types of access: ACCOUNT, BALANCE, TRANSACTION, PAYMENT", example = "ACCOUNT")
-    private TypeAccess typeAccess;
+    @ApiModelProperty(value = "Consent ID", required = true, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
+    private String consentId;
+    @ApiModelProperty(value = "ASPSP consent data Base64", required = true, example = "zdxcvvzzzxcvzzzz")
+    private String aspspConsentDataBase64;
 }

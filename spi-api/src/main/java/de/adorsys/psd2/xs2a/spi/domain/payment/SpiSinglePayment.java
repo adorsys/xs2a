@@ -16,13 +16,12 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
-
-import static de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType.SINGLE;
 
 @Data
 public class SpiSinglePayment implements SpiPayment {
@@ -43,8 +42,8 @@ public class SpiSinglePayment implements SpiPayment {
     }
 
     @Override
-    public SpiPaymentType getPaymentType() {
-        return SINGLE;
+    public PaymentType getPaymentType() {
+        return PaymentType.SINGLE;
     }
 
     @Override

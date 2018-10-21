@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
@@ -24,10 +25,10 @@ import lombok.Data;
 public class Xs2aCreatePisConsentCancellationAuthorisationResponse {
     private String authorizationId;
     private ScaStatus scaStatus;
-    private String paymentType;
+    private PaymentType paymentType;
     private Links links = new Links();
 
-    public Xs2aCreatePisConsentCancellationAuthorisationResponse(String authorizationId, ScaStatus scaStatus, String paymentType) {
+    public Xs2aCreatePisConsentCancellationAuthorisationResponse(String authorizationId, ScaStatus scaStatus, PaymentType paymentType) {
         this.authorizationId = authorizationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;

@@ -17,7 +17,11 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
-import de.adorsys.psd2.aspsp.profile.domain.*;
+import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +81,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * @param availablePaymentTypes List of payment type values
      */
     @Override
-    public void updateAvailablePaymentTypes(List<String> availablePaymentTypes) {
+    public void updateAvailablePaymentTypes(List<PaymentType> availablePaymentTypes) {
         profileConfiguration.setAvailablePaymentTypes(availablePaymentTypes);
     }
 

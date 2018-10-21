@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.server.service;
 
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.psd2.consent.server.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.server.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.server.domain.payment.PisPaymentData;
@@ -36,9 +36,7 @@ import java.util.*;
 
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -81,13 +79,13 @@ public class PisConsentServiceTest {
         when(pisConsentRepository.save(any(PisConsent.class))).thenReturn(pisConsent);
 
         // Then
-        UpdateConsentAspspDataRequest request = this.buildUpdateBlobRequest();
-        Optional<String> consentId = pisConsentService.updateAspspConsentData(EXTERNAL_CONSENT_ID, request);
+        CmsAspspConsentDataBase64 request = this.buildUpdateBlobRequest();
+        Optional<String> consentId = pisConsentService.updateAspspConsentDataInPisConsent(EXTERNAL_CONSENT_ID, request);
         // Assert
         assertTrue(consentId.isPresent());
 
         //Then
-        Optional<String> consentId_notExists = pisConsentService.updateAspspConsentData(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
+        Optional<String> consentId_notExists = pisConsentService.updateAspspConsentDataInPisConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
         // Assert
         assertFalse(consentId_notExists.isPresent());
     }
@@ -100,6 +98,7 @@ public class PisConsentServiceTest {
         //Then
         Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
         //Assert
+        //noinspection OptionalGetWithoutIsPresent
         assertEquals(authorizationByPaymentId.get(), pisConsentAuthorizationList.get(0).getExternalId());
     }
 
@@ -121,8 +120,8 @@ public class PisConsentServiceTest {
         return pisConsent;
     }
 
-    private UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
-        UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
+    private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {
+        CmsAspspConsentDataBase64 request = new CmsAspspConsentDataBase64();
         request.setAspspConsentDataBase64("zdxcvvzzzxcvzzzz");
         return request;
     }

@@ -16,16 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
-import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 
 import java.util.List;
 
@@ -73,7 +75,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return payment status
      */
-    SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiPaymentType paymentType, AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, PaymentType paymentType, AspspConsentData aspspConsentData);
 
     /**
      * Returns a single payment by its ASPSP identifier
@@ -85,7 +87,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return single payment
      */
-    SpiResponse<SpiSinglePayment> getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
+    SpiResponse<SpiSinglePayment> getSinglePaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a periodic payment by its ASPSP identifier
@@ -97,7 +99,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return periodic payment
      */
-    SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
+    SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a bulk payment by its ASPSP identifier
@@ -109,7 +111,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return bulk payment
      */
-    SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Authorises psu and returns current autorization status
@@ -141,7 +143,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return execution payment id
      */
-    SpiResponse<String> executePayment(PisPaymentType pisPaymentType, List<PisPayment> pisPayments, AspspConsentData aspspConsentData);
+    SpiResponse<String> executePayment(PaymentType pisPaymentType, List<PisPayment> pisPayments, AspspConsentData aspspConsentData);
 
     /**
      * Performs strong customer authorization

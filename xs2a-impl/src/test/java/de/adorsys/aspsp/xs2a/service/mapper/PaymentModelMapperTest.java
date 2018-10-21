@@ -24,7 +24,10 @@ import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperPsd2;
+import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +42,7 @@ import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 

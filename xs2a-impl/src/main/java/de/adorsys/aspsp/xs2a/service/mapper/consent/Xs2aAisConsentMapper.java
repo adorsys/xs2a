@@ -21,8 +21,8 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.psd2.consent.api.*;
-import de.adorsys.psd2.consent.api.ais.AccountAccessType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -192,10 +192,10 @@ public class Xs2aAisConsentMapper {
                                        .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
-                                            .map(accessType -> AccountAccessType.valueOf(accessType.name()))
+                                            .map(accessType -> AisAccountAccessType.valueOf(accessType.name()))
                                             .orElse(null));
         accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
-                                  .map(accessType -> AccountAccessType.valueOf(accessType.name()))
+                                  .map(accessType -> AisAccountAccessType.valueOf(accessType.name()))
                                   .orElse(null));
 
         return accessInfo;

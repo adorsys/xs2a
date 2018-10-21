@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.consent.api.ActionStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 @Data
-public class AvailableAccessRequest {
+@AllArgsConstructor
+public class AisConsentActionRequest {
+    private String tppId;
     private String consentId;
-    private Map<String, Set<AccessAccountInfo>> accountsAccesses = new HashMap<>();
+    private ActionStatus actionStatus;
 }

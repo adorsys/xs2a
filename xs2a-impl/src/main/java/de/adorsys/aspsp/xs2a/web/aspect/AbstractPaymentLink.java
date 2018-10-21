@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import org.apache.commons.lang3.StringUtils;
 
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PisConsentStatusResponse {
+public class AisConsentStatusResponse {
     private CmsConsentStatus consentStatus;
 }
