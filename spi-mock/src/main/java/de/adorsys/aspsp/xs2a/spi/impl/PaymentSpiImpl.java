@@ -28,6 +28,7 @@ import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -118,10 +119,10 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#getSinglePaymentById(PaymentType, String, String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#getSinglePaymentById(PaymentType, PaymentProduct, String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<SpiSinglePayment> getSinglePaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiSinglePayment> getSinglePaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiSinglePayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
             HttpMethod.GET,
             null,
@@ -133,10 +134,10 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#getPeriodicPaymentById(PaymentType, String, String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#getPeriodicPaymentById(PaymentType, PaymentProduct, String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiPeriodicPayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
             HttpMethod.GET,
             null,
@@ -149,10 +150,10 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#getBulkPaymentById(PaymentType, String, String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#getBulkPaymentById(PaymentType, PaymentProduct, String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiSinglePayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
             HttpMethod.GET,
             null,

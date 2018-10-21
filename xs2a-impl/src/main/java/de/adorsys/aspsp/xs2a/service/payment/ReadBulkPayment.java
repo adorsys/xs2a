@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ import static de.adorsys.psd2.xs2a.core.profile.PaymentType.BULK;
 @Service("bulk-payments")
 public class ReadBulkPayment extends ReadPayment<BulkPayment> {
     @Override
-    public BulkPayment getPayment(String paymentId, String paymentProduct) {
+    public BulkPayment getPayment(String paymentId, PaymentProduct paymentProduct) {
         SpiResponse<List<SpiSinglePayment>> spiResponse = paymentSpi.getBulkPaymentById(BULK, paymentProduct, paymentId, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         List<SpiSinglePayment> bulkPayments = spiResponse.getPayload();
