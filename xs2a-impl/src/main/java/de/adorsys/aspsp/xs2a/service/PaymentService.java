@@ -27,20 +27,11 @@ import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
+import de.adorsys.aspsp.xs2a.service.payment.*;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
-import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
-import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,13 +41,14 @@ import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class PaymentService {
+    private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
     private final ReadPaymentFactory readPaymentFactory;
     private final PisConsentService pisConsentService;
@@ -66,9 +58,6 @@ public class PaymentService {
     private final CreatePeriodicPaymentService createPeriodicPaymentService;
     private final CreateBulkPaymentService createBulkPaymentService;
     private final Xs2aPisConsentMapper xs2aPisConsentMapper;
-    private final SinglePaymentSpi singlePaymentSpi;
-    private final PeriodicPaymentSpi periodicPaymentSpi;
-    private final BulkPaymentSpi bulkPaymentSpi;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -97,6 +86,24 @@ public class PaymentService {
     }
 
     /**
+     * Retrieves payment status from ASPSP
+     *
+     * @param paymentType The addressed payment category Single, Periodic or Bulk
+     * @param paymentId   String representation of payment primary ASPSP identifier
+     * @return Information about the status of a payment
+     */
+    public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
+        SpiResponse<SpiTransactionStatus> spiResponse = paymentSpi.getPaymentStatusById(paymentId, paymentType, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
+        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+        Xs2aTransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(spiResponse.getPayload());
+        return Optional.ofNullable(transactionStatus)
+                   .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())
+                   .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
+                                  .fail(new MessageError(RESOURCE_UNKNOWN_403))
+                                  ::build);
+    }
+
+    /**
      * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
      *
      * @param paymentType type of payment (payments, bulk-payments, periodic-payments)
@@ -105,44 +112,11 @@ public class PaymentService {
      */
     public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentId) {
         ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
-        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, "sepa-credit-transfers")); //TODO Add actual value https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/441
+        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, "TMP")); //NOT USED IN 1.2
         return payment.map(p -> ResponseObject.builder()
                                     .body(p)
                                     .build())
                    .orElseGet(ResponseObject.builder()
-                                  .fail(new MessageError(RESOURCE_UNKNOWN_403))
-                                  ::build);
-    }
-
-    /**
-     * Retrieves payment status from ASPSP
-     *
-     * @param paymentId   String representation of payment primary ASPSP identifier
-     * @param paymentType The addressed payment category Single, Periodic or Bulk
-     * @return Information about the status of a payment
-     */
-    public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
-        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        SpiResponse<SpiTransactionStatus> spiResponse;
-        if (paymentType == SINGLE) {
-            SpiSinglePayment payment = new SpiSinglePayment(null);
-            payment.setPaymentId(paymentId);
-            spiResponse = singlePaymentSpi.getPaymentStatusById(psuData, payment, aspspConsentData);
-        } else if (paymentType == PERIODIC) {
-            SpiPeriodicPayment payment = new SpiPeriodicPayment(null);
-            payment.setPaymentId(paymentId);
-            spiResponse = periodicPaymentSpi.getPaymentStatusById(psuData, payment, aspspConsentData);
-        } else {
-            SpiBulkPayment payment = new SpiBulkPayment();
-            spiResponse = bulkPaymentSpi.getPaymentStatusById(psuData, payment, aspspConsentData);
-        }
-
-        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
-        Xs2aTransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(spiResponse.getPayload());
-        return Optional.ofNullable(transactionStatus)
-                   .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())
-                   .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
                                   .fail(new MessageError(RESOURCE_UNKNOWN_403))
                                   ::build);
     }

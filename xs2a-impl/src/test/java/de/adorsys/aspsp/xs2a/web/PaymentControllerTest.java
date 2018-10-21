@@ -118,9 +118,9 @@ public class PaymentControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
-        when(paymentService.getPaymentStatusById(CORRECT_PAYMENT_ID, PaymentType.SINGLE))
+        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, CORRECT_PAYMENT_ID))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().body(Xs2aTransactionStatus.ACCP).build());
-        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE))
+        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, WRONG_PAYMENT_ID))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
