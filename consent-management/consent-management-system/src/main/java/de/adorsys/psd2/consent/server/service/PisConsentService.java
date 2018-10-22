@@ -124,6 +124,7 @@ public class PisConsentService {
      * @param paymentId id of the payment
      * @return Response containing aspsp consent data
      */
+    @Transactional(readOnly = true)
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
                    .map(l -> l.get(0))
