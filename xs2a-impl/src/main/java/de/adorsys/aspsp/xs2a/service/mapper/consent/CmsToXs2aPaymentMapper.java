@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
+import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.consent.api.CmsAccountReference;
@@ -28,10 +29,13 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class CmsToXs2aPaymentMapper {
+
     public PeriodicPayment mapToPeriodicPayment(PisPayment payment) {
         return Optional.ofNullable(payment)
                    .map(p -> {
@@ -67,6 +71,18 @@ public class CmsToXs2aPaymentMapper {
                        single.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
                        return single;
                    }).orElse(null);
+    }
+
+    public BulkPayment mapToBulkPayment(List<PisPayment> payments) {
+        BulkPayment bulk = new BulkPayment();
+        bulk.setBatchBookingPreferred(false);
+        bulk.setDebtorAccount(mapToXs2aAccountReference(payments.get(0).getDebtorAccount()));
+        bulk.setRequestedExecutionDate(payments.get(0).getRequestedExecutionDate());
+        List<SinglePayment> paymentList = payments.stream()
+                                                 .map(this::mapToSinglePayment)
+                                                 .collect(Collectors.toList());
+        bulk.setPayments(paymentList);
+        return bulk;
     }
 
     private Xs2aAddress mapToXs2aAddress(CmsAddress address) {

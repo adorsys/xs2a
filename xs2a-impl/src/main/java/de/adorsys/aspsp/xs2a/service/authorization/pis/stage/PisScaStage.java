@@ -16,12 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
+import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
@@ -44,6 +46,7 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     protected final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     protected final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
+    protected final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -68,8 +71,8 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
             PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(payments.get(0));
             return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, PaymentProduct.SEPA);
         } else {
-            // TODO create mapper for BulkPayemnt https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/443
-            return null;
+            BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(payments);
+            return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, PaymentProduct.SEPA);
         }
     }
 }
