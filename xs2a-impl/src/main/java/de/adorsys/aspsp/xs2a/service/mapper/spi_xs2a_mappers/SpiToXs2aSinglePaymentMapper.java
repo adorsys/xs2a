@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ public class SpiToXs2aSinglePaymentMapper {
         single.setCreditorName(payment.getCreditorName());
         single.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        single.setTransactionStatus(Xs2aTransactionStatus.getByValue(payment.getPaymentStatus().getName()));
         return single;
     }
 }

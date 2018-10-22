@@ -52,7 +52,7 @@ public class SpiSinglePaymentMapper {
         single.setCreditorName(payment.getCreditorName());
         single.setCreditorAddress(payment.getCreditorAddress());
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        single.setPaymentStatus(SpiTransactionStatus.RCVD);
+        single.setPaymentStatus(payment.getPaymentStatus());
         return single;
     }
 

@@ -58,7 +58,7 @@ public class SpiPeriodicPaymentMapper {
         periodic.setCreditorName(payment.getCreditorName());
         periodic.setCreditorAddress(payment.getCreditorAddress());
         periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        periodic.setPaymentStatus(SpiTransactionStatus.RCVD);
+        periodic.setPaymentStatus(payment.getPaymentStatus());
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
         periodic.setExecutionRule(payment.getExecutionRule());

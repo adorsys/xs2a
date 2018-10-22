@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -49,6 +50,7 @@ public class SpiToXs2aPeriodicPaymentMapper {
                        periodic.setExecutionRule(p.getExecutionRule());
                        periodic.setFrequency(Xs2aFrequencyCode.valueOf(p.getFrequency().name()));
                        periodic.setDayOfExecution(p.getDayOfExecution());
+                       periodic.setTransactionStatus(Xs2aTransactionStatus.getByValue(payment.getPaymentStatus().getName()));
                        return periodic;
                    }).orElse(null);
     }
