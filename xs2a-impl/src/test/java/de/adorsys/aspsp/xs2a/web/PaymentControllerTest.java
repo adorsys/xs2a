@@ -24,7 +24,6 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -38,6 +37,7 @@ import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.PaymentInitiationTarget2WithStatusResponse;
 import de.adorsys.psd2.model.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -117,7 +117,7 @@ public class PaymentControllerTest {
     }
 
     @Before
-    public void setUpPaymentServiceMock() throws IOException {
+    public void setUpPaymentServiceMock() {
         when(paymentService.getPaymentStatusById(CORRECT_PAYMENT_ID, PaymentType.SINGLE))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().body(Xs2aTransactionStatus.ACCP).build());
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE))
@@ -229,14 +229,14 @@ public class PaymentControllerTest {
         when(referenceValidationService.validateAccountReferences(readSinglePayment().getAccountReferences()))
             .thenReturn(ResponseObject.builder().build());
         //Given
-        PaymentProduct paymentProduct = PaymentProduct.SCT;
+        PaymentProduct paymentProduct = PaymentProduct.SEPA;
         SinglePayment payment = readSinglePayment();
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
         ResponseEntity<PaymentInitialisationResponse> actualResult =
             (ResponseEntity<PaymentInitialisationResponse>) paymentController.initiatePayment(payment,
-                PaymentType.SINGLE.getValue(), paymentProduct.getCode(), null, null, null,
+                PaymentType.SINGLE.getValue(), paymentProduct.getValue(), null, null, null,
                 null, null, null, null, null,
                 null, null, null, null, null,
                 null, null, null, null, null,
@@ -272,7 +272,7 @@ public class PaymentControllerTest {
         when(referenceValidationService.validateAccountReferences(readSinglePayment().getAccountReferences()))
             .thenReturn(ResponseObject.builder().build());
         //Given
-        PaymentProduct paymentProduct = PaymentProduct.SCT;
+        PaymentProduct paymentProduct = PaymentProduct.SEPA;
         PeriodicPayment periodicPayment = readPeriodicPayment();
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(
             getPaymentInitializationResponse(), HttpStatus.CREATED);
@@ -280,7 +280,7 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<PaymentInitialisationResponse> result =
             (ResponseEntity<PaymentInitialisationResponse>) paymentController.initiatePayment(periodicPayment,
-                PERIODIC.getValue(), paymentProduct.getCode(), null, null, null, null,
+                PERIODIC.getValue(), paymentProduct.getValue(), null, null, null, null,
                 null, null, null, null, null,
                 null, null, null, null,
                 null, null, null, null,
@@ -318,7 +318,7 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<List<PaymentInitationRequestResponse201>> actualResult =
             (ResponseEntity<List<PaymentInitationRequestResponse201>>) paymentController.initiatePayment(payments,
-                PaymentType.BULK.getValue(), PaymentProduct.SCT.getCode(), null, null, null,
+                PaymentType.BULK.getValue(), PaymentProduct.SEPA.getValue(), null, null, null,
                 null, null, null, null, null,
                 null, null, null, null, null,
                 null, null, null, null, null,

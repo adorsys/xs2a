@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +72,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * @param availablePaymentProducts List of payment product values
      */
     @Override
-    public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
+    public void updateAvailablePaymentProducts(List<PaymentProduct> availablePaymentProducts) {
         profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
     }
 

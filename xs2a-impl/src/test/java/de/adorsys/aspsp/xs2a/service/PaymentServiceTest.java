@@ -50,8 +50,7 @@ import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -138,9 +137,8 @@ public class PaymentServiceTest {
     //Bulk Tests
     @Test
     public void createBulkPayments() {
-        BulkPayment payment = BULK_PAYMENT_OK;
         //When
-        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(payment, getBulkPaymentInitiationParameters());
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters());
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -150,7 +148,7 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentById() {
         when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(anyString(), anyString())).thenReturn(getSinglePayment(IBAN, "10"));
+        when(readSinglePayment.getPayment(anyString(), anyObject())).thenReturn(getSinglePayment(IBAN, "10"));
         //When
         ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, PAYMENT_ID);
         //Than
@@ -164,7 +162,7 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentById_Failure_wrong_id() {
         when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(anyString(), anyString())).thenReturn(null);
+        when(readSinglePayment.getPayment(anyString(), anyObject())).thenReturn(null);
 
         //When
         ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID);

@@ -18,7 +18,9 @@ package de.adorsys.psd2.consent.client.sample;
 
 import de.adorsys.psd2.consent.api.*;
 import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.consent.api.pis.*;
+import de.adorsys.psd2.consent.api.pis.CmsRemittance;
+import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
@@ -27,6 +29,7 @@ import de.adorsys.psd2.consent.client.cms.model.ais.*;
 import de.adorsys.psd2.consent.client.cms.model.pis.*;
 import de.adorsys.psd2.consent.client.core.Configuration;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -300,7 +303,7 @@ public class CmsExecutor {
     private static PisConsentRequest buildPisConsentRequest() {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(singletonList(buildPisPayment()));
-        request.setPaymentProduct(PisPaymentProduct.SCT);
+        request.setPaymentProduct(PaymentProduct.SEPA);
         request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
             Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
