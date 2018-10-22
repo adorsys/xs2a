@@ -19,16 +19,16 @@ package de.adorsys.aspsp.xs2a.integtest.config.rest.consent;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.AccountAccessType;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -134,10 +134,10 @@ public class ConsentMapper {
                                        .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
-                                            .map(availAcc -> AccountAccessType.valueOf(availAcc.name()))
+                                            .map(availAcc -> AisAccountAccessType.valueOf(availAcc.name()))
                                             .orElse(null));
         accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
-                                  .map(allPsd2 -> AccountAccessType.valueOf(allPsd2.name()))
+                                  .map(allPsd2 -> AisAccountAccessType.valueOf(allPsd2.name()))
                                   .orElse(null));
 
         return accessInfo;

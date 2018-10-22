@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -25,6 +26,7 @@ import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.Consents;
 import io.swagger.annotations.Api;
@@ -48,6 +50,7 @@ public class ConsentController implements ConsentApi {
     private final ResponseMapper responseMapper;
     private final AccountReferenceValidationService referenceValidationService;
     private final ConsentModelMapper consentModelMapper;
+    private final AuthorisationMapper authorisationMapper;
 
     @Override
     public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
@@ -72,7 +75,9 @@ public class ConsentController implements ConsentApi {
 
     @Override
     public ResponseEntity startConsentAuthorisation(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.created(consentService.createConsentAuthorizationWithResponse(PSU_ID, consentId), consentModelMapper::mapToStartScaProcessResponse);
+        ResponseObject<CreateConsentAuthorizationResponse> consentAuthorizationWithResponse =
+            consentService.createConsentAuthorizationWithResponse(PSU_ID, consentId);
+        return responseMapper.created(consentAuthorizationWithResponse, authorisationMapper::mapToStartScaProcessResponse);
     }
 
     @Override

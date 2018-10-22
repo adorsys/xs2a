@@ -10,7 +10,7 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * SLee the License for the specific language governing permissions and
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
@@ -23,18 +23,22 @@ import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapperPsd2;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapperXs2a;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperPsd2;
+import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.PaymentInitiationTarget2WithStatusResponse;
 import de.adorsys.psd2.model.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,9 +56,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -106,9 +110,6 @@ public class PaymentControllerTest {
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPayment(any(), any()))
             .thenReturn(readResponseObject());
-
-        when(paymentService.createBulkPayments(any(), any(), any()))
-            .thenReturn(readListOfXs2aPaymentInitialisationResponses());
         when(aspspProfileService.getPisRedirectUrlToAspsp())
             .thenReturn(REDIRECT_LINK);
         when(referenceValidationService.validateAccountReferences(any()))
@@ -211,10 +212,10 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse =
             (ResponseEntity<PaymentInitiationStatusResponse200Json>) paymentController.getPaymentInitiationStatus(
-            PaymentType.SINGLE.getValue(), WRONG_PAYMENT_ID, null, null, null,
-            null, null, null, null, null,
-            null, null, null, null, null,
-            null );
+                PaymentType.SINGLE.getValue(), WRONG_PAYMENT_ID, null, null, null,
+                null, null, null, null, null,
+                null, null, null, null, null,
+                null);
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedHttpStatus);
@@ -229,18 +230,17 @@ public class PaymentControllerTest {
             .thenReturn(ResponseObject.builder().build());
         //Given
         PaymentProduct paymentProduct = PaymentProduct.SCT;
-        PaymentType paymentType = PaymentType.SINGLE;
         SinglePayment payment = readSinglePayment();
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
         ResponseEntity<PaymentInitialisationResponse> actualResult =
             (ResponseEntity<PaymentInitialisationResponse>) paymentController.initiatePayment(payment,
-            paymentType.getValue(), paymentProduct.getCode(), null, null, null,
+                PaymentType.SINGLE.getValue(), paymentProduct.getCode(), null, null, null,
                 null, null, null, null, null,
                 null, null, null, null, null,
-            null, null, null, null, null,
-            null ,null, null, null, null);
+                null, null, null, null, null,
+                null, null, null, null, null);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -280,9 +280,9 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<PaymentInitialisationResponse> result =
             (ResponseEntity<PaymentInitialisationResponse>) paymentController.initiatePayment(periodicPayment,
-            PERIODIC.getValue(), paymentProduct.getCode(), null,null, null, null,
-            null, null, null, null, null,
-                null ,null, null, null,
+                PERIODIC.getValue(), paymentProduct.getCode(), null, null, null, null,
+                null, null, null, null, null,
+                null, null, null, null,
                 null, null, null, null,
                 null, null, null, null, null,
                 null);
@@ -318,11 +318,11 @@ public class PaymentControllerTest {
         //When:
         ResponseEntity<List<PaymentInitationRequestResponse201>> actualResult =
             (ResponseEntity<List<PaymentInitationRequestResponse201>>) paymentController.initiatePayment(payments,
-                PaymentType.BULK.getValue(), PaymentProduct.SCT.getCode(), null,null, null,
+                PaymentType.BULK.getValue(), PaymentProduct.SCT.getCode(), null, null, null,
                 null, null, null, null, null,
-                null, null ,null, null, null,
-            null, null, null, null, null,
-            null, null, null, null, null);
+                null, null, null, null, null,
+                null, null, null, null, null,
+                null, null, null, null, null);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());

@@ -29,6 +29,8 @@ import java.util.List;
  */
 @Data
 public class SpiBulkPayment {
+    private String paymentId;
+
     private Boolean batchBookingPreferred;
 
     private SpiAccountReference debtorAccount;

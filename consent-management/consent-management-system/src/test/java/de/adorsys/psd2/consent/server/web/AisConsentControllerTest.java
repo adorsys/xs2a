@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.server.web;
 
-import de.adorsys.psd2.consent.api.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.server.service.AisConsentService;
 import org.junit.Before;
@@ -63,8 +63,8 @@ public class AisConsentControllerTest {
 
     @Before
     public void setUp() {
-        when(aisConsentService.updateAspspConsentData(eq(CONSENT_ID), any())).thenReturn(Optional.of(CONSENT_ID));
-        when(aisConsentService.updateAspspConsentData(eq(WRONG_CONSENT_ID), any())).thenReturn(Optional.empty());
+        when(aisConsentService.saveAspspConsentDataInAisConsent(eq(CONSENT_ID), any())).thenReturn(Optional.of(CONSENT_ID));
+        when(aisConsentService.saveAspspConsentDataInAisConsent(eq(WRONG_CONSENT_ID), any())).thenReturn(Optional.empty());
         when(aisConsentService.getConsentStatusById(eq(CONSENT_ID))).thenReturn(Optional.of(RECEIVED));
         when(aisConsentService.getConsentStatusById(eq(WRONG_CONSENT_ID))).thenReturn(Optional.empty());
         when(aisConsentService.updateConsentStatusById(eq(CONSENT_ID), eq(CONSENT_STATUS))).thenReturn(true);

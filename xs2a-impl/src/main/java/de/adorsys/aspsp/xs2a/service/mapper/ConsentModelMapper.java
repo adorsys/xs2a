@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.psd2.api.ConsentApi;
+import de.adorsys.aspsp.xs2a.web.mapper.CoreObjectsMapper;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.model.*;
@@ -28,18 +28,15 @@ import de.adorsys.psd2.model.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 @Component
 @RequiredArgsConstructor
 public class ConsentModelMapper {
+    private final CoreObjectsMapper coreObjectsMapper;
     private final ObjectMapper objectMapper;
 
     public CreateConsentReq mapToCreateConsentReq(Consents consent) {
@@ -65,26 +62,14 @@ public class ConsentModelMapper {
     public StartScaprocessResponse mapToStartScaProcessResponse(Xsa2CreatePisConsentAuthorisationResponse response) {
         return Optional.ofNullable(response)
             .map(r -> new StartScaprocessResponse()
-                .scaStatus(ScaStatus.valueOf(r.getScaStatus()))
+                .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
                 ._links(objectMapper.convertValue(r.getLinks(), Map.class)))
-            .orElse(null);
-    }
-
-    public StartScaprocessResponse mapToStartScaProcessResponse(CreateConsentAuthorizationResponse createConsentAuthorizationResponse) {
-        return Optional.ofNullable(createConsentAuthorizationResponse)
-            .map(csar -> {
-                ControllerLinkBuilder link = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
-
-                return new StartScaprocessResponse()
-                    .scaStatus(createConsentAuthorizationResponse.getScaStatus())
-                    ._links(Collections.singletonMap(csar.getResponseLinkType().getValue(), link.toString()));
-            })
             .orElse(null);
     }
 
     public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisConsentCancellationAuthorisationResponse response) {
         return new StartScaprocessResponse()
-                        .scaStatus(ScaStatus.valueOf(response.getScaStatus()))
+                        .scaStatus(coreObjectsMapper.mapToModelScaStatus(response.getScaStatus()))
                         ._links(objectMapper.convertValue(response.getLinks(), Map.class));
     }
 
@@ -222,9 +207,7 @@ public class ConsentModelMapper {
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuData -> {
-                    updatePsuData.setPassword(psuData.get("password"));
-                });
+                .ifPresent(psuData -> updatePsuData.setPassword(psuData.get("password")));
 
             Optional.ofNullable(body.get("authenticationMethodId"))
                 .map(o -> (String) o)

@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.xs2a.web.advice;
 
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import de.adorsys.psd2.model.TppMessages;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;

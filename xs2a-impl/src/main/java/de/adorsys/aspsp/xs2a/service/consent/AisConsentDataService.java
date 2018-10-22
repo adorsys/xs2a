@@ -18,17 +18,11 @@ package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AspspConsentDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Base64;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,20 +30,18 @@ public class AisConsentDataService {
     @Qualifier("consentRestTemplate")
     protected final RestTemplate consentRestTemplate;
     private final AisConsentRemoteUrls aisConsentRemoteUrls;
-    private final AspspConsentDataMapper aspspConsentDataMapper;
+    private final Base64AspspDataService base64AspspDataService;
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return aspspConsentDataMapper.mapToAspspConsentData(consentRestTemplate.getForEntity(aisConsentRemoteUrls.getAspspConsentData(), Xs2aConsentData.class, consentId).getBody());
+        Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(aisConsentRemoteUrls.getAspspConsentData(), Xs2aConsentData.class, consentId).getBody();
+        byte[] bytePayload = base64AspspDataService.decode(xs2aConsentData.getAspspConsentDataBase64());
+        return new AspspConsentData(bytePayload, xs2aConsentData.getConsentId());
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
-        Optional.ofNullable(consentData)
-            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()) && Objects.nonNull(cd.getAspspConsentData()))
-            .ifPresent(cd -> {
-                String aspspConsentDataBase64 = Optional.ofNullable(cd.getAspspConsentData())
-                                                    .map(bytes -> Base64.getEncoder().encodeToString(bytes))
-                                                    .orElse(null);
-                consentRestTemplate.put(aisConsentRemoteUrls.updateAspspConsentData(), new Xs2aConsentData(cd.getConsentId(), aspspConsentDataBase64), cd.getConsentId());
-            });
+        String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
+
+        consentRestTemplate.put(aisConsentRemoteUrls.updateAspspConsentData(),
+            new Xs2aConsentData(consentData.getConsentId(), base64Payload), consentData.getConsentId());
     }
 }

@@ -16,9 +16,7 @@
 
 package de.adorsys.psd2.consent.server.web;
 
-import de.adorsys.psd2.consent.api.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.CmsConsentStatus;
-import de.adorsys.psd2.consent.api.ConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.server.service.AisConsentService;
 import io.swagger.annotations.*;
@@ -47,7 +45,7 @@ public class AisConsentController {
 
     @PostMapping(path = "/action")
     @ApiOperation(value = "Save information about uses of consent")
-    public ResponseEntity<Void> saveConsentActionLog(@RequestBody ConsentActionRequest request) {
+    public ResponseEntity<Void> saveConsentActionLog(@RequestBody AisConsentActionRequest request) {
         aisConsentService.checkConsentAndSaveActionLog(request);
         return ResponseEntity.ok().build();
     }

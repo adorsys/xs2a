@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
-import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
-import de.adorsys.aspsp.xs2a.config.factory.ScaStageAuthorisationFactory;
+import de.adorsys.aspsp.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +27,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import static de.adorsys.aspsp.xs2a.config.factory.PisScaStageAuthorisationFactory.SERVICE_PREFIX;
+
 @Service
 @RequiredArgsConstructor
 //TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
@@ -34,7 +36,7 @@ public class PisAuthorisationService {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final PisConsentRemoteUrls remotePisConsentUrls;
-    private final ScaStageAuthorisationFactory scaStageAuthorisationFactory;
+    private final PisScaStageAuthorisationFactory pisScaStageAuthorisationFactory;
 
     /**
      * Sends a POST request to CMS to store created consent authorization
@@ -57,7 +59,7 @@ public class PisAuthorisationService {
     public UpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
         GetPisConsentAuthorisationResponse response = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorisationResponse.class, request.getAuthorizationId())
                                                                          .getBody();
-        ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(response.getScaStatus().name());
+        PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(SERVICE_PREFIX + response.getScaStatus().name());
         return service.apply(request, response);
     }
 

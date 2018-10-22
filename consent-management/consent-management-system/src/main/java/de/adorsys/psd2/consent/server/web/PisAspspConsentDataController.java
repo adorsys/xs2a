@@ -16,8 +16,7 @@
 
 package de.adorsys.psd2.consent.server.web;
 
-import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.psd2.consent.api.pis.PisConsentAspspDataResponse;
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.server.service.PisConsentService;
 import io.swagger.annotations.*;
@@ -41,8 +40,8 @@ public class PisAspspConsentDataController {
     public ResponseEntity<CreatePisConsentResponse> updateAspspConsentData(
         @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
-        @RequestBody UpdateConsentAspspDataRequest request) {
-        return pisConsentService.updateAspspConsentData(consentId, request)
+        @RequestBody CmsAspspConsentDataBase64 request) {
+        return pisConsentService.updateAspspConsentDataInPisConsent(consentId, request)
                    .map(consId -> new ResponseEntity<>(new CreatePisConsentResponse(consId), HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -52,7 +51,7 @@ public class PisAspspConsentDataController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PisConsentAspspDataResponse> getAspspConsentDataByPaymentId(
+    public ResponseEntity<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(
         @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
         @PathVariable("payment-id") String paymentId) {
         return pisConsentService.getAspspConsentDataByPaymentId(paymentId)
@@ -65,7 +64,7 @@ public class PisAspspConsentDataController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PisConsentAspspDataResponse> getAspspConsentDataByConsentId(
+    public ResponseEntity<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(
         @ApiParam(name = "consent-id", value = "The consent identification.", example = "32454656712432")
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getAspspConsentDataByConsentId(consentId)
