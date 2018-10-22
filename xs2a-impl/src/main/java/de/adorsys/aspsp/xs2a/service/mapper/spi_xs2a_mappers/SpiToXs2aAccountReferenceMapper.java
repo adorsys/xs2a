@@ -36,6 +36,6 @@ public class SpiToXs2aAccountReferenceMapper {
                        accRef.setMsisdn(spiAccountRef.getMsisdn());
                        accRef.setCurrency(spiAccountRef.getCurrency());
                        return accRef;
-                   }).orElse(null);
+                   }).orElseGet(Xs2aAccountReference::new);
     }
 }
