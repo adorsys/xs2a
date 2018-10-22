@@ -88,7 +88,7 @@ public class PisConsentService {
      * @param consentId String representation of pis consent identifier
      * @return Response containing full information about pis consent
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<PisConsentResponse> getConsentById(String consentId) {
         return getPisConsentById(consentId)
                    .flatMap(pisConsentMapper::mapToPisConsentResponse);
@@ -101,6 +101,7 @@ public class PisConsentService {
      * @param status    new consent status
      * @return Response containing result of status changing
      */
+    @Transactional
     public Optional<Boolean> updateConsentStatusById(String consentId, CmsConsentStatus status) {
         return getActualPisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
@@ -113,7 +114,7 @@ public class PisConsentService {
      * @param consentId id of the consent
      * @return Response containing aspsp consent data
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId) {
         return getPisConsentById(consentId)
                    .map(this::prepareAspspConsentData);
@@ -125,9 +126,10 @@ public class PisConsentService {
      * @param paymentId id of the payment
      * @return Response containing aspsp consent data
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
+                   .map(l -> l.get(0))
                    .map(PisPaymentData::getConsent)
                    .map(this::prepareAspspConsentData);
     }
@@ -187,7 +189,7 @@ public class PisConsentService {
     /**
      * Update PIS consent payment data and stores it into database
      *
-     * @param request PIS consent request for update payment data
+     * @param request   PIS consent request for update payment data
      * @param consentId Consent ID
      */
     // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408

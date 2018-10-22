@@ -158,24 +158,24 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
-                       .aspspConsentData(aspspConsentData)
+                       .aspspConsentData(initialAspspConsentData)
                        .success();
 
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
 
                 return SpiResponse.<SpiResponse.VoidResponse>builder()
-                           .aspspConsentData(aspspConsentData)
+                           .aspspConsentData(initialAspspConsentData)
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
-                       .aspspConsentData(aspspConsentData)
+                       .aspspConsentData(initialAspspConsentData)
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }

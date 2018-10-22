@@ -39,7 +39,7 @@ public class PeriodicPayment extends SinglePayment {
     @ApiModelProperty(name = "startDate", required = true, example = "2020-01-01")
     private LocalDate startDate;
 
-    @ApiModelProperty(name = "executionRule", required = false, example = "preceding")
+    @ApiModelProperty(name = "executionRule", required = false, example = "preceeding")
     private String executionRule;
 
     @ApiModelProperty(name = "endDate", required = false, example = "2020-02-01")

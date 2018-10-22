@@ -36,12 +36,11 @@ public class ReadPeriodicPayment extends ReadPayment<PeriodicPayment> {
     public PeriodicPayment getPayment(String paymentId, String paymentProduct) {
         SpiPeriodicPayment payment = new SpiPeriodicPayment(SpiPaymentProduct.getByValue(paymentProduct));
         payment.setPaymentId(paymentId);
-        payment.setPaymentProduct(SpiPaymentProduct.getByValue(paymentProduct));
         SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(psuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
-        SpiPeriodicPayment responsePayment = spiResponse.getPayload();
+        SpiPeriodicPayment spiResponsePayment = spiResponse.getPayload();
 
-        return xs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(responsePayment);
+        return xs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiResponsePayment);
     }
 }

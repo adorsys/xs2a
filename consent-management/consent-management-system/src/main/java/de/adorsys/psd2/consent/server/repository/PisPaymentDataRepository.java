@@ -25,5 +25,5 @@ import java.util.Optional;
 
 public interface PisPaymentDataRepository extends CrudRepository<PisPaymentData, Long> {
     Optional<List<PisPaymentData>> findByPaymentIdAndConsent_ConsentStatus(String paymentId, CmsConsentStatus cmsConsentStatus);
-    Optional<PisPaymentData> findByPaymentId(String paymentId);
+    Optional<List<PisPaymentData>> findByPaymentId(String paymentId);
 }
