@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -87,7 +88,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return single payment
      */
-    SpiResponse<SpiSinglePayment> getSinglePaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
+    SpiResponse<SpiSinglePayment> getSinglePaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a periodic payment by its ASPSP identifier
@@ -99,7 +100,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return periodic payment
      */
-    SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
+    SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a bulk payment by its ASPSP identifier
@@ -111,7 +112,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return bulk payment
      */
-    SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(PaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Authorises psu and returns current autorization status

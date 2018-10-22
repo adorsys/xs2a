@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -382,7 +383,7 @@ public class PaymentModelMapperTest {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(paymentType);
         requestParameters.setQwacCertificate("TEST CERTIFICATE");
-        requestParameters.setPaymentProduct(PaymentProduct.SCT);
+        requestParameters.setPaymentProduct(PaymentProduct.SEPA);
 
         return requestParameters;
     }

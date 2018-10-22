@@ -25,6 +25,9 @@
         <dropSequence sequenceName="pis_tpp_info_id_seq"/>
         <createSequence sequenceName="tpp_info_id_seq"/>
 
+        <sql dbms="mariadb">DROP SEQUENCE IF EXISTS pis_tpp_info_id_seq</sql>
+        <sql dbms="mariadb">CREATE SEQUENCE tpp_info_id_seq</sql>
+
         <renameTable newTableName="tpp_info"
                      oldTableName="pis_tpp_info"/>
 

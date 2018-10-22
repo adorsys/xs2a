@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.service.payment;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,5 +33,5 @@ public abstract class ReadPayment<T> {
     @Autowired
     protected PisConsentDataService pisConsentDataService;
 
-    public abstract T getPayment(String paymentId, String paymentProduct);
+    public abstract T getPayment(String paymentId, PaymentProduct paymentProduct);
 }

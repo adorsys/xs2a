@@ -17,11 +17,10 @@
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -40,7 +39,7 @@ public class Xs2aToSpiBulkPaymentMapper {
         bulk.setPaymentId(payment.getPaymentId());
         bulk.setBatchBookingPreferred(payment.getBatchBookingPreferred());
         bulk.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
-        bulk.setPaymentProduct(SpiPaymentProduct.getByValue(paymentProduct.getCode()));
+        bulk.setPaymentProduct(paymentProduct);
         bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         bulk.setPayments(mapToListSpiSinglePayment(payment.getPayments(), paymentProduct));
         bulk.setPaymentStatus(SpiTransactionStatus.RCVD);

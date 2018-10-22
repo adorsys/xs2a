@@ -70,7 +70,7 @@ public class PisConsentService {
     public CreatePisConsentResponse createPisConsent(PaymentInitiationParameters parameters, TppInfo tppInfo) {
         PisConsentRequest request = new PisConsentRequest();
         request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(parameters.getPaymentProduct().getCode()).orElse(null));
+        request.setPaymentProduct(parameters.getPaymentProduct());
         request.setPaymentType(parameters.getPaymentType());
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
     }
@@ -139,14 +139,14 @@ public class PisConsentService {
             PaymentInitialisationResponse resp = (PaymentInitialisationResponse) response;
             return pisScaAuthorisationService.createConsentAuthorisation(resp.getPaymentId(), paymentType)
                        .map(r -> extendResponseFieldsWithAuthData(r, resp))
-                       .orElseGet(() -> resp);
+                       .orElse(resp);
         } else {
             List<PaymentInitialisationResponse> responses = (List<PaymentInitialisationResponse>) response;
             return pisScaAuthorisationService.createConsentAuthorisation(responses.get(0).getPaymentId(), paymentType)
                        .map(r -> responses.stream()
                                      .map(pr -> extendResponseFieldsWithAuthData(r, pr))
                                      .collect(Collectors.toList()))
-                       .orElseGet(() -> responses);
+                       .orElse(responses);
         }
     }
 
@@ -162,12 +162,12 @@ public class PisConsentService {
             SinglePayment singlePayment = (SinglePayment) payment;
             PaymentInitialisationResponse response = (PaymentInitialisationResponse) xs2aResponse;
             singlePayment.setPaymentId(response.getPaymentId());
-            pisConsentData = new CreatePisConsentData(singlePayment, tppInfo, requestParameters.getPaymentProduct().getCode(), aspspConsentData);
+            pisConsentData = new CreatePisConsentData(singlePayment, tppInfo, requestParameters.getPaymentProduct(), aspspConsentData);
         } else if (requestParameters.getPaymentType() == PERIODIC) {
             PeriodicPayment periodicPayment = (PeriodicPayment) payment;
             PaymentInitialisationResponse response = (PaymentInitialisationResponse) xs2aResponse;
             periodicPayment.setPaymentId(response.getPaymentId());
-            pisConsentData = new CreatePisConsentData(periodicPayment, tppInfo, requestParameters.getPaymentProduct().getCode(), aspspConsentData);
+            pisConsentData = new CreatePisConsentData(periodicPayment, tppInfo, requestParameters.getPaymentProduct(), aspspConsentData);
         } else {
             BulkPayment payments = (BulkPayment) payment;
             List<PaymentInitialisationResponse> responses = (List<PaymentInitialisationResponse>) xs2aResponse;
@@ -176,7 +176,7 @@ public class PisConsentService {
                                                                                .boxed()
                                                                                .collect(Collectors.toMap(payments.getPayments()::get, responses::get));
             paymentMap.forEach((k, v) -> k.setPaymentId(v.getPaymentId()));
-            pisConsentData = new CreatePisConsentData(paymentMap, tppInfo, requestParameters.getPaymentProduct().getCode(), aspspConsentData);
+            pisConsentData = new CreatePisConsentData(paymentMap, tppInfo, requestParameters.getPaymentProduct(), aspspConsentData);
         }
         return pisConsentData;
     }
