@@ -86,7 +86,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
             SpiBulkPayment spiBulkPayment = spiBulkPaymentMapper.mapToSpiBulkPayment(payments, payment.getPaymentProduct());
 
             return SpiResponse.<SpiBulkPayment>builder()
-                       .aspspConsentData(initialAspspConsentData)
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .payload(spiBulkPayment)
                        .success();
 
@@ -95,12 +95,12 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
 
                 return SpiResponse.<SpiBulkPayment>builder()
-                           .aspspConsentData(initialAspspConsentData)
+                           .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<SpiBulkPayment>builder()
-                       .aspspConsentData(initialAspspConsentData)
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
@@ -112,18 +112,18 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
             SpiTransactionStatus status = aspspResponse.getBody();
 
             return SpiResponse.<SpiTransactionStatus>builder()
-                       .aspspConsentData(initialAspspConsentData)
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .payload(status)
                        .success();
 
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<SpiTransactionStatus>builder()
-                           .aspspConsentData(initialAspspConsentData)
+                           .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
             return SpiResponse.<SpiTransactionStatus>builder()
-                       .aspspConsentData(initialAspspConsentData)
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }

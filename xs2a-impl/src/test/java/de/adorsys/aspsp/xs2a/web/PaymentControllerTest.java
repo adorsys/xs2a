@@ -118,7 +118,7 @@ public class PaymentControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() {
-        when(paymentService.getPaymentStatusById(CORRECT_PAYMENT_ID, PaymentType.SINGLE))
+        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, CORRECT_PAYMENT_ID))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().body(Xs2aTransactionStatus.ACCP).build());
         when(paymentService.getPaymentStatusById(PaymentType.SINGLE, WRONG_PAYMENT_ID))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(
