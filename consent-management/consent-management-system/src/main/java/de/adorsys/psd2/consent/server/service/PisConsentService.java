@@ -51,6 +51,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PisConsentService {
     private final PisConsentRepository pisConsentRepository;
@@ -64,6 +65,7 @@ public class PisConsentService {
      * @param request Consists information about payments.
      * @return Response containing identifier of consent
      */
+    @Transactional
     public Optional<CreatePisConsentResponse> createPaymentConsent(PisConsentRequest request) {
         PisConsent consent = pisConsentMapper.mapToPisConsent(request);
         consent.setExternalId(UUID.randomUUID().toString());
@@ -124,7 +126,6 @@ public class PisConsentService {
      * @param paymentId id of the payment
      * @return Response containing aspsp consent data
      */
-    @Transactional(readOnly = true)
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
                    .map(l -> l.get(0))
