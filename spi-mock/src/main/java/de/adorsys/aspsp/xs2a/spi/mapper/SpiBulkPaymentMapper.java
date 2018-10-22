@@ -46,7 +46,7 @@ public class SpiBulkPaymentMapper {
 
     public SpiBulkPaymentInitiationResponse mapToSpiBulkPaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment payment, PaymentProduct paymentProduct) {
         SpiBulkPaymentInitiationResponse spi = new SpiBulkPaymentInitiationResponse();
-        spi.setPayments(mapToListSpiSinglePayment(payment, paymentProduct));
+        spi.setPayments(mapToListSpiSinglePayments(payment.getPayments(), paymentProduct));
         spi.setPaymentId(payment.getPaymentId());
 
         if (payment.getPaymentId() == null) {
@@ -58,14 +58,20 @@ public class SpiBulkPaymentMapper {
         return spi;
     }
 
+    public SpiBulkPayment mapToSpiBulkPayment(@NotNull List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> payments, PaymentProduct paymentProduct) {
+        SpiBulkPayment bulk = new SpiBulkPayment();
+        bulk.setPayments(mapToListSpiSinglePayments(payments, paymentProduct));
+        return bulk;
+    }
+
     private List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> mapToListAspspSpiSinglePayment(@NotNull SpiBulkPayment payment) {
         return payment.getPayments().stream()
                    .map(spiSinglePaymentMapper::mapToAspspSpiSinglePayment)
                    .collect(Collectors.toList());
     }
 
-    private List<SpiSinglePayment> mapToListSpiSinglePayment(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment payment, PaymentProduct paymentProduct) {
-        return payment.getPayments().stream()
+    private List<SpiSinglePayment> mapToListSpiSinglePayments(@NotNull List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> payments, PaymentProduct paymentProduct) {
+        return payments.stream()
                    .map(p -> spiSinglePaymentMapper.mapToSpiSinglePayment(p, paymentProduct))
                    .collect(Collectors.toList());
     }

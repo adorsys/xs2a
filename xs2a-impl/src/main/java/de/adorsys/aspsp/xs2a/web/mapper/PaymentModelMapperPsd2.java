@@ -72,7 +72,7 @@ public class PaymentModelMapperPsd2 {
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
             paymentResponse.setStartDate(xs2aPayment.getStartDate());
             paymentResponse.setEndDate(xs2aPayment.getEndDate());
-            paymentResponse.setExecutionRule(ExecutionRule.valueOf(xs2aPayment.getExecutionRule()));
+            paymentResponse.setExecutionRule(ExecutionRule.fromValue(xs2aPayment.getExecutionRule()));
             paymentResponse.setFrequency(FrequencyCode.valueOf(xs2aPayment.getFrequency().name()));
             String executionDateString = String.format("%02d", xs2aPayment.getDayOfExecution());
             paymentResponse.setDayOfExecution(DayOfExecution.fromValue(executionDateString));
