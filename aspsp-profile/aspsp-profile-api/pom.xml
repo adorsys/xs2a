@@ -33,11 +33,10 @@
     </properties>
 
     <dependencies>
-
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-core</artifactId>
+            <version>1.10-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

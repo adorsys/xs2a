@@ -20,11 +20,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
 @Data
 public abstract class PaymentInitiationResponse {
-    private String scaStatus;
+    private ScaStatus scaStatus;
     @JsonUnwrapped
     private Xs2aTransactionStatus transactionStatus;
     private Xs2aAmount transactionFees;

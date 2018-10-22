@@ -23,8 +23,8 @@
         <comment>Remove not null constraint from requested_execution_date and requested_execution_time in
             pis_payment_data.
         </comment>
-        <dropNotNullConstraint columnName="requested_execution_date" tableName="pis_payment_data"/>
-        <dropNotNullConstraint columnName="requested_execution_time" tableName="pis_payment_data"/>
+        <dropNotNullConstraint columnName="requested_execution_date" tableName="pis_payment_data" columnDataType="DATE"/>
+        <dropNotNullConstraint columnName="requested_execution_time" tableName="pis_payment_data" columnDataType="DATETIME"/>
     </changeSet>
 
 </databaseChangeLog>

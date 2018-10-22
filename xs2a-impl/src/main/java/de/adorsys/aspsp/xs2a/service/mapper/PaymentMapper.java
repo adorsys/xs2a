@@ -35,7 +35,6 @@ import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiChallengeData;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -181,10 +180,6 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
         response.setPsuMessage(null);
         response.setLinks(null); //Not Present in 1.1 payment entity
         return response;
-    }
-
-    public SpiPaymentType mapToSpiPaymentType(PaymentType paymentType) {
-        return SpiPaymentType.valueOf(paymentType.name());
     }
 
     public SinglePayment mapToSinglePayment(SpiSinglePayment spiSinglePayment) {

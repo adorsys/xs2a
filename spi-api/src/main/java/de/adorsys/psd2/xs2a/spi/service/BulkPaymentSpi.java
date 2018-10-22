@@ -16,25 +16,23 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 /**
  * Interface to be used for bulk payment SPI implementation
  */
-public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, List<SpiPaymentInitialisationResponse>> {
+public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, SpiBulkPaymentInitiationResponse> {
     @NotNull
     @Override
-    default SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<List<SpiPaymentInitialisationResponse>>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    default SpiResponse<SpiBulkPaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
+        return SpiResponse.<SpiBulkPaymentInitiationResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override

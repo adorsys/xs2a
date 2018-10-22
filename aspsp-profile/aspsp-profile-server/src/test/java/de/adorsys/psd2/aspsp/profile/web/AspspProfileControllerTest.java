@@ -16,8 +16,13 @@
 
 package de.adorsys.psd2.aspsp.profile.web;
 
-import de.adorsys.psd2.aspsp.profile.domain.*;
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +48,7 @@ public class AspspProfileControllerTest {
     private static final int FREQUENCY_PER_DAY = 5;
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
-    private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
+    private static final List<PaymentType> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
@@ -129,10 +134,10 @@ public class AspspProfileControllerTest {
             "instant-sepa-credit-transfers");
     }
 
-    private static List<String> getPaymentTypes() {
+    private static List<PaymentType> getPaymentTypes() {
         return Arrays.asList(
-            "periodic",
-            "bulk");
+            PaymentType.PERIODIC,
+            PaymentType.BULK);
     }
 
     private static List<BookingStatus> getBookingStatuses() {

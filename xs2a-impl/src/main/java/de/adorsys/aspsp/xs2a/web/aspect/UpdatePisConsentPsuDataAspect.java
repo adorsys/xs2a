@@ -23,8 +23,8 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
-import de.adorsys.psd2.consent.api.CmsScaStatus;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -83,17 +83,17 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
         return buildPath(PSU_AUTHORISATION_URL, paymentService, paymentId, authorisationId);
     }
 
-    private boolean isScaStatusFinalised(String scaAuthenticationData, CmsScaStatus scaStatus) {
+    private boolean isScaStatusFinalised(String scaAuthenticationData, ScaStatus scaStatus) {
         return StringUtils.isNotBlank(scaAuthenticationData)
-                   && scaStatus == CmsScaStatus.FINALISED;
+                   && scaStatus == ScaStatus.FINALISED;
     }
 
-    private boolean isScaStatusMethodSelected(String authenticationMethodId, CmsScaStatus scaStatus) {
+    private boolean isScaStatusMethodSelected(String authenticationMethodId, ScaStatus scaStatus) {
         return StringUtils.isNotBlank(authenticationMethodId)
-                   && scaStatus == CmsScaStatus.SCAMETHODSELECTED;
+                   && scaStatus == ScaStatus.SCAMETHODSELECTED;
     }
 
-    private boolean isScaStatusMethodAuthenticated(CmsScaStatus scaStatus) {
-        return scaStatus == CmsScaStatus.PSUAUTHENTICATED;
+    private boolean isScaStatusMethodAuthenticated(ScaStatus scaStatus) {
+        return scaStatus == ScaStatus.PSUAUTHENTICATED;
     }
 }

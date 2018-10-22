@@ -18,17 +18,17 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentModelMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapperPsd2;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapperXs2a;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperPsd2;
+import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.psd2.api.PaymentApi;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
@@ -60,9 +60,9 @@ public class PaymentController implements PaymentApi {
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         ResponseObject<Xs2aTransactionStatus> response = PaymentType.getByValue(paymentService)
-            .map(pt -> xs2aPaymentService.getPaymentStatusById(paymentId, pt))
-            .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
-                .fail(new MessageError(FORMAT_ERROR))::build);
+                                                             .map(pt -> xs2aPaymentService.getPaymentStatusById(paymentId, pt))
+                                                             .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
+                                                                            .fail(new MessageError(FORMAT_ERROR))::build);
 
         return responseMapper.ok(response, PaymentModelMapperPsd2::mapToStatusResponse12);
     }
@@ -74,14 +74,14 @@ public class PaymentController implements PaymentApi {
                                                 String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
                                                 UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject response = PaymentType.getByValue(paymentService)
-            .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentId))
-            .orElseGet(ResponseObject.builder()
-                .fail(new MessageError(FORMAT_ERROR))::build);
+                                      .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentId))
+                                      .orElseGet(ResponseObject.builder()
+                                                     .fail(new MessageError(FORMAT_ERROR))::build);
 
         //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
         return response.hasError()
-            ? responseMapper.ok(response)
-            : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT)).build());
+                   ? responseMapper.ok(response)
+                   : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT)).build());
     }
 
     @Override
@@ -98,11 +98,11 @@ public class PaymentController implements PaymentApi {
             xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, paymentInitiationParameters), paymentInitiationParameters);
 
         return serviceResponse.hasError()
-            ? responseMapper.created(serviceResponse)
-            : responseMapper.created(ResponseObject
-            .builder()
-            .body(paymentModelMapperPsd2.mapToPaymentInitiationResponse12(serviceResponse.getBody(), paymentInitiationParameters))
-            .build());
+                   ? responseMapper.created(serviceResponse)
+                   : responseMapper.created(ResponseObject
+                                                .builder()
+                                                .body(paymentModelMapperPsd2.mapToPaymentInitiationResponse12(serviceResponse.getBody()))
+                                                .build());
     }
 
     @Override

@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.service.validator;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
@@ -28,7 +27,7 @@ import de.adorsys.aspsp.xs2a.service.validator.header.impl.PaymentInitiationRequ
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -184,7 +183,7 @@ public class RequestValidatorService {
     }
 
     private Map<String, String> getViolationMapForPaymentType(PaymentType paymentType) {
-        PisPaymentType consentPaymentType = PisPaymentType.valueOf(paymentType.name());
+        PaymentType consentPaymentType = PaymentType.valueOf(paymentType.name());
         return isPaymentTypeAvailable(consentPaymentType)
                    ? Collections.emptyMap()
                    : Collections.singletonMap(MessageErrorCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type: " + paymentType.getValue());
@@ -195,8 +194,8 @@ public class RequestValidatorService {
         return paymentProducts.contains(paymentProduct);
     }
 
-    private boolean isPaymentTypeAvailable(PisPaymentType paymentType) {
-        List<PisPaymentType> paymentTypes = aspspProfileService.getAvailablePaymentTypes();
+    private boolean isPaymentTypeAvailable(PaymentType paymentType) {
+        List<PaymentType> paymentTypes = aspspProfileService.getAvailablePaymentTypes();
         return paymentTypes.contains(paymentType);
     }
 

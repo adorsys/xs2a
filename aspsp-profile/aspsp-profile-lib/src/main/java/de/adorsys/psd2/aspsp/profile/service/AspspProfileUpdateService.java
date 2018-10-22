@@ -16,7 +16,11 @@
 
 package de.adorsys.psd2.aspsp.profile.service;
 
-import de.adorsys.psd2.aspsp.profile.domain.*;
+import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 
 import java.util.List;
 
@@ -29,7 +33,7 @@ public interface AspspProfileUpdateService {
 
     void updateAvailablePaymentProducts(List<String> availablePaymentProducts);
 
-    void updateAvailablePaymentTypes(List<String> availablePaymentTypes);
+    void updateAvailablePaymentTypes(List<PaymentType> availablePaymentTypes);
 
     void updateScaApproach(ScaApproach scaApproach);
 

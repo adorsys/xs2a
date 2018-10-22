@@ -41,6 +41,12 @@
 
         <!-- project dependencies -->
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-core</artifactId>
+            <version>1.10-SNAPSHOT</version>
+        </dependency>
+
 <!-- TODO remove dependency to consent-api https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332 -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>

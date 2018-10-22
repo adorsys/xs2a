@@ -17,9 +17,7 @@
 package de.adorsys.psd2.consent.server.web;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.api.CmsScaStatus;
-import de.adorsys.psd2.consent.api.PisConsentStatusResponse;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -28,6 +26,8 @@ import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.server.service.PisConsentService;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -204,7 +204,8 @@ public class PisConsentControllerTest {
     @Test
     public void updateConsentAuthorization_Success() {
         //Given
-        ResponseEntity<UpdatePisConsentPsuDataResponse> expected = new ResponseEntity<>(new UpdatePisConsentPsuDataResponse(CmsScaStatus.RECEIVED), HttpStatus.OK);
+        ResponseEntity<UpdatePisConsentPsuDataResponse> expected =
+            new ResponseEntity<>(new UpdatePisConsentPsuDataResponse(ScaStatus.RECEIVED), HttpStatus.OK);
 
         //When
         ResponseEntity<UpdatePisConsentPsuDataResponse> actual = pisConsentController.updateConsentAuthorization(AUTHORISATION_ID, getUpdatePisConsentPsuDataRequest());
@@ -259,11 +260,11 @@ public class PisConsentControllerTest {
     private GetPisConsentAuthorisationResponse getGetPisConsentAuthorisationResponse() {
         GetPisConsentAuthorisationResponse response = new GetPisConsentAuthorisationResponse();
         response.setPsuId(PSU_ID);
-        response.setScaStatus(CmsScaStatus.STARTED);
+        response.setScaStatus(ScaStatus.STARTED);
         response.setConsentId(CONSENT_ID);
         response.setPassword(PASSWORD);
         response.setPayments(Collections.emptyList());
-        response.setPaymentType(PisPaymentType.SINGLE);
+        response.setPaymentType(PaymentType.SINGLE);
         return response;
     }
 
@@ -290,6 +291,6 @@ public class PisConsentControllerTest {
     }
 
     private UpdatePisConsentPsuDataResponse getUpdatePisConsentPsuDataResponse() {
-        return new UpdatePisConsentPsuDataResponse(CmsScaStatus.RECEIVED);
+        return new UpdatePisConsentPsuDataResponse(ScaStatus.RECEIVED);
     }
 }

@@ -16,13 +16,12 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-
-import static de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType.PERIODIC;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -38,7 +37,7 @@ public class SpiPeriodicPayment extends SpiSinglePayment {
     }
 
     @Override
-    public final SpiPaymentType getPaymentType() {
-        return PERIODIC;
+    public final PaymentType getPaymentType() {
+        return PaymentType.PERIODIC;
     }
 }

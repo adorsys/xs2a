@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.server.service;
 
 import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
@@ -138,13 +138,13 @@ public class AisConsentServiceTest {
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
 
         // Then
-        UpdateConsentAspspDataRequest request = this.buildUpdateBlobRequest();
-        Optional<String> consentId = aisConsentService.updateAspspConsentData(EXTERNAL_CONSENT_ID, request);
+        CmsAspspConsentDataBase64 request = this.buildUpdateBlobRequest();
+        Optional<String> consentId = aisConsentService.saveAspspConsentDataInAisConsent(EXTERNAL_CONSENT_ID, request);
         // Assert
         assertTrue(consentId.isPresent());
 
         //Then
-        Optional<String> consentId_notExists = aisConsentService.updateAspspConsentData(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
+        Optional<String> consentId_notExists = aisConsentService.saveAspspConsentDataInAisConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
         // Assert
         assertFalse(consentId_notExists.isPresent());
     }
@@ -180,8 +180,8 @@ public class AisConsentServiceTest {
         return Collections.singletonList(new AccountInfo("iban-1", "EUR"));
     }
 
-    private UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
-        UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
+    private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {
+        CmsAspspConsentDataBase64 request = new CmsAspspConsentDataBase64();
         request.setAspspConsentDataBase64("zdxcvvzzzxcvzzzz");
         return request;
     }

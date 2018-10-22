@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
 @Data
@@ -25,7 +26,7 @@ public class UpdateConsentPsuDataReq {
     private String consentId;
     private String authorizationId;
 
-    private Xs2aScaStatus scaStatus;
+    private ScaStatus scaStatus;
     private boolean updatePsuIdentification;
     private String authenticationMethodId;
     private String scaAuthenticationData;

@@ -22,6 +22,7 @@ import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountReference;
 import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiBalanceType;
 import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
 import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.AspspPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiBulkPayment;
 import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiCancelPayment;
 import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiSinglePayment;
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
@@ -61,6 +62,8 @@ public class PaymentServiceTest {
     public void setUp() {
         when(paymentRepository.save(any(AspspPayment.class)))
             .thenReturn(getAspspPayment());
+        when(paymentRepository.save(any(List.class)))
+            .thenReturn(Collections.singletonList(getAspspPayment()));
         when(paymentRepository.exists(PAYMENT_ID))
             .thenReturn(true);
         when(paymentRepository.exists(WRONG_PAYMENT_ID))
@@ -121,11 +124,12 @@ public class PaymentServiceTest {
     @Test
     public void addBulkPayments() {
         //Given
-        List<SpiSinglePayment> expectedPayments = new ArrayList<>();
-        expectedPayments.add(getSpiSinglePayment(50));
+        SpiBulkPayment expectedPayment = new SpiBulkPayment();
+        expectedPayment.setPayments(new ArrayList<>());
+        expectedPayment.getPayments().add(getSpiSinglePayment(50));
 
         //When
-        List<SpiSinglePayment> actualPayments = paymentService.addBulkPayments(expectedPayments);
+        SpiBulkPayment actualPayments = paymentService.addBulkPayments(expectedPayment).get();
 
         //Then
         assertThat(actualPayments).isNotNull();
