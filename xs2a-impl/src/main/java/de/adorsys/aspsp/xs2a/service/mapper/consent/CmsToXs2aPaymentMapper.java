@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
@@ -44,6 +45,7 @@ public class CmsToXs2aPaymentMapper {
                        periodic.setEndToEndIdentification(p.getEndToEndIdentification());
                        periodic.setDebtorAccount(mapToXs2aAccountReference(p.getDebtorAccount()));
                        periodic.setCreditorAccount(mapToXs2aAccountReference(p.getCreditorAccount()));
+                       periodic.setInstructedAmount(new Xs2aAmount(p.getCurrency(), p.getAmount().toPlainString()));
                        periodic.setCreditorAgent(p.getCreditorAgent());
                        periodic.setCreditorName(p.getCreditorName());
                        periodic.setCreditorAddress(mapToXs2aAddress(p.getCreditorAddress()));
@@ -63,6 +65,7 @@ public class CmsToXs2aPaymentMapper {
                        SinglePayment single = new SinglePayment();
                        single.setPaymentId(p.getPaymentId());
                        single.setEndToEndIdentification(p.getEndToEndIdentification());
+                       single.setInstructedAmount(new Xs2aAmount(p.getCurrency(), p.getAmount().toPlainString()));
                        single.setDebtorAccount(mapToXs2aAccountReference(p.getDebtorAccount()));
                        single.setCreditorAccount(mapToXs2aAccountReference(p.getCreditorAccount()));
                        single.setCreditorAgent(p.getCreditorAgent());
