@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.server.service.security;
 import java.util.Optional;
 
 public interface CryptoProvider {
-    Optional<AspspConsentData> encryptData(byte[] data, String password);
-
-    Optional<AspspConsentData> decryptData(byte[] data, String password);
+    Optional<String> encryptText(String text, String password);
+    Optional<String> decryptText(String encryptedText, String password);
 }
