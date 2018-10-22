@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -36,6 +35,7 @@ public class SpiToXs2aPeriodicPaymentMapper {
         return Optional.ofNullable(payment)
                    .map(p -> {
                        PeriodicPayment periodic = new PeriodicPayment();
+                       periodic.setPaymentId(p.getPaymentId());
                        periodic.setEndToEndIdentification(p.getEndToEndIdentification());
                        periodic.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(p.getDebtorAccount()).orElse(null));
                        periodic.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(p.getInstructedAmount()));
@@ -44,7 +44,6 @@ public class SpiToXs2aPeriodicPaymentMapper {
                        periodic.setCreditorName(p.getCreditorName());
                        periodic.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(p.getCreditorAddress()));
                        periodic.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
-                       periodic.setTransactionStatus(Xs2aTransactionStatus.RCVD);
                        periodic.setStartDate(p.getStartDate());
                        periodic.setEndDate(p.getEndDate());
                        periodic.setExecutionRule(p.getExecutionRule());

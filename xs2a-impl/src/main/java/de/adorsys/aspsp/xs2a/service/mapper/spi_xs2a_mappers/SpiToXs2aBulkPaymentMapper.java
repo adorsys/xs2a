@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
@@ -43,7 +42,6 @@ public class SpiToXs2aBulkPaymentMapper {
         bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         bulk.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()).orElse(null));
         bulk.setPayments(mapToListXs2aSinglePayments(payment.getPayments()));
-        bulk.setTransactionStatus(Xs2aTransactionStatus.RCVD);
         return bulk;
     }
 
