@@ -16,12 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl.v2;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.exception.RestException;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
@@ -32,10 +31,15 @@ import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -46,16 +50,14 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
     private final RestTemplate aspspRestTemplate;
     private final AspspRemoteUrls aspspRemoteUrls;
     private final SpiBulkPaymentMapper spiBulkPaymentMapper;
-    private final KeycloakInvokerService keycloakInvokerService;
-    private final JsonConverter jsonConverter;
 
     @Override
     @NotNull
-    public SpiResponse<SpiBulkPaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment spiBulkPayment, @NotNull AspspConsentData initialAspspConsentData) {
+    public SpiResponse<SpiBulkPaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
-            de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment request = spiBulkPaymentMapper.mapToAspspSpiBulkPayment(spiBulkPayment);
+            de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment request = spiBulkPaymentMapper.mapToAspspSpiBulkPayment(payment);
             ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createBulkPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment.class);
-            SpiBulkPaymentInitiationResponse response = spiBulkPaymentMapper.mapToSpiBulkPaymentResponse(responseEntity.getBody(), spiBulkPayment.getPaymentProduct());
+            SpiBulkPaymentInitiationResponse response = spiBulkPaymentMapper.mapToSpiBulkPaymentResponse(responseEntity.getBody(), payment.getPaymentProduct());
 
             return SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
                        .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
@@ -75,12 +77,101 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
     }
 
     @Override
+    public @NotNull SpiResponse<SpiBulkPayment> getPaymentById(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
+        try {
+            ResponseEntity<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment>> aspspResponse =
+                aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment>>() {
+                }, payment.getPaymentType().getValue(), payment.getPaymentProduct().getValue(), payment.getPaymentId());
+            List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> payments = aspspResponse.getBody();
+            SpiBulkPayment spiBulkPayment = spiBulkPaymentMapper.mapToSpiBulkPayment(payments, payment.getPaymentProduct());
+
+            return SpiResponse.<SpiBulkPayment>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(spiBulkPayment)
+                       .success();
+
+        } catch (RestException e) {
+
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+
+                return SpiResponse.<SpiBulkPayment>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiBulkPayment>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    @Override
+    public @NotNull SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
+        try {
+            ResponseEntity<SpiTransactionStatus> aspspResponse = aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), SpiTransactionStatus.class, payment.getPaymentId());
+            SpiTransactionStatus status = aspspResponse.getBody();
+
+            return SpiResponse.<SpiTransactionStatus>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(status)
+                       .success();
+
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiTransactionStatus>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+            return SpiResponse.<SpiTransactionStatus>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    @Override
     public @NotNull SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiResponse.VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment request = spiBulkPaymentMapper.mapToAspspSpiBulkPayment(payment);
+
+        try {
+            aspspRestTemplate.postForEntity(aspspRemoteUrls.createBulkPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment.class);
+
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
+
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiResponse.VoidResponse>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 
     @Override
     public @NotNull SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiResponse.VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+        try {
+            aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
+            de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment request = spiBulkPaymentMapper.mapToAspspSpiBulkPayment(payment);
+            aspspRestTemplate.postForEntity(aspspRemoteUrls.createBulkPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment.class);
+
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
+
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiResponse.VoidResponse>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 }
+

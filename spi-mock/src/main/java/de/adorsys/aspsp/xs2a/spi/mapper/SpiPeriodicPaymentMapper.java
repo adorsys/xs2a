@@ -29,6 +29,7 @@ public class SpiPeriodicPaymentMapper {
 
     public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment mapToAspspSpiPeriodicPayment(@NotNull SpiPeriodicPayment payment) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment periodic = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment();
+        periodic.setPaymentId(payment.getPaymentId());
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
         periodic.setDebtorAccount(payment.getDebtorAccount());
         periodic.setInstructedAmount(payment.getInstructedAmount());
@@ -48,6 +49,7 @@ public class SpiPeriodicPaymentMapper {
 
     public SpiPeriodicPayment mapToSpiPeriodicPayment(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment payment, PaymentProduct paymentProduct) {
         SpiPeriodicPayment periodic = new SpiPeriodicPayment(paymentProduct);
+        periodic.setPaymentId(payment.getPaymentId());
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
         periodic.setDebtorAccount(payment.getDebtorAccount());
         periodic.setInstructedAmount(payment.getInstructedAmount());

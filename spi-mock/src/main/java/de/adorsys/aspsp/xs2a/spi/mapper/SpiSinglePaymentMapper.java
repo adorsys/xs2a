@@ -28,6 +28,7 @@ public class SpiSinglePaymentMapper {
 
     public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment mapToAspspSpiSinglePayment(@NotNull SpiSinglePayment payment) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment single = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment();
+        single.setPaymentId(payment.getPaymentId());
         single.setEndToEndIdentification(payment.getEndToEndIdentification());
         single.setDebtorAccount(payment.getDebtorAccount());
         single.setInstructedAmount(payment.getInstructedAmount());
