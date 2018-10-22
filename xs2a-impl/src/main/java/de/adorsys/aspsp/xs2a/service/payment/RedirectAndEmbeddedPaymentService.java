@@ -37,6 +37,8 @@ import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
+// TODO add add checking SpiResponse on error https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/450
 @Service
 @RequiredArgsConstructor
 public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
