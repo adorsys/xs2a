@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
@@ -51,8 +50,7 @@ import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_400
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -121,9 +119,8 @@ public class PaymentServiceTest {
     //Bulk Tests
     @Test
     public void createBulkPayments() {
-        BulkPayment payment = BULK_PAYMENT_OK;
         //When
-        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(payment, getBulkPaymentInitiationParameters());
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters());
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);

@@ -34,6 +34,8 @@ import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
@@ -110,7 +112,7 @@ public class PaymentService {
      */
     public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentId) {
         ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
-        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, "sepa-credit-transfers")); //TODO put actual payment product data here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/441
+        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, PaymentProduct.SEPA)); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         return payment.map(p -> ResponseObject.builder()
                                     .body(p)
                                     .build())

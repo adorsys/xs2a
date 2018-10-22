@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
 
 public interface SpiPayment {
     PaymentType getPaymentType();
-    SpiPaymentProduct getPaymentProduct();
+    PaymentProduct getPaymentProduct();
 }

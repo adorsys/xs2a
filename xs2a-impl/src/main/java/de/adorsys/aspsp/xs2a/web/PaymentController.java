@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
@@ -28,6 +27,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.psd2.api.PaymentApi;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
@@ -81,7 +81,8 @@ public class PaymentController implements PaymentApi {
         //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
         return response.hasError()
                    ? responseMapper.ok(response)
-                   : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT)).build());
+                   : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(),
+                                                                                                                      PaymentProduct.SEPA)).build());
     }
 
     @Override

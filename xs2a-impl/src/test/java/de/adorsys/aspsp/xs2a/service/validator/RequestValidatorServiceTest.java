@@ -17,11 +17,11 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.ConsentController;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class RequestValidatorServiceTest {
     @Before
     public void setUp() {
         when(aspspProfileService.getAvailablePaymentProducts())
-            .thenReturn(Arrays.asList(PaymentProduct.ISCT, PaymentProduct.SCT));
+            .thenReturn(Arrays.asList(PaymentProduct.SEPA, PaymentProduct.INSTANT_SEPA));
 
         when(aspspProfileService.getAvailablePaymentTypes())
             .thenReturn(Arrays.asList(PaymentType.SINGLE, PaymentType.BULK));
@@ -114,7 +114,7 @@ public class RequestValidatorServiceTest {
     public void getRequestPathVariablesViolationMap_WrongProduct() throws Exception {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
-        request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.CBCT.getCode()));
+        request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.CROSS_BORDER.getValue()));
         HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
@@ -130,7 +130,7 @@ public class RequestValidatorServiceTest {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
         Map<String, String> templates = new HashMap<>();
-        templates.put("payment-product", PaymentProduct.SCT.getCode());
+        templates.put("payment-product", PaymentProduct.SEPA.getValue());
         templates.put("payment-service", PaymentType.SINGLE.getValue());
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
         HandlerMethod handler = getPaymentInitiationControllerHandler();
@@ -147,7 +147,7 @@ public class RequestValidatorServiceTest {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
         Map<String, String> templates = new HashMap<>();
-        templates.put("payment-product", PaymentProduct.SCT.getCode());
+        templates.put("payment-product", PaymentProduct.SEPA.getValue());
         templates.put("payment-service", PaymentType.PERIODIC.getValue());
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
         HandlerMethod handler = getPaymentsControllerHandler();

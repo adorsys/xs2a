@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.service.validator;
 
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
@@ -26,6 +25,7 @@ import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImp
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +160,7 @@ public class RequestValidatorService {
     private Map<String, String> getViolationMapForPaymentProduct(PaymentProduct paymentProduct) {
         return isPaymentProductAvailable(paymentProduct)
                    ? Collections.emptyMap()
-                   : Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct.getCode());
+                   : Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct.getValue());
     }
 
     private Map<String, String> getViolationMapForPaymentType(PaymentType paymentType) {

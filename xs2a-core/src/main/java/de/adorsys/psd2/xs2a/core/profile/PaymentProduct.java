@@ -14,31 +14,29 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.psd2.xs2a.core.profile;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "PaymentProduct", value = "Payment products of ASPSP")
 public enum PaymentProduct {
-    SCT("sepa-credit-transfers"),
-    ISCT("instant-sepa-credit-transfers"),
-    T2P("target-2-payments"),
-    CBCT("cross-border-credit-transfers");
+    SEPA("sepa-credit-transfers"),
+    INSTANT_SEPA("instant-sepa-credit-transfers"),
+    TARGET2("target-2-payments"),
+    CROSS_BORDER("cross-border-credit-transfers");
 
     private String value;
 
     private static Map<String, PaymentProduct> container = new HashMap<>();
 
     static {
-        Arrays.stream(values())
-            .forEach(product -> container.put(product.getCode(), product));
+        for (PaymentProduct product : values()) {
+            container.put(product.getValue(), product);
+        }
     }
 
     @JsonCreator
@@ -47,7 +45,7 @@ public enum PaymentProduct {
     }
 
     @JsonValue
-    public String getCode() {
+    public String getValue() {
         return value;
     }
 

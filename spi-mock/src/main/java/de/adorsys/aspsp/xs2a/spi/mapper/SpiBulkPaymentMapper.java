@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
 
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class SpiBulkPaymentMapper {
         return bulk;
     }
 
-    public SpiBulkPaymentInitiationResponse mapToSpiBulkPaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment payment, SpiPaymentProduct paymentProduct) {
+    public SpiBulkPaymentInitiationResponse mapToSpiBulkPaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment payment, PaymentProduct paymentProduct) {
         SpiBulkPaymentInitiationResponse spi = new SpiBulkPaymentInitiationResponse();
         spi.setPayments(mapToListSpiSinglePayments(payment.getPayments(), paymentProduct));
         spi.setPaymentId(payment.getPaymentId());
@@ -70,6 +70,8 @@ public class SpiBulkPaymentMapper {
                    .collect(Collectors.toList());
     }
 
+    private List<SpiSinglePayment> mapToListSpiSinglePayment(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment payment, PaymentProduct paymentProduct) {
+        return payment.getPayments().stream()
     private List<SpiSinglePayment> mapToListSpiSinglePayments(@NotNull List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> payments, SpiPaymentProduct paymentProduct) {
         return payments.stream()
                    .map(p -> spiSinglePaymentMapper.mapToSpiSinglePayment(p, paymentProduct))
