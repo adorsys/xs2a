@@ -42,8 +42,8 @@ public class SpiToXs2aBulkPaymentMapper {
         bulk.setBatchBookingPreferred(payment.getBatchBookingPreferred());
         bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         bulk.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()).orElse(null));
+        bulk.setTransactionStatus(Xs2aTransactionStatus.getByValue(payment.getPaymentStatus().getName()));
         bulk.setPayments(mapToListXs2aSinglePayments(payment.getPayments()));
-        bulk.setTransactionStatus(Xs2aTransactionStatus.RCVD);
         return bulk;
     }
 

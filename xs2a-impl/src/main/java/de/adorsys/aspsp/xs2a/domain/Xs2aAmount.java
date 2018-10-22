@@ -18,13 +18,17 @@ package de.adorsys.aspsp.xs2a.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.util.Currency;
 
 @Data
 @ApiModel(description = "Amount information", value = "Amount")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Xs2aAmount {
 
 	@ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")

@@ -36,6 +36,7 @@ public class SpiToXs2aPeriodicPaymentMapper {
         return Optional.ofNullable(payment)
                    .map(p -> {
                        PeriodicPayment periodic = new PeriodicPayment();
+                       periodic.setPaymentId(p.getPaymentId());
                        periodic.setEndToEndIdentification(p.getEndToEndIdentification());
                        periodic.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(p.getDebtorAccount()).orElse(null));
                        periodic.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(p.getInstructedAmount()));
@@ -44,12 +45,12 @@ public class SpiToXs2aPeriodicPaymentMapper {
                        periodic.setCreditorName(p.getCreditorName());
                        periodic.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(p.getCreditorAddress()));
                        periodic.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
-                       periodic.setTransactionStatus(Xs2aTransactionStatus.RCVD);
                        periodic.setStartDate(p.getStartDate());
                        periodic.setEndDate(p.getEndDate());
                        periodic.setExecutionRule(p.getExecutionRule());
                        periodic.setFrequency(Xs2aFrequencyCode.valueOf(p.getFrequency().name()));
                        periodic.setDayOfExecution(p.getDayOfExecution());
+                       periodic.setTransactionStatus(Xs2aTransactionStatus.getByValue(payment.getPaymentStatus().getName()));
                        return periodic;
                    }).orElse(null);
     }

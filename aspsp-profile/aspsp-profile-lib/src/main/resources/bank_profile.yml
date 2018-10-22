@@ -16,5 +16,5 @@ setting:
  transactionLifetime: 0
  allPsd2Support: false
  transactionsWithoutBalancesSupported: true
- signingBasketSupported: true
+ signingBasketSupported: false
  paymentCancellationAuthorizationMandated: false

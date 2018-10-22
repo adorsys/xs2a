@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpiPeriodicPaymentMapper {
 
-    public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment mapToAspspSpiPeriodicPayment(@NotNull SpiPeriodicPayment payment) {
+    public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment mapToAspspSpiPeriodicPayment(@NotNull SpiPeriodicPayment payment, SpiTransactionStatus transactionStatus) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment periodic = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment();
         periodic.setPaymentId(payment.getPaymentId());
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
@@ -38,7 +38,7 @@ public class SpiPeriodicPaymentMapper {
         periodic.setCreditorName(payment.getCreditorName());
         periodic.setCreditorAddress(payment.getCreditorAddress());
         periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        periodic.setPaymentStatus(SpiTransactionStatus.RCVD);
+        periodic.setPaymentStatus(transactionStatus);
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
         periodic.setExecutionRule(payment.getExecutionRule());
@@ -58,7 +58,7 @@ public class SpiPeriodicPaymentMapper {
         periodic.setCreditorName(payment.getCreditorName());
         periodic.setCreditorAddress(payment.getCreditorAddress());
         periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        periodic.setPaymentStatus(SpiTransactionStatus.RCVD);
+        periodic.setPaymentStatus(payment.getPaymentStatus());
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
         periodic.setExecutionRule(payment.getExecutionRule());
