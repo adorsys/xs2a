@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aToCmsPisConsentRequest;
-import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;

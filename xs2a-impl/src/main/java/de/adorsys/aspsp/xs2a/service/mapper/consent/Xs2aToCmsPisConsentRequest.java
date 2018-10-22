@@ -30,8 +30,8 @@ import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.CmsTppRole;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +48,7 @@ public class Xs2aToCmsPisConsentRequest {
     public PisConsentRequest mapToCmsSinglePisConsentRequest(SinglePayment singlePayment, PaymentProduct paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct.getCode()).orElse(null));
+        request.setPaymentProduct(paymentProduct);
         // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
         request.setTppInfo(new CmsTppInfo());
         return request;
@@ -57,7 +57,7 @@ public class Xs2aToCmsPisConsentRequest {
     public PisConsentRequest mapToCmsPeriodicPisConsentRequest(PeriodicPayment periodicPayment, PaymentProduct paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(periodicPayment)));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct.getCode()).orElse(null));
+        request.setPaymentProduct(paymentProduct);
         // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
         request.setTppInfo(new CmsTppInfo());
         return request;
@@ -66,7 +66,7 @@ public class Xs2aToCmsPisConsentRequest {
     public PisConsentRequest mapToCmsBulkPisConsentRequest(BulkPayment bulkPayment, PaymentProduct paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(mapToListPisPayment(bulkPayment.getPayments()));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct.getCode()).orElse(null));
+        request.setPaymentProduct(paymentProduct);
         request.setPaymentType(PaymentType.BULK);
         // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
         request.setTppInfo(new CmsTppInfo());
@@ -77,7 +77,7 @@ public class Xs2aToCmsPisConsentRequest {
     public PisConsentRequest mapToCmsPisConsentRequestForPeriodicPayment(CreatePisConsentData createPisConsentData) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createPisConsentData.getPeriodicPayment())));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
+        request.setPaymentProduct(createPisConsentData.getPaymentProduct());
         request.setPaymentType(PaymentType.PERIODIC);
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         return request;
@@ -86,7 +86,7 @@ public class Xs2aToCmsPisConsentRequest {
     public PisConsentRequest mapToCmsPisConsentRequestForBulkPayment(CreatePisConsentData createPisConsentData) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(mapToPisPaymentForBulkPayment(createPisConsentData.getPaymentIdentifierMap()));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
+        request.setPaymentProduct(createPisConsentData.getPaymentProduct());
         request.setPaymentType(PaymentType.BULK);
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         return request;
