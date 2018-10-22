@@ -25,7 +25,7 @@ import java.util.Optional;
 @Component
 public class SpiToXs2aAccountReferenceMapper {
 
-    public Xs2aAccountReference mapToXs2aAccountReference(SpiAccountReference spiAccountRef) {
+    public Optional<Xs2aAccountReference> mapToXs2aAccountReference(SpiAccountReference spiAccountRef) {
         return Optional.ofNullable(spiAccountRef)
                    .map(acc -> {
                        Xs2aAccountReference accRef = new Xs2aAccountReference();
@@ -35,7 +35,7 @@ public class SpiToXs2aAccountReferenceMapper {
                        accRef.setMaskedPan(spiAccountRef.getMaskedPan());
                        accRef.setMsisdn(spiAccountRef.getMsisdn());
                        accRef.setCurrency(spiAccountRef.getCurrency());
-                       return accRef;
-                   }).orElseGet(Xs2aAccountReference::new);
+                       return Optional.of(accRef);
+                   }).orElseGet(Optional::empty);
     }
 }

@@ -34,9 +34,9 @@ public class SpiToXs2aSinglePaymentMapper {
         SinglePayment single = new SinglePayment();
         single.setPaymentId(payment.getPaymentId());
         single.setEndToEndIdentification(payment.getEndToEndIdentification());
-        single.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()));
+        single.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()).orElse(null));
         single.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(payment.getInstructedAmount()));
-        single.setCreditorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getCreditorAccount()));
+        single.setCreditorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getCreditorAccount()).orElse(null));
         single.setCreditorAgent(payment.getCreditorAgent());
         single.setCreditorName(payment.getCreditorName());
         single.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));

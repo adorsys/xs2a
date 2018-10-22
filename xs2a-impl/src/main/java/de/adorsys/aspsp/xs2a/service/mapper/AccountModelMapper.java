@@ -166,6 +166,10 @@ public class AccountModelMapper {
     }
 
     public <T> T mapToAccountReference12(Xs2aAccountReference reference) {
+        if (reference == null) {
+            return null;
+        }
+
         T accountReference = null;
 
         if (StringUtils.isNotBlank(reference.getIban())) {
