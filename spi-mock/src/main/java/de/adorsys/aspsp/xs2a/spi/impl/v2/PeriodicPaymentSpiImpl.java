@@ -48,8 +48,8 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
 
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
-    private final SpiPeriodicPaymentMapper spiPeriodicPaymentMapper;
     private final AspspRemoteUrls aspspRemoteUrls;
+    private final SpiPeriodicPaymentMapper spiPeriodicPaymentMapper;
 
     @Override
     @NotNull
@@ -157,6 +157,8 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
+            de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = spiPeriodicPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
+            aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment.class);
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(initialAspspConsentData)

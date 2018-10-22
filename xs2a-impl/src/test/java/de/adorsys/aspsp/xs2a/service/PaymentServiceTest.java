@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
+ */
 
 
 package de.adorsys.aspsp.xs2a.service;
@@ -27,12 +27,14 @@ import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ReadSinglePayment;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,10 +48,8 @@ import java.util.Collections;
 import java.util.Currency;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_400;
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
-import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -76,21 +76,27 @@ public class PaymentServiceTest {
     @Mock
     private PaymentMapper paymentMapper;
     @Mock
-    private PaymentSpi paymentSpi;
-    @Mock
     private ReadPaymentFactory readPaymentFactory;
     @Mock
-    private ReadSinglePayment readSinglePayment;
+    private PisConsentService pisConsentService;
     @Mock
     private PisConsentDataService pisConsentDataService;
     @Mock
     private TppService tppService;
     @Mock
-    private Xs2aPisConsentMapper xs2aPisConsentMapper;
+    private CreateSinglePaymentService createSinglePaymentService;
     @Mock
-    private PisConsentService pisConsentService;
+    private CreatePeriodicPaymentService createPeriodicPaymentService;
     @Mock
     private CreateBulkPaymentService createBulkPaymentService;
+    @Mock
+    private Xs2aPisConsentMapper xs2aPisConsentMapper;
+    @Mock
+    private SinglePaymentSpi singlePaymentSpi;
+    @Mock
+    private PeriodicPaymentSpi periodicPaymentSpi;
+    @Mock
+    private BulkPaymentSpi bulkPaymentSpi;
 
     @Before
     public void setUp() {
@@ -104,10 +110,6 @@ public class PaymentServiceTest {
         when(xs2aPisConsentMapper.mapToXs2aPisConsent(any())).thenReturn(getXs2aPisConsent());
 
         //Status by ID
-        when(paymentSpi.getPaymentStatusById(PAYMENT_ID, PaymentType.SINGLE, ASPSP_CONSENT_DATA))
-            .thenReturn(new SpiResponse<>(SpiTransactionStatus.ACCP, ASPSP_CONSENT_DATA));
-        when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE, ASPSP_CONSENT_DATA))
-            .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
         when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters(), getTppInfoServiceModified(), getXs2aPisConsent()))
             .thenReturn(getValidResponse());
 
@@ -116,26 +118,6 @@ public class PaymentServiceTest {
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
-    //GetStatus Tests
-    @Test
-    public void getPaymentStatusById() {
-        //When
-        ResponseObject<Xs2aTransactionStatus> response = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_ID);
-        //Then
-        assertThat(response.hasError()).isFalse();
-        assertThat(response.getBody()).isEqualTo(Xs2aTransactionStatus.ACCP);
-    }
-
-    @Test
-    public void getPaymentStatusById_Failure() {
-        //When
-        ResponseObject<Xs2aTransactionStatus> response = paymentService.getPaymentStatusById(PaymentType.SINGLE, WRONG_PAYMENT_ID);
-        //Then
-        assertThat(response.hasError()).isTrue();
-        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(RJCT);
-    }
-
     //Bulk Tests
     @Test
     public void createBulkPayments() {
@@ -146,33 +128,6 @@ public class PaymentServiceTest {
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void getPaymentById() {
-        when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(anyString(), anyString())).thenReturn(getSinglePayment(IBAN, "10"));
-        //When
-        ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, PAYMENT_ID);
-        //Than
-        assertThat(response.hasError()).isFalse();
-        assertThat(response.getError()).isNull();
-        assertThat(response.getBody()).isNotNull();
-        SinglePayment payment = (SinglePayment) response.getBody();
-        assertThat(payment.getEndToEndIdentification()).isEqualTo(PAYMENT_ID);
-    }
-
-    @Test
-    public void getPaymentById_Failure_wrong_id() {
-        when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(anyString(), anyString())).thenReturn(null);
-
-        //When
-        ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID);
-        //Than
-        assertThat(response.hasError()).isTrue();
-        assertThat(response.getBody()).isNull();
-        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_403);
     }
 
     //Test additional methods
@@ -279,4 +234,3 @@ public class PaymentServiceTest {
         return ResponseObject.<BulkPaymentInitiationResponse>builder().body(getBulkResponses(RCVD, null)).build();
     }
 }
-*/

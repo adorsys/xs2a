@@ -48,8 +48,8 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
-    private final SpiSinglePaymentMapper spiSinglePaymentMapper;
     private final AspspRemoteUrls aspspRemoteUrls;
+    private final SpiSinglePaymentMapper spiSinglePaymentMapper;
 
     @Override
     @NotNull
@@ -161,6 +161,8 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
+            de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment request = spiSinglePaymentMapper.mapToAspspSpiSinglePayment(payment);
+            aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment.class);
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(initialAspspConsentData)
