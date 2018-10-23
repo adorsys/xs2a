@@ -39,7 +39,7 @@ import java.util.*;
 
 @Component
 @AllArgsConstructor
-public class AccountSpiImpl implements AccountSpi {
+public class AccountSpiImplDeprecated implements AccountSpi {
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;

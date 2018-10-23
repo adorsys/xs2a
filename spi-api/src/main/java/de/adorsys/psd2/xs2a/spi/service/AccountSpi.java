@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -61,7 +60,7 @@ public interface AccountSpi {
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of transactions
      */
-    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull String accountId, boolean withBalance, @Nullable LocalDate dateFrom, @Nullable LocalDate dateTo, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull String accountId, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests an transaction by transactionId

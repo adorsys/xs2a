@@ -30,10 +30,20 @@ public class SpiAccountReference {
     @Id
     @Setter
     @NonFinal
-    private String iban;
+    private String iban;    // TODO don't use it as an identifier during the account access validation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
     private String bban;
     private String pan;
     private String maskedPan;
     private String msisdn;
     private Currency currency;
+
+    // TODO provide a new field for the account access validation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
+    public SpiAccountReference(@NotNull SpiAccountDetails accountDetails) {
+        this.iban = accountDetails.getIban();
+        this.bban = accountDetails.getBban();
+        this.pan = accountDetails.getPan();
+        this.maskedPan = accountDetails.getMaskedPan();
+        this.msisdn = accountDetails.getMsisdn();
+        this.currency = accountDetails.getCurrency();
+    }
 }
