@@ -35,7 +35,7 @@ import java.util.List;
 interface AuthorisationSpi<T> {
 
     /**
-     * Authorises psu and returns current autorisation status. Used only with embedded SCA Approach.
+     * Authorises psu and returns current authorisation status. Used only with embedded SCA Approach.
      *
      * @param psuData          ASPSP identifier(s) of the psu
      * @param password         Psu's password
