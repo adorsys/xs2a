@@ -26,11 +26,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>consent-api</artifactId>
+    <artifactId>consent-xs2a-api</artifactId>
     <packaging>jar</packaging>
 
-    <name>consent-api</name>
-    <description>Consent API</description>
+    <name>consent-xs2a-api</name>
+    <description>Consent XS2A API</description>
 
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
@@ -38,7 +38,6 @@
 
     <dependencies>
 
-        <!--3rd party dependencies -->
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
@@ -46,6 +45,7 @@
             <version>1.10-SNAPSHOT</version>
         </dependency>
 
+        <!--3rd party dependencies -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
@@ -69,7 +69,7 @@
     </dependencies>
 
     <build>
-        <finalName>consent-api</finalName>
+        <finalName>consent-xs2a-api</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -30,7 +30,7 @@ public class ModuleDependencyTest {
 
     @Before
     public void setUp() {
-        classes = new ClassFileImporter().importPackages("de.adorsys.aspsp.xs2a.consent.api");
+        classes = new ClassFileImporter().importPackages("..psd2.consent.api..");
     }
 
     @Test
