@@ -23,7 +23,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Data
 public class AspspSinglePayment {
@@ -49,6 +49,6 @@ public class AspspSinglePayment {
     @Deprecated // Since 1.2
     private LocalDate requestedExecutionDate;
     @Deprecated // Since 1.2
-    private OffsetDateTime requestedExecutionTime;
+    private LocalDateTime requestedExecutionTime;
     private AspspTransactionStatus paymentStatus;
 }
