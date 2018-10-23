@@ -39,6 +39,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,6 +48,9 @@ public class PaymentServiceTest {
     private static final String WRONG_PAYMENT_ID = "0";
     private static final String IBAN = "DE123456789";
     private static final String WRONG_IBAN = "wrong_iban";
+    private static final long BALANCE_AMOUNT = 100;
+    private static final long AMOUNT_TO_TRANSFER = 50;
+    private static final long EXCEEDING_AMOUNT_TO_TRANSFER = BALANCE_AMOUNT + 1;
     private static final Currency CURRENCY = Currency.getInstance("EUR");
 
     @InjectMocks
@@ -61,17 +65,18 @@ public class PaymentServiceTest {
     @Before
     public void setUp() {
         when(paymentRepository.save(any(AspspPayment.class)))
-            .thenReturn(getAspspPayment());
-        when(paymentRepository.save(any(List.class)))
-            .thenReturn(Collections.singletonList(getAspspPayment()));
+            .thenReturn(getAspspPayment(AMOUNT_TO_TRANSFER));
+        when(paymentRepository.save(anyListOf(AspspPayment.class)))
+            .thenReturn(Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER)));
         when(paymentRepository.exists(PAYMENT_ID))
             .thenReturn(true);
         when(paymentRepository.exists(WRONG_PAYMENT_ID))
             .thenReturn(false);
+        when(accountService.getPsuIdByIban(IBAN)).thenReturn(Optional.of(getAccountDetails().get(0).getId()));
         when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         when(accountService.getAccountsByIban(WRONG_IBAN)).thenReturn(null);
         when(paymentMapper.mapToAspspPayment(any(), any())).thenReturn(new AspspPayment());
-        when(paymentMapper.mapToAspspSinglePayment(any(AspspPayment.class))).thenReturn(getAspspSinglePayment(50));
+        when(paymentMapper.mapToAspspSinglePayment(any(AspspPayment.class))).thenReturn(getAspspSinglePayment(AMOUNT_TO_TRANSFER));
         when(paymentService.cancelPayment(PAYMENT_ID)).thenReturn(buildAspspCancelPayment());
         when(paymentRepository.findOne(PAYMENT_ID)).thenReturn(new AspspPayment());
     }
@@ -80,7 +85,7 @@ public class PaymentServiceTest {
     public void addPayment_Success() {
         when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         //Given
-        AspspSinglePayment expectedPayment = getAspspSinglePayment(50);
+        AspspSinglePayment expectedPayment = getAspspSinglePayment(AMOUNT_TO_TRANSFER);
 
         //When
         Optional<AspspSinglePayment> aspspSinglePayment = paymentService.addPayment(expectedPayment);
@@ -93,7 +98,7 @@ public class PaymentServiceTest {
     @Test
     public void addPayment_AmountsAreEqual() {
         //Given
-        AspspSinglePayment expectedPayment = getAspspSinglePayment(100);
+        AspspSinglePayment expectedPayment = getAspspSinglePayment(BALANCE_AMOUNT);
 
         //When
         Optional<AspspSinglePayment> actualPayment = paymentService.addPayment(expectedPayment);
@@ -105,7 +110,7 @@ public class PaymentServiceTest {
     @Test
     public void addPayment_Failure() {
         //Given
-        AspspSinglePayment expectedPayment = getAspspSinglePayment(101);
+        AspspSinglePayment expectedPayment = getAspspSinglePayment(EXCEEDING_AMOUNT_TO_TRANSFER);
 
         //When
         Optional<AspspSinglePayment> actualPayment = paymentService.addPayment(expectedPayment);
@@ -122,17 +127,43 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void addBulkPayments() {
+    public void addBulkPayments_Success() {
+        List<AspspPayment> payments = Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER));
+        when(paymentMapper.mapToAspspPaymentList(any())).thenReturn(payments);
+        when(paymentRepository.save(anyListOf(AspspPayment.class))).thenReturn(payments);
+        when(paymentMapper.mapToAspspSinglePaymentList(anyListOf(AspspPayment.class)))
+            .thenReturn(Collections.singletonList(getAspspSinglePayment(AMOUNT_TO_TRANSFER)));
+
         //Given
         AspspBulkPayment expectedPayment = new AspspBulkPayment();
         expectedPayment.setPayments(new ArrayList<>());
-        expectedPayment.getPayments().add(getAspspSinglePayment(50));
+        expectedPayment.getPayments().add(getAspspSinglePayment(AMOUNT_TO_TRANSFER));
 
         //When
-        AspspBulkPayment actualPayments = paymentService.addBulkPayments(expectedPayment).get();
+        Optional<AspspBulkPayment> actualPayment = paymentService.addBulkPayments(expectedPayment);
 
         //Then
-        assertThat(actualPayments).isNotNull();
+        assertThat(actualPayment.isPresent()).isTrue();
+        AspspBulkPayment bulkPayment = actualPayment.get();
+        assertThat(bulkPayment.getPayments().size()).isEqualTo(1);
+    }
+
+    @Test
+    public void addBulkPayments_Failure_InsufficientFunds() {
+        when(paymentMapper.mapToAspspPaymentList(any()))
+            .thenReturn(Arrays.asList(getAspspPayment(AMOUNT_TO_TRANSFER), getAspspPayment(EXCEEDING_AMOUNT_TO_TRANSFER)));
+
+        //Given
+        AspspBulkPayment spiBulkPayment = new AspspBulkPayment();
+        List<AspspSinglePayment> payments = Arrays.asList(getAspspSinglePayment(AMOUNT_TO_TRANSFER),
+                                                          getAspspSinglePayment(EXCEEDING_AMOUNT_TO_TRANSFER));
+        spiBulkPayment.setPayments(payments);
+
+        //When
+        Optional<AspspBulkPayment> actualPayment = paymentService.addBulkPayments(spiBulkPayment);
+
+        //Then
+        assertThat(actualPayment.isPresent()).isFalse();
     }
 
     @Test
@@ -165,9 +196,9 @@ public class PaymentServiceTest {
         return payment;
     }
 
-    private AspspPayment getAspspPayment() {
+    private AspspPayment getAspspPayment(long amountToTransfer) {
         AspspPayment payment = new AspspPayment();
-        AspspAmount amount = new AspspAmount(Currency.getInstance("EUR"), new BigDecimal((long) 50));
+        AspspAmount amount = new AspspAmount(Currency.getInstance("EUR"), new BigDecimal(amountToTransfer));
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(getReference());
         payment.setCreditorName("Merchant123");
@@ -186,7 +217,7 @@ public class PaymentServiceTest {
 
     private List<AspspAccountBalance> getBalances() {
         AspspAccountBalance balance = new AspspAccountBalance();
-        balance.setSpiBalanceAmount(new AspspAmount(CURRENCY, BigDecimal.valueOf(100)));
+        balance.setSpiBalanceAmount(new AspspAmount(CURRENCY, BigDecimal.valueOf(BALANCE_AMOUNT)));
         balance.setSpiBalanceType(AspspBalanceType.INTERIM_AVAILABLE);
         return Collections.singletonList(balance);
     }
