@@ -24,6 +24,9 @@ import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+
 @Data
 public class SpiSinglePayment implements SpiPayment {
     private String paymentId;
@@ -37,6 +40,8 @@ public class SpiSinglePayment implements SpiPayment {
     private String remittanceInformationUnstructured;
     private SpiTransactionStatus paymentStatus;
     protected PaymentProduct paymentProduct;
+    private LocalDate requestedExecutionDate;
+    private OffsetDateTime requestedExecutionTime;
 
     public SpiSinglePayment(PaymentProduct paymentProduct) {
         this.paymentProduct = paymentProduct;

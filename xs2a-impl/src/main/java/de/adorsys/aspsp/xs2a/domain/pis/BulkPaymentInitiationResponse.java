@@ -24,5 +24,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class BulkPaymentInitiationResponse extends PaymentInitiationResponse {
 
-    private PaymentType paymentType = PaymentType.BULK;
+    @Override
+    PaymentType getPaymentType() {
+        return PaymentType.BULK;
+    }
 }

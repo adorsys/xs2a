@@ -16,19 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
-import de.adorsys.aspsp.xs2a.spi.component.SpiMockJsonConverter;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
-import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import lombok.AllArgsConstructor;
@@ -37,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -45,17 +37,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDate;
 import java.util.*;
 
-import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
-import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
-
 @Component
 @AllArgsConstructor
 public class AccountSpiImpl implements AccountSpi {
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
-    private final KeycloakInvokerService keycloakInvokerService;
-    private final SpiMockJsonConverter jsonConverter;
 
     /**
      * For detailed description see {@link AccountSpi#readAccountDetailsByIban(String, AspspConsentData)}
@@ -149,42 +136,5 @@ public class AccountSpiImpl implements AccountSpi {
         }, reference.getIban()).getBody())
                                     .orElseGet(Collections::emptyList);
         return new SpiResponse<>(response, aspspConsentData);
-    }
-
-    @Override
-    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password, AspspConsentData aspspConsentData) {
-        ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
-            remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
-            }, psuId);
-        List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
-                                               .orElseGet(Collections::emptyList);
-        return new SpiResponse<>(spiScaMethods, aspspConsentData);
-    }
-
-    /**
-     * For detailed description see {@link PaymentSpi#authorisePsu(String, String, AspspConsentData)}
-     */
-    @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData) {
-        Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuId, password);
-        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
-                                                            .orElse(FAILURE);
-        byte[] payload = accessToken.flatMap(jsonConverter::toJson)
-                             .map(String::getBytes)
-                             .orElse(null);
-        return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData.respondWith(payload));
-    }
-
-    /**
-     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, SpiScaMethod, AspspConsentData)}
-     */
-    @Override
-    public void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData) {
-        aspspRestTemplate.exchange(remoteSpiUrls.getGenerateTanConfirmationForAis(), HttpMethod.POST, null, Void.class, psuId);
-    }
-
-    @Override
-    public void applyStrongUserAuthorisation(SpiAccountConfirmation confirmation, AspspConsentData aspspConsentData) {
-        aspspRestTemplate.exchange(remoteSpiUrls.applyStrongUserAuthorisationForAis(), HttpMethod.PUT, new HttpEntity<>(confirmation), ResponseEntity.class);
     }
 }

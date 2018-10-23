@@ -28,8 +28,8 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
 import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
@@ -62,7 +62,6 @@ import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 @Service
 @AllArgsConstructor
 public class PaymentService {
-    private final PaymentMapper paymentMapper;
     private final ReadPaymentFactory readPaymentFactory;
     private final PisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
@@ -74,6 +73,7 @@ public class PaymentService {
     private final SinglePaymentSpi singlePaymentSpi;
     private final PeriodicPaymentSpi periodicPaymentSpi;
     private final BulkPaymentSpi bulkPaymentSpi;
+    private final SpiToXs2aTransactionalStatusMapper spiToXs2aTransactionalStatus;
 
 
     /**
@@ -146,7 +146,7 @@ public class PaymentService {
         }
 
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
-        Xs2aTransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(spiResponse.getPayload());
+        Xs2aTransactionStatus transactionStatus = spiToXs2aTransactionalStatus.mapToTransactionStatus(spiResponse.getPayload());
         return Optional.ofNullable(transactionStatus)
                    .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())
                    .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()

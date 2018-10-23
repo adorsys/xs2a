@@ -24,5 +24,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class PeriodicPaymentInitiationResponse extends PaymentInitiationResponse {
 
-    private PaymentType paymentType = PaymentType.PERIODIC;
+    @Override
+    PaymentType getPaymentType() {
+        return PaymentType.PERIODIC;
+    }
 }

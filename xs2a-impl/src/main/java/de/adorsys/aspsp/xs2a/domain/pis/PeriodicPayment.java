@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,8 +24,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
-import java.util.Optional;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -43,23 +40,4 @@ public class PeriodicPayment extends SinglePayment {
     @Min(1)
     @Max(31)
     private int dayOfExecution; //Day here max 31
-
-    @JsonIgnore
-    public boolean areValidExecutionAndPeriodDates() {
-        return isValidExecutionDateAndTime() && isValidPeriod();
-    }
-
-    @JsonIgnore
-    private boolean isValidPeriod() {
-        return isValidStartDate()
-                   && Optional.ofNullable(this.endDate)
-                          .map(d -> d.isAfter(this.startDate))
-                          .orElse(true);
-    }
-
-    @JsonIgnore
-    private boolean isValidStartDate() {
-        return this.startDate.isEqual(ChronoLocalDate.from(LocalDate.now()))
-                   || this.startDate.isAfter(ChronoLocalDate.from(LocalDate.now()));
-    }
 }

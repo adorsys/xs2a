@@ -16,43 +16,22 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspAddress;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspRemittance;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Optional;
 
 @Component
 public class SpiPaymentMapper {
-    public SpiPaymentInitialisationResponse mapToSpiPaymentResponse(@NotNull AspspSinglePayment aspspSinglePayment) {
-        SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
-        paymentResponse.setSpiTransactionFees(null);
-        paymentResponse.setSpiTransactionFeeIndicator(false);
-        paymentResponse.setScaMethods(null);
-        if (aspspSinglePayment.getPaymentId() == null) {
-            paymentResponse.setTransactionStatus(SpiTransactionStatus.RJCT);
-            paymentResponse.setPaymentId(aspspSinglePayment.getEndToEndIdentification());
-            paymentResponse.setPsuMessage(null);
-            paymentResponse.setTppMessages(Collections.singletonList("PAYMENT_FAILED"));
-        } else {
-            paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
-            paymentResponse.setPaymentId(aspspSinglePayment.getPaymentId());
-        }
-        return paymentResponse;
-    }
 
     @Nullable AspspTransactionStatus mapToAspspTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
@@ -75,17 +54,6 @@ public class SpiPaymentMapper {
                    .map(s -> new AspspAddress(s.getStreet(), s.getBuildingNumber(), s.getCity(), s.getPostalCode(), s.getCountry()))
                    .orElse(null);
     }
-
-    @Nullable AspspRemittance mapToAspspRemittance(SpiRemittance spiRemittance) {
-        return Optional.ofNullable(spiRemittance).map(s -> {
-            AspspRemittance mockRemittance = new AspspRemittance();
-            mockRemittance.setReference(s.getReference());
-            mockRemittance.setReferenceType(s.getReferenceType());
-            mockRemittance.setReferenceIssuer(s.getReferenceIssuer());
-            return mockRemittance;
-        }).orElse(null);
-    }
-
 
     AspspAccountReference mapToAspspAccountReference(@NotNull SpiAccountReference spiAccountReference) {
         return new AspspAccountReference(spiAccountReference.getIban(),
