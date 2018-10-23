@@ -20,14 +20,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Currency;
 
 @Data
+@ToString(exclude = "consent")
 @Entity(name = "pis_payment_data")
 @ApiModel(description = "pis payment entity", value = "PisPaymentData")
 public class PisPaymentData {
@@ -48,8 +50,8 @@ public class PisPaymentData {
     @ApiModelProperty(value = "Debtor account", required = true)
     private PisAccountReference debtorAccount;
 
-    @Column(name = "ultimate_debtor", nullable = false)
-    @ApiModelProperty(value = "Name of the ultimate debtor", required = true, example = "Mueller")
+    @Column(name = "ultimate_debtor")
+    @ApiModelProperty(value = "Name of the ultimate debtor", example = "Mueller")
     private String ultimateDebtor;
 
     @Column(name = "currency", nullable = false)
@@ -93,7 +95,7 @@ public class PisPaymentData {
 
     @Column(name = "requested_execution_time")
     @ApiModelProperty(value = "Requested execution time", example = "2020-01-01T15:30:35.035Z")
-    private LocalDateTime requestedExecutionTime;
+    private OffsetDateTime requestedExecutionTime;
 
     @Column(name = "ultimate_creditor")
     @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")

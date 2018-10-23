@@ -20,15 +20,13 @@ import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aScaStatus;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.AisConsentStatusResponse;
-import de.adorsys.psd2.consent.api.ConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -43,6 +41,7 @@ public class AisConsentService {
     private final RestTemplate consentRestTemplate;
     private final AisConsentRemoteUrls remoteAisConsentUrls;
     private final Xs2aAisConsentMapper aisConsentMapper;
+    private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
 
     /**
      * Sends a POST request to CMS to store created AISconsent
@@ -50,11 +49,10 @@ public class AisConsentService {
      * @param request          Request body storing main consent details
      * @param psuId            String representation of PSU`s identifier at ASPSP
      * @param tppId            String representation of TPP`s identifier from TPP Certificate
-     * @param aspspConsentData Aspsp private binary data
      * @return String representation of identifier of stored consent
      */
-    public String createConsent(CreateConsentReq request, String psuId, String tppId, AspspConsentData aspspConsentData) {
-        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuId, tppId, aspspConsentData);
+    public String createConsent(CreateConsentReq request, String psuId, String tppId) {
+        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuId, tppId);
         CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), createAisConsentRequest, CreateAisConsentResponse.class).getBody();
 
         return Optional.ofNullable(createAisConsentResponse)
@@ -68,6 +66,7 @@ public class AisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent
      */
+    // TODO don't use Spi models here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/431
     public SpiAccountConsent getAccountConsentById(String consentId) {
         return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentById(), SpiAccountConsent.class, consentId).getBody();
     }
@@ -78,6 +77,7 @@ public class AisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent Status
      */
+    // TODO don't use Spi models here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/431
     public SpiConsentStatus getAccountConsentStatusById(String consentId) {
         AisConsentStatusResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), AisConsentStatusResponse.class, consentId).getBody();
         return aisConsentMapper.mapToSpiConsentStatus(response.getConsentStatus())
@@ -111,7 +111,7 @@ public class AisConsentService {
      * @param actionStatus Enum value representing whether the acition is successful or errors occured
      */
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus) {
-        consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, actionStatus), Void.class);
+        consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new AisConsentActionRequest(tppId, consentId, actionStatus), Void.class);
     }
 
     /**
@@ -120,8 +120,8 @@ public class AisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
-    public Optional<String> createAisConsentAuthorization(String consentId, Xs2aScaStatus scaStatus, String psuId) {
-        AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorization(scaStatus, psuId);
+    public Optional<String> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, String psuId) {
+        AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuId);
 
         CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
             request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
@@ -139,7 +139,7 @@ public class AisConsentService {
 
     public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
         AisConsentAuthorizationResponse resp = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId).getBody();
-        return aisConsentMapper.mapToAccountConsentAuthorization(resp);
+        return aisConsentAuthorisationMapper.mapToAccountConsentAuthorization(resp);
     }
 
     /**
@@ -151,7 +151,7 @@ public class AisConsentService {
         Optional.ofNullable(updatePsuData)
             .ifPresent(req -> {
                 final String authorizationId = req.getAuthorizationId();
-                final AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorizationRequest(req);
+                final AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorizationRequest(req);
 
                 consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, authorizationId);
             });

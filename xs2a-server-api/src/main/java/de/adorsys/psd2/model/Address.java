@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,20 +12,17 @@ import java.util.Objects;
  * Address
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class Address {
     @JsonProperty("street")
     private String street = null;
-
     @JsonProperty("buildingNumber")
     private String buildingNumber = null;
-
     @JsonProperty("city")
     private String city = null;
-
     @JsonProperty("postalCode")
     private String postalCode = null;
-
     @JsonProperty("country")
     private String country = null;
 
@@ -55,7 +36,7 @@ public class Address {
      *
      * @return street
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 70)
     public String getStreet() {
         return street;
@@ -75,7 +56,7 @@ public class Address {
      *
      * @return buildingNumber
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getBuildingNumber() {
         return buildingNumber;
     }
@@ -94,7 +75,7 @@ public class Address {
      *
      * @return city
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getCity() {
         return city;
     }
@@ -113,7 +94,7 @@ public class Address {
      *
      * @return postalCode
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPostalCode() {
         return postalCode;
     }
@@ -132,7 +113,7 @@ public class Address {
      *
      * @return country
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public String getCountry() {
         return country;
@@ -141,7 +122,6 @@ public class Address {
     public void setCountry(String country) {
         this.country = country;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -152,7 +132,9 @@ public class Address {
             return false;
         }
         Address address = (Address) o;
-        return Objects.equals(this.street, address.street) && Objects.equals(this.buildingNumber, address.buildingNumber) && Objects.equals(this.city, address.city) && Objects.equals(this.postalCode, address.postalCode) && Objects.equals(this.country, address.country);
+        return Objects.equals(this.street, address.street) && Objects.equals(this.buildingNumber,
+            address.buildingNumber) && Objects.equals(this.city, address.city) && Objects.equals(this.postalCode,
+            address.postalCode) && Objects.equals(this.country, address.country);
     }
 
     @Override
@@ -164,7 +146,6 @@ public class Address {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Address {\n");
-
         sb.append("    street: ").append(toIndentedString(street)).append("\n");
         sb.append("    buildingNumber: ").append(toIndentedString(buildingNumber)).append("\n");
         sb.append("    city: ").append(toIndentedString(city)).append("\n");

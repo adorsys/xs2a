@@ -21,12 +21,12 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.9</version>
+        <version>1.10-M0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <commons.logging.version>1.2</commons.logging.version>
         <ruleset.basedir>../..</ruleset.basedir>
     </properties>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.9</version>
+            <version>1.10-M0</version>
         </dependency>
 
         <dependency>

@@ -18,13 +18,12 @@ package de.adorsys.aspsp.xs2a.service.profile;
 
 import de.adorsys.aspsp.xs2a.config.cache.CacheConfig;
 import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -44,13 +43,10 @@ public class AspspProfileServiceWrapper {
      * @return List of payment products supported by current ASPSP
      */
     public List<PaymentProduct> getAvailablePaymentProducts() {
-        return Optional.ofNullable(readAspspSettings().getAvailablePaymentProducts())
-                   .map(list -> list.stream()
-                                    .map(PaymentProduct::getByValue)
-                                    .filter(Optional::isPresent)
-                                    .map(Optional::get)
-                                    .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
+        List<PaymentProduct> availablePaymentProducts = readAspspSettings().getAvailablePaymentProducts();
+        return Optional.ofNullable(availablePaymentProducts)
+            .map(Collections::unmodifiableList)
+            .orElse(Collections.emptyList());
     }
 
     /**
@@ -58,24 +54,8 @@ public class AspspProfileServiceWrapper {
      *
      * @return List of payment types allowed by ASPSP
      */
-    public List<PisPaymentType> getAvailablePaymentTypes() {
-        List<String> availablePaymentTypes = readAvailablePaymentTypes();
-
-        return CollectionUtils.isEmpty(availablePaymentTypes)
-                   ? Collections.emptyList()
-                   : getPisPaymentTypes(availablePaymentTypes);
-    }
-
-    private List<String> readAvailablePaymentTypes() {
+    public List<PaymentType> getAvailablePaymentTypes() {
         return readAspspSettings().getAvailablePaymentTypes();
-    }
-
-    private List<PisPaymentType> getPisPaymentTypes(List<String> availablePaymentTypes) {
-        return availablePaymentTypes.stream()
-                   .map(PisPaymentType::getByValue)
-                   .filter(Optional::isPresent)
-                   .map(Optional::get)
-                   .collect(Collectors.toList());
     }
 
     /**

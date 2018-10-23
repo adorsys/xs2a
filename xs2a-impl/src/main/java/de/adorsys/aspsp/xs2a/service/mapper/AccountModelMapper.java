@@ -166,6 +166,10 @@ public class AccountModelMapper {
     }
 
     public <T> T mapToAccountReference12(Xs2aAccountReference reference) {
+        if (reference == null) {
+            return null;
+        }
+
         T accountReference = null;
 
         if (StringUtils.isNotBlank(reference.getIban())) {
@@ -208,9 +212,7 @@ public class AccountModelMapper {
                        targetAddress.setBuildingNumber(a.getBuildingNumber());
                        targetAddress.setCity(a.getCity());
                        targetAddress.setPostalCode(a.getPostalCode());
-                       Xs2aCountryCode code = new Xs2aCountryCode();
-                       code.setCode(a.getCountry());
-                       targetAddress.setCountry(code);
+                       targetAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
                        return targetAddress;
                    })
                    .orElseGet(Xs2aAddress::new);
@@ -228,7 +230,7 @@ public class AccountModelMapper {
 
     }
 
-    public TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport){
+    public TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport) {
         TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
         transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));
         transactionsResponse200Json.setBalances(mapToBalanceList(transactionsReport.getBalances()));

@@ -21,7 +21,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.9</version>
+        <version>1.10-M0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -41,21 +41,21 @@
         <!-- project dependencies -->
 
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>spi-api</artifactId>
-            <version>1.9</version>
+            <version>1.10-M0</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-remote</artifactId>
-            <version>1.9</version>
+            <version>1.10-M0</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>xs2a-impl</artifactId>
-            <version>1.9</version>
+            <version>1.10-M0</version>
         </dependency>
 
         <!-- spring dependencies -->

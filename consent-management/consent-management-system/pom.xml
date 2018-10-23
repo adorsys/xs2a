@@ -21,12 +21,13 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.9</version>
+        <version>1.10-M0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
+        <hibernate.version>5.3.6.Final</hibernate.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -39,18 +40,18 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.9</version>
+            <version>1.10-M0</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-api</artifactId>
-            <version>1.9</version>
+            <version>1.10-M0</version>
         </dependency>
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-remote</artifactId>
-            <version>1.9</version>
+            <version>1.10-M0</version>
         </dependency>
 
 
@@ -89,6 +90,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>${springfox.version}</version>
@@ -111,6 +118,7 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
+
 
         <!-- test dependencies -->
         <dependency>

@@ -11,6 +11,9 @@ metadata:
       [{
         "from": {
           "kind": "ImageStreamTag",
+            {{- if .Values.cmsPortal.image.namespace }}
+            "namespace": "{{ .Values.cmsPortal.image.namespace }}",
+            {{- end }}
           "name":"{{- if .Values.cmsPortal.image.stream }}{{ .Values.cmsPortal.image.name }}:{{ default "latest" .Values.cmsPortal.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-cmsportal:latest{{- end }}"
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"cms-portal\")].image"
@@ -39,6 +42,7 @@ spec:
       containers:
         - name: cms-portal
           image: " "
+          imagePullPolicy: {{ .Values.cmsPortal.image.pullPolicy }}
           ports:
           - containerPort: 8080
             protocol: TCP

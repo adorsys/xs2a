@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.component;
 
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalGenericConverter;
 

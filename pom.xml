@@ -21,9 +21,10 @@
 
     <groupId>de.adorsys.aspsp</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.9</version>
+    <version>1.10-M0</version>
     <modules>
         <module>xs2a-server-api</module>
+        <module>xs2a-core</module>
         <module>aspsp-profile</module>
         <module>xs2a-impl</module>
         <module>spi-api</module>
@@ -128,6 +129,8 @@
         <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
         <commons-validator.version>1.6</commons-validator.version>
         <swagger.annotations.version>1.5.20</swagger.annotations.version>
+        <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
+        <archunit-junit4.version>0.9.1</archunit-junit4.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
@@ -150,6 +153,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>${apache.commons.collections}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${jetbrains.annotations.version}</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
@@ -234,7 +243,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <additionalOptions>-Xdoclint:none</additionalOptions>
                         </configuration>
                         <executions>
                             <execution>

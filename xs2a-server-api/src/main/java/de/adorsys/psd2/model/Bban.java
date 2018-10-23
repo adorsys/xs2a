@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import io.swagger.annotations.ApiModel;
@@ -22,13 +6,21 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * Basic Bank Account Number (BBAN) Identifier  This data element can be used in the body of the Consent Request   Message for retrieving Account access Consent from this Account. This   data elements is used for payment Accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer.
+ * Basic Bank Account Number (BBAN) Identifier  This data element can be used in the body of the Consent Request
+ * Message for retrieving Account access Consent from this Account. This   data elements is used for payment Accounts
+ * which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).    Identifier used nationally by financial
+ * institutions, i.e., in individual countries,   generally as part of a National Account Numbering Scheme(s),
+ * which uniquely identifies the account of a customer.
  */
-@ApiModel(description = "Basic Bank Account Number (BBAN) Identifier  This data element can be used in the body of the Consent Request   Message for retrieving Account access Consent from this Account. This   data elements is used for payment Accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).       Identifier used nationally by financial institutions, i.e., in individual countries,    generally as part of a National Account Numbering Scheme(s),    which uniquely identifies the account of a customer. ")
+@ApiModel(description = "Basic Bank Account Number (BBAN) Identifier  This data element can be used in the body of " +
+    "the Consent Request   Message for retrieving Account access Consent from this Account. This   data elements is " +
+    "used for payment Accounts which have no IBAN.   ISO20022: Basic Bank Account Number (BBAN).    Identifier used " +
+    "nationally by financial institutions, i.e., in individual countries,   generally as part of a National Account " +
+    "Numbering Scheme(s),   which uniquely identifies the account of a customer. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class Bban {
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -49,7 +41,6 @@ public class Bban {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Bban {\n");
-
         sb.append("}");
         return sb.toString();
     }

@@ -26,6 +26,8 @@
     <include file="migration/remove_not_null_constraint_requested_execution_date_time-1.4.xml"/>
     <include file="migration/add_column_authorization_type-1.5.xml"/>
     <include file="migration/change_pis_tpp_info-1.6.xml"/>
+    <include file="migration/remove_not_null_constraint_ultimate_debtor-1.7.xml"/>
+
 
 
     <include file="migration/remove_length_restriction_tpp_id-1.3.xml"/>

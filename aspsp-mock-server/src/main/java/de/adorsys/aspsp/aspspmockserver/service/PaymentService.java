@@ -23,10 +23,7 @@ import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountReference;
 import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
 import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus;
 import de.adorsys.aspsp.aspspmockserver.domain.spi.consent.SpiConsentStatus;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.AspspPayment;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiCancelPayment;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiSinglePayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.*;
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +37,6 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType.PERIODIC;
 import static de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType.SINGLE;
@@ -63,7 +59,7 @@ public class PaymentService {
      * @return Optional of saved single payment
      */
     public Optional<SpiSinglePayment> addPayment(@NotNull SpiSinglePayment payment) {
-        if (areFundsSufficient(payment.getDebtorAccount(), payment.getInstructedAmount().getAmount())) {
+        if (payment.getInstructedAmount() != null && areFundsSufficient(payment.getDebtorAccount(), payment.getInstructedAmount().getAmount())) {
             AspspPayment saved = paymentRepository.save(paymentMapper.mapToAspspPayment(payment, SINGLE));
             return Optional.ofNullable(paymentMapper.mapToSpiSinglePayment(saved));
         }
@@ -100,8 +96,10 @@ public class PaymentService {
      * @return SpiPaymentStatus status of payment
      */
     public Optional<SpiTransactionStatus> getPaymentStatusById(String paymentId) {
-        return Optional.ofNullable(paymentRepository.findOne(paymentId))
-                   .map(AspspPayment::getPaymentStatus);
+        List<AspspPayment> payments = paymentRepository.findByPaymentIdOrBulkId(paymentId, paymentId);
+        return payments.isEmpty()
+                   ? Optional.empty()
+                   : Optional.of(payments.get(0).getPaymentStatus());
     }
 
     /**
@@ -110,15 +108,22 @@ public class PaymentService {
      * @param payments Bulk payment
      * @return list of single payments forming bulk payment
      */
-    public List<SpiSinglePayment> addBulkPayments(List<SpiSinglePayment> payments) {
-        List<AspspPayment> aspspPayments = paymentMapper.mapToAspspPaymentList(payments).stream()
-                                               .peek(p -> {
-                                                   if (isNonExistingAccount(p)) {
-                                                       p.setPaymentStatus(SpiTransactionStatus.RJCT);
-                                                   }
-                                               }).collect(Collectors.toList());
+    public Optional<SpiBulkPayment> addBulkPayments(SpiBulkPayment payments) {
+        List<AspspPayment> aspspPayments = paymentMapper.mapToAspspPaymentList(payments.getPayments());
+        Optional<AspspPayment> firstInvalid = aspspPayments.stream()
+                                                  .filter(this::isNonExistingAccount)
+                                                  .findFirst();
+
+        if (firstInvalid.isPresent()) {
+            return Optional.empty();
+        }
+
         List<AspspPayment> savedPayments = paymentRepository.save(aspspPayments);
-        return paymentMapper.mapToSpiSinglePaymentList(savedPayments);
+        SpiBulkPayment result = new SpiBulkPayment();
+        result.setPayments(paymentMapper.mapToSpiSinglePaymentList(savedPayments));
+        result.setPaymentId(savedPayments.get(0).getBulkId());
+
+        return Optional.of(result);
     }
 
     private boolean isNonExistingAccount(AspspPayment p) {

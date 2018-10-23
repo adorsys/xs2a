@@ -25,6 +25,9 @@
         <dropSequence sequenceName="pis_tpp_info_id_seq"/>
         <createSequence sequenceName="tpp_info_id_seq"/>
 
+        <sql dbms="mariadb">DROP SEQUENCE IF EXISTS pis_tpp_info_id_seq</sql>
+        <sql dbms="mariadb">CREATE SEQUENCE tpp_info_id_seq</sql>
+
         <renameTable newTableName="tpp_info"
                      oldTableName="pis_tpp_info"/>
 
@@ -39,30 +42,30 @@
                     tableName="tpp_info"/>
 
         <dropNotNullConstraint columnName="redirect_uri"
-                               tableName="tpp_info"/>
+                               tableName="tpp_info" columnDataType="VARCHAR(255)"/>
         <dropNotNullConstraint columnName="nok_redirect_uri"
-                               tableName="tpp_info"/>
+                               tableName="tpp_info" columnDataType="VARCHAR(255)"/>
 
         <addColumn tableName="tpp_info">
-            <column defaultValue="12345987" name="authority_id" type="VARCHAR">
+            <column defaultValue="12345987" name="authority_id" type="CLOB">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="authority name" name="authority_name" type="VARCHAR">
+            <column defaultValue="authority name" name="authority_name" type="CLOB">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="Germany" name="country" type="VARCHAR">
+            <column defaultValue="Germany" name="country" type="CLOB">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="Organisation" name="organisation" type="VARCHAR">
+            <column defaultValue="Organisation" name="organisation" type="CLOB">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="Organisation unit" name="organisation_unit" type="VARCHAR">
+            <column defaultValue="Organisation unit" name="organisation_unit" type="CLOB">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="Nuremberg" name="city" type="VARCHAR">
+            <column defaultValue="Nuremberg" name="city" type="CLOB">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="Bayern" name="state" type="VARCHAR">
+            <column defaultValue="Bayern" name="state" type="CLOB">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -71,7 +74,7 @@
             <column name="tpp_info_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="tpp_role" type="VARCHAR">
+            <column name="tpp_role" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
         </createTable>

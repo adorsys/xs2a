@@ -16,26 +16,26 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
+import java.util.Collections;
 
 @Component
 public class SpiPaymentMapper {
-    public SpiPaymentInitialisationResponse mapToSpiPaymentResponse(@NotNull SpiSinglePayment spiSinglePayment) {
+
+    public SpiPaymentInitialisationResponse mapToSpiPaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment spiSinglePayment) {
         SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
         paymentResponse.setSpiTransactionFees(null);
         paymentResponse.setSpiTransactionFeeIndicator(false);
         paymentResponse.setScaMethods(null);
-        paymentResponse.setTppRedirectPreferred(false);
         if (spiSinglePayment.getPaymentId() == null) {
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RJCT);
             paymentResponse.setPaymentId(spiSinglePayment.getEndToEndIdentification());
             paymentResponse.setPsuMessage(null);
-            paymentResponse.setTppMessages(new String[]{"PAYMENT_FAILED"}); //TODO Create ENUM and update everywhere applicable https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/348
+            paymentResponse.setTppMessages(Collections.singletonList("PAYMENT_FAILED"));
         } else {
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
             paymentResponse.setPaymentId(spiSinglePayment.getPaymentId());
@@ -43,3 +43,4 @@ public class SpiPaymentMapper {
         return paymentResponse;
     }
 }
+

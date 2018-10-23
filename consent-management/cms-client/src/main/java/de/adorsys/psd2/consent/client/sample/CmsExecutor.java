@@ -17,13 +17,10 @@
 package de.adorsys.psd2.consent.client.sample;
 
 import de.adorsys.psd2.consent.api.*;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.pis.CmsRemittance;
+import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
@@ -32,6 +29,8 @@ import de.adorsys.psd2.consent.client.cms.model.ais.*;
 import de.adorsys.psd2.consent.client.cms.model.pis.*;
 import de.adorsys.psd2.consent.client.core.Configuration;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +38,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -51,8 +50,8 @@ public class CmsExecutor {
     private static final String CMS_BASE_URL = "http://localhost:38080";
     private static final int CONNECTION_TIMEOUT = 5000;
     private static final int CONNECTION_REQUEST_TIMEOUT = 5000;
-    private static String consentId = "Test consent id";
-    private static String paymentId = "5bab5ff0a3cd5b05a56c9263";
+    private static final String CONSENT_ID = "Test consent id";
+    private static final String PAYMENT_ID = "5bab5ff0a3cd5b05a56c9263";
 
     /**
      * Makes calls to CMS PIS and AIS endpoints and logs the response
@@ -88,8 +87,7 @@ public class CmsExecutor {
      */
     private static void createAisConsent(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         Optional<CreateAisConsentResponse> createAisResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new CreateAisConsentMethod(buildAisConsentRequest())));
-        createAisResponse.ifPresent(resp -> consentId = resp.getConsentId());
-        logger.info("Consent ID: " + consentId);
+        createAisResponse.ifPresent(resp -> logger.info("Consent ID: " + resp.getConsentId()));
     }
 
     /**
@@ -99,7 +97,7 @@ public class CmsExecutor {
      */
     private static void getAisConsentById(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .build();
         Optional<AisAccountConsent> aisAccountConsent = Optional.ofNullable(cmsServiceInvoker.invoke(new GetAisConsentMethod(uriParams)));
         aisAccountConsent.ifPresent(consent -> logger.info("Ais account consent status: " + consent.getConsentStatus()));
@@ -111,7 +109,8 @@ public class CmsExecutor {
      * @param cmsServiceInvoker Service, performing rest call
      */
     private static void saveConsentActionLog(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
-        cmsServiceInvoker.invoke(new SaveConsentActionLogMethod(new ConsentActionRequest("tpp-id", consentId, ActionStatus.SUCCESS)));
+        cmsServiceInvoker.invoke(new SaveConsentActionLogMethod(new AisConsentActionRequest("tpp-id",
+                                                                                            CONSENT_ID, ActionStatus.SUCCESS)));
     }
 
     /**
@@ -121,7 +120,7 @@ public class CmsExecutor {
      */
     private static void getConsentStatusById(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .build();
         Optional<AisConsentStatusResponse> consentStatusResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetConsentStatusByIdMethod(uriParams)));
         consentStatusResponse.ifPresent(status -> logger.info("Status of the consent: " + status.getConsentStatus().name()));
@@ -134,7 +133,7 @@ public class CmsExecutor {
      */
     private static void updateConsentAccess(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .build();
         Optional<CreateAisConsentResponse> updateAccessResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateConsentAccessMethod(buildAccess(), uriParams)));
         updateAccessResponse.ifPresent(resp -> logger.info("Access was updated in: " + resp.getConsentId()));
@@ -147,9 +146,9 @@ public class CmsExecutor {
      */
     private static void getAisConsentAspspData(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .build();
-        Optional<UpdateConsentAspspDataRequest> getAspspDataResponse = Optional.of(cmsServiceInvoker.invoke(new GetAisConsentAspspDataMethod(uriParams)));
+        Optional<CmsAspspConsentDataBase64> getAspspDataResponse = Optional.of(cmsServiceInvoker.invoke(new GetAisConsentAspspDataMethod(uriParams)));
         getAspspDataResponse.ifPresent(resp -> logger.info("Ais consent aspsp data: " + resp.getAspspConsentDataBase64()));
     }
 
@@ -160,9 +159,9 @@ public class CmsExecutor {
      */
     private static void updateAisConsentAspspData(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .build();
-        Optional<CreateAisConsentResponse> updateAspspDataResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateAisConsentAspspDataMethod(buildUpdateConsentAspspDataRequest(), uriParams)));
+        Optional<CmsAspspConsentDataBase64> updateAspspDataResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateAisConsentAspspDataMethod(buildCmsAspspConsentDataBase64(), uriParams)));
         updateAspspDataResponse.ifPresent(resp -> logger.info("Ais consent aspsp data was updated in: " + resp.getConsentId()));
     }
 
@@ -173,7 +172,7 @@ public class CmsExecutor {
      */
     private static void updateConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .addPathVariable("status", CmsConsentStatus.REVOKED_BY_PSU.name())
                                       .build();
         cmsServiceInvoker.invoke(new UpdateConsentStatusMethod(uriParams));
@@ -211,10 +210,10 @@ public class CmsExecutor {
     /**
      * Creates consent aspsp data update request
      *
-     * @return UpdateConsentAspspDataRequest
+     * @return CmsAspspConsentDataBase64
      */
-    private static UpdateConsentAspspDataRequest buildUpdateConsentAspspDataRequest() {
-        UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
+    private static CmsAspspConsentDataBase64 buildCmsAspspConsentDataBase64() {
+        CmsAspspConsentDataBase64 request = new CmsAspspConsentDataBase64();
         byte[] aspspCnsentData = Base64.getEncoder().encode("zdxcvvzzzxcvzzzz".getBytes());
         request.setAspspConsentDataBase64(Base64.getEncoder().encodeToString(aspspCnsentData));
         return request;
@@ -227,8 +226,7 @@ public class CmsExecutor {
      */
     private static void createPaymentConsent(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         Optional<CreatePisConsentResponse> createPisResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new CreatePaymentConsentMethod(buildPisConsentRequest())));
-        createPisResponse.ifPresent(resp -> consentId = resp.getConsentId());
-        logger.info("Consent ID: " + consentId);
+        createPisResponse.ifPresent(resp ->  logger.info("Consent ID: " + resp.getConsentId()));
     }
 
     /**
@@ -238,7 +236,7 @@ public class CmsExecutor {
      */
     private static void getPaymentConsentById(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .build();
         Optional<PisConsentResponse> pisAccountConsent = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentConsentByIdMethod(uriParams)));
         pisAccountConsent.ifPresent(consent -> logger.info("Pis account consent status: " + consent.getConsentStatus()));
@@ -251,7 +249,7 @@ public class CmsExecutor {
      */
     private static void getPaymentConsentStatusById(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .build();
         Optional<PisConsentStatusResponse> consentStatusResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentConsentStatusByIdMethod(uriParams)));
         consentStatusResponse.ifPresent(response -> logger.info("Status of the consent: " + response.getConsentStatus().name()));
@@ -264,9 +262,9 @@ public class CmsExecutor {
      */
     private static void getPisConsentAspspData(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("payment-id", paymentId)
+                                      .addPathVariable("payment-id", PAYMENT_ID)
                                       .build();
-        Optional<UpdateConsentAspspDataRequest> getAspspDataResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPisConsentAspspDataMethod(uriParams)));
+        Optional<CmsAspspConsentDataBase64> getAspspDataResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPisConsentAspspDataMethod(uriParams)));
         getAspspDataResponse.ifPresent(resp -> logger.info("Pis consent aspsp data: " + resp.getAspspConsentDataBase64()));
     }
 
@@ -278,9 +276,9 @@ public class CmsExecutor {
      */
     private static void updatePisConsentAspspData(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .build();
-        Optional<CreatePisConsentResponse> updateAspspDataResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdatePisConsentAspspDataMethod(buildUpdateConsentAspspDataRequest(), uriParams)));
+        Optional<CmsAspspConsentDataBase64> updateAspspDataResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdatePisConsentAspspDataMethod(buildCmsAspspConsentDataBase64(), uriParams)));
         updateAspspDataResponse.ifPresent(resp -> logger.info("Pis consent aspsp data was updated in: " + resp.getConsentId()));
     }
 
@@ -291,7 +289,7 @@ public class CmsExecutor {
      */
     private static void updatePaymentConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("consent-id", CONSENT_ID)
                                       .addPathVariable("status", CmsConsentStatus.REVOKED_BY_PSU.name())
                                       .build();
         cmsServiceInvoker.invoke(new UpdatePaymentConsentStatusMethod(uriParams));
@@ -305,14 +303,13 @@ public class CmsExecutor {
     private static PisConsentRequest buildPisConsentRequest() {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(singletonList(buildPisPayment()));
-        request.setPaymentProduct(PisPaymentProduct.SCT);
-        request.setPaymentType(PisPaymentType.SINGLE);
+        request.setPaymentProduct(PaymentProduct.SEPA);
+        request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
             Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
             "authority id", "authority name", "Germany", "Organisation",
             "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
             "Nok redirect URI"));
-        request.setAspspConsentData("zzzzzzzz".getBytes());
         return request;
     }
 
@@ -338,7 +335,7 @@ public class CmsExecutor {
         payment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
         payment.setRemittanceInformationStructured(buildCmsRemittance("Ref Number Merchant", "reference type", "reference issuer"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, 1, 1));
-        payment.setRequestedExecutionTime(LocalDateTime.parse("2020-01-01T15:30:35.035Z",
+        payment.setRequestedExecutionTime(OffsetDateTime.parse("2020-01-01T15:30:35.035Z",
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
         payment.setUltimateCreditor("Telekom");
         payment.setPurposeCode("BCENECEQ");

@@ -36,6 +36,12 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+
+/**
+ * @deprecated since 1.8. Will be removed in 1.10
+ * TODO create new version of this class https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/365
+ */
+@Deprecated
 @Slf4j
 @Service
 @RequiredArgsConstructor

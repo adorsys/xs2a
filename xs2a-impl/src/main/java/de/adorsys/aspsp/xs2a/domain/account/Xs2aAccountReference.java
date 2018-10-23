@@ -16,15 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Currency;
-import java.util.Optional;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @ApiModel(description = "Account Reference", value = "Xs2aAccountReference")
 public class Xs2aAccountReference {
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
@@ -44,11 +46,4 @@ public class Xs2aAccountReference {
 
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
-
-    @JsonIgnore
-    public boolean matches(Xs2aAccountReference otherReference) {
-        return Optional.ofNullable(otherReference.getCurrency())
-                   .map(cur -> iban.equals(otherReference.getIban()) && currency == cur)
-                   .orElseGet(() -> iban.equals(otherReference.getIban()));
-    }
 }

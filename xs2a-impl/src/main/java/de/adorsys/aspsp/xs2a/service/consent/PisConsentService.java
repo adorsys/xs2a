@@ -25,12 +25,16 @@ import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aToCmsPisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.*;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,19 +54,54 @@ public class PisConsentService {
     private final RestTemplate consentRestTemplate;
     private final PisConsentRemoteUrls remotePisConsentUrls;
     private final Xs2aPisConsentMapper pisConsentMapper;
+    private final Xs2aToCmsPisConsentRequest xs2aToCmsPisConsentRequest;
     private final AuthorisationMethodService authorisationMethodService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
 
-    public ResponseObject createPisConsent(Object payment, Object xs2aResponse, PaymentRequestParameters requestParameters, TppInfo tppInfo) {
+    /**
+     * Creates PIS consent
+     *
+     * @param parameters Payment request parameters to get needed payment info
+     * @param tppInfo    information about TPP
+     * @return String consentId
+     */
+    // TODO rename method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/409
+    public CreatePisConsentResponse createPisConsent(PaymentInitiationParameters parameters, TppInfo tppInfo) {
+        PisConsentRequest request = new PisConsentRequest();
+        request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));
+        request.setPaymentProduct(parameters.getPaymentProduct());
+        request.setPaymentType(parameters.getPaymentType());
+        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
+    }
+
+    public void updateSinglePaymentInPisConsent(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {
+        PisConsentRequest pisConsentRequest = xs2aToCmsPisConsentRequest.mapToCmsSinglePisConsentRequest(singlePayment, paymentInitiationParameters.getPaymentProduct());
+        consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
+    }
+
+    public void updatePeriodicPaymentInPisConsent(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {
+        PisConsentRequest pisConsentRequest = xs2aToCmsPisConsentRequest.mapToCmsPeriodicPisConsentRequest(periodicPayment, paymentInitiationParameters.getPaymentProduct());
+        consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
+    }
+
+    public void updateBulkPaymentInPisConsent(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {
+        PisConsentRequest pisConsentRequest = xs2aToCmsPisConsentRequest.mapToCmsBulkPisConsentRequest(bulkPayment, paymentInitiationParameters.getPaymentProduct());
+        consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
+    }
+
+    /**
+     * @deprecated since 1.8. Will be removed in 1.10
+     * {@link de.adorsys.aspsp.xs2a.service.consent.PisConsentService#createPisConsent(PaymentInitiationParameters, TppInfo)}
+     */
+    @Deprecated
+    public ResponseObject createPisConsent(Object payment, Object xs2aResponse, PaymentInitiationParameters requestParameters, TppInfo tppInfo) {
         CreatePisConsentData consentData = getPisConsentData(payment, xs2aResponse, tppInfo, requestParameters, new AspspConsentData());
 
         PisConsentRequest pisConsentRequest;
-        if (requestParameters.getPaymentType() == SINGLE) {
-            pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForSinglePayment(consentData);
-        } else if (requestParameters.getPaymentType() == PERIODIC) {
-            pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForPeriodicPayment(consentData);
+        if (requestParameters.getPaymentType() == PERIODIC) {
+            pisConsentRequest = xs2aToCmsPisConsentRequest.mapToCmsPisConsentRequestForPeriodicPayment(consentData);
         } else {
-            pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForBulkPayment(consentData);
+            pisConsentRequest = xs2aToCmsPisConsentRequest.mapToCmsPisConsentRequestForBulkPayment(consentData);
         }
         CreatePisConsentResponse consentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), pisConsentRequest, CreatePisConsentResponse.class).getBody();
 
@@ -94,19 +133,19 @@ public class PisConsentService {
         return response;
     }
 
-    private <T> Object createPisAuthorisationForImplicitApproach(T response, PaymentType paymentType) {
+    private Object createPisAuthorisationForImplicitApproach(Object response, PaymentType paymentType) {
         if (EnumSet.of(SINGLE, PERIODIC).contains(paymentType)) {
             PaymentInitialisationResponse resp = (PaymentInitialisationResponse) response;
             return pisScaAuthorisationService.createConsentAuthorisation(resp.getPaymentId(), paymentType)
                        .map(r -> extendResponseFieldsWithAuthData(r, resp))
-                       .orElseGet(() -> resp);
+                       .orElse(resp);
         } else {
             List<PaymentInitialisationResponse> responses = (List<PaymentInitialisationResponse>) response;
             return pisScaAuthorisationService.createConsentAuthorisation(responses.get(0).getPaymentId(), paymentType)
                        .map(r -> responses.stream()
                                      .map(pr -> extendResponseFieldsWithAuthData(r, pr))
                                      .collect(Collectors.toList()))
-                       .orElseGet(() -> responses);
+                       .orElse(responses);
         }
     }
 
@@ -116,18 +155,18 @@ public class PisConsentService {
         return response;
     }
 
-    private CreatePisConsentData getPisConsentData(Object payment, Object xs2aResponse, TppInfo tppInfo, PaymentRequestParameters requestParameters, AspspConsentData aspspConsentData) {
+    private CreatePisConsentData getPisConsentData(Object payment, Object xs2aResponse, TppInfo tppInfo, PaymentInitiationParameters requestParameters, AspspConsentData aspspConsentData) {
         CreatePisConsentData pisConsentData;
         if (requestParameters.getPaymentType() == SINGLE) {
             SinglePayment singlePayment = (SinglePayment) payment;
             PaymentInitialisationResponse response = (PaymentInitialisationResponse) xs2aResponse;
             singlePayment.setPaymentId(response.getPaymentId());
-            pisConsentData = new CreatePisConsentData(singlePayment, tppInfo, requestParameters.getPaymentProduct().getCode(), aspspConsentData);
+            pisConsentData = new CreatePisConsentData(singlePayment, tppInfo, requestParameters.getPaymentProduct(), aspspConsentData);
         } else if (requestParameters.getPaymentType() == PERIODIC) {
             PeriodicPayment periodicPayment = (PeriodicPayment) payment;
             PaymentInitialisationResponse response = (PaymentInitialisationResponse) xs2aResponse;
             periodicPayment.setPaymentId(response.getPaymentId());
-            pisConsentData = new CreatePisConsentData(periodicPayment, tppInfo, requestParameters.getPaymentProduct().getCode(), aspspConsentData);
+            pisConsentData = new CreatePisConsentData(periodicPayment, tppInfo, requestParameters.getPaymentProduct(), aspspConsentData);
         } else {
             BulkPayment payments = (BulkPayment) payment;
             List<PaymentInitialisationResponse> responses = (List<PaymentInitialisationResponse>) xs2aResponse;
@@ -136,7 +175,7 @@ public class PisConsentService {
                                                                                .boxed()
                                                                                .collect(Collectors.toMap(payments.getPayments()::get, responses::get));
             paymentMap.forEach((k, v) -> k.setPaymentId(v.getPaymentId()));
-            pisConsentData = new CreatePisConsentData(paymentMap, tppInfo, requestParameters.getPaymentProduct().getCode(), aspspConsentData);
+            pisConsentData = new CreatePisConsentData(paymentMap, tppInfo, requestParameters.getPaymentProduct(), aspspConsentData);
         }
         return pisConsentData;
     }

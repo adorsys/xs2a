@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.server.web;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsConsentStatus;
-import de.adorsys.psd2.consent.api.PisConsentStatusResponse;
+import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -155,5 +155,15 @@ public class PisConsentController {
         return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
+    @PutMapping(path = "/{consent-id}/payment")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = CreatePisConsentResponse.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updatePaymentConsent(@RequestBody PisConsentRequest request, @PathVariable("consent-id") String consentId) {
+        pisConsentService.updatePaymentConsent(request, consentId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

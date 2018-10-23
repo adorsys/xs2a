@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import io.swagger.annotations.ApiModel;
@@ -22,13 +6,18 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * Body of the response for a successful payment initiation status request in case of an XML based endpoint.  The status is returned as a pain.002 structure.   urn:iso:std:iso:20022:tech:xsd:pain.002.001.03  The chosen XML schema of the Status Request is following the XML schema definitions of the original pain.001 schema.
+ * Body of the response for a successful payment initiation status request in case of an XML based endpoint.  The
+ * status is returned as a pain.002 structure.  urn:iso:std:iso:20022:tech:xsd:pain.002.001.03  The chosen XML schema
+ * of the Status Request is following the XML schema definitions of the original pain.001 schema.
  */
-@ApiModel(description = "Body of the response for a successful payment initiation status request in case of an XML based endpoint.  The status is returned as a pain.002 structure.   urn:iso:std:iso:20022:tech:xsd:pain.002.001.03  The chosen XML schema of the Status Request is following the XML schema definitions of the original pain.001 schema. ")
+@ApiModel(description = "Body of the response for a successful payment initiation status request in case of an XML " +
+    "based endpoint.  The status is returned as a pain.002 structure.  urn:iso:std:iso:20022:tech:xsd:pain.002.001.03" +
+    "  The chosen XML schema of the Status Request is following the XML schema definitions of the original pain.001 " +
+    "schema. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PaymentInitiationStatusResponse200Xml {
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -49,7 +38,6 @@ public class PaymentInitiationStatusResponse200Xml {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PaymentInitiationStatusResponse200Xml {\n");
-
         sb.append("}");
         return sb.toString();
     }

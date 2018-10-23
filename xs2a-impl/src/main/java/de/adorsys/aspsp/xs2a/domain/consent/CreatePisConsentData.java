@@ -20,7 +20,8 @@ import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.Value;
 
 import java.util.Map;
@@ -31,10 +32,10 @@ public class CreatePisConsentData {
     private Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap;
     private PeriodicPayment periodicPayment;
     private TppInfo tppInfo;
-    private String paymentProduct;
+    private PaymentProduct paymentProduct;
     private AspspConsentData aspspConsentData;
 
-    public CreatePisConsentData(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
+    public CreatePisConsentData(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct, AspspConsentData aspspConsentData) {
         this.singlePayment = singlePayment;
         this.tppInfo = tppInfo;
         this.paymentProduct = paymentProduct;
@@ -43,7 +44,7 @@ public class CreatePisConsentData {
         this.periodicPayment = null;
     }
 
-    public CreatePisConsentData(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
+    public CreatePisConsentData(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap, TppInfo tppInfo, PaymentProduct paymentProduct, AspspConsentData aspspConsentData) {
         this.paymentIdentifierMap = paymentIdentifierMap;
         this.tppInfo = tppInfo;
         this.paymentProduct = paymentProduct;
@@ -52,7 +53,7 @@ public class CreatePisConsentData {
         this.periodicPayment = null;
     }
 
-    public CreatePisConsentData(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
+    public CreatePisConsentData(PeriodicPayment periodicPayment, TppInfo tppInfo, PaymentProduct paymentProduct, AspspConsentData aspspConsentData) {
         this.periodicPayment = periodicPayment;
         this.tppInfo = tppInfo;
         this.paymentProduct = paymentProduct;

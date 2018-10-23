@@ -7,17 +7,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets messageCodeTextPisSpecific
  */
 public enum MessageCodeTextPisSpecific {
-
-    PRODUCT_INVALID("PRODUCT_INVALID"),
-
-    PRODUCT_UNKNOWN("PRODUCT_UNKNOWN"),
-
-    PAYMENT_FAILED("PAYMENT_FAILED"),
-
-    REQUIRED_KID_MISSING("REQUIRED_KID_MISSING"),
-
-    EXECUTION_DATE_INVALID("EXECUTION_DATE_INVALID");
-
+    PRODUCT_INVALID("PRODUCT_INVALID"), PRODUCT_UNKNOWN("PRODUCT_UNKNOWN"), PAYMENT_FAILED("PAYMENT_FAILED"),
+    REQUIRED_KID_MISSING("REQUIRED_KID_MISSING"), EXECUTION_DATE_INVALID("EXECUTION_DATE_INVALID");
     private String value;
 
     MessageCodeTextPisSpecific(String value) {

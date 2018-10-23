@@ -3,6 +3,10 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
+{{- with .Values.aspspMock.route.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
   name: {{ template "psd2.fullname" . }}-aspsp-mock
   labels:
 {{ include "psd2.labels" . | indent 4 }}

@@ -20,12 +20,13 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.9</version>
+        <version>1.10-M0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>de.adorsys.psd2</groupId>
     <artifactId>spi-api</artifactId>
     <packaging>jar</packaging>
 
@@ -33,12 +34,6 @@
     <description>xs2a spi interfaces for aspsp</description>
 
     <properties>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <swagger.annotations.version>1.5.19</swagger.annotations.version>
-        <apache.commons.version>3.7</apache.commons.version>
-        <java.version>1.8</java.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
 
@@ -48,17 +43,18 @@
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-core</artifactId>
+            <version>1.10-M0</version>
+        </dependency>
+
+<!-- TODO remove dependency to consent-api https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332 -->
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.9</version>
+            <version>1.10-M0</version>
         </dependency>
 
         <!-- other dependencies -->
-
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -73,16 +69,33 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${apache.commons.version}</version>
+            <version>${apache.commons-lang3.version}</version>
         </dependency>
-
     </dependencies>
 
+<!-- TODO enable and resolve problems
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <source>1.8</source> &lt;!&ndash; TODO &ndash;&gt;
+                    <target>1.8</target>
+                    <compilerArgs>
+                        <arg>-Xplugin:Traute</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>tech.harmonysoft</groupId>
+                            <artifactId>traute-javac</artifactId>
+                            <version>1.1.8</version> &lt;!&ndash; TODO put to common versions &ndash;&gt;
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+-->
 </project>

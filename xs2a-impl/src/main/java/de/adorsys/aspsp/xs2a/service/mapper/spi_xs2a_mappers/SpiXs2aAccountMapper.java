@@ -20,8 +20,8 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
-import de.adorsys.aspsp.xs2a.spi.domain.account.*;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.account.*;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -29,7 +29,12 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated since 1.8. Will be removed in 1.10
+ * TODO create new version of this class https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/405
+ */
 @Component
+@Deprecated
 public class SpiXs2aAccountMapper {
     public Xs2aAccountDetails mapToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
@@ -95,7 +100,7 @@ public class SpiXs2aAccountMapper {
 
     public Xs2aAccountReference mapToXs2aAccountReference(SpiAccountReference spiAccountReference) {
         return Optional.ofNullable(spiAccountReference)
-                   .map(spiReference -> getXs2aAccountReference(spiReference.getIban(), spiReference.getBban(),
+                   .map(spiReference -> new Xs2aAccountReference(spiReference.getIban(), spiReference.getBban(),
                        spiReference.getPan(), spiReference.getMaskedPan(), spiReference.getMsisdn(),
                        spiReference.getCurrency()))
                    .orElse(null);
@@ -180,7 +185,7 @@ public class SpiXs2aAccountMapper {
 
     public Xs2aAccountReference mapToXs2aAccountReference(Xs2aAccountDetails details) {
         return Optional.ofNullable(details)
-                   .map(d -> getXs2aAccountReference(d.getIban(), d.getBban(), d.getPan(), d.getMaskedPan(), d.getMsisdn(), d.getCurrency()))
+                   .map(d -> new Xs2aAccountReference(d.getIban(), d.getBban(), d.getPan(), d.getMaskedPan(), d.getMsisdn(), d.getCurrency()))
                    .orElse(null);
     }
 
@@ -207,17 +212,6 @@ public class SpiXs2aAccountMapper {
                        return exchangeRate;
                    })
                    .orElse(null);
-    }
-
-    private Xs2aAccountReference getXs2aAccountReference(String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
-        Xs2aAccountReference reference = new Xs2aAccountReference();
-        reference.setIban(iban);
-        reference.setBban(bban);
-        reference.setPan(pan);
-        reference.setMaskedPan(maskedPan);
-        reference.setMsisdn(msisdn);
-        reference.setCurrency(currency);
-        return reference;
     }
 
     private CashAccountType mapToAccountType(SpiAccountType spiAccountType) {

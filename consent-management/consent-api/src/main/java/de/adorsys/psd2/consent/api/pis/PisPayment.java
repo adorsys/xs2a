@@ -18,13 +18,12 @@ package de.adorsys.psd2.consent.api.pis;
 
 import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.CmsRemittance;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Currency;
 
 @Data
@@ -72,7 +71,7 @@ public class PisPayment {
     private LocalDate requestedExecutionDate;
 
     @ApiModelProperty(value = "Requested execution time", example = "2020-01-01T15:30:35.035Z")
-    private LocalDateTime requestedExecutionTime;
+    private OffsetDateTime requestedExecutionTime;
 
     @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")
     private String ultimateCreditor;

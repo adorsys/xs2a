@@ -19,27 +19,38 @@ package de.adorsys.aspsp.xs2a.domain.consent;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+// Class can't be immutable, because it it used in aspect (links setting)
 @Data
+@NoArgsConstructor
 public class UpdateConsentPsuDataResponse {
 
     private String psuId;
     private String consentId;
     private String authorizationId;
 
-    private Xs2aScaStatus scaStatus;
+    private ScaStatus scaStatus;
     private List<CmsScaMethod> availableScaMethods;
     private String chosenScaMethod;
     private String authenticationMethodId;
     private String scaAuthenticationData;
-    private String password;
     private Links links;
 
     private ConsentAuthorizationResponseLinkType responseLinkType;
     private String psuMessage;
 
     private MessageErrorCode errorCode;
+
+    public UpdateConsentPsuDataResponse(ScaStatus scaStatus) {
+        this.scaStatus = scaStatus;
+    }
+
+    public boolean hasError() {
+        return errorCode != null;
+    }
 }

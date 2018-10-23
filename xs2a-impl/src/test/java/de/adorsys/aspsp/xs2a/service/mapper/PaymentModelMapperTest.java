@@ -24,7 +24,11 @@ import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperPsd2;
+import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +43,7 @@ import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
+import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -108,7 +112,7 @@ public class PaymentModelMapperTest {
         PaymentInitialisationResponse givenResponse = getXs2aPaymentResponse();
         PaymentInitationRequestResponse201 expectedResponse = getPaymentResponse12();
         //When
-        PaymentInitationRequestResponse201 result = (PaymentInitationRequestResponse201) paymentModelMapperPsd2.mapToPaymentInitiationResponse12(givenResponse, getRequestParameters(SINGLE));
+        PaymentInitationRequestResponse201 result = (PaymentInitationRequestResponse201) paymentModelMapperPsd2.mapToPaymentInitiationResponse12(givenResponse);
         //Then
         assertThat(result).isEqualTo(expectedResponse);
     }
@@ -137,8 +141,8 @@ public class PaymentModelMapperTest {
         assertThat(result.getUltimateCreditor()).isNotBlank();
         assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
         assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getRequestedExecutionDate()).isNotNull();
-        assertThat(result.getRequestedExecutionTime()).isNotNull();
+        assertThat(result.getRequestedExecutionDate()).isNull();
+        assertThat(result.getRequestedExecutionTime()).isNull();
     }
 
     @Test
@@ -356,7 +360,6 @@ public class PaymentModelMapperTest {
         response.setTransactionFees(getXs2aAmount());
         response.setTransactionFeeIndicator(true);
         response.setScaMethods(null);
-        response.setChosenScaMethod(null);
 
         OtpFormat format = OtpFormat.getByValue(OTP_FORMAT).orElse(null);
         Xs2aChallengeData challenge =  new Xs2aChallengeData(IMAGE, DATA, IMAGE_LINK, OTP_MAX_LENGTH, format,
@@ -366,7 +369,6 @@ public class PaymentModelMapperTest {
         response.setPsuMessage(PSU_MSG);
         response.setTppMessages(null); //TODO fix this along with creating TppMessage mapper
         response.setLinks(null);
-        response.setTppRedirectPreferred(false);
         return response;
     }
 
@@ -377,11 +379,11 @@ public class PaymentModelMapperTest {
         return amount;
     }
 
-    private PaymentRequestParameters getRequestParameters(PaymentType paymentType){
-        PaymentRequestParameters requestParameters = new PaymentRequestParameters();
+    private PaymentInitiationParameters getRequestParameters(PaymentType paymentType){
+        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(paymentType);
         requestParameters.setQwacCertificate("TEST CERTIFICATE");
-        requestParameters.setPaymentProduct(PaymentProduct.SCT);
+        requestParameters.setPaymentProduct(PaymentProduct.SEPA);
 
         return requestParameters;
     }

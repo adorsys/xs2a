@@ -19,17 +19,21 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.ReadSinglePayment;
-import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
-import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,20 +42,15 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_400;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
-import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,36 +62,39 @@ public class PaymentServiceTest {
     private static final String AMOUNT = "100";
     private static final String EXCESSIVE_AMOUNT = "10000";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
-    private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
-    private static final TppInfo TPP_INFO = getTppInfo();
-
-    private final PeriodicPayment PERIODIC_PAYMENT_OK = getPeriodicPayment(IBAN, AMOUNT);
-    private final PeriodicPayment PERIODIC_PAYMENT_NOK_AMOUNT = getPeriodicPayment(IBAN, EXCESSIVE_AMOUNT);
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
     private final SinglePayment SINGLE_PAYMENT_OK = getSinglePayment(IBAN, AMOUNT);
     private final SinglePayment SINGLE_PAYMENT_NOK_IBAN = getSinglePayment(WRONG_IBAN, AMOUNT);
-    private final SinglePayment SINGLE_PAYMENT_NOK_AMOUNT = getSinglePayment(IBAN, EXCESSIVE_AMOUNT);
 
     private final BulkPayment BULK_PAYMENT_OK = getBulkPayment(SINGLE_PAYMENT_OK, IBAN);
-    private final BulkPayment BULK_PAYMENT_NOT_OK = getBulkPayment(SINGLE_PAYMENT_OK, WRONG_IBAN);
 
     @InjectMocks
     private PaymentService paymentService;
     @Mock
     private PaymentMapper paymentMapper;
     @Mock
-    private ScaPaymentService scaPaymentService;
-    @Mock
-    private PaymentSpi paymentSpi;
-    @Mock
     private ReadPaymentFactory readPaymentFactory;
     @Mock
-    private ReadSinglePayment readSinglePayment;
-    @Mock
-    private AccountReferenceValidationService referenceValidationService;
+    private PisConsentService pisConsentService;
     @Mock
     private PisConsentDataService pisConsentDataService;
+    @Mock
+    private TppService tppService;
+    @Mock
+    private CreateSinglePaymentService createSinglePaymentService;
+    @Mock
+    private CreatePeriodicPaymentService createPeriodicPaymentService;
+    @Mock
+    private CreateBulkPaymentService createBulkPaymentService;
+    @Mock
+    private Xs2aPisConsentMapper xs2aPisConsentMapper;
+    @Mock
+    private SinglePaymentSpi singlePaymentSpi;
+    @Mock
+    private PeriodicPaymentSpi periodicPaymentSpi;
+    @Mock
+    private BulkPaymentSpi bulkPaymentSpi;
 
     @Before
     public void setUp() {
@@ -101,177 +103,28 @@ public class PaymentServiceTest {
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.ACCP)).thenReturn(Xs2aTransactionStatus.ACCP);
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(Xs2aTransactionStatus.RJCT);
         when(paymentMapper.mapToTransactionStatus(null)).thenReturn(null);
-        when(paymentMapper.mapToSpiPaymentType(PaymentType.SINGLE)).thenReturn(SpiPaymentType.SINGLE);
-        when(paymentMapper.mapToSpiPaymentType(PaymentType.PERIODIC)).thenReturn(SpiPaymentType.PERIODIC);
-        when(paymentMapper.mapToSpiPaymentType(PaymentType.BULK)).thenReturn(SpiPaymentType.BULK);
         when(paymentMapper.mapToPaymentInitResponseFailedPayment(SINGLE_PAYMENT_NOK_IBAN, RESOURCE_UNKNOWN_400))
             .thenReturn(getPaymentResponse(RJCT, RESOURCE_UNKNOWN_400));
+        when(xs2aPisConsentMapper.mapToXs2aPisConsent(any())).thenReturn(getXs2aPisConsent());
 
         //Status by ID
-        when(paymentSpi.getPaymentStatusById(PAYMENT_ID, SpiPaymentType.SINGLE, ASPSP_CONSENT_DATA))
-            .thenReturn(new SpiResponse<>(SpiTransactionStatus.ACCP, ASPSP_CONSENT_DATA));
-        when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, SpiPaymentType.SINGLE, ASPSP_CONSENT_DATA))
-            .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
+        when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters(), getTppInfoServiceModified(), getXs2aPisConsent()))
+            .thenReturn(getValidResponse());
 
-        //ScaPayService
-        when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_OK, TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(getPaymentResponse(RCVD, null));
-        when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_NOK_AMOUNT, TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(getPaymentInitiationResponseRJCT());
-
-        when(scaPaymentService.createBulkPayment(BULK_PAYMENT_OK, TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RCVD, null)));
-        when(scaPaymentService.createBulkPayment(getBulkPayment(SINGLE_PAYMENT_NOK_AMOUNT, WRONG_IBAN), TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RJCT, PAYMENT_FAILED)));
-
-        when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
         when(pisConsentDataService.getAspspConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
-    //GetStatus Tests
-    @Test
-    public void getPaymentStatusById() {
-        //When
-        ResponseObject<Xs2aTransactionStatus> response = paymentService.getPaymentStatusById(PAYMENT_ID, PaymentType.SINGLE);
-        //Then
-        assertThat(response.hasError()).isFalse();
-        assertThat(response.getBody()).isEqualTo(Xs2aTransactionStatus.ACCP);
-    }
-
-    @Test
-    public void getPaymentStatusById_Failure() {
-        //When
-        ResponseObject<Xs2aTransactionStatus> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE);
-        //Then
-        assertThat(response.hasError()).isTrue();
-        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(RJCT);
-    }
-
-    //PeriodicPayment Tests
-    @Test
-    public void initiatePeriodicPayment() {
-        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_OK, TPP_INFO, ALLOWED_PAYMENT_PRODUCT)).thenReturn(getPaymentResponse(RCVD, null));
-        PeriodicPayment payment = PERIODIC_PAYMENT_OK;
-        //When
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void initiatePeriodicPayment_Failure_ASPSP_RJCT() {
-        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_NOK_AMOUNT, TPP_INFO, ALLOWED_PAYMENT_PRODUCT)).thenReturn(getPaymentInitiationResponseRJCT());
-        PeriodicPayment payment = PERIODIC_PAYMENT_NOK_AMOUNT;
-        initiatePeriodicPaymentFailureTest(payment, PAYMENT_FAILED);
-    }
-
-    private PaymentInitialisationResponse getPaymentInitiationResponseRJCT() {
-        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-        response.setTransactionStatus(RJCT);
-        response.setTppMessages(new MessageErrorCode[]{MessageErrorCode.PAYMENT_FAILED});
-        return response;
-    }
-
-    private void initiatePeriodicPaymentFailureTest(PeriodicPayment payment, MessageErrorCode errorCode) {
-        //When
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RJCT);
-        assertThat(actualResponse.getBody().getTppMessages()[0].getName()).isEqualTo(errorCode.getName());
-    }
-
     //Bulk Tests
     @Test
     public void createBulkPayments() {
-        BulkPayment payment = BULK_PAYMENT_OK;
         //When
-        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment,TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters());
         //Then
-        assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getBody().get(0).getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().get(1).getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().get(0).getTransactionStatus()).isEqualTo(RCVD);
-        assertThat(actualResponse.getBody().get(1).getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void createBulkPayments_Failure_null_payments() {
-        BulkPayment payment = null;
-        createBulkFailureTest(payment, FORMAT_ERROR);
-    }
-
-    @Test
-    public void createBulkPayments_Failure_Validation() {
-        BulkPayment payment = BULK_PAYMENT_NOT_OK;
-        payment.setPayments(Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_NOK_AMOUNT));
-        createBulkFailureTest(payment, PAYMENT_FAILED);
-    }
-
-    private void createBulkFailureTest(BulkPayment payment, MessageErrorCode errorCode) {
-        //When
-        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(errorCode);
-        assertThat(actualResponse.getError().getTransactionStatus()).isEqualTo(RJCT);
-    }
-
-    //SinglePayment tests
-    @Test
-    public void createPaymentInitiation() {
-        SinglePayment payment = SINGLE_PAYMENT_OK;
-        //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then:
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void createPaymentInitiation_Failure_ASPSP_RJCT() {
-        SinglePayment payment = SINGLE_PAYMENT_NOK_AMOUNT;
-        createPaymentInitiationFailureTests(payment, PAYMENT_FAILED);
-    }
-
-    private void createPaymentInitiationFailureTests(SinglePayment payment, MessageErrorCode errorCode) {
-        //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then:
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RJCT);
-        assertThat(actualResponse.getBody().getTppMessages()[0].getName()).isEqualTo(errorCode.getName());
-
-    }
-
-    @Test
-    public void getPaymentById() {
-        when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(anyString(), anyString())).thenReturn(getSinglePayment(IBAN, "10"));
-        //When
-        ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, PAYMENT_ID);
-        //Than
-        assertThat(response.hasError()).isFalse();
-        assertThat(response.getError()).isNull();
-        assertThat(response.getBody()).isNotNull();
-        SinglePayment payment = (SinglePayment) response.getBody();
-        assertThat(payment.getEndToEndIdentification()).isEqualTo(PAYMENT_ID);
-    }
-
-    @Test
-    public void getPaymentById_Failure_wrong_id() {
-        when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(anyString(), anyString())).thenReturn(null);
-
-        //When
-        ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID);
-        //Than
-        assertThat(response.hasError()).isTrue();
-        assertThat(response.getBody()).isNull();
-        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_403);
     }
 
     //Test additional methods
@@ -286,7 +139,7 @@ public class PaymentServiceTest {
         return paymentInitialisationResponse;
     }
 
-    private SinglePayment getSinglePayment(String iban, String amountToPay) {
+    private static SinglePayment getSinglePayment(String iban, String amountToPay) {
         SinglePayment singlePayments = new SinglePayment();
         singlePayments.setEndToEndIdentification(PAYMENT_ID);
         Xs2aAmount amount = new Xs2aAmount();
@@ -296,11 +149,11 @@ public class PaymentServiceTest {
         singlePayments.setDebtorAccount(getReference(iban));
         singlePayments.setCreditorAccount(getReference(iban));
         singlePayments.setRequestedExecutionDate(LocalDate.now());
-        singlePayments.setRequestedExecutionTime(LocalDateTime.now());
+        singlePayments.setRequestedExecutionTime(OffsetDateTime.now());
         return singlePayments;
     }
 
-    private Xs2aAccountReference getReference(String iban) {
+    private static Xs2aAccountReference getReference(String iban) {
         Xs2aAccountReference reference = new Xs2aAccountReference();
         reference.setIban(iban);
         reference.setCurrency(CURRENCY);
@@ -308,27 +161,15 @@ public class PaymentServiceTest {
         return reference;
     }
 
-    private SpiAccountReference getSpiReference(String iban) {
-        return new SpiAccountReference(iban, null, null, null, null, CURRENCY);
-    }
+    private BulkPaymentInitiationResponse getBulkResponses(Xs2aTransactionStatus status, MessageErrorCode errorCode) {
+        BulkPaymentInitiationResponse response = new BulkPaymentInitiationResponse();
+        response.setTransactionStatus(status);
 
-    private PeriodicPayment getPeriodicPayment(String iban, String amountToPay) {
-        PeriodicPayment payment = new PeriodicPayment();
-        Xs2aAmount amount = new Xs2aAmount();
-        amount.setCurrency(CURRENCY);
-        amount.setAmount(amountToPay);
-        payment.setInstructedAmount(amount);
-        payment.setDebtorAccount(getReference(iban));
-        payment.setCreditorAccount(getReference(iban));
-        payment.setStartDate(LocalDate.now());
-        payment.setEndDate(LocalDate.now().plusMonths(4));
-        payment.setRequestedExecutionDate(LocalDate.now());
-        payment.setRequestedExecutionTime(LocalDateTime.now());
-        return payment;
-    }
-
-    private List<PaymentInitialisationResponse> getBulkResponses(PaymentInitialisationResponse... response) {
-        return Arrays.stream(response).collect(Collectors.toList());
+        response.setPaymentId(status == RJCT ? null : PAYMENT_ID);
+        if (status == RJCT) {
+            response.setTppMessages(new MessageErrorCode[]{errorCode});
+        }
+        return response;
     }
 
     private static TppInfo getTppInfo() {
@@ -348,6 +189,22 @@ public class PaymentServiceTest {
         return tppInfo;
     }
 
+    private static TppInfo getTppInfoServiceModified() {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber("registrationNumber");
+        tppInfo.setTppName("tppName");
+        tppInfo.setTppRoles(Collections.singletonList(Xs2aTppRole.PISP));
+        tppInfo.setAuthorityId("authorityId");
+        tppInfo.setAuthorityName("authorityName");
+        tppInfo.setCountry("country");
+        tppInfo.setOrganisation("organisation");
+        tppInfo.setOrganisationUnit("organisationUnit");
+        tppInfo.setCity("city");
+        tppInfo.setState("state");
+
+        return tppInfo;
+    }
+
     private BulkPayment getBulkPayment(SinglePayment singlePayment1, String iban) {
         BulkPayment bulkPayment = new BulkPayment();
         bulkPayment.setPayments(Collections.singletonList(singlePayment1));
@@ -358,10 +215,19 @@ public class PaymentServiceTest {
         return bulkPayment;
     }
 
+    private Xs2aPisConsent getXs2aPisConsent() {
+        return new Xs2aPisConsent("TEST");
+    }
 
-    private PaymentRequestParameters getRequestParameters(){
-        PaymentRequestParameters requestParameters = new PaymentRequestParameters();
+
+    private PaymentInitiationParameters getBulkPaymentInitiationParameters() {
+        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
+        requestParameters.setPaymentType(PaymentType.BULK);
 
         return requestParameters;
+    }
+
+    private ResponseObject<BulkPaymentInitiationResponse> getValidResponse() {
+        return ResponseObject.<BulkPaymentInitiationResponse>builder().body(getBulkResponses(RCVD, null)).build();
     }
 }
