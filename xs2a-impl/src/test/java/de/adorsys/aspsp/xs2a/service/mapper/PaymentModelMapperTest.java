@@ -17,12 +17,12 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.OtpFormat;
-import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
@@ -51,21 +51,8 @@ import static org.mockito.Mockito.when;
 public class PaymentModelMapperTest {
 
     private static final String PAYMENT_ID = "123456789";
-    private static final String AMOUNT = "1000";
-    private static final Currency EUR = Currency.getInstance("EUR");
-    private static final String PSU_MSG = "Payment is success";
-    private static final String PATH = "https:\\test.com";
-    private static final String MSG_TEXT = "Some error message";
     private static final String IBAN = "DE1234567890";
     private static final String CURRENCY = "EUR";
-
-    private static final byte[] IMAGE = "zzz".getBytes();
-    private static final String DATA = "Some data";
-    private static final String IMAGE_LINK = "https:\\image.link.com";
-    private static final int OTP_MAX_LENGTH = 12;
-    private static final String OTP_FORMAT = "characters";
-    private static final String ADDITIONAL_INFORMATION = "additional information";
-
     private static final String DAY_OF_EXECUTION = "02";
     private static final boolean BATCH_BOOKING_PREFERRED = true;
 
@@ -104,17 +91,6 @@ public class PaymentModelMapperTest {
         TransactionStatus result = PaymentModelMapperPsd2.mapToTransactionStatus12(status);
         //Then
         assertThat(result).isEqualTo(expected);
-    }
-
-    @Test
-    public void mapToPaymentInitiationResponse12() {
-        //Given
-        PaymentInitialisationResponse givenResponse = getXs2aPaymentResponse();
-        PaymentInitationRequestResponse201 expectedResponse = getPaymentResponse12();
-        //When
-        PaymentInitationRequestResponse201 result = (PaymentInitationRequestResponse201) paymentModelMapperPsd2.mapToPaymentInitiationResponse12(givenResponse);
-        //Then
-        assertThat(result).isEqualTo(expectedResponse);
     }
 
     @Test
@@ -315,68 +291,6 @@ public class PaymentModelMapperTest {
         ref.setIban(iban ? IBAN : null);
         ref.setCurrency(currency ? Currency.getInstance(CURRENCY) : null);
         return ref;
-    }
-
-    private PaymentInitationRequestResponse201 getPaymentResponse12() {
-        PaymentInitationRequestResponse201 response = new PaymentInitationRequestResponse201();
-
-        response.setTransactionStatus(de.adorsys.psd2.model.TransactionStatus.ACCP);
-        response.setPaymentId(PAYMENT_ID);
-        Amount amount = new Amount();
-        amount.setAmount(AMOUNT);
-        amount.setCurrency(EUR.getCurrencyCode());
-        response.setTransactionFees(amount);
-        response.setTransactionFeeIndicator(true);
-        response.setScaMethods(null);
-        response.setChosenScaMethod(null);
-        ChallengeData challengeData = new ChallengeData();
-        challengeData.setImage(IMAGE);
-        challengeData.setData(DATA);
-        challengeData.setImageLink(IMAGE_LINK);
-        challengeData.setOtpMaxLength(OTP_MAX_LENGTH);
-        challengeData.setOtpFormat(ChallengeData.OtpFormatEnum.fromValue(OTP_FORMAT));
-        challengeData.setAdditionalInformation(ADDITIONAL_INFORMATION);
-        response.setChallengeData(challengeData);
-        response.setLinks(null);
-        response.setPsuMessage(PSU_MSG);
-
-        TppMessageGeneric tppMessage = new TppMessageGeneric();
-        tppMessage.setCategory(TppMessageCategory.ERROR);
-        tppMessage.setPath(PATH);
-        tppMessage.setText(MSG_TEXT);
-        tppMessage.setCode(null);
-        TppMessages messages = new TppMessages();
-        messages.add(tppMessage);
-
-        response.setTppMessages(null); //TODO fix this along with creating TppMessage mapper
-        return response;
-    }
-
-    private PaymentInitialisationResponse getXs2aPaymentResponse() {
-        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-        response.setTransactionStatus(Xs2aTransactionStatus.ACCP);
-        response.setPaymentId(PAYMENT_ID);
-
-        response.setTransactionFees(getXs2aAmount());
-        response.setTransactionFeeIndicator(true);
-        response.setScaMethods(null);
-
-        OtpFormat format = OtpFormat.getByValue(OTP_FORMAT).orElse(null);
-        Xs2aChallengeData challenge =  new Xs2aChallengeData(IMAGE, DATA, IMAGE_LINK, OTP_MAX_LENGTH, format,
-            ADDITIONAL_INFORMATION);
-        response.setChallengeData(challenge);
-
-        response.setPsuMessage(PSU_MSG);
-        response.setTppMessages(null); //TODO fix this along with creating TppMessage mapper
-        response.setLinks(null);
-        return response;
-    }
-
-    private Xs2aAmount getXs2aAmount() {
-        Xs2aAmount amount = new Xs2aAmount();
-        amount.setAmount(AMOUNT);
-        amount.setCurrency(EUR);
-        return amount;
     }
 
     private PaymentInitiationParameters getRequestParameters(PaymentType paymentType){
