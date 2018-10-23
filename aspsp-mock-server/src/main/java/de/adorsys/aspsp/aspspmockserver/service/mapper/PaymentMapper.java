@@ -22,9 +22,6 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,7 +82,7 @@ public class PaymentMapper {
         aspsp.setUltimateCreditor(single.getUltimateCreditor());
         aspsp.setPurposeCode(single.getPurposeCode());
         aspsp.setRequestedExecutionDate(single.getRequestedExecutionDate());
-        aspsp.setRequestedExecutionTime(toLocalDateTime(single.getRequestedExecutionTime()));
+        aspsp.setRequestedExecutionTime(single.getRequestedExecutionTime());
         aspsp.setPaymentStatus(single.getPaymentStatus());
         aspsp.setRemittanceInformationStructured(single.getRemittanceInformationStructured());
         aspsp.setRemittanceInformationUnstructured(single.getRemittanceInformationUnstructured());
@@ -108,7 +105,7 @@ public class PaymentMapper {
                        single.setUltimateCreditor(aspsp.getUltimateCreditor());
                        single.setPurposeCode(aspsp.getPurposeCode());
                        single.setRequestedExecutionDate(aspsp.getRequestedExecutionDate());
-                       single.setRequestedExecutionTime(toOffsetDateTime(aspsp.getRequestedExecutionTime()));
+                       single.setRequestedExecutionTime(aspsp.getRequestedExecutionTime());
                        single.setPaymentStatus(aspspPayment.getPaymentStatus());
                        single.setRemittanceInformationStructured(aspsp.getRemittanceInformationStructured());
                        single.setRemittanceInformationUnstructured(aspsp.getRemittanceInformationUnstructured());
@@ -132,7 +129,7 @@ public class PaymentMapper {
                        periodic.setUltimateCreditor(aspsp.getUltimateCreditor());
                        periodic.setPurposeCode(aspsp.getPurposeCode());
                        periodic.setRequestedExecutionDate(aspsp.getRequestedExecutionDate());
-                       periodic.setRequestedExecutionTime(toOffsetDateTime(aspsp.getRequestedExecutionTime()));
+                       periodic.setRequestedExecutionTime(aspsp.getRequestedExecutionTime());
                        periodic.setStartDate(aspsp.getStartDate());
                        periodic.setEndDate(aspsp.getEndDate());
                        periodic.setExecutionRule(aspsp.getExecutionRule());
@@ -143,18 +140,6 @@ public class PaymentMapper {
                        periodic.setRemittanceInformationUnstructured(aspsp.getRemittanceInformationUnstructured());
                        return periodic;
                    })
-                   .orElse(null);
-    }
-
-    private LocalDateTime toLocalDateTime(OffsetDateTime source) {
-        return Optional.ofNullable(source)
-                   .map(OffsetDateTime::toLocalDateTime)
-                   .orElse(null);
-    }
-
-    private OffsetDateTime toOffsetDateTime(LocalDateTime source) {
-        return Optional.ofNullable(source)
-                   .map(d -> d.atOffset(ZoneOffset.UTC))
                    .orElse(null);
     }
 
