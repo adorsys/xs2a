@@ -44,6 +44,7 @@ import static de.adorsys.psd2.consent.api.TypeAccess.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true) // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AisConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
