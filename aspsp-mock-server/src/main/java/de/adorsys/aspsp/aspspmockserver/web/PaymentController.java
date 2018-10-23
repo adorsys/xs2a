@@ -16,9 +16,13 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.*;
+import de.adorsys.aspsp.aspspmockserver.domain.pis.AspspPayment;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspCancelPayment;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,10 +43,10 @@ public class PaymentController {
 
     @ApiOperation(value = "Creates a single payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created", response = SpiSinglePayment.class),
+        @ApiResponse(code = 201, message = "Created", response = AspspSinglePayment.class),
         @ApiResponse(code = 204, message = "Payment Failed")})
     @PostMapping(path = "/")
-    public ResponseEntity<SpiSinglePayment> createSinglePayment(@RequestBody SpiSinglePayment payment) {
+    public ResponseEntity<AspspSinglePayment> createSinglePayment(@RequestBody AspspSinglePayment payment) {
         return paymentService.addPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
                    .orElseGet(ResponseEntity.noContent()::build);
@@ -50,10 +54,10 @@ public class PaymentController {
 
     @ApiOperation(value = "Creates a periodic payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created", response = SpiPeriodicPayment.class),
+        @ApiResponse(code = 201, message = "Created", response = AspspPeriodicPayment.class),
         @ApiResponse(code = 400, message = "Bad Request")})
     @PostMapping(path = "/create-periodic-payment")
-    public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) {
+    public ResponseEntity<AspspPeriodicPayment> createPeriodicPayment(@RequestBody AspspPeriodicPayment payment) {
         return paymentService.addPeriodicPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
                    .orElseGet(ResponseEntity.badRequest()::build);
@@ -64,8 +68,8 @@ public class PaymentController {
         @ApiResponse(code = 201, message = "Created", response = List.class),
         @ApiResponse(code = 204, message = "Payment Failed")})
     @PostMapping(path = "/bulk-payments")
-    public ResponseEntity<SpiBulkPayment> createBulkPayments(
-        @RequestBody SpiBulkPayment bulkPayment) {
+    public ResponseEntity<AspspBulkPayment> createBulkPayments(
+        @RequestBody AspspBulkPayment bulkPayment) {
         return paymentService.addBulkPayments(bulkPayment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
                    .orElseGet(ResponseEntity.noContent()::build);
@@ -73,10 +77,10 @@ public class PaymentController {
 
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = SpiTransactionStatus.class),
+        @ApiResponse(code = 200, message = "OK", response = AspspTransactionStatus.class),
         @ApiResponse(code = 204, message = "Payment Not Found")})
     @GetMapping(path = "/{paymentId}/status")
-    public ResponseEntity<SpiTransactionStatus> getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
+    public ResponseEntity<AspspTransactionStatus> getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.getPaymentStatusById(paymentId)
                    .map(ResponseEntity::ok)
                    .orElseGet(ResponseEntity.noContent()::build);
@@ -105,10 +109,10 @@ public class PaymentController {
 
     @ApiOperation(value = "Cancel payment by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 202, message = "ACCEPTED", response = SpiCancelPayment.class),
+        @ApiResponse(code = 202, message = "ACCEPTED", response = AspspCancelPayment.class),
         @ApiResponse(code = 204, message = "Payment Not Found")})
     @DeleteMapping("/{payment-id}")
-    public ResponseEntity<SpiCancelPayment> cancelPayment(@PathVariable("payment-id") String paymentId) {
+    public ResponseEntity<AspspCancelPayment> cancelPayment(@PathVariable("payment-id") String paymentId) {
         return paymentService.cancelPayment(paymentId)
                    .map(p -> new ResponseEntity<>(p, ACCEPTED))
                    .orElseGet(ResponseEntity.badRequest()::build);

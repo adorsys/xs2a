@@ -25,8 +25,14 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.spi.mapper.SpiBulkPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.mapper.SpiPeriodicPaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.mapper.SpiSinglePaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -64,18 +70,22 @@ public class PaymentSpiImpl implements PaymentSpi {
     private final SpiMockJsonConverter jsonConverter;
     private final SpiPaymentMapper spiPaymentMapper;
     private final SpiCmsPisMapper spiCmsPisMapper;
+    private final SpiSinglePaymentMapper spiSinglePaymentMapper;
+    private final SpiBulkPaymentMapper spiBulkPaymentMapper;
+    private final SpiPeriodicPaymentMapper spiPeriodicPaymentMapper;
 
     /**
      * For detailed description see {@link PaymentSpi#createPaymentInitiation(SpiSinglePayment, AspspConsentData)}
      */
     @Override
     public SpiResponse<SpiPaymentInitialisationResponse> createPaymentInitiation(SpiSinglePayment spiSinglePayment, AspspConsentData aspspConsentData) {
-        ResponseEntity<SpiSinglePayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), spiSinglePayment, SpiSinglePayment.class);
+        AspspSinglePayment aspspSinglePayment = spiSinglePaymentMapper.mapToAspspSinglePayment(spiSinglePayment, SpiTransactionStatus.RCVD);
+        ResponseEntity<AspspSinglePayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), aspspSinglePayment, AspspSinglePayment.class);
 
         SpiPaymentInitialisationResponse response =
             responseEntity.getStatusCode() == CREATED
                 ? spiPaymentMapper.mapToSpiPaymentResponse(responseEntity.getBody())
-                : spiPaymentMapper.mapToSpiPaymentResponse(spiSinglePayment);
+                : spiPaymentMapper.mapToSpiPaymentResponse(aspspSinglePayment);
         return new SpiResponse<>(response, aspspConsentData);
     }
 
@@ -84,9 +94,11 @@ public class PaymentSpiImpl implements PaymentSpi {
      */
     @Override
     public SpiResponse<List<SpiPaymentInitialisationResponse>> createBulkPayments(SpiBulkPayment spiBulkPayment, AspspConsentData aspspConsentData) {
-        ResponseEntity<List<SpiSinglePayment>> responseEntity = aspspRestTemplate.exchange(aspspRemoteUrls.createBulkPayment(), HttpMethod.POST,
-            new HttpEntity<>(spiBulkPayment, null), new ParameterizedTypeReference<List<SpiSinglePayment>>() {
+        AspspBulkPayment mockBulkPayment = spiBulkPaymentMapper.mapToAspspBulkPayment(spiBulkPayment);
+        ResponseEntity<List<AspspSinglePayment>> responseEntity = aspspRestTemplate.exchange(aspspRemoteUrls.createBulkPayment(), HttpMethod.POST,
+                                                                                             new HttpEntity<>(mockBulkPayment, null), new ParameterizedTypeReference<List<AspspSinglePayment>>() {
             });
+
         List<SpiPaymentInitialisationResponse> response =
             (responseEntity.getStatusCode() == CREATED)
                 ? responseEntity.getBody().stream()
@@ -101,11 +113,12 @@ public class PaymentSpiImpl implements PaymentSpi {
      */
     @Override
     public SpiResponse<SpiPaymentInitialisationResponse> initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, AspspConsentData aspspConsentData) {
-        ResponseEntity<SpiPeriodicPayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), periodicPayment, SpiPeriodicPayment.class);
+        AspspPeriodicPayment aspspPeriodicPayment = spiPeriodicPaymentMapper.mapToAspspPeriodicPayment(periodicPayment, SpiTransactionStatus.RCVD);
+        ResponseEntity<AspspPeriodicPayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), periodicPayment, AspspPeriodicPayment.class);
         SpiPaymentInitialisationResponse response =
             responseEntity.getStatusCode() == CREATED
                 ? spiPaymentMapper.mapToSpiPaymentResponse(responseEntity.getBody())
-                : spiPaymentMapper.mapToSpiPaymentResponse(periodicPayment);
+                : spiPaymentMapper.mapToSpiPaymentResponse(aspspPeriodicPayment);
         return new SpiResponse<>(response, aspspConsentData);
     }
 
@@ -124,11 +137,11 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiResponse<SpiSinglePayment> getSinglePaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiSinglePayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<SpiSinglePayment>>() {
-            },
-            paymentType, paymentProduct, paymentId).getBody();
+                                                                          HttpMethod.GET,
+                                                                          null,
+                                                                          new ParameterizedTypeReference<List<SpiSinglePayment>>() {
+                                                                          },
+                                                                          paymentType, paymentProduct, paymentId).getBody();
         SpiSinglePayment response = aspspResponse.get(0);
         return new SpiResponse<>(response, aspspConsentData);
     }
@@ -139,11 +152,11 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiPeriodicPayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<SpiPeriodicPayment>>() {
-            },
-            paymentType, paymentProduct, paymentId).getBody();
+                                                                            HttpMethod.GET,
+                                                                            null,
+                                                                            new ParameterizedTypeReference<List<SpiPeriodicPayment>>() {
+                                                                            },
+                                                                            paymentType, paymentProduct, paymentId).getBody();
 
         SpiPeriodicPayment response = aspspResponse.get(0);
         return new SpiResponse<>(response, aspspConsentData);
@@ -155,11 +168,11 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(PaymentType paymentType, PaymentProduct paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         List<SpiSinglePayment> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(),
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<SpiSinglePayment>>() {
-            },
-            paymentType, paymentProduct, paymentId).getBody();
+                                                                          HttpMethod.GET,
+                                                                          null,
+                                                                          new ParameterizedTypeReference<List<SpiSinglePayment>>() {
+                                                                          },
+                                                                          paymentType, paymentProduct, paymentId).getBody();
         return new SpiResponse<>(aspspResponse, aspspConsentData);
     }
 

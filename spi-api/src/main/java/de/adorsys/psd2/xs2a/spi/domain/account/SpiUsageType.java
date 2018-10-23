@@ -27,7 +27,7 @@ public enum SpiUsageType {
     PRIV("PRIV"),
     ORGA("ORGA");
 
-    private final static Map<String, SpiUsageType> container = new HashMap<>();
+    private static final Map<String, SpiUsageType> container = new HashMap<>();
 
     static {
         for (SpiUsageType usageType : values()) {

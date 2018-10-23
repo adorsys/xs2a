@@ -16,29 +16,33 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class SpiPeriodicPaymentMapper {
+    private final SpiPaymentMapper spiPaymentMapper;
 
-    public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment mapToAspspSpiPeriodicPayment(@NotNull SpiPeriodicPayment payment, SpiTransactionStatus transactionStatus) {
-        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment periodic = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment();
+    public AspspPeriodicPayment mapToAspspPeriodicPayment(@NotNull SpiPeriodicPayment payment, SpiTransactionStatus transactionStatus) {
+        AspspPeriodicPayment periodic = new AspspPeriodicPayment();
         periodic.setPaymentId(payment.getPaymentId());
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
-        periodic.setDebtorAccount(payment.getDebtorAccount());
-        periodic.setInstructedAmount(payment.getInstructedAmount());
-        periodic.setCreditorAccount(payment.getCreditorAccount());
+        periodic.setDebtorAccount(spiPaymentMapper.mapToAspspAccountReference(payment.getDebtorAccount()));
+        periodic.setInstructedAmount(spiPaymentMapper.mapToAspspAmount(payment.getInstructedAmount()));
+        periodic.setCreditorAccount(spiPaymentMapper.mapToAspspAccountReference(payment.getCreditorAccount()));
         periodic.setCreditorAgent(payment.getCreditorAgent());
         periodic.setCreditorName(payment.getCreditorName());
-        periodic.setCreditorAddress(payment.getCreditorAddress());
+        periodic.setCreditorAddress(spiPaymentMapper.mapToAspspAddress(payment.getCreditorAddress()));
         periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        periodic.setPaymentStatus(transactionStatus);
+        periodic.setPaymentStatus(spiPaymentMapper.mapToAspspTransactionStatus(transactionStatus));
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
         periodic.setExecutionRule(payment.getExecutionRule());
@@ -47,18 +51,38 @@ public class SpiPeriodicPaymentMapper {
         return periodic;
     }
 
-    public SpiPeriodicPayment mapToSpiPeriodicPayment(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment payment, PaymentProduct paymentProduct) {
+    public AspspPeriodicPayment mapToAspspPeriodicPayment(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment payment, SpiTransactionStatus transactionStatus) {
+        AspspPeriodicPayment periodic = new AspspPeriodicPayment();
+        periodic.setPaymentId(payment.getPaymentId());
+        periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
+        periodic.setDebtorAccount(spiPaymentMapper.mapToAspspAccountReference(payment.getDebtorAccount()));
+        periodic.setInstructedAmount(spiPaymentMapper.mapToAspspAmount(payment.getInstructedAmount()));
+        periodic.setCreditorAccount(spiPaymentMapper.mapToAspspAccountReference(payment.getCreditorAccount()));
+        periodic.setCreditorAgent(payment.getCreditorAgent());
+        periodic.setCreditorName(payment.getCreditorName());
+        periodic.setCreditorAddress(spiPaymentMapper.mapToAspspAddress(payment.getCreditorAddress()));
+        periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        periodic.setPaymentStatus(spiPaymentMapper.mapToAspspTransactionStatus(transactionStatus));
+        periodic.setStartDate(payment.getStartDate());
+        periodic.setEndDate(payment.getEndDate());
+        periodic.setExecutionRule(payment.getExecutionRule());
+        periodic.setFrequency(payment.getFrequency());
+        periodic.setDayOfExecution(payment.getDayOfExecution());
+        return periodic;
+    }
+
+    public SpiPeriodicPayment mapToSpiPeriodicPayment(@NotNull AspspPeriodicPayment payment, PaymentProduct paymentProduct) {
         SpiPeriodicPayment periodic = new SpiPeriodicPayment(paymentProduct);
         periodic.setPaymentId(payment.getPaymentId());
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
-        periodic.setDebtorAccount(payment.getDebtorAccount());
-        periodic.setInstructedAmount(payment.getInstructedAmount());
-        periodic.setCreditorAccount(payment.getCreditorAccount());
+        periodic.setDebtorAccount(spiPaymentMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
+        periodic.setInstructedAmount(spiPaymentMapper.mapToSpiAmount(payment.getInstructedAmount()));
+        periodic.setCreditorAccount(spiPaymentMapper.mapToSpiAccountReference(payment.getCreditorAccount()));
         periodic.setCreditorAgent(payment.getCreditorAgent());
         periodic.setCreditorName(payment.getCreditorName());
-        periodic.setCreditorAddress(payment.getCreditorAddress());
+        periodic.setCreditorAddress(spiPaymentMapper.mapToSpiAddress(payment.getCreditorAddress()));
         periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        periodic.setPaymentStatus(payment.getPaymentStatus());
+        periodic.setPaymentStatus(spiPaymentMapper.mapToSpiTransactionStatus(payment.getPaymentStatus()));
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
         periodic.setExecutionRule(payment.getExecutionRule());
@@ -67,7 +91,7 @@ public class SpiPeriodicPaymentMapper {
         return periodic;
     }
 
-    public SpiPeriodicPaymentInitiationResponse mapToSpiPeriodicPaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment payment) {
+    public SpiPeriodicPaymentInitiationResponse mapToSpiPeriodicPaymentResponse(@NotNull AspspPeriodicPayment payment) {
         SpiPeriodicPaymentInitiationResponse spi = new SpiPeriodicPaymentInitiationResponse();
         spi.setPaymentId(payment.getPaymentId());
         if (payment.getPaymentId() == null) {

@@ -8,6 +8,7 @@ providing capabilities to interoperate with TPP by defined XS2A Standard Interfa
 The maven modules provided by this implementation are:
 * [**aspsp-idp**](../../aspsp-idp/README.md) - provides identity provider for the service based on 
 [Keycloak](https://www.keycloak.org/) with extension for OpenID dynamic client registration
+* **aspsp-mock-api** - API Domain objects for intercommunication with ASPSP-Mock-Server
 * [**aspsp-mock-server**](../../aspsp-mock-server/README.md) - a mock-implementation of ASPSP for the purposes of 
 testing and introspecting of xs2a-functionality. Provides also a demo TAN application to grant XS2A consents by end-user 
 (PSU)
