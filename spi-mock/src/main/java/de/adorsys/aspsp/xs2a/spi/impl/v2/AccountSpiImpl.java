@@ -16,11 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl.v2;
 
+import de.adorsys.aspsp.xs2a.exception.RestException;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,6 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -51,103 +54,153 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public SpiResponse<List<SpiAccountDetails>> requestAccountDetails(boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        List<SpiAccountDetails> accountDetailsList;
+        try {
+            List<SpiAccountDetails> accountDetailsList;
 
-        if (isBankOfferedConsent(accountConsent.getAccess())) {
-            accountDetailsList = getAccountDetailsByConsentId(accountConsent);
-        } else {
-            accountDetailsList = getAccountDetailsFromReferences(withBalance, accountConsent);
+            if (isBankOfferedConsent(accountConsent.getAccess())) {
+                accountDetailsList = getAccountDetailsByConsentId(accountConsent);
+            } else {
+                accountDetailsList = getAccountDetailsFromReferences(withBalance, accountConsent);
+            }
+
+            return SpiResponse.<List<SpiAccountDetails>>builder()
+                       .payload(filterAccountDetailsByWithBalance(withBalance, accountDetailsList))
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<List<SpiAccountDetails>>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<List<SpiAccountDetails>>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
-
-        return SpiResponse.<List<SpiAccountDetails>>builder()
-                   .payload(filterAccountDetailsByWithBalance(withBalance, accountDetailsList))
-                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                   .success();
     }
 
     @Override
     public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull String accountId, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
+        try {
+            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
 
-        if (!withBalance) {
-            accountDetails.emptyBalances();
+            if (!withBalance) {
+                accountDetails.emptyBalances();
+            }
+
+            return SpiResponse.<SpiAccountDetails>builder()
+                       .payload(accountDetails)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiAccountDetails>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiAccountDetails>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
-
-        return SpiResponse.<SpiAccountDetails>builder()
-                   .payload(accountDetails)
-                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                   .success();
     }
 
     @Override
     public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull String accountId, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
+        try {
+            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
 
-        Map<String, String> uriParams = new HashMap<>();
-        uriParams.put("account-id", accountId);
+            Map<String, String> uriParams = new HashMap<>();
+            uriParams.put("account-id", accountId);
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
-                                          .queryParam("dateFrom", dateFrom)
-                                          .queryParam("dateTo", dateTo)
-                                          .buildAndExpand(uriParams);
+            UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
+                                              .queryParam("dateFrom", dateFrom)
+                                              .queryParam("dateTo", dateTo)
+                                              .buildAndExpand(uriParams);
 
-        Optional<List<SpiTransaction>> transactionsOptional = Optional.ofNullable(aspspRestTemplate.exchange(
-            uriComponents.toUriString(),
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<SpiTransaction>>() {
+            Optional<List<SpiTransaction>> transactionsOptional = Optional.ofNullable(aspspRestTemplate.exchange(
+                uriComponents.toUriString(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<SpiTransaction>>() {
+                }
+            ).getBody());
+
+            SpiAccountReference accountReference = new SpiAccountReference(accountDetails);
+            List<SpiTransaction> transactions = transactionsOptional.orElseGet(ArrayList::new);
+            List<SpiAccountBalance> balances = null;
+
+            if (withBalance) {
+                balances = accountDetails.getBalances();
             }
-        ).getBody());
 
-        SpiAccountReference accountReference = new SpiAccountReference(accountDetails);
-        List<SpiTransaction> transactions = transactionsOptional.orElseGet(ArrayList::new);
-        List<SpiAccountBalance> balances = null;
+            SpiTransactionReport transactionReport = new SpiTransactionReport(accountReference, transactions, balances);
 
-        if (withBalance) {
-            balances = accountDetails.getBalances();
+            return SpiResponse.<SpiTransactionReport>builder()
+                       .payload(transactionReport)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiTransactionReport>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiTransactionReport>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
-
-        SpiTransactionReport transactionReport = new SpiTransactionReport(accountReference, transactions, balances);
-
-        return SpiResponse.<SpiTransactionReport>builder()
-                   .payload(transactionReport)
-                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                   .success();
     }
 
     @Override
     public SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull String transactionId, @NotNull String accountId, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        SpiTransaction transaction = aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId);
-        return SpiResponse.<SpiTransaction>builder()
-                   .payload(transaction)
-                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                   .success();
+        try {
+            SpiTransaction transaction = aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId);
+            return SpiResponse.<SpiTransaction>builder()
+                       .payload(transaction)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiTransaction>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiTransaction>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 
     @Override
     public SpiResponse<SpiBalanceReport> requestBalancesForAccount(@NotNull String accountId, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
-        SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
+        try {
+            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
 
-        List<SpiAccountBalance> accountBalances = aspspRestTemplate.exchange(
-            remoteSpiUrls.getBalancesByAccountId(),
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<List<SpiAccountBalance>>() {
-            },
-            accountId
-        ).getBody();
+            List<SpiAccountBalance> accountBalances = aspspRestTemplate.exchange(
+                remoteSpiUrls.getBalancesByAccountId(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<SpiAccountBalance>>() {
+                },
+                accountId
+            ).getBody();
 
-        SpiBalanceReport balanceReport = new SpiBalanceReport();
-        balanceReport.setBalances(accountBalances);
+            SpiBalanceReport balanceReport = new SpiBalanceReport();
+            balanceReport.setBalances(accountBalances);
 
-        if (accountDetails != null) {
-            balanceReport.setAccountReference(new SpiAccountReference(accountDetails));
+            if (accountDetails != null) {
+                balanceReport.setAccountReference(new SpiAccountReference(accountDetails));
+            }
+
+            return SpiResponse.<SpiBalanceReport>builder()
+                       .payload(balanceReport)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiBalanceReport>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiBalanceReport>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
-
-        return SpiResponse.<SpiBalanceReport>builder()
-                   .payload(balanceReport)
-                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                   .success();
     }
 
     private boolean isBankOfferedConsent(SpiAccountAccess accountAccess) {
