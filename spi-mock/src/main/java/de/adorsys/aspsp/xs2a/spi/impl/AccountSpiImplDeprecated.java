@@ -50,7 +50,7 @@ import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStat
 
 @Component
 @AllArgsConstructor
-public class AccountSpiImpl implements AccountSpi {
+public class AccountSpiImplDeprecated implements AccountSpi {
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
