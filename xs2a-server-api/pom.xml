@@ -7,7 +7,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.10-RC1</version>
+        <version>1.10-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
