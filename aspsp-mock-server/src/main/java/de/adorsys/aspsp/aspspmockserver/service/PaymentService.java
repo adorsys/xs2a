@@ -122,12 +122,32 @@ public class PaymentService {
             return Optional.empty();
         }
 
+        AspspAccountReference debtorAccount = getDebtorAccountFromPayments(aspspPayments);
+        BigDecimal totalAmount = calculateTotalAmount(aspspPayments);
+        if (!areFundsSufficient(debtorAccount, totalAmount)) {
+            log.warn("Insufficient funds for paying {} on account {}", totalAmount, debtorAccount);
+            return Optional.empty();
+        }
+
         List<AspspPayment> savedPayments = paymentRepository.save(aspspPayments);
         AspspBulkPayment result = new AspspBulkPayment();
         result.setPayments(paymentMapper.mapToAspspSinglePaymentList(savedPayments));
         result.setPaymentId(savedPayments.get(0).getBulkId());
 
         return Optional.of(result);
+    }
+
+    private AspspAccountReference getDebtorAccountFromPayments(List<AspspPayment> aspspPayments) {
+        return aspspPayments.stream()
+                   .findFirst()
+                   .map(AspspPayment::getDebtorAccount)
+                   .orElse(null);
+    }
+
+    private BigDecimal calculateTotalAmount(List<AspspPayment> payments) {
+        return payments.stream()
+                   .map(this::getAmountFromPayment)
+                   .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private boolean isNonExistingAccount(AspspPayment p) {
@@ -202,7 +222,7 @@ public class PaymentService {
 
     private BigDecimal getAmountFromPayment(AspspPayment aspspPayment) {
         return Optional.ofNullable(aspspPayment)
-                   .map(paym -> getContentFromAmount(aspspPayment.getInstructedAmount()))
+                   .map(paym -> getContentFromAmount(paym.getInstructedAmount()))
                    .orElse(BigDecimal.ZERO);
     }
 

@@ -66,13 +66,13 @@ public class PaymentController {
     @ApiOperation(value = "Creates a bulk payment(list of single payments) based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = List.class),
-        @ApiResponse(code = 204, message = "Payment Failed")})
+        @ApiResponse(code = 400, message = "Payment Failed")})
     @PostMapping(path = "/bulk-payments")
     public ResponseEntity<AspspBulkPayment> createBulkPayments(
         @RequestBody AspspBulkPayment bulkPayment) {
         return paymentService.addBulkPayments(bulkPayment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
-                   .orElseGet(ResponseEntity.noContent()::build);
+                   .orElseGet(ResponseEntity.badRequest()::build);
     }
 
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
