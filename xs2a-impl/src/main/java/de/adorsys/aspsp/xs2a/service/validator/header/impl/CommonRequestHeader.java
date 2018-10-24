@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.validator.header.impl;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
@@ -30,7 +31,8 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class CommonRequestHeader implements RequestHeader {
 
-    @JsonProperty(value = "x-request-id")
+    @JsonProperty(value = "X-Request-ID")
+    @JsonAlias({"x-request-id"})
     @NotNull
     private UUID xRequestId;
 
