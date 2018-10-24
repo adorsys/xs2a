@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Psu;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.SpiScaMethod;
 import de.adorsys.aspsp.aspspmockserver.keycloak.KeycloakService;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspScaMethod;
+import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -126,7 +126,7 @@ public class PsuService {
      * @param psuId PSU id
      * @return list of SCA methods
      */
-    public List<SpiScaMethod> getScaMethods(String psuId) {
+    public List<AspspScaMethod> getScaMethods(String psuId) {
         return psuRepository.findByPsuId(psuId)
                    .map(Psu::getScaMethods)
                    .orElse(null);
@@ -138,7 +138,7 @@ public class PsuService {
      * @param psuId PSU id
      * @param scaMethods list of SCA methods
      */
-    public void updateScaMethods(String psuId, List<SpiScaMethod> scaMethods) {
+    public void updateScaMethods(String psuId, List<AspspScaMethod> scaMethods) {
         psuRepository.findByPsuId(psuId)
             .map(p -> {
                 p.setScaMethods(scaMethods);

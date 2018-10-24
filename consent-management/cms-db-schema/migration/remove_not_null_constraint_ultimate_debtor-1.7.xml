@@ -22,7 +22,7 @@
     <changeSet author="pru@adorsys.com.ua" id="2018-10-08-1">
         <comment>Remove not null constraint from ultimate_debtor in pis_payment_data.
         </comment>
-        <dropNotNullConstraint columnName="ultimate_debtor" tableName="pis_payment_data"/>
+        <dropNotNullConstraint columnName="ultimate_debtor" tableName="pis_payment_data" columnDataType="VARCHAR(100)"/>
     </changeSet>
 
 </databaseChangeLog>

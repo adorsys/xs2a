@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, SpiBulkPaymentInitiationResponse> {
     @NotNull
     @Override
-    default SpiResponse<SpiBulkPaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiBulkPaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         return SpiResponse.<SpiBulkPaymentInitiationResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 

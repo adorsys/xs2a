@@ -36,6 +36,11 @@ import java.util.stream.Collectors;
 @Component
 @Deprecated
 public class SpiXs2aAccountMapper {
+
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountDetailsMapper#mapToXs2aAccountDetails(SpiAccountDetails)} instead
+     */
+    @Deprecated
     public Xs2aAccountDetails mapToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
                    .map(ad -> new Xs2aAccountDetails(
@@ -60,6 +65,10 @@ public class SpiXs2aAccountMapper {
                    .orElse(null);
     }
 
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAmountMapper#mapToXs2aAmount(SpiAmount)} instead
+     */
+    @Deprecated
     public Xs2aAmount mapToXs2aAmount(SpiAmount spiAmount) {
         return Optional.ofNullable(spiAmount)
                    .map(a -> {
@@ -71,12 +80,20 @@ public class SpiXs2aAccountMapper {
                    .orElse(null);
     }
 
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAmountMapper#mapToSpiAmount(Xs2aAmount)} instead
+     */
+    @Deprecated
     public SpiAmount mapToSpiAmount(Xs2aAmount amount) {
         return Optional.ofNullable(amount)
                    .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getAmount())))
                    .orElse(null);
     }
 
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiTransactionListToXs2aAccountReportMapper#mapToXs2aAccountReport(List)} instead
+     */
+    @Deprecated
     public Optional<Xs2aAccountReport> mapToXs2aAccountReport(List<SpiTransaction> spiTransactions) {
 
         if (spiTransactions.isEmpty()) {
@@ -135,6 +152,10 @@ public class SpiXs2aAccountMapper {
                    .orElseGet(Collections::emptyList);
     }
 
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionMapper#mapToXs2aTransaction(SpiTransaction)} instead
+     */
+    @Deprecated
     private Transactions mapToXs2aTransaction(SpiTransaction spiTransaction) {
         return Optional.ofNullable(spiTransaction)
                    .map(t -> {
@@ -174,6 +195,10 @@ public class SpiXs2aAccountMapper {
                    .orElseGet(Collections::emptyList);
     }
 
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper#mapToXs2aBalanceList(List)} instead
+     */
+    @Deprecated
     private List<Xs2aBalance> mapToXs2aBalanceList(List<SpiAccountBalance> spiBalances) {
         if (CollectionUtils.isEmpty(spiBalances)) {
             return new ArrayList<>();
@@ -189,6 +214,10 @@ public class SpiXs2aAccountMapper {
                    .orElse(null);
     }
 
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aExchangeRateMapper#mapToExchangeRateList(List)} instead
+     */
+    @Deprecated
     private List<Xs2aExchangeRate> mapToExchangeRateList(List<SpiExchangeRate> spiExchangeRates) {
         if (CollectionUtils.isEmpty(spiExchangeRates)) {
             return new ArrayList<>();
@@ -199,6 +228,10 @@ public class SpiXs2aAccountMapper {
                    .collect(Collectors.toList());
     }
 
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aExchangeRateMapper#mapToExchangeRate(SpiExchangeRate)} instead
+     */
+    @Deprecated
     private Xs2aExchangeRate mapToExchangeRate(SpiExchangeRate spiExchangeRate) {
         return Optional.ofNullable(spiExchangeRate)
                    .map(e -> {
@@ -232,6 +265,10 @@ public class SpiXs2aAccountMapper {
                    .orElse(null);
     }
 
+    /**
+     * Use {@link de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper#mapToXs2aBalance(SpiAccountBalance)} instead
+     */
+    @Deprecated
     private Xs2aBalance mapToBalance(SpiAccountBalance spiAccountBalance) {
         return Optional.ofNullable(spiAccountBalance)
                    .map(b -> {
@@ -246,15 +283,24 @@ public class SpiXs2aAccountMapper {
                    .orElse(null);
     }
 
+    /**
+     * Not needed
+     */
+    @Deprecated
     public List<Xs2aAccountDetails> mapToAccountDetailsListNoBalances(List<Xs2aAccountDetails> details) {
         return details.stream()
                    .map(this::mapToAccountDetailNoBalances)
                    .collect(Collectors.toList());
     }
 
+    /**
+     * Not needed
+     */
+    @Deprecated
     public Xs2aAccountDetails mapToAccountDetailNoBalances(Xs2aAccountDetails detail) {
         return new Xs2aAccountDetails(detail.getId(), detail.getIban(), detail.getBban(), detail.getPan(),
             detail.getMaskedPan(), detail.getMsisdn(), detail.getCurrency(), detail.getName(),
-            detail.getProduct(), detail.getCashAccountType(), detail.getAccountStatus(), detail.getBic(), detail.getLinkedAccounts(), detail.getUsageType(), detail.getDetails(), null);
+            detail.getProduct(), detail.getCashAccountType(), detail.getAccountStatus(), detail.getBic(),
+            detail.getLinkedAccounts(), detail.getUsageType(), detail.getDetails(), null);
     }
 }

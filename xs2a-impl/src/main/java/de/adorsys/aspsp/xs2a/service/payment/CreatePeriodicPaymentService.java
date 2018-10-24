@@ -59,7 +59,7 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
         periodicPayment.setPaymentId(response.getPaymentId());
         periodicPayment.setTransactionStatus(response.getTransactionStatus());
 
-        pisConsentService.updatePaymentInPisConsent(periodicPayment, paymentInitiationParameters, pisConsent.getConsentId());
+        pisConsentService.updatePeriodicPaymentInPisConsent(periodicPayment, paymentInitiationParameters, pisConsent.getConsentId());
 
         boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {

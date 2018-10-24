@@ -18,9 +18,9 @@ package de.adorsys.aspsp.xs2a.service.profile;
 
 import de.adorsys.aspsp.xs2a.config.cache.CacheConfig;
 import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
@@ -43,13 +43,10 @@ public class AspspProfileServiceWrapper {
      * @return List of payment products supported by current ASPSP
      */
     public List<PaymentProduct> getAvailablePaymentProducts() {
-        return Optional.ofNullable(readAspspSettings().getAvailablePaymentProducts())
-                   .map(list -> list.stream()
-                                    .map(PaymentProduct::getByValue)
-                                    .filter(Optional::isPresent)
-                                    .map(Optional::get)
-                                    .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
+        List<PaymentProduct> availablePaymentProducts = readAspspSettings().getAvailablePaymentProducts();
+        return Optional.ofNullable(availablePaymentProducts)
+            .map(Collections::unmodifiableList)
+            .orElse(Collections.emptyList());
     }
 
     /**

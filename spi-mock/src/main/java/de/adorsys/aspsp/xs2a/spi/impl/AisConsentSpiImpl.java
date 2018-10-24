@@ -86,13 +86,23 @@ public class AisConsentSpiImpl implements AisConsentSpi {
 
     @Override
     public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password, SpiAccountConsent accountConsent, AspspConsentData aspspConsentData) {
-        Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuData.getPsuId(), password);
-        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
-                                                            .orElse(FAILURE);
-        byte[] payload = accessToken.flatMap(jsonConverter::toJson)
-                             .map(String::getBytes)
-                             .orElse(null);
-        return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData.respondWith(payload));
+        try {
+            Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuData.getPsuId(), password);
+            SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
+                                                                .orElse(FAILURE);
+            byte[] payload = accessToken.flatMap(jsonConverter::toJson)
+                                 .map(String::getBytes)
+                                 .orElse(null);
+            return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData.respondWith(payload));
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiAuthorisationStatus>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiAuthorisationStatus>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
 
     }
 
@@ -100,12 +110,22 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(@NotNull SpiPsuData psuData,
                                                                       SpiAccountConsent accountConsent,
                                                                       AspspConsentData aspspConsentData) {
-        ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
-            remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
-            }, psuData.getPsuId());
-        List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
-                                               .orElseGet(Collections::emptyList);
-        return new SpiResponse<>(spiScaMethods, aspspConsentData);
+        try {
+            ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
+                remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
+                }, psuData.getPsuId());
+            List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
+                                                   .orElseGet(Collections::emptyList);
+            return new SpiResponse<>(spiScaMethods, aspspConsentData);
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<List<SpiScaMethod>>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<List<SpiScaMethod>>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
 
     }
 

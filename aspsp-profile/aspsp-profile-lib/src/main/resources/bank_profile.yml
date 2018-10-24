@@ -2,7 +2,7 @@
 setting:
  frequencyPerDay: 5
  combinedServiceIndicator: false
- availablePaymentProducts: sepa-credit-transfers, instant-sepa-credit-transfers
+ availablePaymentProducts: SEPA, INSTANT_SEPA
  availablePaymentTypes: bulk, periodic, single
  scaApproach: REDIRECT
  tppSignatureRequired: false
@@ -16,5 +16,5 @@ setting:
  transactionLifetime: 0
  allPsd2Support: false
  transactionsWithoutBalancesSupported: true
- signingBasketSupported: true
+ signingBasketSupported: false
  paymentCancellationAuthorizationMandated: false

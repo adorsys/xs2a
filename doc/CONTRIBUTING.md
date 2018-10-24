@@ -37,3 +37,22 @@ You may find more information and a plugin for your editor/IDE [here](http://edi
 * Please use Optionals and corresponding streams instead of null-checks where possible
 * We prefer using Mockito over EasyMock for unit-tests.
 * We prefer SpringBoot autoconfiguration over manual Configuration where possible
+
+## Versioning and Releasing
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+
+Release is being done using the [release scripts](https://github.com/borisskert/release-scripts) ( (C) by [Boris Skert](https://github.com/borisskert) ) located under scripts/release-scripts.
+For detailed info see [README for release-scripts](scripts/release-scripts/README.md).
+
+### Steps to make a release
+
+**Release is made from local copy! Ensure that you have enough rights to push to master and develop branches**
+```bash
+$ git submodule update --init --remote
+$ scripts/release-scripts/release.sh <release-version> <next-develop-version>
+``` 
+Example
+```bash
+$ scripts/release-scripts/release.sh 1.0 1.1
+```

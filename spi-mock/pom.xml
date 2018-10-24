@@ -58,6 +58,12 @@
             <version>1.10-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-mock-api</artifactId>
+            <version>1.10-SNAPSHOT</version>
+        </dependency>
+
         <!-- spring dependencies -->
 
         <dependency>

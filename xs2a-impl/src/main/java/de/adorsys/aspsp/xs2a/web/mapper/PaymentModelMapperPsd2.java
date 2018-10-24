@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -71,7 +72,7 @@ public class PaymentModelMapperPsd2 {
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
             paymentResponse.setStartDate(xs2aPayment.getStartDate());
             paymentResponse.setEndDate(xs2aPayment.getEndDate());
-            paymentResponse.setExecutionRule(ExecutionRule.valueOf(xs2aPayment.getExecutionRule()));
+            paymentResponse.setExecutionRule(ExecutionRule.fromValue(xs2aPayment.getExecutionRule()));
             paymentResponse.setFrequency(FrequencyCode.valueOf(xs2aPayment.getFrequency().name()));
             String executionDateString = String.format("%02d", xs2aPayment.getDayOfExecution());
             paymentResponse.setDayOfExecution(DayOfExecution.fromValue(executionDateString));

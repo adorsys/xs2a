@@ -16,14 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -109,39 +106,4 @@ public interface AccountSpi {
      * @return a list of allowed payment products
      */
     SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData);
-
-    @Deprecated
-    SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password, AspspConsentData aspspConsentData);
-
-    /**
-     * Authorises psu and returns current autorization status
-     *
-     * @param psuId            ASPSP identifier of the psu
-     * @param password         Psu's password
-     * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request.
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
-     * @return success or failure authorization status
-     */
-    @Deprecated
-    SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData);
-
-    /**
-     * Performs strong customer authorization
-     *
-     * @param psuId            ASPSP identifier of the psu
-     * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request.
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
-     */
-    @Deprecated
-    void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
-
-    /**
-     * Applies strong customer authorization
-     *
-     * @param spiAccountConfirmation Account confirmation data
-     * @param aspspConsentData       Encrypted data that may be stored in the consent management system in the consent linked to a request.
-     *                               May be null if consent does not contain such data, or request isn't done from a workflow with a consent
-     */
-    @Deprecated
-    void applyStrongUserAuthorisation(SpiAccountConfirmation spiAccountConfirmation, AspspConsentData aspspConsentData);
 }
