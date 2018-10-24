@@ -22,6 +22,7 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
@@ -97,6 +98,36 @@ public class GlobalSuccessfulSteps {
         context.setAccessToken(Objects.requireNonNull(response).getBody().get("access_token").toString());
     }
 
+    // Global Step for single payment initiation
+    @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
+        context.setPaymentProduct(paymentProduct);
+        context.setPaymentService(paymentService);
+
+        testService.parseJson("/data-input/pis/single/" + dataFileName,  new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
+        });
+    }
+
+    // Global Step for single payment initiation
+    @When("^PSU sends the single payment initiating request$")
+    public void sendSinglePaymentInitiatingRequest() {
+        testService.sendRestCall(HttpMethod.POST,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
+    }
+
+    // Global Step for the single payment initiation and storage of the paymentId
+    @Given("^PSU sends the single payment initiation request and receives the paymentId$")
+    public void sendSinglePaymentInitiationRequestAndStoreId() throws IOException {
+        context.setPaymentProduct("sepa-credit-transfers");
+        context.setPaymentService("payments");
+
+        testService.parseJson("/data-input/pis/single/singlePayInit-successful.json",  new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
+        });
+        testService.sendRestCall(HttpMethod.POST, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
+        context.setPaymentId(((PaymentInitationRequestResponse201) context.getActualResponse().getBody()).getPaymentId());
+    }
+
+
+    // Global step for checking the redirect url of the payment initiation response - Redirect Approach
     @And("^a redirect URL is delivered to the PSU$")
     public void checkRedirectUrl() {
         ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
@@ -104,6 +135,7 @@ public class GlobalSuccessfulSteps {
         assertThat(actualResponse.getBody().getLinks().get("scaRedirect"), notNullValue());
     }
 
+    // Global step for checking the response of payment initiation - Redirect Approach
     @Then("^a successful response code and the appropriate payment response data are received$")
     public void checkResponseCode() {
         ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
@@ -121,16 +153,11 @@ public class GlobalSuccessfulSteps {
         // assertThat(actualResponse.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
     }
 
-    // Embedded Global Step Payment Initiation
-    @And("^PSU sends the single payment initiating request and receives the paymentId$")
-    public void sendSinglePaymentInitiationEmbedded() {
-        testService.sendRestCall(HttpMethod.POST, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
-        context.setPaymentId(((PaymentInitationRequestResponse201) context.getActualResponse().getBody()).getPaymentId());
-    }
 
-    // Embedded Global Step Payment Initiation
+
+    //Global Step for starting the authorisation and saving the authorisation id - Embedded Approach
     @And("^PSU sends the start authorisation request and receives the authorisationId$")
-    public void startAuthorisationRequest() throws IOException {
+    public void startAuthorisationAndStoreId() throws IOException {
         HttpEntity entity = PaymentUtils.getHttpEntityWithoutBody(context.getTestData().getRequest(), context.getAccessToken());
         testService.parseJson(("/data-input/pis/embedded/" + "startAuth-successful.json"), new TypeReference<TestData<HashMap, StartScaprocessResponse>>() {
         });
@@ -147,32 +174,12 @@ public class GlobalSuccessfulSteps {
         }
     }
 
-    // Embedded Global Step Payment Initiation
-    @And("^PSU wants to update the resource with his (.*)$")
-    public void loadIdentificationData(String identificationData) throws IOException {
-        testService.parseJson("/data-input/pis/embedded/" + identificationData,  new TypeReference<TestData<UpdatePsuAuthentication, UpdatePsuAuthenticationResponse>>() {
+    // Global Step for updating the PSU identification data - Embedded Approach
+    @And("^PSU updates his identification data$")
+    public void updatePsuIdentification() throws IOException {
+        testService.parseJson("/data-input/pis/embedded/" + "updateIdentificationNoSca-successful.json",  new TypeReference<TestData<UpdatePsuAuthentication, UpdatePsuAuthenticationResponse>>() {
         });
-    }
-
-    // Embedded Global Step Payment Initiation
-    @Then("PSU checks if the correct SCA status and response code is received$")
-    public void checkScaStatusAndResponseCode() {
-        ResponseEntity<UpdatePsuAuthenticationResponse> actualResponse = context.getActualResponse();
-        UpdatePsuAuthenticationResponse givenResponseBody = (UpdatePsuAuthenticationResponse) context.getTestData().getResponse().getBody();
-
-        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        assertThat(actualResponse.getBody().getScaStatus(), equalTo(givenResponseBody.getScaStatus()));
-
-        if (actualResponse.getBody().getScaStatus().equals(ScaStatus.PSUAUTHENTICATED)) {
-            ScaMethods actualMethods = actualResponse.getBody().getScaMethods();
-
-            assertThat(actualMethods.size(), equalTo(givenResponseBody.getScaMethods().size()));
-
-            for (int i = 0; i < actualMethods.size(); i++) {
-                assertThat(actualMethods.get(i).getAuthenticationType(), equalTo(givenResponseBody.getScaMethods().get(i).getAuthenticationType()));
-                assertThat(actualMethods.get(i).getAuthenticationMethodId(), notNullValue());
-            }
-        }
+        testService.sendRestCall(HttpMethod.PUT,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId());
     }
 
     @After
