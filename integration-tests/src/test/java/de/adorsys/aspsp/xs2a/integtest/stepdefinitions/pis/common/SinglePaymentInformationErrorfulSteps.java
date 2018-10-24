@@ -41,11 +41,8 @@ public class SinglePaymentInformationErrorfulSteps extends AbstractErrorfulSteps
     @Autowired
     private TestService testService;
 
-    // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
-    // See SinglePaymentSuccessfulSteps
-
-    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
-    // See GlobalSuccessfulSteps
+    //    @Given("^PSU sends the single payment initiation request and receives the paymentId$")
+    //    See Global Successful Steps
 
     @And("^PSU prepares the errorful payment information request data (.*) with the payment service (.*)$")
     public void loadErrorfulPaymentInformationTestData (String dataFileName, String paymentService) throws IOException {

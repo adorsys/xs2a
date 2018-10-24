@@ -45,11 +45,8 @@ public class PaymentStatusSuccessfulSteps {
     @Autowired
     private TestService testService;
 
-    // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
-    // See SinglePaymentSuccessfulSteps
-
-    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
-    // See GlobalSuccessfulSteps
+    //    @Given("^PSU sends the single payment initiation request and receives the paymentId$")
+    //    See Global Successful Steps
 
     @And("^PSU wants to request the payment status by using a set of data (.*)$")
     public void loadPaymentStatusTestData(String dataFileName) throws IOException {

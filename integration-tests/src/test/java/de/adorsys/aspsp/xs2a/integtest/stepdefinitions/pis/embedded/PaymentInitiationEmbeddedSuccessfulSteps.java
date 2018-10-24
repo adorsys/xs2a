@@ -34,11 +34,11 @@ public class PaymentInitiationEmbeddedSuccessfulSteps {
     @Autowired
     private Context<PaymentInitiationSctJson, PaymentInitationRequestResponse201> context;
 
-    // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
-    // See SinglePaymentSuccessfulSteps
+//    @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+//    See GlobalSuccessfulSteps
 
-    // @When("^PSU sends the single payment initiating request$")
-    // See SinglePaymentSuccessfulSteps
+//    @When("^PSU sends the single payment initiating request$")
+//    See GlobalSuccessfulSteps
 
     @Then("^a successful response code and the appropriate authentication URL is delivered to the PSU$")
     public void checkResponseCodeAndAuthorisationLink() {

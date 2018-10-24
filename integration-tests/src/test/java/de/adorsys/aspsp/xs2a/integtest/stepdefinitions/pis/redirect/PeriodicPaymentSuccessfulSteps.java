@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
@@ -42,7 +42,7 @@ public class PeriodicPaymentSuccessfulSteps {
     @Autowired
     private TestService testService;
 
-    @And("^PSU wants to initiate a recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
+    @Given("^PSU wants to initiate a recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestDataForSuccessfulPeriodicPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);

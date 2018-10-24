@@ -29,12 +29,10 @@ import de.adorsys.psd2.model.BulkPaymentInitiationSctWithStatusResponse;
 import de.adorsys.psd2.model.PaymentInitiationSctWithStatusResponse;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationSctWithStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -51,10 +49,6 @@ public class PaymentInformationSuccessfulSteps {
     private static final long DAYS_OFFSET = 100L;
 
     @Autowired
-    @Qualifier("xs2a")
-    private RestTemplate restTemplate;
-
-    @Autowired
     private Context<HashMap, PaymentInitiationSctWithStatusResponse> context;
 
     @Autowired
@@ -63,11 +57,8 @@ public class PaymentInformationSuccessfulSteps {
     @Autowired
     private TestService testService;
 
-    // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
-    // See SinglePaymentSuccessfulSteps
-
-    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
-    // See GlobalSuccessfulSteps
+    //    @Given("^PSU sends the single payment initiation request and receives the paymentId$")
+    //    See Global Successful Steps
 
 
     @And("^PSU wants to request the payment information by using a set of data (.*)$")
