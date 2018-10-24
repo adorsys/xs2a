@@ -212,8 +212,8 @@ public class AccountControllerTest {
         transaction.setRemittanceInformationUnstructured("Ref Number Merchant");
         transaction.setPurposeCode(new Xs2aPurposeCode("BKDF"));
         transaction.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
-        Transactions[] booked = {new Transactions()};
-        Xs2aAccountReport accountReport = new Xs2aAccountReport(booked, new Transactions[]{});
+        List<Transactions> booked = Collections.singletonList(new Transactions());
+        Xs2aAccountReport accountReport = new Xs2aAccountReport(booked, Collections.emptyList());
         return ResponseObject.<Xs2aAccountReport>builder().body(accountReport).build();
     }
 

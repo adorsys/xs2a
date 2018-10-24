@@ -127,13 +127,13 @@ public class AccountModelMapper {
     public AccountReport mapToAccountReport(Xs2aAccountReport accountReport) {
         TransactionList booked = new TransactionList();
         List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
-                                                          .map(ts -> Arrays.stream(ts).map(this::mapToTransaction).collect(Collectors.toList()))
+                                                          .map(ts -> ts.stream().map(this::mapToTransaction).collect(Collectors.toList()))
                                                           .orElseGet(ArrayList::new);
         booked.addAll(bookedTransactions);
 
         TransactionList pending = new TransactionList();
         List<TransactionDetails> pendingTransactions = Optional.ofNullable(accountReport.getPending())
-                                                           .map(ts -> Arrays.stream(ts).map(this::mapToTransaction).collect(Collectors.toList()))
+                                                           .map(ts -> ts.stream().map(this::mapToTransaction).collect(Collectors.toList()))
                                                            .orElseGet(ArrayList::new);
         pending.addAll(pendingTransactions);
 
