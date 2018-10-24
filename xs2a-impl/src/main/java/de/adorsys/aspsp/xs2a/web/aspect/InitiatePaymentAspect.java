@@ -17,11 +17,11 @@
 package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -33,10 +33,9 @@ import java.util.Map;
 
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class InitiatePaymentAspect {
-
-    @Autowired
-    RequestValidatorService requestValidatorService;
+    private final RequestValidatorService requestValidatorService;
 
     /**
      * Check for violations in initiate payment request
@@ -60,7 +59,7 @@ public class InitiatePaymentAspect {
         Object[] args = joinPoint.getArgs();
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Method method = methodSignature .getMethod();
+        Method method = methodSignature.getMethod();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         assert args.length == parameterAnnotations.length;
         for (int argIndex = 0; argIndex < args.length; argIndex++) {
