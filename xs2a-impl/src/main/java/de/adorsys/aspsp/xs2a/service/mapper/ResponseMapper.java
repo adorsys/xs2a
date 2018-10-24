@@ -56,6 +56,10 @@ public class ResponseMapper {
         return getEntity(response, NO_CONTENT);
     }
 
+    public <T> ResponseEntity<T> accepted(ResponseObject<T> response) {
+        return getEntity(response, ACCEPTED);
+    }
+
     private <T> ResponseEntity<T> getEntity(ResponseObject<T> response, HttpStatus status) {
         return getEntity(response, status, null);
     }

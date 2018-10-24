@@ -52,9 +52,9 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     private ApplicationContext applicationContext;
 
     protected PaymentSpi getPaymentService(PaymentType paymentType) {
-        if(PaymentType.SINGLE == paymentType){
+        if (PaymentType.SINGLE == paymentType) {
             return applicationContext.getBean(SinglePaymentSpi.class);
-        } else if(PaymentType.PERIODIC == paymentType){
+        } else if (PaymentType.PERIODIC == paymentType) {
             return applicationContext.getBean(PeriodicPaymentSpi.class);
         } else {
             return applicationContext.getBean(BulkPaymentSpi.class);

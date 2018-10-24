@@ -20,17 +20,16 @@ import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
-import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.BulkPaymentInitiationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
+import de.adorsys.aspsp.xs2a.service.payment.CancelPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
@@ -49,8 +48,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
+import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -74,6 +72,8 @@ public class PaymentServiceTest {
     @Mock
     private SpiToXs2aTransactionalStatusMapper paymentMapper;
     @Mock
+    private CancelPaymentService cancelPaymentService;
+    @Mock
     private ReadPaymentFactory readPaymentFactory;
     @Mock
     private PisConsentService pisConsentService;
@@ -95,6 +95,8 @@ public class PaymentServiceTest {
     private PeriodicPaymentSpi periodicPaymentSpi;
     @Mock
     private BulkPaymentSpi bulkPaymentSpi;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
 
     @Before
     public void setUp() {
@@ -111,6 +113,15 @@ public class PaymentServiceTest {
 
         when(pisConsentDataService.getAspspConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
         when(tppService.getTppInfo()).thenReturn(getTppInfo());
+
+        when(cancelPaymentService.initiatePaymentCancellation(any(), any(), any()))
+            .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
+                            .body(getCancelPaymentResponse(true, ACTC))
+                            .build());
+        when(cancelPaymentService.cancelPaymentWithoutAuthorisation(any(), any(), any()))
+            .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
+                            .body(getCancelPaymentResponse(false, CANC))
+                            .build());
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
@@ -123,6 +134,30 @@ public class PaymentServiceTest {
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
+    }
+
+    @Test
+    public void cancelPayment_Success_WithAuthorisation() {
+        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.TRUE);
+
+        // When
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+
+        // Then
+        assertThat(actual.getBody()).isNotNull();
+        assertThat(actual.getBody().isStartAuthorisationRequired()).isEqualTo(true);
+    }
+
+    @Test
+    public void cancelPayment_Success_WithoutAuthorisation() {
+        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
+
+        // When
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+
+        // Then
+        assertThat(actual.getBody()).isNotNull();
+        assertThat(actual.getBody().isStartAuthorisationRequired()).isEqualTo(false);
     }
 
     private static SinglePayment getSinglePayment(String iban, String amountToPay) {
@@ -215,5 +250,12 @@ public class PaymentServiceTest {
 
     private ResponseObject<BulkPaymentInitiationResponse> getValidResponse() {
         return ResponseObject.<BulkPaymentInitiationResponse>builder().body(getBulkResponses(RCVD, null)).build();
+    }
+
+    private CancelPaymentResponse getCancelPaymentResponse(boolean authorisationRequired, Xs2aTransactionStatus transactionStatus) {
+        CancelPaymentResponse response = new CancelPaymentResponse();
+        response.setStartAuthorisationRequired(authorisationRequired);
+        response.setTransactionStatus(transactionStatus);
+        return response;
     }
 }
