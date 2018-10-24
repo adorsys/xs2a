@@ -26,7 +26,7 @@ Feature: Payment Initiation Service
             | payments            | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
             | payments            | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
             | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
-#            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
+            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
 #            | recurring-payments  | sepa-credit-transfers         | singlePayInit-wrong-payment-service.json       |
 
     ####################################################################################################################
@@ -91,7 +91,7 @@ Feature: Payment Initiation Service
             | periodic-payments | sepa-credit-transfers | recPayInit-no-request-id.json               |
             | periodic-payments | sepa-credit-transfers | recPayInit-no-ip-address.json               |
             | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |
-#            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-psu-ip-address.json |
+            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-psu-ip-address.json |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-start-date-in-past.json          |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-end-date-before-start-date.json  |
 
@@ -102,28 +102,26 @@ Feature: Payment Initiation Service
     #                                                                                                                  #
     ####################################################################################################################
     Scenario Outline: Successful payment status request
-        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
-        And PSU sends the single payment initiating request and receives the paymentId
+        Given PSU sends the single payment initiation request and receives the paymentId
         And PSU wants to request the payment status by using a set of data <payment-status-data>
         When PSU requests the status of the payment
         Then a successful response code and the correct payment status is delivered to the PSU
         Examples:
-            | single-payment                | payment-initiation-service | payment-product       | payment-status-data                     |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentStatus-RCVD-successful.json      |
+            | payment-status-data                     |
+            | paymentStatus-RCVD-successful.json      |
 
 
     Scenario Outline: Failed payment status request
-        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
-        And PSU sends the single payment initiating request and receives the paymentId
-        And PSU prepares the errorful payment status request data <payment-status-data> with the payment service <payment-status-service>
+        Given PSU sends the single payment initiation request and receives the paymentId
+        And PSU prepares the errorful payment status request data <payment-status-data> with the payment service <payment-service>
         When PSU requests the status of the payment with error
         Then an error response code and the appropriate error response are received
         Examples:
-            | single-payment                | payment-initiation-service | payment-product       | payment-status-data                       | payment-status-service |
-#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-not-existing-paymentId.json  | payments               |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-no-request-id.json           | payments               |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-wrong-format-request-id.json | payments               |
-#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-wrong-payment-service.json   | recurring-payments     |
+            | payment-status-data                       | payment-service |
+#            |paymentStatus-not-existing-paymentId.json  | payments               |
+            |paymentStatus-no-request-id.json           | payments               |
+            |paymentStatus-wrong-format-request-id.json | payments               |
+#            |paymentStatus-wrong-payment-service.json   | recurring-payments     |
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -131,28 +129,26 @@ Feature: Payment Initiation Service
     #                                                                                                                  #
     ####################################################################################################################
     Scenario Outline: Successful Single Payment Information Request
-        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
-        And PSU sends the single payment initiating request and receives the paymentId
+        Given PSU sends the single payment initiation request and receives the paymentId
         And PSU wants to request the payment information by using a set of data <payment-information-data>
         When PSU requests the information of the payment
         Then a successful response code and the payment information is delivered to the PSU
         Examples:
-            | single-payment                | payment-initiation-service | payment-product       | payment-information-data             |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-successful.json |
+           | payment-information-data             |
+           | singlePayInformation-successful.json |
 
 
     Scenario Outline: Failed Payment Information Request
-        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
-        And PSU sends the single payment initiating request and receives the paymentId
-        And PSU prepares the errorful payment information request data <payment-information-data> with the payment service <payment-information-service>
+        Given PSU sends the single payment initiation request and receives the paymentId
+        And PSU prepares the errorful payment information request data <payment-information-data> with the payment service <payment-service>
         When PSU requests the information of the payment with error
         Then an error response code and the appropriate error response are received
         Examples:
-            | single-payment                | payment-initiation-service | payment-product       | payment-information-data                          | payment-information-service |
-#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-not-existing-paymentId.json  | payments                    |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-wrong-format-request-id.json | payments                    |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-no-request-id.json           | payments                    |
-#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-wrong-payment-service.json   | recurring-payments          |
+           | payment-information-data                          | payment-service |
+#           | singlePayInformation-not-existing-paymentId.json  | payments                    |
+           | singlePayInformation-wrong-format-request-id.json | payments                    |
+           | singlePayInformation-no-request-id.json           | payments                    |
+#           | singlePayInformation-wrong-payment-service.json   | recurring-payments          |
 
 
     ####################################################################################################################
@@ -162,24 +158,22 @@ Feature: Payment Initiation Service
     ####################################################################################################################
     @ignore
     Scenario Outline: Successful payment cancellation request
-        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
-        And PSU sends the single payment initiating request and receives the paymentId
+        Given PSU sends the single payment initiation request and receives the paymentId
         And PSU wants to cancel the payment by using a set of data <payment-cancellation-data>
         When PSU initiates the cancellation of the payment
         Then an successful response code and the appropriate transaction status is delivered to the PSU
         Examples:
-            | single-payment                | payment-initiation-service | payment-product       | payment-cancellation-data           |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-successful.json |
+            | payment-cancellation-data           |
+            | paymentCancellation-successful.json |
 
    Scenario Outline: Failed payment cancellation request
-        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
-        And PSU sends the single payment initiating request and receives the paymentId
-        And PSU prepares the errorful cancellation request data <payment-cancellation-data> with the payment service <payment-cancellation-service>
+        Given PSU sends the single payment initiation request and receives the paymentId
+        And PSU prepares the errorful cancellation request data <payment-cancellation-data> with the payment service <payment-service>
         When PSU initiates the cancellation of the payment with error
         Then an error response code and the appropriate error response are received
         Examples:
-            | single-payment                | payment-initiation-service | payment-product       | payment-cancellation-data                        | payment-cancellation-service |
-#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-not-existing-paymentId.json  | payments                    |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-wrong-format-request-id.json | payments                    |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-no-request-id.json           | payments                    |
-#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-wrong-payment-service.json   | recurring-payments          |
+            | payment-cancellation-data                        | payment-service |
+#            | paymentCancellation-not-existing-paymentId.json  | payments                    |
+            | paymentCancellation-wrong-format-request-id.json | payments                    |
+            | paymentCancellation-no-request-id.json           | payments                    |
+#           | paymentCancellation-wrong-payment-service.json   | recurring-payments          |
