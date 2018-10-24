@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.common;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
-import de.adorsys.psd2.model.PaymentInitiationCancelResponse200202;
+import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -38,18 +39,16 @@ import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 @FeatureFileSteps
-public class PaymentCancellationSuccessfulSteps {
+public class PaymentCancellationErrorfulSteps extends AbstractErrorfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<HashMap, PaymentInitiationCancelResponse200202> context;
+    private Context<HashMap, TppMessages> context;
 
     @Autowired
     private ObjectMapper mapper;
@@ -60,38 +59,36 @@ public class PaymentCancellationSuccessfulSteps {
     // @And("^PSU sends the single payment initiating request and receives the paymentId$")
     // See GlobalSuccessfulSteps
 
-    @And("PSU wants to cancel the payment by using a set of data (.*)$")
-    public void loadPaymentCancellationTestData(String dataFileName) throws IOException {
-        TestData<HashMap, PaymentInitiationCancelResponse200202> data = mapper.readValue(resourceToString(
+    @And("^PSU prepares the errorful cancellation request data (.*) with the payment service (.*)$")
+    public void loadErrorfulPaymentCancellationTestData(String dataFileName, String paymentService) throws IOException {
+
+        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
             "/data-input/pis/cancellation/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, PaymentInitiationCancelResponse200202>>() {
+            new TypeReference<TestData<HashMap, TppMessages>>() {
             });
 
         context.setTestData(data);
+        context.setPaymentService(paymentService);
+        this.setErrorfulIds(dataFileName);
     }
 
-    @When("^PSU initiates the cancellation of the payment$")
-    public void sendPaymentCancellationRequest() {
+    @When("^PSU initiates the cancellation of the payment with error$")
+    public void sendPaymentCancellationRequestWithError() throws HttpClientErrorException, IOException {
         HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
-        ResponseEntity<PaymentInitiationCancelResponse200202> response = restTemplate.exchange(
-            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
-            HttpMethod.DELETE,
-            entity,
-            PaymentInitiationCancelResponse200202.class);
-
-        context.setActualResponse(response);
-
+        try {
+            restTemplate.exchange(
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
+                HttpMethod.DELETE,
+                entity,
+                HashMap.class);
+        } catch (RestClientResponseException rex) {
+            context.handleRequestError(rex);
+        }
     }
 
-    @Then("^an successful response code and the appropriate transaction status is delivered to the PSU$")
-    public void checkResponse() {
-        ResponseEntity<PaymentInitiationCancelResponse200202> actualResponse = context.getActualResponse();
-        PaymentInitiationCancelResponse200202 givenResponseBody = context.getTestData().getResponse().getBody();
+    // @Then("^an error response code and the appropriate error response are received$")
+    // See GlobalErrorfulSteps
 
-        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
-        assertThat(actualResponse.getHeaders().get("x-request-id"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
-    }
 }

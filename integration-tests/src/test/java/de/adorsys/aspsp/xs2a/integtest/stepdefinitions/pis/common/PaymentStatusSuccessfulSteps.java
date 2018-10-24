@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.common;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import cucumber.api.java.en.And;
