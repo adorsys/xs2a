@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
 
 // TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
-interface PaymentSpi<T extends SpiPayment, R> {
+public interface PaymentSpi<T extends SpiPayment, R> {
 
     @NotNull
     SpiResponse<R> initiatePayment(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);

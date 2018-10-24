@@ -18,9 +18,9 @@ package de.adorsys.psd2.consent.server.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.api.CmsConsentStatus;
-import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.server.domain.ConsentType;
 import de.adorsys.psd2.consent.server.domain.TppInfo;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -64,7 +64,7 @@ public class PisConsent {
     @Column(name = "payment_product", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
-    private PisPaymentProduct pisPaymentProduct;
+    private PaymentProduct pisPaymentProduct;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

@@ -100,7 +100,7 @@ public class AspspRemoteUrls {
     }
 
     /**
-     * Returns URL-string to ASPSP-Mock endpoint that Creates a new Transaction with body SpiTransaction
+     * Returns URL-string to ASPSP-Mock endpoint that Creates a new Transaction with body AspspTransaction
      *
      * @return URL
      */

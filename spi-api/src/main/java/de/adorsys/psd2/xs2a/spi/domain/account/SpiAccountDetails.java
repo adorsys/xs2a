@@ -93,4 +93,8 @@ public class SpiAccountDetails {
             .findFirst()
             .map(b -> balance);
     }
+
+    public void emptyBalances() {
+        balances = null;
+    }
 }

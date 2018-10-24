@@ -32,6 +32,7 @@ public class SpiResponse<T> {
     /**
      * Business object that is returned in scope of request
      */
+    @NotNull
     private T payload;
 
     /**

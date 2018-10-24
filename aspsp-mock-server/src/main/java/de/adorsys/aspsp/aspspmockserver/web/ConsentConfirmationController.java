@@ -18,9 +18,9 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.domain.Confirmation;
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.consent.SpiConsentStatus;
 import de.adorsys.aspsp.aspspmockserver.service.ConsentService;
 import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
+import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +60,7 @@ public class ConsentConfirmationController {
     @PutMapping(path = "/{consent-id}/{status}")
     @ApiOperation(value = "Update ais consent status of the corresponding consent", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<Void> updateAisConsentStatus(@PathVariable("consent-id") String consentId,
-                                                       @PathVariable("status") SpiConsentStatus status) {
+                                                       @PathVariable("status") AspspConsentStatus status) {
         consentService.updateAisConsentStatus(consentId, status);
         return ResponseEntity.ok().build();
     }

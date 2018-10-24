@@ -24,5 +24,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class SinglePaymentInitiationResponse extends PaymentInitiationResponse {
 
-    private PaymentType paymentType = PaymentType.SINGLE;
+    @Override
+    PaymentType getPaymentType() {
+        return PaymentType.SINGLE;
+    }
 }
