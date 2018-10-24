@@ -63,7 +63,7 @@ public class FundsConfirmationService {
 
 
         SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        SpiResponse<Boolean> fundsSufficientCheck = fundsConfirmationSpi.peformFundsSufficientCheck(
+        SpiResponse<Boolean> fundsSufficientCheck = fundsConfirmationSpi.performFundsSufficientCheck(
             psuData,
             null, //TODO Put here actual FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
             accountReference,
