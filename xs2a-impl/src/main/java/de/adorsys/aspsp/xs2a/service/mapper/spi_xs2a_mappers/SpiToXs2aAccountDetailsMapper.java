@@ -41,23 +41,23 @@ public class SpiToXs2aAccountDetailsMapper {
     public Xs2aAccountDetails mapToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
                    .map(ad -> new Xs2aAccountDetails(
-                           ad.getId(),
-                           ad.getIban(),
-                           ad.getBban(),
-                           ad.getPan(),
-                           ad.getMaskedPan(),
-                           ad.getMsisdn(),
-                           ad.getCurrency(),
-                           ad.getName(),
-                           ad.getProduct(),
-                           mapToAccountType(ad.getCashSpiAccountType()),
-                           mapToAccountStatus(ad.getSpiAccountStatus()),
-                           ad.getBic(),
-                           ad.getLinkedAccounts(),
-                           mapToXs2aUsageType(ad.getUsageType()),
-                           ad.getDetails(),
-                           balanceMapper.mapToXs2aBalanceList(ad.getBalances())
-                       )
+                            ad.getId(),
+                            ad.getIban(),
+                            ad.getBban(),
+                            ad.getPan(),
+                            ad.getMaskedPan(),
+                            ad.getMsisdn(),
+                            ad.getCurrency(),
+                            ad.getName(),
+                            ad.getProduct(),
+                            mapToAccountType(ad.getCashSpiAccountType()),
+                            mapToAccountStatus(ad.getSpiAccountStatus()),
+                            ad.getBic(),
+                            ad.getLinkedAccounts(),
+                            mapToXs2aUsageType(ad.getUsageType()),
+                            ad.getDetails(),
+                            balanceMapper.mapToXs2aBalanceList(ad.getBalances())
+                        )
                    )
                    .orElse(null);
     }
@@ -68,8 +68,8 @@ public class SpiToXs2aAccountDetailsMapper {
         }
 
         return accountDetails.stream()
-            .map(this::mapToXs2aAccountDetails)
-            .collect(Collectors.toList());
+                   .map(this::mapToXs2aAccountDetails)
+                   .collect(Collectors.toList());
     }
 
     private CashAccountType mapToAccountType(SpiAccountType spiAccountType) {

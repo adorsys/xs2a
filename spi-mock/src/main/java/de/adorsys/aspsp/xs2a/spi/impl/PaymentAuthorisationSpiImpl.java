@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,7 @@ import java.util.Optional;
 import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
 import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
 
+@Primary
 @Service
 @RequiredArgsConstructor
 public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {

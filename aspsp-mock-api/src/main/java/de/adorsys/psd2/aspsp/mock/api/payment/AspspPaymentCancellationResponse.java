@@ -16,9 +16,11 @@
 
 package de.adorsys.psd2.aspsp.mock.api.payment;
 
-import lombok.Value;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
+import lombok.Data;
 
-@Value
-public class AspspCancelPayment {
-    private boolean startAuthorisationRequired = true;
+@Data
+public class AspspPaymentCancellationResponse {
+    private boolean cancellationAuthorisationMandated;
+    private AspspTransactionStatus transactionStatus;
 }
