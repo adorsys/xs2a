@@ -26,7 +26,9 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -50,7 +52,7 @@ public class SpiPeriodicPaymentMapper {
         periodic.setExecutionRule(payment.getExecutionRule());
         periodic.setFrequency(payment.getFrequency().name());
         periodic.setDayOfExecution(payment.getDayOfExecution());
-        periodic.setRequestedExecutionTime(payment.getRequestedExecutionTime().toLocalDateTime());
+        periodic.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(OffsetDateTime::toLocalDateTime).orElse(null));
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         return periodic;
     }
@@ -72,7 +74,7 @@ public class SpiPeriodicPaymentMapper {
         periodic.setExecutionRule(payment.getExecutionRule());
         periodic.setFrequency(SpiFrequencyCode.valueOf(payment.getFrequency()));
         periodic.setDayOfExecution(payment.getDayOfExecution());
-        periodic.setRequestedExecutionTime(payment.getRequestedExecutionTime().atOffset(ZoneOffset.UTC));
+        periodic.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(t -> t.atOffset(ZoneOffset.UTC)).orElse(null));
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         return periodic;
     }
