@@ -38,6 +38,12 @@ public class InitiatePaymentAspect {
     @Autowired
     RequestValidatorService requestValidatorService;
 
+    /**
+     * Check for violations in initiate payment request
+     *
+     * @param joinPoint for initiate payment request
+     * @throws ValidationException when violations exist
+     */
     @Before("execution(* de.adorsys.psd2.api.PaymentApi._initiatePayment(..))")
     public void initiatePayment(JoinPoint joinPoint) throws ValidationException {
 

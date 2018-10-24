@@ -37,12 +37,26 @@ public class HeadersFactory {
         controllerClassMap.put(AccountController.class, AccountRequestHeader.class);
         controllerClassMap.put(ConsentController.class, ConsentRequestHeader.class);
         controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
-   }
+    }
 
+    /**
+     * Gets request header instance filled by request headers and controller class
+     *
+     * @param requestHeadersMap headers and its values
+     * @param controllerClass controller class that gives us appropriate header class
+     * @return request header instance filled by headers and controller class
+     */
     public static RequestHeader getHeadersImpl(Map<String, String> requestHeadersMap, Class controllerClass) {
         return getHeadersImplByRequestHeaderClass(requestHeadersMap, controllerClassMap.get(controllerClass));
     }
 
+    /**
+     * Gets request header instance filled by request headers and request header class
+     *
+     * @param requestHeadersMap headers and its values
+     * @param headerClass header class that will be construct with requestHeadersMap
+     * @return request header instance filled by headers and request header class
+     */
     public static RequestHeader getHeadersImplByRequestHeaderClass(Map<String, String> requestHeadersMap, Class<? extends RequestHeader> headerClass) {
 
         if (headerClass == null) {

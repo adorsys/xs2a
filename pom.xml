@@ -132,7 +132,7 @@
         <swagger.annotations.version>1.5.20</swagger.annotations.version>
         <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
         <archunit-junit4.version>0.9.1</archunit-junit4.version>
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
     </properties>
