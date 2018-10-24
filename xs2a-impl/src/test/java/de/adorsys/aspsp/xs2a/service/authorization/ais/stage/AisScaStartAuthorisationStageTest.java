@@ -65,6 +65,7 @@ public class AisScaStartAuthorisationStageTest {
     private static final ScaStatus METHOD_SELECTED_SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
     private static final MessageErrorCode FORMAT_ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final MessageErrorCode SCA_METHOD_UNKNOWN_ERROR_CODE = MessageErrorCode.SCA_METHOD_UNKNOWN;
+    private static final MessageErrorCode PSU_CREDENTIALS_INVALID_ERROR_CODE = MessageErrorCode.PSU_CREDENTIALS_INVALID;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
     private static final List<SpiScaMethod> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PHOTO_OTP);
@@ -125,12 +126,13 @@ public class AisScaStartAuthorisationStageTest {
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
+        assertThat(actualResponse.getErrorCode()).isEqualTo(PSU_CREDENTIALS_INVALID_ERROR_CODE);
     }
 
     @Test
     public void apply_MultipleAvailableScaMethods_Success() {
         when(aisConsentSpi.authorisePsu(SPI_PSU_DATA, PASSWORD, accountConsent, ASPSP_CONSENT_DATA))
-            .thenReturn(buildErrorSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, accountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(MULTIPLE_SPI_SCA_METHODS));
@@ -150,7 +152,7 @@ public class AisScaStartAuthorisationStageTest {
     @Test
     public void apply_OneAvailableScaMethod_Success() {
         when(aisConsentSpi.authorisePsu(SPI_PSU_DATA, PASSWORD, accountConsent, ASPSP_CONSENT_DATA))
-            .thenReturn(buildErrorSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, accountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(ONE_SPI_SCA_METHOD));
@@ -172,7 +174,7 @@ public class AisScaStartAuthorisationStageTest {
     @Test
     public void apply_OneAvailableScaMethod_Failure_ResponseWithError() {
         when(aisConsentSpi.authorisePsu(SPI_PSU_DATA, PASSWORD, accountConsent, ASPSP_CONSENT_DATA))
-            .thenReturn(buildErrorSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, accountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(ONE_SPI_SCA_METHOD));
@@ -194,7 +196,7 @@ public class AisScaStartAuthorisationStageTest {
     @Test
     public void apply_NoneAvailableScaMethods_Failure_WrongScenarioAccordingToSpecification() {
         when(aisConsentSpi.authorisePsu(SPI_PSU_DATA, PASSWORD, accountConsent, ASPSP_CONSENT_DATA))
-            .thenReturn(buildErrorSpiResponse(SpiAuthorisationStatus.SUCCESS));
+            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
 
         when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, accountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(NONE_SPI_SCA_METHOD));

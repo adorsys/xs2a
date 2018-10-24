@@ -69,14 +69,20 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData());
 
-        if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
-            UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-            response.setScaStatus(ScaStatus.FAILED);
-            return response;
+        if (authorisationStatusSpiResponse.hasError()) {
+            if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
+                return createFailedResponse(MessageErrorCode.PSU_CREDENTIALS_INVALID);
+            }
+
+            return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(authorisationStatusSpiResponse.getResponseStatus()));
         }
 
         SpiResponse<List<SpiScaMethod>> spiResponse = aisConsentSpi.requestAvailableScaMethods(psuDataMapper.mapToSpiPsuData(psuData), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()));
+        }
 
         List<SpiScaMethod> availableScaMethods = spiResponse.getPayload();
 

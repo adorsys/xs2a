@@ -62,9 +62,7 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
-            UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-            response.setErrorCode(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()));
-            return response;
+            return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()));
         }
 
         aisConsentService.updateConsentStatus(request.getConsentId(), SpiConsentStatus.VALID);

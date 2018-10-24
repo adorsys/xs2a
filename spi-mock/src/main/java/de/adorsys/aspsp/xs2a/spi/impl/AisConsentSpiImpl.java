@@ -97,10 +97,12 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<SpiAuthorisationStatus>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<SpiAuthorisationStatus>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
 
@@ -120,10 +122,12 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<List<SpiScaMethod>>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<List<SpiScaMethod>>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
 
@@ -137,14 +141,18 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         try {
             aspspRestTemplate.exchange(remoteSpiUrls.getGenerateTanConfirmationForAis(), HttpMethod.POST, null, Void.class, psuData.getPsuId());
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                       .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
@@ -154,14 +162,18 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         try {
             aspspRestTemplate.exchange(remoteSpiUrls.applyStrongUserAuthorisationForAis(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), Void.class);
             return SpiResponse.<VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                       .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<VoidResponse>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
