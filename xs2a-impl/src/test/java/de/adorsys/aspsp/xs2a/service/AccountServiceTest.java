@@ -71,7 +71,7 @@ public class AccountServiceTest {
     private static final MessageErrorCode CONSENT_INVALID_MESSAGE_ERROR_CODE = MessageErrorCode.CONSENT_INVALID;
     private static final MessageErrorCode RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE = MessageErrorCode.RESOURCE_UNKNOWN_404;
     private static final MessageError CONSENT_INVALID_MESSAGE_ERROR = new MessageError(new TppMessageInformation(MessageCategory.ERROR, CONSENT_INVALID_MESSAGE_ERROR_CODE));
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("Test AspspConsentData".getBytes(), CONSENT_ID);
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
     private static final List<SpiAccountDetails> EMPTY_ACCOUNT_DETAILS_LIST = Collections.emptyList();
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE = buildSpiAccountReference();
@@ -542,7 +542,7 @@ public class AccountServiceTest {
         when(accountSpi.requestTransactionsForAccount(ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
-        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(new Transactions[]{}, new Transactions[]{});
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList());
 
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList()))
             .thenReturn(Optional.of(xs2aAccountReport));
