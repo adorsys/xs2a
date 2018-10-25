@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
-import de.adorsys.psd2.consent.api.CmsAccountReference;
 import lombok.Value;
 
 import java.util.List;

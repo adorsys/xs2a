@@ -41,6 +41,11 @@
             <artifactId>consent-psu-api</artifactId>
             <version>1.10-SNAPSHOT</version>
         </dependency>
+        <dependency> <!-- TODO remove this dependency in order to split APIs https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/452 -->
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-xs2a-api</artifactId>
+            <version>1.10-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

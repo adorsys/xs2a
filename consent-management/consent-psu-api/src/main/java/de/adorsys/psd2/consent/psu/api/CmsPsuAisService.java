@@ -20,29 +20,69 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface CmsPsuAisService {
     /**
      * Updates PSU Data in consent, based on the trusted information about PSU known to ASPSP (i.e. after authorisation)
      *
-     * @param psuIdData PSU Data to put. If some fields are nullable, the existing values will be overwritten.
+     * @param psuIdData PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
      * @param consentId External ID of Consent known to TPP and ASPSP
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
-    boolean updatePsuDataInConsent(PsuIdData psuIdData, String consentId);
+    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
 
-    AisAccountConsent getConsent(PsuIdData psuIdData, String consentId);
+    /**
+     * Returns AIS Consent object by its ID
+     *
+     * @param psuIdData PSU credentials data
+     * @param consentId ID of Consent
+     * @return Consent object if it was found and it corresponds to the user data given in parameter
+     */
+    @NotNull
+    Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
 
-    boolean updateAuthorisationStatus(PsuIdData psuIdData, String consentId, ScaStatus status);
+    /**
+     * Updates a Status of AIS Consent Authorisation by its ID and PSU ID
+     *
+     * @param psuIdData PSU credentials data
+     * @param consentId ID of Consent
+     * @param authorisationId ID of Authorisation process
+     * @param status    Status of Authorisation to be set
+     * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     */
+    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status);
 
-    boolean updateConsentStatus(PsuIdData psuIdData, String consentId, ConsentStatus status);
 
-    List<AisAccountConsent> getConsentsForPsu(PsuIdData psuIdData);
+    /**
+     * Updates a Status of AIS Consent object by its ID and PSU ID
+     *
+     * @param psuIdData PSU credentials data
+     * @param consentId ID of Consent
+     * @param status    Status of Consent to be set
+     * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     */
+    boolean updateConsentStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull ConsentStatus status);
 
-    boolean revokeConsent(PsuIdData psuIdData, String consentId);
+    /**
+     * Returns a list of AIS Consent objects by PSU ID
+     *
+     * @param psuIdData PSU credentials data
+     * @return List of AIS Consent objects corresponding to the given PSU
+     */
+    @NotNull
+    List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData);
 
-    //boolean updateAspspConsentData(String consentId, AspspConsentData aspspConsentData);
+    /**
+     * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".
+     *
+     * @param psuIdData PSU credentials data
+     * @param consentId ID of Consent
+     * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
+     */
+    boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
 }

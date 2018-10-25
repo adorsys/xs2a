@@ -37,11 +37,9 @@
     </properties>
 
     <dependencies>
-
-
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>xs2a-core</artifactId>
+            <artifactId>consent-core-api</artifactId>
             <version>1.10-SNAPSHOT</version>
         </dependency>
 

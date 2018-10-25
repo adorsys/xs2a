@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.api.ais;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
