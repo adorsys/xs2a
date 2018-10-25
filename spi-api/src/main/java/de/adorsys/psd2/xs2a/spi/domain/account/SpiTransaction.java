@@ -18,14 +18,12 @@ package de.adorsys.psd2.xs2a.spi.domain.account;
 
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 public class SpiTransaction {
-    @Id
     private final String transactionId;
     private final String entryReference;
     private final String endToEndId;
