@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 public interface CmsPsuPisService {
     boolean updatePsuInPayment(PsuIdData psuIdData, String paymentId);
-    List<PaymentData> getPaymentDataByPaymentIdAndPsuId(PsuIdData psuIdData, String paymentId);
+    //List<PaymentData> getPaymentDataByPaymentIdAndPsuId(PsuIdData psuIdData, String paymentId);
     boolean updateAuthorisationStatus(PsuIdData psuIdData, String paymentId, ScaStatus status);
     boolean updatePaymentStatus(String paymentId);
 }

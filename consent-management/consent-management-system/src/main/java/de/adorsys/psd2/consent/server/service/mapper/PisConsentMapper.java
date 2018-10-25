@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.server.service.mapper;
 
 import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
@@ -27,6 +26,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.server.domain.ConsentType;
 import de.adorsys.psd2.consent.server.domain.payment.*;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class PisConsentMapper {
         consent.setPaymentType(request.getPaymentType());
         consent.setPisPaymentProduct(request.getPaymentProduct());
         consent.setConsentType(ConsentType.PIS);
-        consent.setConsentStatus(CmsConsentStatus.RECEIVED);
+        consent.setConsentStatus(ConsentStatus.RECEIVED);
         return consent;
     }
 

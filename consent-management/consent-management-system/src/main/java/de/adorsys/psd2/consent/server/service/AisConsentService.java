@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.server.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.server.account.AccountAccessHolder;
 import de.adorsys.psd2.consent.server.domain.account.AccountAccess;
@@ -29,6 +28,7 @@ import de.adorsys.psd2.consent.server.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.server.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.server.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.server.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,8 +39,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.*;
 import static de.adorsys.psd2.consent.api.TypeAccess.*;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +75,7 @@ public class AisConsentService {
      * @param consentId id of consent
      * @return ConsentStatus
      */
-    public Optional<CmsConsentStatus> getConsentStatusById(String consentId) {
+    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return getAisConsentById(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(AisConsent::getConsentStatus);
@@ -88,7 +89,7 @@ public class AisConsentService {
      * @return Boolean
      */
     @Transactional
-    public boolean updateConsentStatusById(String consentId, CmsConsentStatus status) {
+    public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
         return getActualAisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status)
@@ -325,7 +326,7 @@ public class AisConsentService {
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
         if (consent != null && consent.isExpiredByDate() && consent.isStatusNotExpired()) {
-            consent.setConsentStatus(EXPIRED);
+            consent.setConsentStatus(ConsentStatus.EXPIRED);
             consent.setExpireDate(LocalDate.now());
             consent.setLastActionDate(LocalDate.now());
             aisConsentRepository.save(consent);
@@ -333,7 +334,7 @@ public class AisConsentService {
         return consent;
     }
 
-    private AisConsent setStatusAndSaveConsent(AisConsent consent, CmsConsentStatus status) {
+    private AisConsent setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.core.consent;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,7 +39,7 @@ public enum ConsentStatus {
     TERMINATED_BY_TPP("terminatedByTpp"),
     TERMINATED_BY_ASPSP("terminatedByAspsp");
 
-    private static final HashMap<String, ConsentStatus> CONTAINER = new HashMap<>();
+    private static final Map<String, ConsentStatus> CONTAINER = new HashMap<>();
 
     static {
         for (ConsentStatus status : values()) {

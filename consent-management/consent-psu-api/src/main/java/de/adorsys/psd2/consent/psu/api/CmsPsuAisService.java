@@ -16,9 +16,12 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+
+import java.util.List;
 
 
 public interface CmsPsuAisService {
@@ -31,15 +34,15 @@ public interface CmsPsuAisService {
      */
     boolean updatePsuDataInConsent(PsuIdData psuIdData, String consentId);
 
-    AisConsent getConsent(PsuIdData psuIdData, String consentId);
+    AisAccountConsent getConsent(PsuIdData psuIdData, String consentId);
 
     boolean updateAuthorisationStatus(PsuIdData psuIdData, String consentId, ScaStatus status);
 
     boolean updateConsentStatus(PsuIdData psuIdData, String consentId, ConsentStatus status);
 
-    List<AisConsent> getConsentsForPsu(PsuIdData psuIdData);
+    List<AisAccountConsent> getConsentsForPsu(PsuIdData psuIdData);
 
     boolean revokeConsent(PsuIdData psuIdData, String consentId);
 
-    boolean updateAspspConsentData(String consentId, AspspConsentData aspspConsentData);
+    //boolean updateAspspConsentData(String consentId, AspspConsentData aspspConsentData);
 }

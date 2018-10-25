@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
 public class PisConsentStatusResponse {
-    private CmsConsentStatus consentStatus;
+    private ConsentStatus consentStatus;
 }

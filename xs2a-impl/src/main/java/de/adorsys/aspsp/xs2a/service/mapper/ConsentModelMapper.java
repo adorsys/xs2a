@@ -23,8 +23,6 @@ import de.adorsys.aspsp.xs2a.web.mapper.CoreObjectsMapper;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.model.AuthenticationType;
-import de.adorsys.psd2.model.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -120,7 +118,7 @@ public class ConsentModelMapper {
         List<AuthenticationObject> authList = Optional.ofNullable(createConsentResponse.getScaMethods())
                                                   .map(arr -> Arrays.stream(arr)
                                                                   .map(au -> new AuthenticationObject()
-                                                                                 .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType().getDescription()))
+                                                                                 .authenticationType(de.adorsys.psd2.model.AuthenticationType.fromValue(au.getAuthenticationType().getDescription()))
                                                                                  .authenticationVersion(au.getAuthenticationVersion())
                                                                                  .authenticationMethodId(au.getAuthenticationMethodId())
                                                                                  .name(au.getName())
@@ -268,7 +266,7 @@ public class ConsentModelMapper {
             .map(ch -> {
                 ChosenScaMethod method = new ChosenScaMethod();
                 method.setAuthenticationMethodId(ch.getAuthenticationMethodId());
-                method.setAuthenticationType(AuthenticationType.fromValue(ch.getAuthenticationType()));
+                method.setAuthenticationType(de.adorsys.psd2.model.AuthenticationType.fromValue(ch.getAuthenticationType()));
                 return method;
             }).orElse(null);
     }

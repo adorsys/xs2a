@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.Value;
 
 import java.time.LocalDate;
@@ -29,7 +29,7 @@ public class AisAccountConsent {
     private LocalDate validUntil;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
-    private CmsConsentStatus consentStatus;
+    private ConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
     private AisConsentRequestType aisConsentRequestType;

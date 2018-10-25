@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.client.cms.model.ais.*;
 import de.adorsys.psd2.consent.client.cms.model.pis.*;
 import de.adorsys.psd2.consent.client.core.Configuration;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.apache.commons.logging.Log;
@@ -173,7 +174,7 @@ public class CmsExecutor {
     private static void updateConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", CONSENT_ID)
-                                      .addPathVariable("status", CmsConsentStatus.REVOKED_BY_PSU.name())
+                                      .addPathVariable("status", ConsentStatus.REVOKED_BY_PSU.name())
                                       .build();
         cmsServiceInvoker.invoke(new UpdateConsentStatusMethod(uriParams));
     }
@@ -290,7 +291,7 @@ public class CmsExecutor {
     private static void updatePaymentConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", CONSENT_ID)
-                                      .addPathVariable("status", CmsConsentStatus.REVOKED_BY_PSU.name())
+                                      .addPathVariable("status", ConsentStatus.REVOKED_BY_PSU.name())
                                       .build();
         cmsServiceInvoker.invoke(new UpdatePaymentConsentStatusMethod(uriParams));
     }

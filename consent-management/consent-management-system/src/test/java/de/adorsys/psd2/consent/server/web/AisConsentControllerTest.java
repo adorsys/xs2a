@@ -16,12 +16,13 @@
 
 package de.adorsys.psd2.consent.server.web;
 
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
+
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.server.service.AisConsentService;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doReturn;
@@ -44,8 +44,8 @@ public class AisConsentControllerTest {
 
     private static final String CONSENT_ID = "ed4190c7-64ee-42fb-b671-d62645f54672";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
-    private static final CmsConsentStatus CONSENT_STATUS = VALID;
-    private static final CmsConsentStatus WRONG_CONSENT_STATUS = EXPIRED;
+    private static final ConsentStatus CONSENT_STATUS = ConsentStatus.VALID;
+    private static final ConsentStatus WRONG_CONSENT_STATUS = ConsentStatus.EXPIRED;
     private static final AisConsentAuthorizationRequest CONSENT_AUTHORIZATION_REQUEST = getConsentAuthorizationRequest();
     private static final AisConsentAuthorizationRequest WRONG_CONSENT_AUTHORIZATION_REQUEST = getWrongConsentAuthorizationRequest();
     private static final String PSU_ID = "4e5dbef0-2377-483f-9ab9-ad510c1a557a";
@@ -65,7 +65,7 @@ public class AisConsentControllerTest {
     public void setUp() {
         when(aisConsentService.saveAspspConsentDataInAisConsent(eq(CONSENT_ID), any())).thenReturn(Optional.of(CONSENT_ID));
         when(aisConsentService.saveAspspConsentDataInAisConsent(eq(WRONG_CONSENT_ID), any())).thenReturn(Optional.empty());
-        when(aisConsentService.getConsentStatusById(eq(CONSENT_ID))).thenReturn(Optional.of(RECEIVED));
+        when(aisConsentService.getConsentStatusById(eq(CONSENT_ID))).thenReturn(Optional.of(ConsentStatus.RECEIVED));
         when(aisConsentService.getConsentStatusById(eq(WRONG_CONSENT_ID))).thenReturn(Optional.empty());
         when(aisConsentService.updateConsentStatusById(eq(CONSENT_ID), eq(CONSENT_STATUS))).thenReturn(true);
         when(aisConsentService.updateConsentStatusById(eq(WRONG_CONSENT_ID), eq(WRONG_CONSENT_STATUS))).thenReturn(false);
@@ -88,7 +88,7 @@ public class AisConsentControllerTest {
 
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody().getConsentStatus()).isEqualTo(RECEIVED);
+        assertThat(responseEntity.getBody().getConsentStatus()).isEqualTo(ConsentStatus.RECEIVED);
     }
 
     @Test
