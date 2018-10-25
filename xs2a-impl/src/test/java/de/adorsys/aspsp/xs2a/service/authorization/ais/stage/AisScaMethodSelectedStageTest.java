@@ -56,7 +56,7 @@ public class AisScaMethodSelectedStageTest {
     private static final SpiResponseStatus RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
 
     @InjectMocks
     private AisScaMethodSelectedStage scaMethodSelectedStage;
