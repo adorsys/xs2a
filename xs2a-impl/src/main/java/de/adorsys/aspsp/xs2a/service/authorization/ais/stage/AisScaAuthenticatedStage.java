@@ -56,7 +56,7 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
-        Xs2aPsuData psuData = new Xs2aPsuData(null, null, null, null);    // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        Xs2aPsuData psuData = new Xs2aPsuData(null, null, null, null);    // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
 
         SpiResponse<SpiResponse.VoidResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(psuDataMapper.mapToSpiPsuData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());

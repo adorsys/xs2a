@@ -98,7 +98,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
         }
 
-        SpiPsuData psuData = new SpiPsuData(psuId, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiPsuData psuData = new SpiPsuData(psuId, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(psuData, getValidatedSpiAccountConsent(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(initiateAisConsentSpiResponse.getAspspConsentData());
 
@@ -142,7 +142,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         SpiAccountConsent accountConsent = getValidatedSpiAccountConsent(consentId);
 
         if (accountConsent != null) {
-            SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
             SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(psuData, accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
             aisConsentDataService.updateAspspConsentData(revokeAisConsentResponse.getAspspConsentData());
 

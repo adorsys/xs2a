@@ -58,7 +58,7 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
         String authenticationMethodId = request.getAuthenticationMethodId();
-        Xs2aPsuData psuData = new Xs2aPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        Xs2aPsuData psuData = new Xs2aPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
 
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(psuDataMapper.mapToSpiPsuData(psuData), SpiScaMethod.valueOf(authenticationMethodId), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());

@@ -125,7 +125,7 @@ public class PaymentService {
      */
     public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
-        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
             SpiSinglePayment payment = new SpiSinglePayment(null);
@@ -183,7 +183,7 @@ public class PaymentService {
         }
 
         AspspConsentData consentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
-        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
             return cancelPaymentService.initiatePaymentCancellation(psuData, payment, consentData);
         } else {
