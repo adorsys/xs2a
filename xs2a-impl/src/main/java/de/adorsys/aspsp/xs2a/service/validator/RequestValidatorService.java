@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
 import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImpl;
+import de.adorsys.aspsp.xs2a.service.validator.header.impl.PaymentInitiationRequestHeader;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
@@ -53,6 +54,13 @@ public class RequestValidatorService {
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
 
+    /**
+     * Gets violations of incoming request, checking headers, parameters and path variables
+     *
+     * @param request incoming request
+     * @param handler of method
+     * @return Map with violations for incoming request
+     */
     public Map<String, String> getRequestViolationMap(HttpServletRequest request, Object handler) {
         Map<String, String> violationMap = new HashMap<>();
 
@@ -68,6 +76,36 @@ public class RequestValidatorService {
         }
 
         return violationMap;
+    }
+
+    /**
+     * Gets violations for initiate  payment request base on headers and its values
+     *
+     * @param requestHeadersMap map with headers and its values
+     * @return Map with violations for initiate payment request
+     */
+    public Map<String, String> getRequestViolationMapInitiatePayment(Map<String, String> requestHeadersMap) {
+
+        RequestHeader headerImpl = HeadersFactory.getHeadersImplByRequestHeaderClass(requestHeadersMap, PaymentInitiationRequestHeader.class);
+
+        if (headerImpl instanceof ErrorMessageHeaderImpl) {
+            return Collections.singletonMap("Wrong header arguments: ",
+                ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
+            );
+        }
+
+        return getViolationMessagesMap(validator.validate(headerImpl));
+    }
+
+    /**
+     * Gets violations for initiate  payment request base on request
+     *
+     * @param request initiate payment request
+     * @return Map with violations for initiate payment request
+     */
+    public Map<String, String> getRequestViolationMapInitiatePayment(HttpServletRequest request) {
+        Map<String, String> requestHeadersMap = getRequestHeadersMap(request);
+        return getRequestViolationMapInitiatePayment(requestHeadersMap);
     }
 
     private Map<String, String> getRequestParametersViolationMap(HttpServletRequest request, HandlerMethod handler) {

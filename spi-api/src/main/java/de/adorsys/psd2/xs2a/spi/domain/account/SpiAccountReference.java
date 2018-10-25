@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
+import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;

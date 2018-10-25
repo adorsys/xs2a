@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.payment;
+package de.adorsys.psd2.xs2a.core.psu;
 
 import lombok.Value;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * Contains authorisation data about PSU.
+ * Normally it comes with the TPP request header.
+ */
 @Value
-public class SpiCancelPayment {
-    private boolean startAuthorisationRequired = true;
+public class PsuIdData {
+    @Nullable
+    private String psuId;
+
+    @Nullable
+    private String psuIdType;
+
+    @Nullable
+    private String psuCorporateId;
+
+    @Nullable
+    private String psuCorporateIdType;
 }

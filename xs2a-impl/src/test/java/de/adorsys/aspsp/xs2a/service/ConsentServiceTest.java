@@ -73,7 +73,7 @@ public class ConsentServiceTest {
     private static final Currency CURRENCY_2 = Currency.getInstance("USD");
     private static final LocalDate DATE = LocalDate.parse("2019-03-03");
     private static final boolean EXPLICIT_PREFERRED = true;
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final String CONSENT_ID_DATE_VALID_YESTERDAY = "c966f143-f6a2-41db-9036-8abaeeef3af8";
     private static final LocalDate YESTERDAY = LocalDate.now().minus(Period.ofDays(1));
 

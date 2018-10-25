@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.account;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aChosenScaMethod;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Data
-@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-@JsonRootName(value = "transactions")
-public class Xs2aAccountReport {
-
-    @NotNull
-    private final List<Transactions> booked;
-
-    private final List<Transactions> pending;
-
+public class CancelPaymentResponse {
+    private boolean startAuthorisationRequired;
+    private Xs2aTransactionStatus transactionStatus;
+    private Xs2aAuthenticationObject[] scaMethods;
+    private Xs2aChosenScaMethod chosenScaMethod;
+    private Xs2aChallengeData challengeData;
     @NotNull
     @JsonProperty("_links")
     private Links links;

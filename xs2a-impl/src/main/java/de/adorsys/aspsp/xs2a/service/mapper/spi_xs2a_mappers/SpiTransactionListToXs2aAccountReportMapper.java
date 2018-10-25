@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -36,17 +37,17 @@ public class SpiTransactionListToXs2aAccountReportMapper {
             return Optional.empty();
         }
 
-        Transactions[] booked = spiTransactions
+        List<Transactions> booked = spiTransactions
                                     .stream()
                                     .filter(transaction -> transaction.getBookingDate() != null)
                                     .map(toXs2aTransactionMapper::mapToXs2aTransaction)
-                                    .toArray(Transactions[]::new);
+                                    .collect(Collectors.toList());
 
-        Transactions[] pending = spiTransactions
+        List<Transactions> pending = spiTransactions
                                      .stream()
                                      .filter(transaction -> transaction.getBookingDate() == null)
                                      .map(toXs2aTransactionMapper::mapToXs2aTransaction)
-                                     .toArray(Transactions[]::new);
+                                     .collect(Collectors.toList());
 
         return Optional.of(new Xs2aAccountReport(booked, pending));
     }

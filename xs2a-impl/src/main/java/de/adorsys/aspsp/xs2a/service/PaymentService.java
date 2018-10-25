@@ -21,19 +21,14 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
-import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
-import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
+import de.adorsys.aspsp.xs2a.service.payment.*;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -46,6 +41,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -53,8 +49,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 
@@ -74,7 +69,8 @@ public class PaymentService {
     private final PeriodicPaymentSpi periodicPaymentSpi;
     private final BulkPaymentSpi bulkPaymentSpi;
     private final SpiToXs2aTransactionalStatusMapper spiToXs2aTransactionalStatus;
-
+    private final AspspProfileServiceWrapper profileService;
+    private final CancelPaymentService cancelPaymentService;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -129,7 +125,7 @@ public class PaymentService {
      */
     public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
-        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
             SpiSinglePayment payment = new SpiSinglePayment(null);
@@ -152,5 +148,46 @@ public class PaymentService {
                    .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
                                   .fail(new MessageError(RESOURCE_UNKNOWN_403))
                                   ::build);
+    }
+
+    /**
+     * Cancels payment by its ASPSP identifier and payment type
+     *
+     * @param paymentType type of payment (payments, bulk-payments, periodic-payments)
+     * @param paymentId   ASPSP identifier of the payment
+     * @return Response containing information about cancelled payment or corresponding error
+     */
+    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentId) {
+        SpiPayment payment;
+        switch (paymentType) {
+            case SINGLE:
+                SpiSinglePayment singlePayment = new SpiSinglePayment(null);
+                singlePayment.setPaymentId(paymentId);
+                payment = singlePayment;
+                break;
+            case PERIODIC:
+                SpiPeriodicPayment periodicPayment = new SpiPeriodicPayment(null);
+                periodicPayment.setPaymentId(paymentId);
+                payment = periodicPayment;
+                break;
+            case BULK:
+                SpiBulkPayment bulkPayment = new SpiBulkPayment();
+                bulkPayment.setPaymentId(paymentId);
+                payment = bulkPayment;
+                break;
+            default:
+                log.error("Unknown payment type: {}", paymentType);
+                return ResponseObject.<CancelPaymentResponse>builder()
+                           .fail(new MessageError(FORMAT_ERROR))
+                           .build();
+        }
+
+        AspspConsentData consentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
+        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
+        if (profileService.isPaymentCancellationAuthorizationMandated()) {
+            return cancelPaymentService.initiatePaymentCancellation(psuData, payment, consentData);
+        } else {
+            return cancelPaymentService.cancelPaymentWithoutAuthorisation(psuData, payment, consentData);
+        }
     }
 }
