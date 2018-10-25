@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.psu;
+package de.adorsys.psd2.xs2a.core.psu;
 
 import lombok.Value;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Contains data about PSU
+ * Contains authorisation data about PSU.
+ * Normally it comes with the TPP request header.
  */
 @Value
-public class Xs2aPsuData {
+public class PsuIdData {
+    @Nullable
     private String psuId;
+
+    @Nullable
     private String psuIdType;
+
+    @Nullable
     private String psuCorporateId;
+
+    @Nullable
     private String psuCorporateIdType;
 }

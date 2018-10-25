@@ -19,12 +19,12 @@ package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.domain.psu.Xs2aPsuData;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -89,7 +89,7 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(accountConsent);
 
-        when(psuDataMapper.mapToSpiPsuData(any(Xs2aPsuData.class)))
+        when(psuDataMapper.mapToSpiPsuData(any(PsuIdData.class)))
             .thenReturn(SPI_PSU_DATA);
 
         when(aisConsentMapper.mapToSpiScaConfirmation(request))
