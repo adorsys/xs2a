@@ -108,7 +108,7 @@ public class AccountController implements AccountApi {
     @Override
     public ResponseEntity getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<Xs2aTransactionsReport> transactionsReport =
-            accountService.getTransactionsReportByPeriod(accountId, Optional.ofNullable(withBalance).orElse(false), consentID, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
+            accountService.getTransactionsReportByPeriod(consentID, accountId, Optional.ofNullable(withBalance).orElse(false), dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
         return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponse200Json);
     }
 
