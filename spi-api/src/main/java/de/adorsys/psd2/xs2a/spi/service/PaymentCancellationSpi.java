@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
 
-public interface PaymentCancellationSpi extends PaymentAuthorisationSpi {
+public interface PaymentCancellationSpi extends AuthorisationSpi<SpiPayment> {
     /**
      * Initiates payment cancellation process
      *
