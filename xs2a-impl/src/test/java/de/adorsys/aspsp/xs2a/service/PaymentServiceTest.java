@@ -61,7 +61,7 @@ public class PaymentServiceTest {
     private static final String WRONG_IBAN = "wrong_iban";
     private static final String AMOUNT = "100";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
 
     private final SinglePayment SINGLE_PAYMENT_OK = getSinglePayment(IBAN, AMOUNT);
 

@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class FundsConfirmationConsentDataService {
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return new AspspConsentData();
+        return new AspspConsentData(new byte[0], "some stub consent");
     }
 
     public void updateAspspConsentData(AspspConsentData aspspConsentData){}

@@ -67,7 +67,7 @@ public class AisScaStartAuthorisationStageTest {
     private static final MessageErrorCode SCA_METHOD_UNKNOWN_ERROR_CODE = MessageErrorCode.SCA_METHOD_UNKNOWN;
     private static final MessageErrorCode PSU_CREDENTIALS_INVALID_ERROR_CODE = MessageErrorCode.PSU_CREDENTIALS_INVALID;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final List<SpiScaMethod> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PHOTO_OTP);
     private static final List<CmsScaMethod> MULTIPLE_CMS_SCA_METHODS = Arrays.asList(CmsScaMethod.SMS_OTP, CmsScaMethod.PHOTO_OTP);
     private static final List<SpiScaMethod> ONE_SPI_SCA_METHOD = Collections.singletonList(SpiScaMethod.SMS_OTP);
