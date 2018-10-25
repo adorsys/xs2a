@@ -47,7 +47,6 @@ import java.util.*;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
-// TODO cover with tests https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/451
 @Slf4j
 @Service
 @Validated
