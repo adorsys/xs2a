@@ -16,14 +16,17 @@
 
 package de.adorsys.psd2.consent.server.service.security;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class MockCryptoProvider implements CryptoProvider {
     private final String algorithmId;
+    private String algorithmName;
     private final boolean alwaysFail;
 
     @Override
@@ -48,6 +51,6 @@ public class MockCryptoProvider implements CryptoProvider {
 
     @Override
     public CryptoProviderAlgorithmVersion getAlgorithmVersion() {
-        return new CryptoProviderAlgorithmVersion(algorithmId, "Mock algorithm");
+        return new CryptoProviderAlgorithmVersion(algorithmId, algorithmName);
     }
 }
