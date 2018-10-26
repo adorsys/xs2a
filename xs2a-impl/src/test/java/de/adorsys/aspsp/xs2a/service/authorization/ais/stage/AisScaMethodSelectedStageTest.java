@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-
+TODO Rework it after the task merged to develop https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/466
 @RunWith(MockitoJUnitRunner.class)
 public class AisScaMethodSelectedStageTest {
     private static final String CONSENT_ID = "Test consentId";
