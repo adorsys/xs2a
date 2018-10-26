@@ -19,9 +19,10 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.web.mapper.CoreObjectsMapper;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.model.AuthenticationType;
 import de.adorsys.psd2.model.ConsentStatus;
@@ -223,8 +224,8 @@ public class ConsentModelMapper {
         return updatePsuData;
     }
 
-    public UpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(String psuId, String paymentId, String authorisationId, String paymentService, Map body) {
-        UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
+    public Xs2aUpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(String psuId, String paymentId, String authorisationId, String paymentService, Map body) {
+        Xs2aUpdatePisConsentPsuDataRequest request = new Xs2aUpdatePisConsentPsuDataRequest();
         request.setPsuId(psuId);
         request.setPaymentId(paymentId);
         request.setAuthorizationId(authorisationId);
@@ -249,9 +250,7 @@ public class ConsentModelMapper {
             ._links(objectMapper.convertValue(response.getLinks(), Map.class))
             .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
             .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
-            .scaStatus(Optional.ofNullable(response.getScaStatus())
-                .map(ScaStatus::valueOf)
-                .orElse(ScaStatus.FAILED));
+            .scaStatus(ScaStatus.valueOf(response.getScaStatus().name()));
     }
 
     private ScaMethods getAvailableScaMethods(List<CmsScaMethod> availableScaMethods) {

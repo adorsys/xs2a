@@ -18,11 +18,13 @@ package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
-import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.CmsTppRole;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -46,11 +48,6 @@ public class Xs2aPisConsentMapper {
 
     public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource(String authorisationId) {
         return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(authorisationId)));
-    }
-
-    public Optional<Xs2aUpdatePisConsentPsuDataResponse> mapToXs2aUpdatePisConsentPsuDataResponse(UpdatePisConsentPsuDataResponse response) {
-        return Optional.ofNullable(response)
-                   .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(r), r.getAvailableScaMethods()));
     }
 
     public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response) {
@@ -86,11 +83,5 @@ public class Xs2aPisConsentMapper {
                                      .map(role -> CmsTppRole.valueOf(role.name()))
                                      .collect(Collectors.toList()))
                    .orElseGet(Collections::emptyList);
-    }
-
-    private String getScaStatus(UpdatePisConsentPsuDataResponse response) {
-        return Optional.ofNullable(response.getScaStatus())
-                   .map(Enum::name)
-                   .orElse(null);
     }
 }
