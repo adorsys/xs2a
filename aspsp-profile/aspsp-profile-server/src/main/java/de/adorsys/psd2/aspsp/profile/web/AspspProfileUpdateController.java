@@ -226,4 +226,14 @@ public class AspspProfileUpdateController {
         aspspProfileService.updatePaymentCancellationAuthorizationMandated(paymentCancellationAuthorizationMandated);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(path = "/piis-consent-supported")
+    @ApiOperation(value = "Update the value of PIIS consent supported. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updatePiisConsentSupported(@RequestBody boolean piisConsentSupported) {
+        aspspProfileService.updatePiisConsentSupported(piisConsentSupported);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

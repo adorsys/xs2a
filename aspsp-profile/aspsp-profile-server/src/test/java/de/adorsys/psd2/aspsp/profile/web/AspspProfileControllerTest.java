@@ -63,6 +63,7 @@ public class AspspProfileControllerTest {
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
+    private static final boolean PIIS_CONSENT_SUPPORTED = false;
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -122,7 +123,8 @@ public class AspspProfileControllerTest {
             ALL_PSD_2_SUPPORT,
             TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
             SIGNING_BASKET_SUPPORTED,
-            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
+            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
+            PIIS_CONSENT_SUPPORTED);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

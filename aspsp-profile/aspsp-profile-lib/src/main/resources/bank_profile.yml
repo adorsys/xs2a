@@ -18,3 +18,4 @@ setting:
  transactionsWithoutBalancesSupported: true
  signingBasketSupported: false
  paymentCancellationAuthorizationMandated: false
+ piisConsentSupported: false
