@@ -62,9 +62,8 @@ public class PisScaMethodSelectedStage extends PisScaStage<Xs2aUpdatePisConsentP
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         // TODO check the paymentSpi result first https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/338
-        Xs2aUpdatePisConsentPsuDataResponse xs2aResponse = new Xs2aUpdatePisConsentPsuDataResponse();
+        Xs2aUpdatePisConsentPsuDataResponse xs2aResponse = new Xs2aUpdatePisConsentPsuDataResponse(FINALISED);
         xs2aResponse.setPsuId(psuData.getPsuId());
-        xs2aResponse.setScaStatus(FINALISED);
         return xs2aResponse;
     }
 }

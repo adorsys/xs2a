@@ -25,7 +25,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 public class Xs2aUpdatePisConsentPsuDataResponse {
     private String psuId;
     private String paymentId;
@@ -34,8 +33,6 @@ public class Xs2aUpdatePisConsentPsuDataResponse {
     private ScaStatus scaStatus;
     private List<Xs2aAuthenticationObject> availableScaMethods;
     private Xs2aAuthenticationObject chosenScaMethod;
-    private String authenticationMethodId;
-    private String scaAuthenticationData;
     private Links links = new Links();
 
     private String psuMessage;

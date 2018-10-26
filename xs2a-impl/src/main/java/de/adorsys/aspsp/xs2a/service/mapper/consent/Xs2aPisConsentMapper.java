@@ -82,11 +82,16 @@ public class Xs2aPisConsentMapper {
                        request.setPsuId(data.getPsuId());
                        request.setPaymentId(updatePsuDataRequest.getPaymentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
-                       request.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod()).map(Xs2aAuthenticationObject::getAuthenticationMethodId).orElse(null));
-                       request.setScaAuthenticationData(data.getScaAuthenticationData());
+                       request.setAuthenticationMethodId(getAuthenticationMethodId(data));
                        request.setScaStatus(data.getScaStatus());
                        return request;
                    })
+                   .orElse(null);
+    }
+
+    private String getAuthenticationMethodId(Xs2aUpdatePisConsentPsuDataResponse data) {
+        return Optional.ofNullable(data.getChosenScaMethod())
+                   .map(Xs2aAuthenticationObject::getAuthenticationMethodId)
                    .orElse(null);
     }
 
