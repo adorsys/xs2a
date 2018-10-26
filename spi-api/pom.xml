@@ -20,13 +20,12 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.10-SNAPSHOT</version>
+        <version>1.11-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.adorsys.psd2</groupId>
     <artifactId>spi-api</artifactId>
     <packaging>jar</packaging>
 
@@ -44,7 +43,7 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-core</artifactId>
-            <version>1.10-SNAPSHOT</version>
+            <version>1.11-SNAPSHOT</version>
         </dependency>
 
         <!-- other dependencies -->
@@ -52,11 +51,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
         </dependency>
 
         <dependency>
@@ -87,6 +81,7 @@
                                         <exclude>de.adorsys.psd2:cms-client</exclude>
                                         <exclude>de.adorsys.psd2:xs2a-server-api</exclude>
                                         <exclude>de.adorsys.psd2:xs2a-impl</exclude>
+                                        <exclude>de.adorsys.psd2:spi-mock</exclude>
                                     </excludes>
                                 </bannedDependencies>
                             </rules>

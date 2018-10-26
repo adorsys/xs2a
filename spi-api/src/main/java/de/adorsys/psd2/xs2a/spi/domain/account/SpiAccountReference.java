@@ -21,7 +21,6 @@ import lombok.Setter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.annotation.Id;
 
 import java.util.Currency;
 
@@ -29,7 +28,6 @@ import java.util.Currency;
 @Value
 @AllArgsConstructor
 public class SpiAccountReference {
-    @Id
     @Setter
     @NonFinal
     private String iban;    // TODO don't use it as an identifier during the account access validation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440

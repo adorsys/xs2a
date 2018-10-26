@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.constant;
+package de.adorsys.aspsp.xs2a.spi.config.keycloak;
 
 public class AuthorizationConstant {
     public static final String AUTHORIZATION_HEADER = "Authorization";
