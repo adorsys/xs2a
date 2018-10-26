@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRespo
 import de.adorsys.aspsp.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -67,8 +68,9 @@ public class PisAuthorisationService {
     }
 
     public Xs2aUpdatePisConsentPsuDataResponse doUpdatePisConsentAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
-        return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-            Xs2aUpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+        UpdatePisConsentPsuDataResponse body = consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
+            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+        return new Xs2aUpdatePisConsentPsuDataResponse(body.getScaStatus());
     }
 
     /**

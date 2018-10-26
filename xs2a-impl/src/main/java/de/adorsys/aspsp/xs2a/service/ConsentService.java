@@ -248,6 +248,12 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
         Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentPsuData(request);
+
+        if(response.hasError()){
+            return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+                .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
+                .build();
+        }
         return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
                    .body(response)
                    .build();
