@@ -30,12 +30,14 @@ import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -61,6 +63,7 @@ import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACC
 @RequiredArgsConstructor
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
     private final Xs2aAisConsentMapper aisConsentMapper;
+    private final Xs2aToSpiPsuDataMapper psuDataMapper;
     private final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     private final AisConsentService aisConsentService;
     private final AisConsentDataService aisConsentDataService;
@@ -74,13 +77,13 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     /**
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
-     * @param psuId   String representing PSU identification at ASPSP
+     * @param psuData PsuIdData container of authorisation data about PSU
      * @return CreateConsentResponse representing the complete response to create consent request
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
      * account details or by getting account details from ASPSP by psuId and filling the appropriate fields in
      * AccountAccess determined by availableAccounts or allPsd2 variables
      */
-    public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId, boolean explicitPreferred) {
+    public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred) {
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(request);
 
         if (validationResult.isNotValid()) {
@@ -92,14 +95,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
 
         String tppId = tppService.getTppId();
-        String consentId = aisConsentService.createConsent(request, psuId, tppId);
+        String consentId = aisConsentService.createConsent(request, psuData.getPsuId(), tppId);
 
         if (StringUtils.isBlank(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
         }
 
-        SpiPsuData psuData = new SpiPsuData(psuId, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
-        SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(psuData, getValidatedSpiAccountConsent(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
+        SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(spiPsuData, getValidatedSpiAccountConsent(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(initiateAisConsentSpiResponse.getAspspConsentData());
 
         if (initiateAisConsentSpiResponse.hasError()) {
@@ -113,7 +116,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED
                 && authorisationMethodService.isImplicitMethod(explicitPreferred)) {
-            proceedEmbeddedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuId, consentId);
+            proceedEmbeddedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData.getPsuId(), consentId);
         }
 
         return createConsentResponseObject;
@@ -138,12 +141,12 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * @return VOID
      * Revokes account consent on PSU request
      */
-    public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
+    public ResponseObject<Void> deleteAccountConsentsById(String consentId, PsuIdData psuData) {
         SpiAccountConsent accountConsent = getValidatedSpiAccountConsent(consentId);
 
         if (accountConsent != null) {
-            SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
-            SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(psuData, accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+            SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
+            SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(spiPsuData, accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
             aisConsentDataService.updateAspspConsentData(revokeAisConsentResponse.getAspspConsentData());
 
             if (revokeAisConsentResponse.hasError()) {
@@ -261,16 +264,16 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                     .body(resp)
                                     .build())
                    .orElseGet(ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
-                                        .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
-                                        ::build);
+                                  .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
+                                  ::build);
     }
 
     public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
         return pisAuthorizationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
-                                        .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
-                                        ::build);
+                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                  ::build);
     }
 
     // TODO remove when the new validation is ready https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440

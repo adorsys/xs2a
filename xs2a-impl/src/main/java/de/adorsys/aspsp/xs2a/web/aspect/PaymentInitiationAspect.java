@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -33,8 +34,8 @@ public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentControll
         super(aspspProfileService, messageService, authorisationMethodService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters, ..)", returning = "result", argNames = "result,payment,requestParameters")
-    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentInitiationParameters requestParameters) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters,psuData)", returning = "result", argNames = "result,payment,requestParameters,psuData")
+    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentInitiationParameters requestParameters, PsuIdData psuData) {
         if (!result.hasError()) {
             return enrichLink(result, requestParameters);
         }

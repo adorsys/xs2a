@@ -25,6 +25,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
@@ -47,6 +48,7 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     protected final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     protected final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
+    protected final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     @Autowired
     private ApplicationContext applicationContext;

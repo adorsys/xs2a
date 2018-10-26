@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +62,7 @@ public class Xs2aAisConsentAuthorisationMapper {
         return Optional.ofNullable(updatePsuData)
                    .map(data -> {
                        AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
-                       consentAuthorization.setPsuId(data.getPsuId());
+                       consentAuthorization.setPsuId(Optional.ofNullable(data.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
                        consentAuthorization.setScaStatus(data.getScaStatus());
                        consentAuthorization.setAuthenticationMethodId(data.getAuthenticationMethodId());
                        consentAuthorization.setPassword(data.getPassword());

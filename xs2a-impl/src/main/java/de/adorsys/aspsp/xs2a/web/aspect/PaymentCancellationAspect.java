@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -34,8 +35,8 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.cancelPayment(..)) && args(paymentType,paymentId)", returning = "result", argNames = "result,paymentType,paymentId")
-    public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PaymentType paymentType, String paymentId) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.cancelPayment(..)) && args(paymentType,paymentId,psuData)", returning = "result", argNames = "result,paymentType,paymentId,psuData")
+    public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PaymentType paymentType, String paymentId, PsuIdData psuData) {
         if (!result.hasError()) {
             CancelPaymentResponse response = result.getBody();
             response.setLinks(buildCancellationLinks(response.isStartAuthorisationRequired(), paymentType, paymentId));

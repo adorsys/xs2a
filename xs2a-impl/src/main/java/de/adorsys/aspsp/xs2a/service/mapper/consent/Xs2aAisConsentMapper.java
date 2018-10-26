@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.*;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
@@ -103,12 +104,11 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-                       request.setPsuId(updatePsuDataResponse.getPsuId());
+                       request.setPsuData(new PsuIdData(data.getPsuId(), null, null, null));
                        request.setConsentId(updatePsuDataRequest.getConsentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
-                       request.setAuthenticationMethodId(updatePsuDataResponse.getAuthenticationMethodId());
-                       request.setAuthenticationMethodId(updatePsuDataResponse.getChosenScaMethod());
-                       request.setScaAuthenticationData(updatePsuDataResponse.getScaAuthenticationData());
+                       request.setAuthenticationMethodId(data.getChosenScaMethod());
+                       request.setScaAuthenticationData(data.getScaAuthenticationData());
                        request.setScaStatus(data.getScaStatus());
                        return request;
                    })
@@ -129,7 +129,7 @@ public class Xs2aAisConsentMapper {
     public SpiScaConfirmation mapToSpiScaConfirmation(UpdateConsentPsuDataReq request) {
         SpiScaConfirmation accountConfirmation = new SpiScaConfirmation();
         accountConfirmation.setConsentId(request.getConsentId());
-        accountConfirmation.setPsuId(request.getPsuId());
+        accountConfirmation.setPsuId(Optional.ofNullable(request.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
         accountConfirmation.setTanNumber(request.getScaAuthenticationData());
         return accountConfirmation;
     }

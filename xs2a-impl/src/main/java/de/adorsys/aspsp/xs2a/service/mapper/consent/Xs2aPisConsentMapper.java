@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisati
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.springframework.stereotype.Component;
 
@@ -53,8 +54,8 @@ public class Xs2aPisConsentMapper {
                    .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(r), r.getAvailableScaMethods()));
     }
 
-    public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response) {
-        return new Xs2aPisConsent(response.getConsentId());
+    public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response, PsuIdData psuData) {
+        return new Xs2aPisConsent(response.getConsentId(), psuData);
     }
 
     public CmsTppInfo mapToCmsTppInfo(TppInfo pisTppInfo) {

@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +43,7 @@ public class SpiCmsPisMapper {
         paymentConfirmation.setPaymentId(request.getPaymentId());
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
         paymentConfirmation.setConsentId(consentId);
-        paymentConfirmation.setPsuId(request.getPsuId());
+        paymentConfirmation.setPsuId(Optional.ofNullable(request.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
         return paymentConfirmation;
     }
 

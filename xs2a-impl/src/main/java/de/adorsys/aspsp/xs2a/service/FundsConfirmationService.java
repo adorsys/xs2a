@@ -23,6 +23,8 @@ import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountReferenceMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAmountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
@@ -41,6 +43,7 @@ public class FundsConfirmationService {
     private final FundsConfirmationConsentDataService fundsConfirmationConsentDataService;
     private final Xs2aToSpiAmountMapper xs2aToSpiAmountMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    private final Xs2aToSpiPsuDataMapper psuDataMapper;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -48,7 +51,7 @@ public class FundsConfirmationService {
      * @param request Contains the requested balanceAmount in order to comparing with available balanceAmount on account
      * @return Response with result 'true' if there are enough funds on the account, 'false' if not
      */
-    public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
+    public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request, PsuIdData psuData) {
         ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(request.getAccountReferences());
 
         if (accountReferenceValidationResponse.hasError()) {
@@ -61,10 +64,9 @@ public class FundsConfirmationService {
         SpiAmount amount = xs2aToSpiAmountMapper.mapToSpiAmount(request.getInstructedAmount());
         AspspConsentData aspspConsentData = fundsConfirmationConsentDataService.getAspspConsentDataByConsentId("Put here actual consent data"); // TODO Read it by actual consent_id https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
 
-
-        SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
+        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<Boolean> fundsSufficientCheck = fundsConfirmationSpi.performFundsSufficientCheck(
-            psuData,
+            spiPsuData,
             null, //TODO Put here actual FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
             accountReference,
             amount,

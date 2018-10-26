@@ -36,6 +36,7 @@ import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.PaymentInitiationTarget2WithStatusResponse;
 import de.adorsys.psd2.model.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +64,7 @@ public class PaymentControllerTest {
     private static final String WRONG_PAYMENT_ID = "wrong_payment_id";
     private final Charset UTF_8 = Charset.forName("utf-8");
     private static final String REDIRECT_LINK = "http://localhost:4200/consent/confirmation/pis";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
 
     private final String BULK_PAYMENT_DATA = "/json/BulkPaymentTestData.json";
     private final String BULK_PAYMENT_RESP_DATA = "/json/BulkPaymentResponseTestData.json";
@@ -89,9 +91,9 @@ public class PaymentControllerTest {
 
     @Before
     public void setUp() {
-        when(paymentService.getPaymentById(SINGLE, CORRECT_PAYMENT_ID))
+        when(paymentService.getPaymentById(SINGLE, CORRECT_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
-        when(paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID))
+        when(paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(ResponseObject.builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(aspspProfileService.getPisRedirectUrlToAspsp())
@@ -102,9 +104,9 @@ public class PaymentControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() {
-        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, CORRECT_PAYMENT_ID))
+        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, CORRECT_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().body(Xs2aTransactionStatus.ACCP).build());
-        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, WRONG_PAYMENT_ID))
+        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, WRONG_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
@@ -209,7 +211,7 @@ public class PaymentControllerTest {
     public void cancelPayment_WithoutAuthorisation_Success() {
         when(responseMapper.ok(any()))
             .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(TransactionStatus.CANC), HttpStatus.OK));
-        when(paymentService.cancelPayment(any(), any())).thenReturn(getCancelPaymentResponseObject(false));
+        when(paymentService.cancelPayment(any(), any(), any())).thenReturn(getCancelPaymentResponseObject(false));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
@@ -231,7 +233,7 @@ public class PaymentControllerTest {
     public void cancelPayment_WithAuthorisation_Success() {
         when(responseMapper.accepted(any()))
             .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(TransactionStatus.ACTC), HttpStatus.ACCEPTED));
-        when(paymentService.cancelPayment(any(), any())).thenReturn(getCancelPaymentResponseObject(true));
+        when(paymentService.cancelPayment(any(), any(), any())).thenReturn(getCancelPaymentResponseObject(true));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;

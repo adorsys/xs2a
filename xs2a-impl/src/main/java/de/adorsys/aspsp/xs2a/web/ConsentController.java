@@ -29,6 +29,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.aspsp.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.Consents;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,9 +62,16 @@ public class ConsentController implements ConsentApi {
             ? ResponseObject.builder().build()
             : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
 
-        ResponseObject<CreateConsentResponse> createConsentResponse = accountReferenceValidationResponse.hasError()
-            ? ResponseObject.<CreateConsentResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
-            : consentService.createAccountConsentsWithResponse(createConsent, PSU_ID, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred));
+        ResponseObject<CreateConsentResponse> createConsentResponse;
+
+        if (accountReferenceValidationResponse.hasError()) {
+            createConsentResponse = ResponseObject.<CreateConsentResponse>builder()
+                                        .fail(accountReferenceValidationResponse.getError())
+                                        .build();
+        } else {
+            PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
+            createConsentResponse = consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred));
+        }
 
         return responseMapper.created(createConsentResponse, consentModelMapper::mapToConsentsResponse201);
     }
@@ -82,7 +90,8 @@ public class ConsentController implements ConsentApi {
 
     @Override
     public ResponseEntity updateConsentsPsuData(String consentId, String authorisationId, UUID xRequestID, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        UpdateConsentPsuDataReq updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(PSU_ID, consentId, authorisationId, (HashMap) body);
+        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
+        UpdateConsentPsuDataReq updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(psuData, consentId, authorisationId, (HashMap) body);
         return responseMapper.ok(consentService.updateConsentPsuData(updatePsuDataRequest), consentModelMapper::mapToUpdatePsuAuthenticationResponse);
     }
 
@@ -103,7 +112,8 @@ public class ConsentController implements ConsentApi {
 
     @Override
     public ResponseEntity deleteConsent(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Void> response = consentService.deleteAccountConsentsById(consentId);
+        PsuIdData psuData = new PsuIdData(null, null, null, null);
+        ResponseObject<Void> response = consentService.deleteAccountConsentsById(consentId, psuData);
         return responseMapper.delete(response);
     }
 }
