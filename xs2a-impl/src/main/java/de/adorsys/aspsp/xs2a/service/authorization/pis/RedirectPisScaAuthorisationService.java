@@ -58,7 +58,7 @@ public class RedirectPisScaAuthorisationService implements PisScaAuthorisationSe
     /**
      * Creates authorization cancellation for pis consent
      *
-     * @param paymentId ASPSP identifier of a payment
+     * @param paymentId   ASPSP identifier of a payment
      * @param paymentType Type of payment
      * @return
      */
