@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
@@ -59,14 +58,22 @@ public interface CmsPsuAisService {
 
 
     /**
-     * Updates a Status of AIS Consent object by its ID and PSU ID
+     * Puts a Status of AIS Consent object by its ID and PSU ID to VALID
      *
      * @param psuIdData PSU credentials data
      * @param consentId ID of Consent
-     * @param status    Status of Consent to be set
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
-    boolean updateConsentStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull ConsentStatus status);
+    boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+
+    /**
+     * Puts a Status of AIS Consent object by its ID and PSU ID to REJECTED
+     *
+     * @param psuIdData PSU credentials data
+     * @param consentId ID of Consent
+     * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     */
+    boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
 
     /**
      * Returns a list of AIS Consent objects by PSU ID

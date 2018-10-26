@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 
 public interface CmsPsuPisService {
     /**
@@ -41,7 +40,7 @@ public interface CmsPsuPisService {
      */
     //TODO Create common Payment object in consent-core-api (analog to SpiPayment) and use it here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/456
     @NotNull
-    List<Object/*Payment*/> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
+    Object/*Payment*/ getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
 
     /**
      * Updates a Status of Payment's autorisation by its ID and PSU ID
