@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
@@ -27,8 +28,8 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMap
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -50,8 +51,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AisScaMethodSelectedStageTest {
     private static final String CONSENT_ID = "Test consentId";
-    private static final String TEST_AUTHENTICATION_METHOD_ID = SpiScaMethod.SMS_OTP.name();
-    private static final SpiScaMethod SCA_METHOD = SpiScaMethod.SMS_OTP;
+    private static final String TEST_AUTHENTICATION_METHOD_ID = SpiAuthenticationObject.SMS_OTP.name();
+    private static final SpiAuthenticationObject SCA_METHOD = SpiAuthenticationObject.SMS_OTP;
     private static final ScaStatus METHOD_SELECTED_SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
     private static final SpiResponseStatus RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
@@ -141,3 +142,4 @@ public class AisScaMethodSelectedStageTest {
                    .fail(RESPONSE_STATUS);
     }
 }
+*/

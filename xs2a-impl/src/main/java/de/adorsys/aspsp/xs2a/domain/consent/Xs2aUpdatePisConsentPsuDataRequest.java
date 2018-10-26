@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.aspsp.mock.api.psu;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-public enum AspspScaMethod {
-    SMS_OTP,
-    CHIP_OTP,
-    PHOTO_OTP,
-    PUSH_OTP
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import lombok.Data;
+
+@Data
+public class Xs2aUpdatePisConsentPsuDataRequest {
+    private String paymentId;
+    private String authorizationId;
+    private String psuId;
+
+    private String password;
+    private String authenticationMethodId;
+    private ScaStatus scaStatus;
+    private String paymentService;
+    private String scaAuthenticationData;
 }

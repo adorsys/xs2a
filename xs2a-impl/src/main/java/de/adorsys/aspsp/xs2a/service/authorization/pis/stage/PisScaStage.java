@@ -19,10 +19,10 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
@@ -39,14 +39,14 @@ import java.util.function.BiFunction;
 
 @RequiredArgsConstructor
 public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
-    protected final PisAuthorisationService pisAuthorisationService;
     protected final PaymentAuthorisationSpi paymentAuthorisationSpi;
-    protected final SpiCmsPisMapper spiCmsPisMapper;
     protected final PisConsentDataService pisConsentDataService;
     protected final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     protected final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     protected final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     protected final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
+    protected final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
+    protected final Xs2aPisConsentMapper xs2aPisConsentMapper;
 
     @Autowired
     private ApplicationContext applicationContext;

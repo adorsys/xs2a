@@ -19,7 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.keycloak.KeycloakService;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
-import de.adorsys.psd2.aspsp.mock.api.psu.AspspScaMethod;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
 import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import org.junit.Before;
 import org.junit.Test;
@@ -204,7 +204,7 @@ public class PsuServiceTest {
     }
 
     private Psu getPsu(String aspspPsuId, String email, String psuId, List<AspspAccountDetails> details, List<String> products) {
-        return new Psu(aspspPsuId, email, psuId, PASSWORD, details, products, Collections.singletonList(AspspScaMethod.SMS_OTP));
+        return new Psu(aspspPsuId, email, psuId, PASSWORD, details, products, Collections.singletonList(new AspspAuthenticationObject("SMS_OTP", "sms")));
     }
 
     private List<AspspAccountDetails> getDetails(boolean isEmpty) {

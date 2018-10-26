@@ -16,19 +16,19 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
-import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -37,38 +37,47 @@ import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 
 @Slf4j
 @Service("PIS_PSUAUTHENTICATED")
-public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {
+public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> {
 
-    public PisScaAuthenticatedStage(PisAuthorisationService pisAuthorisationService, PaymentAuthorisationSpi paymentAuthorisationSpi, SpiCmsPisMapper spiCmsPisMapper, PisConsentDataService pisConsentDataService, CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper) {
-        super(pisAuthorisationService, paymentAuthorisationSpi, spiCmsPisMapper, pisConsentDataService, cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper);
+    public PisScaAuthenticatedStage(PaymentAuthorisationSpi paymentAuthorisationSpi, PisConsentDataService pisConsentDataService, CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, Xs2aPisConsentMapper xs2aPisConsentMapper) {
+        super(paymentAuthorisationSpi, pisConsentDataService, cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, spiToXs2aAuthenticationObjectMapper, xs2aPisConsentMapper);
     }
 
     @Override
-    public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
+    public Xs2aUpdatePisConsentPsuDataResponse apply(Xs2aUpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
         PaymentType paymentType = pisConsentAuthorisationResponse.getPaymentType();
         SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType);
+        String authenticationMethodId = request.getAuthenticationMethodId();
 
         SpiPsuData psuData = new SpiPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
 
-        SpiResponse<SpiAuthorizationCodeResult> response = paymentAuthorisationSpi.requestAuthorisationCode(psuData, getMethod(request.getAuthenticationMethodId()), payment, aspspConsentData);
+        SpiResponse<SpiAuthorizationCodeResult> spiResponse = paymentAuthorisationSpi.requestAuthorisationCode(psuData, authenticationMethodId, payment, aspspConsentData);
 
-        pisConsentDataService.updateAspspConsentData(response.getAspspConsentData());
-        request.setScaStatus(SCAMETHODSELECTED);
-        return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
-    }
+        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
-    private SpiScaMethod getMethod(String method) { //TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/411
-        SpiScaMethod scaMethod = SpiScaMethod.SMS_OTP;
-        try {
-            scaMethod = SpiScaMethod.valueOf(method);
-        } catch (IllegalArgumentException e) {
-            log.error("Sca Method could not be parsed", e.getLocalizedMessage());
-        }
-        return scaMethod;
+        SpiResponse<List<SpiAuthenticationObject>> listAvailableScaMethodResponse = paymentAuthorisationSpi.requestAvailableScaMethods(psuData, payment, aspspConsentData);
+
+        aspspConsentData = listAvailableScaMethodResponse.getAspspConsentData();
+
+        pisConsentDataService.updateAspspConsentData(aspspConsentData);
+
+        List<SpiAuthenticationObject> availableScaMethods = listAvailableScaMethodResponse.getPayload();
+        SpiAuthenticationObject chosenScaMethod = availableScaMethods.stream()
+                                                      .filter(a -> authenticationMethodId.equals(a.getAuthenticationMethodId()))
+                                                      .findFirst()
+                                                      .orElse(null);
+
+        Xs2aUpdatePisConsentPsuDataResponse response = new Xs2aUpdatePisConsentPsuDataResponse();
+        response.setPsuId(psuData.getPsuId());
+        response.setScaStatus(SCAMETHODSELECTED);
+        response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(chosenScaMethod));
+        return response;
     }
 }

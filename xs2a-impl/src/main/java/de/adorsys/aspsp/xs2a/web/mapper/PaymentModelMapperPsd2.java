@@ -174,7 +174,7 @@ public class PaymentModelMapperPsd2 {
         return Optional.ofNullable(xs2aAuthenticationObject)
                    .map(a -> {
                        AuthenticationObject psd2Authentication = new AuthenticationObject();
-                       psd2Authentication.setAuthenticationType(AuthenticationType.fromValue(a.getAuthenticationType().name()));
+                       psd2Authentication.setAuthenticationType(AuthenticationType.fromValue(a.getAuthenticationType()));
                        psd2Authentication.setAuthenticationVersion(a.getAuthenticationVersion());
                        psd2Authentication.setAuthenticationMethodId(a.getAuthenticationMethodId());
                        psd2Authentication.setName(a.getName());
