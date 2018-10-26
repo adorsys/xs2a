@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.consent;
+package de.adorsys.aspsp.xs2a.domain.consent.pis;
 
+import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
 import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aChosenScaMethod;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,10 @@ import java.util.List;
 @Data
 public class Xs2aUpdatePisConsentPsuDataResponse {
     private String psuId;
+    private ScaStatus scaStatus;
+    private List<CmsScaMethod> availableScaMethods;
+    private ErrorHolder errorHolder;
+    private String psuMessage;
     private String paymentId;
     private String authorisationId;
 
@@ -35,20 +41,24 @@ public class Xs2aUpdatePisConsentPsuDataResponse {
     private Xs2aAuthenticationObject chosenScaMethod;
     private Links links = new Links();
 
-    private String psuMessage;
-    private MessageErrorCode errorCode;
+    private Xs2aChosenScaMethod chosenScaMethod;
 
-    public Xs2aUpdatePisConsentPsuDataResponse(ScaStatus scaStatus) {
-        this.scaStatus = scaStatus;
-    }
-
-    public Xs2aUpdatePisConsentPsuDataResponse(ScaStatus scaStatus, List<Xs2aAuthenticationObject> availableScaMethods) {
+    public Xs2aUpdatePisConsentPsuDataResponse(ScaStatus scaStatus, List<CmsScaMethod> availableScaMethods) {
         this.scaStatus = scaStatus;
         this.availableScaMethods = availableScaMethods;
     }
 
+    public Xs2aUpdatePisConsentPsuDataResponse(ScaStatus scaStatus) {
+        this(scaStatus, null);
+    }
+
+    public Xs2aUpdatePisConsentPsuDataResponse(ErrorHolder errorHolder) {
+        this(ScaStatus.FAILED);
+        this.errorHolder = errorHolder;
+    }
+
     public boolean hasError() {
-        return errorCode != null;
+        return errorHolder != null;
     }
 }
 

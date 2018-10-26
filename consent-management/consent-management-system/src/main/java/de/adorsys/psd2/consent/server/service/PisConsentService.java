@@ -181,7 +181,7 @@ public class PisConsentService {
             consentAuthorization.setScaStatus(request.getScaStatus());
             pisConsentAuthorizationRepository.save(consentAuthorization);
         }
-        return pisConsentAuthorisationOptional.map(pisConsentMapper::mapToUpdatePisConsentPsuDataResponse);
+        return pisConsentAuthorisationOptional.map(p -> new UpdatePisConsentPsuDataResponse(p.getScaStatus()));
     }
 
     /**

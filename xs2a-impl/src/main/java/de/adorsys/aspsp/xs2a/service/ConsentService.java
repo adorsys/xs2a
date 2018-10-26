@@ -21,6 +21,8 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
@@ -245,13 +247,16 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
-        return pisAuthorizationService.updateConsentPsuData(request)
-                   .map(r -> ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
-                                 .body(r).build())
-                   .orElseGet(ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
-                                  .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
-                                  ::build);
+        Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentPsuData(request);
 
+        if(response.hasError()){
+            return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+                .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
+                .build();
+        }
+        return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+                   .body(response)
+                   .build();
     }
 
     public ResponseObject<Xs2aCreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {

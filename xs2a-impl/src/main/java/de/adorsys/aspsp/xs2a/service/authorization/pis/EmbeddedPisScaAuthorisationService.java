@@ -16,7 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
-import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +51,8 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
      */
     @Override
-    public Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
-        return Optional.ofNullable(authorisationService.updatePisConsentAuthorisation(request));
+    public Xs2aUpdatePisConsentPsuDataResponse updateConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+        return authorisationService.updatePisConsentAuthorisation(request);
     }
 
     /**

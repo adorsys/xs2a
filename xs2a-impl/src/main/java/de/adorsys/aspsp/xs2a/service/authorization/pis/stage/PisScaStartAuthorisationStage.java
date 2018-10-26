@@ -54,20 +54,24 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisCons
     @SuppressWarnings("unchecked")
     public Xs2aUpdatePisConsentPsuDataResponse apply(Xs2aUpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
         PaymentType paymentType = pisConsentAuthorisationResponse.getPaymentType();
-
         SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType);
 
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
 
         SpiPsuData psuData = new SpiPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
 
-        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentAuthorisationSpi.authorisePsu(psuData, request.getPassword(), payment, aspspConsentData);
+        SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentAuthorisationSpi.authorisePsu(psuData, request.getPassword(), payment, aspspConsentData);
+        pisConsentDataService.updateAspspConsentData(authPsuResponse.getAspspConsentData());
 
-        aspspConsentData = authorisationStatusSpiResponse.getAspspConsentData();
-        pisConsentDataService.updateAspspConsentData(aspspConsentData);
+        if (authPsuResponse.hasError()) {
+            return new Xs2aUpdatePisConsentPsuDataResponse(spiErrorMapper.mapToErrorHolder(authPsuResponse));
+        }
 
-        if (SpiAuthorisationStatus.FAILURE == authorisationStatusSpiResponse.getPayload()) {
-            return new Xs2aUpdatePisConsentPsuDataResponse(FAILED);
+        SpiResponse<List<SpiScaMethod>> availableScaMethodsResponse = paymentAuthorisationSpi.requestAvailableScaMethods(psuData, payment, authPsuResponse.getAspspConsentData());
+        pisConsentDataService.updateAspspConsentData(availableScaMethodsResponse.getAspspConsentData());
+
+        if (availableScaMethodsResponse.hasError()) {
+            return new Xs2aUpdatePisConsentPsuDataResponse(spiErrorMapper.mapToErrorHolder(availableScaMethodsResponse));
         }
         SpiResponse<List<SpiAuthenticationObject>> listAvailableScaMethodResponse = paymentAuthorisationSpi.requestAvailableScaMethods(psuData, payment, aspspConsentData);
 
@@ -77,7 +81,8 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisCons
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
             PaymentSpi paymentSpi = getPaymentService(paymentType);
-            SpiResponse<SpiResponse.VoidResponse> executePaymentResponse = paymentSpi.executePaymentWithoutSca(psuData, payment, aspspConsentData);
+            SpiResponse<SpiResponse.VoidResponse> executePaymentResponse = paymentSpi.executePaymentWithoutSca(psuData, payment, availableScaMethodsResponse.getAspspConsentData());
+            pisConsentDataService.updateAspspConsentData(executePaymentResponse.getAspspConsentData());
 
             aspspConsentData = executePaymentResponse.getAspspConsentData();
             pisConsentDataService.updateAspspConsentData(aspspConsentData);

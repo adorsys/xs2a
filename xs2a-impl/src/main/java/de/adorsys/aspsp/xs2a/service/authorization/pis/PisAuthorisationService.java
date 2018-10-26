@@ -52,7 +52,7 @@ public class PisAuthorisationService {
      */
     public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId) {
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-                                                 null, CreatePisConsentAuthorisationResponse.class, paymentId)
+            null, CreatePisConsentAuthorisationResponse.class, paymentId)
                    .getBody();
     }
 

@@ -44,18 +44,18 @@ public class TppMessageInformation {
     @Size(max = 512)
     private String text;
 
-    public TppMessageInformation(MessageCategory category, MessageErrorCode messageErrorCode) {
+    public TppMessageInformation(MessageCategory category, MessageErrorCode messageErrorCode, String text) {
         this.category = category;
         this.messageErrorCode = messageErrorCode;
+        this.text = text;
+    }
+
+    public TppMessageInformation(MessageCategory category, MessageErrorCode messageErrorCode) {
+        this(category, messageErrorCode, null);
     }
 
     public TppMessageInformation path(String path) {
         this.path = path;
-        return this;
-    }
-
-    public TppMessageInformation text(String text) {
-        this.text = text;
         return this;
     }
 }
