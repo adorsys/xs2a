@@ -42,7 +42,7 @@ public class AisConsentMapper {
             consent.getUsageCounter(),
             consent.getLastActionDate(),
             consent.getConsentStatus(),
-            false,
+            consent.getAccesses().stream().anyMatch(a -> a.getTypeAccess() == TypeAccess.BALANCE),
             consent.isTppRedirectPreferred(),
             consent.getAisConsentRequestType(),
             consent.getPsuId(),

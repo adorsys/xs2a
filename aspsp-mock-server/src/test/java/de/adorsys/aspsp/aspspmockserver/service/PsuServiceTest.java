@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Psu;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.SpiScaMethod;
 import de.adorsys.aspsp.aspspmockserver.keycloak.KeycloakService;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspScaMethod;
+import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -203,14 +203,14 @@ public class PsuServiceTest {
         return products;
     }
 
-    private Psu getPsu(String aspspPsuId, String email, String psuId, List<SpiAccountDetails> details, List<String> products) {
-        return new Psu(aspspPsuId, email, psuId, PASSWORD, details, products, Collections.singletonList(SpiScaMethod.SMS_OTP));
+    private Psu getPsu(String aspspPsuId, String email, String psuId, List<AspspAccountDetails> details, List<String> products) {
+        return new Psu(aspspPsuId, email, psuId, PASSWORD, details, products, Collections.singletonList(AspspScaMethod.SMS_OTP));
     }
 
-    private List<SpiAccountDetails> getDetails(boolean isEmpty) {
+    private List<AspspAccountDetails> getDetails(boolean isEmpty) {
         return isEmpty
                    ? Collections.emptyList()
-                   : Collections.singletonList(new SpiAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, Collections.emptyList()));
+                   : Collections.singletonList(new AspspAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, Collections.emptyList()));
 
     }
 }

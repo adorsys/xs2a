@@ -127,13 +127,13 @@ public class AccountModelMapper {
     public AccountReport mapToAccountReport(Xs2aAccountReport accountReport) {
         TransactionList booked = new TransactionList();
         List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
-                                                          .map(ts -> Arrays.stream(ts).map(this::mapToTransaction).collect(Collectors.toList()))
+                                                          .map(ts -> ts.stream().map(this::mapToTransaction).collect(Collectors.toList()))
                                                           .orElseGet(ArrayList::new);
         booked.addAll(bookedTransactions);
 
         TransactionList pending = new TransactionList();
         List<TransactionDetails> pendingTransactions = Optional.ofNullable(accountReport.getPending())
-                                                           .map(ts -> Arrays.stream(ts).map(this::mapToTransaction).collect(Collectors.toList()))
+                                                           .map(ts -> ts.stream().map(this::mapToTransaction).collect(Collectors.toList()))
                                                            .orElseGet(ArrayList::new);
         pending.addAll(pendingTransactions);
 
@@ -166,6 +166,10 @@ public class AccountModelMapper {
     }
 
     public <T> T mapToAccountReference12(Xs2aAccountReference reference) {
+        if (reference == null) {
+            return null;
+        }
+
         T accountReference = null;
 
         if (StringUtils.isNotBlank(reference.getIban())) {
@@ -226,7 +230,7 @@ public class AccountModelMapper {
 
     }
 
-    public TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport){
+    public TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport) {
         TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
         transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));
         transactionsResponse200Json.setBalances(mapToBalanceList(transactionsReport.getBalances()));

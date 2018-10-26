@@ -23,7 +23,7 @@
 
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
+        <groupId>de.adorsys.psd2</groupId>
         <version>1.10-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -50,6 +50,14 @@
     </properties>
 
     <dependencies>
+
+        <!-- project dependencies -->
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-mock-api</artifactId>
+            <version>1.10-SNAPSHOT</version>
+        </dependency>
 
         <!-- spring dependencies -->
 
@@ -215,6 +223,9 @@
                                     <excludes>
                                         <exclude>de.adorsys.*:*</exclude>
                                     </excludes>
+                                    <includes>
+                                        <include>de.adorsys.psd2:aspsp-mock-api</include>
+                                    </includes>
                                 </bannedDependencies>
                             </rules>
                             <fail>true</fail>

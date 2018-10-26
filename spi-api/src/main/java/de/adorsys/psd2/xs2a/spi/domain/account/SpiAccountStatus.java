@@ -28,7 +28,7 @@ public enum SpiAccountStatus {
     DELETED("deleted"),
     BLOCKED("blocked");
 
-    private final static Map<String, SpiAccountStatus> container = new HashMap<>();
+    private static final Map<String, SpiAccountStatus> container = new HashMap<>();
 
     static {
         for (SpiAccountStatus accountStatus : values()) {

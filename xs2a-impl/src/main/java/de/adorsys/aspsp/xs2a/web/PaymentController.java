@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
@@ -27,6 +28,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.psd2.api.PaymentApi;
+import de.adorsys.psd2.model.PaymentInitiationCancelResponse200202;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.Api;
@@ -60,7 +62,7 @@ public class PaymentController implements PaymentApi {
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         ResponseObject<Xs2aTransactionStatus> response = PaymentType.getByValue(paymentService)
-                                                             .map(pt -> xs2aPaymentService.getPaymentStatusById(paymentId, pt))
+                                                             .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId))
                                                              .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
                                                                             .fail(new MessageError(FORMAT_ERROR))::build);
 
@@ -108,7 +110,21 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity cancelPayment(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null; //TODO implement
+        ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
+                                                                    .map(type -> xs2aPaymentService.cancelPayment(type, paymentId))
+                                                                    .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
+                                                                                   .fail(new MessageError(FORMAT_ERROR))::build);
+
+        if (serviceResponse.hasError()) {
+            return responseMapper.ok(serviceResponse);
+        }
+
+        CancelPaymentResponse cancelPayment = serviceResponse.getBody();
+        PaymentInitiationCancelResponse200202 response = paymentModelMapperPsd2.mapToPaymentInitiationCancelResponse(cancelPayment);
+
+        return cancelPayment.isStartAuthorisationRequired()
+                   ? responseMapper.accepted(ResponseObject.builder().body(response).build())
+                   : responseMapper.ok(ResponseObject.builder().body(response).build());
     }
 
     @Override

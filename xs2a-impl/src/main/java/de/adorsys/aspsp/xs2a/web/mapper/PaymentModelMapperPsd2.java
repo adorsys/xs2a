@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
@@ -72,7 +73,7 @@ public class PaymentModelMapperPsd2 {
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
             paymentResponse.setStartDate(xs2aPayment.getStartDate());
             paymentResponse.setEndDate(xs2aPayment.getEndDate());
-            paymentResponse.setExecutionRule(ExecutionRule.valueOf(xs2aPayment.getExecutionRule()));
+            paymentResponse.setExecutionRule(ExecutionRule.fromValue(xs2aPayment.getExecutionRule()));
             paymentResponse.setFrequency(FrequencyCode.valueOf(xs2aPayment.getFrequency().name()));
             String executionDateString = String.format("%02d", xs2aPayment.getDayOfExecution());
             paymentResponse.setDayOfExecution(DayOfExecution.fromValue(executionDateString));
@@ -146,6 +147,16 @@ public class PaymentModelMapperPsd2 {
         return parameters;
     }
 
+    public PaymentInitiationCancelResponse200202 mapToPaymentInitiationCancelResponse(CancelPaymentResponse cancelPaymentResponse) {
+        PaymentInitiationCancelResponse200202 response = new PaymentInitiationCancelResponse200202();
+        response.setTransactionStatus(mapToTransactionStatus12(cancelPaymentResponse.getTransactionStatus()));
+        response.setScaMethods(mapToScaMethods(cancelPaymentResponse.getScaMethods()));
+        response.setChosenScaMethod(mapToChosenScaMethod(cancelPaymentResponse.getChosenScaMethod()));
+        response.setChallengeData(mapToChallengeData(cancelPaymentResponse.getChallengeData()));
+        response._links(mapper.convertValue(cancelPaymentResponse.getLinks(), Map.class));
+        return response;
+    }
+
     private ScaMethods mapToScaMethods(Xs2aAuthenticationObject... authenticationObjects) {
         return Optional.ofNullable(authenticationObjects)
                    .map(objects -> {
@@ -171,6 +182,16 @@ public class PaymentModelMapperPsd2 {
                        return psd2Authentication;
                    })
                    .orElse(null);
+    }
+
+    private ChosenScaMethod mapToChosenScaMethod(Xs2aChosenScaMethod xs2aChosenScaMethod) {
+        return Optional.ofNullable(xs2aChosenScaMethod)
+                   .map(ch -> {
+                       ChosenScaMethod method = new ChosenScaMethod();
+                       method.setAuthenticationMethodId(ch.getAuthenticationMethodId());
+                       method.setAuthenticationType(AuthenticationType.fromValue(ch.getAuthenticationType()));
+                       return method;
+                   }).orElse(null);
     }
 
     private ChallengeData mapToChallengeData(Xs2aChallengeData xs2aChallengeData) {

@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountBalance;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
 import de.adorsys.aspsp.aspspmockserver.service.AccountService;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountBalance;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +44,7 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
     })
 
     @GetMapping(path = "/")
-    public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
+    public ResponseEntity<List<AspspAccountDetails>> readAllAccounts() {
         return Optional.ofNullable(accountService.getAllAccounts())
                    .map(ResponseEntity::ok)
                    .orElseGet(ResponseEntity.noContent()::build);
@@ -52,10 +52,10 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
 
     @ApiOperation(value = "Returns account details specified by ASPSP account identifier.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = SpiAccountDetails.class),
+        @ApiResponse(code = 200, message = "OK", response = AspspAccountDetails.class),
         @ApiResponse(code = 204, message = "Not Content")})
     @GetMapping(path = "/{accountId}")
-    public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
+    public ResponseEntity<AspspAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
         return accountService.getAccountById(accountId)
                    .map(ResponseEntity::ok)
                    .orElseGet(ResponseEntity.noContent()::build);
@@ -63,10 +63,10 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
 
     @ApiOperation(value = "Creates an account for a specific PSU.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created", response = SpiAccountDetails.class),
+        @ApiResponse(code = 201, message = "Created", response = AspspAccountDetails.class),
         @ApiResponse(code = 400, message = "Bad Request")})
     @PutMapping(path = "/")
-    public ResponseEntity createAccount(@RequestParam String psuId, @RequestBody SpiAccountDetails account) {
+    public ResponseEntity createAccount(@RequestParam String psuId, @RequestBody AspspAccountDetails account) {
         return accountService.addAccount(psuId, account)
                    .map(acc -> new ResponseEntity<>(acc, CREATED))
                    .orElseGet(ResponseEntity.badRequest()::build);
@@ -86,8 +86,8 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{accountId}/balances")
-    public ResponseEntity<List<SpiAccountBalance>> readBalancesById(@PathVariable("accountId") String accountId) {
-        List<SpiAccountBalance> response = accountService.getAccountBalancesById(accountId);
+    public ResponseEntity<List<AspspAccountBalance>> readBalancesById(@PathVariable("accountId") String accountId) {
+        List<AspspAccountBalance> response = accountService.getAccountBalancesById(accountId);
         return isEmpty(response)
                    ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);
@@ -98,8 +98,8 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/psu/{psuId}")
-    public ResponseEntity<List<SpiAccountDetails>> readAccountsByPsuId(@PathVariable("psuId") String psuId) {
-        List<SpiAccountDetails> response = accountService.getAccountsByPsuId(psuId);
+    public ResponseEntity<List<AspspAccountDetails>> readAccountsByPsuId(@PathVariable("psuId") String psuId) {
+        List<AspspAccountDetails> response = accountService.getAccountsByPsuId(psuId);
         return isEmpty(response)
                    ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);
@@ -110,8 +110,8 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/iban/{iban}")
-    public ResponseEntity<List<SpiAccountDetails>> readAccountsByIban(@PathVariable("iban") String iban) {
-        List<SpiAccountDetails> response = accountService.getAccountsByIban(iban);
+    public ResponseEntity<List<AspspAccountDetails>> readAccountsByIban(@PathVariable("iban") String iban) {
+        List<AspspAccountDetails> response = accountService.getAccountsByIban(iban);
         return isEmpty(response)
                    ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);

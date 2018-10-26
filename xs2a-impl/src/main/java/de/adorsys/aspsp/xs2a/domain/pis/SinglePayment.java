@@ -34,7 +34,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Data
@@ -95,27 +94,14 @@ public class SinglePayment implements AccountReferenceCollector {
     @ApiModelProperty(value = "remittance information structured")
     private Remittance remittanceInformationStructured;
 
-    @Deprecated // Since 1.2
     @ApiModelProperty(value = "requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
-    @Deprecated // Since 1.2
     @ApiModelProperty(value = "requested execution time", example = "2020-01-01T15:30:35.035Z")
     private OffsetDateTime requestedExecutionTime;
 
     @ApiModelProperty(value = "Transaction status", example = "Pending")
     private Xs2aTransactionStatus transactionStatus;
-
-    @JsonIgnore
-    public boolean isValidExecutionDateAndTime() { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
-        return Optional.ofNullable(this.requestedExecutionDate)
-                   .map(d -> d.isEqual(LocalDate.now()) || d.isAfter(LocalDate.now()))
-                   .orElse(true)
-                   &&
-                   Optional.ofNullable(this.requestedExecutionTime)
-                       .map(d -> d.isAfter(LocalDate.now().atTime(0, 0).atOffset(this.requestedExecutionTime.getOffset())))
-                       .orElse(true);
-    }
 
     @JsonIgnore
     @Override

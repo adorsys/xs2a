@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiTransaction;
 import de.adorsys.aspsp.aspspmockserver.service.TransactionService;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspTransaction;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,8 +42,8 @@ public class TransactionController {
         @ApiResponse(code = 201, message = "Created", response = List.class),
         @ApiResponse(code = 404, message = "Not Found")})
     @GetMapping(path = "/")
-    public ResponseEntity<List<SpiTransaction>> readAllTransactions() {
-        List<SpiTransaction> transactions = transactionService.getAllTransactions();
+    public ResponseEntity<List<AspspTransaction>> readAllTransactions() {
+        List<AspspTransaction> transactions = transactionService.getAllTransactions();
         return CollectionUtils.isEmpty(transactions)
                    ? ResponseEntity.notFound().build()
                    : ResponseEntity.ok(transactions);
@@ -51,10 +51,10 @@ public class TransactionController {
 
     @ApiOperation(value = "Returns a transaction by its ASPSP identifier and account identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = SpiTransaction.class),
+        @ApiResponse(code = 200, message = "OK", response = AspspTransaction.class),
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{transaction-id}/{account-id}")
-    public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transaction-id") String transactionId, @PathVariable("account-id") String accountId) {
+    public ResponseEntity<AspspTransaction> readTransactionById(@PathVariable("transaction-id") String transactionId, @PathVariable("account-id") String accountId) {
         return transactionService.getTransactionById(transactionId, accountId)
                    .map(ResponseEntity::ok)
                    .orElseGet(ResponseEntity.noContent()::build);
@@ -65,7 +65,7 @@ public class TransactionController {
         @ApiResponse(code = 201, message = "Created", response = String.class),
         @ApiResponse(code = 400, message = "Bad Request")})
     @PostMapping(path = "/")
-    public ResponseEntity createTransaction(@RequestBody SpiTransaction transaction) {
+    public ResponseEntity createTransaction(@RequestBody AspspTransaction transaction) {
         return transactionService.saveTransaction(transaction)
                    .map(transactionId -> new ResponseEntity<>(transactionId, CREATED))
                    .orElseGet(ResponseEntity.badRequest()::build);
@@ -76,10 +76,10 @@ public class TransactionController {
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{account-id}")
-    public ResponseEntity<List<SpiTransaction>> readTransactionsByPeriod(@PathVariable("account-id") String accountId,
-                                                                         @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-                                                                         @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
-        List<SpiTransaction> response = transactionService.getTransactionsByPeriod(accountId, dateFrom, dateTo);
+    public ResponseEntity<List<AspspTransaction>> readTransactionsByPeriod(@PathVariable("account-id") String accountId,
+                                                                           @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+                                                                           @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
+        List<AspspTransaction> response = transactionService.getTransactionsByPeriod(accountId, dateFrom, dateTo);
         return CollectionUtils.isEmpty(response)
                    ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);

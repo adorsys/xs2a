@@ -199,8 +199,8 @@ public class AccountModelMapperTest {
 
     @Test
     public void testMapToAccountReport() {
-        Transactions[] bookedTransactions = {createTransactions(), createTransactions(), createTransactions()};
-        Transactions[] pendingTransactions = {createTransactions(), createTransactions()};
+        List<Transactions> bookedTransactions = Arrays.asList(createTransactions(), createTransactions(), createTransactions());
+        List<Transactions> pendingTransactions = Arrays.asList(createTransactions(), createTransactions());
         Xs2aAccountReport accountReport = new Xs2aAccountReport(bookedTransactions, pendingTransactions);
         accountReport.setLinks(createLinks());
 
@@ -208,15 +208,15 @@ public class AccountModelMapperTest {
         assertNotNull(result);
 
         //transactions mapping tested in testMapToTransaction
-        assertEquals(accountReport.getBooked().length, result.getBooked().size());
+        assertEquals(accountReport.getBooked().size(), result.getBooked().size());
 
-        Transactions[] expectedPending = accountReport.getPending();
+        List<Transactions> expectedPending = accountReport.getPending();
         assertNotNull(expectedPending);
 
         TransactionList actualPending = result.getPending();
         assertNotNull(actualPending);
 
-        assertEquals(expectedPending.length, actualPending.size());
+        assertEquals(expectedPending.size(), actualPending.size());
 
         Map links = result.getLinks();
         assertEquals(accountReport.getLinks().getScaOAuth(), links.get("scaOAuth"));

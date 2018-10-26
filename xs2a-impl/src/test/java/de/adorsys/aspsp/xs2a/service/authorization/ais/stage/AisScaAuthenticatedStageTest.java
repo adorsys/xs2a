@@ -19,12 +19,12 @@ package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.domain.psu.Xs2aPsuData;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -57,7 +57,7 @@ public class AisScaAuthenticatedStageTest {
     private static final SpiResponseStatus RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
 
     @InjectMocks
     private AisScaAuthenticatedStage scaAuthenticatedStage;
@@ -89,7 +89,7 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(accountConsent);
 
-        when(psuDataMapper.mapToSpiPsuData(any(Xs2aPsuData.class)))
+        when(psuDataMapper.mapToSpiPsuData(any(PsuIdData.class)))
             .thenReturn(SPI_PSU_DATA);
 
         when(aisConsentMapper.mapToSpiScaConfirmation(request))

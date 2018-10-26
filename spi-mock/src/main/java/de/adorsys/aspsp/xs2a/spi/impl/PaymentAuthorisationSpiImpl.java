@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -47,9 +48,12 @@ import java.util.Optional;
 import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
 import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
 
+@Primary
 @Service
 @RequiredArgsConstructor
 public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
+    private static final String TEST_ASPSP_DATA = "Test aspsp data";
+
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
     private final AspspRemoteUrls aspspRemoteUrls;
@@ -75,16 +79,28 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
     @Override
     @NotNull
     public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, SpiPayment payment, AspspConsentData aspspConsentData) {
-        ResponseEntity<List<SpiScaMethod>> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
-        }, psuData.getPsuId());
+        try {
+            ResponseEntity<List<SpiScaMethod>> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
+            }, psuData.getPsuId());
 
-        List<SpiScaMethod> spiScaMethods = Optional.ofNullable(aspspResponse.getBody())
-                                               .orElseGet(Collections::emptyList);
+            List<SpiScaMethod> spiScaMethods = Optional.ofNullable(aspspResponse.getBody())
+                                                   .orElseGet(Collections::emptyList);
 
-        return SpiResponse.<List<SpiScaMethod>>builder()
-                   .aspspConsentData(aspspConsentData)
-                   .payload(spiScaMethods)
-                   .success();
+            return SpiResponse.<List<SpiScaMethod>>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(spiScaMethods)
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<List<SpiScaMethod>>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<List<SpiScaMethod>>builder()
+                       .aspspConsentData(aspspConsentData)
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 
     @Override
@@ -94,19 +110,18 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
             aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuData.getPsuId(), scaMethod);
 
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                       .aspspConsentData(aspspConsentData)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .success();
 
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-
                 return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                           .aspspConsentData(aspspConsentData)
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                       .aspspConsentData(aspspConsentData)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }

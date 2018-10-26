@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
+        <groupId>de.adorsys.psd2</groupId>
         <version>1.10-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -122,7 +122,7 @@
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>
             <version>1.10-SNAPSHOT</version>
         </dependency>

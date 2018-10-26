@@ -51,6 +51,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PisConsentService {
     private final PisConsentRepository pisConsentRepository;
@@ -64,6 +65,7 @@ public class PisConsentService {
      * @param request Consists information about payments.
      * @return Response containing identifier of consent
      */
+    @Transactional
     public Optional<CreatePisConsentResponse> createPaymentConsent(PisConsentRequest request) {
         PisConsent consent = pisConsentMapper.mapToPisConsent(request);
         consent.setExternalId(UUID.randomUUID().toString());
@@ -88,7 +90,6 @@ public class PisConsentService {
      * @param consentId String representation of pis consent identifier
      * @return Response containing full information about pis consent
      */
-    @Transactional
     public Optional<PisConsentResponse> getConsentById(String consentId) {
         return getPisConsentById(consentId)
                    .flatMap(pisConsentMapper::mapToPisConsentResponse);
@@ -101,6 +102,7 @@ public class PisConsentService {
      * @param status    new consent status
      * @return Response containing result of status changing
      */
+    @Transactional
     public Optional<Boolean> updateConsentStatusById(String consentId, CmsConsentStatus status) {
         return getActualPisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
@@ -113,7 +115,6 @@ public class PisConsentService {
      * @param consentId id of the consent
      * @return Response containing aspsp consent data
      */
-    @Transactional
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId) {
         return getPisConsentById(consentId)
                    .map(this::prepareAspspConsentData);
@@ -125,9 +126,9 @@ public class PisConsentService {
      * @param paymentId id of the payment
      * @return Response containing aspsp consent data
      */
-    @Transactional
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
+                   .map(l -> l.get(0))
                    .map(PisPaymentData::getConsent)
                    .map(this::prepareAspspConsentData);
     }
@@ -187,7 +188,7 @@ public class PisConsentService {
     /**
      * Update PIS consent payment data and stores it into database
      *
-     * @param request PIS consent request for update payment data
+     * @param request   PIS consent request for update payment data
      * @param consentId Consent ID
      */
     // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
@@ -197,7 +198,6 @@ public class PisConsentService {
         pisConsentById.ifPresent(pisConsent -> pisPaymentDataRepository.save(pisConsentMapper.mapToPisPaymentDataList(request.getPayments(), pisConsent)));
     }
 
-    @Transactional
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType) {
         return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(authorizationId, authorizationType)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);

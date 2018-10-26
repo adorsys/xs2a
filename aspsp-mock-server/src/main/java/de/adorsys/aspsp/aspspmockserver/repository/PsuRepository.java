@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.repository;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Psu;
+import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

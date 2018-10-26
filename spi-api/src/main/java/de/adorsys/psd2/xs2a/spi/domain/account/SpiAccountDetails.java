@@ -19,9 +19,6 @@ package de.adorsys.psd2.xs2a.spi.domain.account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Setter;
-import lombok.experimental.NonFinal;
-import org.springframework.data.annotation.Id;
 
 import java.util.Currency;
 import java.util.List;
@@ -30,9 +27,6 @@ import java.util.Optional;
 @Data
 @AllArgsConstructor
 public class SpiAccountDetails {
-    @Id
-    @Setter
-    @NonFinal
     private String id; // TODO shouldn't this be resourceId?
     /**
      * International Bank Account Number
@@ -92,5 +86,9 @@ public class SpiAccountDetails {
             .filter(bal -> SpiBalanceType.INTERIM_AVAILABLE == bal.getSpiBalanceType())
             .findFirst()
             .map(b -> balance);
+    }
+
+    public void emptyBalances() {
+        balances = null;
     }
 }
