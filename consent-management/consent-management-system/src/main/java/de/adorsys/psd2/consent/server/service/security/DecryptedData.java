@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.server.service.security;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 
 @Value
-@ApiModel(description = "ASPSP Consent data", value = "CmsAspspConsentDataBase64")
-public class CmsAspspConsentDataBase64 {
-
-    @ApiModelProperty(value = "Consent ID", required = true, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
-    private String consentId;
-    @ApiModelProperty(value = "ASPSP consent data Base64", required = true, example = "zdxcvvzzzxcvzzzz")
-    private String aspspConsentDataBase64;
+public class DecryptedData {
+    private byte[] data;
 }

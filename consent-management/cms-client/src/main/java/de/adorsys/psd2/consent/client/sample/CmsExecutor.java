@@ -213,10 +213,7 @@ public class CmsExecutor {
      * @return CmsAspspConsentDataBase64
      */
     private static CmsAspspConsentDataBase64 buildCmsAspspConsentDataBase64() {
-        CmsAspspConsentDataBase64 request = new CmsAspspConsentDataBase64();
-        byte[] aspspCnsentData = Base64.getEncoder().encode("zdxcvvzzzxcvzzzz".getBytes());
-        request.setAspspConsentDataBase64(Base64.getEncoder().encodeToString(aspspCnsentData));
-        return request;
+        return new CmsAspspConsentDataBase64("encryptedId", Base64.getEncoder().encodeToString("decrypted consent data".getBytes()));
     }
 
     /**

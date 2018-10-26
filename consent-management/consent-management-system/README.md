@@ -25,9 +25,17 @@ Some of these parameters you can obtain after installing and running PostgreSQL 
 
 To run consent-management-system app from command line:
 
+1. Without test data
 ```
 mvn clean install 
 mvn spring-boot:run
+ 
+```
+
+2. With test data
+```
+mvn clean install 
+mvn spring-boot:run -Drun.profiles=data_test
  
 ```
 

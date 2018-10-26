@@ -29,6 +29,8 @@ import de.adorsys.psd2.consent.server.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.server.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.server.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.server.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.server.service.security.DecryptedData;
+import de.adorsys.psd2.consent.server.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,13 +46,15 @@ import static de.adorsys.psd2.consent.api.TypeAccess.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
+@Transactional(readOnly = true)
+// TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AisConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
     private final AisConsentMapper consentMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
+    private final SecurityDataService securityDataService;
 
     /**
      * Create AIS consent
@@ -64,7 +68,7 @@ public class AisConsentService {
         consent.setExternalId(UUID.randomUUID().toString());
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
-                   ? Optional.ofNullable(saved.getExternalId())
+                   ? securityDataService.getEncryptedId(saved.getExternalId())
                    : Optional.empty();
     }
 
@@ -141,49 +145,54 @@ public class AisConsentService {
     /**
      * Get Ais aspsp consent data by id
      *
-     * @param consentId id of the consent
+     * @param encryptedConsentId id of the consent
      * @return Response containing aspsp consent data
      */
-    public Optional<CmsAspspConsentDataBase64> getAspspConsentData(String consentId) {
-        return getActualAisConsent(consentId)
-                   .map(this::getConsentAspspData);
+    public Optional<CmsAspspConsentDataBase64> getAspspConsentData(String encryptedConsentId) {
+        return getActualAisConsent(encryptedConsentId)
+                   .map(aisConsent -> getConsentAspspData(aisConsent, encryptedConsentId));
     }
 
     /**
      * Update AIS consent aspsp consent data by id
      *
-     * @param request   Aspsp provided ais consent data
-     * @param consentId id of the consent to be updated
+     * @param request            Aspsp provided ais consent data
+     * @param encryptedConsentId id of the consent to be updated
      * @return String   consent id
      */
     @Transactional
-    public Optional<String> saveAspspConsentDataInAisConsent(String consentId, CmsAspspConsentDataBase64 request) {
-        return getActualAisConsent(consentId)
-                   .map(cons -> saveAspspConsentDataInAisConsent(request, cons));
+    public Optional<String> saveAspspConsentDataInAisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
+        return getActualAisConsent(encryptedConsentId)
+                   .flatMap(cons -> saveAspspConsentDataInAisConsent(request, cons, encryptedConsentId));
     }
 
     /**
      * Create consent authorization
      *
-     * @param consentId id of consent
-     * @param request   needed parameters for creating consent authorization
+     * @param encryptedConsentId id of consent
+     * @param request            needed parameters for creating consent authorization
      * @return String authorization id
      */
     @Transactional
-    public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
-        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID))
+    public Optional<String> createAuthorization(String encryptedConsentId, AisConsentAuthorizationRequest request) {
+        return securityDataService.getConsentId(encryptedConsentId)
+                   .flatMap(consentId -> aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)))
                    .map(aisConsent -> saveNewAuthorization(aisConsent, request));
     }
 
     /**
      * Get consent authorization
      *
-     * @param consentId       id of consent
-     * @param authorizationId id of authorisation session
+     * @param encryptedConsentId id of consent
+     * @param authorizationId    id of authorisation session
      * @return AisConsentAuthorizationResponse
      */
-    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)).isPresent()
+    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String encryptedConsentId) {
+        Optional<String> consentId = securityDataService.getConsentId(encryptedConsentId);
+        if (!consentId.isPresent()) {
+            return Optional.empty();
+        }
+        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId.get(), EnumSet.of(RECEIVED, VALID)).isPresent()
                    ? aisConsentAuthorizationRepository.findByExternalId(authorizationId)
                          .map(consentMapper::mapToAisConsentAuthorizationResponse)
                    : Optional.empty();
@@ -232,23 +241,24 @@ public class AisConsentService {
         return holder.getAccountAccesses();
     }
 
-    private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent) {
-        CmsAspspConsentDataBase64 response = new CmsAspspConsentDataBase64();
-        String aspspConsentDataBase64 = Optional.ofNullable(consent.getAspspConsentData())
-                                            .map(bytes -> Base64.getEncoder().encodeToString(bytes))
-                                            .orElse(null);
-        response.setAspspConsentDataBase64(aspspConsentDataBase64);
-        response.setConsentId(consent.getExternalId());
-        return response;
+    private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent, String encryptedConsentId) {
+        return Optional.ofNullable(consent.getAspspConsentData())
+            .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
+            .map(DecryptedData::getData)
+            .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+            .map(str64 -> new CmsAspspConsentDataBase64(encryptedConsentId, str64))
+            .orElseGet(() -> new CmsAspspConsentDataBase64(encryptedConsentId, null));
     }
 
-    private String saveAspspConsentDataInAisConsent(CmsAspspConsentDataBase64 request, AisConsent consent) {
-        byte[] aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
-                                      .map(aspspConsentDataBase64 -> Base64.getDecoder().decode(aspspConsentDataBase64))
-                                      .orElse(null);
-        consent.setAspspConsentData(aspspConsentData);
-        AisConsent savedConsent = aisConsentRepository.save(consent);
-        return savedConsent.getExternalId();
+    private Optional<String> saveAspspConsentDataInAisConsent(CmsAspspConsentDataBase64 request, AisConsent consent, String encryptedConsentId) {
+        return securityDataService.encryptConsentData(encryptedConsentId, request.getAspspConsentDataBase64())
+                   .map(encr -> updateConsentDataAndSaveConsent(consent, encr.getData()))
+                   .map(a -> encryptedConsentId);
+    }
+
+    private AisConsent updateConsentDataAndSaveConsent(AisConsent consent, byte[] consentData) {
+        consent.setAspspConsentData(consentData);
+        return aisConsentRepository.save(consent);
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
@@ -313,13 +323,15 @@ public class AisConsentService {
         aisConsentActionRepository.save(action);
     }
 
-    private Optional<AisConsent> getActualAisConsent(String consentId) {
-        return Optional.ofNullable(consentId)
-                   .flatMap(c -> aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
+    private Optional<AisConsent> getActualAisConsent(String encryptedConsentId) {
+        Optional<String> consentIdDecrypted = securityDataService.getConsentId(encryptedConsentId);
+        return consentIdDecrypted
+                   .flatMap(c -> aisConsentRepository.findByExternalIdAndConsentStatusIn(c, EnumSet.of(RECEIVED, VALID)));
     }
 
-    private Optional<AisConsent> getAisConsentById(String consentId) {
-        return Optional.ofNullable(consentId)
+    private Optional<AisConsent> getAisConsentById(String encryptedConsentId) {
+        Optional<String> consentIdDecrypted = securityDataService.getConsentId(encryptedConsentId);
+        return consentIdDecrypted
                    .flatMap(aisConsentRepository::findByExternalId);
     }
 

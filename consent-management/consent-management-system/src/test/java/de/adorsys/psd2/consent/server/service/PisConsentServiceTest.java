@@ -25,6 +25,8 @@ import de.adorsys.psd2.consent.server.repository.PisConsentAuthorizationReposito
 import de.adorsys.psd2.consent.server.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.server.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.server.service.mapper.PisConsentMapper;
+import de.adorsys.psd2.consent.server.service.security.EncryptedData;
+import de.adorsys.psd2.consent.server.service.security.SecurityDataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,21 +55,30 @@ public class PisConsentServiceTest {
     private PisPaymentDataRepository pisPaymentDataRepository;
     @Mock
     private PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
+    @Mock
+    SecurityDataService securityDataService;
 
     private PisConsent pisConsent;
     private final long CONSENT_ID = 1;
     private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
     private final String paymentId = "5bbde955ca10e8e4035a10c2";
-     private final String paymentIdWrong = "5bbdcb28ca10e8e14a41b12f";
+    private final String paymentIdWrong = "5bbdcb28ca10e8e14a41b12f";
     private PisPaymentData pisPaymentData;
     private List<PisConsentAuthorization> pisConsentAuthorizationList = new ArrayList();
+    private CmsAspspConsentDataBase64 cmsAspspConsentDataBase64;
+
 
     @Before
     public void setUp() {
+        cmsAspspConsentDataBase64 = buildUpdateBlobRequest();
         pisConsent = buildConsent();
         pisPaymentData = buildPaymentData(pisConsent);
         pisConsentAuthorizationList.add(buildPisConsentAuthorisation("906a08bc-8347-4f08-8c24-eda17b1f4c57"));
+        when(securityDataService.getConsentId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
+        when(securityDataService.getConsentId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
+        when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, cmsAspspConsentDataBase64.getAspspConsentDataBase64()))
+            .thenReturn(Optional.of(new EncryptedData("test data".getBytes())));
     }
 
     @Test
@@ -91,7 +102,7 @@ public class PisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorisationByPaymentIdSuccess(){
+    public void getAuthorisationByPaymentIdSuccess() {
         //When
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
@@ -103,7 +114,7 @@ public class PisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorisationByPaymentIdWrongPaymentId(){
+    public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
         //Then
@@ -121,9 +132,7 @@ public class PisConsentServiceTest {
     }
 
     private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {
-        CmsAspspConsentDataBase64 request = new CmsAspspConsentDataBase64();
-        request.setAspspConsentDataBase64("zdxcvvzzzxcvzzzz");
-        return request;
+        return new CmsAspspConsentDataBase64("encryptedId", Base64.getEncoder().encodeToString("decrypted consent data".getBytes()));
     }
 
     private PisConsentAuthorization buildPisConsentAuthorisation(String externalId) {
