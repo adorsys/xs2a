@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.payment;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
+import lombok.Data;
 
-public abstract class ReadPayment<T> {
-    @Autowired
-    protected PisConsentDataService pisConsentDataService;
+@Data
+public class PaymentInformationResponse<T> {
+    private T payment;
+    private ErrorHolder errorHolder;
 
-    public abstract T getPayment(String paymentId, PaymentProduct paymentProduct);
+    public PaymentInformationResponse(T payment) {
+        this.payment = payment;
+    }
+
+    public PaymentInformationResponse(ErrorHolder errorHolder) {
+        this.errorHolder = errorHolder;
+    }
+
+    public boolean hasError() {
+        return errorHolder != null;
+    }
 }

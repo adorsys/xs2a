@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.domain.consent.pis;
 
-import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class PeriodicPaymentInitiationResponse extends PaymentInitiationResponse {
-
-    public PeriodicPaymentInitiationResponse(ErrorHolder errorHolder) {
-        super(errorHolder);
-    }
-
-    @Override
-    PaymentType getPaymentType() {
-        return PaymentType.PERIODIC;
-    }
+public class Xs2aUpdatePisConsentPsuDataRequest {
+    private String paymentId;
+    private String authorizationId;
+    private String psuId;
+    private String password;
+    private String authenticationMethodId;
+    private ScaStatus scaStatus;
+    private String paymentService;
+    private String scaAuthenticationData;
 }
