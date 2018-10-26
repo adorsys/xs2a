@@ -117,14 +117,8 @@ public class PaymentService {
                        .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
                        .build();
         }
-        Object payment = response.getPayment();
-        if (payment == null) {
-            ResponseObject.builder()
-                .fail(new MessageError(RESOURCE_UNKNOWN_403))
-                .build();
-        }
         return ResponseObject.builder()
-                   .body(payment)
+                   .body(response.getPayment())
                    .build();
     }
 
