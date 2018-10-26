@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.repository;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiTransaction;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspTransaction;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -28,10 +28,10 @@ import java.util.List;
 
 @Repository
 @Profile({"mongo", "fongo"})
-public interface TransactionRepository extends MongoRepository<SpiTransaction, String> {
+public interface TransactionRepository extends MongoRepository<AspspTransaction, String> {
     @Query("{$or:[{$and:[{'creditorAccount.iban':?0},{'creditorAccount.currency':?1}]},{$and:[{'debtorAccount.iban':?0},{'debtorAccount.currency':?1}]}],'valueDate':{$gte:?2,$lte:?3}}")
-    List<SpiTransaction> findAllByDates(String iban, Currency currency, LocalDate dateFrom, LocalDate dateTo);
+    List<AspspTransaction> findAllByDates(String iban, Currency currency, LocalDate dateFrom, LocalDate dateTo);
 
     @Query("{$or:[{$and:[{'creditorAccount.iban':?0},{'creditorAccount.currency':?1}]},{$and:[{'debtorAccount.iban':?0},{'debtorAccount.currency':?1}]}],'transactionId':?2}")
-    SpiTransaction findOneByTransactionIdAndAccount(String iban, Currency currency, String transactionId);
+    AspspTransaction findOneByTransactionIdAndAccount(String iban, Currency currency, String transactionId);
 }

@@ -16,13 +16,13 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountBalance;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiBalanceType;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Psu;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.SpiScaMethod;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountBalance;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspBalanceType;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspScaMethod;
+import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -81,79 +81,79 @@ public class AccountServiceTest {
     @Test
     public void addAccount() {
         //Given
-        SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
+        AspspAccountDetails expectedAspspAccountDetails = getAspspAccountDetails_1();
 
         //When
-        SpiAccountDetails actualSpiAccountDetails = accountService.addAccount(PSU_ID, expectedSpiAccountDetails).get();
+        AspspAccountDetails actualAspspAccountDetails = accountService.addAccount(PSU_ID, expectedAspspAccountDetails).get();
 
         //Then
-        assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);
+        assertThat(actualAspspAccountDetails).isEqualTo(expectedAspspAccountDetails);
     }
 
     @Test
     public void updateAccount() {
         //Given
-        SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
+        AspspAccountDetails expectedAspspAccountDetails = getAspspAccountDetails_1();
 
         //When
-        SpiAccountDetails actualSpiAccountDetails = accountService.updateAccount(expectedSpiAccountDetails).get();
+        AspspAccountDetails actualAspspAccountDetails = accountService.updateAccount(expectedAspspAccountDetails).get();
 
         //Then
-        assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);
+        assertThat(actualAspspAccountDetails).isEqualTo(expectedAspspAccountDetails);
     }
 
     @Test
     public void getAccountByIban_Success() {
         //Given
-        List<SpiAccountDetails> expectedSpiAccountDetails = getAccounts();
+        List<AspspAccountDetails> expectedAspspAccountDetails = getAccounts();
         //When
-        List<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountsByIban(IBAN);
+        List<AspspAccountDetails> actualAspspAccountDetails = accountService.getAccountsByIban(IBAN);
 
         //Then
-        assertThat(actualSpiAccountDetails).isNotNull();
-        assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);
+        assertThat(actualAspspAccountDetails).isNotNull();
+        assertThat(actualAspspAccountDetails).isEqualTo(expectedAspspAccountDetails);
     }
 
     @Test
     public void getAccountByIban_WrongIban() {
         //When
-        List<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountsByIban(WRONG_IBAN);
+        List<AspspAccountDetails> actualAspspAccountDetails = accountService.getAccountsByIban(WRONG_IBAN);
 
         //Then
-        assertThat(actualSpiAccountDetails).isEqualTo(Collections.emptyList());
+        assertThat(actualAspspAccountDetails).isEqualTo(Collections.emptyList());
     }
 
     @Test
     public void getAccount_Success() {
         //Given
-        SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
+        AspspAccountDetails expectedAspspAccountDetails = getAspspAccountDetails_1();
         //When
-        Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountById(ACCOUNT_ID);
+        Optional<AspspAccountDetails> actualAspspAccountDetails = accountService.getAccountById(ACCOUNT_ID);
 
         //Then
-        assertThat(actualSpiAccountDetails).isNotNull();
-        assertThat(actualSpiAccountDetails.get()).isEqualTo(expectedSpiAccountDetails);
+        assertThat(actualAspspAccountDetails).isNotNull();
+        assertThat(actualAspspAccountDetails.get()).isEqualTo(expectedAspspAccountDetails);
     }
 
     @Test
     public void getAccount_WrongId() {
         //Given
-        accountService.addAccount("12234556", getSpiAccountDetails_1());
+        accountService.addAccount("12234556", getAspspAccountDetails_1());
 
         //When
-        Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountById(WRONG_ACCOUNT_ID);
+        Optional<AspspAccountDetails> actualAspspAccountDetails = accountService.getAccountById(WRONG_ACCOUNT_ID);
 
         //Then
-        assertThat(actualSpiAccountDetails).isEqualTo(Optional.empty());
+        assertThat(actualAspspAccountDetails).isEqualTo(Optional.empty());
     }
 
     @Test
     public void getBalances() {
         //Given
-        List<SpiAccountBalance> expectedBalance = getNewBalanceList();
+        List<AspspAccountBalance> expectedBalance = getNewBalanceList();
 
         //When
-        List<SpiAccountBalance> actualBalanceList = accountService.getAccountBalancesById(ACCOUNT_ID);
+        List<AspspAccountBalance> actualBalanceList = accountService.getAccountBalancesById(ACCOUNT_ID);
 
         //Then
         assertThat(actualBalanceList).isEqualTo(expectedBalance);
@@ -162,7 +162,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountsByPsuId() {
         //When:
-        List<SpiAccountDetails> actualList = accountService.getAccountsByPsuId(PSU_ID);
+        List<AspspAccountDetails> actualList = accountService.getAccountsByPsuId(PSU_ID);
         //Then:
         assertThat(actualList).isNotNull();
         assertThat(actualList).isNotEmpty();
@@ -172,45 +172,45 @@ public class AccountServiceTest {
     @Test
     public void getAccountsByPsuId_Failure() {
         //When:
-        List<SpiAccountDetails> actualList = accountService.getAccountsByPsuId(WRONG_PSU_ID);
+        List<AspspAccountDetails> actualList = accountService.getAccountsByPsuId(WRONG_PSU_ID);
         //Then:
         assertThat(actualList).isEmpty();
     }
 
-    private SpiAccountDetails getSpiAccountDetails_1() {
-        return new SpiAccountDetails(ACCOUNT_ID, IBAN, null, "1111222233334444",
-            "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
-            null, null, "XE3DDD", null, null, null, getNewBalanceList());
+    private AspspAccountDetails getAspspAccountDetails_1() {
+        return new AspspAccountDetails(ACCOUNT_ID, IBAN, null, "1111222233334444",
+                                       "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
+                                       null, null, "XE3DDD", null, null, null, getNewBalanceList());
     }
 
-    private SpiAccountDetails getSpiAccountDetails_2() {
-        return new SpiAccountDetails("qwertyuiop12345678", IBAN, null,
-            "4444333322221111", "444433xxxxxx1111", null, null, "Emily",
-            "GIRO", null, null, "ACVB222", null, null, null, null);
+    private AspspAccountDetails getAspspAccountDetails_2() {
+        return new AspspAccountDetails("qwertyuiop12345678", IBAN, null,
+                                       "4444333322221111", "444433xxxxxx1111", null, null, "Emily",
+                                       "GIRO", null, null, "ACVB222", null, null, null, null);
     }
 
-    private List<SpiAccountBalance> getNewBalanceList() {
-        return Collections.singletonList(getNewSingleBalances(new SpiAmount(EUR, BigDecimal.valueOf(1000))));
+    private List<AspspAccountBalance> getNewBalanceList() {
+        return Collections.singletonList(getNewSingleBalances(new AspspAmount(EUR, BigDecimal.valueOf(1000))));
     }
 
-    private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
-        SpiAccountBalance sb = new SpiAccountBalance();
+    private AspspAccountBalance getNewSingleBalances(AspspAmount aspspAmount) {
+        AspspAccountBalance sb = new AspspAccountBalance();
         sb.setReferenceDate(LocalDate.parse("2019-03-03"));
-        sb.setSpiBalanceAmount(spiAmount);
+        sb.setSpiBalanceAmount(aspspAmount);
         sb.setLastChangeDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
-        sb.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        sb.setSpiBalanceType(AspspBalanceType.INTERIM_AVAILABLE);
         sb.setLastCommittedTransaction("abc");
         return sb;
     }
 
     private Psu getPsuWithRightAccounts() {
-        return new Psu("12345678910", "test@gmail.com", "aspsp", "zzz", getAccounts(), null, Collections.singletonList(SpiScaMethod.SMS_OTP));
+        return new Psu("12345678910", "test@gmail.com", "aspsp", "zzz", getAccounts(), null, Collections.singletonList(AspspScaMethod.SMS_OTP));
     }
 
-    private List<SpiAccountDetails> getAccounts() {
-        List<SpiAccountDetails> list = new ArrayList<>();
-        list.add(getSpiAccountDetails_1());
-        list.add(getSpiAccountDetails_2());
+    private List<AspspAccountDetails> getAccounts() {
+        List<AspspAccountDetails> list = new ArrayList<>();
+        list.add(getAspspAccountDetails_1());
+        list.add(getAspspAccountDetails_2());
         return list;
     }
 }

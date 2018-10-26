@@ -30,8 +30,8 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class CommonRequestHeader implements RequestHeader {
 
-    @JsonProperty(value = "x-request-id")
     @NotNull
+    @JsonProperty(value = "x-request-id")
     private UUID xRequestId;
 
     @NotNull

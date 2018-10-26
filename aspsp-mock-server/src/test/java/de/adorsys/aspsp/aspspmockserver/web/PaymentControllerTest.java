@@ -16,11 +16,13 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountReference;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiBulkPayment;
-import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiSinglePayment;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspPaymentCancellationResponse;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,10 +34,11 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.Optional;
 
-import static de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus.ACCP;
-import static de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus.RJCT;
+import static de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -52,11 +55,11 @@ public class PaymentControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() {
-        SpiSinglePayment response = getSpiSinglePayment();
+        AspspSinglePayment response = getAspspSinglePayment();
         response.setPaymentId(PAYMENT_ID);
-        SpiBulkPayment bulkResponse = new SpiBulkPayment();
+        AspspBulkPayment bulkResponse = new AspspBulkPayment();
         bulkResponse.setPaymentId(PAYMENT_ID);
-        when(paymentService.addPayment(getSpiSinglePayment()))
+        when(paymentService.addPayment(getAspspSinglePayment()))
             .thenReturn(Optional.of(response));
         when(paymentService.addBulkPayments(any()))
             .thenReturn(Optional.of(bulkResponse));
@@ -68,6 +71,14 @@ public class PaymentControllerTest {
             .thenReturn(Optional.of(ACCP));
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID))
             .thenReturn(Optional.of(RJCT));
+        when(paymentService.cancelPayment(PAYMENT_ID))
+            .thenReturn(Optional.of(getAspspPaymentCancellationResponse(false, CANC)));
+        when(paymentService.cancelPayment(WRONG_PAYMENT_ID))
+            .thenReturn(Optional.empty());
+        when(paymentService.initiatePaymentCancellation(PAYMENT_ID))
+            .thenReturn(Optional.of(getAspspPaymentCancellationResponse(true, ACTC)));
+        when(paymentService.initiatePaymentCancellation(WRONG_PAYMENT_ID))
+            .thenReturn(Optional.empty());
     }
 
     @Test
@@ -76,7 +87,7 @@ public class PaymentControllerTest {
         HttpStatus expectedStatus = HttpStatus.CREATED;
 
         //When
-        ResponseEntity<SpiSinglePayment> actualResponse = paymentController.createSinglePayment(getSpiSinglePayment());
+        ResponseEntity<AspspSinglePayment> actualResponse = paymentController.createSinglePayment(getAspspSinglePayment());
 
         //Then
         HttpStatus actualStatus = actualResponse.getStatusCode();
@@ -89,9 +100,9 @@ public class PaymentControllerTest {
     public void createBulkPayments() {
         //Given
         HttpStatus expectedStatus = HttpStatus.CREATED;
-        SpiBulkPayment expectedRequest = getSpiBulkPayment();
+        AspspBulkPayment expectedRequest = getAspspBulkPayment();
         //When
-        ResponseEntity<SpiBulkPayment> actualResponse = paymentController.createBulkPayments(expectedRequest);
+        ResponseEntity<AspspBulkPayment> actualResponse = paymentController.createBulkPayments(expectedRequest);
 
         //Then
         HttpStatus actualStatus = actualResponse.getStatusCode();
@@ -120,9 +131,47 @@ public class PaymentControllerTest {
         assertThat(actualResponse.getBody()).isEqualTo(RJCT);
     }
 
-    private SpiSinglePayment getSpiSinglePayment() {
-        SpiSinglePayment payment = new SpiSinglePayment();
-        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(20));
+    @Test
+    public void cancelPayment_Success() {
+        //When
+        ResponseEntity actualResponse = paymentController.cancelPayment(PAYMENT_ID);
+
+        //Then
+        assertThat(actualResponse.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    }
+
+    @Test
+    public void cancelPayment_Failure_WrongId() {
+        //When
+        ResponseEntity actualResponse = paymentController.cancelPayment(WRONG_PAYMENT_ID);
+
+        //Then
+        assertThat(actualResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void initiatePaymentCancellation_Success() {
+        //When
+        ResponseEntity actualResponse = paymentController.initiatePaymentCancellation(PAYMENT_ID);
+
+        //Then
+        assertThat(actualResponse.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+        assertThat(actualResponse.getBody()).isEqualTo(getAspspPaymentCancellationResponse(true, ACTC));
+    }
+
+    @Test
+    public void initiatePaymentCancellation_Failure_WrongId() {
+        //When
+        ResponseEntity actualResponse = paymentController.initiatePaymentCancellation(WRONG_PAYMENT_ID);
+
+        //Then
+        assertThat(actualResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(actualResponse.hasBody()).isFalse();
+    }
+
+    private AspspSinglePayment getAspspSinglePayment() {
+        AspspSinglePayment payment = new AspspSinglePayment();
+        AspspAmount amount = new AspspAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(20));
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(getReference());
         payment.setCreditorName("Merchant123");
@@ -134,22 +183,29 @@ public class PaymentControllerTest {
         return payment;
     }
 
-    private SpiBulkPayment getSpiBulkPayment() {
-        SpiBulkPayment spiBulkPayment = new SpiBulkPayment();
-        spiBulkPayment.setBatchBookingPreferred(false);
-        spiBulkPayment.setRequestedExecutionDate(LocalDate.now());
-        spiBulkPayment.setPayments(Collections.singletonList(getSpiSinglePayment()));
-        spiBulkPayment.setDebtorAccount(getReference());
+    private AspspBulkPayment getAspspBulkPayment() {
+        AspspBulkPayment aspspBulkPayment = new AspspBulkPayment();
+        aspspBulkPayment.setBatchBookingPreferred(false);
+        aspspBulkPayment.setRequestedExecutionDate(LocalDate.now());
+        aspspBulkPayment.setPayments(Collections.singletonList(getAspspSinglePayment()));
+        aspspBulkPayment.setDebtorAccount(getReference());
 
-        return spiBulkPayment;
+        return aspspBulkPayment;
     }
 
-    private SpiAccountReference getReference() {
-        return new SpiAccountReference("DE23100120020123456789",
-            null,
-            null,
-            null,
-            null,
-            Currency.getInstance("EUR"));
+    private AspspAccountReference getReference() {
+        return new AspspAccountReference("DE23100120020123456789",
+                                         null,
+                                         null,
+                                         null,
+                                         null,
+                                         Currency.getInstance("EUR"));
+    }
+
+    private AspspPaymentCancellationResponse getAspspPaymentCancellationResponse(boolean authorisationMandated, AspspTransactionStatus transactionStatus) {
+        AspspPaymentCancellationResponse response = new AspspPaymentCancellationResponse();
+        response.setCancellationAuthorisationMandated(authorisationMandated);
+        response.setTransactionStatus(transactionStatus);
+        return response;
     }
 }

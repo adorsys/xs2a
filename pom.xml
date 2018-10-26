@@ -19,9 +19,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.adorsys.aspsp</groupId>
+    <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.10-RC1</version>
+    <version>1.10</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -31,6 +31,7 @@
         <module>spi-mock</module>
         <module>consent-management</module>
         <module>aspsp-idp</module>
+        <module>aspsp-mock-api</module>
         <module>aspsp-mock-server</module>
         <module>psd2-validator</module>
         <module>integration-tests</module>

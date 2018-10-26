@@ -16,8 +16,6 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.consent;
 
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +29,6 @@ import java.util.Objects;
  * SPI developer shall not use this class without consentId!
  */
 @Value
-@RequiredArgsConstructor // TODO make constructor package private and factory class for internal usage https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-@NoArgsConstructor(force = true) //TODO don't create AspspConsentData without consentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 public class AspspConsentData {
     /**
      * Encrypted data that may be stored in the consent management system in the consent linked to a request.<br>

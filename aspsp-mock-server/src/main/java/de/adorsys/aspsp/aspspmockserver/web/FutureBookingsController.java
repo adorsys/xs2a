@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
 import de.adorsys.aspsp.aspspmockserver.service.FutureBookingsService;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +35,10 @@ public class FutureBookingsController {
 
     @ApiOperation(value = "Executes future payments for account specified by IBAN and Currency, with update on corresponding account balances", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = SpiAccountDetails.class),
+        @ApiResponse(code = 200, message = "OK", response = AspspAccountDetails.class),
         @ApiResponse(code = 204, message = "No Content")})
     @PostMapping(path = "/{iban}/{currency}")
-    public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("iban") String iban, @PathVariable("currency") String currency) {
+    public ResponseEntity<AspspAccountDetails> changeBalances(@PathVariable("iban") String iban, @PathVariable("currency") String currency) {
         return futureBookingsService.changeBalances(iban, currency)
                    .map(ResponseEntity::ok)
                    .orElseGet(ResponseEntity.noContent()::build);

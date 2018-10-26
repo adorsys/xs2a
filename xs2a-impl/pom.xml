@@ -22,8 +22,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
-        <version>1.10-RC1</version>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>1.10</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -34,33 +34,33 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-server-api</artifactId>
-            <version>1.10-RC1</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-core</artifactId>
-            <version>1.10-RC1</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.10-RC1</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>spi-api</artifactId>
-            <version>1.10-RC1</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-api</artifactId>
-            <version>1.10-RC1</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
@@ -70,9 +70,9 @@
         </dependency>
 
 		<dependency>
-			<groupId>de.adorsys</groupId>
+			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>psd2-validator</artifactId>
-			<version>1.10-RC1</version>
+			<version>1.10</version>
 		</dependency>
 
         <dependency>
@@ -214,7 +214,31 @@
                     <argLine>-Dspring.profiles.active=mockspi,test</argLine>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>de.adorsys.psd2:consent-management-system</exclude>
+                                        <exclude>de.adorsys.psd2:cms-client</exclude>
+                                        <exclude>de.adorsys.psd2:spi-mock</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

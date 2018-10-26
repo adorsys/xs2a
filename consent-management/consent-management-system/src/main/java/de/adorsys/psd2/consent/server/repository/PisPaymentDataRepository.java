@@ -25,5 +25,6 @@ import java.util.Optional;
 
 public interface PisPaymentDataRepository extends CrudRepository<PisPaymentData, Long> {
     Optional<List<PisPaymentData>> findByPaymentIdAndConsent_ConsentStatus(String paymentId, CmsConsentStatus cmsConsentStatus);
+
     Optional<List<PisPaymentData>> findByPaymentId(String paymentId); //TODO It should be changed after BulkPayment will be added to the Database https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/446
 }

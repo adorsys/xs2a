@@ -20,13 +20,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
-        <version>1.10-RC1</version>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>1.10</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a-core</artifactId>
 
     <properties>

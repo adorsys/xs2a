@@ -52,7 +52,7 @@ public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDat
         PaymentType paymentType = pisConsentAuthorisationResponse.getPaymentType();
         SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType);
 
-        SpiPsuData psuData = new SpiPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiPsuData psuData = new SpiPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
 
         SpiResponse<SpiAuthorizationCodeResult> response = paymentAuthorisationSpi.requestAuthorisationCode(psuData, getMethod(request.getAuthenticationMethodId()), payment, aspspConsentData);
@@ -62,7 +62,7 @@ public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDat
         return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
     }
 
-    private SpiScaMethod getMethod(String method) { //TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+    private SpiScaMethod getMethod(String method) { //TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/411
         SpiScaMethod scaMethod = SpiScaMethod.SMS_OTP;
         try {
             scaMethod = SpiScaMethod.valueOf(method);

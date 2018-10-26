@@ -54,7 +54,7 @@ public class PisScaMethodSelectedStage extends PisScaStage<UpdatePisConsentPsuDa
 
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
 
-        SpiPsuData psuData = new SpiPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiPsuData psuData = new SpiPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         SpiScaConfirmation spiScaConfirmation = spiCmsPisMapper.buildSpiScaConfirmation(request, response.getConsentId());
 
         SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentSpi.verifyScaAuthorisationAndExecutePayment(psuData, spiScaConfirmation, payment, aspspConsentData);

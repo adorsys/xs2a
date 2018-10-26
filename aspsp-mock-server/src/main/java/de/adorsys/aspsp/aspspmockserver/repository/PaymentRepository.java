@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.repository;
 
-import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.AspspPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.pis.AspspPayment;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

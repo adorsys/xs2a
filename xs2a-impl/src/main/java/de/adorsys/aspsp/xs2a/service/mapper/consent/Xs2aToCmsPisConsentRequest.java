@@ -16,18 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
-import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
-import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.Remittance;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.CmsTppInfo;
-import de.adorsys.psd2.consent.api.CmsTppRole;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
@@ -38,7 +37,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -74,49 +72,10 @@ public class Xs2aToCmsPisConsentRequest {
 
     }
 
-    public PisConsentRequest mapToCmsPisConsentRequestForPeriodicPayment(CreatePisConsentData createPisConsentData) {
-        PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createPisConsentData.getPeriodicPayment())));
-        request.setPaymentProduct(createPisConsentData.getPaymentProduct());
-        request.setPaymentType(PaymentType.PERIODIC);
-        request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
-        return request;
-    }
-
-    public PisConsentRequest mapToCmsPisConsentRequestForBulkPayment(CreatePisConsentData createPisConsentData) {
-        PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(mapToPisPaymentForBulkPayment(createPisConsentData.getPaymentIdentifierMap()));
-        request.setPaymentProduct(createPisConsentData.getPaymentProduct());
-        request.setPaymentType(PaymentType.BULK);
-        request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
-        return request;
-
-    }
-
     private List<PisPayment> mapToListPisPayment(List<SinglePayment> payments) {
         return payments.stream()
                    .map(this::mapToPisPaymentForSinglePayment)
                    .collect(Collectors.toList());
-    }
-
-    private CmsTppInfo mapToTppInfo(TppInfo tppInfo) {
-        return Optional.ofNullable(tppInfo)
-                   .map(tpp -> {
-                       CmsTppInfo cmsTppInfo = new CmsTppInfo();
-                       cmsTppInfo.setAuthorisationNumber(tpp.getAuthorisationNumber());
-                       cmsTppInfo.setTppName(tpp.getTppName());
-                       cmsTppInfo.setTppRoles(mapToTppRoles(tpp.getTppRoles()));
-                       cmsTppInfo.setAuthorityId(tpp.getAuthorityId());
-                       cmsTppInfo.setAuthorityName(tpp.getAuthorityName());
-                       cmsTppInfo.setCountry(tpp.getCountry());
-                       cmsTppInfo.setOrganisation(tpp.getOrganisation());
-                       cmsTppInfo.setOrganisationUnit(tpp.getOrganisationUnit());
-                       cmsTppInfo.setCity(tpp.getCity());
-                       cmsTppInfo.setState(tpp.getState());
-                       cmsTppInfo.setRedirectUri(tpp.getRedirectUri());
-                       cmsTppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
-                       return cmsTppInfo;
-                   }).orElse(null);
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
@@ -179,21 +138,6 @@ public class Xs2aToCmsPisConsentRequest {
 
                        return pisPayment;
                    }).orElse(null);
-    }
-
-    private List<PisPayment> mapToPisPaymentForBulkPayment(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap) {
-        return paymentIdentifierMap.entrySet().stream()
-                   .map(etr -> mapToPisPaymentForSinglePayment(etr.getKey()))
-                   .collect(Collectors.toList());
-    }
-
-
-    private List<CmsTppRole> mapToTppRoles(List<Xs2aTppRole> tppRoles) {
-        return Optional.ofNullable(tppRoles)
-                   .map(roles -> roles.stream()
-                                     .map(role -> CmsTppRole.valueOf(role.name()))
-                                     .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
     }
 
     private CmsAccountReference mapToPisAccountReference(Xs2aAccountReference xs2aAccountReference) {

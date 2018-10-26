@@ -21,31 +21,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
-@ApiModel(description = "Account Report", value = "AccountReport")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @JsonRootName(value = "transactions")
 public class Xs2aAccountReport {
 
-    @ApiModelProperty(value = "Booked TransactionsCreditorResponse", required = true)
     @NotNull
-    private final Transactions[] booked;
+    private final List<Transactions> booked;
 
-    @ApiModelProperty(value = "Pending TransactionsCreditorResponse")
-    private final Transactions[] pending;
+    private final List<Transactions> pending;
 
-    @ApiModelProperty(value = "Links: the following links might be used within this context:" +
-                              "account link (mandatory)" +
-                              "first_page_link (optional)" +
-                              "second_page_link (optional)" +
-                              "current_page_ link (optional)" +
-                              "last_page_link (optional)", required = true)
     @NotNull
     @JsonProperty("_links")
     private Links links;

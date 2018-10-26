@@ -98,7 +98,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
         }
 
-        SpiPsuData psuData = new SpiPsuData(psuId, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiPsuData psuData = new SpiPsuData(psuId, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(psuData, getValidatedSpiAccountConsent(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(initiateAisConsentSpiResponse.getAspspConsentData());
 
@@ -142,7 +142,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         SpiAccountConsent accountConsent = getValidatedSpiAccountConsent(consentId);
 
         if (accountConsent != null) {
-            SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
             SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(psuData, accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
             aisConsentDataService.updateAspspConsentData(revokeAisConsentResponse.getAspspConsentData());
 
@@ -171,12 +171,18 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
-    ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId) {
+    public ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId, boolean withBalance) {
         SpiAccountConsent spiAccountConsent = getValidatedSpiAccountConsent(consentId);
 
         if (spiAccountConsent == null) {
             return ResponseObject.<Xs2aAccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
+        }
+
+        if (withBalance && !spiAccountConsent.isWithBalance()) {
+            return ResponseObject.<Xs2aAccountAccess>builder()
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_INVALID)))
+                       .build();
         }
 
         if (LocalDate.now().compareTo(spiAccountConsent.getValidUntil()) >= 0) {
@@ -195,6 +201,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.ACCESS_EXCEEDED))).build();
         }
         return ResponseObject.<Xs2aAccountAccess>builder().body(consent.getAccess()).build();
+    }
+
+    public ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId) {
+        return getValidatedConsent(consentId, false);
     }
 
     public ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(String psuId, String consentId) {
@@ -263,7 +273,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                         ::build);
     }
 
-    boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
+    // TODO remove when the new validation is ready https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
+    public boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
                           .anyMatch(a -> a.getIban().equals(iban)

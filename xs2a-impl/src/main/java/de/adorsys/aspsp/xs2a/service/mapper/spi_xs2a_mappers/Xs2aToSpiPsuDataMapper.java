@@ -16,17 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.aspsp.xs2a.domain.psu.Xs2aPsuData;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Xs2aToSpiPsuDataMapper {
 
-    public SpiPsuData mapToSpiPsuData(Xs2aPsuData xs2aPsuData) {
-        return new SpiPsuData(xs2aPsuData.getPsuId(),
-            xs2aPsuData.getPsuIdType(),
-            xs2aPsuData.getPsuCorporateId(),
-            xs2aPsuData.getPsuCorporateIdType());
+    public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData) {
+        return new SpiPsuData(psuIdData.getPsuId(),
+                              psuIdData.getPsuIdType(),
+                              psuIdData.getPsuCorporateId(),
+                              psuIdData.getPsuCorporateIdType());
     }
 }

@@ -1,0 +1,2 @@
+*.postman_environment.json
+!Local ENV.postman_environment.json

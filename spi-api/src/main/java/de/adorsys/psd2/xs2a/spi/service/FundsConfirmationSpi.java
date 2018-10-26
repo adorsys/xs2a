@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationConsent;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface FundsConfirmationSpi {
     /**
@@ -37,5 +38,5 @@ public interface FundsConfirmationSpi {
      * @return 'true' if the requested amount can be booked on the account, 'false' otherwise
      */
     @NotNull
-    SpiResponse<Boolean> peformFundsSufficientCheck(@NotNull SpiPsuData psuData, SpiFundsConfirmationConsent consent, SpiAccountReference reference, SpiAmount amount, AspspConsentData aspspConsentData);
+    SpiResponse<Boolean> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable SpiFundsConfirmationConsent consent, @NotNull SpiAccountReference reference, @NotNull SpiAmount amount, @NotNull AspspConsentData aspspConsentData);
 }
