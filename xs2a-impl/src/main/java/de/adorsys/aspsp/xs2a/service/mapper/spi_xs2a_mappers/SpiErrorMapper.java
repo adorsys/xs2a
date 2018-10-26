@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class PeriodicPaymentInitiationResponse extends PaymentInitiationResponse {
+@Component
+@RequiredArgsConstructor
+public class SpiErrorMapper {
+    private final SpiResponseStatusToXs2aMessageErrorCodeMapper spiToXs2aMessageErrorCodeMapper;
 
-    public PeriodicPaymentInitiationResponse(ErrorHolder errorHolder) {
-        super(errorHolder);
-    }
-
-    @Override
-    PaymentType getPaymentType() {
-        return PaymentType.PERIODIC;
+    public ErrorHolder mapToErrorHolder(SpiResponse<?> spiResponse) {
+        return ErrorHolder.builder(spiToXs2aMessageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()))
+                   .messages(spiResponse.getMessages())
+                   .build();
     }
 }

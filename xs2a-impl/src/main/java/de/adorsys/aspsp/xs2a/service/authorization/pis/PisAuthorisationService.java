@@ -18,6 +18,8 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
 import de.adorsys.aspsp.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
@@ -49,7 +51,7 @@ public class PisAuthorisationService {
      */
     public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId) {
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-                                                 null, CreatePisConsentAuthorisationResponse.class, paymentId)
+            null, CreatePisConsentAuthorisationResponse.class, paymentId)
                    .getBody();
     }
 
@@ -61,14 +63,14 @@ public class PisAuthorisationService {
      */
     public UpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
         GetPisConsentAuthorisationResponse response = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorisationResponse.class, request.getAuthorizationId())
-                                                                         .getBody();
+                                                          .getBody();
         PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(SERVICE_PREFIX + response.getScaStatus().name());
         return service.apply(request, response);
     }
 
-    public UpdatePisConsentPsuDataResponse doUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
+    public Xs2aUpdatePisConsentPsuDataResponse doUpdatePisConsentAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
         return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                                            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+            Xs2aUpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
     }
 
     /**

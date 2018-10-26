@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import lombok.AllArgsConstructor;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Deprecated
 public class SpiCmsPisMapper {
 
-    public SpiScaConfirmation buildSpiScaConfirmation(UpdatePisConsentPsuDataRequest request, String consentId) {
+    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisConsentPsuDataRequest request, String consentId) {
         SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
         paymentConfirmation.setPaymentId(request.getPaymentId());
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());

@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.service.payment;
 
-import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class PeriodicPaymentInitiationResponse extends PaymentInitiationResponse {
+public abstract class ReadPaymentService<T> {
+    @Autowired
+    protected PisConsentDataService pisConsentDataService;
 
-    public PeriodicPaymentInitiationResponse(ErrorHolder errorHolder) {
-        super(errorHolder);
-    }
-
-    @Override
-    PaymentType getPaymentType() {
-        return PaymentType.PERIODIC;
-    }
+    public abstract T getPayment(String paymentId, PaymentProduct paymentProduct);
 }
