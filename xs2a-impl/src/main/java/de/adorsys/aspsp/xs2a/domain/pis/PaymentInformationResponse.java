@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.domain;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
-public enum ScaMethod {
-    SMS_OTP,
-    CHIP_OTP,
-    PHOTO_OTP,
-    PUSH_OTP
+import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
+import lombok.Data;
+
+@Data
+public class PaymentInformationResponse<T> {
+    private T payment;
+    private ErrorHolder errorHolder;
+
+    public PaymentInformationResponse(T payment) {
+        this.payment = payment;
+    }
+
+    public PaymentInformationResponse(ErrorHolder errorHolder) {
+        this.errorHolder = errorHolder;
+    }
+
+    public boolean hasError() {
+        return errorHolder != null;
+    }
 }

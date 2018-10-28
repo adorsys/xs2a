@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.server.service;
 
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -176,13 +176,13 @@ public class PisConsentService {
             if (SCAMETHODSELECTED == request.getScaStatus()) {
                 String chosenMethod = request.getAuthenticationMethodId();
                 if (StringUtils.isNotBlank(chosenMethod)) {
-                    consentAuthorization.setChosenScaMethod(CmsScaMethod.valueOf(chosenMethod));
+                    consentAuthorization.setChosenScaMethod(chosenMethod);
                 }
             }
             consentAuthorization.setScaStatus(request.getScaStatus());
             pisConsentAuthorizationRepository.save(consentAuthorization);
         }
-        return pisConsentAuthorisationOptional.map(pisConsentMapper::mapToUpdatePisConsentPsuDataResponse);
+        return pisConsentAuthorisationOptional.map(p -> new UpdatePisConsentPsuDataResponse(p.getScaStatus()));
     }
 
     /**

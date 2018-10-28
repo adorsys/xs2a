@@ -34,7 +34,7 @@ import java.util.Map;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class InitiatePaymentAspect {
+public class IpAddressValidationAspect {
     private final RequestValidatorService requestValidatorService;
 
     /**
@@ -68,7 +68,7 @@ public class InitiatePaymentAspect {
                     continue;
                 }
                 RequestHeader headerParam = (RequestHeader) annotation;
-                requestParameterMap.put(headerParam.value(), String.valueOf(args[argIndex]));
+                requestParameterMap.put(headerParam.value().toLowerCase(), String.valueOf(args[argIndex]));
             }
         }
         requestParameterMap.putIfAbsent("date", "Sun, 11 Aug 2019 15:02:37 GMT");

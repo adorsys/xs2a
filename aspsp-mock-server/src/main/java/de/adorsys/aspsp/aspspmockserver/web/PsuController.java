@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
-import de.adorsys.psd2.aspsp.mock.api.psu.AspspScaMethod;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
 import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -106,7 +106,7 @@ public class PsuController {
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/sca-methods/{psu-id}")
-    public ResponseEntity<List<AspspScaMethod>> readScaMethods(@PathVariable("psu-id") String psuId) {
+    public ResponseEntity<List<AspspAuthenticationObject>> readScaMethods(@PathVariable("psu-id") String psuId) {
         return Optional.ofNullable(psuService.getScaMethods(psuId))
                    .map(ResponseEntity::ok)
                    .orElseGet(ResponseEntity.noContent()::build);
@@ -116,7 +116,7 @@ public class PsuController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
     @PutMapping(path = "/sca-methods/{psu-id}")
-    public void updateScaMethods(@RequestBody List<AspspScaMethod> scaMethods, @PathVariable("psu-id") String psuId) {
+    public void updateScaMethods(@RequestBody List<AspspAuthenticationObject> scaMethods, @PathVariable("psu-id") String psuId) {
         psuService.updateScaMethods(psuId, scaMethods);
     }
 }

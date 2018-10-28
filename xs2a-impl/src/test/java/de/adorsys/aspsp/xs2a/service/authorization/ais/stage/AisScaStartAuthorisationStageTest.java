@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+TODO Rework it after the task merged to develop https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/466
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
@@ -28,9 +29,9 @@ import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -68,10 +69,10 @@ public class AisScaStartAuthorisationStageTest {
     private static final MessageErrorCode PSU_CREDENTIALS_INVALID_ERROR_CODE = MessageErrorCode.PSU_CREDENTIALS_INVALID;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
-    private static final List<SpiScaMethod> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PHOTO_OTP);
+    private static final List<SpiAuthenticationObject> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(SpiAuthenticationObject.SMS_OTP, SpiAuthenticationObject.PHOTO_OTP);
     private static final List<CmsScaMethod> MULTIPLE_CMS_SCA_METHODS = Arrays.asList(CmsScaMethod.SMS_OTP, CmsScaMethod.PHOTO_OTP);
-    private static final List<SpiScaMethod> ONE_SPI_SCA_METHOD = Collections.singletonList(SpiScaMethod.SMS_OTP);
-    private static final List<SpiScaMethod> NONE_SPI_SCA_METHOD = Collections.emptyList();
+    private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD = Collections.singletonList(SpiAuthenticationObject.SMS_OTP);
+    private static final List<SpiAuthenticationObject> NONE_SPI_SCA_METHOD = Collections.emptyList();
 
     @InjectMocks
     private AisScaStartAuthorisationStage scaStartAuthorisationStage;
@@ -157,7 +158,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, accountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(ONE_SPI_SCA_METHOD));
 
-        SpiScaMethod scaMethod = ONE_SPI_SCA_METHOD.get(0);
+        SpiAuthenticationObject scaMethod = ONE_SPI_SCA_METHOD.get(0);
 
         when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, scaMethod, accountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorizationCodeResult()));
@@ -179,7 +180,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, accountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(ONE_SPI_SCA_METHOD));
 
-        SpiScaMethod scaMethod = ONE_SPI_SCA_METHOD.get(0);
+        SpiAuthenticationObject scaMethod = ONE_SPI_SCA_METHOD.get(0);
 
         when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, scaMethod, accountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(new SpiAuthorizationCodeResult()));
@@ -225,3 +226,4 @@ public class AisScaStartAuthorisationStageTest {
                    .fail(RESPONSE_STATUS);
     }
 }
+*/
