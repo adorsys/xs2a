@@ -22,14 +22,12 @@ import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -116,11 +114,6 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(data.getChosenScaMethod())
                    .map(Xs2aAuthenticationObject::getAuthenticationMethodId)
                    .orElse(null);
-    }
-
-    public Optional<SpiConsentStatus> mapToSpiConsentStatus(CmsConsentStatus consentStatus) {
-        return Optional.ofNullable(consentStatus)
-                   .map(status -> SpiConsentStatus.valueOf(status.name()));
     }
 
     public SpiScaConfirmation mapToSpiScaConfirmation(UpdateConsentPsuDataReq request) {

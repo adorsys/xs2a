@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataReque
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.web.mapper.CoreObjectsMapper;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.model.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
