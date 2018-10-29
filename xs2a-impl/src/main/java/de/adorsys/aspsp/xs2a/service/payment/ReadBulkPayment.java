@@ -36,7 +36,9 @@ public class ReadBulkPayment extends ReadPayment<BulkPayment> {
     public BulkPayment getPayment(String paymentId, PaymentProduct paymentProduct) {
         SpiBulkPayment payment = new SpiBulkPayment();
         payment.setPaymentProduct(paymentProduct);
-        payment.setPaymentId(paymentId);
+        String internalPaymentId = pisConsentDataService.getInnerPaymentIdByEncryptedString(paymentId);
+
+        payment.setPaymentId(internalPaymentId);
         SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         SpiResponse<SpiBulkPayment> spiResponse = bulkPaymentSpi.getPaymentById(psuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());

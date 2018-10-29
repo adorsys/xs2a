@@ -71,4 +71,17 @@ public class PisAspspConsentDataController {
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @GetMapping(path = "/payment/{payment-id}")
+    @ApiOperation(value = "Get inner payment id by encrypted string")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<String> getPaymentIdByEncryptedString(
+        @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
+        @PathVariable("payment-id") String encryptedId) {
+        return pisConsentService.getDecryptedId(encryptedId)
+                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }

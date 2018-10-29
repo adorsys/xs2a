@@ -50,8 +50,8 @@ public class CmsExecutor {
     private static final String CMS_BASE_URL = "http://localhost:38080";
     private static final int CONNECTION_TIMEOUT = 5000;
     private static final int CONNECTION_REQUEST_TIMEOUT = 5000;
-    private static final String CONSENT_ID = "Test consent id";
-    private static final String PAYMENT_ID = "5bab5ff0a3cd5b05a56c9263";
+    private static final String CONSENT_ID = "sKrhvGddmlkItKsvBZwJyXG7Bm7Qbq2FnrJ3F2vB9mVKwiMoElPiohTItFBnfJsohO5sHYhMF_ymmQwlQdgkxA==_=_bS6p6XvTWI";
+    private static final String PAYMENT_ID = "sKrhvGddmlkItKsvBZwJyXG7Bm7Qbq2FnrJ3F2vB9mVKwiMoElPiohTItFBnfJsohO5sHYhMF_ymmQwlQdgkxA==_=_bS6p6XvTWI";
 
     /**
      * Makes calls to CMS PIS and AIS endpoints and logs the response
@@ -78,6 +78,7 @@ public class CmsExecutor {
         getPisConsentAspspData(cmsServiceInvoker);
         updatePisConsentAspspData(cmsServiceInvoker);
         updatePaymentConsentStatus(cmsServiceInvoker);
+        getPaymentIdByEncryptedString(cmsServiceInvoker);
     }
 
     /**
@@ -277,6 +278,20 @@ public class CmsExecutor {
                                       .build();
         Optional<CmsAspspConsentDataBase64> updateAspspDataResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdatePisConsentAspspDataMethod(buildCmsAspspConsentDataBase64(), uriParams)));
         updateAspspDataResponse.ifPresent(resp -> logger.info("Pis consent aspsp data was updated in: " + resp.getConsentId()));
+    }
+
+    /**
+     * Sends request to GET api/v1/pis/payment/{payment-id} endpoint
+     *
+     * @param cmsServiceInvoker Service, performing rest call
+     */
+    private static void getPaymentIdByEncryptedString(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("payment-id", PAYMENT_ID)
+                                      .build();
+
+        Optional<String> paymentId = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentIdByEncryptedStringMethod(uriParams)));
+        paymentId.ifPresent(resp -> logger.info("Payment id decrypted: " + resp));
     }
 
     /**

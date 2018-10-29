@@ -48,6 +48,10 @@ public class PisConsentDataService {
         String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
 
         consentRestTemplate.put(pisConsentRemoteUrls.updateAspspConsentData(),
-                                new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload));
+                                new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload), consentData.getConsentId());
+    }
+
+    public String getInnerPaymentIdByEncryptedString(String encryptedId) {
+        return consentRestTemplate.getForEntity(pisConsentRemoteUrls.getPaymentIdByEncryptedString(), String.class, encryptedId).getBody();
     }
 }

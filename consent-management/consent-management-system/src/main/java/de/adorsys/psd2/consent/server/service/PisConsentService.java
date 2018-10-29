@@ -135,18 +135,19 @@ public class PisConsentService {
     /**
      * Get Pis aspsp consent data by payment id
      *
-     * @param paymentId id of the payment
+     * @param encryptedPaymentId encrypted id of the payment
      * @return Response containing aspsp consent data
      */
-    public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId) {
-        Optional<String> innerPaymentId = securityDataService.getConsentId(paymentId);
-        if (!innerPaymentId.isPresent()) {
-            log.warn("Payment Id has not encrypted: {}", paymentId);
+    public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String encryptedPaymentId) {
+        Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
+        if (!paymentId.isPresent()) {
+            log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
+            return Optional.empty();
         }
-        return pisPaymentDataRepository.findByPaymentId(innerPaymentId.get())
+        return pisPaymentDataRepository.findByPaymentId(paymentId.get())
                    .map(dta -> dta.get(0))
                    .map(PisPaymentData::getConsent)
-                   .map(dta -> prepareAspspConsentData(dta, paymentId));
+                   .map(dta -> prepareAspspConsentData(dta, encryptedPaymentId));
     }
 
     private CmsAspspConsentDataBase64 prepareAspspConsentData(PisConsent consent, String encryptedConsentId) {
@@ -156,6 +157,16 @@ public class PisConsentService {
                    .map(bytes -> Base64.getEncoder().encodeToString(bytes))
                    .map(str64 -> new CmsAspspConsentDataBase64(encryptedConsentId, str64))
                    .orElseGet(() -> new CmsAspspConsentDataBase64(encryptedConsentId, null));
+    }
+
+    /**
+     * Get original decrypted Id from encrypted string
+     *
+     * @param encryptedId id to be decrypted
+     * @return Response containing original decrypted Id
+     */
+    public Optional<String> getDecryptedId(String encryptedId) {
+        return securityDataService.getDecryptedId(encryptedId);
     }
 
     /**
@@ -175,8 +186,14 @@ public class PisConsentService {
      * Create consent authorization
      */
     @Transactional
-    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType) {
-        return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String encryptedPaymentId, CmsAuthorisationType authorizationType) {
+        Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
+        if (!paymentId.isPresent()) {
+            log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
+            return Optional.empty();
+        }
+
+        return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId.get(), RECEIVED)
                    .map(list -> saveNewAuthorization(list.get(0).getConsent(), authorizationType))
                    .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
@@ -219,15 +236,21 @@ public class PisConsentService {
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }
 
-    public Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType) {
-        return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
+    public Optional<String> getAuthorisationByPaymentId(String encryptedPaymentId, CmsAuthorisationType authorizationType) {
+        Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
+        if (!paymentId.isPresent()) {
+            log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
+            return Optional.empty();
+        }
+
+        return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId.get(), RECEIVED)
                    .flatMap(list -> pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(list.get(0).getConsent().getId(), authorizationType))
                    .filter(CollectionUtils::isNotEmpty)
                    .map(lst -> lst.get(0).getExternalId());
     }
 
     private Optional<PisConsent> getActualPisConsent(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.getConsentId(encryptedConsentId);
+        Optional<String> consentIdDecrypted = securityDataService.getDecryptedId(encryptedConsentId);
         if (!consentIdDecrypted.isPresent()) {
             log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
         }
@@ -237,7 +260,7 @@ public class PisConsentService {
     }
 
     private Optional<PisConsent> getPisConsentById(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.getConsentId(encryptedConsentId);
+        Optional<String> consentIdDecrypted = securityDataService.getDecryptedId(encryptedConsentId);
         if (!consentIdDecrypted.isPresent()) {
             log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
         }

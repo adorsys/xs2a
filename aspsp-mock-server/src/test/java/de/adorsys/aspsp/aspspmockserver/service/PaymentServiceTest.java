@@ -41,6 +41,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -129,7 +130,7 @@ public class PaymentServiceTest {
     @Test
     public void addBulkPayments_Success() {
         List<AspspPayment> payments = Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER));
-        when(paymentMapper.mapToAspspPaymentList(any())).thenReturn(payments);
+        when(paymentMapper.mapToAspspPaymentList(any(), anyString())).thenReturn(payments);
         when(paymentRepository.save(anyListOf(AspspPayment.class))).thenReturn(payments);
         when(paymentMapper.mapToAspspSinglePaymentList(anyListOf(AspspPayment.class)))
             .thenReturn(Collections.singletonList(getAspspSinglePayment(AMOUNT_TO_TRANSFER)));
@@ -150,7 +151,7 @@ public class PaymentServiceTest {
 
     @Test
     public void addBulkPayments_Failure_InsufficientFunds() {
-        when(paymentMapper.mapToAspspPaymentList(any()))
+        when(paymentMapper.mapToAspspPaymentList(any(), anyString()))
             .thenReturn(Arrays.asList(getAspspPayment(AMOUNT_TO_TRANSFER), getAspspPayment(EXCEEDING_AMOUNT_TO_TRANSFER)));
 
         //Given

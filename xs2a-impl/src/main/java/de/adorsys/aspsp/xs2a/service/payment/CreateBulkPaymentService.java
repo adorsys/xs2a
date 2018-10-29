@@ -54,7 +54,9 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<BulkPaymentInitiationResponse> createPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
+    public ResponseObject<BulkPaymentInitiationResponse> createPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent, String externalPaymentId, String internalPaymentId) {
+        bulkPayment.setPaymentId(internalPaymentId);
+
         BulkPaymentInitiationResponse response = scaPaymentService.createBulkPayment(bulkPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
@@ -66,7 +68,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
 
         boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {
-            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(response.getPaymentId(), PaymentType.BULK);
+            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(externalPaymentId, PaymentType.BULK);
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<BulkPaymentInitiationResponse>builder()
                            .fail(new MessageError(MessageErrorCode.CONSENT_INVALID))
@@ -76,6 +78,9 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
             response.setAuthorizationId(authorisationResponse.getAuthorizationId());
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
+
+        response.setPaymentId(externalPaymentId);
+
         return ResponseObject.<BulkPaymentInitiationResponse>builder()
                    .body(response)
                    .build();

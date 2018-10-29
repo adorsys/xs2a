@@ -54,18 +54,18 @@ public class SecurityDataService {
     }
 
     /**
-     * Decrypts encrypted external consent ID
+     * Decrypts encrypted external ID
      *
-     * @param encryptedConsentId
-     * @return String external consent ID
+     * @param encryptedId
+     * @return String external ID
      */
-    public Optional<String> getConsentId(String encryptedConsentId) {
-        if (!encryptedConsentId.contains(SEPARATOR)){
+    public Optional<String> getDecryptedId(String encryptedId) {
+        if (!encryptedId.contains(SEPARATOR)){
             return Optional.empty();
         }
 
-        Optional<String> compositeId = getCompositeId(encryptedConsentId);
-        return compositeId.map(this::getConsentIdFromCompositeId);
+        Optional<String> compositeId = getCompositeId(encryptedId);
+        return compositeId.map(this::getOriginalIdFromCompositeId);
     }
 
     private Optional<String> getCompositeId(String encryptedConsentId) {
@@ -85,7 +85,7 @@ public class SecurityDataService {
         return StringUtils.isAsciiPrintable(consentId);
     }
 
-    private String getConsentIdFromCompositeId(String compositeId) {
+    private String getOriginalIdFromCompositeId(String compositeId) {
         return compositeId.split(SEPARATOR)[0];
     }
 

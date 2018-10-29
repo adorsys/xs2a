@@ -32,6 +32,7 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -41,6 +42,7 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType.PERIODIC;
 import static de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType.SINGLE;
@@ -113,7 +115,11 @@ public class PaymentService {
      * @return list of single payments forming bulk payment
      */
     public Optional<AspspBulkPayment> addBulkPayments(AspspBulkPayment payments) {
-        List<AspspPayment> aspspPayments = paymentMapper.mapToAspspPaymentList(payments.getPayments());
+        String bulkId = StringUtils.isBlank(payments.getPaymentId())
+                            ? UUID.randomUUID().toString()
+                            : payments.getPaymentId();
+
+        List<AspspPayment> aspspPayments = paymentMapper.mapToAspspPaymentList(payments.getPayments(), bulkId);
         Optional<AspspPayment> firstInvalid = aspspPayments.stream()
                                                   .filter(this::isNonExistingAccount)
                                                   .findFirst();
@@ -221,7 +227,7 @@ public class PaymentService {
 
     private boolean areFundsSufficient(AspspAccountReference reference, BigDecimal amount) {
         Optional<AspspAccountBalance> balance = Optional.ofNullable(reference)
-                                                  .flatMap(this::getInterimAvailableBalanceByReference);
+                                                    .flatMap(this::getInterimAvailableBalanceByReference);
         return balance
                    .map(b -> b.getSpiBalanceAmount().getAmount().compareTo(amount) >= 0)
                    .orElse(false);

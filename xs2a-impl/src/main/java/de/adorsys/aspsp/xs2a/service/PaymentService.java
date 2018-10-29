@@ -88,19 +88,15 @@ public class PaymentService {
                        .fail(new MessageError(CONSENT_UNKNOWN_400))
                        .build();
         }
-        String innerPaymentId = "inner payment id";  //pisConsentDataService.getInnerPaymentId(paymentId); todo to make implements of method
+        String externalPaymentId = pisConsent.getConsentId();
+        String internalPaymentId = pisConsentDataService.getInnerPaymentIdByEncryptedString(externalPaymentId);
 
         if (paymentInitiationParameters.getPaymentType() == SINGLE) {
-            ((SinglePayment) payment).setPaymentId(innerPaymentId);
-
-            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
+            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo, pisConsent, externalPaymentId, internalPaymentId);
         } else if (paymentInitiationParameters.getPaymentType() == PERIODIC) {
-            ((PeriodicPayment) payment).setPaymentId(innerPaymentId);
-
-            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
+            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo, pisConsent, externalPaymentId, internalPaymentId);
         } else {
-            ((BulkPayment) payment).setPaymentId(innerPaymentId);
-            return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
+            return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo, pisConsent, externalPaymentId, internalPaymentId);
         }
     }
 

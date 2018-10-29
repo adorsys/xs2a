@@ -52,7 +52,9 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<SinglePaymentInitiationResponse> createPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
+    public ResponseObject<SinglePaymentInitiationResponse> createPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent, String externalPaymentId, String internalPaymentId) {
+        singlePayment.setPaymentId(internalPaymentId);
+
         SinglePaymentInitiationResponse response = scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
@@ -63,7 +65,7 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
 
         boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {
-            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(response.getPaymentId(), PaymentType.SINGLE);
+            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(externalPaymentId, PaymentType.SINGLE);
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<SinglePaymentInitiationResponse>builder()
                            .fail(new MessageError(MessageErrorCode.CONSENT_INVALID))
@@ -73,6 +75,9 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
             response.setAuthorizationId(authorisationResponse.getAuthorizationId());
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
+
+        response.setPaymentId(externalPaymentId);
+
         return ResponseObject.<SinglePaymentInitiationResponse>builder()
                    .body(response)
                    .build();

@@ -52,7 +52,9 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<PeriodicPaymentInitiationResponse> createPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
+    public ResponseObject<PeriodicPaymentInitiationResponse> createPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent, String externalPaymentId, String internalPaymentId) {
+        periodicPayment.setPaymentId(internalPaymentId);
+
         PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
@@ -63,7 +65,7 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
 
         boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {
-            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(response.getPaymentId(), PaymentType.PERIODIC);
+            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(externalPaymentId, PaymentType.PERIODIC);
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<PeriodicPaymentInitiationResponse>builder()
                            .fail(new MessageError(MessageErrorCode.CONSENT_INVALID))
@@ -73,6 +75,9 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
             response.setAuthorizationId(authorisationResponse.getAuthorizationId());
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
+
+        response.setPaymentId(externalPaymentId);
+
         return ResponseObject.<PeriodicPaymentInitiationResponse>builder()
                    .body(response)
                    .build();

@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.service.payment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -36,14 +35,11 @@ public class ReadSinglePayment extends ReadPayment<SinglePayment> {
     @Override
     public SinglePayment getPayment(String paymentId, PaymentProduct paymentProduct) {
         SpiSinglePayment payment = new SpiSinglePayment(paymentProduct);
+        String internalPaymentId = pisConsentDataService.getInnerPaymentIdByEncryptedString(paymentId);
 
-        AspspConsentData consentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
-
-        String innerPaymentId = "inner payment id";  //pisConsentDataService.getInnerPaymentId(paymentId); todo to make implements of method
-
-        payment.setPaymentId(innerPaymentId);
+        payment.setPaymentId(internalPaymentId);
         SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
-        SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(psuData, payment, consentData);
+        SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(psuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         SpiSinglePayment spiSinglePayment = spiResponse.getPayload();
 

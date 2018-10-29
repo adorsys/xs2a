@@ -63,7 +63,7 @@ public class CreatePeriodicPaymentTest {
     public void success_initiate_periodic_payment() {
         //When
         when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, PaymentProduct.SEPA, buildXs2aPisConsent())).thenReturn(buildPeriodicPaymentInitiationResponse());
-        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo(), buildXs2aPisConsent());
+        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo(), buildXs2aPisConsent(), PAYMENT_ID, PAYMENT_ID);
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -74,6 +74,7 @@ public class CreatePeriodicPaymentTest {
     private PeriodicPayment buildPeriodicPayment() {
         PeriodicPayment payment = new PeriodicPayment();
         Xs2aAmount amount = buildXs2aAmount();
+        payment.setPaymentId(PAYMENT_ID);
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(buildReference());
         payment.setCreditorAccount(buildReference());

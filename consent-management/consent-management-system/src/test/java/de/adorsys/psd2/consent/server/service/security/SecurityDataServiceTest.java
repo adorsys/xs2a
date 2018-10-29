@@ -111,7 +111,7 @@ public class SecurityDataServiceTest {
         String encrypted = getEncryptedConsentId(CRYPTO_PROVIDER_ID);
 
         // When
-        Optional<String> actual = securityDataService.getConsentId(encrypted);
+        Optional<String> actual = securityDataService.getDecryptedId(encrypted);
 
         // Then
         assertThat(actual.isPresent()).isTrue();
@@ -121,7 +121,7 @@ public class SecurityDataServiceTest {
     @Test
     public void getConsentId_Failure_WrongExternalIdFormat() {
         // When
-        Optional<String> actual = securityDataService.getConsentId(CONSENT_ID);
+        Optional<String> actual = securityDataService.getDecryptedId(CONSENT_ID);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
@@ -133,7 +133,7 @@ public class SecurityDataServiceTest {
         String encrypted = getEncryptedConsentId(NON_EXISTING_CRYPT_PROVIDER_ID);
 
         // When
-        Optional<String> actual = securityDataService.getConsentId(encrypted);
+        Optional<String> actual = securityDataService.getDecryptedId(encrypted);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
@@ -145,7 +145,7 @@ public class SecurityDataServiceTest {
         String encrypted = getEncryptedConsentId(FAILING_CRYPTO_PROVIDER_ID);
 
         // When
-        Optional<String> actual = securityDataService.getConsentId(encrypted);
+        Optional<String> actual = securityDataService.getDecryptedId(encrypted);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
