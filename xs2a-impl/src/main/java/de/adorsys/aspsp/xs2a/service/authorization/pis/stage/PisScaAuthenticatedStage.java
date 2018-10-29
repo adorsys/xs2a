@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
 import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
