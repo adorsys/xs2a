@@ -49,6 +49,11 @@ public class UpdateConsentPsuDataResponse {
         this.scaStatus = scaStatus;
     }
 
+    public UpdateConsentPsuDataResponse(MessageErrorCode errorCode) {
+        this.scaStatus = ScaStatus.FAILED;
+        this.errorCode = errorCode;
+    }
+
     public boolean hasError() {
         return errorCode != null;
     }

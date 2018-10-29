@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
+import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
@@ -74,6 +76,12 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisConsentPs
                                                       .filter(a -> authenticationMethodId.equals(a.getAuthenticationMethodId()))
                                                       .findFirst()
                                                       .orElse(null);
+
+        if (chosenScaMethod == null) {
+            ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.SCA_METHOD_UNKNOWN)
+                                          .build();
+            return new Xs2aUpdatePisConsentPsuDataResponse(errorHolder);
+        }
 
         Xs2aUpdatePisConsentPsuDataResponse response = new Xs2aUpdatePisConsentPsuDataResponse(SCAMETHODSELECTED);
         response.setPsuId(psuData.getPsuId());
