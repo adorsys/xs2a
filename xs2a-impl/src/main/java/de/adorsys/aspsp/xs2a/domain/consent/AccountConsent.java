@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,8 +25,8 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.EnumSet;
 
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.VALID;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Data
 @ApiModel(description = "Response for the get account information consent request by consent Id")

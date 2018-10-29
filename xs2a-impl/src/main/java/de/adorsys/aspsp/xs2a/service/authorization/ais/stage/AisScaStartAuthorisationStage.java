@@ -25,13 +25,13 @@ import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.apache.commons.collections4.CollectionUtils;
@@ -95,7 +95,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
                 return createResponseForOneAvailableMethod(accountConsent, psuData, availableScaMethods.get(0), request.getConsentId());
             }
         } else {
-            aisConsentService.updateConsentStatus(request.getConsentId(), SpiConsentStatus.REJECTED);
+            aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.REJECTED);
             return createResponseForNoneAvailableScaMethod(psuData);
         }
     }

@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.server.config.schedule;
 
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.server.domain.account.AisConsent;
 import de.adorsys.psd2.consent.server.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.server.service.FrequencyPerDateCalculationService;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,8 +31,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
+
 
 @Slf4j
 @Component
@@ -64,9 +65,9 @@ public class ConsentScheduleTask {
         return consent;
     }
 
-    private CmsConsentStatus updateConsentStatus(AisConsent consent) {
+    private ConsentStatus updateConsentStatus(AisConsent consent) {
         return consent.isExpiredByDate()
-                   ? CmsConsentStatus.EXPIRED
+                   ? ConsentStatus.EXPIRED
                    : consent.getConsentStatus();
     }
 }

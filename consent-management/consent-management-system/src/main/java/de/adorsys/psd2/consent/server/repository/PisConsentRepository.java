@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.server.repository;
 
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.server.domain.payment.PisConsent;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
@@ -26,5 +26,5 @@ import java.util.Set;
 public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
     Optional<PisConsent> findByExternalId(String externalId);
 
-    Optional<PisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<CmsConsentStatus> statuses);
+    Optional<PisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
 }
