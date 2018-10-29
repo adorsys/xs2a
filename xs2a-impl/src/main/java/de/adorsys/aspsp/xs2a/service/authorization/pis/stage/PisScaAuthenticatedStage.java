@@ -55,14 +55,14 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisConsentPs
         PsuIdData psuData = request.getPsuData();
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
 
-        SpiResponse<SpiAuthorizationCodeResult> response = paymentAuthorisationSpi.requestAuthorisationCode(xs2aToSpiPsuDataMapper.mapToSpiPsuData(psuData), authenticationMethodId, payment, aspspConsentData);
+        SpiResponse<SpiAuthorizationCodeResult> spiResponse = paymentAuthorisationSpi.requestAuthorisationCode(xs2aToSpiPsuDataMapper.mapToSpiPsuData(psuData), authenticationMethodId, payment, aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
             return new Xs2aUpdatePisConsentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
         }
 
-        SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = paymentAuthorisationSpi.requestAvailableScaMethods(psuData, payment, aspspConsentData);
+        SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = paymentAuthorisationSpi.requestAvailableScaMethods(xs2aToSpiPsuDataMapper.mapToSpiPsuData(psuData), payment, aspspConsentData);
         pisConsentDataService.updateAspspConsentData(availableScaMethodsResponse.getAspspConsentData());
 
         if (availableScaMethodsResponse.hasError()) {

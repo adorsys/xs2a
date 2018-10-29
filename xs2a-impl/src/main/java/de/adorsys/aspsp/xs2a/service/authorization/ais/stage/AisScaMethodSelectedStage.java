@@ -69,7 +69,7 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
             return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()));
         }
 
-        SpiResponse<List<SpiAuthenticationObject>> spiScaMethodsResponse = aisConsentSpi.requestAvailableScaMethods(psuDataMapper.mapToSpiPsuData(psuData), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<List<SpiAuthenticationObject>> spiScaMethodsResponse = aisConsentSpi.requestAvailableScaMethods(psuDataMapper.mapToSpiPsuData(request.getPsuData()), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiScaMethodsResponse.hasError()) {

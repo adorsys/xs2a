@@ -51,11 +51,6 @@ public class Xs2aPisConsentMapper {
         return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(authorisationId)));
     }
 
-    public Optional<Xs2aUpdatePisConsentPsuDataResponse> mapToXs2aUpdatePisConsentPsuDataResponse(UpdatePisConsentPsuDataResponse response) {
-        return Optional.ofNullable(response)
-                   .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(r), r.getAvailableScaMethods()));
-    }
-
     public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response, PsuIdData psuData) {
         return new Xs2aPisConsent(response.getConsentId(), psuData);
     }
@@ -87,7 +82,7 @@ public class Xs2aPisConsentMapper {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        Xs2aUpdatePisConsentPsuDataRequest request = new Xs2aUpdatePisConsentPsuDataRequest();
-                       request.setPsuId(data.getPsuId());
+                       request.setPsuData(request.getPsuData());
                        request.setPaymentId(updatePsuDataRequest.getPaymentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));
@@ -108,7 +103,7 @@ public class Xs2aPisConsentMapper {
         paymentConfirmation.setPaymentId(request.getPaymentId());
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
         paymentConfirmation.setConsentId(consentId);
-        paymentConfirmation.setPsuId(request.getPsuId());
+        paymentConfirmation.setPsuId(Optional.ofNullable(request.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
         return paymentConfirmation;
     }
 
