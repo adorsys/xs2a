@@ -16,6 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
+import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
@@ -56,7 +59,8 @@ public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDat
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
 
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = paymentAuthorisationSpi.requestAuthorisationCode(psuData, authenticationMethodId, payment, aspspConsentData);
-        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+        aspspConsentData = spiResponse.getAspspConsentData();
+        pisConsentDataService.updateAspspConsentData(aspspConsentData);
 
         if (spiResponse.hasError()) {
             return new Xs2aUpdatePisConsentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
@@ -74,6 +78,12 @@ public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDat
                                                       .filter(a -> authenticationMethodId.equals(a.getAuthenticationMethodId()))
                                                       .findFirst()
                                                       .orElse(null);
+
+        if (chosenScaMethod == null) {
+            ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.SCA_METHOD_UNKNOWN)
+                                          .build();
+            return new Xs2aUpdatePisConsentPsuDataResponse(errorHolder);
+        }
 
         Xs2aUpdatePisConsentPsuDataResponse response = new Xs2aUpdatePisConsentPsuDataResponse(SCAMETHODSELECTED);
         response.setPsuId(psuData.getPsuId());

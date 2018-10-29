@@ -60,7 +60,8 @@ public class PisScaStartAuthorisationStage extends PisScaStage<UpdatePisConsentP
         SpiPsuData psuData = new SpiPsuData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
 
         SpiResponse<SpiAuthorisationStatus> authPsuResponse = paymentAuthorisationSpi.authorisePsu(psuData, request.getPassword(), payment, aspspConsentData);
-        pisConsentDataService.updateAspspConsentData(authPsuResponse.getAspspConsentData());
+        aspspConsentData = authPsuResponse.getAspspConsentData();
+        pisConsentDataService.updateAspspConsentData(aspspConsentData);
 
         if (authPsuResponse.hasError()) {
             return new Xs2aUpdatePisConsentPsuDataResponse(spiErrorMapper.mapToErrorHolder(authPsuResponse));
