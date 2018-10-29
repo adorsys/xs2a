@@ -118,11 +118,14 @@ public class AisConsentService {
      */
     @Transactional
     public void checkConsentAndSaveActionLog(AisConsentActionRequest request) {
-        AisConsent consent = getAisConsentById(request.getConsentId())
+        String encryptedId = request.getConsentId();
+        AisConsent consent = getAisConsentById(encryptedId)
                                  .orElse(null);
         checkAndUpdateOnExpiration(consent);
         updateAisConsentCounter(consent);
-        logConsentAction(request.getConsentId(), resolveConsentActionStatus(request, consent), request.getTppId());
+        String consentId = securityDataService.getConsentId(encryptedId)
+                               .orElse(encryptedId);
+        logConsentAction(consentId, resolveConsentActionStatus(request, consent), request.getTppId());
     }
 
     /**

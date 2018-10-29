@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.server.service.security;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +77,12 @@ public class SecurityDataService {
 
         return provider
                    .flatMap(prd -> prd.decryptData(bytesCompositeId, serverKey))
-                   .map(ed -> new String(ed.getData()));
+                   .map(ed -> new String(ed.getData()))
+                   .filter(this::hasValidCharacters);
+    }
+
+    private boolean hasValidCharacters(String consentId) {
+        return StringUtils.isAsciiPrintable(consentId);
     }
 
     private String getConsentIdFromCompositeId(String compositeId) {

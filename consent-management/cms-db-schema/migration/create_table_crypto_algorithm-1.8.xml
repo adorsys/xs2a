@@ -43,4 +43,13 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="ssh@adorsys.com.ua" id="2018-10-29-3">
+        <comment>Increase length of requested_consent_id to 255</comment>
+
+        <modifyDataType
+            columnName="requested_consent_id"
+            newDataType="VARCHAR(255)"
+            tableName="ais_consent_action"/>
+    </changeSet>
+
 </databaseChangeLog>
