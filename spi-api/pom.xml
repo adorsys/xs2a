@@ -19,14 +19,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
-        <version>1.10-SNAPSHOT</version>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>1.11-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.adorsys.psd2</groupId>
     <artifactId>spi-api</artifactId>
     <packaging>jar</packaging>
 
@@ -44,14 +43,7 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-core</artifactId>
-            <version>1.10-SNAPSHOT</version>
-        </dependency>
-
-<!-- TODO remove dependency to consent-api https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332 -->
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>consent-api</artifactId>
-            <version>1.10-SNAPSHOT</version>
+            <version>1.11-SNAPSHOT</version>
         </dependency>
 
         <!-- other dependencies -->
@@ -62,40 +54,43 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${apache.commons-lang3.version}</version>
         </dependency>
     </dependencies>
 
-<!-- TODO enable and resolve problems
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <source>1.8</source> &lt;!&ndash; TODO &ndash;&gt;
-                    <target>1.8</target>
-                    <compilerArgs>
-                        <arg>-Xplugin:Traute</arg>
-                    </compilerArgs>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>tech.harmonysoft</groupId>
-                            <artifactId>traute-javac</artifactId>
-                            <version>1.1.8</version> &lt;!&ndash; TODO put to common versions &ndash;&gt;
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>de.adorsys.psd2:consent-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-system</exclude>
+                                        <exclude>de.adorsys.psd2:cms-client</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-server-api</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-impl</exclude>
+                                        <exclude>de.adorsys.psd2:spi-mock</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
--->
+
 </project>

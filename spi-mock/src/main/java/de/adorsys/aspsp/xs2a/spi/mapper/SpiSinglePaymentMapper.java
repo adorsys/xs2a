@@ -25,6 +25,10 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class SpiSinglePaymentMapper {
@@ -42,6 +46,8 @@ public class SpiSinglePaymentMapper {
         single.setCreditorAddress(spiPaymentMapper.mapToAspspAddress(payment.getCreditorAddress()));
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setPaymentStatus(spiPaymentMapper.mapToAspspTransactionStatus(transactionStatus));
+        single.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(OffsetDateTime::toLocalDateTime).orElse(null));
+        single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         return single;
     }
 
@@ -57,6 +63,8 @@ public class SpiSinglePaymentMapper {
         single.setCreditorAddress(spiPaymentMapper.mapToSpiAddress(payment.getCreditorAddress()));
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setPaymentStatus(spiPaymentMapper.mapToSpiTransactionStatus(payment.getPaymentStatus()));
+        single.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(t -> t.atOffset(ZoneOffset.UTC)).orElse(null));
+        single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         return single;
     }
 

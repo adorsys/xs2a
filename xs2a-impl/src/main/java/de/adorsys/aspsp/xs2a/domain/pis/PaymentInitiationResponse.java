@@ -23,8 +23,10 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public abstract class PaymentInitiationResponse {
     private ScaStatus scaStatus;
     @JsonUnwrapped
@@ -40,6 +42,15 @@ public abstract class PaymentInitiationResponse {
     private Links links;
     private String pisConsentId;
     private String authorizationId;
+    private ErrorHolder errorHolder;
+
+    PaymentInitiationResponse(ErrorHolder errorHolder) {
+        this.errorHolder = errorHolder;
+    }
+
+    public boolean hasError(){
+        return errorHolder != null;
+    }
 
     abstract PaymentType getPaymentType();
 }

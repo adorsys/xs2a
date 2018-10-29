@@ -19,17 +19,16 @@ package de.adorsys.aspsp.xs2a.service.mapper.consent;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
-import de.adorsys.psd2.consent.api.*;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
+import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -44,7 +43,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Xs2aAisConsentMapper {
     // TODO remove this dependency. Should not be dependencies between spi-api and consent-api https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/437
-    private final SpiXs2aAccountMapper spiXs2aAccountMapper;
+    private final SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;
 
     public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId) {
         return Optional.ofNullable(req)
@@ -67,7 +66,7 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(spiAccountConsent)
                    .map(ac -> new AccountConsent(
                        ac.getId(),
-                       mapToAccountAccess(ac.getAccess()),
+                       spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
                        ac.isRecurringIndicator(),
                        ac.getValidUntil(),
                        ac.getFrequencyPerDay(),
@@ -106,15 +105,20 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-                       request.setPsuId(updatePsuDataResponse.getPsuId());
+                       request.setPsuId(data.getPsuId());
                        request.setConsentId(updatePsuDataRequest.getConsentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
-                       request.setAuthenticationMethodId(updatePsuDataResponse.getAuthenticationMethodId());
-                       request.setAuthenticationMethodId(updatePsuDataResponse.getChosenScaMethod());
-                       request.setScaAuthenticationData(updatePsuDataResponse.getScaAuthenticationData());
+                       request.setAuthenticationMethodId(getAuthenticationMethodId(data));
+                       request.setScaAuthenticationData(data.getScaAuthenticationData());
                        request.setScaStatus(data.getScaStatus());
                        return request;
                    })
+                   .orElse(null);
+    }
+
+    private String getAuthenticationMethodId(UpdateConsentPsuDataResponse data) {
+        return Optional.ofNullable(data.getChosenScaMethod())
+                   .map(Xs2aAuthenticationObject::getAuthenticationMethodId)
                    .orElse(null);
     }
 
@@ -123,58 +127,12 @@ public class Xs2aAisConsentMapper {
                    .map(status -> SpiConsentStatus.valueOf(status.name()));
     }
 
-    public List<CmsScaMethod> mapToCmsScaMethods(List<SpiScaMethod> spiScaMethods) {
-        return spiScaMethods.stream()
-                   .map(this::mapToCmsScaMethod)
-                   .collect(Collectors.toList());
-    }
-
-    /**
-     * @deprecated since 1.8. Will be removed in 1.10
-     * {@link #mapToSpiScaConfirmation(UpdateConsentPsuDataReq)} should be used instead
-     */
-    @Deprecated
-    public SpiAccountConfirmation mapToSpiAccountConfirmation(UpdateConsentPsuDataReq request) {
-        return Optional.ofNullable(request)
-                   .map(r -> {
-                       SpiAccountConfirmation accountConfirmation = new SpiAccountConfirmation();
-                       accountConfirmation.setConsentId(r.getConsentId());
-                       accountConfirmation.setPsuId(r.getPsuId());
-                       accountConfirmation.setTanNumber(r.getScaAuthenticationData());
-                       return accountConfirmation;
-                   })
-                   .orElse(null);
-    }
-
     public SpiScaConfirmation mapToSpiScaConfirmation(UpdateConsentPsuDataReq request) {
         SpiScaConfirmation accountConfirmation = new SpiScaConfirmation();
         accountConfirmation.setConsentId(request.getConsentId());
         accountConfirmation.setPsuId(request.getPsuId());
         accountConfirmation.setTanNumber(request.getScaAuthenticationData());
         return accountConfirmation;
-    }
-
-    private CmsScaMethod mapToCmsScaMethod(SpiScaMethod spiScaMethod) {
-        return CmsScaMethod.valueOf(spiScaMethod.name());
-    }
-
-    private Xs2aAccountAccess mapToAccountAccess(SpiAccountAccess access) {
-        return Optional.ofNullable(access)
-                   .map(aa ->
-                            new Xs2aAccountAccess(
-                                spiXs2aAccountMapper.mapToXs2aAccountReferences(aa.getAccounts()),
-                                spiXs2aAccountMapper.mapToXs2aAccountReferences(aa.getBalances()),
-                                spiXs2aAccountMapper.mapToXs2aAccountReferences(aa.getTransactions()),
-                                mapToAccountAccessType(aa.getAvailableAccounts()),
-                                mapToAccountAccessType(aa.getAllPsd2()))
-                   )
-                   .orElse(null);
-    }
-
-    private Xs2aAccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
-        return Optional.ofNullable(accessType)
-                   .map(at -> Xs2aAccountAccessType.valueOf(at.name()))
-                   .orElse(null);
     }
 
     private AisAccountAccessInfo mapToAisAccountAccessInfo(Xs2aAccountAccess access) {

@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
 public class Xs2aAuthenticationObject {
 
     @ApiModelProperty(value = "Type of the authentication method", required = true)
-    private AuthenticationType authenticationType;
+    private String authenticationType;
 
     @ApiModelProperty(value = "Version can be used by differentiating authentication tools used within performing OTP generation in the same authentication type")
     private String authenticationVersion;

@@ -24,10 +24,11 @@ import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.Collections.singletonList;
 
 @Data
 public class MessageError {
@@ -47,7 +48,7 @@ public class MessageError {
     }
 
     public MessageError(Xs2aTransactionStatus status, TppMessageInformation tppMessage) {
-        this(status, Collections.singletonList(tppMessage));
+        this(status, singletonList(tppMessage));
     }
 
     public MessageError(Xs2aTransactionStatus status, List<TppMessageInformation> tppMessages) {
@@ -55,12 +56,12 @@ public class MessageError {
         this.tppMessages.addAll(tppMessages);
     }
 
-    public MessageError(MessageErrorCode errorCode) {
-        this(Xs2aTransactionStatus.RJCT, Collections.singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode)));
+    public MessageError(MessageErrorCode errorCode, String message) {
+        this(Xs2aTransactionStatus.RJCT, singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode, message)));
     }
 
-    public void addTppMessage(TppMessageInformation tppMessage) {
-        this.tppMessages.add(tppMessage);
+    public MessageError(MessageErrorCode errorCode) {
+        this(errorCode, null);
     }
 
     // TODO task: add logic to resolve resulting MessageError https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/211

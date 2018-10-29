@@ -27,7 +27,6 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationResult;
@@ -74,7 +73,7 @@ public class ConsentServiceTest {
     private static final Currency CURRENCY_2 = Currency.getInstance("USD");
     private static final LocalDate DATE = LocalDate.parse("2019-03-03");
     private static final boolean EXPLICIT_PREFERRED = true;
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final String CONSENT_ID_DATE_VALID_YESTERDAY = "c966f143-f6a2-41db-9036-8abaeeef3af8";
     private static final LocalDate YESTERDAY = LocalDate.now().minus(Period.ofDays(1));
 
@@ -85,8 +84,6 @@ public class ConsentServiceTest {
     AisConsentService aisConsentService;
     @Mock
     AisConsentDataService aspspConsentDataService;
-    @Mock
-    SpiXs2aAccountMapper spiXs2aAccountMapper;
     @Mock
     Xs2aAisConsentMapper aisConsentMapper;
     @Mock
@@ -100,9 +97,6 @@ public class ConsentServiceTest {
 
     @Before
     public void setUp() {
-        //AccountMapping
-        when(spiXs2aAccountMapper.mapToXs2aAccountReferencesFromDetails(getSpiDetailsList()))
-            .thenReturn(getReferenceList());
         //ConsentMapping
         when(aisConsentMapper.mapToAccountConsent(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false)))
             .thenReturn(getConsent(CONSENT_ID, getAccess(Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));

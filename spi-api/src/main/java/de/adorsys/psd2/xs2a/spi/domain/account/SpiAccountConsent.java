@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
 
@@ -30,7 +29,6 @@ import java.time.LocalDate;
 @Data
 public class SpiAccountConsent {
     // TODO remove ID and add externalId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/430
-    @Id
     private String id;
     private SpiAccountAccess access;
     private boolean recurringIndicator;

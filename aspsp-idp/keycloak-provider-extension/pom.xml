@@ -20,15 +20,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>de.adorsys.aspsp</groupId>
+		<groupId>de.adorsys.psd2</groupId>
 		<artifactId>aspsp-idp</artifactId>
-		<version>1.10-SNAPSHOT</version>
+		<version>1.11-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<groupId>de.adorsys.keycloak</groupId>
 	<artifactId>keycloak-provider-extension</artifactId>
-	<version>1.10-SNAPSHOT</version>
+	<version>1.11-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
     <properties>

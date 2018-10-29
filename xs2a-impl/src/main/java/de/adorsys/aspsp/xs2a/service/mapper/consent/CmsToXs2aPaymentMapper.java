@@ -82,8 +82,8 @@ public class CmsToXs2aPaymentMapper {
         bulk.setDebtorAccount(mapToXs2aAccountReference(payments.get(0).getDebtorAccount()));
         bulk.setRequestedExecutionDate(payments.get(0).getRequestedExecutionDate());
         List<SinglePayment> paymentList = payments.stream()
-                                                 .map(this::mapToSinglePayment)
-                                                 .collect(Collectors.toList());
+                                              .map(this::mapToSinglePayment)
+                                              .collect(Collectors.toList());
         bulk.setPayments(paymentList);
         return bulk;
     }

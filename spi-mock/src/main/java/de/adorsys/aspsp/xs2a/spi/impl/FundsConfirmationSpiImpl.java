@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -55,7 +56,7 @@ public class FundsConfirmationSpiImpl implements FundsConfirmationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<Boolean> peformFundsSufficientCheck(@NotNull SpiPsuData psuData, SpiFundsConfirmationConsent consent, SpiAccountReference reference, SpiAmount amount, AspspConsentData aspspConsentData) {
+    public SpiResponse<Boolean> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable SpiFundsConfirmationConsent consent, @NotNull SpiAccountReference reference, @NotNull SpiAmount amount, @NotNull AspspConsentData aspspConsentData) {
         try {
             //TODO Account data reads should be performed through specially created endpoint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/383
             List<SpiAccountDetails> accounts = Optional.ofNullable(

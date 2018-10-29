@@ -20,14 +20,14 @@
 	
 	<parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
-        <version>1.10-SNAPSHOT</version>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>1.11-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-	<groupId>de.adorsys</groupId>
+	<groupId>de.adorsys.psd2</groupId>
 	<artifactId>psd2-validator</artifactId>
-	<version>1.10-SNAPSHOT</version>
+	<version>1.11-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	
