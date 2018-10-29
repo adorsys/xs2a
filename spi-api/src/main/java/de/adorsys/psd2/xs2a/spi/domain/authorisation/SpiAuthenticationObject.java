@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.payment;
+package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
 
-public abstract class ReadPayment<T> {
-    @Autowired
-    protected PisConsentDataService pisConsentDataService;
+@Data
+public class SpiAuthenticationObject {
+    private String authenticationType;
+    private String authenticationMethodId;
+    private String authenticationVersion;
+    private String name;
+    private String explanation;
 
-    public abstract T getPayment(String paymentId, PaymentProduct paymentProduct);
 }
