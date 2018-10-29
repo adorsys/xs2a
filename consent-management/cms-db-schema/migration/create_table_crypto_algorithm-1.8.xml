@@ -50,6 +50,11 @@
             columnName="requested_consent_id"
             newDataType="VARCHAR(255)"
             tableName="ais_consent_action"/>
+        <!--
+            [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
+            Use <sql> and re-specify all configuration if this is the case
+        -->
+        <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY requested_consent_id VARCHAR(255) NOT NULL</sql>
     </changeSet>
 
 </databaseChangeLog>
