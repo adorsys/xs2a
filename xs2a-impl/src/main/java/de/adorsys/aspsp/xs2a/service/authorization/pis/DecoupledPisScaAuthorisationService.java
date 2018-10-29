@@ -19,8 +19,8 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 
 import java.util.Optional;
@@ -32,7 +32,7 @@ public class DecoupledPisScaAuthorisationService implements PisScaAuthorisationS
     }
 
     @Override
-    public Xs2aUpdatePisConsentPsuDataResponse updateConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+    public Xs2aUpdatePisConsentPsuDataResponse updateConsentPsuData(UpdatePisConsentPsuDataRequest request) {
         return null;
     }
 

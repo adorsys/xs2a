@@ -16,15 +16,17 @@
 
 package de.adorsys.psd2.consent.server.service;
 
+/*
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.server.domain.payment.PisConsent;
-import de.adorsys.psd2.consent.server.domain.payment.PisConsentAuthorization;
-import de.adorsys.psd2.consent.server.domain.payment.PisPaymentData;
-import de.adorsys.psd2.consent.server.repository.PisConsentAuthorizationRepository;
-import de.adorsys.psd2.consent.server.repository.PisConsentRepository;
-import de.adorsys.psd2.consent.server.repository.PisPaymentDataRepository;
-import de.adorsys.psd2.consent.server.service.mapper.PisConsentMapper;
+import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.domain.payment.PisConsent;
+import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
+import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
+import de.adorsys.psd2.consent.repository.PisConsentRepository;
+import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
+import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +38,9 @@ import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -141,3 +145,4 @@ public class PisConsentServiceTest {
 
 
 }
+*/

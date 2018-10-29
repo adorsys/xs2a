@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.response;
 
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.NonNull;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;

@@ -16,14 +16,17 @@
 
 package de.adorsys.psd2.consent.server.service;
 
+/*
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.consent.server.domain.account.AisConsent;
-import de.adorsys.psd2.consent.server.repository.AisConsentRepository;
-import de.adorsys.psd2.consent.server.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.domain.account.AisConsent;
+import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.service.FrequencyPerDateCalculationService;
+import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -194,3 +197,4 @@ public class AisConsentServiceTest {
             false, false, null, null, null);
     }
 }
+*/

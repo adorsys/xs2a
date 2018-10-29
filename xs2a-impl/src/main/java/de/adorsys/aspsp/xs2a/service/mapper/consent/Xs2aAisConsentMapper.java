@@ -23,11 +23,11 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAcc
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -161,5 +161,45 @@ public class Xs2aAisConsentMapper {
                              .map(Currency::getCurrencyCode)
                              .orElse(null));
         return info;
+    }
+
+    // TODO need to refactoring, there isn't connection between spi and cmc
+    public SpiAccountConsent mapToSpiAccountConsent(AisAccountConsent ais) {
+        return Optional.ofNullable(ais)
+                   .map(ac -> new SpiAccountConsent(
+                       ac.getId(),
+                       mapToSpiAccountAccess(ac.getAccess()),
+                       ac.isRecurringIndicator(),
+                       ac.getValidUntil(),
+                       ac.getFrequencyPerDay(),
+                       ac.getLastActionDate(),
+                       ac.getConsentStatus(),
+                       ac.isWithBalance(),
+                       ac.isTppRedirectPreferred(), ac.getPsuId(), ac.getTppId()))
+                   .orElse(null);
+    }
+
+    private SpiAccountAccess mapToSpiAccountAccess(AisAccountAccess ais) {
+        SpiAccountAccess access = new SpiAccountAccess();
+        access.setAccounts(mapToSpiAccountReference(ais.getAccounts()));
+        access.setBalances(mapToSpiAccountReference(ais.getBalances()));
+        access.setTransactions(mapToSpiAccountReference(ais.getTransactions()));
+        return access;
+    }
+
+    private List<SpiAccountReference> mapToSpiAccountReference(List<CmsAccountReference> cms) {
+        return cms.stream()
+                   .map(this::mapToSpiAccountReference)
+                   .collect(Collectors.toList());
+    }
+
+    private SpiAccountReference mapToSpiAccountReference(CmsAccountReference cms) {
+        return new SpiAccountReference(
+            cms.getIban(),
+            cms.getBban(),
+            cms.getPan(),
+            cms.getMaskedPan(),
+            cms.getMsisdn(),
+            cms.getCurrency());
     }
 }
