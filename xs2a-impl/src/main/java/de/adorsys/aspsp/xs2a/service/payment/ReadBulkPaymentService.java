@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInformationResponse;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -29,20 +31,27 @@ import org.springframework.stereotype.Service;
 
 @Service("bulk-payments")
 @RequiredArgsConstructor
-public class ReadBulkPayment extends ReadPayment<BulkPayment> {
+public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformationResponse<BulkPayment>> {
     private final BulkPaymentSpi bulkPaymentSpi;
     private final SpiToXs2aBulkPaymentMapper xs2aBulkPaymentMapper;
+    private final SpiErrorMapper spiErrorMapper;
 
     @Override
-    public BulkPayment getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
-        SpiBulkPayment payment = new SpiBulkPayment();
-        payment.setPaymentProduct(paymentProduct);
-        payment.setPaymentId(paymentId);
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-        SpiResponse<SpiBulkPayment> spiResponse = bulkPaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
-        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
-        SpiBulkPayment spiResponsePayment = spiResponse.getPayload();
+    public PaymentInformationResponse<BulkPayment> getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
+            SpiBulkPayment payment = new SpiBulkPayment();
+            payment.setPaymentProduct(paymentProduct);
+            payment.setPaymentId(paymentId);
+            SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
-        return xs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiResponsePayment);
+            SpiResponse<SpiBulkPayment> spiResponse = bulkPaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
+            pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+            if (spiResponse.hasError()) {
+                return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse));
+            }
+
+            SpiBulkPayment spiResponsePayment = spiResponse.getPayload();
+
+            return new PaymentInformationResponse<>(xs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiResponsePayment));
     }
 }

@@ -16,7 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -29,19 +31,26 @@ import org.springframework.stereotype.Service;
 
 @Service("payments")
 @RequiredArgsConstructor
-public class ReadSinglePayment extends ReadPayment<SinglePayment> {
+public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformationResponse<SinglePayment>> {
     private final SinglePaymentSpi singlePaymentSpi;
     private final SpiToXs2aSinglePaymentMapper xs2aPeriodicPaymentMapper;
+    private final SpiErrorMapper spiErrorMapper;
+
 
     @Override
-    public SinglePayment getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
+    public PaymentInformationResponse<SinglePayment> getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
         SpiSinglePayment payment = new SpiSinglePayment(paymentProduct);
         payment.setPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse));
+        }
+
         SpiSinglePayment spiSinglePayment = spiResponse.getPayload();
 
-        return xs2aPeriodicPaymentMapper.mapToXs2aSinglePayment(spiSinglePayment);
+        return new PaymentInformationResponse<>(xs2aPeriodicPaymentMapper.mapToXs2aSinglePayment(spiSinglePayment));
     }
 }

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmbeddedScaPaymentService extends RedirectAndEmbeddedPaymentService {
-    public EmbeddedScaPaymentService(SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, BulkPaymentSpi bulkPaymentSpi, Xs2aToSpiSinglePaymentMapper xs2AToSpiSinglePaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, Xs2aToSpiPsuDataMapper psuDataMapper, PisConsentDataService pisConsentDataService) {
-        super(singlePaymentSpi, periodicPaymentSpi, bulkPaymentSpi, xs2AToSpiSinglePaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiBulkPaymentMapper, spiToXs2aPaymentMapper, psuDataMapper, pisConsentDataService);
+    public EmbeddedScaPaymentService(SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, BulkPaymentSpi bulkPaymentSpi, Xs2aToSpiSinglePaymentMapper xs2AToSpiSinglePaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, Xs2aToSpiPsuDataMapper psuDataMapper, PisConsentDataService pisConsentDataService, SpiErrorMapper spiErrorMapper) {
+        super(singlePaymentSpi, periodicPaymentSpi, bulkPaymentSpi, xs2AToSpiSinglePaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiBulkPaymentMapper, spiToXs2aPaymentMapper, psuDataMapper, pisConsentDataService, spiErrorMapper);
     }
 }

@@ -16,9 +16,19 @@
 
 package de.adorsys.psd2.aspsp.mock.api.psu;
 
-public enum AspspScaMethod {
-    SMS_OTP,
-    CHIP_OTP,
-    PHOTO_OTP,
-    PUSH_OTP
+import lombok.Data;
+
+@Data
+public class AspspAuthenticationObject {
+    private String authenticationType;
+    private String authenticationMethodId;
+    private String authenticationVersion;
+    private String name;
+    private String explanation;
+
+    public AspspAuthenticationObject(String authenticationType, String authenticationMethodId) {
+        this.authenticationType = authenticationType;
+        this.authenticationMethodId = authenticationMethodId;
+    }
 }
+

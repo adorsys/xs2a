@@ -16,7 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -29,19 +31,25 @@ import org.springframework.stereotype.Service;
 
 @Service("periodic-payments")
 @RequiredArgsConstructor
-public class ReadPeriodicPayment extends ReadPayment<PeriodicPayment> {
+public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInformationResponse<PeriodicPayment>> {
     private final PeriodicPaymentSpi periodicPaymentSpi;
     private final SpiToXs2aPeriodicPaymentMapper xs2aPeriodicPaymentMapper;
+    private final SpiErrorMapper spiErrorMapper;
 
     @Override
-    public PeriodicPayment getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
+    public PaymentInformationResponse<PeriodicPayment> getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
         SpiPeriodicPayment payment = new SpiPeriodicPayment(paymentProduct);
         payment.setPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse));
+        }
+
         SpiPeriodicPayment spiResponsePayment = spiResponse.getPayload();
 
-        return xs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiResponsePayment);
+        return new PaymentInformationResponse<>(xs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiResponsePayment));
     }
 }

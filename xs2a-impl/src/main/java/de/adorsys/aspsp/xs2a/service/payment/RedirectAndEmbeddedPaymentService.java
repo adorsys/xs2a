@@ -48,34 +48,50 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
     private final SpiToXs2aPaymentMapper spiToXs2aPaymentMapper;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
     private final PisConsentDataService pisConsentDataService;
+    private final SpiErrorMapper spiErrorMapper;
 
     @Override
     public SinglePaymentInitiationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByConsentId(pisConsent.getConsentId());
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(pisConsent.getPsuData());
-        SpiResponse<SpiSinglePaymentInitiationResponse> response = singlePaymentSpi.initiatePayment(spiPsuData, xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(payment, paymentProduct), aspspConsentData);
 
-        pisConsentDataService.updateAspspConsentData(response.getAspspConsentData());
-        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(response.getPayload(), SinglePaymentInitiationResponse::new);
+        SpiResponse<SpiSinglePaymentInitiationResponse> spiResponse = singlePaymentSpi.initiatePayment(spiPsuData, xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(payment, paymentProduct), aspspConsentData);
+        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return new SinglePaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
+        }
+
+        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), SinglePaymentInitiationResponse::new);
     }
 
     @Override
     public PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment payment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByConsentId(pisConsent.getConsentId());
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(pisConsent.getPsuData());
-        SpiResponse<SpiPeriodicPaymentInitiationResponse> response = periodicPaymentSpi.initiatePayment(spiPsuData, xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(payment, paymentProduct), aspspConsentData);
 
-        pisConsentDataService.updateAspspConsentData(response.getAspspConsentData());
-        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(response.getPayload(), PeriodicPaymentInitiationResponse::new);
+        SpiResponse<SpiPeriodicPaymentInitiationResponse> spiResponse = periodicPaymentSpi.initiatePayment(spiPsuData, xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(payment, paymentProduct), aspspConsentData);
+        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return new PeriodicPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
+        }
+
+        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), PeriodicPaymentInitiationResponse::new);
     }
 
     @Override
     public BulkPaymentInitiationResponse createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByConsentId(pisConsent.getConsentId());
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(pisConsent.getPsuData());
-        SpiResponse<SpiBulkPaymentInitiationResponse> response = bulkPaymentSpi.initiatePayment(spiPsuData, xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct), aspspConsentData);
 
-        pisConsentDataService.updateAspspConsentData(response.getAspspConsentData());
-        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(response.getPayload(), BulkPaymentInitiationResponse::new);
+        SpiResponse<SpiBulkPaymentInitiationResponse> spiResponse = bulkPaymentSpi.initiatePayment(spiPsuData, xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct), aspspConsentData);
+        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return new BulkPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
+        }
+
+        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), BulkPaymentInitiationResponse::new);
     }
 }

@@ -36,7 +36,7 @@ public class Psu {
     private String password;
     private List<AspspAccountDetails> accountDetailsList;
     private List<String> permittedPaymentProducts;
-    private List<AspspScaMethod> scaMethods;
+    private List<AspspAuthenticationObject> scaMethods;
 
     @JsonIgnore
     public boolean isValid() {

@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class ReadPayment<T> {
+public abstract class ReadPaymentService<T> {
     @Autowired
     protected PisConsentDataService pisConsentDataService;
     @Autowired

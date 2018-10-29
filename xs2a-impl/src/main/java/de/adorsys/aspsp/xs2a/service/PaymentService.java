@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
+import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
@@ -26,6 +27,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
@@ -74,6 +76,7 @@ public class PaymentService {
     private final SpiToXs2aTransactionalStatusMapper spiToXs2aTransactionalStatus;
     private final AspspProfileServiceWrapper profileService;
     private final CancelPaymentService cancelPaymentService;
+    private final SpiErrorMapper spiErrorMapper;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -108,15 +111,18 @@ public class PaymentService {
      * @param paymentId   ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentId, PsuIdData psuData) {
-        ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
-        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, PaymentProduct.SEPA, psuData)); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        return payment.map(p -> ResponseObject.builder()
-                                    .body(p)
-                                    .build())
-                   .orElseGet(ResponseObject.builder()
-                                  .fail(new MessageError(RESOURCE_UNKNOWN_403))
-                                  ::build);
+    public ResponseObject getPaymentById(PaymentType paymentType, String paymentId, PsuIdData psuData) {
+        ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
+        PaymentInformationResponse response = readPaymentService.getPayment(paymentId, PaymentProduct.SEPA, psuData); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+
+        if (response.hasError()) {
+            return ResponseObject.builder()
+                       .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
+                       .build();
+        }
+        return ResponseObject.builder()
+                   .body(response.getPayment())
+                   .build();
     }
 
     /**
@@ -143,8 +149,15 @@ public class PaymentService {
             payment.setPaymentId(paymentId);
             spiResponse = bulkPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         }
-
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse);
+            return ResponseObject.<Xs2aTransactionStatus>builder()
+                       .fail(new MessageError(errorHolder.getErrorCode(),  errorHolder.getMessage()))
+                       .build();
+        }
+
         Xs2aTransactionStatus transactionStatus = spiToXs2aTransactionalStatus.mapToTransactionStatus(spiResponse.getPayload());
         return Optional.ofNullable(transactionStatus)
                    .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())

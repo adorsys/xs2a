@@ -19,14 +19,16 @@ package de.adorsys.aspsp.xs2a.service.mapper.consent;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.CmsTppRole;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -80,6 +82,35 @@ public class Xs2aPisConsentMapper {
                    }).orElse(null);
     }
 
+    public Xs2aUpdatePisConsentPsuDataRequest mapToSpiUpdateConsentPsuDataReq(Xs2aUpdatePisConsentPsuDataRequest updatePsuDataRequest,
+                                                                              Xs2aUpdatePisConsentPsuDataResponse updatePsuDataResponse) {
+        return Optional.ofNullable(updatePsuDataResponse)
+                   .map(data -> {
+                       Xs2aUpdatePisConsentPsuDataRequest request = new Xs2aUpdatePisConsentPsuDataRequest();
+                       request.setPsuId(data.getPsuId());
+                       request.setPaymentId(updatePsuDataRequest.getPaymentId());
+                       request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
+                       request.setAuthenticationMethodId(getAuthenticationMethodId(data));
+                       request.setScaStatus(data.getScaStatus());
+                       return request;
+                   })
+                   .orElse(null);
+    }
+
+    private String getAuthenticationMethodId(Xs2aUpdatePisConsentPsuDataResponse data) {
+        return Optional.ofNullable(data.getChosenScaMethod())
+                   .map(Xs2aAuthenticationObject::getAuthenticationMethodId)
+                   .orElse(null);
+    }
+
+    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisConsentPsuDataRequest request, String consentId) {
+        SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
+        paymentConfirmation.setPaymentId(request.getPaymentId());
+        paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
+        paymentConfirmation.setConsentId(consentId);
+        paymentConfirmation.setPsuId(request.getPsuId());
+        return paymentConfirmation;
+    }
 
     private List<CmsTppRole> mapToCmsTppRoles(List<Xs2aTppRole> tppRoles) {
         return Optional.ofNullable(tppRoles)
@@ -87,11 +118,5 @@ public class Xs2aPisConsentMapper {
                                      .map(role -> CmsTppRole.valueOf(role.name()))
                                      .collect(Collectors.toList()))
                    .orElseGet(Collections::emptyList);
-    }
-
-    private String getScaStatus(UpdatePisConsentPsuDataResponse response) {
-        return Optional.ofNullable(response.getScaStatus())
-                   .map(Enum::name)
-                   .orElse(null);
     }
 }
