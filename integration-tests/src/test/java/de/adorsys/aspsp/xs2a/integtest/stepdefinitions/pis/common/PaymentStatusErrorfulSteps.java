@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.common;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import cucumber.api.java.en.And;
@@ -33,25 +33,30 @@ import java.io.IOException;
 import java.util.HashMap;
 
 @FeatureFileSteps
-public class StartAuthorisationErrorfulSteps extends AbstractErrorfulSteps {
+public class PaymentStatusErrorfulSteps extends AbstractErrorfulSteps {
 
     @Autowired
-    private Context context;
+    private Context<HashMap, TppMessages> context;
 
     @Autowired
     private TestService testService;
 
-//    @Given("^PSU sends the single payment initiation request and receives the paymentId$")
-//    See Global Successful Steps
+    //    @Given("^PSU sends the single payment initiation request and receives the paymentId$")
+    //    See Global Successful Steps
 
-//    @And("^PSU prepares the errorful authorisation data (.*) with the payment service (.*)$")
-//    See GlobalErrorfulSteps
-
-    @When("^PSU sends the errorful start authorisation request$")
-    public void sendErrorfulAuthorisationRequest() throws HttpClientErrorException, IOException {
-        testService.sendErrorfulRestCall(HttpMethod.POST, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations");
+    @And("^PSU prepares the errorful payment status request data (.*) with the payment service (.*)$")
+    public void loadErrorfulPaymentStatusTestData (String dataFileName, String paymentService) throws IOException {
+        testService.parseJson("/data-input/pis/status/" + dataFileName,  new TypeReference<TestData<HashMap, TppMessages>>() {
+        });
+        context.setPaymentService(paymentService);
+        this.setErrorfulIds(dataFileName);
     }
 
-    // @Then an error response code and the appropriate error response are received
+    @When("^PSU requests the status of the payment with error$")
+    public void sendPaymentStatusRequestWithoutExistingPaymentId() throws HttpClientErrorException, IOException {
+        testService.sendErrorfulRestCall(HttpMethod.GET, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status");
+    }
+
+    // @Then("^an error response code and the appropriate error response are received$")
     // See GlobalErrorfulSteps
 }

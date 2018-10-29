@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.common;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,48 +40,40 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class PaymentStatusErrorfulSteps extends AbstractErrorfulSteps {
-
+public class BulkPaymentErrorfulSteps {
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<HashMap, TppMessages> context;
+    private Context<BulkPaymentInitiationSctJson, TppMessages> context;
 
     @Autowired
     private ObjectMapper mapper;
 
-    //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
-    // See SinglePaymentSuccessfulSteps
+    @Given("^PSU loads errorful multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestDataForErrorfulBulkPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
+        context.setPaymentProduct(paymentProduct);
+        context.setPaymentService(paymentService);
 
-    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
-    // See GlobalSuccessfulSteps
-
-    @And("^PSU prepares the errorful payment status request data (.*) with the payment service (.*)$")
-    public void loadErrorfulPaymentStatusTestData (String dataFileName, String paymentService) throws IOException {
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
-            "/data-input/pis/status/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, TppMessages>>() {
-            });
+        TestData<BulkPaymentInitiationSctJson, TppMessages> data = mapper.readValue(
+            resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
+            new TypeReference<TestData<BulkPaymentInitiationSctJson, TppMessages>>() {});
 
         context.setTestData(data);
-        context.setPaymentService(paymentService);
-        this.setErrorfulIds(dataFileName);
     }
 
-    @When("^PSU requests the status of the payment with error$")
-    public void sendPaymentStatusRequestWithoutExistingPaymentId() throws HttpClientErrorException, IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+    @When("^PSU sends the bulk payment initiating request with error$")
+    public void sendBulkPaymentInitiatingRequest() throws IOException {
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",
-                HttpMethod.GET,
-                entity,
-                HashMap.class);
-        } catch (RestClientResponseException rex) {
-            context.handleRequestError(rex);
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
+                HttpMethod.POST, entity, HashMap.class);
+        } catch (RestClientResponseException restclientResponseException) {
+            context.handleRequestError(restclientResponseException);
         }
     }
 
