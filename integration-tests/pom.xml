@@ -135,7 +135,7 @@
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>consent-api</artifactId>
+            <artifactId>consent-xs2a-api</artifactId>
             <version>1.11-SNAPSHOT</version>
         </dependency>
 

@@ -34,8 +34,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.LocalDate;
 import java.util.*;
 
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

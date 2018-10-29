@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.server.service;
 
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -33,6 +32,7 @@ import de.adorsys.psd2.consent.server.repository.PisConsentAuthorizationReposito
 import de.adorsys.psd2.consent.server.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.server.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.server.service.mapper.PisConsentMapper;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,8 +44,8 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 
@@ -78,7 +78,7 @@ public class PisConsentService {
      * @param consentId String representation of pis consent identifier
      * @return Information about the status of a consent
      */
-    public Optional<CmsConsentStatus> getConsentStatusById(String consentId) {
+    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
                    .map(PisConsent::getConsentStatus);
     }
@@ -102,7 +102,7 @@ public class PisConsentService {
      * @return Response containing result of status changing
      */
     @Transactional
-    public Optional<Boolean> updateConsentStatusById(String consentId, CmsConsentStatus status) {
+    public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
         return getActualPisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
@@ -214,7 +214,7 @@ public class PisConsentService {
                    .flatMap(pisConsentRepository::findByExternalId);
     }
 
-    private PisConsent setStatusAndSaveConsent(PisConsent consent, CmsConsentStatus status) {
+    private PisConsent setStatusAndSaveConsent(PisConsent consent, ConsentStatus status) {
         consent.setConsentStatus(status);
         return pisConsentRepository.save(consent);
     }

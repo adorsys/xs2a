@@ -24,12 +24,12 @@ import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AisScaAuthenticatedStageTest {
     private static final String CONSENT_ID = "Test consentId";
-    private static final SpiConsentStatus VALID_CONSENT_STATUS = SpiConsentStatus.VALID;
+    private static final ConsentStatus VALID_CONSENT_STATUS = ConsentStatus.VALID;
     private static final String TEST_AUTHENTICATION_DATA = "Test authenticationData";
     private static final ScaStatus FINALIZED_SCA_STATUS = ScaStatus.FINALISED;
     private static final SpiResponseStatus RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;

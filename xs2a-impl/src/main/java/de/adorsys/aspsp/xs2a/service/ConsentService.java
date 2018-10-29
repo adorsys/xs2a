@@ -36,11 +36,11 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMap
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
@@ -56,9 +56,9 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 
 @Service
 @RequiredArgsConstructor
@@ -107,7 +107,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         aisConsentDataService.updateAspspConsentData(initiateAisConsentSpiResponse.getAspspConsentData());
 
         if (initiateAisConsentSpiResponse.hasError()) {
-            aisConsentService.updateConsentStatus(consentId, SpiConsentStatus.REJECTED);
+            aisConsentService.updateConsentStatus(consentId, ConsentStatus.REJECTED);
             return ResponseObject.<CreateConsentResponse>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCodeMapper.mapToMessageErrorCode(initiateAisConsentSpiResponse.getResponseStatus()))))
                        .build();
@@ -130,8 +130,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      */
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
         return Optional.ofNullable(getValidatedSpiAccountConsent(consentId))
-                   .map(consent -> aisConsentMapper.mapToConsentStatus(consent.getConsentStatus()))
-                   .map(status -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(status.get())).build())
+                   .map(consent -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(consent.getConsentStatus())).build())
                    .orElseGet(ResponseObject.<ConsentStatusResponse>builder()
                                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
                                   ::build);

@@ -41,4 +41,5 @@ public class AspspSettings {
     private boolean transactionsWithoutBalancesSupported;
     private boolean signingBasketSupported;
     private boolean paymentCancellationAuthorizationMandated;
+    private boolean piisConsentSupported;
 }

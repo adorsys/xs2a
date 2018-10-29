@@ -24,9 +24,9 @@ import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationM
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -77,11 +77,9 @@ public class AisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent Status
      */
-    // TODO don't use Spi models here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/431
-    public SpiConsentStatus getAccountConsentStatusById(String consentId) {
+    public ConsentStatus getAccountConsentStatusById(String consentId) {
         AisConsentStatusResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), AisConsentStatusResponse.class, consentId).getBody();
-        return aisConsentMapper.mapToSpiConsentStatus(response.getConsentStatus())
-                   .orElse(null);
+        return response.getConsentStatus();
     }
 
     /**
@@ -90,16 +88,16 @@ public class AisConsentService {
      * @param consentId String representation of identifier of stored consent
      */
     public void revokeConsent(String consentId) {
-        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, SpiConsentStatus.REVOKED_BY_PSU);
+        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, ConsentStatus.REVOKED_BY_PSU);
     }
 
     /**
      * Requests CMS to update consent status into provided one
      *
      * @param consentId String representation of identifier of stored consent
-     * @param consentStatus SpiConsentStatus the consent be changed to
+     * @param consentStatus ConsentStatus the consent be changed to
      */
-    public void updateConsentStatus(String consentId, SpiConsentStatus consentStatus) {
+    public void updateConsentStatus(String consentId, ConsentStatus consentStatus) {
         consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, consentStatus);
     }
 

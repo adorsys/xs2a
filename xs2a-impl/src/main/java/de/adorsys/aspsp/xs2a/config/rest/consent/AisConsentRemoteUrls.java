@@ -43,7 +43,7 @@ public class AisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
     }
 
     /**
-     * @return SpiConsentStatus status
+     * @return ConsentStatus status
      * Method: GET
      * PathVariable: String consentId
      */
@@ -54,7 +54,7 @@ public class AisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
     /**
      * @return VOID
      * Method: PUT
-     * PathVariables: String consentId, SpiConsentStatus consentStatus
+     * PathVariables: String consentId, ConsentStatus consentStatus
      */
     public String updateAisConsentStatus() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";

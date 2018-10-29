@@ -32,9 +32,13 @@
 
     <modules>
         <module>cms-db-schema</module>
-        <module>consent-api</module>
-        <module>cms-client</module>
+        <module>consent-xs2a-api</module>
+        <module>consent-psu-api</module>
+        <module>consent-psu-client</module>
+        <module>consent-aspsp-api</module>
+        <module>consent-management-lib</module>
         <module>consent-management-system</module>
+        <module>consent-core-api</module>
     </modules>
 
 </project>

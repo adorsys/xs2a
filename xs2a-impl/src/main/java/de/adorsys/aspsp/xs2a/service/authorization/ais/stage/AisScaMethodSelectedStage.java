@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
@@ -81,6 +82,10 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
                                                       .filter(a -> authenticationMethodId.equals(a.getAuthenticationMethodId()))
                                                       .findFirst()
                                                       .orElse(null);
+
+        if (chosenScaMethod == null) {
+            return new UpdateConsentPsuDataResponse(MessageErrorCode.SCA_METHOD_UNKNOWN);
+        }
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(chosenScaMethod));
