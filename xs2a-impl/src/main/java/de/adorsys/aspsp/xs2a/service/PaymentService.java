@@ -88,12 +88,18 @@ public class PaymentService {
                        .fail(new MessageError(CONSENT_UNKNOWN_400))
                        .build();
         }
+        String innerPaymentId = "inner payment id";  //pisConsentDataService.getInnerPaymentId(paymentId); todo to make implements of method
 
         if (paymentInitiationParameters.getPaymentType() == SINGLE) {
+            ((SinglePayment) payment).setPaymentId(innerPaymentId);
+
             return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
         } else if (paymentInitiationParameters.getPaymentType() == PERIODIC) {
+            ((PeriodicPayment) payment).setPaymentId(innerPaymentId);
+
             return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
         } else {
+            ((BulkPayment) payment).setPaymentId(innerPaymentId);
             return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
         }
     }
@@ -101,13 +107,13 @@ public class PaymentService {
     /**
      * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
      *
-     * @param paymentType type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentId   ASPSP identifier of the payment
+     * @param paymentType        type of payment (payments, bulk-payments, periodic-payments)
+     * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentId) {
+    public ResponseObject<Object> getPaymentById(PaymentType paymentType, String encryptedPaymentId) {
         ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
-        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, PaymentProduct.SEPA)); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        Optional<Object> payment = Optional.ofNullable(service.getPayment(encryptedPaymentId, PaymentProduct.SEPA)); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         return payment.map(p -> ResponseObject.builder()
                                     .body(p)
                                     .build())

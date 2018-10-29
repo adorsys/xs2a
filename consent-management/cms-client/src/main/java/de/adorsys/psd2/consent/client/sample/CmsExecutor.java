@@ -223,7 +223,7 @@ public class CmsExecutor {
      */
     private static void createPaymentConsent(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         Optional<CreatePisConsentResponse> createPisResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new CreatePaymentConsentMethod(buildPisConsentRequest())));
-        createPisResponse.ifPresent(resp ->  logger.info("Consent ID: " + resp.getConsentId()));
+        createPisResponse.ifPresent(resp -> logger.info("Consent ID: " + resp.getConsentId()));
     }
 
     /**
@@ -303,10 +303,10 @@ public class CmsExecutor {
         request.setPaymentProduct(PaymentProduct.SEPA);
         request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
-            Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
-            "authority id", "authority name", "Germany", "Organisation",
-            "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
-            "Nok redirect URI"));
+                                           Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
+                                           "authority id", "authority name", "Germany", "Organisation",
+                                           "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
+                                           "Nok redirect URI"));
         return request;
     }
 
@@ -320,12 +320,12 @@ public class CmsExecutor {
         payment.setPaymentId("32454656712432");
         payment.setEndToEndIdentification("RI-123456789");
         payment.setDebtorAccount(new CmsAccountReference("DE89370400440532013000", "89370400440532010000",
-            "2356 5746 3217 1234", "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
+                                                         "2356 5746 3217 1234", "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setUltimateDebtor("Mueller");
         payment.setCurrency(Currency.getInstance("EUR"));
         payment.setAmount(BigDecimal.valueOf(1000));
         payment.setCreditorAccount(new CmsAccountReference("DE89370400440532013000", "89370400440532010000", "2356 5746 3217 1234",
-            "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
+                                                           "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setCreditorAgent("Telekom");
         payment.setCreditorName("Telekom");
         payment.setCreditorAddress(buildCmsAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "Germany"));
@@ -333,7 +333,7 @@ public class CmsExecutor {
         payment.setRemittanceInformationStructured(buildCmsRemittance("Ref Number Merchant", "reference type", "reference issuer"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, 1, 1));
         payment.setRequestedExecutionTime(OffsetDateTime.parse("2020-01-01T15:30:35.035Z",
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
+                                                               DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
         payment.setUltimateCreditor("Telekom");
         payment.setPurposeCode("BCENECEQ");
         payment.setStartDate(LocalDate.of(2020, 1, 1));

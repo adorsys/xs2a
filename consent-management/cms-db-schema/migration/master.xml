@@ -28,7 +28,6 @@
     <include file="migration/change_pis_tpp_info-1.6.xml"/>
     <include file="migration/remove_not_null_constraint_ultimate_debtor-1.7.xml"/>
     <include file="migration/create_table_crypto_algorithm-1.8.xml"/>
-    <include file="migration/add_encrypted_id_column_to_pis_consent-1.9.xml"/>
 
 
 </databaseChangeLog>

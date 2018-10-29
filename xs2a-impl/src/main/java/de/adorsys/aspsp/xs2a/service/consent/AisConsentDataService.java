@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,15 +33,15 @@ public class AisConsentDataService {
     private final Base64AspspDataService base64AspspDataService;
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(aisConsentRemoteUrls.getAspspConsentData(), Xs2aConsentData.class, consentId).getBody();
-        byte[] bytePayload = base64AspspDataService.decode(xs2aConsentData.getAspspConsentDataBase64());
-        return new AspspConsentData(bytePayload, xs2aConsentData.getConsentId());
+        CmsAspspConsentDataBase64 consentData = consentRestTemplate.getForEntity(aisConsentRemoteUrls.getAspspConsentData(), CmsAspspConsentDataBase64.class, consentId).getBody();
+        byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
+        return new AspspConsentData(bytePayload, consentData.getConsentId());
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
         String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
 
         consentRestTemplate.put(aisConsentRemoteUrls.updateAspspConsentData(),
-            new Xs2aConsentData(consentData.getConsentId(), base64Payload), consentData.getConsentId());
+                                new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload), consentData.getConsentId());
     }
 }

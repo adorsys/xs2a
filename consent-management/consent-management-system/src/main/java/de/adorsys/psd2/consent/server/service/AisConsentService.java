@@ -246,11 +246,11 @@ public class AisConsentService {
 
     private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent, String encryptedConsentId) {
         return Optional.ofNullable(consent.getAspspConsentData())
-            .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
-            .map(DecryptedData::getData)
-            .map(bytes -> Base64.getEncoder().encodeToString(bytes))
-            .map(str64 -> new CmsAspspConsentDataBase64(encryptedConsentId, str64))
-            .orElseGet(() -> new CmsAspspConsentDataBase64(encryptedConsentId, null));
+                   .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
+                   .map(DecryptedData::getData)
+                   .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+                   .map(str64 -> new CmsAspspConsentDataBase64(encryptedConsentId, str64))
+                   .orElseGet(() -> new CmsAspspConsentDataBase64(encryptedConsentId, null));
     }
 
     private Optional<String> saveAspspConsentDataInAisConsent(CmsAspspConsentDataBase64 request, AisConsent consent, String encryptedConsentId) {

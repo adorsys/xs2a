@@ -80,8 +80,4 @@ public class PisConsent {
     @JsonIgnore
     @Column(name = "aspsp_consent_data")
     private byte[] aspspConsentData;
-
-    // TODO we need decide how we will get encryptedId without storing in DB https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/457
-    @Column(name = "encrypted_id")
-    private String encryptedId;
 }

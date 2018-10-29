@@ -37,6 +37,7 @@ import de.adorsys.psd2.consent.server.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.consent.server.service.security.DecryptedData;
 import de.adorsys.psd2.consent.server.service.security.SecurityDataService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -78,7 +80,6 @@ public class PisConsentService {
         return encryptedId
                    .map(encr -> {
                        consent.setExternalId(externalId);
-                       consent.setEncryptedId(encr);
                        pisConsentRepository.save(consent);
                        return new CreatePisConsentResponse(encr);
                    });
@@ -138,10 +139,14 @@ public class PisConsentService {
      * @return Response containing aspsp consent data
      */
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId) {
-        return pisPaymentDataRepository.findByPaymentId(paymentId)
+        Optional<String> innerPaymentId = securityDataService.getConsentId(paymentId);
+        if (!innerPaymentId.isPresent()) {
+            log.warn("Payment Id has not encrypted: {}", paymentId);
+        }
+        return pisPaymentDataRepository.findByPaymentId(innerPaymentId.get())
                    .map(dta -> dta.get(0))
                    .map(PisPaymentData::getConsent)
-                   .map(dta -> prepareAspspConsentData(dta, dta.getEncryptedId()));
+                   .map(dta -> prepareAspspConsentData(dta, paymentId));
     }
 
     private CmsAspspConsentDataBase64 prepareAspspConsentData(PisConsent consent, String encryptedConsentId) {
@@ -223,12 +228,20 @@ public class PisConsentService {
 
     private Optional<PisConsent> getActualPisConsent(String encryptedConsentId) {
         Optional<String> consentIdDecrypted = securityDataService.getConsentId(encryptedConsentId);
+        if (!consentIdDecrypted.isPresent()) {
+            log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
+        }
+
         return consentIdDecrypted
                    .flatMap(id -> pisConsentRepository.findByExternalIdAndConsentStatusIn(id, EnumSet.of(RECEIVED, VALID)));
     }
 
     private Optional<PisConsent> getPisConsentById(String encryptedConsentId) {
         Optional<String> consentIdDecrypted = securityDataService.getConsentId(encryptedConsentId);
+        if (!consentIdDecrypted.isPresent()) {
+            log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
+        }
+
         return consentIdDecrypted
                    .flatMap(pisConsentRepository::findByExternalId);
     }
