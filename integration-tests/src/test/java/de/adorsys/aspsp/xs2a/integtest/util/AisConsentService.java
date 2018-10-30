@@ -46,14 +46,23 @@ public class AisConsentService {
         this.remoteAisConsentUrls = remoteAisConsentUrls;
     }
 
+    /**
+     * Sends a post request to the consent management for creating a consent
+     *
+     * @return Consent Id
+     */
     public String createConsent() {
-
         HttpEntity entity = getConsentEntity();
         CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), entity,  CreateAisConsentResponse.class).getBody();
 
         return createAisConsentResponse.getConsentId();
     }
 
+    /**
+     * Creates a new Http Entity with a consent as body and Content-Type, Accept as headers
+     *
+     * @return Http Entity containing the consent and the headers
+     */
     private HttpEntity getConsentEntity() {
         CreateAisConsentRequest aisConsentRequest = new CreateAisConsentRequest();
         AisAccountAccessInfo info = new AisAccountAccessInfo();
@@ -62,7 +71,6 @@ public class AisConsentService {
         accountInfo.setIban("DE89370400440532013000");
         info.setAccounts(Collections.singletonList(accountInfo));
         aisConsentRequest.setAccess(info);
-
         aisConsentRequest.setCombinedServiceIndicator(false);
         aisConsentRequest.setFrequencyPerDay(4);
         aisConsentRequest.setPsuId("aspsp");
@@ -74,9 +82,15 @@ public class AisConsentService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "application/json");
+
         return new HttpEntity<>(aisConsentRequest, headers);
     }
 
+    /**
+     *
+     * @param consentId as a String
+     * @param consentStatus which represents the new Consent Status
+     */
     public void changeAccountConsentStatus (@NotNull String consentId, ConsentStatus consentStatus) {
         consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, consentStatus);
     }
