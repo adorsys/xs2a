@@ -33,7 +33,7 @@ public class AccountMapper {
     public Xs2aAccountDetails mapToAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
                    .map(ad -> new Xs2aAccountDetails(
-                           ad.getId(),
+                           ad.getResourceId(),
                            ad.getIban(),
                            ad.getBban(),
                            ad.getPan(),
@@ -104,6 +104,7 @@ public class AccountMapper {
     public SpiAccountReference mapToSpiAccountReference(Xs2aAccountReference account) {
         return Optional.ofNullable(account)
                    .map(ac -> new SpiAccountReference(
+                       ac.getResourceId(),
                        ac.getIban(),
                        ac.getBban(),
                        ac.getPan(),

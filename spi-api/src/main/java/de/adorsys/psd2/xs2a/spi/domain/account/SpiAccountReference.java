@@ -28,6 +28,8 @@ import java.util.Currency;
 @Value
 @AllArgsConstructor
 public class SpiAccountReference {
+
+    private String resourceId;
     @Setter
     @NonFinal
     private String iban;    // TODO don't use it as an identifier during the account access validation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
@@ -39,6 +41,7 @@ public class SpiAccountReference {
 
     // TODO provide a new field for the account access validation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
     public SpiAccountReference(@NotNull SpiAccountDetails accountDetails) {
+        this.resourceId = accountDetails.getResourceId();
         this.iban = accountDetails.getIban();
         this.bban = accountDetails.getBban();
         this.pan = accountDetails.getPan();

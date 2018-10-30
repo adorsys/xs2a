@@ -37,7 +37,7 @@ public class Xs2aAccountDetails {
     @ApiModelProperty(value = "ID: This is the data element to be used in the path when retrieving data from a dedicated account", required = true, example = "3dc3d5b3-7023-4848-9853-f5400a64e80f")
     @Size(max = 35)
     @NotNull
-    private final String id;
+    private final String resourceId;
 
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private final String iban;
