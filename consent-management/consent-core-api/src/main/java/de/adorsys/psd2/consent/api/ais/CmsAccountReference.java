@@ -22,7 +22,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Currency;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
