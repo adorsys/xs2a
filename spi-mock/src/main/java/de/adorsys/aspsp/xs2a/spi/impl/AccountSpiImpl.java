@@ -130,7 +130,7 @@ public class AccountSpiImpl implements AccountSpi {
                 balances = accountDetails.getBalances();
             }
 
-            SpiTransactionReport transactionReport = new SpiTransactionReport(accountReference, transactions, balances);
+            SpiTransactionReport transactionReport = new SpiTransactionReport(transactions, balances);
 
             return SpiResponse.<SpiTransactionReport>builder()
                        .payload(transactionReport)

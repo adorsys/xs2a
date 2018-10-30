@@ -295,7 +295,7 @@ public class AccountService {
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(report.orElseGet(() -> new Xs2aAccountReport(Collections.emptyList(),
             Collections.emptyList())));
-        transactionsReport.setXs2aAccountReference(referenceMapper.mapToXs2aAccountReference(spiTransactionReport.getAccountReference()).orElse(null));
+        transactionsReport.setXs2aAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference.get()).orElse(null));
         transactionsReport.setBalances(balanceMapper.mapToXs2aBalanceList(spiTransactionReport.getBalances()));
 
         ResponseObject<Xs2aTransactionsReport> response =
