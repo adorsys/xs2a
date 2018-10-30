@@ -32,7 +32,7 @@ import static de.adorsys.aspsp.xs2a.config.factory.PisScaStageAuthorisationFacto
 
 @Service
 @RequiredArgsConstructor
-//TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+// TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 public class PisAuthorisationService {
     private final PisConsentService pisConsentService;
     private final PisScaStageAuthorisationFactory pisScaStageAuthorisationFactory;
