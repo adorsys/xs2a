@@ -44,14 +44,14 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
             Xs2aUpdatePisConsentPsuDataResponse body = result.getBody();
             Links links = buildLink(request);
 
-            if (isScaStatusMethodAuthenticated(request.getScaStatus())) {
+            if (isScaStatusMethodAuthenticated(body.getScaStatus())) {
 
                 links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
                 links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
-            } else if (isScaStatusMethodSelected(request.getAuthenticationMethodId(), request.getScaStatus())) {
+            } else if (isScaStatusMethodSelected(request.getAuthenticationMethodId(), body.getScaStatus())) {
 
                 links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
-            } else if (isScaStatusFinalised(request.getScaAuthenticationData(), request.getScaStatus())) {
+            } else if (isScaStatusFinalised(request.getScaAuthenticationData(), body.getScaStatus())) {
 
                 links.setScaStatus(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
             }
