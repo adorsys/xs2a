@@ -34,33 +34,31 @@ public interface AccountSpi {
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of account details
      */
-    SpiResponse<List<SpiAccountDetails>> requestAccountDetails(boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiAccountDetails>> requestAccountList(boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests an account detail for account
      *
-     * @param accountId        String representation of ASPSP account primary identifier
      * @param withBalance      Boolean representing if the responded AccountDetails should contain balance
-     * @param accountConsent   SpiAccountConsent
+     * @param accountReference   SpiAccountReference
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return Account detail
      */
-    SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull String accountId, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests a list of transactions
      *
-     * @param accountId        String representation of ASPSP account primary identifier
      * @param withBalance      boolean representing if the responded AccountDetails should contain balance
      * @param dateFrom         Date representing the beginning of the search period.<br>
      *                         If null, transactions will not be limited by start date
      * @param dateTo           Date representing the ending of the search period. <br>
      *                         If null, transactions will not be limited by end date
-     * @param accountConsent   SpiAccountConsent
+     * @param accountReference   SpiAccountReference
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of transactions
      */
-    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull String accountId, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests an transaction by transactionId
@@ -76,10 +74,9 @@ public interface AccountSpi {
     /**
      * Requests a list of account balances
      *
-     * @param accountId        String representation of ASPSP account primary identifier
-     * @param accountConsent   SpiAccountConsent
+     * @param accountReference   SpiAccountReference
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of account balances
      */
-    SpiResponse<SpiBalanceReport> requestBalancesForAccount(@NotNull String accountId, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiBalanceReport> requestBalancesForAccount(@NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData);
 }

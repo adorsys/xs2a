@@ -53,7 +53,7 @@ public class AccountSpiImpl implements AccountSpi {
     private final RestTemplate aspspRestTemplate;
 
     @Override
-    public SpiResponse<List<SpiAccountDetails>> requestAccountDetails(boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiAccountDetails>> requestAccountList(boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
             List<SpiAccountDetails> accountDetailsList;
 
@@ -79,9 +79,9 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull String accountId, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData) {
         try {
-            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
+            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
 
             if (!withBalance) {
                 accountDetails.emptyBalances();
@@ -103,12 +103,12 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull String accountId, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData) {
         try {
-            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
+            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
 
             Map<String, String> uriParams = new HashMap<>();
-            uriParams.put("account-id", accountId);
+            uriParams.put("account-id", accountReference.getResourceId());
 
             UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
                                               .queryParam("dateFrom", dateFrom)
@@ -123,7 +123,6 @@ public class AccountSpiImpl implements AccountSpi {
                 }
             ).getBody());
 
-            SpiAccountReference accountReference = new SpiAccountReference(accountDetails);
             List<SpiTransaction> transactions = transactionsOptional.orElseGet(ArrayList::new);
             List<SpiAccountBalance> balances = null;
 
@@ -168,25 +167,19 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiBalanceReport> requestBalancesForAccount(@NotNull String accountId, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiBalanceReport> requestBalancesForAccount(@NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData) {
         try {
-            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
-
             List<SpiAccountBalance> accountBalances = aspspRestTemplate.exchange(
                 remoteSpiUrls.getBalancesByAccountId(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<SpiAccountBalance>>() {
                 },
-                accountId
+                accountReference.getResourceId()
             ).getBody();
 
             SpiBalanceReport balanceReport = new SpiBalanceReport();
             balanceReport.setBalances(accountBalances);
-
-            if (accountDetails != null) {
-                balanceReport.setAccountReference(new SpiAccountReference(accountDetails));
-            }
 
             return SpiResponse.<SpiBalanceReport>builder()
                        .payload(balanceReport)

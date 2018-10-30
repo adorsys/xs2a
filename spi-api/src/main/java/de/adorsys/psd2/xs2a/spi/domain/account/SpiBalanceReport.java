@@ -23,5 +23,4 @@ import java.util.List;
 @Data
 public class SpiBalanceReport {
     private List<SpiAccountBalance> balances;
-    private SpiAccountReference accountReference;
 }

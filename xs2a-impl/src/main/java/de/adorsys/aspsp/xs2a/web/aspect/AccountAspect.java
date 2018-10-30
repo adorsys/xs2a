@@ -50,7 +50,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountDetailsList(..)) && args(consentId, withBalance)", returning = "result", argNames = "result,consentId,withBalance")
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAcccountList(..)) && args(consentId, withBalance)", returning = "result", argNames = "result,consentId,withBalance")
     public ResponseObject<Map<String, List<Xs2aAccountDetails>>> getAccountDetailsListAspect(ResponseObject<Map<String, List<Xs2aAccountDetails>>> result, String consentId, boolean withBalance) {
         if (!result.hasError()) {
             Map<String, List<Xs2aAccountDetails>> accountDetails = result.getBody();
