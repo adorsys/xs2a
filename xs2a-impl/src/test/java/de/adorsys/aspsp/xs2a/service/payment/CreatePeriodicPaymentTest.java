@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
@@ -23,9 +23,8 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
-import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import org.junit.Test;
@@ -58,6 +57,8 @@ public class CreatePeriodicPaymentTest {
     private PisConsentService pisConsentService;
     @Mock
     private AuthorisationMethodService authorisationMethodService;
+    @Mock
+    private PisScaAuthorisationService pisScaAuthorisationService;
 
     @Test
     public void success_initiate_periodic_payment() {
