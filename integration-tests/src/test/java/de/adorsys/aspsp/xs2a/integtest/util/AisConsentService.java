@@ -48,6 +48,13 @@ public class AisConsentService {
 
     public String createConsent() {
 
+        HttpEntity entity = getConsentEntity();
+        CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), entity,  CreateAisConsentResponse.class).getBody();
+
+        return createAisConsentResponse.getConsentId();
+    }
+
+    private HttpEntity getConsentEntity() {
         CreateAisConsentRequest aisConsentRequest = new CreateAisConsentRequest();
         AisAccountAccessInfo info = new AisAccountAccessInfo();
         AccountInfo accountInfo = new AccountInfo();
@@ -67,10 +74,7 @@ public class AisConsentService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "application/json");
-        HttpEntity entity = new HttpEntity<>(aisConsentRequest, headers);
-        CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), entity,  CreateAisConsentResponse.class).getBody();
-
-        return createAisConsentResponse.getConsentId();
+        return new HttpEntity<>(aisConsentRequest, headers);
     }
 
     public void changeAccountConsentStatus (@NotNull String consentId, ConsentStatus consentStatus) {
