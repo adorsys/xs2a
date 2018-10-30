@@ -108,7 +108,7 @@ public class PisConsentServiceTest {
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
         //Then
-        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
+        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationId(paymentId, CmsAuthorisationType.CANCELLED);
         //Assert
         //noinspection OptionalGetWithoutIsPresent
         assertEquals(authorizationByPaymentId.get(), pisConsentAuthorizationList.get(0).getExternalId());
@@ -120,7 +120,7 @@ public class PisConsentServiceTest {
         when(securityDataService.getDecryptedId(paymentIdWrong)).thenReturn(Optional.empty());
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
         //Then
-        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentIdWrong, CmsAuthorisationType.CANCELLED);
+        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationId(paymentIdWrong, CmsAuthorisationType.CANCELLED);
         //Assert
         assertFalse(authorizationByPaymentId.isPresent());
     }

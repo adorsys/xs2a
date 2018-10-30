@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service.security;
+package de.adorsys.psd2.consent.server.service.security.provider;
 
 import de.adorsys.psd2.consent.server.domain.CryptoAlgorithm;
 import de.adorsys.psd2.consent.server.repository.CryptoAlgorithmRepository;

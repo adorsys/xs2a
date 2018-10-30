@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.consent.server.config;
 
-import de.adorsys.psd2.consent.server.service.security.AesEcbCryptoProviderImpl;
-import de.adorsys.psd2.consent.server.service.security.CryptoProvider;
-import de.adorsys.psd2.consent.server.service.security.JweCryptoProviderImpl;
+import de.adorsys.psd2.consent.server.service.security.provider.AesEcbCryptoProviderImpl;
+import de.adorsys.psd2.consent.server.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.server.service.security.provider.JweCryptoProviderImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

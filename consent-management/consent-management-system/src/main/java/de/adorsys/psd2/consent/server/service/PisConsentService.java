@@ -74,15 +74,13 @@ public class PisConsentService {
     public Optional<CreatePisConsentResponse> createPaymentConsent(PisConsentRequest request) {
         PisConsent consent = pisConsentMapper.mapToPisConsent(request);
         String externalId = UUID.randomUUID().toString();
-        Optional<String> encryptedId = securityDataService.getEncryptedId(externalId);
+        consent.setExternalId(externalId);
 
-        // TODO we need decide how we will get encryptedId without storing in DB https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/457
-        return encryptedId
-                   .map(encr -> {
-                       consent.setExternalId(externalId);
-                       pisConsentRepository.save(consent);
-                       return new CreatePisConsentResponse(encr);
-                   });
+        PisConsent saved = pisConsentRepository.save(consent);
+
+        return Optional.ofNullable(saved.getId())
+                   .flatMap(id -> securityDataService.getEncryptedId(saved.getExternalId()))
+                   .map(CreatePisConsentResponse::new);
     }
 
     /**
@@ -184,6 +182,10 @@ public class PisConsentService {
 
     /**
      * Create consent authorization
+     *
+     * @param encryptedPaymentId encrypted id of the payment
+     * @param authorizationType  type of authorization required to create. Can be  CREATED or CANCELLED
+     * @return response contains authorization id
      */
     @Transactional
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String encryptedPaymentId, CmsAuthorisationType authorizationType) {
@@ -198,6 +200,14 @@ public class PisConsentService {
                    .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
 
+    /**
+     * Update consent authorization
+     *
+     * @param authorizationId   id of the authorization to be updated
+     * @param request           contains data for updating authorization
+     * @param authorizationType type of authorization required to update. Can be  CREATED or CANCELLED
+     * @return response contains updated data
+     */
     @Transactional
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType) {
         Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(
@@ -221,7 +231,7 @@ public class PisConsentService {
      * Update PIS consent payment data and stores it into database
      *
      * @param request            PIS consent request for update payment data
-     * @param encryptedConsentId Consent ID
+     * @param encryptedConsentId encrypted Consent ID
      */
     // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
     @Transactional
@@ -231,12 +241,26 @@ public class PisConsentService {
             .ifPresent(pisConsent -> pisPaymentDataRepository.save(pisConsentMapper.mapToPisPaymentDataList(request.getPayments(), pisConsent)));
     }
 
+    /**
+     * Reads authorization data by authorization Id
+     *
+     * @param authorizationId   id of the authorization to be updated
+     * @param authorizationType type of authorization. Can be  CREATED or CANCELLED
+     * @return response contains authorization data
+     */
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType) {
         return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(authorizationId, authorizationType)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }
 
-    public Optional<String> getAuthorisationByPaymentId(String encryptedPaymentId, CmsAuthorisationType authorizationType) {
+    /**
+     * Reads authorization id data by encrypted payment Id and type of authorization
+     *
+     * @param encryptedPaymentId encrypted id of the payment
+     * @param authorizationType  type of authorization required to create. Can be  CREATED or CANCELLED
+     * @return response contains authorization id
+     */
+    public Optional<String> getAuthorisationId(String encryptedPaymentId, CmsAuthorisationType authorizationType) {
         Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
         if (!paymentId.isPresent()) {
             log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);

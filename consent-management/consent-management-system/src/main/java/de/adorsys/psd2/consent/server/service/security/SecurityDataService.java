@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.consent.server.service.security;
 
+import de.adorsys.psd2.consent.server.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.server.service.security.provider.CryptoProviderFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -64,16 +66,45 @@ public class SecurityDataService {
             return Optional.empty();
         }
 
-        Optional<String> compositeId = getCompositeId(encryptedId);
+        Optional<String> compositeId = decryptCompositeId(encryptedId);
         return compositeId.map(this::getOriginalIdFromCompositeId);
     }
 
-    private Optional<String> getCompositeId(String encryptedConsentId) {
-        CompositeIdentifier compositeIdentifier = new CompositeIdentifier(encryptedConsentId, SEPARATOR);
+    /**
+     * Encrypts ASPSP consent data
+     *
+     * @param encryptedConsentId
+     * @param aspspConsentDataBase64 original data encoded in Base64 to be encrypted
+     *
+     * @return response contains encrypted data
+     */
+    public Optional<EncryptedData> encryptConsentData(String encryptedConsentId, String aspspConsentDataBase64) {
+        byte[] aspspConsentData = decode64(aspspConsentDataBase64);
 
-        byte[] bytesCompositeId = decode64(compositeIdentifier.getCompositeId());
+        return getConsentKeyFromEncryptedConsentId(encryptedConsentId)
+                   .flatMap(consentKey -> consentDataCP().encryptData(aspspConsentData, consentKey));
+    }
 
-        Optional<CryptoProvider> provider = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(compositeIdentifier.getVersion());
+    /**
+     * Decrypt ASPSP consent data
+     *
+     * @param encryptedConsentId
+     * @param aspspConsentData encrypted data to be decrypted
+     *
+     * @return response contains decrypted data
+     */
+    public Optional<DecryptedData> decryptConsentData(String encryptedConsentId, byte[] aspspConsentData) {
+        return getConsentKeyFromEncryptedConsentId(encryptedConsentId)
+                   .flatMap(consentKey -> consentDataCP().decryptData(aspspConsentData, consentKey));
+    }
+
+    private Optional<String> decryptCompositeId(String encryptedId) {
+        String algorithmVersion = readAlgorithmVersion(encryptedId);
+        String encryptedCompositeId = readCompositeIdWithoutVersion(encryptedId);
+
+        byte[] bytesCompositeId = decode64(encryptedCompositeId);
+
+        Optional<CryptoProvider> provider = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(algorithmVersion);
 
         return provider
                    .flatMap(prd -> prd.decryptData(bytesCompositeId, serverKey))
@@ -89,20 +120,8 @@ public class SecurityDataService {
         return compositeId.split(SEPARATOR)[0];
     }
 
-    public Optional<EncryptedData> encryptConsentData(String encryptedConsentId, String aspspConsentDataBase64) {
-        byte[] aspspConsentData = decode64(aspspConsentDataBase64);
-
-        return getConsentKeyFromEncryptedConsentId(encryptedConsentId)
-                   .flatMap(consentKey -> consentDataCP().encryptData(aspspConsentData, consentKey));
-    }
-
-    public Optional<DecryptedData> decryptConsentData(String encryptedConsentId, byte[] aspspConsentData) {
-        return getConsentKeyFromEncryptedConsentId(encryptedConsentId)
-                   .flatMap(consentKey -> consentDataCP().decryptData(aspspConsentData, consentKey));
-    }
-
     private Optional<String> getConsentKeyFromEncryptedConsentId(String encryptedConsentId) {
-        return getCompositeId(encryptedConsentId)
+        return decryptCompositeId(encryptedConsentId)
                    .map(this::getConsentKeyFromCompositeId);
     }
 
@@ -142,5 +161,13 @@ public class SecurityDataService {
         sb.append(SEPARATOR);
         sb.append(rightPart);
         return sb.toString();
+    }
+
+    private String readCompositeIdWithoutVersion(String compositeIdWithVersion){
+        return compositeIdWithVersion.substring(0, compositeIdWithVersion.indexOf(SEPARATOR));
+    }
+
+    private String readAlgorithmVersion(String compositeIdWithVersion){
+        return compositeIdWithVersion.substring(compositeIdWithVersion.indexOf(SEPARATOR) + SEPARATOR.length());
     }
 }

@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.consent.server.service.security;
 
+import de.adorsys.psd2.consent.server.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.server.service.security.provider.CryptoProviderAlgorithmVersion;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

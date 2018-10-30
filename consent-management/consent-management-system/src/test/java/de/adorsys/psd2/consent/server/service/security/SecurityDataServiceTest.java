@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.consent.server.service.security;
 
+import de.adorsys.psd2.consent.server.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.server.service.security.provider.CryptoProviderFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;

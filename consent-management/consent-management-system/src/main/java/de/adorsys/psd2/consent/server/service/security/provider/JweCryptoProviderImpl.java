@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service.security;
+package de.adorsys.psd2.consent.server.service.security.provider;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.AESEncrypter;
+import de.adorsys.psd2.consent.server.service.security.DecryptedData;
+import de.adorsys.psd2.consent.server.service.security.EncryptedData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
