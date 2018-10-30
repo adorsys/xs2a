@@ -64,7 +64,7 @@ public class AccountService {
      * @return Optional of account details
      */
     public Optional<AspspAccountDetails> getAccountById(String accountId) {
-        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+        return psuRepository.findPsuByAccountDetailsList_ResourceId(accountId)
                    .flatMap(psu -> findAccountInPsuById(psu, accountId));
     }
 
@@ -98,7 +98,7 @@ public class AccountService {
      * @return list of account balances
      */
     public List<AspspAccountBalance> getAccountBalancesById(String accountId) {
-        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+        return psuRepository.findPsuByAccountDetailsList_ResourceId(accountId)
                    .flatMap(psu -> findAccountInPsuById(psu, accountId))
                    .map(AspspAccountDetails::getBalances)
                    .orElseGet(Collections::emptyList);
@@ -122,14 +122,14 @@ public class AccountService {
      * @param accountId accounts primary ASPSP identifier
      */
     public void deleteAccountById(String accountId) {
-        psuRepository.findPsuByAccountDetailsList_Id(accountId)
+        psuRepository.findPsuByAccountDetailsList_ResourceId(accountId)
             .map(psu -> getPsuWithFilteredAccountListById(psu, accountId))
             .map(psuRepository::save);
     }
 
     Optional<AspspAccountDetails> updateAccount(AspspAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails.getResourceId())
-                   .flatMap(psuRepository::findPsuByAccountDetailsList_Id)
+                   .flatMap(psuRepository::findPsuByAccountDetailsList_ResourceId)
                    .map(psu -> updateAccountInPsu(psu, accountDetails))
                    .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getResourceId()));
     }
