@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
+package de.adorsys.psd2.consent.server.service.mapper;
 
+import de.adorsys.psd2.consent.server.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Xs2aToSpiPsuDataMapper {
+public class PsuDataMapper {
 
-    public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData) {
-        if (psuIdData == null) {
-            return new SpiPsuData(null, null, null, null);
-        }
+    public PsuData mapToPsuData(PsuIdData psuData) {
+        return new PsuData(
+            psuData.getPsuId(),
+            psuData.getPsuIdType(),
+            psuData.getPsuCorporateId(),
+            psuData.getPsuCorporateIdType()
+        );
+    }
 
-        return new SpiPsuData(
-            psuIdData.getPsuId(),
-            psuIdData.getPsuIdType(),
-            psuIdData.getPsuCorporateId(),
-            psuIdData.getPsuCorporateIdType()
+    public PsuIdData mapToPsuIdData(PsuData psuData) {
+        return new PsuIdData(
+            psuData.getPsuId(),
+            psuData.getPsuIdType(),
+            psuData.getPsuCorporateId(),
+            psuData.getPsuCorporateIdType()
         );
     }
 }

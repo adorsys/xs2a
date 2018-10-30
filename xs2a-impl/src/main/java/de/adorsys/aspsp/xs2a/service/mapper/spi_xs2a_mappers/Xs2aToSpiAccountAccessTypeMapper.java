@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import lombok.Data;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccessType;
+import org.springframework.stereotype.Component;
 
-@Data
-public class PaymentInitiationParameters {
-    private PaymentType paymentType;
-    private PaymentProduct paymentProduct;
-    private String qwacCertificate;
-    private String tppRedirectUri;
-    private String tppNokRedirectUri;
-    private boolean tppExplicitAuthorisationPreferred;
-    private PsuIdData psuData;
+import java.util.Optional;
+
+@Component
+public class Xs2aToSpiAccountAccessTypeMapper {
+
+    public SpiAccountAccessType mapToAccountAccessType(Xs2aAccountAccessType accessType) {
+        return Optional.ofNullable(accessType)
+                   .map(at -> SpiAccountAccessType.valueOf(at.name()))
+                   .orElse(null);
+    }
 }

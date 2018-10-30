@@ -32,6 +32,7 @@ import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -189,7 +190,7 @@ public class CmsExecutor {
         request.setAccess(buildAccess());
         request.setCombinedServiceIndicator(true);
         request.setFrequencyPerDay(10);
-        request.setPsuId("psu-id-1");
+        request.setPsuData(new PsuIdData("psu-id-1", null, null, null));
         request.setRecurringIndicator(true);
         request.setTppId("tpp-id-1");
         request.setValidUntil(LocalDate.of(2020, 12, 31));

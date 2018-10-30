@@ -83,8 +83,9 @@ public class ConsentController implements ConsentApi {
 
     @Override
     public ResponseEntity startConsentAuthorisation(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         ResponseObject<CreateConsentAuthorizationResponse> consentAuthorizationWithResponse =
-            consentService.createConsentAuthorizationWithResponse(PSU_ID, consentId);
+            consentService.createConsentAuthorizationWithResponse(psuData, consentId);
         return responseMapper.created(consentAuthorizationWithResponse, authorisationMapper::mapToStartScaProcessResponse);
     }
 
@@ -112,8 +113,7 @@ public class ConsentController implements ConsentApi {
 
     @Override
     public ResponseEntity deleteConsent(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        PsuIdData psuData = new PsuIdData(null, null, null, null);
-        ResponseObject<Void> response = consentService.deleteAccountConsentsById(consentId, psuData);
+        ResponseObject<Void> response = consentService.deleteAccountConsentsById(consentId);
         return responseMapper.delete(response);
     }
 }

@@ -59,7 +59,7 @@ public class FundsConfirmationControllerTest {
 
     @Before
     public void setUp() {
-        when(fundsConfirmationService.fundsConfirmation(any(), any())).thenReturn(readResponseObject());
+        when(fundsConfirmationService.fundsConfirmation(any())).thenReturn(readResponseObject());
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 

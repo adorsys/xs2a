@@ -91,9 +91,9 @@ public class PaymentControllerTest {
 
     @Before
     public void setUp() {
-        when(paymentService.getPaymentById(SINGLE, CORRECT_PAYMENT_ID, PSU_ID_DATA))
+        when(paymentService.getPaymentById(SINGLE, CORRECT_PAYMENT_ID))
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
-        when(paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID, PSU_ID_DATA))
+        when(paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID))
             .thenReturn(ResponseObject.builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(aspspProfileService.getPisRedirectUrlToAspsp())
@@ -104,9 +104,9 @@ public class PaymentControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() {
-        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, CORRECT_PAYMENT_ID, PSU_ID_DATA))
+        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, CORRECT_PAYMENT_ID))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().body(Xs2aTransactionStatus.ACCP).build());
-        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, WRONG_PAYMENT_ID, PSU_ID_DATA))
+        when(paymentService.getPaymentStatusById(PaymentType.SINGLE, WRONG_PAYMENT_ID))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
@@ -211,7 +211,7 @@ public class PaymentControllerTest {
     public void cancelPayment_WithoutAuthorisation_Success() {
         when(responseMapper.ok(any()))
             .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(TransactionStatus.CANC), HttpStatus.OK));
-        when(paymentService.cancelPayment(any(), any(), any())).thenReturn(getCancelPaymentResponseObject(false));
+        when(paymentService.cancelPayment(any(), any())).thenReturn(getCancelPaymentResponseObject(false));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
@@ -233,7 +233,7 @@ public class PaymentControllerTest {
     public void cancelPayment_WithAuthorisation_Success() {
         when(responseMapper.accepted(any()))
             .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(TransactionStatus.ACTC), HttpStatus.ACCEPTED));
-        when(paymentService.cancelPayment(any(), any(), any())).thenReturn(getCancelPaymentResponseObject(true));
+        when(paymentService.cancelPayment(any(), any())).thenReturn(getCancelPaymentResponseObject(true));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;

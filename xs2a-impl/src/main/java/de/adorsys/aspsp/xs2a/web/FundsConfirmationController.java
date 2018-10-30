@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.service.mapper.FundsConfirmationModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.api.FundsConfirmationApi;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +42,6 @@ public class FundsConfirmationController implements FundsConfirmationApi {
 
     @Override
     public ResponseEntity checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
-        PsuIdData psuData = new PsuIdData(null, null, null, null);
-        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body), psuData));
+        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body)));
     }
 }

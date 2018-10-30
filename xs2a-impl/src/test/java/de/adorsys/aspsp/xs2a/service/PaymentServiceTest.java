@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.PisSpuDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
@@ -104,6 +105,8 @@ public class PaymentServiceTest {
     private AspspProfileServiceWrapper aspspProfileService;
     @Mock
     private Xs2aToSpiPsuDataMapper psuDataMapper;
+    @Mock
+    private PisSpuDataService pisSpuDataService;
 
     @Before
     public void setUp() {
@@ -138,7 +141,7 @@ public class PaymentServiceTest {
     @Test
     public void createBulkPayments() {
         //When
-        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters(), PSU_ID_DATA);
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters());
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -148,9 +151,11 @@ public class PaymentServiceTest {
     @Test
     public void cancelPayment_Success_WithAuthorisation() {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.TRUE);
+        when(pisSpuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(PSU_ID_DATA);
 
         // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID, PSU_ID_DATA);
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
 
         // Then
         assertThat(actual.getBody()).isNotNull();
@@ -160,9 +165,11 @@ public class PaymentServiceTest {
     @Test
     public void cancelPayment_Success_WithoutAuthorisation() {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
+        when(pisSpuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(PSU_ID_DATA);
 
         // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID, PSU_ID_DATA);
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
 
         // Then
         assertThat(actual.getBody()).isNotNull();

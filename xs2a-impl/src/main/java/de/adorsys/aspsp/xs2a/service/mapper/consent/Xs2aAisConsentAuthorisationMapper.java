@@ -47,11 +47,11 @@ public class Xs2aAisConsentAuthorisationMapper {
                    .orElse(null);
     }
 
-    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(ScaStatus scaStatus, String psuId) {
+    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(ScaStatus scaStatus, PsuIdData psuData) {
         return Optional.ofNullable(scaStatus)
                    .map(st -> {
                        AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
-                       consentAuthorization.setPsuId(psuId);
+                       consentAuthorization.setPsuData(psuData);
                        consentAuthorization.setScaStatus(scaStatus);
                        return consentAuthorization;
                    })
@@ -62,7 +62,7 @@ public class Xs2aAisConsentAuthorisationMapper {
         return Optional.ofNullable(updatePsuData)
                    .map(data -> {
                        AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
-                       consentAuthorization.setPsuId(Optional.ofNullable(data.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
+                       consentAuthorization.setPsuData(data.getPsuData());
                        consentAuthorization.setScaStatus(data.getScaStatus());
                        consentAuthorization.setAuthenticationMethodId(data.getAuthenticationMethodId());
                        consentAuthorization.setPassword(data.getPassword());

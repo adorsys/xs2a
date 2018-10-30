@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import lombok.Data;
+import org.springframework.stereotype.Service;
 
-@Data
-public class PaymentInitiationParameters {
-    private PaymentType paymentType;
-    private PaymentProduct paymentProduct;
-    private String qwacCertificate;
-    private String tppRedirectUri;
-    private String tppNokRedirectUri;
-    private boolean tppExplicitAuthorisationPreferred;
-    private PsuIdData psuData;
+//TODO Implement this class properly during implementation of FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
+@Service
+public class FundsConfirmationPsuDataService {
+
+    public PsuIdData getPsuDataByConsentId(String consentId) {
+        return new PsuIdData(null, null, null, null);
+    }
 }

@@ -41,6 +41,7 @@ public class FundsConfirmationService {
     private final AccountReferenceValidationService referenceValidationService;
     private final FundsConfirmationSpi fundsConfirmationSpi;
     private final FundsConfirmationConsentDataService fundsConfirmationConsentDataService;
+    private final FundsConfirmationPsuDataService fundsConfirmationPsuDataService;
     private final Xs2aToSpiAmountMapper xs2aToSpiAmountMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
@@ -51,7 +52,7 @@ public class FundsConfirmationService {
      * @param request Contains the requested balanceAmount in order to comparing with available balanceAmount on account
      * @return Response with result 'true' if there are enough funds on the account, 'false' if not
      */
-    public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request, PsuIdData psuData) {
+    public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
         ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(request.getAccountReferences());
 
         if (accountReferenceValidationResponse.hasError()) {
@@ -63,6 +64,7 @@ public class FundsConfirmationService {
         SpiAccountReference accountReference = xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(request.getPsuAccount());
         SpiAmount amount = xs2aToSpiAmountMapper.mapToSpiAmount(request.getInstructedAmount());
         AspspConsentData aspspConsentData = fundsConfirmationConsentDataService.getAspspConsentDataByConsentId("Put here actual consent data"); // TODO Read it by actual consent_id https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
+        PsuIdData psuData = fundsConfirmationPsuDataService.getPsuDataByConsentId("Put here actual consent data");// TODO Read it by actual consent_id https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<Boolean> fundsSufficientCheck = fundsConfirmationSpi.performFundsSufficientCheck(

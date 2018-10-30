@@ -61,9 +61,8 @@ public class PaymentController implements PaymentApi {
                                                      Object psUIPPort, String psUAccept, String psUAcceptCharset,
                                                      String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        PsuIdData psuData = new PsuIdData(null, null, null, null);
         ResponseObject<Xs2aTransactionStatus> response = PaymentType.getByValue(paymentService)
-                                                             .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId, psuData))
+                                                             .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId))
                                                              .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
                                                                             .fail(new MessageError(FORMAT_ERROR))::build);
 
@@ -76,9 +75,8 @@ public class PaymentController implements PaymentApi {
                                                 Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                                 String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
                                                 UUID psUDeviceID, String psUGeoLocation) {
-        PsuIdData psuData = new PsuIdData(null, null, null, null);
         ResponseObject response = PaymentType.getByValue(paymentService)
-                                      .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentId, psuData))
+                                      .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentId))
                                       .orElseGet(ResponseObject.builder()
                                                      .fail(new MessageError(FORMAT_ERROR))::build);
 
@@ -98,10 +96,10 @@ public class PaymentController implements PaymentApi {
                                           Object psUIPPort, String psUAccept, String psUAcceptCharset,
                                           String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
                                           String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        PsuIdData psuData = new PsuIdData(null, null, null, null);
-        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), PSU_ID);
+        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
         ResponseObject serviceResponse =
-            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, paymentInitiationParameters), paymentInitiationParameters, psuData);
+            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, paymentInitiationParameters), paymentInitiationParameters);
 
         return serviceResponse.hasError()
                    ? responseMapper.created(serviceResponse)
@@ -113,9 +111,8 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity cancelPayment(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        PsuIdData psuData = new PsuIdData(null, null, null, null);
         ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
-                                                                    .map(type -> xs2aPaymentService.cancelPayment(type, paymentId, psuData))
+                                                                    .map(type -> xs2aPaymentService.cancelPayment(type, paymentId))
                                                                     .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
                                                                                    .fail(new MessageError(FORMAT_ERROR))::build);
 
@@ -154,8 +151,9 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity startPaymentAuthorisation(String paymentService, String paymentId, UUID xRequestID, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
-        return responseMapper.created(consentService.createPisConsentAuthorization(paymentId, PaymentType.getByValue(paymentService).get()), consentModelMapper::mapToStartScaProcessResponse);
+        return responseMapper.created(consentService.createPisConsentAuthorization(paymentId, PaymentType.getByValue(paymentService).get(), psuData), consentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override

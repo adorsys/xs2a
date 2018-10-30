@@ -40,7 +40,6 @@ public class ConsentMapper {
         return Optional.ofNullable(req)
                    .map(r -> {
                        CreateAisConsentRequest request = new CreateAisConsentRequest();
-                       request.setPsuId(psuId);
                        request.setTppId(tppId);
                        request.setFrequencyPerDay(r.getFrequencyPerDay());
                        request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));

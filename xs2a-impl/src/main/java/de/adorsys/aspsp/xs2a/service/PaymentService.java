@@ -26,6 +26,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.PisSpuDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
@@ -64,6 +65,7 @@ public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
     private final PisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
+    private final PisSpuDataService pisSpuDataService;
     private final TppService tppService;
     private final CreateSinglePaymentService createSinglePaymentService;
     private final CreatePeriodicPaymentService createPeriodicPaymentService;
@@ -84,11 +86,11 @@ public class PaymentService {
      * @param payment Payment information
      * @return Response containing information about created payment or corresponding error
      */
-    public ResponseObject createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters, PsuIdData psuData) {
+    public ResponseObject createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters) {
         TppInfo tppInfo = tppService.getTppInfo();
         tppInfo.setRedirectUri(paymentInitiationParameters.getTppRedirectUri());
         tppInfo.setNokRedirectUri(paymentInitiationParameters.getTppNokRedirectUri());
-        Xs2aPisConsent pisConsent = xs2aPisConsentMapper.mapToXs2aPisConsent(pisConsentService.createPisConsent(paymentInitiationParameters, tppInfo), psuData);
+        Xs2aPisConsent pisConsent = xs2aPisConsentMapper.mapToXs2aPisConsent(pisConsentService.createPisConsent(paymentInitiationParameters, tppInfo), paymentInitiationParameters.getPsuData());
         if (StringUtils.isBlank(pisConsent.getConsentId())) {
             return ResponseObject.builder()
                        .fail(new MessageError(CONSENT_UNKNOWN_400))
@@ -111,7 +113,9 @@ public class PaymentService {
      * @param paymentId   ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject getPaymentById(PaymentType paymentType, String paymentId, PsuIdData psuData) {
+    public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
+        PsuIdData psuData = pisSpuDataService.getPsuDataByPaymentId(paymentId);
+
         ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
         PaymentInformationResponse response = readPaymentService.getPayment(paymentId, PaymentProduct.SEPA, psuData); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 
@@ -132,9 +136,12 @@ public class PaymentService {
      * @param paymentId   String representation of payment primary ASPSP identifier
      * @return Information about the status of a payment
      */
-    public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId, PsuIdData psuData) {
+    public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
+        PsuIdData psuData = pisSpuDataService.getPsuDataByPaymentId(paymentId);
+
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
+
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
             SpiSinglePayment payment = new SpiSinglePayment(null);
@@ -173,7 +180,7 @@ public class PaymentService {
      * @param paymentId   ASPSP identifier of the payment
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentId, PsuIdData psuData) {
+    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentId) {
         SpiPayment payment;
         switch (paymentType) {
             case SINGLE:
@@ -199,7 +206,9 @@ public class PaymentService {
         }
 
         AspspConsentData consentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
+        PsuIdData psuData = pisSpuDataService.getPsuDataByPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
+
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
             return cancelPaymentService.initiatePaymentCancellation(spiPsuData, payment, consentData);
         } else {
