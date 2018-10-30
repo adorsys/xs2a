@@ -69,7 +69,9 @@ public class AisConsentServiceRemote implements AisConsentService {
 
     @Override
     public Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request) {
-        return Optional.empty();
+        CreateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
+            new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
+        return Optional.ofNullable(response.getConsentId());
     }
 
     @Override

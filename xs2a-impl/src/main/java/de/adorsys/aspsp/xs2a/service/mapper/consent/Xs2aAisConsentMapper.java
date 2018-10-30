@@ -196,6 +196,7 @@ public class Xs2aAisConsentMapper {
 
     private SpiAccountReference mapToSpiAccountReference(CmsAccountReference cms) {
         return new SpiAccountReference(
+            cms.getResourceId(),
             cms.getIban(),
             cms.getBban(),
             cms.getPan(),
