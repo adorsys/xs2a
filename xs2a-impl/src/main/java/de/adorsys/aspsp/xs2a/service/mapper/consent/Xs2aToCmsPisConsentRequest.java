@@ -143,6 +143,7 @@ public class Xs2aToCmsPisConsentRequest {
     private CmsAccountReference mapToPisAccountReference(Xs2aAccountReference xs2aAccountReference) {
         return Optional.ofNullable(xs2aAccountReference)
                    .map(ref -> new CmsAccountReference(
+                       ref.getResourceId(),
                        ref.getIban(),
                        ref.getBban(),
                        ref.getPan(),

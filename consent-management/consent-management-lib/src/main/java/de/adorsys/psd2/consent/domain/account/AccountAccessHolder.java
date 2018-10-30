@@ -30,7 +30,7 @@ public class AccountAccessHolder {
     public void fillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
         if (CollectionUtils.isNotEmpty(info)) {
             for (AccountInfo a : info) {
-                addAccountAccess(a.getIban(), getCurrencyByString(a.getCurrency()), typeAccess);
+                addAccountAccess(a.getResourceId(), a.getIban(), getCurrencyByString(a.getCurrency()), typeAccess);
             }
         }
     }
@@ -41,10 +41,10 @@ public class AccountAccessHolder {
                    .orElse(null);
     }
 
-    private void addAccountAccess(String iban, Currency currency, TypeAccess typeAccess) {
-        accountAccesses.add(new AccountAccess(iban, currency, typeAccess));
+    private void addAccountAccess(String resourceId, String iban, Currency currency, TypeAccess typeAccess) {
+        accountAccesses.add(new AccountAccess(resourceId, iban, currency, typeAccess));
         if (EnumSet.of(TypeAccess.BALANCE, TypeAccess.TRANSACTION).contains(typeAccess)) {
-            accountAccesses.add(new AccountAccess(iban, currency, TypeAccess.ACCOUNT));
+            accountAccesses.add(new AccountAccess(resourceId, iban, currency, TypeAccess.ACCOUNT));
         }
     }
 }

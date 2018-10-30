@@ -19,6 +19,8 @@ package de.adorsys.aspsp.xs2a.service.consent;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +40,10 @@ public class AisConsentDataService {
     public void updateAspspConsentData(AspspConsentData consentData) {
         String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
         aisConsentService.saveAspspConsentDataInAisConsent(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload));
+    }
+
+    public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
+        consentRestTemplate.put(aisConsentRemoteUrls.updateAisAccountAccess(),
+            aisAccountAccessInfo, consentId);
     }
 }

@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Optional;
+import java.util.UUID;
 
 import static de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +88,8 @@ public class PaymentControllerTest {
         HttpStatus expectedStatus = HttpStatus.CREATED;
 
         //When
-        ResponseEntity<AspspSinglePayment> actualResponse = paymentController.createSinglePayment(getAspspSinglePayment());
+        ResponseEntity<AspspSinglePayment> actualResponse =
+            paymentController.createSinglePayment(getAspspSinglePayment());
 
         //Then
         HttpStatus actualStatus = actualResponse.getStatusCode();
@@ -194,15 +196,18 @@ public class PaymentControllerTest {
     }
 
     private AspspAccountReference getReference() {
-        return new AspspAccountReference("DE23100120020123456789",
-                                         null,
-                                         null,
-                                         null,
-                                         null,
-                                         Currency.getInstance("EUR"));
+        return new AspspAccountReference(
+            null,
+            "DE23100120020123456789",
+            null,
+            null,
+            null,
+            null,
+            Currency.getInstance("EUR"));
     }
 
-    private AspspPaymentCancellationResponse getAspspPaymentCancellationResponse(boolean authorisationMandated, AspspTransactionStatus transactionStatus) {
+    private AspspPaymentCancellationResponse getAspspPaymentCancellationResponse(boolean authorisationMandated,
+                                                                                 AspspTransactionStatus transactionStatus) {
         AspspPaymentCancellationResponse response = new AspspPaymentCancellationResponse();
         response.setCancellationAuthorisationMandated(authorisationMandated);
         response.setTransactionStatus(transactionStatus);

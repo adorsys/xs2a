@@ -128,8 +128,8 @@ public class TransactionServiceTest {
 
     private AspspTransaction getTransaction() {
         return new AspspTransaction(TRANSACTION_ID, null, null, "Creditor_id", null, null, DATE, DATE, new AspspAmount(EUR, BigDecimal.valueOf(1000)), null, "Creditor",
-                                    new AspspAccountReference(IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
-                                    new AspspAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
+                                    new AspspAccountReference(null, IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
+                                    new AspspAccountReference(null, IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
     }
 
     private AspspAccountDetails getDetails() {

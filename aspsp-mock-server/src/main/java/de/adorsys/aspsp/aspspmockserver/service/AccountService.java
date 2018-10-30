@@ -43,7 +43,7 @@ public class AccountService {
     public Optional<AspspAccountDetails> addAccount(String psuId, AspspAccountDetails accountDetails) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
                    .map(psu -> addAccountToPsuAndSave(psu, accountDetails))
-                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
+                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getResourceId()));
     }
 
     /**
@@ -128,20 +128,20 @@ public class AccountService {
     }
 
     Optional<AspspAccountDetails> updateAccount(AspspAccountDetails accountDetails) {
-        return Optional.ofNullable(accountDetails.getId())
+        return Optional.ofNullable(accountDetails.getResourceId())
                    .flatMap(psuRepository::findPsuByAccountDetailsList_Id)
                    .map(psu -> updateAccountInPsu(psu, accountDetails))
-                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
+                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getResourceId()));
     }
 
     private Psu updateAccountInPsu(Psu psu, AspspAccountDetails accountDetails) {
-        Psu filteredPsu = getPsuWithFilteredAccountListById(psu, accountDetails.getId());
+        Psu filteredPsu = getPsuWithFilteredAccountListById(psu, accountDetails.getResourceId());
         return addAccountToPsuAndSave(filteredPsu, accountDetails);
     }
 
     private Optional<AspspAccountDetails> findAccountInPsuById(Psu psu, String accountId) {
         return psu.getAccountDetailsList().stream()
-                   .filter(acc -> acc.getId().equals(accountId))
+                   .filter(acc -> acc.getResourceId().equals(accountId))
                    .findFirst();
     }
 
@@ -157,7 +157,7 @@ public class AccountService {
 
     private List<AspspAccountDetails> getFilteredAccountDetailsListFromPsuById(Psu psu, String accountId) {
         return psu.getAccountDetailsList().stream()
-                   .filter(ad -> !ad.getId().equals(accountId))
+                   .filter(ad -> !ad.getResourceId().equals(accountId))
                    .collect(Collectors.toList());
     }
 }

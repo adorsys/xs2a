@@ -115,4 +115,13 @@ public class AisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
     public String updateAspspConsentData() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/aspsp-consent-data";
     }
+
+    /**
+     * Returns URL-string to CMS endpoint that updates AccountAccess
+     *
+     * @return String
+     */
+    public String updateAisAccountAccess() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/access";
+    }
 }

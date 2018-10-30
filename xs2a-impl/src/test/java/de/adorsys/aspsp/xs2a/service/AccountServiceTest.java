@@ -655,7 +655,7 @@ public class AccountServiceTest {
 
     // Needed because SpiAccountReference is final, so it's impossible to mock it
     private static SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference(IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+        return new SpiAccountReference(UUID.randomUUID().toString(), IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it
