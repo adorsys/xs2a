@@ -19,12 +19,10 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.web.mapper.CoreObjectsMapper;
-import de.adorsys.psd2.consent.api.CmsScaMethod;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.model.AuthenticationType;
-import de.adorsys.psd2.model.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -41,86 +39,87 @@ public class ConsentModelMapper {
 
     public CreateConsentReq mapToCreateConsentReq(Consents consent) {
         return Optional.ofNullable(consent)
-            .map(cnst -> {
-                CreateConsentReq createAisConsentRequest = new CreateConsentReq();
-                createAisConsentRequest.setAccess(mapToAccountAccessInner(cnst.getAccess()));
-                createAisConsentRequest.setRecurringIndicator(cnst.getRecurringIndicator());
-                createAisConsentRequest.setValidUntil(cnst.getValidUntil());
-                createAisConsentRequest.setFrequencyPerDay(cnst.getFrequencyPerDay());
-                createAisConsentRequest.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
-                return createAisConsentRequest;
-            })
-            .orElse(null);
+                   .map(cnst -> {
+                       CreateConsentReq createAisConsentRequest = new CreateConsentReq();
+                       createAisConsentRequest.setAccess(mapToAccountAccessInner(cnst.getAccess()));
+                       createAisConsentRequest.setRecurringIndicator(cnst.getRecurringIndicator());
+                       createAisConsentRequest.setValidUntil(cnst.getValidUntil());
+                       createAisConsentRequest.setFrequencyPerDay(cnst.getFrequencyPerDay());
+                       createAisConsentRequest.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
+                       return createAisConsentRequest;
+                   })
+                   .orElse(null);
     }
 
     public ConsentStatusResponse200 mapToConsentStatusResponse200(ConsentStatusResponse consentStatusResponse) {
         return Optional.ofNullable(consentStatusResponse)
-            .map(cstr -> new ConsentStatusResponse200().consentStatus(ConsentStatus.fromValue(cstr.getConsentStatus())))
-            .orElse(null);
+                   .map(cstr -> new ConsentStatusResponse200().consentStatus(ConsentStatus.fromValue(cstr.getConsentStatus())))
+                   .orElse(null);
     }
 
     public StartScaprocessResponse mapToStartScaProcessResponse(Xsa2CreatePisConsentAuthorisationResponse response) {
         return Optional.ofNullable(response)
-            .map(r -> new StartScaprocessResponse()
-                .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
-                ._links(objectMapper.convertValue(r.getLinks(), Map.class)))
-            .orElse(null);
+                   .map(r -> new StartScaprocessResponse()
+                                 .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
+                                 ._links(objectMapper.convertValue(r.getLinks(), Map.class)))
+                   .orElse(null);
     }
 
     public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisConsentCancellationAuthorisationResponse response) {
         return new StartScaprocessResponse()
-                        .scaStatus(coreObjectsMapper.mapToModelScaStatus(response.getScaStatus()))
-                        ._links(objectMapper.convertValue(response.getLinks(), Map.class));
+                   .scaStatus(coreObjectsMapper.mapToModelScaStatus(response.getScaStatus()))
+                   ._links(objectMapper.convertValue(response.getLinks(), Map.class));
     }
 
     public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
-            .map(r ->
-                // TODO add mapping of chosenScaMethod after ChosenScaMethod generated entity will be updated in the specification https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/335
-                new UpdatePsuAuthenticationResponse()
-                    ._links(objectMapper.convertValue(response.getLinks(), Map.class))
-                    .scaMethods(getAvailableScaMethods(r.getAvailableScaMethods()))
-                    .scaStatus(
-                        Optional.ofNullable(r.getScaStatus())
-                            .map(s -> ScaStatus.valueOf(s.name()))
-                            .orElse(null)
-                    )
-            )
-            .orElse(null);
+                   .map(r ->
+                            // TODO add mapping of chosenScaMethod after ChosenScaMethod generated entity will be updated in the specification https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/335
+                            new UpdatePsuAuthenticationResponse()
+                                ._links(objectMapper.convertValue(response.getLinks(), Map.class))
+                                .scaMethods(getAvailableScaMethods(r.getAvailableScaMethods()))
+                                .scaStatus(
+                                    Optional.ofNullable(r.getScaStatus())
+                                        .map(s -> ScaStatus.valueOf(s.name()))
+                                        .orElse(null)
+                                )
+                                .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
+                   )
+                   .orElse(null);
     }
 
     public ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
         return Optional.ofNullable(createConsentResponse)
-            .map(cnst ->
-                new ConsentsResponse201()
-                    .consentStatus(ConsentStatus.fromValue(cnst.getConsentStatus()))
-                    .consentId(cnst.getConsentId())
-                    .scaMethods(mapToScaMethodsOuter(cnst))
-                    ._links(objectMapper.convertValue(cnst.getLinks(), Map.class))
-                    .message(cnst.getPsuMessage())
-            )
-            .orElse(null);
+                   .map(cnst ->
+                            new ConsentsResponse201()
+                                .consentStatus(ConsentStatus.fromValue(cnst.getConsentStatus()))
+                                .consentId(cnst.getConsentId())
+                                .scaMethods(mapToScaMethodsOuter(cnst))
+                                ._links(objectMapper.convertValue(cnst.getLinks(), Map.class))
+                                .message(cnst.getPsuMessage())
+                   )
+                   .orElse(null);
     }
 
     public ConsentInformationResponse200Json mapToConsentInformationResponse200Json(AccountConsent accountConsent) {
         return Optional.ofNullable(accountConsent)
-            .map(consent ->
-                new ConsentInformationResponse200Json()
-                    .access(mapToAccountAccessDomain(consent.getAccess()))
-                    .recurringIndicator(consent.isRecurringIndicator())
-                    .validUntil(consent.getValidUntil())
-                    .frequencyPerDay(consent.getFrequencyPerDay())
-                    .lastActionDate(consent.getLastActionDate())
-                    .consentStatus(ConsentStatus.fromValue(consent.getConsentStatus().getValue()))
-            )
-            .orElse(null);
+                   .map(consent ->
+                            new ConsentInformationResponse200Json()
+                                .access(mapToAccountAccessDomain(consent.getAccess()))
+                                .recurringIndicator(consent.isRecurringIndicator())
+                                .validUntil(consent.getValidUntil())
+                                .frequencyPerDay(consent.getFrequencyPerDay())
+                                .lastActionDate(consent.getLastActionDate())
+                                .consentStatus(ConsentStatus.fromValue(consent.getConsentStatus().getValue()))
+                   )
+                   .orElse(null);
     }
 
     private ScaMethods mapToScaMethodsOuter(CreateConsentResponse createConsentResponse) {
         List<AuthenticationObject> authList = Optional.ofNullable(createConsentResponse.getScaMethods())
                                                   .map(arr -> Arrays.stream(arr)
                                                                   .map(au -> new AuthenticationObject()
-                                                                                 .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType().getDescription()))
+                                                                                 .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType()))
                                                                                  .authenticationVersion(au.getAuthenticationVersion())
                                                                                  .authenticationMethodId(au.getAuthenticationMethodId())
                                                                                  .name(au.getName())
@@ -135,63 +134,63 @@ public class ConsentModelMapper {
 
     private Xs2aAccountAccess mapToAccountAccessInner(AccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
-            .map(acs ->
-                new Xs2aAccountAccess(
-                    mapToXs2aAccountReferences(acs.getAccounts()),
-                    mapToXs2aAccountReferences(acs.getBalances()),
-                    mapToXs2aAccountReferences(acs.getTransactions()),
-                    mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
-                    mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2())
-                ))
-            .orElse(null);
+                   .map(acs ->
+                            new Xs2aAccountAccess(
+                                mapToXs2aAccountReferences(acs.getAccounts()),
+                                mapToXs2aAccountReferences(acs.getBalances()),
+                                mapToXs2aAccountReferences(acs.getTransactions()),
+                                mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
+                                mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2())
+                            ))
+                   .orElse(null);
     }
 
     private AccountAccess mapToAccountAccessDomain(Xs2aAccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
-            .map(access -> {
-                    AccountAccess mappedAccountAccess = new AccountAccess();
-                    mappedAccountAccess.setAccounts(new ArrayList<>(access.getAccounts()));
-                    mappedAccountAccess.setBalances(new ArrayList<>(access.getBalances()));
-                    mappedAccountAccess.setTransactions(new ArrayList<>(access.getTransactions()));
-                    mappedAccountAccess.setAvailableAccounts(
-                        AccountAccess.AvailableAccountsEnum.fromValue(
-                            Optional.ofNullable(access.getAvailableAccounts())
-                                .map(Xs2aAccountAccessType::getDescription)
-                                .orElse(null)
-                        )
-                    );
-                    mappedAccountAccess.setAllPsd2(
-                        AccountAccess.AllPsd2Enum.fromValue(
-                            Optional.ofNullable(access.getAllPsd2())
-                                .map(Xs2aAccountAccessType::getDescription)
-                                .orElse(null)
-                        )
-                    );
+                   .map(access -> {
+                           AccountAccess mappedAccountAccess = new AccountAccess();
+                           mappedAccountAccess.setAccounts(new ArrayList<>(access.getAccounts()));
+                           mappedAccountAccess.setBalances(new ArrayList<>(access.getBalances()));
+                           mappedAccountAccess.setTransactions(new ArrayList<>(access.getTransactions()));
+                           mappedAccountAccess.setAvailableAccounts(
+                               AccountAccess.AvailableAccountsEnum.fromValue(
+                                   Optional.ofNullable(access.getAvailableAccounts())
+                                       .map(Xs2aAccountAccessType::getDescription)
+                                       .orElse(null)
+                               )
+                           );
+                           mappedAccountAccess.setAllPsd2(
+                               AccountAccess.AllPsd2Enum.fromValue(
+                                   Optional.ofNullable(access.getAllPsd2())
+                                       .map(Xs2aAccountAccessType::getDescription)
+                                       .orElse(null)
+                               )
+                           );
 
-                    return mappedAccountAccess;
-                }
-            )
-            .orElse(null);
+                           return mappedAccountAccess;
+                       }
+                   )
+                   .orElse(null);
     }
 
     private Xs2aAccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
-            .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
-            .orElse(null);
+                   .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
+                   .orElse(null);
     }
 
     private Xs2aAccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
         return Optional.ofNullable(allPsd2Enum)
-            .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
-            .orElse(null);
+                   .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
+                   .orElse(null);
     }
 
     private List<Xs2aAccountReference> mapToXs2aAccountReferences(List<Object> references) {
         return Optional.ofNullable(references)
-            .map(ref -> ref.stream()
-                .map(this::mapToXs2aAccountReference)
-                .collect(Collectors.toList()))
-            .orElseGet(Collections::emptyList);
+                   .map(ref -> ref.stream()
+                                   .map(this::mapToXs2aAccountReference)
+                                   .collect(Collectors.toList()))
+                   .orElseGet(Collections::emptyList);
     }
 
     private Xs2aAccountReference mapToXs2aAccountReference(Object reference) {
@@ -223,8 +222,8 @@ public class ConsentModelMapper {
         return updatePsuData;
     }
 
-    public UpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(String psuId, String paymentId, String authorisationId, String paymentService, Map body) {
-        UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
+    public Xs2aUpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(String psuId, String paymentId, String authorisationId, String paymentService, Map body) {
+        Xs2aUpdatePisConsentPsuDataRequest request = new Xs2aUpdatePisConsentPsuDataRequest();
         request.setPsuId(psuId);
         request.setPaymentId(paymentId);
         request.setAuthorizationId(authorisationId);
@@ -246,30 +245,37 @@ public class ConsentModelMapper {
 
     public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(Xs2aUpdatePisConsentPsuDataResponse response) {
         return new UpdatePsuAuthenticationResponse()
-            ._links(objectMapper.convertValue(response.getLinks(), Map.class))
-            .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
-            .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
-            .scaStatus(Optional.ofNullable(response.getScaStatus())
-                .map(ScaStatus::valueOf)
-                .orElse(ScaStatus.FAILED));
+                   ._links(objectMapper.convertValue(response.getLinks(), Map.class))
+                   .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
+                   .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
+                   .scaStatus(Optional.ofNullable(response.getScaStatus())
+                                  .map(s -> ScaStatus.fromValue(s.getValue()))
+                                  .orElse(ScaStatus.FAILED));
     }
 
-    private ScaMethods getAvailableScaMethods(List<CmsScaMethod> availableScaMethods) {
+    private ScaMethods getAvailableScaMethods(List<Xs2aAuthenticationObject> availableScaMethods) {
         ScaMethods scaMethods = new ScaMethods();
         if (CollectionUtils.isNotEmpty(availableScaMethods)) {
             availableScaMethods.forEach(a -> scaMethods.add(new AuthenticationObject()
-                .authenticationMethodId(a.name())));
+                                                                .authenticationMethodId(a.getAuthenticationMethodId())
+                                                                .authenticationType(AuthenticationType.fromValue(a.getAuthenticationType()))
+                                                                .authenticationVersion(a.getAuthenticationVersion())
+                                                                .name(a.getName())
+                                                                .explanation(a.getExplanation())));
         }
         return scaMethods;
     }
 
-    private ChosenScaMethod mapToChosenScaMethod(Xs2aChosenScaMethod xs2aChosenScaMethod) {
-        return Optional.ofNullable(xs2aChosenScaMethod)
-            .map(ch -> {
-                ChosenScaMethod method = new ChosenScaMethod();
-                method.setAuthenticationMethodId(ch.getAuthenticationMethodId());
-                method.setAuthenticationType(AuthenticationType.fromValue(ch.getAuthenticationType()));
-                return method;
-            }).orElse(null);
+    private ChosenScaMethod mapToChosenScaMethod(Xs2aAuthenticationObject xs2aAuthenticationObject) {
+        return Optional.ofNullable(xs2aAuthenticationObject)
+                   .map(ch -> {
+                       ChosenScaMethod method = new ChosenScaMethod();
+                       method.setAuthenticationMethodId(ch.getAuthenticationMethodId());
+                       method.setAuthenticationType(AuthenticationType.fromValue(ch.getAuthenticationType()));
+                       method.setAuthenticationVersion(ch.getAuthenticationVersion());
+                       method.setName(ch.getName());
+                       method.setExplanation(ch.getExplanation());
+                       return method;
+                   }).orElse(null);
     }
 }

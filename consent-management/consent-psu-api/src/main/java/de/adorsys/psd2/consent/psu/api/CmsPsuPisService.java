@@ -1,0 +1,65 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package de.adorsys.psd2.consent.psu.api;
+
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import org.jetbrains.annotations.NotNull;
+
+
+public interface CmsPsuPisService {
+    /**
+     * Updates PSU Data in Payment, based on the trusted information about PSU known to ASPSP (i.e. after authorisation)
+     *
+     * @param psuIdData PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
+     * @param paymentId External ID of Payment known to TPP and ASPSP
+     * @return <code>true</code> if payment was found and data was updated. <code>false</code> otherwise.
+     */
+    boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
+
+    /**
+     * Returns Payment object by its ID
+     *
+     * @param psuIdData PSU credentials data
+     * @param paymentId ID of Payment
+     * @return Payment object if it was found and it corresponds to the user data given in parameter
+     */
+    //TODO Create common Payment object in consent-core-api (analog to SpiPayment) and use it here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/456
+    @NotNull
+    Object/*Payment*/ getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
+
+    /**
+     * Updates a Status of Payment's autorisation by its ID and PSU ID
+     *
+     * @param psuIdData PSU credentials data
+     * @param paymentId ID of Payment
+     * @param authorisationId ID of Authorisation process
+     * @param status    Status of Authorisation to be set
+     * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
+     */
+    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String authorisationId, @NotNull ScaStatus status);
+
+    /**
+     * Updates a Status of Payment object by its ID and PSU ID
+     *
+     * @param paymentId ID of Payment
+     * @param status    Status of Payment to be set
+     * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
+     */
+    //TODO Move Xs2aTransactionStatus to xs2a-core (de.adorsys.psd2.xs2a.core.pis.TransactionStatus) and use it here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/456
+    boolean updatePaymentStatus(@NotNull String paymentId, @NotNull Object/*TransactionStatus*/ status);
+}

@@ -47,7 +47,6 @@ import java.util.*;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
-// TODO cover with tests https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/451
 @Slf4j
 @Service
 @Validated
@@ -130,13 +129,16 @@ public class AccountService {
                        .build();
         }
 
-        Xs2aAccountDetails accountDetails = accountDetailsMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
+        SpiAccountDetails spiAccountDetails = spiResponse.getPayload();
 
-        if (accountDetails == null) {
+        //noinspection ConstantConditions - although @NotNull on paylod inside SpiResponse is set, but it couldn't be guaranteed by SPI implementation
+        if (spiAccountDetails == null) {
             return ResponseObject.<Xs2aAccountDetails>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)))
                        .build();
         }
+
+        Xs2aAccountDetails accountDetails = accountDetailsMapper.mapToXs2aAccountDetails(spiAccountDetails);
 
         boolean isValid = withBalance
                               ? consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())
@@ -220,7 +222,7 @@ public class AccountService {
      * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses
      * @return TransactionsReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
-    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(String accountId, boolean withBalance, String consentId, LocalDate dateFrom,
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(String consentId, String accountId, boolean withBalance, LocalDate dateFrom,
                                                                                 LocalDate dateTo, Xs2aBookingStatus bookingStatus) {
         ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId, withBalance);
         if (allowedAccountData.hasError()) {
@@ -238,6 +240,12 @@ public class AccountService {
 
         SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(accountId, isTransactionsShouldContainBalances, dateFrom, dateToChecked, aisConsentService.getAccountConsentById(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return ResponseObject.<Xs2aTransactionsReport>builder()
+                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())))
+                       .build();
+        }
 
         SpiTransactionReport spiTransactionReport = spiResponse.getPayload();
 
@@ -287,16 +295,21 @@ public class AccountService {
         SpiResponse<SpiTransaction> spiResponse = accountSpi.requestTransactionForAccountByTransactionId(transactionId, accountId, aisConsentService.getAccountConsentById(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
-        //noinspection ConstantConditions - although @NotNull on paylod inside SpiResponse is set, but it couldn't be guaranteed by SPI implementation
-        List<SpiTransaction> transactions = Optional.ofNullable(spiResponse.getPayload())
-                                                .map(Collections::singletonList)
-                                                .orElseGet(Collections::emptyList);
-
-        Optional<Xs2aAccountReport> report = transactionsToAccountReportMapper.mapToXs2aAccountReport(transactions);
-
-        if (!report.isPresent()) {
-            return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_403)).build();
+        if (spiResponse.hasError()) {
+            return ResponseObject.<Xs2aAccountReport>builder()
+                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())))
+                       .build();
         }
+
+        SpiTransaction payload = spiResponse.getPayload();
+
+        //noinspection ConstantConditions - although @NotNull on paylod inside SpiResponse is set, but it couldn't be guaranteed by SPI implementation
+        if (payload == null) {
+            return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
+        }
+
+        List<SpiTransaction> transactions = Collections.singletonList(payload);
+        Optional<Xs2aAccountReport> report = transactionsToAccountReportMapper.mapToXs2aAccountReport(transactions);
 
         ResponseObject<Xs2aAccountReport> response = ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build();
 

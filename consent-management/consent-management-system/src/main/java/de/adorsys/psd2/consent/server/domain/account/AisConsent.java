@@ -17,9 +17,9 @@
 package de.adorsys.psd2.consent.server.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
 import de.adorsys.psd2.consent.server.domain.ConsentType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.EXPIRED;
 
 @Data
 @ToString(exclude = {"accesses", "authorizations"})
@@ -83,7 +82,7 @@ public class AisConsent {
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
-    private CmsConsentStatus consentStatus;
+    private ConsentStatus consentStatus;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -130,7 +129,7 @@ public class AisConsent {
     }
 
     public boolean isStatusNotExpired() {
-        return consentStatus != EXPIRED;
+        return consentStatus != ConsentStatus.EXPIRED;
     }
 
     public boolean hasUsagesAvailable() {

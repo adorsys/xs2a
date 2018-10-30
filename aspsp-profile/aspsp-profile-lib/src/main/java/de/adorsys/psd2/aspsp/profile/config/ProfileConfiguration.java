@@ -130,6 +130,11 @@ public class ProfileConfiguration {
      */
     private boolean paymentCancellationAuthorizationMandated;
 
+    /**
+     * If the option is set to "true", than PIIS consent should be stored in CMS
+     */
+    private boolean piisConsentSupported;
+
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
         setDefaultPaymentType(PaymentType.SINGLE);

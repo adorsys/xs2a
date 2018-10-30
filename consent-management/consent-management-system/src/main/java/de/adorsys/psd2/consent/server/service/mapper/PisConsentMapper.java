@@ -16,17 +16,16 @@
 
 package de.adorsys.psd2.consent.server.service.mapper;
 
-import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.server.domain.ConsentType;
 import de.adorsys.psd2.consent.server.domain.payment.*;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -39,16 +38,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PisConsentMapper {
-    private final ConsentMapper consentMapper;
+    private final TppInfoMapper tppInfoMapper;
 
     public PisConsent mapToPisConsent(PisConsentRequest request) {
         PisConsent consent = new PisConsent();
         consent.setPayments(mapToPisPaymentDataList(request.getPayments(), consent));
-        consent.setTppInfo(consentMapper.mapToTppInfo(request.getTppInfo()));
+        consent.setTppInfo(tppInfoMapper.mapToTppInfo(request.getTppInfo()));
         consent.setPaymentType(request.getPaymentType());
         consent.setPisPaymentProduct(request.getPaymentProduct());
         consent.setConsentType(ConsentType.PIS);
-        consent.setConsentStatus(CmsConsentStatus.RECEIVED);
+        consent.setConsentStatus(ConsentStatus.RECEIVED);
         return consent;
     }
 
@@ -101,10 +100,6 @@ public class PisConsentMapper {
         return response;
     }
 
-    public UpdatePisConsentPsuDataResponse mapToUpdatePisConsentPsuDataResponse(PisConsentAuthorization pisConsentAuthorization) {
-        return new UpdatePisConsentPsuDataResponse(pisConsentAuthorization.getScaStatus());
-    }
-
     public Optional<PisConsentResponse> mapToPisConsentResponse(PisConsent pisConsent) {
         return Optional.ofNullable(pisConsent)
                    .map(pc -> {
@@ -114,7 +109,7 @@ public class PisConsentMapper {
                        response.setConsentStatus(pc.getConsentStatus());
                        response.setPaymentType(pc.getPaymentType());
                        response.setPaymentProduct(pc.getPisPaymentProduct());
-                       response.setTppInfo(consentMapper.mapToCmsTppInfo(pc.getTppInfo()));
+                       response.setTppInfo(tppInfoMapper.mapToCmsTppInfo(pc.getTppInfo()));
                        return response;
                    });
     }

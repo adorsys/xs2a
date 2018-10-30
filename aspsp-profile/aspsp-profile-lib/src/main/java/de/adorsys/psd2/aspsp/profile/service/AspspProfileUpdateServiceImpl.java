@@ -221,4 +221,14 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     public void updatePaymentCancellationAuthorizationMandated(boolean paymentCancellationAuthorizationMandated) {
         profileConfiguration.setPaymentCancellationAuthorizationMandated(paymentCancellationAuthorizationMandated);
     }
+
+    /**
+     * Update the value of PIIS consent supported
+     *
+     * @param piisConsentSupported the value of PIIS consent supported
+     */
+    @Override
+    public void updatePiisConsentSupported(boolean piisConsentSupported) {
+        profileConfiguration.setPiisConsentSupported(piisConsentSupported);
+    }
 }

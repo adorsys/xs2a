@@ -21,6 +21,8 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
@@ -33,11 +35,10 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusTo
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
@@ -53,9 +54,9 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 
 @Service
 @RequiredArgsConstructor
@@ -103,7 +104,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         aisConsentDataService.updateAspspConsentData(initiateAisConsentSpiResponse.getAspspConsentData());
 
         if (initiateAisConsentSpiResponse.hasError()) {
-            aisConsentService.updateConsentStatus(consentId, SpiConsentStatus.REJECTED);
+            aisConsentService.updateConsentStatus(consentId, ConsentStatus.REJECTED);
             return ResponseObject.<CreateConsentResponse>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCodeMapper.mapToMessageErrorCode(initiateAisConsentSpiResponse.getResponseStatus()))))
                        .build();
@@ -126,8 +127,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      */
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
         return Optional.ofNullable(getValidatedSpiAccountConsent(consentId))
-                   .map(consent -> aisConsentMapper.mapToConsentStatus(consent.getConsentStatus()))
-                   .map(status -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(status.get())).build())
+                   .map(consent -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(consent.getConsentStatus())).build())
                    .orElseGet(ResponseObject.<ConsentStatusResponse>builder()
                                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
                                   ::build);
@@ -245,14 +245,17 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                   ::build);
     }
 
-    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(UpdatePisConsentPsuDataRequest request) {
-        return pisAuthorizationService.updateConsentPsuData(request)
-                   .map(r -> ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
-                                 .body(r).build())
-                   .orElseGet(ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
-                                  .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
-                                  ::build);
+    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+        Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentPsuData(request);
 
+        if(response.hasError()){
+            return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+                .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
+                .build();
+        }
+        return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+                   .body(response)
+                   .build();
     }
 
     public ResponseObject<Xs2aCreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
@@ -261,16 +264,16 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                     .body(resp)
                                     .build())
                    .orElseGet(ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
-                                        .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
-                                        ::build);
+                                  .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
+                                  ::build);
     }
 
     public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
         return pisAuthorizationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
-                                        .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
-                                        ::build);
+                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                  ::build);
     }
 
     // TODO remove when the new validation is ready https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440

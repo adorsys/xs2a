@@ -36,8 +36,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;

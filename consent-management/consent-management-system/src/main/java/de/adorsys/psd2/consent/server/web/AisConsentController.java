@@ -16,9 +16,10 @@
 
 package de.adorsys.psd2.consent.server.web;
 
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
+
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.server.service.AisConsentService;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -80,7 +81,7 @@ public class AisConsentController {
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "Can check the status of an account information consent resource.")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsConsentStatus.class),
+        @ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<AisConsentStatusResponse> getConsentStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
@@ -100,7 +101,7 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId,
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String status) {
-        return aisConsentService.updateConsentStatusById(consentId, CmsConsentStatus.valueOf(status))
+        return aisConsentService.updateConsentStatusById(consentId, ConsentStatus.valueOf(status))
                    ? new ResponseEntity<>(HttpStatus.OK)
                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

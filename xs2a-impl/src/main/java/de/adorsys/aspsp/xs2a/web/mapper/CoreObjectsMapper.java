@@ -21,19 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 
 @Service
 public class CoreObjectsMapper {
     @Nullable
     public ScaStatus mapToModelScaStatus(@NotNull de.adorsys.psd2.xs2a.core.sca.ScaStatus scaStatus) {
         return ScaStatus.fromValue(scaStatus.getValue());
-    }
-
-    @NotNull
-    public Optional<de.adorsys.psd2.xs2a.core.sca.ScaStatus> mapToCoreScaStatus(@Nullable ScaStatus scaStatus) {
-        return Optional.ofNullable(scaStatus)
-            .map(s -> de.adorsys.psd2.xs2a.core.sca.ScaStatus.fromValue(s.toString()));
     }
 }
