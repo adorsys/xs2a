@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service;
+package de.adorsys.psd2.consent.service;
 
-/*
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
-import de.adorsys.psd2.consent.service.FrequencyPerDateCalculationService;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +48,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AisConsentServiceTest {
     @InjectMocks
-    private AisConsentService aisConsentService;
+    private AisConsentServiceInternal aisConsentService;
     @Mock
     private FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     @Mock
@@ -197,4 +194,3 @@ public class AisConsentServiceTest {
             false, false, null, null, null);
     }
 }
-*/

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.web;
+package de.adorsys.psd2.consent.web;
 
 
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
@@ -22,7 +22,6 @@ import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
-import de.adorsys.psd2.consent.web.AisConsentController;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.junit.Before;
 import org.junit.Test;
