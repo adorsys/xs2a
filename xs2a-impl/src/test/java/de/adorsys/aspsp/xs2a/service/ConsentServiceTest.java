@@ -444,7 +444,7 @@ public class ConsentServiceTest {
     }
 
     private SpiAccountReference getSpiReference(String iban, Currency currency) {
-        return new SpiAccountReference(iban, null, null, null, null, currency);
+        return new SpiAccountReference(null, iban, null, null, null, null, currency);
     }
 
     private List<SpiAccountReference> getSpiReferensesList(String iban) {

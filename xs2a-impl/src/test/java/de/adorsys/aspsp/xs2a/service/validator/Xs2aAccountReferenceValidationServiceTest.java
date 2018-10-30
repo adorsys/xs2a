@@ -28,10 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.Currency;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -87,6 +84,6 @@ public class Xs2aAccountReferenceValidationServiceTest {
     }
 
     private Xs2aAccountReference getReference(String iban, String bban, String pan, String masked, String msisdn) {
-        return new Xs2aAccountReference(iban, bban, pan, masked, msisdn, Currency.getInstance("EUR"));
+        return new Xs2aAccountReference(UUID.randomUUID().toString(), iban, bban, pan, masked, msisdn, Currency.getInstance("EUR"));
     }
 }

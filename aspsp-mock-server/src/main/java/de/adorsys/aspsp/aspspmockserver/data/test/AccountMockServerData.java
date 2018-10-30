@@ -247,7 +247,7 @@ public class AccountMockServerData {
     }
 
     private AspspAccountReference mapToReferenceFromDetails(AspspAccountDetails details) {
-        return new AspspAccountReference(details.getIban(), details.getBban(), details.getPan(), details.getMaskedPan(), details.getMsisdn(), details.getCurrency());
+        return new AspspAccountReference(details.getResourceId(), details.getIban(), details.getBban(), details.getPan(), details.getMaskedPan(), details.getMsisdn(), details.getCurrency());
     }
 
     private void fillTanRepository() {

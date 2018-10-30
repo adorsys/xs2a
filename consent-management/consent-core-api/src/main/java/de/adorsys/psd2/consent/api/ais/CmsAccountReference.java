@@ -22,11 +22,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Currency;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CmsAccountReference {
+    @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
+    private String resourceId;
+
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private String iban;
 
@@ -45,7 +49,7 @@ public class CmsAccountReference {
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
-    public CmsAccountReference(String iban, Currency currency) {
-        this(iban, null, null, null, null, currency);
+    public CmsAccountReference(String resourceId, String iban, Currency currency) {
+        this(resourceId, iban, null, null, null, null, currency);
     }
 }

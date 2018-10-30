@@ -87,6 +87,7 @@ public class ConsentMapper {
 
     private AccountInfo mapToAccountInfo(Xs2aAccountReference ref) {
         AccountInfo info = new AccountInfo();
+        info.setResourceId(ref.getResourceId());
         info.setIban(ref.getIban());
         info.setCurrency(Optional.ofNullable(ref.getCurrency())
                              .map(Currency::getCurrencyCode)

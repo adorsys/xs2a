@@ -33,7 +33,7 @@ public class AspspAccountDetails {
     @Id
     @Setter
     @NonFinal
-    private String id; // TODO shouldn't this be resourceId?
+    private String resourceId;
     /**
      * International Bank Account Number
      * 2 letters CountryCode + 2 digits checksum + BBAN

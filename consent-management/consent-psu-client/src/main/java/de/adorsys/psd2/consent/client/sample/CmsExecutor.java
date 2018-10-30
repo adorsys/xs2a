@@ -204,7 +204,7 @@ public class CmsExecutor {
      */
     private static AisAccountAccessInfo buildAccess() {
         AisAccountAccessInfo info = new AisAccountAccessInfo();
-        info.setAccounts(singletonList(new AccountInfo("iban-1", "EUR")));
+        info.setAccounts(singletonList(new AccountInfo(UUID.randomUUID().toString(), "iban-1", "EUR")));
         return info;
     }
 
@@ -323,12 +323,12 @@ public class CmsExecutor {
         PisPayment payment = new PisPayment();
         payment.setPaymentId("32454656712432");
         payment.setEndToEndIdentification("RI-123456789");
-        payment.setDebtorAccount(new CmsAccountReference("DE89370400440532013000", "89370400440532010000",
+        payment.setDebtorAccount(new CmsAccountReference(UUID.randomUUID().toString(), "DE89370400440532013000", "89370400440532010000",
             "2356 5746 3217 1234", "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setUltimateDebtor("Mueller");
         payment.setCurrency(Currency.getInstance("EUR"));
         payment.setAmount(BigDecimal.valueOf(1000));
-        payment.setCreditorAccount(new CmsAccountReference("DE89370400440532013000", "89370400440532010000", "2356 5746 3217 1234",
+        payment.setCreditorAccount(new CmsAccountReference(UUID.randomUUID().toString(),"DE89370400440532013000", "89370400440532010000", "2356 5746 3217 1234",
             "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setCreditorAgent("Telekom");
         payment.setCreditorName("Telekom");
