@@ -185,9 +185,9 @@ public class AccountMockServerData {
         );
     }
 
-    private AspspAccountDetails getNewAccount(String id, List<AspspAccountBalance> balance, String iban, String pan, String bic, String name, String accountType) {
+    private AspspAccountDetails getNewAccount(String resourceId, List<AspspAccountBalance> balance, String iban, String pan, String bic, String name, String accountType) {
         return new AspspAccountDetails(
-            id,
+            resourceId,
             iban,
             iban.substring(3),
             pan,
@@ -221,9 +221,9 @@ public class AccountMockServerData {
     }
 
     // Custom Methods to create Test account for Cucumber tests
-    private AspspAccountDetails getNewAccountCucumberTest(String id, List<AspspAccountBalance> balance, String iban, String pan, String bic, String name, String accountType) {
+    private AspspAccountDetails getNewAccountCucumberTest(String resourceId, List<AspspAccountBalance> balance, String iban, String pan, String bic, String name, String accountType) {
         return new AspspAccountDetails(
-            id,
+            resourceId,
             iban,
             iban.substring(3),
             pan,
