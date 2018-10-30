@@ -132,7 +132,6 @@
             <column name="consent_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="resource_id" type="VARCHAR(40)"/>
             <column name="currency" type="VARCHAR(3)">
                 <constraints nullable="false"/>
             </column>
