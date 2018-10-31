@@ -403,6 +403,6 @@ public class AccountService {
         return references.stream()
             .filter(xs2aAccountReference -> StringUtils.equals(xs2aAccountReference.getResourceId(), resourceId))
             .findFirst()
-            .map(xs2aAccountReference -> xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(xs2aAccountReference));
+            .map(xs2aToSpiAccountReferenceMapper::mapToSpiAccountReference)
     }
 }
