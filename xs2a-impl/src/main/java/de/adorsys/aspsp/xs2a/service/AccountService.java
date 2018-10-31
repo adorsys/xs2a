@@ -128,11 +128,8 @@ public class AccountService {
         }
 
         Optional<SpiAccountReference> requestedAccountReference = findAccountReference(allowedAccountData.getBody().getAccounts(), accountId);
-        boolean isValid = requestedAccountReference.map(accountReference -> withBalance
-            ? consentService.isValidAccountByAccess(requestedAccountReference.get().getIban(), requestedAccountReference.get().getCurrency(), allowedAccountData.getBody().getBalances())
-            : consentService.isValidAccountByAccess(requestedAccountReference.get().getIban(), requestedAccountReference.get().getCurrency(), allowedAccountData.getBody().getAccounts())).orElse(false);
 
-        if (!isValid) {
+        if (!accountReferencePermitted(requestedAccountReference, allowedAccountData.getBody(), withBalance)) {
             return ResponseObject.<Xs2aAccountDetails>builder()
                 .fail(new MessageError(RESOURCE_UNKNOWN_404))
                 .build();
@@ -249,11 +246,8 @@ public class AccountService {
         }
 
         Optional<SpiAccountReference> requestedAccountReference = findAccountReference(allowedAccountData.getBody().getTransactions(), accountId);
-        boolean isValid = requestedAccountReference.map(accountReference -> withBalance
-            ? consentService.isValidAccountByAccess(requestedAccountReference.get().getIban(), requestedAccountReference.get().getCurrency(), allowedAccountData.getBody().getBalances())
-            : consentService.isValidAccountByAccess(requestedAccountReference.get().getIban(), requestedAccountReference.get().getCurrency(), allowedAccountData.getBody().getAccounts())).orElse(false);
 
-        if (!isValid) {
+        if (!accountReferencePermitted(requestedAccountReference, allowedAccountData.getBody(), withBalance)) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
                 .fail(new MessageError(RESOURCE_UNKNOWN_404))
                 .build();
@@ -375,6 +369,18 @@ public class AccountService {
             EnumSet.of(Xs2aBookingStatus.PENDING, Xs2aBookingStatus.BOTH).contains(bookingStatus)
                 ? report.getPending() : Collections.emptyList()
         );
+    }
+
+    private boolean accountReferencePermitted(Optional<SpiAccountReference> requestedAccountReference, Xs2aAccountAccess consentAccountAccess, boolean withBalance) {
+        return requestedAccountReference.map(accountReference -> {
+            List<Xs2aAccountReference> accountReferences;
+            if (withBalance) {
+                accountReferences = consentAccountAccess.getBalances();
+            } else {
+                accountReferences = consentAccountAccess.getAccounts();
+            }
+            return consentService.isValidAccountByAccess(accountReference.getIban(), accountReference.getCurrency(), accountReferences);
+        }).orElse(false);
     }
 
     public void updateResourceId(Xs2aAccountAccess accountAccess, List<Xs2aAccountDetails> accountDetailsList) {
