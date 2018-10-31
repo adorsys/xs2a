@@ -25,6 +25,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -50,9 +51,9 @@ public class PisAuthorisationService {
      * @param paymentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
-    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId) {
+    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId, PsuIdData psuData) {
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-            null, CreatePisConsentAuthorisationResponse.class, paymentId)
+            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
                    .getBody();
     }
 
@@ -86,9 +87,9 @@ public class PisAuthorisationService {
      * @param paymentId String representation of identifier of payment ID
      * @return long representation of identifier of stored consent authorization cancellation
      */
-    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId) {
+    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId, PsuIdData psuData) {
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisationCancellation(),
-            null, CreatePisConsentAuthorisationResponse.class, paymentId)
+            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
                    .getBody();
     }
 

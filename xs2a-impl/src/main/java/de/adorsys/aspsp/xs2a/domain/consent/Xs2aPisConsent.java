@@ -16,9 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.Value;
 
 @Value
 public class Xs2aPisConsent {
     private String consentId;
+    private PsuIdData psuData;
 }

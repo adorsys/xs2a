@@ -16,13 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
 @Data
 public class UpdateConsentPsuDataReq {
 
-    private String psuId;
+    private PsuIdData psuData;
     private String consentId;
     private String authorizationId;
 

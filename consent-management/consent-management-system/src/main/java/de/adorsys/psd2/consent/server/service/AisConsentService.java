@@ -28,7 +28,9 @@ import de.adorsys.psd2.consent.server.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.server.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.server.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.server.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.server.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -51,6 +53,7 @@ public class AisConsentService {
     private final AisConsentActionRepository aisConsentActionRepository;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
     private final AisConsentMapper consentMapper;
+    private final PsuDataMapper psuDataMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
 
     /**
@@ -208,9 +211,7 @@ public class AisConsentService {
         AisConsentAuthorization aisConsentAuthorization = aisConsentAuthorizationOptional.get();
 
         if (ScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
-            aisConsentAuthorization.setPsuId(request.getPsuId());
-            // TODO refactor logic and don't save tan and password data in plain text https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/390
-            aisConsentAuthorization.setPassword(request.getPassword());
+            aisConsentAuthorization.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
         }
 
         if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
@@ -224,6 +225,11 @@ public class AisConsentService {
         return aisConsentAuthorization.getExternalId() != null;
     }
 
+    public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
+        return getActualAisConsent(consentId)
+            .map(ac -> psuDataMapper.mapToPsuIdData(ac.getPsuData()));
+
+    }
 
     private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
         AccountAccessHolder holder = new AccountAccessHolder();
@@ -261,7 +267,7 @@ public class AisConsentService {
         consent.setUsageCounter(minFrequencyPerDay);
         consent.setRequestDateTime(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
-        consent.setPsuId(request.getPsuId());
+        consent.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
         consent.setTppId(request.getTppId());
         consent.addAccountAccess(readAccountAccess(request.getAccess()));
         consent.setRecurringIndicator(request.isRecurringIndicator());
@@ -343,7 +349,7 @@ public class AisConsentService {
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPsuId(request.getPsuId());
+        consentAuthorization.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();

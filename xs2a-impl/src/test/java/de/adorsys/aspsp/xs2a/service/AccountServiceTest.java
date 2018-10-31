@@ -16,8 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.account.*;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
@@ -47,7 +51,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -124,6 +129,8 @@ public class AccountServiceTest {
     private SpiTransaction spiTransaction;
     @Mock
     private Xs2aAccountReport xs2aAccountReport;
+    @Mock
+    private AccountConsent accountConsent;
 
     @Before
     public void setUp() {
@@ -152,6 +159,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -180,6 +190,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -228,6 +241,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -256,6 +272,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -281,6 +300,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -324,6 +346,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -352,6 +377,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -380,6 +408,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -411,6 +442,9 @@ public class AccountServiceTest {
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -466,6 +500,9 @@ public class AccountServiceTest {
             .thenReturn(true);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -500,6 +537,9 @@ public class AccountServiceTest {
             .thenReturn(true);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -534,6 +574,9 @@ public class AccountServiceTest {
             .thenReturn(true);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -587,6 +630,9 @@ public class AccountServiceTest {
             .when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -618,6 +664,9 @@ public class AccountServiceTest {
             .when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
@@ -649,6 +698,9 @@ public class AccountServiceTest {
             .when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(accountConsent);
+
+        when(consentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))

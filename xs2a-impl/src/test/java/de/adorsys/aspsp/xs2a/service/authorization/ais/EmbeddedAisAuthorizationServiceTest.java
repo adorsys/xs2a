@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.stage.AisScaStartAuthorisationStage;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +46,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     private static final ScaStatus STARTED_SCA_STATUS = ScaStatus.STARTED;
     private static final ScaStatus STARTED_XS2A_SCA_STATUS = ScaStatus.STARTED;
     private static final String PSU_ID = "Test psuId";
+    private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final String CONSENT_ID = "Test consentId";
     private static final String AUTHORISATION_ID = "Test authorisationId";
 
@@ -80,10 +82,10 @@ public class EmbeddedAisAuthorizationServiceTest {
 
     @Test
     public void createConsentAuthorization_Success() {
-        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_ID))
+        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(AUTHORISATION_ID));
 
-        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_ID, CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
         assertThat(actualResponseOptional.isPresent()).isTrue();
 

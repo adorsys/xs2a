@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.account.*;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
@@ -61,6 +62,7 @@ public class AccountService {
     private final SpiToXs2aAccountReferenceMapper referenceMapper;
     private final SpiTransactionListToXs2aAccountReportMapper transactionsToAccountReportMapper;
     private final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
+
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
     private final AisConsentService aisConsentService;
@@ -85,7 +87,9 @@ public class AccountService {
                        .build();
         }
 
-        SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.requestAccountDetails(withBalance, aisConsentService.getAccountConsentById(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        AccountConsent accountConsent = aisConsentService.getAccountConsentById(consentId);
+
+        SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.requestAccountDetails(withBalance, consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -146,7 +150,9 @@ public class AccountService {
 
         // TODO check if consent contains the account https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
 
-        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.requestAccountDetailForAccount(accountId, withBalance, aisConsentService.getAccountConsentById(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        AccountConsent accountConsent = aisConsentService.getAccountConsentById(consentId);
+
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.requestAccountDetailForAccount(accountId, withBalance, consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -201,7 +207,9 @@ public class AccountService {
 
         // TODO check if consent contains the account https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
 
-        SpiResponse<SpiBalanceReport> spiResponse = accountSpi.requestBalancesForAccount(accountId, aisConsentService.getAccountConsentById(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        AccountConsent accountConsent = aisConsentService.getAccountConsentById(consentId);
+
+        SpiResponse<SpiBalanceReport> spiResponse = accountSpi.requestBalancesForAccount(accountId, consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -264,7 +272,9 @@ public class AccountService {
 
         boolean isTransactionsShouldContainBalances = !aspspProfileService.isTransactionsWithoutBalancesSupported() || withBalance;
 
-        SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(accountId, isTransactionsShouldContainBalances, dateFrom, dateToChecked, aisConsentService.getAccountConsentById(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        AccountConsent accountConsent = aisConsentService.getAccountConsentById(consentId);
+
+        SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(accountId, isTransactionsShouldContainBalances, dateFrom, dateToChecked, consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -318,7 +328,9 @@ public class AccountService {
 
         validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
-        SpiResponse<SpiTransaction> spiResponse = accountSpi.requestTransactionForAccountByTransactionId(transactionId, accountId, aisConsentService.getAccountConsentById(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        AccountConsent accountConsent = aisConsentService.getAccountConsentById(consentId);
+
+        SpiResponse<SpiTransaction> spiResponse = accountSpi.requestTransactionForAccountByTransactionId(transactionId, accountId, consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
