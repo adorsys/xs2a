@@ -457,7 +457,7 @@ public class ConsentServiceTest {
     }
 
     private Xs2aAccountReference getXs2aReference(String iban, Currency currency) {
-        return new Xs2aAccountReference(iban, null, null, null, null, currency);
+        return new Xs2aAccountReference(null, iban, null, null, null, null, currency);
     }
 
     private List<SpiAccountReference> getSpiReferensesList(String iban) {
