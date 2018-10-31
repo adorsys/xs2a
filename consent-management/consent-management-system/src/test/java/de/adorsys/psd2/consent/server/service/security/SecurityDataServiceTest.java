@@ -67,7 +67,7 @@ public class SecurityDataServiceTest {
     }
 
     @Test
-    public void getEncryptedId_Success() {
+    public void getEncryptedId_Success() throws Exception {
         // Given
         when(cryptoProviderFactory.getActualIdentifierCryptoProvider())
             .thenReturn(CRYPTO_PROVIDER);
@@ -203,7 +203,7 @@ public class SecurityDataServiceTest {
     }
 
     @Test
-    public void decryptConsentData_Success() {
+    public void decryptConsentData_Success() throws Exception {
         when(cryptoProviderFactory.getActualConsentDataCryptoProvider())
             .thenReturn(CRYPTO_PROVIDER);
 
@@ -221,7 +221,7 @@ public class SecurityDataServiceTest {
     }
 
     @Test
-    public void decryptConsentData_Failure_NonExistingAlgorithm() {
+    public void decryptConsentData_Failure_NonExistingAlgorithm() throws Exception {
         // Given
         String encryptedId = getEncryptedConsentId(NON_EXISTING_CRYPT_PROVIDER_ID);
         byte[] encryptedConsentData = CRYPTO_PROVIDER.encryptData(CONSENT_DATA, CONSENT_KEY).get().getData();
@@ -234,7 +234,7 @@ public class SecurityDataServiceTest {
     }
 
     @Test
-    public void decryptConsentData_Failure_DecryptionError() {
+    public void decryptConsentData_Failure_DecryptionError() throws Exception {
         when(cryptoProviderFactory.getActualConsentDataCryptoProvider())
             .thenReturn(FAILING_CRYPTO_PROVIDER);
 
@@ -255,7 +255,7 @@ public class SecurityDataServiceTest {
         return encodedCompositeId + SEPARATOR + cryptoProviderId;
     }
 
-    private String[] decryptAndSplitConsentId(String encryptedId) {
+    private String[] decryptAndSplitConsentId(String encryptedId) throws Exception {
         String withoutSeparator = StringUtils.removeEnd(encryptedId, SEPARATOR + CRYPTO_PROVIDER_ID);
         String encryptedDecoded = new String(Base64.getDecoder().decode(withoutSeparator));
         String decrypted = new String(CRYPTO_PROVIDER

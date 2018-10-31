@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
@@ -41,18 +42,22 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
     private final PisConsentService pisConsentService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
     private final AuthorisationMethodService authorisationMethodService;
+    private final PisConsentDataService pisConsentDataService;
 
     /**
      * Initiates single payment
      *
-     * @param singlePayment Single payment information
-     * @param paymentInitiationParameters  payment initiation parameters
-     * @param pisConsent PIS consent information
-     * @param tppInfo  information about particular TPP
+     * @param singlePayment               Single payment information
+     * @param paymentInitiationParameters payment initiation parameters
+     * @param pisConsent                  PIS consent information
+     * @param tppInfo                     information about particular TPP
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<SinglePaymentInitiationResponse> createPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent, String externalPaymentId, String internalPaymentId) {
+    public ResponseObject<SinglePaymentInitiationResponse> createPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
+        String externalPaymentId = pisConsent.getConsentId();
+        // we need to get decrypted payment ID
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(externalPaymentId);
         singlePayment.setPaymentId(internalPaymentId);
 
         SinglePaymentInitiationResponse response = scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
@@ -76,6 +81,7 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
 
+        // we need to return encrypted payment ID
         response.setPaymentId(externalPaymentId);
 
         return ResponseObject.<SinglePaymentInitiationResponse>builder()

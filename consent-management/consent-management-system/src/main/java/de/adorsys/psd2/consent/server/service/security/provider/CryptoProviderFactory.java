@@ -36,9 +36,14 @@ public class CryptoProviderFactory {
     private final CryptoAlgorithmRepository cryptoAlgorithmRepository;
 
     public Optional<CryptoProvider> getCryptoProviderByAlgorithmVersion(String algorithmVersion) {
-        return cryptoAlgorithmRepository.findByExternalId(algorithmVersion)
-                   .map(CryptoAlgorithm::getAlgorithm)
-                   .flatMap(this::mapCryptoProviderByAlgorithmName);
+        Optional<CryptoProvider> provider = cryptoAlgorithmRepository.findByExternalId(algorithmVersion)
+                                                .map(CryptoAlgorithm::getAlgorithm)
+                                                .flatMap(this::mapCryptoProviderByAlgorithmName);
+        if (!provider.isPresent()) {
+            log.warn("Crypto provider can not be identify by id: {}", algorithmVersion);
+        }
+
+        return provider;
     }
 
     public CryptoProvider getActualIdentifierCryptoProvider() {

@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.payment;
+package de.adorsys.psd2.consent.client.cms.model.pis;
 
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
+import de.adorsys.psd2.consent.client.core.HttpMethod;
+import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 
-public interface CreatePaymentService<T, R> {
-    ResponseObject<R> createPayment(T payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent);
+public class GetPaymentIdByEncryptedStringMethod extends RestCmsRequestMethod<Void, String> {
+    private static final String GET_PAYMENT_ID_BY_ENCRYPTED_STRING = "api/v1/pis/payment/{payment-id}";
+
+    public GetPaymentIdByEncryptedStringMethod(HttpUriParams uriParams) {
+        super(HttpMethod.GET, GET_PAYMENT_ID_BY_ENCRYPTED_STRING, uriParams);
+    }
 }
+

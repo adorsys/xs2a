@@ -62,7 +62,7 @@ public class SecurityDataService {
      * @return String external ID
      */
     public Optional<String> getDecryptedId(String encryptedId) {
-        if (!encryptedId.contains(SEPARATOR)){
+        if (!encryptedId.contains(SEPARATOR)) {
             return Optional.empty();
         }
 
@@ -75,11 +75,14 @@ public class SecurityDataService {
      *
      * @param encryptedConsentId
      * @param aspspConsentDataBase64 original data encoded in Base64 to be encrypted
-     *
      * @return response contains encrypted data
      */
     public Optional<EncryptedData> encryptConsentData(String encryptedConsentId, String aspspConsentDataBase64) {
         byte[] aspspConsentData = decode64(aspspConsentDataBase64);
+
+        if (aspspConsentData == null) {
+            return Optional.empty();
+        }
 
         return getConsentKeyFromEncryptedConsentId(encryptedConsentId)
                    .flatMap(consentKey -> consentDataCP().encryptData(aspspConsentData, consentKey));
@@ -89,8 +92,7 @@ public class SecurityDataService {
      * Decrypt ASPSP consent data
      *
      * @param encryptedConsentId
-     * @param aspspConsentData encrypted data to be decrypted
-     *
+     * @param aspspConsentData   encrypted data to be decrypted
      * @return response contains decrypted data
      */
     public Optional<DecryptedData> decryptConsentData(String encryptedConsentId, byte[] aspspConsentData) {
@@ -99,11 +101,12 @@ public class SecurityDataService {
     }
 
     private Optional<String> decryptCompositeId(String encryptedId) {
-        String algorithmVersion = readAlgorithmVersion(encryptedId);
         String encryptedCompositeId = readCompositeIdWithoutVersion(encryptedId);
-
         byte[] bytesCompositeId = decode64(encryptedCompositeId);
-
+        if (bytesCompositeId == null) {
+            return Optional.empty();
+        }
+        String algorithmVersion = readAlgorithmVersion(encryptedId);
         Optional<CryptoProvider> provider = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(algorithmVersion);
 
         return provider
@@ -138,7 +141,12 @@ public class SecurityDataService {
     }
 
     private byte[] decode64(String raw) {
-        return Base64.getUrlDecoder().decode(raw);
+        try {
+            return Base64.getUrlDecoder().decode(raw);
+        } catch (IllegalArgumentException ex) {
+            log.warn("Input id has wrong format: {}", raw);
+            return null;
+        }
     }
 
     private String addVersionToEncryptedId(String encryptedConsentId) {
@@ -163,11 +171,11 @@ public class SecurityDataService {
         return sb.toString();
     }
 
-    private String readCompositeIdWithoutVersion(String compositeIdWithVersion){
+    private String readCompositeIdWithoutVersion(String compositeIdWithVersion) {
         return compositeIdWithVersion.substring(0, compositeIdWithVersion.indexOf(SEPARATOR));
     }
 
-    private String readAlgorithmVersion(String compositeIdWithVersion){
+    private String readAlgorithmVersion(String compositeIdWithVersion) {
         return compositeIdWithVersion.substring(compositeIdWithVersion.indexOf(SEPARATOR) + SEPARATOR.length());
     }
 }

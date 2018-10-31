@@ -91,15 +91,13 @@ public class PaymentService {
                        .fail(new MessageError(CONSENT_UNKNOWN_400))
                        .build();
         }
-        String externalPaymentId = pisConsent.getConsentId();
-        String internalPaymentId = pisConsentDataService.getInnerPaymentIdByEncryptedString(externalPaymentId);
 
         if (paymentInitiationParameters.getPaymentType() == SINGLE) {
-            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo, pisConsent, externalPaymentId, internalPaymentId);
+            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
         } else if (paymentInitiationParameters.getPaymentType() == PERIODIC) {
-            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo, pisConsent, externalPaymentId, internalPaymentId);
+            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
         } else {
-            return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo, pisConsent, externalPaymentId, internalPaymentId);
+            return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
         }
     }
 
@@ -133,19 +131,21 @@ public class PaymentService {
      */
     public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
+
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
         SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
             SpiSinglePayment payment = new SpiSinglePayment(null);
-            payment.setPaymentId(paymentId);
+            payment.setPaymentId(internalPaymentId);
             spiResponse = singlePaymentSpi.getPaymentStatusById(psuData, payment, aspspConsentData);
         } else if (paymentType == PERIODIC) {
             SpiPeriodicPayment payment = new SpiPeriodicPayment(null);
-            payment.setPaymentId(paymentId);
+            payment.setPaymentId(internalPaymentId);
             spiResponse = periodicPaymentSpi.getPaymentStatusById(psuData, payment, aspspConsentData);
         } else {
             SpiBulkPayment payment = new SpiBulkPayment();
-            payment.setPaymentId(paymentId);
+            payment.setPaymentId(internalPaymentId);
             spiResponse = bulkPaymentSpi.getPaymentStatusById(psuData, payment, aspspConsentData);
         }
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -153,7 +153,7 @@ public class PaymentService {
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse);
             return ResponseObject.<Xs2aTransactionStatus>builder()
-                       .fail(new MessageError(errorHolder.getErrorCode(),  errorHolder.getMessage()))
+                       .fail(new MessageError(errorHolder.getErrorCode(), errorHolder.getMessage()))
                        .build();
         }
 

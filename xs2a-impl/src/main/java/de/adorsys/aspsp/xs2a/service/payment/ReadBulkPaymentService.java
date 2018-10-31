@@ -39,7 +39,9 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
     public PaymentInformationResponse<BulkPayment> getPayment(String paymentId, PaymentProduct paymentProduct) {
             SpiBulkPayment payment = new SpiBulkPayment();
             payment.setPaymentProduct(paymentProduct);
-            String internalPaymentId = pisConsentDataService.getInnerPaymentIdByEncryptedString(paymentId);
+
+            // we need to get decrypted payment ID
+            String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
 
             payment.setPaymentId(internalPaymentId);
             SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458

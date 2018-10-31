@@ -39,7 +39,7 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
     @Override
     public PaymentInformationResponse<SinglePayment> getPayment(String paymentId, PaymentProduct paymentProduct) {
         SpiSinglePayment payment = new SpiSinglePayment(paymentProduct);
-        String internalPaymentId = pisConsentDataService.getInnerPaymentIdByEncryptedString(paymentId);
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
 
         payment.setPaymentId(internalPaymentId);
         SpiPsuData psuData = new SpiPsuData(null, null, null, null); // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458

@@ -51,7 +51,7 @@ public class JweCryptoProviderImpl implements CryptoProvider {
             return Optional.of(new EncryptedData(encryptedData.getBytes()));
 
         } catch (GeneralSecurityException | JOSEException e) {
-            log.error("Error encryption data: {}", e);
+            log.warn("Error encryption data: {}", e);
         }
 
         return Optional.empty();
@@ -68,12 +68,12 @@ public class JweCryptoProviderImpl implements CryptoProvider {
 
             return Optional.of(new DecryptedData(jweObject.getPayload().toBytes()));
         } catch (ParseException e) {
-            log.error("Error encryption data. Data can't be parsed : {}", e);
+            log.warn("Error encryption data. Data can't be parsed : {}", e);
         } catch (GeneralSecurityException | JOSEException e) {
             if (e.getMessage().contains("Tag mismatch!")) {
-                log.error("Error decryption data. Wrong password");
+                log.warn("Error decryption data. Wrong password");
             } else {
-                log.error("Error encryption data: {}", e);
+                log.warn("Error encryption data: {}", e.getMessage());
             }
         }
 

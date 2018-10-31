@@ -97,9 +97,9 @@ public class Xs2aPisConsentMapper {
                    .orElse(null);
     }
 
-    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisConsentPsuDataRequest request, String consentId) {
+    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisConsentPsuDataRequest request, String consentId, String paymentId) {
         SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
-        paymentConfirmation.setPaymentId(request.getPaymentId());
+        paymentConfirmation.setPaymentId(paymentId);
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
         paymentConfirmation.setConsentId(consentId);
         paymentConfirmation.setPsuId(request.getPsuId());

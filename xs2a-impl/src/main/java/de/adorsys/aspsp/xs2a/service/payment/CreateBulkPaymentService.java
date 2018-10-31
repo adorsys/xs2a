@@ -28,6 +28,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
     private final PisConsentService pisConsentService;
     private final AuthorisationMethodService authorisationMethodService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
+    private final PisConsentDataService pisConsentDataService;
 
     /**
      * Initiates bulk payment
@@ -54,13 +56,15 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<BulkPaymentInitiationResponse> createPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent, String externalPaymentId, String internalPaymentId) {
-        bulkPayment.setPaymentId(internalPaymentId);
+    public ResponseObject<BulkPaymentInitiationResponse> createPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
+        String externalPaymentId = pisConsent.getConsentId();
+        // we need to get decrypted payment ID
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(externalPaymentId);
 
+        bulkPayment.setPaymentId(internalPaymentId);
         BulkPaymentInitiationResponse response = scaPaymentService.createBulkPayment(bulkPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
-        bulkPayment.setPaymentId(response.getPaymentId());
         bulkPayment.setTransactionStatus(response.getTransactionStatus());
         updateBulkPaymentIds(bulkPayment.getPayments(), response.getPaymentId());
 
@@ -79,6 +83,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
 
+        // we need to return encrypted payment ID
         response.setPaymentId(externalPaymentId);
 
         return ResponseObject.<BulkPaymentInitiationResponse>builder()
