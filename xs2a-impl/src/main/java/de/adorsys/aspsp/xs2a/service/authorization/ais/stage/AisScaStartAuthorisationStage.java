@@ -98,7 +98,9 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
             }
         } else {
             aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.REJECTED);
-            return createResponseForNoneAvailableScaMethod(psuData);
+            UpdateConsentPsuDataResponse response = createResponseForNoneAvailableScaMethod(psuData);
+            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
+            return response;
         }
     }
 
