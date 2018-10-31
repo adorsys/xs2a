@@ -30,7 +30,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
-import de.adorsys.aspsp.xs2a.service.consent.PisSpuDataService;
+import de.adorsys.aspsp.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
@@ -71,7 +71,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final AisAuthorizationService aisAuthorizationService;
     private final AspspProfileServiceWrapper aspspProfileService;
     private final PisScaAuthorisationService pisAuthorizationService;
-    private final PisSpuDataService pisSpuDataService;
+    private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
     private final AuthorisationMethodService authorisationMethodService;
     private final AisConsentSpi aisConsentSpi;
@@ -263,7 +263,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     public ResponseObject<Xs2aCreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
-        PsuIdData psuData = pisSpuDataService.getPsuDataByPaymentId(paymentId);
+        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         return pisAuthorizationService.createConsentCancellationAuthorisation(paymentId, paymentType, psuData)
                    .map(resp -> ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
                                     .body(resp)

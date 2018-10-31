@@ -33,7 +33,7 @@ public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentControll
         super(aspspProfileService, messageService, authorisationMethodService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters)", returning = "result", argNames = "result,payment,requestParameters")
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters, ..)", returning = "result", argNames = "result,payment,requestParameters")
     public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentInitiationParameters requestParameters) {
         if (!result.hasError()) {
             return enrichLink(result, requestParameters);

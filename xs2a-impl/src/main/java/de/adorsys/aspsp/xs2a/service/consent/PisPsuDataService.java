@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class PisSpuDataService {
+public class PisPsuDataService {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final PisConsentRemoteUrls pisConsentRemoteUrls;

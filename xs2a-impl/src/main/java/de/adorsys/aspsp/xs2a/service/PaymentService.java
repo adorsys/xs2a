@@ -26,7 +26,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
-import de.adorsys.aspsp.xs2a.service.consent.PisSpuDataService;
+import de.adorsys.aspsp.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
@@ -65,7 +65,7 @@ public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
     private final PisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
-    private final PisSpuDataService pisSpuDataService;
+    private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
     private final CreateSinglePaymentService createSinglePaymentService;
     private final CreatePeriodicPaymentService createPeriodicPaymentService;
@@ -114,7 +114,7 @@ public class PaymentService {
      * @return Response containing information about payment or corresponding error
      */
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
-        PsuIdData psuData = pisSpuDataService.getPsuDataByPaymentId(paymentId);
+        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
 
         ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
         PaymentInformationResponse response = readPaymentService.getPayment(paymentId, PaymentProduct.SEPA, psuData); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
@@ -138,7 +138,7 @@ public class PaymentService {
      */
     public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
-        PsuIdData psuData = pisSpuDataService.getPsuDataByPaymentId(paymentId);
+        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
@@ -206,7 +206,7 @@ public class PaymentService {
         }
 
         AspspConsentData consentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
-        PsuIdData psuData = pisSpuDataService.getPsuDataByPaymentId(paymentId);
+        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
