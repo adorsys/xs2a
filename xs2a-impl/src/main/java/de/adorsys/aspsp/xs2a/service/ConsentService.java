@@ -104,7 +104,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-        AccountConsent accountConsent = getValidatedSpiAccountConsent(consentId);
+        AccountConsent accountConsent = getValidatedAccountConsent(consentId);
 
         SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(spiPsuData, aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(initiateAisConsentSpiResponse.getAspspConsentData());
@@ -132,7 +132,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * Returns status of requested consent
      */
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
-        return Optional.ofNullable(getValidatedSpiAccountConsent(consentId))
+        return Optional.ofNullable(getValidatedAccountConsent(consentId))
                    .map(consent -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(consent.getConsentStatus())).build())
                    .orElseGet(ResponseObject.<ConsentStatusResponse>builder()
                                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
@@ -145,7 +145,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * Revokes account consent on PSU request
      */
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
-        AccountConsent accountConsent = getValidatedSpiAccountConsent(consentId);
+        AccountConsent accountConsent = getValidatedAccountConsent(consentId);
 
         if (accountConsent != null) {
             SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(accountConsent.getPsuData());
@@ -171,14 +171,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * @return AccountConsent requested by consentId
      */
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
-        AccountConsent consent = getValidatedSpiAccountConsent(consentId);
+        AccountConsent consent = getValidatedAccountConsent(consentId);
         return consent == null
                    ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
     public ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId, boolean withBalance) {
-        AccountConsent accountConsent = getValidatedSpiAccountConsent(consentId);
+        AccountConsent accountConsent = getValidatedAccountConsent(consentId);
 
         if (accountConsent == null) {
             return ResponseObject.<Xs2aAccountAccess>builder()
@@ -315,7 +315,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         );
     }
 
-    private AccountConsent getValidatedSpiAccountConsent(String consentId) {
+    private AccountConsent getValidatedAccountConsent(String consentId) {
         return Optional.ofNullable(aisConsentService.getAccountConsentById(consentId))
                    .filter(consent -> tppService.getTppId().equals(consent.getTppId()))
                    .orElse(null);
