@@ -67,11 +67,11 @@ public class AccountServiceTest {
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN))
             .thenReturn(Optional.empty());
 
-        when(psuRepository.findPsuByAccountDetailsList_Id(ACCOUNT_ID))
+        when(psuRepository.findPsuByAccountDetailsList_ResourceId(ACCOUNT_ID))
             .thenReturn(Optional.of(getPsuWithRightAccounts()));
-        when(psuRepository.findPsuByAccountDetailsList_Id(WRONG_ACCOUNT_ID))
+        when(psuRepository.findPsuByAccountDetailsList_ResourceId(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
-        when(psuRepository.findPsuByAccountDetailsList_Id(null))
+        when(psuRepository.findPsuByAccountDetailsList_ResourceId(null))
             .thenReturn(Optional.empty());
 
         when(psuRepository.save(any(Psu.class)))

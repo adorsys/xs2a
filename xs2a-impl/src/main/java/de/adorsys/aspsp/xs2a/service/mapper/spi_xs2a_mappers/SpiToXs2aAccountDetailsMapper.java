@@ -41,7 +41,7 @@ public class SpiToXs2aAccountDetailsMapper {
     public Xs2aAccountDetails mapToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
                    .map(ad -> new Xs2aAccountDetails(
-                            ad.getId(),
+                            ad.getResourceId(),
                             ad.getIban(),
                             ad.getBban(),
                             ad.getPan(),

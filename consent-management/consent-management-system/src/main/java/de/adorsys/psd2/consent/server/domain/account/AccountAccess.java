@@ -31,6 +31,11 @@ import java.util.Currency;
 @Embeddable
 @ApiModel(description = "Account access", value = "AccountAccess")
 public class AccountAccess {
+
+    @Column(name = "resource_id", nullable = false)
+    @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
+    private String resourceId;
+
     @Column(name = "iban", nullable = false, length = 34)
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", required = true, example = "DE2310010010123456789")
     private String iban;
@@ -47,7 +52,8 @@ public class AccountAccess {
     public AccountAccess() {
     }
 
-    public AccountAccess(String iban, Currency currency, TypeAccess typeAccess) {
+    public AccountAccess(String resourceId, String iban, Currency currency, TypeAccess typeAccess) {
+        this.resourceId = resourceId;
         this.iban = iban;
         this.currency = currency;
         this.typeAccess = typeAccess;

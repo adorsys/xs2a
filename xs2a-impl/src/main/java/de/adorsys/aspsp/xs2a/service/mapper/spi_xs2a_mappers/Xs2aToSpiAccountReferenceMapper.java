@@ -33,6 +33,7 @@ public class Xs2aToSpiAccountReferenceMapper {
 
     public SpiAccountReference mapToSpiAccountReference(Xs2aAccountReference account) {
         return new SpiAccountReference(
+            account.getResourceId(),
             account.getIban(),
             account.getBban(),
             account.getPan(),

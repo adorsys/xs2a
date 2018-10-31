@@ -26,13 +26,17 @@ import lombok.NoArgsConstructor;
 @ApiModel(description = "Account information", value = "AccountInfo")
 public class AccountInfo {
 
+    @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
+    private String resourceId;
+
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment accoun", example = "DE2310010010156789")
     private String iban;
 
     @ApiModelProperty(value = "ISO 4217 currency code", example = "EUR")
     private String currency;
 
-    public AccountInfo(String iban, String currency) {
+    public AccountInfo(String resourceId, String iban, String currency) {
+        this.resourceId = resourceId;
         this.iban = iban;
         this.currency = currency;
     }

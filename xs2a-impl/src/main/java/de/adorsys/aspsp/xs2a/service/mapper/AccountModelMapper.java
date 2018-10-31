@@ -57,7 +57,7 @@ public class AccountModelMapper {
 
         // TODO fill missing values: product status usage details
         // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/248
-        target.resourceId(accountDetails.getId())
+        target.resourceId(accountDetails.getResourceId())
             .currency(accountDetails.getCurrency().getCurrencyCode())
             .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType())
                                  .map(Enum::name)

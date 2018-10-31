@@ -153,7 +153,7 @@ public class Xs2aAisConsentMapper {
         return accountConfirmation;
     }
 
-    private AisAccountAccessInfo mapToAisAccountAccessInfo(Xs2aAccountAccess access) {
+    public AisAccountAccessInfo mapToAisAccountAccessInfo(Xs2aAccountAccess access) {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
                                    .map(this::mapToListAccountInfo)
@@ -185,6 +185,7 @@ public class Xs2aAisConsentMapper {
 
     private AccountInfo mapToAccountInfo(Xs2aAccountReference ref) {
         AccountInfo info = new AccountInfo();
+        info.setResourceId(ref.getResourceId());
         info.setIban(ref.getIban());
         info.setCurrency(Optional.ofNullable(ref.getCurrency())
                              .map(Currency::getCurrencyCode)

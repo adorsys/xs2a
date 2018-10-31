@@ -114,8 +114,8 @@ public class AisConsentServiceTest {
         // Then
         AisAccountAccessInfo info = new AisAccountAccessInfo();
         info.setAccounts(Arrays.asList(
-            new AccountInfo("iban-1", "EUR"),
-            new AccountInfo("iban-1", "USD")
+            new AccountInfo(UUID.randomUUID().toString(), "iban-1", "EUR"),
+            new AccountInfo(UUID.randomUUID().toString(),"iban-1", "USD")
         ));
         Optional<String> consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
@@ -124,10 +124,10 @@ public class AisConsentServiceTest {
         // Then
         info = new AisAccountAccessInfo();
         info.setAccounts(Arrays.asList(
-            new AccountInfo("iban-1", "EUR"),
-            new AccountInfo("iban-2", "USD"),
-            new AccountInfo("iban-2", "EUR"),
-            new AccountInfo("iban-3", "USD")
+            new AccountInfo(UUID.randomUUID().toString(),"iban-1", "EUR"),
+            new AccountInfo(UUID.randomUUID().toString(),"iban-2", "USD"),
+            new AccountInfo(UUID.randomUUID().toString(),"iban-2", "EUR"),
+            new AccountInfo(UUID.randomUUID().toString(),"iban-3", "USD")
         ));
         consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
@@ -186,7 +186,7 @@ public class AisConsentServiceTest {
     }
 
     private List<AccountInfo> buildAccountsInfo() {
-        return Collections.singletonList(new AccountInfo("iban-1", "EUR"));
+        return Collections.singletonList(new AccountInfo(UUID.randomUUID().toString(),"iban-1", "EUR"));
     }
 
     private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {
