@@ -245,7 +245,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
@@ -270,7 +270,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
@@ -301,13 +301,13 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         when(accountDetailsMapper.mapToXs2aAccountDetails(spiAccountDetails))
             .thenReturn(xs2aAccountDetails);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
@@ -344,7 +344,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
@@ -375,7 +375,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
@@ -440,7 +440,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
@@ -483,7 +483,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
@@ -520,7 +520,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
@@ -571,7 +571,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
@@ -616,7 +616,7 @@ public class AccountServiceTest {
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
+        when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
         when(consentMapper.mapToSpiAccountConsent(any()))

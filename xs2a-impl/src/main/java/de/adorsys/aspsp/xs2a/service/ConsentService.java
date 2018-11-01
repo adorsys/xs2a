@@ -281,12 +281,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                   ::build);
     }
 
-    // TODO remove when the new validation is ready https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
-    public boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
+    public boolean isValidAccountByAccess(String resourceId, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
-                          .anyMatch(a -> a.getIban().equals(iban)
-                                             && a.getCurrency() == currency);
+                          .anyMatch(a -> a.getResourceId().equals(resourceId));
     }
 
     private Boolean isNotEmptyAccess(Xs2aAccountAccess access) {
