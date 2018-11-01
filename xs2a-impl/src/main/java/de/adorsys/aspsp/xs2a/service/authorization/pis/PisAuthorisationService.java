@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisati
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,8 +45,8 @@ public class PisAuthorisationService {
      * @param paymentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
-    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED)
+    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId, PsuIdData psuData) {
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED, psuData)
                                                                        .orElse(null);
     }
 
@@ -79,8 +80,8 @@ public class PisAuthorisationService {
      * @param paymentId String representation of identifier of payment ID
      * @return long representation of identifier of stored consent authorization cancellation
      */
-    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED)
+    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId, PsuIdData psuData) {
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED, psuData)
             .orElse(null);
     }
 

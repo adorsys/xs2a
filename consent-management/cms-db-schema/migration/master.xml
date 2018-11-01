@@ -28,6 +28,9 @@
     <include file="migration/change_pis_tpp_info-1.6.xml"/>
     <include file="migration/remove_not_null_constraint_ultimate_debtor-1.7.xml"/>
     <include file="migration/add_account_reference_resource_id-1.8.xml"/>
+    <include file="migration/20181030_1.9_create_psu_data_table.xml"/>
+    <include file="migration/20181030_1.10_add_fk_constraints_for_psu_id_columns.xml"/>
+    <include file="migration/20181030_1.11_remove_password_column_from_ais_consent_authorization.xml"/>
     <include file="migration/20181101_1.14_add_piis_consent.xml"/>
 
 </databaseChangeLog>

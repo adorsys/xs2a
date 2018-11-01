@@ -20,14 +20,16 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPsuDataMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -42,12 +44,15 @@ import java.util.stream.Collectors;
 public class Xs2aAisConsentMapper {
     // TODO remove this dependency. Should not be dependencies between spi-api and consent-api https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/437
     private final SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;
+    private final SpiToXs2aPsuDataMapper spiToXs2aPsuDataMapper;
+    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final Xs2aToSpiAccountAccessMapper xs2aToSpiAccountAccessMapper;
 
-    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId) {
+    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, PsuIdData psuData, String tppId) {
         return Optional.ofNullable(req)
                    .map(r -> {
                        CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
-                       aisRequest.setPsuId(psuId);
+                       aisRequest.setPsuData(psuData);
                        aisRequest.setTppId(tppId);
                        aisRequest.setFrequencyPerDay(r.getFrequencyPerDay());
                        aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
@@ -63,18 +68,40 @@ public class Xs2aAisConsentMapper {
     public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
                    .map(ac -> new AccountConsent(
-                       ac.getId(),
-                       spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
-                       ac.isRecurringIndicator(),
-                       ac.getValidUntil(),
-                       ac.getFrequencyPerDay(),
-                       ac.getLastActionDate(),
-                       ac.getConsentStatus(),
-                       ac.isWithBalance(),
-                       ac.isTppRedirectPreferred()))
+                           ac.getId(),
+                           spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
+                           ac.isRecurringIndicator(),
+                           ac.getValidUntil(),
+                           ac.getFrequencyPerDay(),
+                           ac.getLastActionDate(),
+                           ac.getConsentStatus(),
+                           ac.isWithBalance(),
+                           ac.isTppRedirectPreferred(),
+                           spiToXs2aPsuDataMapper.mapToPsuIdData(ac.getPsuData()),
+                           ac.getTppId()
+                       )
+                   )
                    .orElse(null);
     }
 
+    public SpiAccountConsent mapToSpiAccountConsent(AccountConsent accountConsent) {
+        return Optional.ofNullable(accountConsent)
+                   .map(ac -> new SpiAccountConsent(
+                           ac.getId(),
+                           xs2aToSpiAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
+                           ac.isRecurringIndicator(),
+                           ac.getValidUntil(),
+                           ac.getFrequencyPerDay(),
+                           ac.getLastActionDate(),
+                           ac.getConsentStatus(),
+                           ac.isWithBalance(),
+                           ac.isTppRedirectPreferred(),
+                           xs2aToSpiPsuDataMapper.mapToSpiPsuData(ac.getPsuData()),
+                           ac.getTppId()
+                       )
+                   )
+                   .orElse(null);
+    }
 
     public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
         ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
@@ -99,7 +126,7 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-                       request.setPsuId(data.getPsuId());
+                       request.setPsuData(new PsuIdData(data.getPsuId(), null, null, null));
                        request.setConsentId(updatePsuDataRequest.getConsentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));
@@ -119,7 +146,7 @@ public class Xs2aAisConsentMapper {
     public SpiScaConfirmation mapToSpiScaConfirmation(UpdateConsentPsuDataReq request) {
         SpiScaConfirmation accountConfirmation = new SpiScaConfirmation();
         accountConfirmation.setConsentId(request.getConsentId());
-        accountConfirmation.setPsuId(request.getPsuId());
+        accountConfirmation.setPsuId(Optional.ofNullable(request.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
         accountConfirmation.setTanNumber(request.getScaAuthenticationData());
         return accountConfirmation;
     }
@@ -164,38 +191,38 @@ public class Xs2aAisConsentMapper {
         return info;
     }
 
-    // TODO need to refactoring, there isn't connection between spi and cmc
-    public SpiAccountConsent mapToSpiAccountConsent(AisAccountConsent ais) {
+    public AccountConsent mapToAccountConsent(AisAccountConsent ais) {
         return Optional.ofNullable(ais)
-                   .map(ac -> new SpiAccountConsent(
+                   .map(ac -> new AccountConsent(
                        ac.getId(),
-                       mapToSpiAccountAccess(ac.getAccess()),
+                       mapToXs2aAccountAccess(ac.getAccess()),
                        ac.isRecurringIndicator(),
                        ac.getValidUntil(),
                        ac.getFrequencyPerDay(),
                        ac.getLastActionDate(),
                        ac.getConsentStatus(),
                        ac.isWithBalance(),
-                       ac.isTppRedirectPreferred(), ac.getPsuId(), ac.getTppId()))
+                       ac.isTppRedirectPreferred(), ac.getPsuData(), ac.getTppId()))
                    .orElse(null);
     }
 
-    private SpiAccountAccess mapToSpiAccountAccess(AisAccountAccess ais) {
-        SpiAccountAccess access = new SpiAccountAccess();
-        access.setAccounts(mapToSpiAccountReference(ais.getAccounts()));
-        access.setBalances(mapToSpiAccountReference(ais.getBalances()));
-        access.setTransactions(mapToSpiAccountReference(ais.getTransactions()));
-        return access;
+    private Xs2aAccountAccess mapToXs2aAccountAccess(AisAccountAccess ais) {
+        return new Xs2aAccountAccess(
+            mapToXs2aAccountReference(ais.getAccounts()),
+            mapToXs2aAccountReference(ais.getBalances()),
+            mapToXs2aAccountReference(ais.getTransactions()),
+            null,
+            null);
     }
 
-    private List<SpiAccountReference> mapToSpiAccountReference(List<CmsAccountReference> cms) {
+    private List<Xs2aAccountReference> mapToXs2aAccountReference(List<CmsAccountReference> cms) {
         return cms.stream()
-                   .map(this::mapToSpiAccountReference)
+                   .map(this::mapToXs2aAccountReference)
                    .collect(Collectors.toList());
     }
 
-    private SpiAccountReference mapToSpiAccountReference(CmsAccountReference cms) {
-        return new SpiAccountReference(
+    private Xs2aAccountReference mapToXs2aAccountReference(CmsAccountReference cms) {
+        return new Xs2aAccountReference(
             cms.getResourceId(),
             cms.getIban(),
             cms.getBban(),

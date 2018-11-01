@@ -23,7 +23,10 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,12 +58,17 @@ public class AisConsentServiceTest {
     private AisConsentMapper consentMapper;
     @Mock
     private AisConsentRepository aisConsentRepository;
+    @Mock
+    private PsuDataMapper psuDataMapper;
+    @Mock
+    private PsuData psuData;
 
 
     private AisConsent aisConsent;
     private final long CONSENT_ID = 1;
     private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id-1", null, null, null);
 
     @Before
     public void setUp() {
@@ -86,6 +94,7 @@ public class AisConsentServiceTest {
         // When
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt())).thenReturn(anyInt());
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(psuData);
 
         // Then
         Optional<String> externalId = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
@@ -162,7 +171,7 @@ public class AisConsentServiceTest {
         request.setAccess(buildAccess());
         request.setCombinedServiceIndicator(true);
         request.setFrequencyPerDay(5);
-        request.setPsuId("psu-id-1");
+        request.setPsuData(PSU_ID_DATA);
         request.setRecurringIndicator(true);
         request.setTppId("tpp-id-1");
         request.setValidUntil(LocalDate.now());

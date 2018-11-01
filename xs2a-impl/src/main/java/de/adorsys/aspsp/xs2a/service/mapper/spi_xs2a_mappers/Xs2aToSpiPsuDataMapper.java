@@ -24,9 +24,15 @@ import org.springframework.stereotype.Component;
 public class Xs2aToSpiPsuDataMapper {
 
     public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData) {
-        return new SpiPsuData(psuIdData.getPsuId(),
-                              psuIdData.getPsuIdType(),
-                              psuIdData.getPsuCorporateId(),
-                              psuIdData.getPsuCorporateIdType());
+        if (psuIdData == null) {
+            return new SpiPsuData(null, null, null, null);
+        }
+
+        return new SpiPsuData(
+            psuIdData.getPsuId(),
+            psuIdData.getPsuIdType(),
+            psuIdData.getPsuCorporateId(),
+            psuIdData.getPsuCorporateIdType()
+        );
     }
 }

@@ -27,7 +27,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>consent-xs2a-api</artifactId>
-    <packaging>jar</packaging>
 
     <name>consent-xs2a-api</name>
     <description>Consent XS2A API</description>
@@ -65,13 +64,4 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-        <finalName>consent-xs2a-api</finalName>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

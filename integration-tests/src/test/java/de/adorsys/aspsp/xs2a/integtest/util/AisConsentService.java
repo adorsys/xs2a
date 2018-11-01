@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -73,7 +74,7 @@ public class AisConsentService {
         aisConsentRequest.setAccess(info);
         aisConsentRequest.setCombinedServiceIndicator(false);
         aisConsentRequest.setFrequencyPerDay(4);
-        aisConsentRequest.setPsuId("aspsp");
+        aisConsentRequest.setPsuData(new PsuIdData("aspsp", null, null, null));
         aisConsentRequest.setRecurringIndicator(false);
         aisConsentRequest.setTppId("12345987");
         aisConsentRequest.setValidUntil(LocalDate.now().plusDays(30));

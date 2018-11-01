@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.domain.account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
 import de.adorsys.psd2.consent.domain.ConsentType;
+import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -71,9 +72,9 @@ public class AisConsent {
     @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
     private LocalDate expireDate;
 
-    @Column(name = "psu_id")
-    @ApiModelProperty(value = "Psu id", required = true, example = "PSU_001")
-    private String psuId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "psu_id")
+    private PsuData psuData;
 
     @Column(name = "tpp_id", nullable = false)
     @ApiModelProperty(value = "TPP id", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")

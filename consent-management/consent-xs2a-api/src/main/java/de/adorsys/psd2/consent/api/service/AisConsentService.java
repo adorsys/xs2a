@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api.service;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
 import java.util.Optional;
 
@@ -116,4 +117,6 @@ public interface AisConsentService {
      * @return boolean
      */
     boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
+
+    Optional<PsuIdData> getPsuDataByConsentId(String consentId);
 }

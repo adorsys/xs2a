@@ -22,12 +22,13 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationRes
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
 import java.util.Optional;
 
 public class OauthPisScaAuthorisationService implements PisScaAuthorisationService {
     @Override
-    public Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType) {
+    public Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
         return null;
     }
 
@@ -37,7 +38,7 @@ public class OauthPisScaAuthorisationService implements PisScaAuthorisationServi
     }
 
     @Override
-    public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType) {
+    public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
         return Optional.empty();
     }
 

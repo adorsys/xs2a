@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationServic
 import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,7 @@ public class CreateSinglePaymentServiceTest {
     private static final String CONSENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String PAYMENT_ID = "12345";
     private static final String IBAN = "DE123456789";
+    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
     private final TppInfo TPP_INFO = buildTppInfo();
 
     @InjectMocks
@@ -101,7 +103,7 @@ public class CreateSinglePaymentServiceTest {
     }
 
     private Xs2aPisConsent buildXs2aPisConsent() {
-        return new Xs2aPisConsent(CONSENT_ID);
+        return new Xs2aPisConsent(CONSENT_ID, PSU_DATA);
     }
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {
