@@ -44,6 +44,10 @@ public class PiisConsent {
     @ApiModelProperty(value = "An external exposed identification of the created PIIS consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
+    @Column(name = "recurring_indicator", nullable = false)
+    @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for single access to the account data", required = true, example = "false")
+    private boolean recurringIndicator;
+
     @Column(name = "request_date_time", nullable = false)
     @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-10-25T15:30:35.035Z")
     private LocalDateTime requestDateTime;

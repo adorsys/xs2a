@@ -46,6 +46,9 @@
             </column>
             <column name="last_action_date" type="DATE"/>
             <column name="psu_id" type="VARCHAR(40)"/>
+            <column name="recurring_indicator" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
             <column name="request_date_time" type="DATETIME">
                 <constraints nullable="false"/>
             </column>
