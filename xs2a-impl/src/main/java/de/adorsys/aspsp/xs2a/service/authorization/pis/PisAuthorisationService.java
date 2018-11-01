@@ -46,7 +46,7 @@ public class PisAuthorisationService {
      * @return long representation of identifier of stored consent authorization
      */
     public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId, PsuIdData psuData) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED)
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED, psuData)
                                                                        .orElse(null);
     }
 
@@ -81,7 +81,7 @@ public class PisAuthorisationService {
      * @return long representation of identifier of stored consent authorization cancellation
      */
     public CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId, PsuIdData psuData) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED)
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED, psuData)
             .orElse(null);
     }
 

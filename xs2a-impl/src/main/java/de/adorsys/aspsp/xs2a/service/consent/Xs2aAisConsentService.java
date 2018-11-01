@@ -23,10 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -46,9 +43,9 @@ public class Xs2aAisConsentService {
     /**
      * Sends a POST request to CMS to store created AISconsent
      *
-     * @param request          Request body storing main consent details
-     * @param psuData          PsuIdData container of authorisation data about PSU
-     * @param tppId            String representation of TPP`s identifier from TPP Certificate
+     * @param request Request body storing main consent details
+     * @param psuData PsuIdData container of authorisation data about PSU
+     * @param tppId   String representation of TPP`s identifier from TPP Certificate
      * @return String representation of identifier of stored consent
      */
     public String createConsent(CreateConsentReq request, PsuIdData psuData, String tppId) {
@@ -64,8 +61,9 @@ public class Xs2aAisConsentService {
      * @return Response containing AIS Consent
      */
     public AccountConsent getAccountConsentById(String consentId) {
-        return aisConsentService.getAisAccountConsentById(consentId)
-                   .orElse(null);
+        AisAccountConsent aisAccountConsent = aisConsentService.getAisAccountConsentById(consentId)
+                                                  .orElse(null);
+        return aisConsentMapper.mapToAccountConsent(aisAccountConsent);
     }
 
     /**

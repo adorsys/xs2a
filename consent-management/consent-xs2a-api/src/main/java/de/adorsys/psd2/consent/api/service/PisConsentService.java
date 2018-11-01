@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
 import java.util.Optional;
 
@@ -86,12 +87,12 @@ public interface PisConsentService {
     /**
      * Create consent authorization
      */
-    Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType);
+    Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
     /**
      * Create consent authorization cancellation
      */
-    Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType);
+    Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
     Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType);
 
@@ -106,4 +107,8 @@ public interface PisConsentService {
     Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType);
 
     Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType);
+
+    Optional<PsuIdData> getPsuDataByPaymentId(String paymentId);
+
+    Optional<PsuIdData> getPsuDataByConsentId(String consentId);
 }

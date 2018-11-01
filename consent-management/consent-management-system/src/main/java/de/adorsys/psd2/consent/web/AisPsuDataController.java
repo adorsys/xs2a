@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.web;
+package de.adorsys.psd2.consent.web;
 
-import de.adorsys.psd2.consent.server.service.AisConsentService;
+import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;

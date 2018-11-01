@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
-import de.adorsys.psd2.consent.server.domain.PsuData;
+import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 

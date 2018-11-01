@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -98,12 +99,19 @@ public class AisConsentServiceRemote implements AisConsentService {
 
     @Override
     public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId).getBody());
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId)
+                                       .getBody());
     }
 
     @Override
     public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
         consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, authorizationId);
         return true;
+    }
+
+    @Override
+    public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getPsuDataByConsentId(), PsuIdData.class, consentId)
+                                       .getBody());
     }
 }

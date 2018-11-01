@@ -24,8 +24,8 @@ import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
-import de.adorsys.psd2.consent.server.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -233,10 +233,10 @@ public class AisConsentServiceInternal implements AisConsentService {
         return aisConsentAuthorization.getExternalId() != null;
     }
 
+    @Override
     public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
         return getActualAisConsent(consentId)
             .map(ac -> psuDataMapper.mapToPsuIdData(ac.getPsuData()));
-
     }
 
     private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {

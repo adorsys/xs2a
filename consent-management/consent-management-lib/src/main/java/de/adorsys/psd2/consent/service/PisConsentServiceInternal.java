@@ -32,8 +32,8 @@ import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
-import de.adorsys.psd2.consent.server.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -179,8 +179,8 @@ public class PisConsentServiceInternal implements PisConsentService {
 
     @Override
     @Transactional
-    public Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType) {
-        return createAuthorization(paymentId, authorizationType);
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
+        return createAuthorization(paymentId, authorizationType, psuData);
     }
 
     @Override
@@ -231,6 +231,7 @@ public class PisConsentServiceInternal implements PisConsentService {
                    .map(lst -> lst.get(0).getExternalId());
     }
 
+    @Override
     public Optional<PsuIdData> getPsuDataByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
                    .map(l -> l.get(0))
@@ -238,6 +239,7 @@ public class PisConsentServiceInternal implements PisConsentService {
                    .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
     }
 
+    @Override
     public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
         return getPisConsentById(consentId)
             .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));

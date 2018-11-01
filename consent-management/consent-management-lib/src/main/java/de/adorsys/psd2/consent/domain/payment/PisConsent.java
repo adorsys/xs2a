@@ -18,8 +18,8 @@ package de.adorsys.psd2.consent.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.domain.ConsentType;
+import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfo;
-import de.adorsys.psd2.consent.server.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;

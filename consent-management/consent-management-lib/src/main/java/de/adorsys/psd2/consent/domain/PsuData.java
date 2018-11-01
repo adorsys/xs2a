@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.domain;
+package de.adorsys.psd2.consent.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

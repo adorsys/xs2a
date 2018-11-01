@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.domain.account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
 import de.adorsys.psd2.consent.domain.ConsentType;
-import de.adorsys.psd2.consent.server.domain.PsuData;
+import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

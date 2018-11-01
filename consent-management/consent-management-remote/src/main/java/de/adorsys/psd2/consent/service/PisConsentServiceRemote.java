@@ -28,6 +28,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.config.PisConsentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -84,16 +85,16 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
-    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType) {
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-            null, CreatePisConsentAuthorisationResponse.class, paymentId)
+            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
                    .getBody());
     }
 
     @Override
-    public Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType) {
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisationCancellation(),
-            null, CreatePisConsentAuthorisationResponse.class, paymentId)
+            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
                    .getBody());
     }
 
@@ -117,6 +118,18 @@ public class PisConsentServiceRemote implements PisConsentService {
     @Override
     public Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType) {
         return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getCancellationAuthorisationSubResources(), String.class, paymentId)
+                                       .getBody());
+    }
+
+    @Override
+    public Optional<PsuIdData> getPsuDataByPaymentId(String paymentId) {
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPsuDataByPaymentId(), PsuIdData.class, paymentId)
+                                       .getBody());
+    }
+
+    @Override
+    public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPsuDataByConsentId(), PsuIdData.class, consentId)
                                        .getBody());
     }
 }

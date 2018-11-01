@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service.mapper;
+package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.server.domain.PsuData;
+import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.springframework.stereotype.Component;
 
