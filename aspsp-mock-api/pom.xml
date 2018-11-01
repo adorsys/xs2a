@@ -24,7 +24,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.11-RC1</version>
+        <version>1.11-SNAPSHOT</version>
     </parent>
 
     <groupId>de.adorsys.psd2</groupId>
