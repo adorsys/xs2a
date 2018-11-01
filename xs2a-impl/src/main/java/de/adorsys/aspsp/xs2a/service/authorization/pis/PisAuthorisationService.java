@@ -53,8 +53,7 @@ public class PisAuthorisationService {
      */
     public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId, PsuIdData psuData) {
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
-                   .getBody();
+                                                 psuData, CreatePisConsentAuthorisationResponse.class, paymentId).getBody();
     }
 
     /**
@@ -76,9 +75,9 @@ public class PisAuthorisationService {
         return stageResponse;
     }
 
-   private void doUpdatePisConsentAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
+    private void doUpdatePisConsentAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
         consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+                                     UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
     }
 
     /**
@@ -89,8 +88,7 @@ public class PisAuthorisationService {
      */
     CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId, PsuIdData psuData) {
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisationCancellation(),
-            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
-                   .getBody();
+                                                 psuData, CreatePisConsentAuthorisationResponse.class, paymentId).getBody();
     }
 
     /**

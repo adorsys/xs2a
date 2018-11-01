@@ -32,6 +32,7 @@ import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -118,7 +119,7 @@ public class PaymentServiceTest {
         when(xs2aPisConsentMapper.mapToXs2aPisConsent(any(), any())).thenReturn(getXs2aPisConsent());
         when(psuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
             .thenReturn(SPI_PSU_DATA);
-        when(xs2aPisConsentMapper.mapToXs2aPisConsent(any())).thenReturn(getXs2aPisConsent());
+        when(xs2aPisConsentMapper.mapToXs2aPisConsent(new CreatePisConsentResponse("TEST"), PSU_ID_DATA)).thenReturn(getXs2aPisConsent());
         when(pisConsentDataService.getInternalPaymentIdByEncryptedString("TEST")).thenReturn("TEST");
 
         //Status by ID

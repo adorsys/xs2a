@@ -46,7 +46,6 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
             payment.setPaymentId(internalPaymentId);
 
             SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-
             SpiResponse<SpiBulkPayment> spiResponse = bulkPaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
             pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 

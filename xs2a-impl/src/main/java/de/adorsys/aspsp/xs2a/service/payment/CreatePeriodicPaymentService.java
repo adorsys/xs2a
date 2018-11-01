@@ -56,9 +56,9 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
     @Override
     public ResponseObject<PeriodicPaymentInitiationResponse> createPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
         String externalPaymentId = pisConsent.getConsentId();
+
         // we need to get decrypted payment ID
         String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(externalPaymentId);
-
         periodicPayment.setPaymentId(internalPaymentId);
 
         PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);

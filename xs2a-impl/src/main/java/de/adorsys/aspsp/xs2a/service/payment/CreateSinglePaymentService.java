@@ -56,6 +56,7 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
     @Override
     public ResponseObject<SinglePaymentInitiationResponse> createPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
         String externalPaymentId = pisConsent.getConsentId();
+
         // we need to get decrypted payment ID
         String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(externalPaymentId);
         singlePayment.setPaymentId(internalPaymentId);

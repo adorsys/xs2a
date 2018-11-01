@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
-import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +48,6 @@ public class AisConsentDataService {
 
     public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
         consentRestTemplate.put(aisConsentRemoteUrls.updateAisAccountAccess(),
-            aisAccountAccessInfo, consentId);
+                                aisAccountAccessInfo, consentId);
     }
 }

@@ -39,9 +39,11 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
     @Override
     public PaymentInformationResponse<PeriodicPayment> getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
         SpiPeriodicPayment payment = new SpiPeriodicPayment(paymentProduct);
-        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
 
+        // we need to get decrypted payment ID
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
         payment.setPaymentId(internalPaymentId);
+
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());

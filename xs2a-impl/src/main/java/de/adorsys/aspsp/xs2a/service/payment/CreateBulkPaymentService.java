@@ -58,10 +58,11 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
     @Override
     public ResponseObject<BulkPaymentInitiationResponse> createPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
         String externalPaymentId = pisConsent.getConsentId();
+
         // we need to get decrypted payment ID
         String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(externalPaymentId);
-
         bulkPayment.setPaymentId(internalPaymentId);
+
         BulkPaymentInitiationResponse response = scaPaymentService.createBulkPayment(bulkPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 

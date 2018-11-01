@@ -139,6 +139,8 @@ public class PaymentService {
     public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
+
+        // we need to get decrypted payment ID
         String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);

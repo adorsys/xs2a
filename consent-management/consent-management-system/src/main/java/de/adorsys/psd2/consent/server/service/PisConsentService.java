@@ -33,10 +33,10 @@ import de.adorsys.psd2.consent.server.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.server.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.server.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.consent.server.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.consent.server.service.security.DecryptedData;
 import de.adorsys.psd2.consent.server.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -275,23 +275,35 @@ public class PisConsentService {
                    .map(lst -> lst.get(0).getExternalId());
     }
 
-    public Optional<PsuIdData> getPsuDataByPaymentId(String encryptedConsentId) {
-        return pisPaymentDataRepository.findByPaymentId(paymentId)
+    /**
+     * Reads Psu data by encrypted payment Id
+     *
+     * @param encryptedPaymentId encrypted id of the payment
+     * @return response contains data of Psu
+     */
+    public Optional<PsuIdData> getPsuDataByPaymentId(String encryptedPaymentId) {
+        Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
+        if (!paymentId.isPresent()) {
+            log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
+            return Optional.empty();
+        }
+
+        return pisPaymentDataRepository.findByPaymentId(paymentId.get())
                    .map(l -> l.get(0))
                    .map(PisPaymentData::getConsent)
                    .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
     }
 
-    public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
-        return getPisConsentById(consentId)
-            .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
+    /**
+     * Reads Psu data by encrypted consent Id
+     *
+     * @param encryptedConsentId encrypted Consent ID
+     * @return response contains data of Psu
+     */
+    public Optional<PsuIdData> getPsuDataByConsentId(String encryptedConsentId) {
+        return getPisConsentById(encryptedConsentId)
+                   .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
     }
-
-    private Optional<PisConsent> getPisConsentById(String consentId) {
-        return Optional.ofNullable(consentId)
-                   .flatMap(pisConsentRepository::findByExternalId);
-    }
-
 
     private Optional<PisConsent> getActualPisConsent(String encryptedConsentId) {
         Optional<String> consentIdDecrypted = securityDataService.getDecryptedId(encryptedConsentId);
