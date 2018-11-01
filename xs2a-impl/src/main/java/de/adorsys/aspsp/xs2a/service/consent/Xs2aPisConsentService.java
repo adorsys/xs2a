@@ -48,6 +48,7 @@ public class Xs2aPisConsentService {
         request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));
         request.setPaymentProduct(parameters.getPaymentProduct());
         request.setPaymentType(parameters.getPaymentType());
+        request.setPsuData(parameters.getPsuData());
         return pisConsentService.createPaymentConsent(request)
                    .orElse(null);
     }

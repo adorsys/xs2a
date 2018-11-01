@@ -16,15 +16,20 @@
 
 package de.adorsys.aspsp.xs2a.service.consent;
 
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
+import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
+import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,13 +46,13 @@ public class Xs2aAisConsentService {
     /**
      * Sends a POST request to CMS to store created AISconsent
      *
-     * @param request Request body storing main consent details
-     * @param psuId   String representation of PSU`s identifier at ASPSP
-     * @param tppId   String representation of TPP`s identifier from TPP Certificate
+     * @param request          Request body storing main consent details
+     * @param psuData          PsuIdData container of authorisation data about PSU
+     * @param tppId            String representation of TPP`s identifier from TPP Certificate
      * @return String representation of identifier of stored consent
      */
-    public String createConsent(CreateConsentReq request, String psuId, String tppId) {
-        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuId, tppId);
+    public String createConsent(CreateConsentReq request, PsuIdData psuData, String tppId) {
+        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppId);
         Optional<String> consent = aisConsentService.createConsent(createAisConsentRequest);
         return consent.orElse(null);
     }
@@ -58,7 +63,7 @@ public class Xs2aAisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent
      */
-    public AisAccountConsent getAccountConsentById(String consentId) {
+    public AccountConsent getAccountConsentById(String consentId) {
         return aisConsentService.getAisAccountConsentById(consentId)
                    .orElse(null);
     }
@@ -110,8 +115,8 @@ public class Xs2aAisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
-    public Optional<String> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, String psuId) {
-        AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuId);
+    public Optional<String> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
+        AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData);
         return aisConsentService.createAuthorization(consentId, request);
     }
 

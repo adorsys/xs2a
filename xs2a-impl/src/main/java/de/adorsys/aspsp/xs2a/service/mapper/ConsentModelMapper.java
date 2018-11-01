@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRespo
 import de.adorsys.aspsp.xs2a.web.mapper.CoreObjectsMapper;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -197,16 +198,16 @@ public class ConsentModelMapper {
         return objectMapper.convertValue(reference, Xs2aAccountReference.class);
     }
 
-    public UpdateConsentPsuDataReq mapToUpdatePsuData(String psuId, String consentId, String authorizationId, Map body) {
+    public UpdateConsentPsuDataReq mapToUpdatePsuData(PsuIdData psuData, String consentId, String authorizationId, Map body) {
         UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
-        updatePsuData.setPsuId(psuId);
+        updatePsuData.setPsuData(psuData);
         updatePsuData.setConsentId(consentId);
         updatePsuData.setAuthorizationId(authorizationId);
 
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuData -> updatePsuData.setPassword(psuData.get("password")));
+                .ifPresent(psuDataMap -> updatePsuData.setPassword(psuDataMap.get("password")));
 
             Optional.ofNullable(body.get("authenticationMethodId"))
                 .map(o -> (String) o)
@@ -222,16 +223,16 @@ public class ConsentModelMapper {
         return updatePsuData;
     }
 
-    public UpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(String psuId, String paymentId, String authorisationId, String paymentService, Map body) {
+    public UpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(PsuIdData psuData, String paymentId, String authorisationId, String paymentService, Map body) {
         UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
-        request.setPsuId(psuId);
+        request.setPsuData(psuData);
         request.setPaymentId(paymentId);
         request.setAuthorizationId(authorisationId);
         request.setPaymentService(paymentService);
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuData -> request.setPassword(psuData.get("password")));
+                .ifPresent(psuDataMap -> request.setPassword(psuDataMap.get("password")));
 
             Optional.ofNullable(body.get("authenticationMethodId"))
                 .map(o -> (String) o)

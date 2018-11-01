@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PisConsentMapper {
     private final TppInfoMapper tppInfoMapper;
+    private final PsuDataMapper psuDataMapper;
 
     public PisConsent mapToPisConsent(PisConsentRequest request) {
         PisConsent consent = new PisConsent();
@@ -48,6 +49,7 @@ public class PisConsentMapper {
         consent.setPisPaymentProduct(request.getPaymentProduct());
         consent.setConsentType(ConsentType.PIS);
         consent.setConsentStatus(ConsentStatus.RECEIVED);
+        consent.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
         return consent;
     }
 
@@ -102,16 +104,17 @@ public class PisConsentMapper {
 
     public Optional<PisConsentResponse> mapToPisConsentResponse(PisConsent pisConsent) {
         return Optional.ofNullable(pisConsent)
-            .map(pc -> {
-                PisConsentResponse response = new PisConsentResponse();
-                response.setPayments(mapToPisPaymentList(pc.getPayments()));
-                response.setExternalId(pc.getExternalId());
-                response.setConsentStatus(pc.getConsentStatus());
-                response.setPaymentType(pc.getPaymentType());
-                response.setPaymentProduct(pc.getPisPaymentProduct());
-                response.setTppInfo(tppInfoMapper.mapToCmsTppInfo(pc.getTppInfo()));
-                return response;
-            });
+                   .map(pc -> {
+                       PisConsentResponse response = new PisConsentResponse();
+                       response.setPayments(mapToPisPaymentList(pc.getPayments()));
+                       response.setExternalId(pc.getExternalId());
+                       response.setConsentStatus(pc.getConsentStatus());
+                       response.setPaymentType(pc.getPaymentType());
+                       response.setPaymentProduct(pc.getPisPaymentProduct());
+                       response.setTppInfo(tppInfoMapper.mapToCmsTppInfo(pc.getTppInfo()));
+                       response.setPsuData(psuDataMapper.mapToPsuIdData(pisConsent.getPsuData()));
+                       return response;
+                   });
     }
 
     private List<PisPayment> mapToPisPaymentList(List<PisPaymentData> payments) {

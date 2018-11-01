@@ -29,11 +29,13 @@ import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
-import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
+import de.adorsys.psd2.consent.server.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +58,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 public class PisConsentServiceInternal implements PisConsentService {
     private final PisConsentRepository pisConsentRepository;
     private final PisConsentMapper pisConsentMapper;
+    private final PsuDataMapper psuDataMapper;
     private final PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
 
@@ -168,9 +171,9 @@ public class PisConsentServiceInternal implements PisConsentService {
      */
     @Override
     @Transactional
-    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType) {
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
-                   .map(list -> saveNewAuthorization(list.get(0).getConsent(), authorizationType))
+                   .map(list -> saveNewAuthorization(list.get(0).getConsent(), authorizationType, psuData))
                    .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
 
@@ -228,6 +231,18 @@ public class PisConsentServiceInternal implements PisConsentService {
                    .map(lst -> lst.get(0).getExternalId());
     }
 
+    public Optional<PsuIdData> getPsuDataByPaymentId(String paymentId) {
+        return pisPaymentDataRepository.findByPaymentId(paymentId)
+                   .map(l -> l.get(0))
+                   .map(PisPaymentData::getConsent)
+                   .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
+    }
+
+    public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
+        return getPisConsentById(consentId)
+            .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
+    }
+
     private Optional<PisConsent> getPisConsentById(String consentId) {
         return Optional.ofNullable(consentId)
                    .flatMap(pisConsentRepository::findByExternalId);
@@ -249,12 +264,13 @@ public class PisConsentServiceInternal implements PisConsentService {
      * @param pisConsent PIS Consent, for which authorization is performed
      * @return PisConsentAuthorization
      */
-    private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent, CmsAuthorisationType authorizationType) {
+    private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
         consentAuthorization.setConsent(pisConsent);
         consentAuthorization.setScaStatus(STARTED);
         consentAuthorization.setAuthorizationType(authorizationType);
+        consentAuthorization.setPsuData(psuDataMapper.mapToPsuData(psuData));
         return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 

@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.domain.payment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.domain.ConsentType;
 import de.adorsys.psd2.consent.domain.TppInfo;
+import de.adorsys.psd2.consent.server.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -50,6 +51,10 @@ public class PisConsent {
         orphanRemoval = true)
     @ApiModelProperty(value = "List of single payments ", required = true)
     private List<PisPaymentData> payments = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "psu_id")
+    private PsuData psuData;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id")

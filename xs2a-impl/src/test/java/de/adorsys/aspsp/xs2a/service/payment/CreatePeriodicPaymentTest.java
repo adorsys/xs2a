@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationServic
 import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -48,6 +49,7 @@ public class CreatePeriodicPaymentTest {
     private static final String PAYMENT_ID = "12345";
     private static final String IBAN = "DE123456789";
     private final TppInfo TPP_INFO = buildTppInfo();
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
 
     @InjectMocks
     private CreatePeriodicPaymentService createPeriodicPaymentService;
@@ -99,7 +101,7 @@ public class CreatePeriodicPaymentTest {
     }
 
     private Xs2aPisConsent buildXs2aPisConsent() {
-        return new Xs2aPisConsent(CONSENT_ID);
+        return new Xs2aPisConsent(CONSENT_ID, PSU_ID_DATA);
     }
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {

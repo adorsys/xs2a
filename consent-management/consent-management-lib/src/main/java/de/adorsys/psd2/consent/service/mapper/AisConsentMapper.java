@@ -24,6 +24,8 @@ import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.domain.account.AccountAccess;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.consent.server.domain.PsuData;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,7 +33,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class AisConsentMapper {
+    private final PsuDataMapper psuDataMapper;
 
     public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
         return new AisAccountConsent(
@@ -45,7 +49,7 @@ public class AisConsentMapper {
             consent.getAccesses().stream().anyMatch(a -> a.getTypeAccess() == TypeAccess.BALANCE),
             consent.isTppRedirectPreferred(),
             consent.getAisConsentRequestType(),
-            consent.getPsuId(),
+            psuDataMapper.mapToPsuIdData(consent.getPsuData()),
             consent.getTppId());
     }
 
@@ -54,11 +58,12 @@ public class AisConsentMapper {
                    .map(conAuth -> {
                        AisConsentAuthorizationResponse resp = new AisConsentAuthorizationResponse();
                        resp.setAuthorizationId(conAuth.getExternalId());
-                       resp.setPsuId(conAuth.getPsuId());
+                       resp.setPsuId(Optional.ofNullable(conAuth.getPsuData())
+                                         .map(PsuData::getPsuId)
+                                         .orElse(null));
                        resp.setConsentId(conAuth.getConsent().getExternalId());
                        resp.setScaStatus(conAuth.getScaStatus());
                        resp.setAuthenticationMethodId(conAuth.getAuthenticationMethodId());
-                       resp.setPassword(conAuth.getPassword());
                        resp.setScaAuthenticationData(conAuth.getScaAuthenticationData());
 
                        return resp;

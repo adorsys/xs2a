@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
+import de.adorsys.psd2.consent.server.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
@@ -33,8 +34,9 @@ public class AisConsentAuthorization {
     @Column(name = "external_id", nullable = false)
     private String externalId;
 
-    @Column(name = "psu_id")
-    private String psuId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "psu_id")
+    private PsuData psuData;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "consent_id")
@@ -49,7 +51,4 @@ public class AisConsentAuthorization {
 
     @Column(name = "sca_authentication_data")
     private String scaAuthenticationData;
-
-    @Column(name = "password")
-    private String password;
 }

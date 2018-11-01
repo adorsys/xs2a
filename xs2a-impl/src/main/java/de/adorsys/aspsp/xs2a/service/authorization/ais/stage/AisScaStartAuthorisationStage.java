@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
@@ -66,10 +67,9 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
      */
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
-        AisAccountConsent aisAccountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
-        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(aisAccountConsent);
-
-        PsuIdData psuData = new PsuIdData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
+        AccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
+        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
+        PsuIdData psuData = request.getPsuData();
 
         SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData());
@@ -99,7 +99,9 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
             }
         } else {
             aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.REJECTED);
-            return createResponseForNoneAvailableScaMethod(psuData);
+            UpdateConsentPsuDataResponse response = createResponseForNoneAvailableScaMethod(psuData);
+            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
+            return response;
         }
     }
 

@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -248,7 +249,7 @@ public class AisConsentControllerTest {
 
     private static AisConsentAuthorizationRequest getConsentAuthorizationRequest() {
         AisConsentAuthorizationRequest request = new AisConsentAuthorizationRequest();
-        request.setPsuId(PSU_ID);
+        request.setPsuData(new PsuIdData(PSU_ID, null, null, null));
         request.setPassword("zzz");
 
         return request;
@@ -256,7 +257,7 @@ public class AisConsentControllerTest {
 
     private static AisConsentAuthorizationRequest getWrongConsentAuthorizationRequest() {
         AisConsentAuthorizationRequest request = new AisConsentAuthorizationRequest();
-        request.setPsuId(WRONG_PSU_ID);
+        request.setPsuData(new PsuIdData(WRONG_PSU_ID, null, null, null));
         request.setPassword("zzz");
 
         return request;
