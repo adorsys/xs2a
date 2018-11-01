@@ -168,7 +168,7 @@
             <plugin>
                 <groupId>com.trivago.rta</groupId>
                 <artifactId>cluecumber-report-plugin</artifactId>
-                <version>1.4.0</version>
+                <version>1.4.2</version>
                 <executions>
                     <execution>
                         <id>report</id>
