@@ -26,7 +26,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.adorsys.psd2</groupId>
     <artifactId>consent-management</artifactId>
     <packaging>pom</packaging>
 
