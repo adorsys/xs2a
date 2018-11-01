@@ -24,18 +24,15 @@ import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.model.ConsentsResponse201;
-import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -48,7 +45,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
-public class ConsentRequestSteps {
+public class ConsentRequestSuccessfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
@@ -75,7 +72,7 @@ public class ConsentRequestSteps {
 
     @When("^PSU sends the create consent request$")
     public void sendConsentRequest() throws HttpClientErrorException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(),
+        HttpEntity entity = HttpEntityUtils.getHttpEntity(context.getTestData().getRequest(),
             context.getAccessToken());
         ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
                 context.getBaseUrl() + "/consents",
@@ -94,27 +91,7 @@ public class ConsentRequestSteps {
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getConsentStatus(), equalTo(givenResponseBody.getConsentStatus()));
         assertThat(actualResponse.getBody().getConsentId(), notNullValue());
-    }
 
-    @When("^PSU sends the create consent request with error$")
-    public void sendErrorfulConsentRequest() throws HttpClientErrorException, IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-        try {
-            restTemplate.exchange(
-                context.getBaseUrl() + "/consents",
-                HttpMethod.POST,
-                entity,
-                ConsentsResponse201.class);
-        } catch (RestClientResponseException rex) {
-            handleRequestError(rex);
-        }
-    }
-
-    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-        context.setTppMessages(tppMessages);
+        context.cleanUp();
     }
 }

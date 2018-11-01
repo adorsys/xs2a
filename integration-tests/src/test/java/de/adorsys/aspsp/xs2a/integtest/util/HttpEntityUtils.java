@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.integtest.model.Request;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
-public class PaymentUtils {
+public class HttpEntityUtils {
 
     /**
      *
