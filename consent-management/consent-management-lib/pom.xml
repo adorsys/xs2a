@@ -21,7 +21,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.11-SNAPSHOT</version>
+        <version>1.11-RC1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
