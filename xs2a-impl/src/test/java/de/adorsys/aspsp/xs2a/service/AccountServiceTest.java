@@ -122,8 +122,6 @@ public class AccountServiceTest {
     @Mock
     private Xs2aAccountDetails xs2aAccountDetails;
     @Mock
-    private SpiBalanceReport spiBalanceReport;
-    @Mock
     private Xs2aBalancesReport xs2aBalancesReport;
     @Mock
     private SpiTransaction spiTransaction;
@@ -350,7 +348,7 @@ public class AccountServiceTest {
             .thenReturn(true);
 
         when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
-            .thenReturn(buildErrorSpiResponse(spiBalanceReport));
+            .thenReturn(buildErrorSpiResponse(Collections.EMPTY_LIST));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(FORMAT_ERROR_CODE);
@@ -406,7 +404,7 @@ public class AccountServiceTest {
             .thenReturn(ASPSP_CONSENT_DATA);
 
         when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(spiBalanceReport));
+            .thenReturn(buildSuccessSpiResponse(Collections.EMPTY_LIST));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
@@ -431,9 +429,9 @@ public class AccountServiceTest {
             .thenReturn(ASPSP_CONSENT_DATA);
 
         when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(spiBalanceReport));
+            .thenReturn(buildSuccessSpiResponse(Collections.EMPTY_LIST));
 
-        when(balanceReportMapper.mapToXs2aBalancesReport(spiBalanceReport, SPI_ACCOUNT_REFERENCE))
+        when(balanceReportMapper.mapToXs2aBalancesReport(Collections.emptyList(), SPI_ACCOUNT_REFERENCE))
             .thenReturn(xs2aBalancesReport);
 
         when(xs2aBalancesReport.getXs2aAccountReference())
@@ -751,6 +749,7 @@ public class AccountServiceTest {
             .build();
     }
 
+    // Needed because ResponseObject is final, so it's impossible to mock it
     private static ResponseObject<AccountConsent> buildEmptyAllowedAccountDataResponse() {
         return ResponseObject.<AccountConsent>builder()
             .body(createConsent(CONSENT_ID, createEmptyAccountAccess()))

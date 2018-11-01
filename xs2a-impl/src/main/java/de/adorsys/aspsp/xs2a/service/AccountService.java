@@ -192,7 +192,7 @@ public class AccountService {
                 .build();
         }
 
-        SpiResponse<SpiBalanceReport> spiResponse = accountSpi.requestBalancesForAccount(requestedAccountReference.get(),
+        SpiResponse<List<SpiAccountBalance>> spiResponse = accountSpi.requestBalancesForAccount(requestedAccountReference.get(),
             aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 

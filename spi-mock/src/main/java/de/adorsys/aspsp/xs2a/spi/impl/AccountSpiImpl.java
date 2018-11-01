@@ -168,7 +168,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiBalanceReport> requestBalancesForAccount(@NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData) {
         try {
             List<SpiAccountBalance> accountBalances = aspspRestTemplate.exchange(
                 remoteSpiUrls.getBalancesByAccountId(),
@@ -179,20 +179,17 @@ public class AccountSpiImpl implements AccountSpi {
                 accountReference.getResourceId()
             ).getBody();
 
-            SpiBalanceReport balanceReport = new SpiBalanceReport();
-            balanceReport.setBalances(accountBalances);
-
-            return SpiResponse.<SpiBalanceReport>builder()
-                       .payload(balanceReport)
+            return SpiResponse.<List<SpiAccountBalance>>builder()
+                       .payload(accountBalances)
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                return SpiResponse.<SpiBalanceReport>builder()
+                return SpiResponse.<List<SpiAccountBalance>>builder()
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
-            return SpiResponse.<SpiBalanceReport>builder()
+            return SpiResponse.<List<SpiAccountBalance>>builder()
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
