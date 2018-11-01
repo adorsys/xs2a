@@ -76,10 +76,6 @@
             <column name="currency" type="VARCHAR(3)"/>
         </createTable>
 
-        <addPrimaryKey columnNames="consent_id, iban, bban, pan, masked_pan, msisdn, currency"
-                       constraintName="piis_account_reference_pkey"
-                       tableName="piis_account_reference"/>
-
         <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="piis_account_reference"
                                  constraintName="fk__piis_account_reference__piis_consent" deferrable="false"
                                  initiallyDeferred="false"
