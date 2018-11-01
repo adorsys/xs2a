@@ -50,6 +50,6 @@ public class PisConsentDataService {
     }
 
     public String getInternalPaymentIdByEncryptedString(String encryptedId) {
-        return consentRestTemplate.getForEntity(pisConsentRemoteUrls.getPaymentIdByEncryptedString(), String.class, encryptedId).getBody();
+        return pisConsentService.getDecryptedId(encryptedId).orElse(null);
     }
 }

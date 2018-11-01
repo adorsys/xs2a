@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.server.service.security;
 
-import de.adorsys.psd2.consent.server.domain.CryptoAlgorithm;
-import de.adorsys.psd2.consent.server.repository.CryptoAlgorithmRepository;
-import de.adorsys.psd2.consent.server.service.security.provider.CryptoProvider;
-import de.adorsys.psd2.consent.server.service.security.provider.CryptoProviderFactory;
+import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
+import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;
+import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

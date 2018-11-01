@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.server.data.test;
 
-import de.adorsys.psd2.consent.server.domain.CryptoAlgorithm;
-import de.adorsys.psd2.consent.server.repository.CryptoAlgorithmRepository;
+import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
+import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

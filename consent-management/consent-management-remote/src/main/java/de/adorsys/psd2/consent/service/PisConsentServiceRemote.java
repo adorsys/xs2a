@@ -78,30 +78,36 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
+    public Optional<String> getDecryptedId(String encryptedId) {
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPaymentIdByEncryptedString(), String.class, encryptedId)
+                                       .getBody());
+    }
+
+    @Override
     public Optional<String> updateAspspConsentDataInPisConsent(String consentId, CmsAspspConsentDataBase64 request) {
         CreatePisConsentResponse response = consentRestTemplate.exchange(remotePisConsentUrls.updateAspspConsentData(), HttpMethod.PUT,
-            new HttpEntity<>(request), CreatePisConsentResponse.class, consentId).getBody();
+                                                                         new HttpEntity<>(request), CreatePisConsentResponse.class, consentId).getBody();
         return Optional.ofNullable(response.getConsentId());
     }
 
     @Override
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
-                   .getBody());
+                                                                     psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
+                                       .getBody());
     }
 
     @Override
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisationCancellation(),
-            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
-                   .getBody());
+                                                                     psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
+                                       .getBody());
     }
 
     @Override
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
+                                                                UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
     }
 
     @Override
@@ -112,7 +118,7 @@ public class PisConsentServiceRemote implements PisConsentService {
     @Override
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, null, GetPisConsentAuthorisationResponse.class, authorizationId)
-                                                          .getBody());
+                                       .getBody());
     }
 
     @Override

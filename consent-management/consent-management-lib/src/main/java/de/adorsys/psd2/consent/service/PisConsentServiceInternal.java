@@ -34,6 +34,8 @@ import de.adorsys.psd2.consent.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.security.DecryptedData;
+import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -170,6 +172,7 @@ public class PisConsentServiceInternal implements PisConsentService {
      * @param encryptedId id to be decrypted
      * @return Response containing original decrypted Id
      */
+    @Override
     public Optional<String> getDecryptedId(String encryptedId) {
         return securityDataService.getDecryptedId(encryptedId);
     }

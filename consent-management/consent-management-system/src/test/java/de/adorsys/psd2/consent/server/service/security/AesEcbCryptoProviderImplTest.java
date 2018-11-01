@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.consent.server.service.security;
 
-import de.adorsys.psd2.consent.server.service.security.provider.AesEcbCryptoProviderImpl;
+import de.adorsys.psd2.consent.service.security.provider.AesEcbCryptoProviderImpl;
+import de.adorsys.psd2.consent.service.security.DecryptedData;
+import de.adorsys.psd2.consent.service.security.EncryptedData;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;

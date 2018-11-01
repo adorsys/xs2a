@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service.security.provider;
+package de.adorsys.psd2.consent.service.security.provider;
 
-import de.adorsys.psd2.consent.server.service.security.DecryptedData;
-import de.adorsys.psd2.consent.server.service.security.EncryptedData;
+import de.adorsys.psd2.consent.service.security.DecryptedData;
+import de.adorsys.psd2.consent.service.security.EncryptedData;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;

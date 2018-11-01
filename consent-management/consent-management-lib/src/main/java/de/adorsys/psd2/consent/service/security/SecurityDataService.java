@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service.security;
+package de.adorsys.psd2.consent.service.security;
 
-import de.adorsys.psd2.consent.server.service.security.provider.CryptoProvider;
-import de.adorsys.psd2.consent.server.service.security.provider.CryptoProviderFactory;
+
+import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;

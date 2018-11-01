@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service.security;
+package de.adorsys.psd2.consent.service.security.provider;
 
 import lombok.Value;
 
 @Value
-public class DecryptedData {
-    private byte[] data;
+public class CryptoProviderAlgorithmVersion {
+    private String externalId;
+    private String algorithmName;
 }

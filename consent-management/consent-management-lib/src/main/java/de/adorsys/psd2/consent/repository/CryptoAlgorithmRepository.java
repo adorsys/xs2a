@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.repository;
+package de.adorsys.psd2.consent.repository;
 
-import de.adorsys.psd2.consent.server.domain.CryptoAlgorithm;
+
+import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

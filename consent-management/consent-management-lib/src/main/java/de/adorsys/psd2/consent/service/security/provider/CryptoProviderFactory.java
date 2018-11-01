@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service.security.provider;
+package de.adorsys.psd2.consent.service.security.provider;
 
-import de.adorsys.psd2.consent.server.domain.CryptoAlgorithm;
-import de.adorsys.psd2.consent.server.repository.CryptoAlgorithmRepository;
+import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
+import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
