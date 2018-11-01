@@ -10,4 +10,4 @@ import org.junit.runner.RunWith;
     glue = "de.adorsys.aspsp.xs2a.integtest.stepdefinitions",
     format = {"json:cucumber-report/cucumber.json"},
     tags = {"~@ignore", "~@TestTag"})
-public class CucumberTest { }
+public class CucumberIT { }

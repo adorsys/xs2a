@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
@@ -27,7 +26,6 @@ import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.AccountList;
-import de.adorsys.psd2.model.ConsentsResponse201;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -43,8 +41,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @FeatureFileSteps
 public class AccountListRequestSuccessfulSteps {
 
@@ -64,7 +64,7 @@ public class AccountListRequestSuccessfulSteps {
     @And("^wants to get a list of accounts using (.*)$")
     public void wants_to_get_a_list_of_accounts_using(String dataFileName) throws IOException {
         TestData<HashMap, AccountList> data = mapper.readValue(
-                resourceToString("/data-input/ais/consent/" + dataFileName, UTF_8),
+                resourceToString("/data-input/ais/account/" + dataFileName, UTF_8),
                 new TypeReference<TestData<HashMap, AccountList>>() {});
 
         context.setTestData(data);
@@ -72,9 +72,10 @@ public class AccountListRequestSuccessfulSteps {
     }
 
     @When("^PSU requests the list of accounts$")
-    public void psu_requests_the_list_of_accounts() throws HttpClientErrorException {
+    public void psu_requests_the_list_of_accounts() {
         HttpEntity entity = HttpEntityUtils.getHttpEntity(context.getTestData().getRequest(),
                 context.getAccessToken());
+        log.info("////entity request list account////  "+entity.toString());
         ResponseEntity<AccountList> response = restTemplate.exchange(
                 context.getBaseUrl() + "/accounts",
                 HttpMethod.GET,
@@ -92,7 +93,6 @@ public class AccountListRequestSuccessfulSteps {
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         //TODO assert that the response body is what we expect
         //we expect at least one accountDetail in the list
-        //the iban of the actual response should match an iban in one of accountDetail
     }
 
 }

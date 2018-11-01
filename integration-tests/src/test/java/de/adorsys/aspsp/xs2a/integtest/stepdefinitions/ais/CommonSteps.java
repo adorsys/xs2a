@@ -16,25 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import de.adorsys.aspsp.xs2a.integtest.model.TestData;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.AisConsentService;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -46,6 +37,8 @@ public class CommonSteps{
 
     @Autowired
     private Context context;
+    @Autowired
+    private AisConsentService aisConsentService;
 
     // Common errorful step for checking response code and error response
     @Then("^an error response code is displayed and an appropriate error response is shown$")
@@ -65,8 +58,9 @@ public class CommonSteps{
         context.cleanUp();
     }
 
-    @Given("^PSU already has an existing consent (.*)$")
-    public void psu_already_has_an_existing_consent(String dataFileName) throws IOException {
-
+    @Given("^PSU already has an existing (.*) consent (.*)$")
+    public void psu_already_has_an_existing_consent(String consentStatus, String dataFileName) throws IOException {
+        String consentId = aisConsentService.createConsentWithStatus(consentStatus, dataFileName);
+        context.setConsentId(consentId);
     }
 }

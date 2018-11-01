@@ -40,8 +40,6 @@ import java.time.LocalDate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
 public class ConsentRequestErrorfulSteps {
