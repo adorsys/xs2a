@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,8 +26,8 @@ import lombok.Data;
 @ApiModel(description = "AIS consent authorization", value = "AisConsentAuthorization")
 public class AisConsentAuthorizationRequest {
 
-    @ApiModelProperty(value = "ID of the corresponding PSU", required = true, example = "32aad578-58a6-4d5d-8b0c-45546dd88f07")
-    private String psuId;
+    @ApiModelProperty(value = "Corresponding PSU", required = true)
+    private PsuIdData psuData;
 
     @ApiModelProperty(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
     private ScaStatus scaStatus;

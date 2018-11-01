@@ -23,16 +23,20 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.aspsp.xs2a.service.payment.CancelPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreateBulkPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
@@ -62,6 +66,8 @@ public class PaymentServiceTest {
     private static final String AMOUNT = "100";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
+    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
 
     private final SinglePayment SINGLE_PAYMENT_OK = getSinglePayment(IBAN, AMOUNT);
 
@@ -97,6 +103,10 @@ public class PaymentServiceTest {
     private BulkPaymentSpi bulkPaymentSpi;
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
+    @Mock
+    private Xs2aToSpiPsuDataMapper psuDataMapper;
+    @Mock
+    private PisPsuDataService pisPsuDataService;
 
     @Before
     public void setUp() {
@@ -105,6 +115,9 @@ public class PaymentServiceTest {
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.ACCP)).thenReturn(Xs2aTransactionStatus.ACCP);
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(Xs2aTransactionStatus.RJCT);
         when(paymentMapper.mapToTransactionStatus(null)).thenReturn(null);
+        when(xs2aPisConsentMapper.mapToXs2aPisConsent(any(), any())).thenReturn(getXs2aPisConsent());
+        when(psuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
+            .thenReturn(SPI_PSU_DATA);
         when(xs2aPisConsentMapper.mapToXs2aPisConsent(any())).thenReturn(getXs2aPisConsent());
         when(pisConsentDataService.getInternalPaymentIdByEncryptedString("TEST")).thenReturn("TEST");
 
@@ -123,9 +136,6 @@ public class PaymentServiceTest {
             .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
                             .body(getCancelPaymentResponse(false, CANC))
                             .build());
-
-
-
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
@@ -143,6 +153,8 @@ public class PaymentServiceTest {
     @Test
     public void cancelPayment_Success_WithAuthorisation() {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.TRUE);
+        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(PSU_ID_DATA);
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -155,6 +167,8 @@ public class PaymentServiceTest {
     @Test
     public void cancelPayment_Success_WithoutAuthorisation() {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
+        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(PSU_ID_DATA);
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -241,7 +255,7 @@ public class PaymentServiceTest {
     }
 
     private Xs2aPisConsent getXs2aPisConsent() {
-        return new Xs2aPisConsent("TEST");
+        return new Xs2aPisConsent("TEST", PSU_ID_DATA);
     }
 
 

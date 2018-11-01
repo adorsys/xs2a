@@ -35,14 +35,14 @@ public class SpiPaymentMapper {
 
     @Nullable AspspTransactionStatus mapToAspspTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
-                   .map(t -> AspspTransactionStatus.valueOf(t.name()))
-                   .orElse(null);
+            .map(t -> AspspTransactionStatus.valueOf(t.name()))
+            .orElse(null);
     }
 
     public @Nullable SpiTransactionStatus mapToSpiTransactionStatus(AspspTransactionStatus aspspTransactionStatus) {
         return Optional.ofNullable(aspspTransactionStatus)
-                   .map(t -> SpiTransactionStatus.valueOf(t.name()))
-                   .orElse(null);
+            .map(t -> SpiTransactionStatus.valueOf(t.name()))
+            .orElse(null);
     }
 
     AspspAmount mapToAspspAmount(@NotNull SpiAmount spiAmount) {
@@ -51,26 +51,29 @@ public class SpiPaymentMapper {
 
     @Nullable AspspAddress mapToAspspAddress(SpiAddress spiAddress) {
         return Optional.ofNullable(spiAddress)
-                   .map(s -> new AspspAddress(s.getStreet(), s.getBuildingNumber(), s.getCity(), s.getPostalCode(), s.getCountry()))
-                   .orElse(null);
+            .map(s -> new AspspAddress(s.getStreet(), s.getBuildingNumber(), s.getCity(), s.getPostalCode(),
+                s.getCountry()))
+            .orElse(null);
     }
 
     AspspAccountReference mapToAspspAccountReference(@NotNull SpiAccountReference spiAccountReference) {
-        return new AspspAccountReference(spiAccountReference.getIban(),
-                                         spiAccountReference.getBban(),
-                                         spiAccountReference.getPan(),
-                                         spiAccountReference.getMaskedPan(),
-                                         spiAccountReference.getMsisdn(),
-                                         spiAccountReference.getCurrency());
+        return new AspspAccountReference(spiAccountReference.getResourceId(),
+            spiAccountReference.getIban(),
+            spiAccountReference.getBban(),
+            spiAccountReference.getPan(),
+            spiAccountReference.getMaskedPan(),
+            spiAccountReference.getMsisdn(),
+            spiAccountReference.getCurrency());
     }
 
     SpiAccountReference mapToSpiAccountReference(@NotNull AspspAccountReference aspspAccountReference) {
-        return new SpiAccountReference(aspspAccountReference.getIban(),
-                                       aspspAccountReference.getBban(),
-                                       aspspAccountReference.getPan(),
-                                       aspspAccountReference.getMaskedPan(),
-                                       aspspAccountReference.getMsisdn(),
-                                       aspspAccountReference.getCurrency());
+        return new SpiAccountReference(aspspAccountReference.getAccountId(),
+            aspspAccountReference.getIban(),
+            aspspAccountReference.getBban(),
+            aspspAccountReference.getPan(),
+            aspspAccountReference.getMaskedPan(),
+            aspspAccountReference.getMsisdn(),
+            aspspAccountReference.getCurrency());
     }
 
     SpiAmount mapToSpiAmount(@NotNull AspspAmount aspspAmount) {
@@ -79,8 +82,9 @@ public class SpiPaymentMapper {
 
     @Nullable SpiAddress mapToSpiAddress(AspspAddress aspspAddress) {
         return Optional.ofNullable(aspspAddress)
-                   .map(a -> new SpiAddress(a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry()))
-                   .orElse(null);
+            .map(a -> new SpiAddress(a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(),
+                a.getCountry()))
+            .orElse(null);
     }
 }
 

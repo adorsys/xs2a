@@ -14,78 +14,76 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
-import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
-import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
 
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CreatePeriodicPaymentTest {
+public class CreateSinglePaymentServiceTest {
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String CONSENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
-    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
+    private static final String PAYMENT_ID = "12345";
     private static final String IBAN = "DE123456789";
+    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
     private final TppInfo TPP_INFO = buildTppInfo();
 
     @InjectMocks
-    private CreatePeriodicPaymentService createPeriodicPaymentService;
+    private CreateSinglePaymentService createSinglePaymentService;
     @Mock
     private ScaPaymentService scaPaymentService;
     @Mock
     private PisConsentService pisConsentService;
     @Mock
-    private AuthorisationMethodService authorisationMethodService;
+    private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
-    private PisConsentDataService pisConsentDataService;
+    private AuthorisationMethodService authorisationMethodService;
+
+    @Before
+    public void init() {
+        when(scaPaymentService.createSinglePayment(buildSinglePayment(), TPP_INFO, PaymentProduct.SEPA, buildXs2aPisConsent())).thenReturn(buildSinglePaymentInitiationResponse());
+    }
 
     @Test
-    public void success_initiate_periodic_payment() {
+    public void success_initiate_single_payment() {
         //When
-        when(pisConsentDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
-        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, PaymentProduct.SEPA, buildXs2aPisConsent())).thenReturn(buildPeriodicPaymentInitiationResponse());
-
-        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo(), buildXs2aPisConsent());
+        ResponseObject<SinglePaymentInitiationResponse> actualResponse = createSinglePaymentService.createPayment(buildSinglePayment(), buildPaymentInitiationParameters(), buildTppInfo(), buildXs2aPisConsent());
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(CONSENT_ID);
+        assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
     }
 
-    private PeriodicPayment buildPeriodicPayment() {
-        PeriodicPayment payment = new PeriodicPayment();
+    private SinglePayment buildSinglePayment() {
+        SinglePayment payment = new SinglePayment();
         Xs2aAmount amount = buildXs2aAmount();
-        payment.setPaymentId(PAYMENT_ID);
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(buildReference());
         payment.setCreditorAccount(buildReference());
-        payment.setStartDate(LocalDate.now());
-        payment.setEndDate(LocalDate.now().plusMonths(4));
         payment.setTransactionStatus(Xs2aTransactionStatus.RCVD);
         return payment;
     }
@@ -105,18 +103,18 @@ public class CreatePeriodicPaymentTest {
     }
 
     private Xs2aPisConsent buildXs2aPisConsent() {
-        return new Xs2aPisConsent(CONSENT_ID);
+        return new Xs2aPisConsent(CONSENT_ID, PSU_DATA);
     }
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentProduct(PaymentProduct.SEPA);
-        parameters.setPaymentType(PaymentType.PERIODIC);
+        parameters.setPaymentType(PaymentType.SINGLE);
         return parameters;
     }
 
-    private PeriodicPaymentInitiationResponse buildPeriodicPaymentInitiationResponse() {
-        PeriodicPaymentInitiationResponse response = new PeriodicPaymentInitiationResponse();
+    private SinglePaymentInitiationResponse buildSinglePaymentInitiationResponse() {
+        SinglePaymentInitiationResponse response = new SinglePaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(Xs2aTransactionStatus.RCVD);
         response.setPisConsentId(CONSENT_ID);

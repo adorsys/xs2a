@@ -18,6 +18,8 @@ package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
+import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,5 +45,10 @@ public class AisConsentDataService {
 
         consentRestTemplate.put(aisConsentRemoteUrls.updateAspspConsentData(),
                                 new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload), consentData.getConsentId());
+    }
+
+    public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
+        consentRestTemplate.put(aisConsentRemoteUrls.updateAisAccountAccess(),
+            aisAccountAccessInfo, consentId);
     }
 }

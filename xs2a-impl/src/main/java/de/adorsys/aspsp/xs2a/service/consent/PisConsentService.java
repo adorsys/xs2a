@@ -54,6 +54,7 @@ public class PisConsentService {
         request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));
         request.setPaymentProduct(parameters.getPaymentProduct());
         request.setPaymentType(parameters.getPaymentType());
+        request.setPsuData(parameters.getPsuData());
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
     }
 

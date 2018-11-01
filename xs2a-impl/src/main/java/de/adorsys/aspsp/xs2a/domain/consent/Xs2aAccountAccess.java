@@ -38,18 +38,19 @@ public class Xs2aAccountAccess {
     @ApiModelProperty(value = "transactions of the addressed accounts", required = false)
     private List<Xs2aAccountReference> transactions;
 
-    @ApiModelProperty(value = "only the value 'allAccounts' or 'allAccountsWithBalances' is admitted", example = "allAccounts", required = false)
+    @ApiModelProperty(value = "only the value 'allAccounts' or 'allAccountsWithBalances' is admitted", example =
+        "allAccounts", required = false)
     private Xs2aAccountAccessType availableAccounts;
 
     @ApiModelProperty(value = "only the value 'allAccounts' is admitted", example = "allAccounts", required = false)
     private Xs2aAccountAccessType allPsd2;
 
     @JsonIgnore
-    public boolean isNotEmpty(){
-       return  !(CollectionUtils.isEmpty(accounts)
-              && CollectionUtils.isEmpty(balances)
-              && CollectionUtils.isEmpty(transactions)
-              && allPsd2 == null
-              && availableAccounts == null);
+    public boolean isNotEmpty() {
+        return !(CollectionUtils.isEmpty(accounts)
+            && CollectionUtils.isEmpty(balances)
+            && CollectionUtils.isEmpty(transactions)
+            && allPsd2 == null
+            && availableAccounts == null);
     }
 }

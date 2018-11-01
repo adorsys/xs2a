@@ -74,7 +74,7 @@ public class PaymentServiceTest {
             .thenReturn(true);
         when(paymentRepository.exists(WRONG_PAYMENT_ID))
             .thenReturn(false);
-        when(accountService.getPsuIdByIban(IBAN)).thenReturn(Optional.of(getAccountDetails().get(0).getId()));
+        when(accountService.getPsuIdByIban(IBAN)).thenReturn(Optional.of(getAccountDetails().get(0).getResourceId()));
         when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         when(accountService.getAccountsByIban(WRONG_IBAN)).thenReturn(null);
         when(paymentMapper.mapToAspspPayment(any(), any())).thenReturn(new AspspPayment());
@@ -277,6 +277,6 @@ public class PaymentServiceTest {
 
     private AspspAccountReference getReference() {
         AspspAccountDetails details = getAccountDetails().get(0);
-        return new AspspAccountReference(details.getIban(), null, null, null, null, details.getCurrency());
+        return new AspspAccountReference(details.getResourceId(), details.getIban(), null, null, null, null, details.getCurrency());
     }
 }

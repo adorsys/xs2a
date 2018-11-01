@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
@@ -77,7 +78,9 @@ public class AisScaAuthenticatedStageTest {
     @Mock
     private UpdateConsentPsuDataReq request;
     @Mock
-    private SpiAccountConsent accountConsent;
+    private SpiAccountConsent spiAccountConsent;
+    @Mock
+    private AccountConsent accountConsent;
     @Mock
     private SpiScaConfirmation scaConfirmation;
 
@@ -95,6 +98,9 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentMapper.mapToSpiScaConfirmation(request))
             .thenReturn(scaConfirmation);
 
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
@@ -104,7 +110,7 @@ public class AisScaAuthenticatedStageTest {
 
     @Test
     public void apply_Success() {
-        when(aisConsentSpi.verifyScaAuthorisation(SPI_PSU_DATA, scaConfirmation, accountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.verifyScaAuthorisation(SPI_PSU_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse());
 
         doNothing()
@@ -123,7 +129,7 @@ public class AisScaAuthenticatedStageTest {
 
     @Test
     public void apply_Failure_SpiResponseWithError() {
-        when(aisConsentSpi.verifyScaAuthorisation(SPI_PSU_DATA, scaConfirmation, accountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.verifyScaAuthorisation(SPI_PSU_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse());
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(RESPONSE_STATUS))
