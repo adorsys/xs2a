@@ -681,12 +681,10 @@ public class AccountServiceTest {
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        AccountConsent consent = createConsent(CONSENT_ID, null);
+        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
+            .thenReturn(SPI_ACCOUNT_REFERENCE);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(consent);
-
-        when(consentMapper.mapToSpiAccountConsent(consent))
+        when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, ACCOUNT_ID, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
