@@ -52,6 +52,20 @@
             <version>1.11-SNAPSHOT</version>
         </dependency>
 
+        <!-- CMS remote mode -->
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-management-remote</artifactId>
+            <version>1.11-SNAPSHOT</version>
+        </dependency>
+
+        <!-- CMS embeddable mode -->
+        <!--<dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-management-lib</artifactId>
+            <version>1.11-SNAPSHOT</version>
+        </dependency>-->
+
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>

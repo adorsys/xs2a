@@ -16,38 +16,32 @@
 
 package de.adorsys.aspsp.xs2a.service.consent;
 
-import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class AisConsentDataService {
-    @Qualifier("consentRestTemplate")
-    protected final RestTemplate consentRestTemplate;
-    private final AisConsentRemoteUrls aisConsentRemoteUrls;
+    private final AisConsentService aisConsentService;
     private final Base64AspspDataService base64AspspDataService;
 
+    // TODO check on null
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        CmsAspspConsentDataBase64 consentData = consentRestTemplate.getForEntity(aisConsentRemoteUrls.getAspspConsentData(), CmsAspspConsentDataBase64.class, consentId).getBody();
-        byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
-        return new AspspConsentData(bytePayload, consentData.getConsentId());
+        CmsAspspConsentDataBase64 aspspConsentData = aisConsentService.getAspspConsentData(consentId).orElse(null);
+        byte[] bytePayload = base64AspspDataService.decode(aspspConsentData.getAspspConsentDataBase64());
+        return new AspspConsentData(bytePayload, aspspConsentData.getConsentId());
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
         String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
-
-        consentRestTemplate.put(aisConsentRemoteUrls.updateAspspConsentData(),
-                                new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload), consentData.getConsentId());
+        aisConsentService.saveAspspConsentDataInAisConsent(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload));
     }
 
     public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
-        consentRestTemplate.put(aisConsentRemoteUrls.updateAisAccountAccess(),
-                                aisAccountAccessInfo, consentId);
+        aisConsentService.updateAccountAccess(consentId, aisAccountAccessInfo);
     }
 }

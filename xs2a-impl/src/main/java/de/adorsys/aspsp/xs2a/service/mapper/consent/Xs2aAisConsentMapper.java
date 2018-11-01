@@ -26,9 +26,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMap
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -191,5 +189,46 @@ public class Xs2aAisConsentMapper {
                              .map(Currency::getCurrencyCode)
                              .orElse(null));
         return info;
+    }
+
+    public AccountConsent mapToAccountConsent(AisAccountConsent ais) {
+        return Optional.ofNullable(ais)
+                   .map(ac -> new AccountConsent(
+                       ac.getId(),
+                       mapToXs2aAccountAccess(ac.getAccess()),
+                       ac.isRecurringIndicator(),
+                       ac.getValidUntil(),
+                       ac.getFrequencyPerDay(),
+                       ac.getLastActionDate(),
+                       ac.getConsentStatus(),
+                       ac.isWithBalance(),
+                       ac.isTppRedirectPreferred(), ac.getPsuData(), ac.getTppId()))
+                   .orElse(null);
+    }
+
+    private Xs2aAccountAccess mapToXs2aAccountAccess(AisAccountAccess ais) {
+        return new Xs2aAccountAccess(
+            mapToXs2aAccountReference(ais.getAccounts()),
+            mapToXs2aAccountReference(ais.getBalances()),
+            mapToXs2aAccountReference(ais.getTransactions()),
+            null,
+            null);
+    }
+
+    private List<Xs2aAccountReference> mapToXs2aAccountReference(List<CmsAccountReference> cms) {
+        return cms.stream()
+                   .map(this::mapToXs2aAccountReference)
+                   .collect(Collectors.toList());
+    }
+
+    private Xs2aAccountReference mapToXs2aAccountReference(CmsAccountReference cms) {
+        return new Xs2aAccountReference(
+            cms.getResourceId(),
+            cms.getIban(),
+            cms.getBban(),
+            cms.getPan(),
+            cms.getMaskedPan(),
+            cms.getMsisdn(),
+            cms.getCurrency());
     }
 }

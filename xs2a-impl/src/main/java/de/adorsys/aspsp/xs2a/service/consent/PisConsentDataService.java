@@ -16,39 +16,37 @@
 
 package de.adorsys.aspsp.xs2a.service.consent;
 
-import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class PisConsentDataService {
-    @Qualifier("consentRestTemplate")
-    private final RestTemplate consentRestTemplate;
-    private final PisConsentRemoteUrls pisConsentRemoteUrls;
+    private final PisConsentService pisConsentService;
     private final Base64AspspDataService base64AspspDataService;
 
+    // TODO check on null
     public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
-        CmsAspspConsentDataBase64 consentData = consentRestTemplate.getForEntity(pisConsentRemoteUrls.getAspspConsentData(), CmsAspspConsentDataBase64.class, paymentId).getBody();
+        CmsAspspConsentDataBase64 consentData = pisConsentService.getAspspConsentDataByPaymentId(paymentId).orElse(null);
+
         byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
         return new AspspConsentData(bytePayload, consentData.getConsentId());
     }
 
+    // TODO check on null
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        CmsAspspConsentDataBase64 consentData = consentRestTemplate.getForEntity(pisConsentRemoteUrls.getAspspConsentDataByConsentId(), CmsAspspConsentDataBase64.class, consentId).getBody();
+        CmsAspspConsentDataBase64 consentData = pisConsentService.getAspspConsentDataByConsentId(consentId).orElse(null);
+
         byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
         return new AspspConsentData(bytePayload, consentData.getConsentId());
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
         String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
-
-        consentRestTemplate.put(pisConsentRemoteUrls.updateAspspConsentData(),
-                                new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload), consentData.getConsentId());
+        pisConsentService.updateAspspConsentDataInPisConsent(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload));
     }
 
     public String getInternalPaymentIdByEncryptedString(String encryptedId) {

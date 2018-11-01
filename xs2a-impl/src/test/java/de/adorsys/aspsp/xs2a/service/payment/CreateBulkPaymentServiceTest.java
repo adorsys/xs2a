@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -61,7 +62,7 @@ public class CreateBulkPaymentServiceTest {
     @Mock
     private ScaPaymentService scaPaymentService;
     @Mock
-    private PisConsentService pisConsentService;
+    private Xs2aPisConsentService pisConsentService;
     @Mock
     private AuthorisationMethodService authorisationMethodService;
     @Mock

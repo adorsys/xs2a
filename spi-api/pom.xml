@@ -81,7 +81,7 @@
                                         <exclude>de.adorsys.psd2:consent-psu-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-aspsp-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-psu-client</exclude>
-                                        <exclude>de.adorsys.psd2:consent-management-system</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-lib</exclude>
                                         <exclude>de.adorsys.psd2:consent-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-management-system</exclude>
                                         <exclude>de.adorsys.psd2:cms-client</exclude>

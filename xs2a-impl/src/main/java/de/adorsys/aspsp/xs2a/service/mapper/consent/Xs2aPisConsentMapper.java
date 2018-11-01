@@ -19,11 +19,11 @@ package de.adorsys.aspsp.xs2a.service.mapper.consent;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.CmsTppRole;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -77,11 +77,11 @@ public class Xs2aPisConsentMapper {
                    }).orElse(null);
     }
 
-    public Xs2aUpdatePisConsentPsuDataRequest mapToSpiUpdateConsentPsuDataReq(Xs2aUpdatePisConsentPsuDataRequest updatePsuDataRequest,
+    public UpdatePisConsentPsuDataRequest mapToSpiUpdateConsentPsuDataReq(UpdatePisConsentPsuDataRequest updatePsuDataRequest,
                                                                               Xs2aUpdatePisConsentPsuDataResponse updatePsuDataResponse) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
-                       Xs2aUpdatePisConsentPsuDataRequest request = new Xs2aUpdatePisConsentPsuDataRequest();
+                       UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
                        request.setPsuData(request.getPsuData());
                        request.setPaymentId(updatePsuDataRequest.getPaymentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
@@ -98,7 +98,7 @@ public class Xs2aPisConsentMapper {
                    .orElse(null);
     }
 
-    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisConsentPsuDataRequest request, String consentId, String paymentId) {
+    public SpiScaConfirmation buildSpiScaConfirmation(UpdatePisConsentPsuDataRequest request, String consentId, String paymentId) {
         SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
         paymentConfirmation.setPaymentId(paymentId);
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());

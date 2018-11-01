@@ -17,31 +17,25 @@
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
 import de.adorsys.aspsp.xs2a.config.factory.PisScaStageAuthorisationFactory;
-import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import static de.adorsys.aspsp.xs2a.config.factory.PisScaStageAuthorisationFactory.SERVICE_PREFIX;
 
 @Service
 @RequiredArgsConstructor
-//TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+// TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 public class PisAuthorisationService {
-    @Qualifier("consentRestTemplate")
-    private final RestTemplate consentRestTemplate;
-    private final PisConsentRemoteUrls remotePisConsentUrls;
+    private final PisConsentService pisConsentService;
     private final PisScaStageAuthorisationFactory pisScaStageAuthorisationFactory;
     private final Xs2aPisConsentMapper pisConsentMapper;
 
@@ -52,8 +46,8 @@ public class PisAuthorisationService {
      * @return long representation of identifier of stored consent authorization
      */
     public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId, PsuIdData psuData) {
-        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-                                                 psuData, CreatePisConsentAuthorisationResponse.class, paymentId).getBody();
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED, psuData)
+                                                                       .orElse(null);
     }
 
     /**
@@ -62,10 +56,11 @@ public class PisAuthorisationService {
      * @param request Provides transporting data when updating consent authorization
      * @return sca status
      */
-    public Xs2aUpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
-        GetPisConsentAuthorisationResponse response = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorisationResponse.class, request.getAuthorizationId())
-                                                          .getBody();
-        PisScaStage<Xs2aUpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(SERVICE_PREFIX + response.getScaStatus().name());
+    public Xs2aUpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
+        GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentAuthorizationById(request.getAuthorizationId(), CmsAuthorisationType.CREATED)
+                                                          .orElse(null);
+
+        PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(SERVICE_PREFIX + response.getScaStatus().name());
         Xs2aUpdatePisConsentPsuDataResponse stageResponse = service.apply(request, response);
 
         if (!stageResponse.hasError()) {
@@ -75,9 +70,8 @@ public class PisAuthorisationService {
         return stageResponse;
     }
 
-    private void doUpdatePisConsentAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
-        consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                                     UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+    public void doUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
+        pisConsentService.updateConsentAuthorization(request.getAuthorizationId(), request, CmsAuthorisationType.CREATED);
     }
 
     /**
@@ -86,9 +80,9 @@ public class PisAuthorisationService {
      * @param paymentId String representation of identifier of payment ID
      * @return long representation of identifier of stored consent authorization cancellation
      */
-    CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId, PsuIdData psuData) {
-        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisationCancellation(),
-                                                 psuData, CreatePisConsentAuthorisationResponse.class, paymentId).getBody();
+    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId, PsuIdData psuData) {
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED, psuData)
+            .orElse(null);
     }
 
     /**
@@ -97,7 +91,8 @@ public class PisAuthorisationService {
      * @param paymentId String representation of identifier of payment ID
      * @return long representation of identifier of stored consent authorization cancellation
      */
-    String getCancellationAuthorisationSubResources(String paymentId) {
-        return consentRestTemplate.getForEntity(remotePisConsentUrls.getCancellationAuthorisationSubResources(), String.class, paymentId).getBody();
+    public String getCancellationAuthorisationSubResources(String paymentId) {
+        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
+                   .orElse(null);
     }
 }

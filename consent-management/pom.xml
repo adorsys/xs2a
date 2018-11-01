@@ -26,7 +26,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.adorsys.psd2</groupId>
     <artifactId>consent-management</artifactId>
     <packaging>pom</packaging>
 
@@ -39,6 +38,7 @@
         <module>consent-management-lib</module>
         <module>consent-management-system</module>
         <module>consent-core-api</module>
+        <module>consent-management-remote</module>
     </modules>
 
 </project>

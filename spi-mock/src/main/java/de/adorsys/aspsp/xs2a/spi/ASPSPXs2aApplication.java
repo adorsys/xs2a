@@ -22,6 +22,13 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2"})
+/* CMS embeddable mode */
+/*
+@EnableScheduling
+@EnableTransactionManagement
+@EntityScan("de.adorsys.psd2.consent.domain")
+@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository"})
+*/
 public class ASPSPXs2aApplication {
 
     public static void main(String[] args) {
