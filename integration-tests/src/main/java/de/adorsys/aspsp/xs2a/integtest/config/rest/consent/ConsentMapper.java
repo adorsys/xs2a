@@ -16,19 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.integtest.config.rest.consent;
 
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
-import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccessType;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -41,13 +35,11 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ConsentMapper {
-    private final AccountMapper accountMapper;
 
     public CreateAisConsentRequest mapToAisConsentRequest(CreateConsentReq req, String psuId, String tppId) {
         return Optional.ofNullable(req)
                    .map(r -> {
                        CreateAisConsentRequest request = new CreateAisConsentRequest();
-                       request.setPsuId(psuId);
                        request.setTppId(tppId);
                        request.setFrequencyPerDay(r.getFrequencyPerDay());
                        request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
@@ -60,63 +52,6 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-    public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
-        return Optional.ofNullable(spiAccountConsent)
-                   .map(ac -> new AccountConsent(
-                       ac.getId(),
-                       mapToAccountAccess(ac.getAccess()),
-                       ac.isRecurringIndicator(),
-                       ac.getValidUntil(),
-                       ac.getFrequencyPerDay(),
-                       ac.getLastActionDate(),
-                       ConsentStatus.valueOf(ac.getConsentStatus().name()),
-                       ac.isWithBalance(),
-                       ac.isTppRedirectPreferred()))
-                   .orElse(null);
-    }
-
-    public Optional<ConsentStatus> mapToConsentStatus(SpiConsentStatus spiConsentStatus) {
-        return Optional.ofNullable(spiConsentStatus)
-                   .map(status -> ConsentStatus.valueOf(status.name()));
-    }
-
-    public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
-        ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
-        if (error == MessageErrorCode.ACCESS_EXCEEDED) {
-            actionStatus = ActionStatus.CONSENT_LIMIT_EXCEEDED;
-        } else if (error == MessageErrorCode.CONSENT_EXPIRED) {
-            actionStatus = ActionStatus.CONSENT_INVALID_STATUS;
-        } else if (error == MessageErrorCode.CONSENT_UNKNOWN_400) {
-            actionStatus = ActionStatus.CONSENT_NOT_FOUND;
-        } else if (error == MessageErrorCode.CONSENT_INVALID) {
-            if (access == TypeAccess.TRANSACTION) {
-                actionStatus = ActionStatus.FAILURE_TRANSACTION;
-            } else if (access == TypeAccess.BALANCE || withBalance) {
-                actionStatus = ActionStatus.FAILURE_BALANCE;
-            }
-        }
-        return actionStatus;
-    }
-
-    //Domain
-    private Xs2aAccountAccess mapToAccountAccess(SpiAccountAccess access) {
-        return Optional.ofNullable(access)
-                   .map(aa ->
-                            new Xs2aAccountAccess(
-                                accountMapper.mapToAccountReferences(aa.getAccounts()),
-                                accountMapper.mapToAccountReferences(aa.getBalances()),
-                                accountMapper.mapToAccountReferences(aa.getTransactions()),
-                                mapToAccountAccessType(aa.getAvailableAccounts()),
-                                mapToAccountAccessType(aa.getAllPsd2()))
-                   )
-                   .orElse(null);
-    }
-
-    private Xs2aAccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
-        return Optional.ofNullable(accessType)
-                   .map(at -> Xs2aAccountAccessType.valueOf(at.name()))
-                   .orElse(null);
-    }
 
     //Spi
     private AisAccountAccessInfo mapToAisAccountAccessInfo(Xs2aAccountAccess access) {
@@ -151,6 +86,7 @@ public class ConsentMapper {
 
     private AccountInfo mapToAccountInfo(Xs2aAccountReference ref) {
         AccountInfo info = new AccountInfo();
+        info.setResourceId(ref.getResourceId());
         info.setIban(ref.getIban());
         info.setCurrency(Optional.ofNullable(ref.getCurrency())
                              .map(Currency::getCurrencyCode)

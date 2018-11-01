@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.server.web;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
@@ -27,6 +26,8 @@ import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.server.service.PisConsentService;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -86,7 +87,7 @@ public class PisConsentController {
         @PathVariable("consent-id") String consentId,
         @ApiParam(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", allowableValues = "RECEIVED,  REJECTED, VALID, REVOKED_BY_PSU,  EXPIRED,  TERMINATED_BY_TPP")
         @PathVariable("status") String status) {
-        return pisConsentService.updateConsentStatusById(consentId, CmsConsentStatus.valueOf(status))
+        return pisConsentService.updateConsentStatusById(consentId, ConsentStatus.valueOf(status))
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
@@ -98,8 +99,9 @@ public class PisConsentController {
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<CreatePisConsentAuthorisationResponse> createConsentAuthorization(
         @ApiParam(name = "payment-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED)
+        @PathVariable("payment-id") String paymentId,
+        @RequestBody PsuIdData psuData) {
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED, psuData)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -111,8 +113,9 @@ public class PisConsentController {
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<CreatePisConsentAuthorisationResponse> createConsentAuthorizationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED)
+        @PathVariable("payment-id") String paymentId,
+        @RequestBody PsuIdData psuData) {
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED, psuData)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

@@ -18,11 +18,12 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
@@ -37,11 +38,12 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      *
      * @param paymentId   ASPSP identifier of a payment
      * @param paymentType Type of payment
+     * @param psuData     PsuIdData container of authorisation data about PSU
      * @return create consent authorization response, which contains authorization id, sca status, payment type and links
      */
     @Override
-    public Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType) {
-        return pisConsentMapper.mapToXsa2CreatePisConsentAuthorizationResponse(authorisationService.createPisConsentAuthorisation(paymentId), paymentType);
+    public Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
+        return pisConsentMapper.mapToXsa2CreatePisConsentAuthorizationResponse(authorisationService.createPisConsentAuthorisation(paymentId, psuData), paymentType);
     }
 
     /**
@@ -51,20 +53,20 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
      */
     @Override
-    public Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request) {
-        return pisConsentMapper.mapToXs2aUpdatePisConsentPsuDataResponse(authorisationService.updatePisConsentAuthorisation(request));
+    public Xs2aUpdatePisConsentPsuDataResponse updateConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+        return authorisationService.updatePisConsentAuthorisation(request);
     }
 
     /**
      * Creates authorization cancellation for pis consent
      *
-     * @param paymentId ASPSP identifier of a payment
+     * @param paymentId   ASPSP identifier of a payment
      * @param paymentType Type of payment
      * @return
      */
     @Override
-    public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType) {
-        return pisConsentMapper.mapToXs2aCreatePisConsentCancellationAuthorisationResponse(authorisationService.createPisConsentAuthorisationCancellation(paymentId), paymentType);
+    public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
+        return pisConsentMapper.mapToXs2aCreatePisConsentCancellationAuthorisationResponse(authorisationService.createPisConsentAuthorisationCancellation(paymentId, psuData), paymentType);
     }
 
     /**

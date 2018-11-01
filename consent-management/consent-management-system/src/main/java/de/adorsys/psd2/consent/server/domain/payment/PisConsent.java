@@ -17,9 +17,10 @@
 package de.adorsys.psd2.consent.server.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.server.domain.ConsentType;
+import de.adorsys.psd2.consent.server.domain.PsuData;
 import de.adorsys.psd2.consent.server.domain.TppInfo;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.ApiModel;
@@ -52,6 +53,10 @@ public class PisConsent {
     private List<PisPaymentData> payments = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "psu_id")
+    private PsuData psuData;
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id")
     @ApiModelProperty(value = "Information about TPP", required = true)
     private TppInfo tppInfo;
@@ -74,7 +79,7 @@ public class PisConsent {
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
-    private CmsConsentStatus consentStatus;
+    private ConsentStatus consentStatus;
 
     @Lob
     @JsonIgnore

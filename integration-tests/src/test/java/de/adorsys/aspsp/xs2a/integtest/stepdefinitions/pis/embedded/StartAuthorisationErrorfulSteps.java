@@ -17,73 +17,39 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestClientResponseException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
 import java.util.HashMap;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
 public class StartAuthorisationErrorfulSteps extends AbstractErrorfulSteps {
 
     @Autowired
-    @Qualifier("xs2a")
-    private RestTemplate restTemplate;
-
-    @Autowired
     private Context context;
 
     @Autowired
-    private ObjectMapper mapper;
+    private TestService testService;
 
-    //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
-    // See SinglePaymentSuccessfulSteps
+//    @Given("^PSU sends the single payment initiation request and receives the paymentId$")
+//    See Global Successful Steps
 
-    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
-    // See GlobalSuccessfulSteps
-
-    @And("^PSU prepares the errorful authorisation data (.*) with the payment service (.*)$")
-    public void loadErrorfulAuthorisationData (String dataFileName, String paymentService) throws IOException {
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
-            "/data-input/pis/embedded/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, TppMessages>>() {
-            });
-
-        context.setTestData(data);
-        context.setPaymentService(paymentService);
-        this.setErrorfulIds(dataFileName);
-    }
+//    @And("^PSU prepares the errorful authorisation data (.*) with the payment service (.*)$")
+//    See GlobalErrorfulSteps
 
     @When("^PSU sends the errorful start authorisation request$")
-    public void sendErrorfulAuthorisationRequest() throws IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-
-        try {
-            restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations",
-                HttpMethod.POST,
-                entity,
-                HashMap.class);
-        } catch (RestClientResponseException rex) {
-            context.handleRequestError(rex);
-        }
+    public void sendErrorfulAuthorisationRequest() throws HttpClientErrorException, IOException {
+        testService.sendErrorfulRestCall(HttpMethod.POST, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations");
     }
 
     // @Then an error response code and the appropriate error response are received

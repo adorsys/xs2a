@@ -16,13 +16,20 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
+import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class SinglePaymentInitiationResponse extends PaymentInitiationResponse {
+
+    public SinglePaymentInitiationResponse(ErrorHolder errorHolder) {
+        super(errorHolder);
+    }
 
     @Override
     PaymentType getPaymentType() {

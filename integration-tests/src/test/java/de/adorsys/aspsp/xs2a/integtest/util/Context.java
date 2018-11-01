@@ -34,9 +34,9 @@ public class Context<T, U> {
     private String accessToken;
     private String paymentId;
     private String authorisationId;
+    private String consentId;
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
-    //private ResponseEntity<ScaStatusResponse> authorisationResponse;
     private TppMessages tppMessages;
     private HttpStatus actualResponseStatus;
 
@@ -49,10 +49,14 @@ public class Context<T, U> {
 
     public void cleanUp() {
         this.scaApproach = null;
+        this.scaMethod = null;
+        this.tanValue = null;
         this.paymentProduct = null;
         this.paymentService = null;
         this.accessToken = null;
         this.paymentId = null;
+        this.authorisationId = null;
+        this.consentId = null;
         this.testData = null;
         this.actualResponse = null;
         this.tppMessages = null;

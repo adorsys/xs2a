@@ -16,19 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.RestClientResponseException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,35 +37,18 @@ import static org.hamcrest.Matchers.is;
 
 
 @FeatureFileSteps
-public class GlobalErrorfulSteps {
+public class GlobalErrorfulSteps extends AbstractErrorfulSteps{
 
     @Autowired
     private Context context;
 
     @Autowired
-    private ObjectMapper mapper;
+    private TestService testService;
 
-    @Autowired
-    @Qualifier("xs2a")
-    private RestTemplate restTemplate;
 
-    @When("^PSU sends the errorful update authorisation data request$")
-    public void sendUpdateAuthorisationWithIdentificationRequest() throws IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-        try {
-            restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId(),
-                HttpMethod.PUT,
-                entity,
-                HashMap.class);
-        } catch (RestClientResponseException restClientException) {
-            context.handleRequestError(restClientException);
-        }
-    }
-
+    // Global errorful step for checking response code and error response
     @Then("^an error response code and the appropriate error response are received")
-    public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
+    public void checkErrorCodeAndResponse() {
         TppMessages actualTppMessages = context.getTppMessages();
         TppMessages givenTppMessages = (TppMessages) context.getTestData().getResponse().getBody();
 
@@ -80,6 +61,21 @@ public class GlobalErrorfulSteps {
             assertThat(actualTppMessages.get(i).getCategory(), equalTo(givenTppMessages.get(i).getCategory()));
             assertThat(actualTppMessages.get(i).getCode(), equalTo(givenTppMessages.get(i).getCode()));
         }
+    }
+
+    // Global errorful step for loading the data - Embedded Approach
+    @And("^PSU prepares the errorful data (.*) with the payment service (.*)$")
+    public void loadErrorfulDataEmbedded (String dataFileName, String paymentService) throws IOException {
+        testService.parseJson("/data-input/pis/embedded/" + dataFileName, new TypeReference<TestData<HashMap, TppMessages>>() {
+        });
+        context.setPaymentService(paymentService);
+        this.setErrorfulIds(dataFileName);
+    }
+
+    // Global errorful step for sending the update authorisation request - Embedded Approach
+    @When("^PSU sends the errorful update authorisation data request$")
+    public void sendErrorfulUpdateAuthorisationRequest() throws IOException {
+        testService.sendErrorfulRestCall(HttpMethod.PUT, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId());
     }
 
     // @After **** see GlobalSuccessfulSteps

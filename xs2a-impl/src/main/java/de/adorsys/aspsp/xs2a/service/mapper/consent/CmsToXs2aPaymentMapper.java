@@ -24,8 +24,8 @@ import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
+import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -104,6 +104,7 @@ public class CmsToXs2aPaymentMapper {
     private Xs2aAccountReference mapToXs2aAccountReference(CmsAccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(ref -> new Xs2aAccountReference(
+                       ref.getResourceId(),
                        ref.getIban(),
                        ref.getBban(),
                        ref.getPan(),

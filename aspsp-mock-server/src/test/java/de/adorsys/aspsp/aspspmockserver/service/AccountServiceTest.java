@@ -21,7 +21,7 @@ import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountBalance;
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
 import de.adorsys.psd2.aspsp.mock.api.account.AspspBalanceType;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
-import de.adorsys.psd2.aspsp.mock.api.psu.AspspScaMethod;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
 import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,11 +67,11 @@ public class AccountServiceTest {
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN))
             .thenReturn(Optional.empty());
 
-        when(psuRepository.findPsuByAccountDetailsList_Id(ACCOUNT_ID))
+        when(psuRepository.findPsuByAccountDetailsList_ResourceId(ACCOUNT_ID))
             .thenReturn(Optional.of(getPsuWithRightAccounts()));
-        when(psuRepository.findPsuByAccountDetailsList_Id(WRONG_ACCOUNT_ID))
+        when(psuRepository.findPsuByAccountDetailsList_ResourceId(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
-        when(psuRepository.findPsuByAccountDetailsList_Id(null))
+        when(psuRepository.findPsuByAccountDetailsList_ResourceId(null))
             .thenReturn(Optional.empty());
 
         when(psuRepository.save(any(Psu.class)))
@@ -179,14 +179,14 @@ public class AccountServiceTest {
 
     private AspspAccountDetails getAspspAccountDetails_1() {
         return new AspspAccountDetails(ACCOUNT_ID, IBAN, null, "1111222233334444",
-                                       "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
-                                       null, null, "XE3DDD", null, null, null, getNewBalanceList());
+            "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
+            null, null, "XE3DDD", null, null, null, getNewBalanceList());
     }
 
     private AspspAccountDetails getAspspAccountDetails_2() {
         return new AspspAccountDetails("qwertyuiop12345678", IBAN, null,
-                                       "4444333322221111", "444433xxxxxx1111", null, null, "Emily",
-                                       "GIRO", null, null, "ACVB222", null, null, null, null);
+            "4444333322221111", "444433xxxxxx1111", null, null, "Emily",
+            "GIRO", null, null, "ACVB222", null, null, null, null);
     }
 
     private List<AspspAccountBalance> getNewBalanceList() {
@@ -204,7 +204,7 @@ public class AccountServiceTest {
     }
 
     private Psu getPsuWithRightAccounts() {
-        return new Psu("12345678910", "test@gmail.com", "aspsp", "zzz", getAccounts(), null, Collections.singletonList(AspspScaMethod.SMS_OTP));
+        return new Psu("12345678910", "test@gmail.com", "aspsp", "zzz", getAccounts(), null, Collections.singletonList(new AspspAuthenticationObject("SMS_OTP", "sms")));
     }
 
     private List<AspspAccountDetails> getAccounts() {

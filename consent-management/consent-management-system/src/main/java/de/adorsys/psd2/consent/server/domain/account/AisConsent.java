@@ -17,9 +17,10 @@
 package de.adorsys.psd2.consent.server.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
 import de.adorsys.psd2.consent.server.domain.ConsentType;
+import de.adorsys.psd2.consent.server.domain.PsuData;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static de.adorsys.psd2.consent.api.CmsConsentStatus.EXPIRED;
 
 @Data
 @ToString(exclude = {"accesses", "authorizations"})
@@ -72,9 +72,9 @@ public class AisConsent {
     @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
     private LocalDate expireDate;
 
-    @Column(name = "psu_id")
-    @ApiModelProperty(value = "Psu id", required = true, example = "PSU_001")
-    private String psuId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "psu_id")
+    private PsuData psuData;
 
     @Column(name = "tpp_id", nullable = false)
     @ApiModelProperty(value = "TPP id", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")
@@ -83,7 +83,7 @@ public class AisConsent {
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
-    private CmsConsentStatus consentStatus;
+    private ConsentStatus consentStatus;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -130,7 +130,7 @@ public class AisConsent {
     }
 
     public boolean isStatusNotExpired() {
-        return consentStatus != EXPIRED;
+        return consentStatus != ConsentStatus.EXPIRED;
     }
 
     public boolean hasUsagesAvailable() {

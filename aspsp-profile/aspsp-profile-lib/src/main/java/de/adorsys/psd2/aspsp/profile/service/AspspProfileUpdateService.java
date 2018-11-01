@@ -61,4 +61,6 @@ public interface AspspProfileUpdateService {
     void updateSigningBasketSupported(boolean signingBasketSupported);
 
     void updatePaymentCancellationAuthorizationMandated(boolean paymentCancellationAuthorizationMandated);
+
+    void updatePiisConsentSupported(boolean piisConsentSupported);
 }

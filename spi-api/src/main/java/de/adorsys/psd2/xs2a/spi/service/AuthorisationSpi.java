@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -55,18 +55,18 @@ interface AuthorisationSpi<T> {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of SCA methods applicable for specified PSU
      */
-    SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, T businessObject, AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, T businessObject, AspspConsentData aspspConsentData);
 
     /**
      * Performs strong customer authorisation depending on selected SCA method. Used only with embedded SCA Approach.
      *
-     * @param psuData          ASPSP identifier(s) of the psu
-     * @param scaMethod        Chosen sca method
-     * @param businessObject   generic payment object
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param psuData                ASPSP identifier(s) of the psu
+     * @param authenticationMethodId Id of a chosen sca method
+     * @param businessObject         generic payment object
+     * @param aspspConsentData       Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                               May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
-    SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiPsuData psuData, @NotNull SpiScaMethod scaMethod, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiPsuData psuData, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData);
 }

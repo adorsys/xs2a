@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,8 +26,8 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.EnumSet;
 
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.VALID;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Data
 @ApiModel(description = "Response for the get account information consent request by consent Id")
@@ -59,6 +61,14 @@ public class AccountConsent {
     @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @JsonIgnore
     private final boolean tppRedirectPreferred;
+
+    @ApiModelProperty(value = "Corresponding PSU", name = "psuData")
+    @JsonIgnore
+    private final PsuIdData psuData;
+
+    @ApiModelProperty(value = "TPP id", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")
+    @JsonIgnore
+    private final String tppId;
 
     @JsonIgnore
     public boolean isValidStatus() {

@@ -22,7 +22,6 @@ import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
 import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
-import de.adorsys.psd2.aspsp.mock.api.psu.AspspScaMethod;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,8 +44,8 @@ public class PaymentConfirmationController {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity<Void> generateAndSendTan(@PathVariable("psu-id") String psuId, @PathVariable("sca-method-selected")String scaMethodSelected) {
-        return tanConfirmationService.sendUserAuthRequestWithPreSelectedScaMethod(psuId, AspspScaMethod.valueOf(scaMethodSelected))
+    public ResponseEntity<Void> generateAndSendTan(@PathVariable("psu-id") String psuId, @PathVariable("sca-method-selected") String authenticationMethodId) {
+        return tanConfirmationService.sendUserAuthRequestWithPreSelectedScaMethod(psuId, authenticationMethodId)
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }

@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.server.domain.payment;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.server.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 import lombok.ToString;
@@ -37,6 +37,10 @@ public class PisConsentAuthorization {
     @Column(name = "external_id", nullable = false)
     private String externalId;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "psu_id")
+    private PsuData psuData;
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "consent_id")
     private PisConsent consent;
@@ -46,8 +50,7 @@ public class PisConsentAuthorization {
     private ScaStatus scaStatus;
 
     @Column(name = "chosen_sca_method")
-    @Enumerated(value = EnumType.STRING)
-    private CmsScaMethod chosenScaMethod;
+    private String chosenScaMethod;
 
     @Column(name = "authorization_type")
     @Enumerated(value = EnumType.STRING)

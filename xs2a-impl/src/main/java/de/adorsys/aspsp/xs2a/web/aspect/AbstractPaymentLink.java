@@ -24,7 +24,10 @@ import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
 
@@ -91,7 +94,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String paymentService = paymentRequestParameters.getPaymentType().getValue();
         String paymentId = body.getPaymentId();
         String authorizationId = body.getAuthorizationId();
-        String psuId = paymentRequestParameters.getPsuId();
+        String psuId = Optional.ofNullable(paymentRequestParameters.getPsuData()).map(PsuIdData::getPsuId).orElse(null);
 
         if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));

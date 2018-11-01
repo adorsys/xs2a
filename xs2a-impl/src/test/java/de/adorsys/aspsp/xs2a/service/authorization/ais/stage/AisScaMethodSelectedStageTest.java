@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -41,17 +45,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
+import java.util.List;
+
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class AisScaMethodSelectedStageTest {
     private static final String CONSENT_ID = "Test consentId";
-    private static final String TEST_AUTHENTICATION_METHOD_ID = SpiScaMethod.SMS_OTP.name();
-    private static final SpiScaMethod SCA_METHOD = SpiScaMethod.SMS_OTP;
+    private static final String TEST_AUTHENTICATION_METHOD_ID = "sms";
     private static final ScaStatus METHOD_SELECTED_SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
     private static final SpiResponseStatus RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
@@ -76,7 +81,11 @@ public class AisScaMethodSelectedStageTest {
     @Mock
     private UpdateConsentPsuDataReq request;
     @Mock
-    private SpiAccountConsent accountConsent;
+    private SpiAccountConsent spiAccountConsent;
+    @Mock
+    private AccountConsent accountConsent;
+    @Mock
+    private SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
 
     @Before
     public void setUp() {
@@ -89,11 +98,18 @@ public class AisScaMethodSelectedStageTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(accountConsent);
 
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
         when(psuDataMapper.mapToSpiPsuData(any(PsuIdData.class)))
             .thenReturn(SPI_PSU_DATA);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
+
+        when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, spiAccountConsent, ASPSP_CONSENT_DATA)).thenReturn(buildAvailableListSpiResponse());
+
+        when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(buildSpiAuthenticationObject())).thenReturn(buildXs2aAuthenticationObject());
 
         doNothing()
             .when(aisConsentDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
@@ -101,20 +117,20 @@ public class AisScaMethodSelectedStageTest {
 
     @Test
     public void apply_Success() {
-        when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, SCA_METHOD, accountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse());
 
         UpdateConsentPsuDataResponse actualResponse = scaMethodSelectedStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getChosenScaMethod()).isEqualTo(TEST_AUTHENTICATION_METHOD_ID);
+        assertThat(actualResponse.getChosenScaMethod()).isEqualTo(buildXs2aAuthenticationObject());
         assertThat(actualResponse.getScaStatus()).isEqualTo(METHOD_SELECTED_SCA_STATUS);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
     }
 
     @Test
     public void apply_Failure_SpiResponseWithError() {
-        when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, SCA_METHOD, accountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse());
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(RESPONSE_STATUS))
@@ -124,6 +140,20 @@ public class AisScaMethodSelectedStageTest {
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorCode()).isEqualTo(ERROR_CODE);
+    }
+
+    private SpiAuthenticationObject buildSpiAuthenticationObject() {
+        SpiAuthenticationObject spiAuthenticationObject = new SpiAuthenticationObject();
+        spiAuthenticationObject.setAuthenticationMethodId("sms");
+        spiAuthenticationObject.setAuthenticationType("SMS_OTP");
+        return spiAuthenticationObject;
+    }
+
+    private Xs2aAuthenticationObject buildXs2aAuthenticationObject() {
+        Xs2aAuthenticationObject xs2aAuthenticationObject = new Xs2aAuthenticationObject();
+        xs2aAuthenticationObject.setAuthenticationMethodId("sms");
+        xs2aAuthenticationObject.setAuthenticationType("SMS_OTP");
+        return xs2aAuthenticationObject;
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
@@ -139,5 +169,12 @@ public class AisScaMethodSelectedStageTest {
         return SpiResponse.<SpiAuthorizationCodeResult>builder()
                    .aspspConsentData(ASPSP_CONSENT_DATA)
                    .fail(RESPONSE_STATUS);
+    }
+
+    private SpiResponse<List<SpiAuthenticationObject>> buildAvailableListSpiResponse() {
+        return SpiResponse.<List<SpiAuthenticationObject>>builder()
+                   .payload(Collections.singletonList(buildSpiAuthenticationObject()))
+                   .aspspConsentData(ASPSP_CONSENT_DATA)
+                   .success();
     }
 }

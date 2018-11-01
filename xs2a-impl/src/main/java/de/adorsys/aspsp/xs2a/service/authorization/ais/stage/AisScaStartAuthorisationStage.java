@@ -17,20 +17,22 @@
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.apache.commons.collections4.CollectionUtils;
@@ -49,8 +51,9 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
                                          AisConsentSpi aisConsentSpi,
                                          Xs2aAisConsentMapper aisConsentMapper,
                                          SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper,
-                                         Xs2aToSpiPsuDataMapper psuDataMapper) {
-        super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper);
+                                         Xs2aToSpiPsuDataMapper psuDataMapper,
+                                         SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper) {
+        super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper);
     }
 
     /**
@@ -63,10 +66,11 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
      */
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
-        SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
-        PsuIdData psuData = new PsuIdData(request.getPsuId(), null, null, null);  // TODO get it from XS2A Interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/458
+        AccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
+        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
+        PsuIdData psuData = request.getPsuData();
 
-        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData());
 
         if (authorisationStatusSpiResponse.hasError()) {
@@ -77,38 +81,40 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
             return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(authorisationStatusSpiResponse.getResponseStatus()));
         }
 
-        SpiResponse<List<SpiScaMethod>> spiResponse = aisConsentSpi.requestAvailableScaMethods(psuDataMapper.mapToSpiPsuData(psuData), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
-        aisConsentDataService.updateAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData());
+        SpiResponse<List<SpiAuthenticationObject>> spiResponse = aisConsentSpi.requestAvailableScaMethods(psuDataMapper.mapToSpiPsuData(psuData), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
             return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()));
         }
 
-        List<SpiScaMethod> availableScaMethods = spiResponse.getPayload();
+        List<SpiAuthenticationObject> availableScaMethods = spiResponse.getPayload();
 
         if (CollectionUtils.isNotEmpty(availableScaMethods)) {
             if (availableScaMethods.size() > 1) {
                 return createResponseForMultipleAvailableMethods(psuData, availableScaMethods);
             } else {
-                return createResponseForOneAvailableMethod(accountConsent, psuData, availableScaMethods.get(0), request.getConsentId());
+                return createResponseForOneAvailableMethod(spiAccountConsent, psuData, availableScaMethods.get(0), request.getConsentId());
             }
         } else {
-            aisConsentService.updateConsentStatus(request.getConsentId(), SpiConsentStatus.REJECTED);
-            return createResponseForNoneAvailableScaMethod(psuData);
+            aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.REJECTED);
+            UpdateConsentPsuDataResponse response = createResponseForNoneAvailableScaMethod(psuData);
+            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
+            return response;
         }
     }
 
-    private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(PsuIdData psuData, List<SpiScaMethod> availableScaMethods) {
+    private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(PsuIdData psuData, List<SpiAuthenticationObject> availableScaMethods) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setPsuId(psuData.getPsuId());
-        response.setAvailableScaMethods(aisConsentMapper.mapToCmsScaMethods(availableScaMethods));
+        response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
         response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
         return response;
     }
 
-    private UpdateConsentPsuDataResponse createResponseForOneAvailableMethod(SpiAccountConsent accountConsent, PsuIdData psuData, SpiScaMethod scaMethod, String consentId) {
-        SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(psuDataMapper.mapToSpiPsuData(psuData), scaMethod, accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+    private UpdateConsentPsuDataResponse createResponseForOneAvailableMethod(SpiAccountConsent accountConsent, PsuIdData psuData, SpiAuthenticationObject scaMethod, String consentId) {
+        SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(psuDataMapper.mapToSpiPsuData(psuData), scaMethod.getAuthenticationMethodId(), accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -119,7 +125,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setPsuId(psuData.getPsuId());
-        response.setChosenScaMethod(scaMethod.name());
+        response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(scaMethod));
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
         return response;

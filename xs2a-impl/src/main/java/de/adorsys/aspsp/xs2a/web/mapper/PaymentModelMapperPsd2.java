@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -135,7 +136,7 @@ public class PaymentModelMapperPsd2 {
         return bulkPart;
     }
 
-    public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, String psuId) {
+    public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
         parameters.setPaymentProduct(PaymentProduct.getByValue(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
@@ -143,7 +144,7 @@ public class PaymentModelMapperPsd2 {
         parameters.setTppRedirectUri(tpPRedirectURI);
         parameters.setTppNokRedirectUri(tpPNokRedirectURI);
         parameters.setTppExplicitAuthorisationPreferred(tppExplicitAuthorisationPreferred);
-        parameters.setPsuId(psuId);
+        parameters.setPsuData(psuData);
         return parameters;
     }
 
@@ -174,7 +175,7 @@ public class PaymentModelMapperPsd2 {
         return Optional.ofNullable(xs2aAuthenticationObject)
                    .map(a -> {
                        AuthenticationObject psd2Authentication = new AuthenticationObject();
-                       psd2Authentication.setAuthenticationType(AuthenticationType.fromValue(a.getAuthenticationType().name()));
+                       psd2Authentication.setAuthenticationType(AuthenticationType.fromValue(a.getAuthenticationType()));
                        psd2Authentication.setAuthenticationVersion(a.getAuthenticationVersion());
                        psd2Authentication.setAuthenticationMethodId(a.getAuthenticationMethodId());
                        psd2Authentication.setName(a.getName());
