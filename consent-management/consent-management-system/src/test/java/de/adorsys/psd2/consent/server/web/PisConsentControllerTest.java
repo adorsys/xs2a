@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.server.service.PisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +61,8 @@ public class PisConsentControllerTest {
     private static final String WRONG_PAYMENT_ID = "32343-999997777";
     private static final String WRONG_CONSENT_ID = "67890";
 
+    private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null);
+
     @InjectMocks
     private PisConsentController pisConsentController;
 
@@ -72,7 +75,7 @@ public class PisConsentControllerTest {
         when(pisConsentService.getConsentStatusById(CONSENT_ID)).thenReturn(Optional.of(RECEIVED));
         when(pisConsentService.getConsentById(CONSENT_ID)).thenReturn(Optional.of(getPisConsentResponse()));
         when(pisConsentService.updateConsentStatusById(CONSENT_ID, RECEIVED)).thenReturn(Optional.of(Boolean.TRUE));
-        when(pisConsentService.createAuthorization(PAYMENT_ID, CmsAuthorisationType.CREATED)).thenReturn(Optional.of(getCreatePisConsentAuthorisationResponse()));
+        when(pisConsentService.createAuthorization(PAYMENT_ID, CmsAuthorisationType.CREATED, PSU_DATA)).thenReturn(Optional.of(getCreatePisConsentAuthorisationResponse()));
         when(pisConsentService.updateConsentAuthorization(AUTHORISATION_ID, getUpdatePisConsentPsuDataRequest(), CmsAuthorisationType.CREATED)).thenReturn(Optional.of(getUpdatePisConsentPsuDataResponse()));
     }
 
@@ -182,7 +185,7 @@ public class PisConsentControllerTest {
         ResponseEntity<CreatePisConsentAuthorisationResponse> expected = new ResponseEntity<>(new CreatePisConsentAuthorisationResponse(AUTHORISATION_ID), HttpStatus.CREATED);
 
         //When
-        ResponseEntity<CreatePisConsentAuthorisationResponse> actual = pisConsentController.createConsentAuthorization(PAYMENT_ID);
+        ResponseEntity<CreatePisConsentAuthorisationResponse> actual = pisConsentController.createConsentAuthorization(PAYMENT_ID, PSU_DATA);
 
         //Then
         assertEquals(actual, expected);
@@ -191,11 +194,11 @@ public class PisConsentControllerTest {
     @Test
     public void createConsentAuthorization_Failure() {
         //Given
-        when(pisConsentService.createAuthorization(WRONG_PAYMENT_ID, CmsAuthorisationType.CREATED)).thenReturn(Optional.empty());
+        when(pisConsentService.createAuthorization(WRONG_PAYMENT_ID, CmsAuthorisationType.CREATED, PSU_DATA)).thenReturn(Optional.empty());
         ResponseEntity<CreatePisConsentAuthorisationResponse> expected = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         //When
-        ResponseEntity<CreatePisConsentAuthorisationResponse> actual = pisConsentController.createConsentAuthorization(WRONG_PAYMENT_ID);
+        ResponseEntity<CreatePisConsentAuthorisationResponse> actual = pisConsentController.createConsentAuthorization(WRONG_PAYMENT_ID, PSU_DATA);
 
         //Then
         assertEquals(actual, expected);

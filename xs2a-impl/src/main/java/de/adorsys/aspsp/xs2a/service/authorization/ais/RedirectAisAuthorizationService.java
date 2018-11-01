@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,7 +28,7 @@ import java.util.Optional;
 @Service
 public class RedirectAisAuthorizationService implements AisAuthorizationService {
     @Override
-    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
+    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
         return null;
     }
 

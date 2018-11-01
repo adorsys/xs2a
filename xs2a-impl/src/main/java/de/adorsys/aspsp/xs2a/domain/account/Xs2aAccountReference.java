@@ -29,6 +29,10 @@ import java.util.Currency;
 @NoArgsConstructor
 @ApiModel(description = "Account Reference", value = "Xs2aAccountReference")
 public class Xs2aAccountReference {
+
+    @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
+    private String resourceId;
+
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private String iban;
 

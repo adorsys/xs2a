@@ -104,6 +104,7 @@ public class CmsToXs2aPaymentMapper {
     private Xs2aAccountReference mapToXs2aAccountReference(CmsAccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(ref -> new Xs2aAccountReference(
+                       ref.getResourceId(),
                        ref.getIban(),
                        ref.getBban(),
                        ref.getPan(),

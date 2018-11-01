@@ -44,7 +44,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
     public ResponseObject<Xs2aAccountDetails> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetails> result, String consentId, String accountId, boolean withBalance) {
         if (!result.hasError()) {
             Xs2aAccountDetails accountDetails = result.getBody();
-            accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getId(), withBalance));
+            accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getResourceId(), withBalance));
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -113,7 +113,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
     }
 
     private void setLinksToAccount(Xs2aAccountDetails accountDetails, boolean withBalance) {
-        accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getId(), withBalance));
+        accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getResourceId(), withBalance));
     }
 
     private Links buildLinksForAccountDetails(String accountId, boolean withBalance) {

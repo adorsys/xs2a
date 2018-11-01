@@ -77,7 +77,7 @@ public class FutureBookingsService {
 
     private BigDecimal getNewBalanceAmount(AspspAccountDetails account, AspspAccountBalance balance) {
         BigDecimal oldBalanceAmount = balance.getSpiBalanceAmount().getAmount();
-        return oldBalanceAmount.subtract(paymentService.calculateAmountToBeCharged(account.getId()));
+        return oldBalanceAmount.subtract(paymentService.calculateAmountToBeCharged(account.getResourceId()));
     }
 
     private boolean areCurrenciesEqual(Currency accountCurrency, String givenCurrency) {

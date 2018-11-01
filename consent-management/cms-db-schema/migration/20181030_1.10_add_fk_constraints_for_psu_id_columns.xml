@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-10-30-3">
+        <comment>Change psu_id column type and add FK constraint to ais_consent table</comment>
+
+        <modifyDataType columnName="psu_id" tableName="ais_consent" newDataType="BIGINT"/>
+
+        <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="ais_consent"
+                                 constraintName="fk__ais_consent__psu_data" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="psu_data"/>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-10-30-4">
+        <comment>Change psu_id column type and add FK constraint to ais_consent_authorization table</comment>
+
+        <modifyDataType columnName="psu_id" tableName="ais_consent_authorization" newDataType="BIGINT"/>
+
+        <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="ais_consent_authorization"
+                                 constraintName="fk__ais_consent_authorization__psu_data" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="psu_data"/>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-10-30-5">
+        <comment>Add psu_id column and FK constraint to pis_consent table</comment>
+
+        <addColumn tableName="pis_consent">
+            <column name="psu_id" type="BIGINT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="pis_consent"
+                                 constraintName="fk__pis_consent__psu_data" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="psu_data"/>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-10-30-6">
+        <comment>Add psu_id column and FK constraint to pis_consent_authorization table</comment>
+
+        <addColumn tableName="pis_consent_authorization">
+            <column name="psu_id" type="BIGINT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="pis_consent_authorization"
+                                 constraintName="fk__pis_consent_authorization__psu_data" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="psu_data"/>
+    </changeSet>
+
+</databaseChangeLog>
