@@ -26,6 +26,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -41,7 +42,6 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -78,14 +78,14 @@ public class CreateBulkPaymentServiceTest {
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
+        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
     }
 
     private BulkPayment buildBulkPayment() {
         BulkPayment payment = new BulkPayment();
         payment.setPayments(buildListSinglePayment());
         payment.setDebtorAccount(buildReference());
-        payment.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        payment.setTransactionStatus(TransactionStatus.RCVD);
         return payment;
     }
 
@@ -96,7 +96,7 @@ public class CreateBulkPaymentServiceTest {
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(buildReference());
         payment.setCreditorAccount(buildReference());
-        payment.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        payment.setTransactionStatus(TransactionStatus.RCVD);
         list.add(payment);
         return list;
     }
@@ -129,7 +129,7 @@ public class CreateBulkPaymentServiceTest {
     private BulkPaymentInitiationResponse buildBulkPaymentInitiationResponse() {
         BulkPaymentInitiationResponse response = new BulkPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
-        response.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        response.setTransactionStatus(TransactionStatus.RCVD);
         response.setPisConsentId(CONSENT_ID);
         return response;
     }

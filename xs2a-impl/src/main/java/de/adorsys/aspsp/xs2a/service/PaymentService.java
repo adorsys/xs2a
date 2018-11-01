@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -136,7 +136,7 @@ public class PaymentService {
      * @param paymentId   String representation of payment primary ASPSP identifier
      * @return Information about the status of a payment
      */
-    public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
+    public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
 
@@ -160,15 +160,15 @@ public class PaymentService {
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse);
-            return ResponseObject.<Xs2aTransactionStatus>builder()
+            return ResponseObject.<TransactionStatus>builder()
                        .fail(new MessageError(errorHolder.getErrorCode(),  errorHolder.getMessage()))
                        .build();
         }
 
-        Xs2aTransactionStatus transactionStatus = spiToXs2aTransactionalStatus.mapToTransactionStatus(spiResponse.getPayload());
+        TransactionStatus transactionStatus = spiToXs2aTransactionalStatus.mapToTransactionStatus(spiResponse.getPayload());
         return Optional.ofNullable(transactionStatus)
-                   .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())
-                   .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
+                   .map(tr -> ResponseObject.<TransactionStatus>builder().body(tr).build())
+                   .orElseGet(ResponseObject.<TransactionStatus>builder()
                                   .fail(new MessageError(RESOURCE_UNKNOWN_403))
                                   ::build);
     }

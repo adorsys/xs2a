@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
@@ -25,6 +28,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -38,7 +42,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.Currency;
 
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -75,7 +78,7 @@ public class CreateSinglePaymentServiceTest {
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
+        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
     }
 
     private SinglePayment buildSinglePayment() {
@@ -84,7 +87,7 @@ public class CreateSinglePaymentServiceTest {
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(buildReference());
         payment.setCreditorAccount(buildReference());
-        payment.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        payment.setTransactionStatus(TransactionStatus.RCVD);
         return payment;
     }
 
@@ -116,7 +119,7 @@ public class CreateSinglePaymentServiceTest {
     private SinglePaymentInitiationResponse buildSinglePaymentInitiationResponse() {
         SinglePaymentInitiationResponse response = new SinglePaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
-        response.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        response.setTransactionStatus(TransactionStatus.RCVD);
         response.setPisConsentId(CONSENT_ID);
         return response;
     }

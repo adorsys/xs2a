@@ -60,7 +60,7 @@ public class PisConsentServiceTest {
     private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
     private final String paymentId = "5bbde955ca10e8e4035a10c2";
-     private final String paymentIdWrong = "5bbdcb28ca10e8e14a41b12f";
+    private final String paymentIdWrong = "5bbdcb28ca10e8e14a41b12f";
     private PisPaymentData pisPaymentData;
     private List<PisConsentAuthorization> pisConsentAuthorizationList = new ArrayList();
 
@@ -92,7 +92,7 @@ public class PisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorisationByPaymentIdSuccess(){
+    public void getAuthorisationByPaymentIdSuccess() {
         //When
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
@@ -104,7 +104,7 @@ public class PisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorisationByPaymentIdWrongPaymentId(){
+    public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
         //Then

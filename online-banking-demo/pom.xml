@@ -34,6 +34,13 @@
     <artifactId>online-banking-demo</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-management-lib</artifactId>
+            <version>1.11-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -56,6 +63,17 @@
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox.version}</version>
         </dependency>
     </dependencies>
 

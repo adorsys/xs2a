@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.repository;
+package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.consent.domain.payment.PisConsent;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import org.springframework.data.repository.CrudRepository;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 
-import java.util.Optional;
-import java.util.Set;
-
-public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
-    Optional<PisConsent> findByExternalId(String externalId);
-
-    Optional<PisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
-
+public interface CmsPayment {
+    String getPaymentId();
+    PaymentType getPaymentType();
+    PaymentProduct getPaymentProduct();
 }

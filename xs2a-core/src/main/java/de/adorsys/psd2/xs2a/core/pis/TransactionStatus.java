@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.psd2.xs2a.core.pis;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Xs2aTransactionStatus {
+public enum TransactionStatus {
 
     ACCP("AcceptedCustomerProfile"),  //Preceding check of technical validation was successful. Customer profile check was also successful
     ACSC("AcceptedSettlementCompleted"),  //Settlement on the debtor's account has been completed. Usage : this can be used by the first agent to report to the debtor that the transaction has been completed. Warning : this status is provided for transaction status reasons, not for financial information. It can only be used after bilateral agreement"),
@@ -35,7 +35,7 @@ public enum Xs2aTransactionStatus {
     RJCT("Rejected"),  //Payment initiation or individual transaction included in the payment initiation has been rejected
     CANC("Canceled"); //Canceled
 
-    private static Map<String, Xs2aTransactionStatus> container = new HashMap<>();
+    private static Map<String, TransactionStatus> container = new HashMap<>();
 
     static {
         Arrays.stream(values())
@@ -45,7 +45,7 @@ public enum Xs2aTransactionStatus {
     private String transactionStatus;
 
     @JsonCreator
-    Xs2aTransactionStatus(String transactionStatus) {
+    TransactionStatus(String transactionStatus) {
         this.transactionStatus = transactionStatus;
     }
 
@@ -53,7 +53,7 @@ public enum Xs2aTransactionStatus {
         return transactionStatus;
     }
 
-    public static Xs2aTransactionStatus getByValue(String value) {
+    public static TransactionStatus getByValue(String value) {
         return container.get(value);
     }
 }

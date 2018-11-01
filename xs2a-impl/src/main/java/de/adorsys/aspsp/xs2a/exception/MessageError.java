@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -34,30 +34,30 @@ import static java.util.Collections.singletonList;
 public class MessageError {
     @JsonUnwrapped
     @ApiModelProperty(value = "Transaction status", example = "Rejected")
-    private Xs2aTransactionStatus transactionStatus;
+    private TransactionStatus transactionStatus;
 
     @ApiModelProperty(value = "Tpp messages information of the Berlin Group XS2A Interface")
     private Set<TppMessageInformation> tppMessages = new HashSet<>();
 
     public MessageError(TppMessageInformation tppMessage) {
-        this(Xs2aTransactionStatus.RJCT, tppMessage);
+        this(TransactionStatus.RJCT, tppMessage);
     }
 
     public MessageError(List<TppMessageInformation> tppMessages) {
-        this(Xs2aTransactionStatus.RJCT, tppMessages);
+        this(TransactionStatus.RJCT, tppMessages);
     }
 
-    public MessageError(Xs2aTransactionStatus status, TppMessageInformation tppMessage) {
+    public MessageError(TransactionStatus status, TppMessageInformation tppMessage) {
         this(status, singletonList(tppMessage));
     }
 
-    public MessageError(Xs2aTransactionStatus status, List<TppMessageInformation> tppMessages) {
+    public MessageError(TransactionStatus status, List<TppMessageInformation> tppMessages) {
         this.transactionStatus = status;
         this.tppMessages.addAll(tppMessages);
     }
 
     public MessageError(MessageErrorCode errorCode, String message) {
-        this(Xs2aTransactionStatus.RJCT, singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode, message)));
+        this(TransactionStatus.RJCT, singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode, message)));
     }
 
     public MessageError(MessageErrorCode errorCode) {

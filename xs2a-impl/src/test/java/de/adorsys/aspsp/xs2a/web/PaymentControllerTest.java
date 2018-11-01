@@ -21,7 +21,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -34,7 +34,6 @@ import de.adorsys.aspsp.xs2a.web.mapper.PaymentModelMapperXs2a;
 import de.adorsys.psd2.model.PaymentInitiationCancelResponse200202;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.PaymentInitiationTarget2WithStatusResponse;
-import de.adorsys.psd2.model.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
@@ -105,19 +104,19 @@ public class PaymentControllerTest {
     @Before
     public void setUpPaymentServiceMock() {
         when(paymentService.getPaymentStatusById(PaymentType.SINGLE, CORRECT_PAYMENT_ID))
-            .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().body(Xs2aTransactionStatus.ACCP).build());
+            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
         when(paymentService.getPaymentStatusById(PaymentType.SINGLE, WRONG_PAYMENT_ID))
-            .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(
+            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
 
     @Test
     public void getPaymentById() {
-        doReturn(new ResponseEntity<>(getPaymentInitiationResponse(TransactionStatus.ACCP), OK))
+        doReturn(new ResponseEntity<>(getPaymentInitiationResponse(de.adorsys.psd2.model.TransactionStatus.ACCP), OK))
             .when(responseMapper).ok(any());
 
         //Given:
-        Object expectedBody = getPaymentInitiationResponse(TransactionStatus.ACCP);
+        Object expectedBody = getPaymentInitiationResponse(de.adorsys.psd2.model.TransactionStatus.ACCP);
 
         //When
         ResponseEntity response = paymentController.getPaymentInformation(SINGLE.getValue(), CORRECT_PAYMENT_ID,
@@ -146,7 +145,7 @@ public class PaymentControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
     }
 
-    private PaymentInitiationTarget2WithStatusResponse getPaymentInitiationResponse(TransactionStatus transactionStatus) {
+    private PaymentInitiationTarget2WithStatusResponse getPaymentInitiationResponse(de.adorsys.psd2.model.TransactionStatus transactionStatus) {
         PaymentInitiationTarget2WithStatusResponse response = new PaymentInitiationTarget2WithStatusResponse();
         response.setTransactionStatus(transactionStatus);
         return response;
@@ -160,11 +159,11 @@ public class PaymentControllerTest {
 
     @Test
     public void getTransactionStatusById_Success() {
-        doReturn(new ResponseEntity<>(getPaymentInitiationStatus(TransactionStatus.ACCP), HttpStatus.OK))
+        doReturn(new ResponseEntity<>(getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
 
         //Given:
-        PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus(TransactionStatus.ACCP);
+        PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP);
         HttpStatus expectedHttpStatus = OK;
 
         //When:
@@ -181,7 +180,7 @@ public class PaymentControllerTest {
         assertThat(actualResponse.getBody()).isEqualTo(expectedBody);
     }
 
-    private PaymentInitiationStatusResponse200Json getPaymentInitiationStatus(TransactionStatus transactionStatus) {
+    private PaymentInitiationStatusResponse200Json getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus transactionStatus) {
         PaymentInitiationStatusResponse200Json response = new PaymentInitiationStatusResponse200Json();
         response.setTransactionStatus(transactionStatus);
         return response;
@@ -210,12 +209,12 @@ public class PaymentControllerTest {
     @Test
     public void cancelPayment_WithoutAuthorisation_Success() {
         when(responseMapper.ok(any()))
-            .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(TransactionStatus.CANC), HttpStatus.OK));
+            .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.CANC), HttpStatus.OK));
         when(paymentService.cancelPayment(any(), any())).thenReturn(getCancelPaymentResponseObject(false));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
-        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(TransactionStatus.CANC), HttpStatus.OK);
+        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.CANC), HttpStatus.OK);
 
         // When
         ResponseEntity<PaymentInitiationCancelResponse200202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse200202>) paymentController.cancelPayment(paymentType.getValue(),
@@ -232,12 +231,12 @@ public class PaymentControllerTest {
     @Test
     public void cancelPayment_WithAuthorisation_Success() {
         when(responseMapper.accepted(any()))
-            .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(TransactionStatus.ACTC), HttpStatus.ACCEPTED));
+            .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED));
         when(paymentService.cancelPayment(any(), any())).thenReturn(getCancelPaymentResponseObject(true));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
-        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(TransactionStatus.ACTC), HttpStatus.ACCEPTED);
+        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED);
 
         // When
         ResponseEntity<PaymentInitiationCancelResponse200202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse200202>) paymentController.cancelPayment(paymentType.getValue(),
@@ -257,7 +256,7 @@ public class PaymentControllerTest {
         return ResponseObject.<CancelPaymentResponse>builder().body(response).build();
     }
 
-    private PaymentInitiationCancelResponse200202 getPaymentInitiationCancelResponse200202(TransactionStatus transactionStatus) {
+    private PaymentInitiationCancelResponse200202 getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus transactionStatus) {
         PaymentInitiationCancelResponse200202 response = new PaymentInitiationCancelResponse200202();
         response.setTransactionStatus(transactionStatus);
         return response;
