@@ -77,7 +77,7 @@ public class AccountService {
      * @param withBalance boolean representing if the responded AccountDetails should contain
      * @return List of AccountDetails with Balances if requested and granted by consent
      */
-    public ResponseObject<Map<String, List<Xs2aAccountDetails>>> getAcccountList(String consentId, boolean withBalance) {
+    public ResponseObject<Map<String, List<Xs2aAccountDetails>>> getAccountList(String consentId, boolean withBalance) {
         ResponseObject<AccountConsent> accountConsentResponse = consentService.getValidatedConsent(consentId, withBalance);
         if (accountConsentResponse.hasError()) {
             return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()

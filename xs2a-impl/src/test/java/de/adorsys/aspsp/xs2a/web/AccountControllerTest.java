@@ -76,7 +76,7 @@ public class AccountControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        when(accountService.getAcccountList(anyString(), anyBoolean())).thenReturn(getXs2aAccountDetailsList());
+        when(accountService.getAccountList(anyString(), anyBoolean())).thenReturn(getXs2aAccountDetailsList());
         when(accountService.getBalancesReport(anyString(), anyString())).thenReturn(getBalanceReport());
         when(accountService.getAccountDetails(anyString(), any(), anyBoolean())).thenReturn(getXs2aAccountDetails());
     }

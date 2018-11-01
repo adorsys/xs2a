@@ -145,7 +145,7 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAcccountList(CONSENT_ID, WITH_BALANCE);
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -169,7 +169,7 @@ public class AccountServiceTest {
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(FORMAT_ERROR_CODE);
 
-        ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAcccountList(CONSENT_ID, WITH_BALANCE);
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -201,7 +201,7 @@ public class AccountServiceTest {
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
 
-        ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAcccountList(CONSENT_ID, WITH_BALANCE);
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
