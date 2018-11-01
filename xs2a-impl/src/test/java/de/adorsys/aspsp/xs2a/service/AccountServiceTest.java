@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.account.*;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
@@ -32,6 +33,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -81,8 +83,8 @@ public class AccountServiceTest {
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE = buildSpiAccountReference();
     private static final Xs2aAccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final SpiTransactionReport SPI_TRANSACTION_REPORT = buildSpiTransactionReport();
-    private static final ResponseObject<Xs2aAccountAccess> ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE = buildErrorAllowedAccountDataResponse();
-    private static final ResponseObject<Xs2aAccountAccess> SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE = buildSuccessAllowedAccountDataResponse();
+    private static final ResponseObject<AccountConsent> ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE = buildErrorAllowedAccountDataResponse();
+    private static final ResponseObject<AccountConsent> SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE = buildSuccessAllowedAccountDataResponse();
 
     @InjectMocks
     private AccountService accountService;
@@ -130,6 +132,7 @@ public class AccountServiceTest {
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
 
+
     @Before
     public void setUp() {
         doNothing()
@@ -156,11 +159,11 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(accountSpi.requestAccountList(WITH_BALANCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(EMPTY_ACCOUNT_DETAILS_LIST));
@@ -184,13 +187,13 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
         List<SpiAccountDetails> spiAccountDetailsList = Collections.singletonList(spiAccountDetails);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(accountSpi.requestAccountList(WITH_BALANCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
@@ -232,17 +235,11 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
         when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(spiAccountDetails));
-
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(FORMAT_ERROR_CODE);
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(FORMAT_ERROR_CODE);
@@ -268,9 +265,6 @@ public class AccountServiceTest {
     public void getAccountDetails_Failure_SpiResponseBodyIsNull() {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
-
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
@@ -299,9 +293,6 @@ public class AccountServiceTest {
     public void getAccountDetails_Success() {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
-
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
@@ -349,9 +340,6 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
@@ -382,9 +370,6 @@ public class AccountServiceTest {
     public void getBalancesReport_Failure_SpiResponseBodyIsNull() {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
-
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
@@ -417,9 +402,6 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(buildEmptyAllowedAccountDataResponse());
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
@@ -444,9 +426,6 @@ public class AccountServiceTest {
     public void getBalancesReport_Success() {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
-
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
@@ -500,9 +479,6 @@ public class AccountServiceTest {
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
@@ -540,9 +516,6 @@ public class AccountServiceTest {
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
@@ -574,16 +547,16 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
         doNothing()
             .when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
 
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+       when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
         when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
@@ -639,9 +612,6 @@ public class AccountServiceTest {
         doNothing()
             .when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
@@ -650,6 +620,9 @@ public class AccountServiceTest {
 
         when(consentService.isValidAccountByAccess(anyString(), any(Currency.class), any()))
             .thenReturn(true);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, ACCOUNT_ID, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(spiTransaction));
@@ -676,11 +649,11 @@ public class AccountServiceTest {
         doNothing()
             .when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, ACCOUNT_ID, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(null));
@@ -707,11 +680,16 @@ public class AccountServiceTest {
         doNothing()
             .when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
+
+        AccountConsent consent = createConsent(CONSENT_ID, null);
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(consent);
+
+        when(consentMapper.mapToSpiAccountConsent(consent))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, ACCOUNT_ID, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
@@ -760,23 +738,35 @@ public class AccountServiceTest {
     }
 
     // Needed because ResponseObject is final, so it's impossible to mock it
-    private static ResponseObject<Xs2aAccountAccess> buildErrorAllowedAccountDataResponse() {
-        return ResponseObject.<Xs2aAccountAccess>builder()
-                   .fail(CONSENT_INVALID_MESSAGE_ERROR)
-                   .build();
-    }
-
-    // Needed because ResponseObject is final, so it's impossible to mock it
-    private static ResponseObject<Xs2aAccountAccess> buildSuccessAllowedAccountDataResponse() {
-        return ResponseObject.<Xs2aAccountAccess>builder()
-                   .body(new Xs2aAccountAccess(Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES))
-                   .build();
-    }
-
-    // Needed because ResponseObject is final, so it's impossible to mock it
-    private static ResponseObject<Xs2aAccountAccess> buildEmptyAllowedAccountDataResponse() {
-        return ResponseObject.<Xs2aAccountAccess>builder()
-            .body(new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES))
+    private static ResponseObject<AccountConsent> buildSuccessAllowedAccountDataResponse() {
+        return ResponseObject.<AccountConsent>builder()
+            .body(createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE)))
             .build();
     }
+
+    // Needed because ResponseObject is final, so it's impossible to mock it
+    private static ResponseObject<AccountConsent> buildErrorAllowedAccountDataResponse() {
+        return ResponseObject.<AccountConsent>builder()
+            .fail(CONSENT_INVALID_MESSAGE_ERROR)
+            .build();
+    }
+
+    private static ResponseObject<AccountConsent> buildEmptyAllowedAccountDataResponse() {
+        return ResponseObject.<AccountConsent>builder()
+            .body(createConsent(CONSENT_ID, createEmptyAccountAccess()))
+            .build();
+    }
+
+    private static AccountConsent createConsent(String id, Xs2aAccountAccess access) {
+        return new AccountConsent(id, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, UUID.randomUUID().toString());
+    }
+
+    private static Xs2aAccountAccess createAccountAccess(Xs2aAccountReference accountReference) {
+        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
+    }
+
+    private static Xs2aAccountAccess createEmptyAccountAccess() {
+        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
+    }
+
 }

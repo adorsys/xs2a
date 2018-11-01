@@ -45,6 +45,7 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     protected final Xs2aPisConsentMapper xs2aPisConsentMapper;
     protected final SpiErrorMapper spiErrorMapper;
+    protected final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     @Autowired
     private ApplicationContext applicationContext;

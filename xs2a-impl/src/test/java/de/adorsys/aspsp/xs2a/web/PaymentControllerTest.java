@@ -36,6 +36,7 @@ import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.PaymentInitiationTarget2WithStatusResponse;
 import de.adorsys.psd2.model.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +64,7 @@ public class PaymentControllerTest {
     private static final String WRONG_PAYMENT_ID = "wrong_payment_id";
     private final Charset UTF_8 = Charset.forName("utf-8");
     private static final String REDIRECT_LINK = "http://localhost:4200/consent/confirmation/pis";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
 
     private final String BULK_PAYMENT_DATA = "/json/BulkPaymentTestData.json";
     private final String BULK_PAYMENT_RESP_DATA = "/json/BulkPaymentResponseTestData.json";
