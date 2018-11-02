@@ -18,22 +18,26 @@ package de.adorsys.psd2.consent.service.security.provider;
 
 import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
 import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@Data
 public class CryptoProviderFactory {
-    @Qualifier(value = "cryptoProviderId")
-    private final CryptoProvider cryptoProviderId;
-    @Qualifier(value = "cryptoProviderConsentData")
-    private final CryptoProvider cryptoProviderConsentData;
     private final CryptoAlgorithmRepository cryptoAlgorithmRepository;
+    private CryptoProvider aesEcbCryptoProviderId;
+    private CryptoProvider jweCryptoProviderConsentData;
+
+    public CryptoProviderFactory(CryptoAlgorithmRepository cryptoAlgorithmRepository) {
+        this.cryptoAlgorithmRepository = cryptoAlgorithmRepository;
+
+        aesEcbCryptoProviderId = new AesEcbCryptoProviderImpl();
+        jweCryptoProviderConsentData = new JweCryptoProviderImpl();
+    }
 
     public Optional<CryptoProvider> getCryptoProviderByAlgorithmVersion(String algorithmVersion) {
         Optional<CryptoProvider> provider = cryptoAlgorithmRepository.findByExternalId(algorithmVersion)
@@ -42,23 +46,22 @@ public class CryptoProviderFactory {
         if (!provider.isPresent()) {
             log.warn("Crypto provider can not be identify by id: {}", algorithmVersion);
         }
-
         return provider;
     }
 
-    public CryptoProvider getActualIdentifierCryptoProvider() {
-        return cryptoProviderId;
+    public CryptoProvider actualIdentifierCryptoProvider() {
+        return aesEcbCryptoProviderId;
     }
 
-    public CryptoProvider getActualConsentDataCryptoProvider() {
-        return cryptoProviderConsentData;
+    public CryptoProvider actualConsentDataCryptoProvider() {
+        return jweCryptoProviderConsentData;
     }
 
     private Optional<CryptoProvider> mapCryptoProviderByAlgorithmName(String algorithm) {
-        if (algorithm.equals(cryptoProviderId.getAlgorithmVersion().getAlgorithmName())) {
-            return Optional.of(cryptoProviderId);
-        } else if (algorithm.equals(cryptoProviderConsentData.getAlgorithmVersion().getAlgorithmName())) {
-            return Optional.of(cryptoProviderConsentData);
+        if (algorithm.equals(aesEcbCryptoProviderId.getAlgorithmVersion().getAlgorithmName())) {
+            return Optional.of(aesEcbCryptoProviderId);
+        } else if (algorithm.equals(jweCryptoProviderConsentData.getAlgorithmVersion().getAlgorithmName())) {
+            return Optional.of(jweCryptoProviderConsentData);
         } else {
             return Optional.empty();
         }

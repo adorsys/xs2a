@@ -35,7 +35,7 @@ public class CryptoAlgorithm {
     private Long id;
 
     @ApiModelProperty(value = "External Id", required = true, example = "nML0IXWdMa")
-    @Column(name = "external_id", nullable = false)
+    @Column(name = "external_id", nullable = false, unique = true)
     private String externalId;
 
     @ApiModelProperty(value = "Algorithm", required = true, example = "AES/GCM/NoPadding")

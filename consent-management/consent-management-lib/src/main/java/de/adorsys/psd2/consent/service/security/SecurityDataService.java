@@ -23,7 +23,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
@@ -33,26 +34,35 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class SecurityDataService {
-    @Qualifier(value = "serverKey")
-    private final String serverKey;
     private static final String SEPARATOR = "_=_";
-
+    private String serverKey;
     private final CryptoProviderFactory cryptoProviderFactory;
+
+    @Autowired
+    public SecurityDataService(Environment environment, CryptoProviderFactory cryptoProviderFactory) {
+        this.cryptoProviderFactory = cryptoProviderFactory;
+        serverKey = environment.getProperty("server_key");
+        if (StringUtils.isBlank(serverKey)) {
+            log.warn("The 'server_key' must be specified at CMS start");
+            throw new IllegalArgumentException("CMS_SERVER_KEY_MISSING");
+        }
+    }
 
     /**
      * Encrypts external consent ID with secret consent key via configuration server key
      *
-     * @param consentId
+     * @param originalId
      * @return String encrypted external consent ID
      */
-    public Optional<String> getEncryptedId(String consentId) {
-        String consent_key = getConsentKey();
-        String compositeConsentId = concatWithSeparator(consentId, consent_key);
+    public Optional<String> encryptId(String originalId) {
+        String consentKey = RandomStringUtils.random(16, true, true);
+
+        String compositeConsentId = concatWithSeparator(originalId, consentKey);
         byte[] bytesCompositeConsentId = compositeConsentId.getBytes();
         return identifierCP()
                    .encryptData(bytesCompositeConsentId, serverKey)
                    .map(EncryptedData::getData)
-                   .map(this::encode64)
+                   .map(raw -> Base64.getUrlEncoder().encodeToString(raw))
                    .map(this::addVersionToEncryptedId);
     }
 
@@ -60,85 +70,67 @@ public class SecurityDataService {
      * Decrypts encrypted external ID
      *
      * @param encryptedId
-     * @return String external ID
+     * @return String original ID
      */
-    public Optional<String> getDecryptedId(String encryptedId) {
+    public Optional<String> decryptId(String encryptedId) {
         if (!encryptedId.contains(SEPARATOR)) {
             return Optional.empty();
         }
 
-        Optional<String> compositeId = decryptCompositeId(encryptedId);
-        return compositeId.map(this::getOriginalIdFromCompositeId);
+        return decryptCompositeId(encryptedId)
+                   .map(cmst -> cmst.split(SEPARATOR)[0]);
     }
 
     /**
      * Encrypts ASPSP consent data
      *
-     * @param encryptedConsentId
+     * @param encryptedId
      * @param aspspConsentDataBase64 original data encoded in Base64 to be encrypted
      * @return response contains encrypted data
      */
-    public Optional<EncryptedData> encryptConsentData(String encryptedConsentId, String aspspConsentDataBase64) {
+    public Optional<EncryptedData> encryptConsentData(String encryptedId, String aspspConsentDataBase64) {
         byte[] aspspConsentData = decode64(aspspConsentDataBase64);
 
         if (aspspConsentData == null) {
             return Optional.empty();
         }
 
-        return getConsentKeyFromEncryptedConsentId(encryptedConsentId)
+        return getConsentKeyByEncryptedId(encryptedId)
                    .flatMap(consentKey -> consentDataCP().encryptData(aspspConsentData, consentKey));
     }
 
     /**
      * Decrypt ASPSP consent data
      *
-     * @param encryptedConsentId
-     * @param aspspConsentData   encrypted data to be decrypted
+     * @param encryptedId
+     * @param aspspConsentData encrypted data to be decrypted
      * @return response contains decrypted data
      */
-    public Optional<DecryptedData> decryptConsentData(String encryptedConsentId, byte[] aspspConsentData) {
-        return getConsentKeyFromEncryptedConsentId(encryptedConsentId)
+    public Optional<DecryptedData> decryptConsentData(String encryptedId, byte[] aspspConsentData) {
+        return getConsentKeyByEncryptedId(encryptedId)
                    .flatMap(consentKey -> consentDataCP().decryptData(aspspConsentData, consentKey));
     }
 
     private Optional<String> decryptCompositeId(String encryptedId) {
-        String encryptedCompositeId = readCompositeIdWithoutVersion(encryptedId);
+        String encryptedCompositeId = encryptedId.substring(0, encryptedId.indexOf(SEPARATOR));
+
         byte[] bytesCompositeId = decode64(encryptedCompositeId);
         if (bytesCompositeId == null) {
             return Optional.empty();
         }
-        String algorithmVersion = readAlgorithmVersion(encryptedId);
+
+        String algorithmVersion = encryptedId.substring(encryptedId.indexOf(SEPARATOR) + SEPARATOR.length());
         Optional<CryptoProvider> provider = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(algorithmVersion);
 
         return provider
                    .flatMap(prd -> prd.decryptData(bytesCompositeId, serverKey))
                    .map(ed -> new String(ed.getData()))
-                   .filter(this::hasValidCharacters);
+                   .filter(StringUtils::isAsciiPrintable);
     }
 
-    private boolean hasValidCharacters(String consentId) {
-        return StringUtils.isAsciiPrintable(consentId);
-    }
-
-    private String getOriginalIdFromCompositeId(String compositeId) {
-        return compositeId.split(SEPARATOR)[0];
-    }
-
-    private Optional<String> getConsentKeyFromEncryptedConsentId(String encryptedConsentId) {
-        return decryptCompositeId(encryptedConsentId)
-                   .map(this::getConsentKeyFromCompositeId);
-    }
-
-    private String getConsentKeyFromCompositeId(String compositeId) {
-        return compositeId.split(SEPARATOR)[1];
-    }
-
-    private String getConsentKey() {
-        return RandomStringUtils.random(16, true, true);
-    }
-
-    private String encode64(byte[] raw) {
-        return Base64.getUrlEncoder().encodeToString(raw);
+    private Optional<String> getConsentKeyByEncryptedId(String encryptedId) {
+        return decryptCompositeId(encryptedId)
+                   .map(comst -> comst.split(SEPARATOR)[1]);
     }
 
     private byte[] decode64(String raw) {
@@ -150,18 +142,18 @@ public class SecurityDataService {
         }
     }
 
-    private String addVersionToEncryptedId(String encryptedConsentId) {
+    private String addVersionToEncryptedId(String encryptedId) {
         // external Id is identifier of crypto method
         String algorithmVersion = identifierCP().getAlgorithmVersion().getExternalId();
-        return concatWithSeparator(encryptedConsentId, algorithmVersion);
+        return concatWithSeparator(encryptedId, algorithmVersion);
     }
 
     private CryptoProvider consentDataCP() {
-        return cryptoProviderFactory.getActualConsentDataCryptoProvider();
+        return cryptoProviderFactory.actualConsentDataCryptoProvider();
     }
 
     private CryptoProvider identifierCP() {
-        return cryptoProviderFactory.getActualIdentifierCryptoProvider();
+        return cryptoProviderFactory.actualIdentifierCryptoProvider();
     }
 
     private String concatWithSeparator(String leftPart, String rightPart) {
@@ -170,13 +162,5 @@ public class SecurityDataService {
         sb.append(SEPARATOR);
         sb.append(rightPart);
         return sb.toString();
-    }
-
-    private String readCompositeIdWithoutVersion(String compositeIdWithVersion) {
-        return compositeIdWithVersion.substring(0, compositeIdWithVersion.indexOf(SEPARATOR));
-    }
-
-    private String readAlgorithmVersion(String compositeIdWithVersion) {
-        return compositeIdWithVersion.substring(compositeIdWithVersion.indexOf(SEPARATOR) + SEPARATOR.length());
     }
 }

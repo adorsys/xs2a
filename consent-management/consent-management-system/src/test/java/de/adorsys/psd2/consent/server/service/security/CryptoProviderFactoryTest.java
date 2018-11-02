@@ -34,11 +34,11 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CryptoProviderFactoryTest {
-    private static final String ALGORITHM_ID = "MockId";
-    private static final String ALGORITHM_ID_CONSENT_DATA = "MockIdForConsentData";
+    private static final String ALGORITHM_ID = "bS6p6XvTWI";
+    private static final String ALGORITHM_ID_CONSENT_DATA = "gQ8wkMeo93";
     private static final String NON_EXISTING_ALGORITHM_ID = "OtherId";
-    private static final String ALGORITHM_NAME = "Mock algorithm";
-    private static final String ALGORITHM_NAME_CONSENT_DATA = "Mock algorithm for consent data";
+    private static final String ALGORITHM_NAME = "AES/ECB/PKCS5Padding";
+    private static final String ALGORITHM_NAME_CONSENT_DATA = "JWE/GCM/256";
 
     private final CryptoProvider cryptoProviderId = getCryptoProvider(ALGORITHM_ID, ALGORITHM_NAME);
     private final CryptoProvider cryptoProviderConsentData = getCryptoProvider(ALGORITHM_ID_CONSENT_DATA,
@@ -50,9 +50,8 @@ public class CryptoProviderFactoryTest {
 
     @Before
     public void setUp() {
-        cryptoProviderFactory = new CryptoProviderFactory(cryptoProviderId,
-                                                          cryptoProviderConsentData,
-                                                          cryptoAlgorithmRepository);
+        cryptoProviderFactory = new CryptoProviderFactory(cryptoAlgorithmRepository);
+
 
         when(cryptoAlgorithmRepository.findByExternalId(eq(ALGORITHM_ID)))
             .thenReturn(Optional.of(getMockCryptoAlgorithm(ALGORITHM_ID, ALGORITHM_NAME)));
@@ -66,7 +65,7 @@ public class CryptoProviderFactoryTest {
     public void getCryptoProviderByAlgorithmVersion_Success_IdProvider() {
         Optional<CryptoProvider> actual = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(ALGORITHM_ID);
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(cryptoProviderId);
+        assertThat(actual.get().getAlgorithmVersion()).isEqualTo(cryptoProviderId.getAlgorithmVersion());
     }
 
     @Test
@@ -74,7 +73,7 @@ public class CryptoProviderFactoryTest {
         Optional<CryptoProvider> actual =
             cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(ALGORITHM_ID_CONSENT_DATA);
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(cryptoProviderConsentData);
+        assertThat(actual.get().getAlgorithmVersion()).isEqualTo(cryptoProviderConsentData.getAlgorithmVersion());
     }
 
     @Test

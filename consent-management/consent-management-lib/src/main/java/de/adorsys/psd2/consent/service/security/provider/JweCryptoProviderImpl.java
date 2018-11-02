@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
-import java.text.ParseException;
 import java.util.Optional;
 
 @Slf4j
@@ -67,14 +66,8 @@ public class JweCryptoProviderImpl implements CryptoProvider {
             jweObject.decrypt(decrypter);
 
             return Optional.of(new DecryptedData(jweObject.getPayload().toBytes()));
-        } catch (ParseException e) {
+        } catch (Exception e) {
             log.warn("Error encryption data. Data can't be parsed : {}", e);
-        } catch (GeneralSecurityException | JOSEException e) {
-            if (e.getMessage().contains("Tag mismatch!")) {
-                log.warn("Error decryption data. Wrong password");
-            } else {
-                log.warn("Error encryption data: {}", e.getMessage());
-            }
         }
 
         return Optional.empty();

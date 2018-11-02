@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.data.test;
+package de.adorsys.psd2.consent.data.test;
 
 import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
 import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;

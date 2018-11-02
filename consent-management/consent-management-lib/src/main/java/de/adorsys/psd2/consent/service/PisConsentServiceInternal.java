@@ -83,7 +83,7 @@ public class PisConsentServiceInternal implements PisConsentService {
         PisConsent saved = pisConsentRepository.save(consent);
 
         return Optional.ofNullable(saved.getId())
-                   .flatMap(id -> securityDataService.getEncryptedId(saved.getExternalId()))
+                   .flatMap(id -> securityDataService.encryptId(saved.getExternalId()))
                    .map(CreatePisConsentResponse::new);
     }
 
@@ -146,7 +146,7 @@ public class PisConsentServiceInternal implements PisConsentService {
      */
     @Override
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String encryptedPaymentId) {
-        Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
+        Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
         if (!paymentId.isPresent()) {
             log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
             return Optional.empty();
@@ -174,7 +174,7 @@ public class PisConsentServiceInternal implements PisConsentService {
      */
     @Override
     public Optional<String> getDecryptedId(String encryptedId) {
-        return securityDataService.getDecryptedId(encryptedId);
+        return securityDataService.decryptId(encryptedId);
     }
 
     /**
@@ -201,7 +201,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     @Override
     @Transactional
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String encryptedPaymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
-        Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
+        Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
         if (!paymentId.isPresent()) {
             log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
             return Optional.empty();
@@ -283,7 +283,7 @@ public class PisConsentServiceInternal implements PisConsentService {
      */
     @Override
     public Optional<String> getAuthorisationByPaymentId(String encryptedPaymentId, CmsAuthorisationType authorizationType) {
-        Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
+        Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
         if (!paymentId.isPresent()) {
             log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
             return Optional.empty();
@@ -303,7 +303,7 @@ public class PisConsentServiceInternal implements PisConsentService {
      */
     @Override
     public Optional<PsuIdData> getPsuDataByPaymentId(String encryptedPaymentId) {
-        Optional<String> paymentId = securityDataService.getDecryptedId(encryptedPaymentId);
+        Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
         if (!paymentId.isPresent()) {
             log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
             return Optional.empty();
@@ -328,7 +328,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     }
 
     private Optional<PisConsent> getActualPisConsent(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.getDecryptedId(encryptedConsentId);
+        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
         if (!consentIdDecrypted.isPresent()) {
             log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
         }
@@ -338,7 +338,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     }
 
     private Optional<PisConsent> getPisConsentById(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.getDecryptedId(encryptedConsentId);
+        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
         if (!consentIdDecrypted.isPresent()) {
             log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
         }

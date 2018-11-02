@@ -32,6 +32,7 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -226,24 +226,26 @@ public class PaymentService {
     }
 
     private boolean areFundsSufficient(AspspAccountReference reference, BigDecimal amount) {
-        Optional<AspspAccountBalance> balance = Optional.ofNullable(reference)
-                                                    .flatMap(this::getInterimAvailableBalanceByReference);
-        return balance
-                   .map(b -> b.getSpiBalanceAmount().getAmount().compareTo(amount) >= 0)
+        return Optional.ofNullable(reference)
+                   .map(this::getAvailableBalanceByReference)
+                   .map(am -> am.compareTo(amount) >= 0)
                    .orElse(false);
     }
 
-    private Optional<AspspAccountBalance> getInterimAvailableBalanceByReference(AspspAccountReference reference) {
-        List<AspspAccountDetails> accountsByIban = accountService.getAccountsByIban(reference.getIban());
-        return filterDetailsByCurrency(accountsByIban, reference.getCurrency())
-                   .flatMap(AspspAccountDetails::getFirstBalance);
-    }
+    private BigDecimal getAvailableBalanceByReference(AspspAccountReference reference) {
+        BigDecimal amountZero = BigDecimal.ZERO;
+        List<AspspAccountDetails> accounts = accountService.getAccountsByIban(reference.getIban());
 
-    private Optional<AspspAccountDetails> filterDetailsByCurrency(List<AspspAccountDetails> accounts, Currency currency) {
-        return Optional.ofNullable(accounts)
-                   .flatMap(accs -> accs.stream()
-                                        .filter(ac -> ac.getCurrency() == currency)
-                                        .findFirst());
+        if (CollectionUtils.isNotEmpty(accounts)) {
+            return accounts.stream()
+                       .filter(ac -> ac.getCurrency() == reference.getCurrency())
+                       .findFirst()
+                       .flatMap(AspspAccountDetails::getFirstBalance)
+                       .map(AspspAccountBalance::getSpiBalanceAmount)
+                       .map(AspspAmount::getAmount)
+                       .orElse(amountZero);
+        }
+        return amountZero;
     }
 
     private String getDebtorAccountIdFromPayment(AspspPayment aspspPayment) {

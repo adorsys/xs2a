@@ -62,7 +62,7 @@ public class AesEcbCryptoProviderImpl implements CryptoProvider {
         } catch (BadPaddingException e) {
             log.warn("Error decryption data. Wrong password");
         } catch (GeneralSecurityException e) {
-            log.warn("Error decryption data: {}", e.getMessage());
+            log.warn("Error decryption data: {}", e);
         }
 
         return Optional.empty();

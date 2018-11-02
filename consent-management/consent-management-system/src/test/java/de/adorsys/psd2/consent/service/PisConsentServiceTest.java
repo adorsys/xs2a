@@ -76,8 +76,8 @@ public class PisConsentServiceTest {
         pisConsent = buildConsent();
         pisPaymentData = buildPaymentData(pisConsent);
         pisConsentAuthorizationList.add(buildPisConsentAuthorisation("906a08bc-8347-4f08-8c24-eda17b1f4c57"));
-        when(securityDataService.getDecryptedId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
-        when(securityDataService.getDecryptedId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
         when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, cmsAspspConsentDataBase64.getAspspConsentDataBase64()))
             .thenReturn(Optional.of(new EncryptedData("test data".getBytes())));
     }
@@ -105,7 +105,7 @@ public class PisConsentServiceTest {
     @Test
     public void getAuthorisationByPaymentIdSuccess() {
         //When
-        when(securityDataService.getDecryptedId(paymentId)).thenReturn(Optional.of(paymentId));
+        when(securityDataService.decryptId(paymentId)).thenReturn(Optional.of(paymentId));
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
         //Then
@@ -118,7 +118,7 @@ public class PisConsentServiceTest {
     @Test
     public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
-        when(securityDataService.getDecryptedId(paymentIdWrong)).thenReturn(Optional.empty());
+        when(securityDataService.decryptId(paymentIdWrong)).thenReturn(Optional.empty());
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
         //Then
         Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentIdWrong, CmsAuthorisationType.CANCELLED);

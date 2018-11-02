@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.consent.server.service.security;
 
-import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
-import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -28,11 +28,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.core.env.Environment;
 
 import java.util.Base64;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -57,12 +59,20 @@ public class SecurityDataServiceTest {
     private CryptoProviderFactory cryptoProviderFactory;
     private SecurityDataService securityDataService;
 
+    @Mock
+    private Environment environment;
+
     @Before
     public void setUp() {
-        securityDataService = new SecurityDataService(SERVER_KEY, cryptoProviderFactory);
+        environment = mock(Environment.class);
+
+        when(environment.getProperty("server_key")).thenReturn(SERVER_KEY);
+
+        securityDataService = new SecurityDataService(environment, cryptoProviderFactory);
 
         when(cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(CRYPTO_PROVIDER_ID))
             .thenReturn(Optional.of(CRYPTO_PROVIDER));
+
         when(cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(FAILING_CRYPTO_PROVIDER_ID))
             .thenReturn(Optional.of(FAILING_CRYPTO_PROVIDER));
         when(cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(NON_EXISTING_CRYPT_PROVIDER_ID))
@@ -72,11 +82,11 @@ public class SecurityDataServiceTest {
     @Test
     public void getEncryptedId_Success() throws Exception {
         // Given
-        when(cryptoProviderFactory.getActualIdentifierCryptoProvider())
+        when(cryptoProviderFactory.actualIdentifierCryptoProvider())
             .thenReturn(CRYPTO_PROVIDER);
 
         // When
-        Optional<String> actual = securityDataService.getEncryptedId(CONSENT_ID);
+        Optional<String> actual = securityDataService.encryptId(CONSENT_ID);
 
         // Then
         assertThat(actual.isPresent()).isTrue();
@@ -100,11 +110,11 @@ public class SecurityDataServiceTest {
     @Test
     public void getEncryptedId_Failure_EncryptionError() {
         // Given
-        when(cryptoProviderFactory.getActualIdentifierCryptoProvider())
+        when(cryptoProviderFactory.actualIdentifierCryptoProvider())
             .thenReturn(FAILING_CRYPTO_PROVIDER);
 
         // When
-        Optional<String> actual = securityDataService.getEncryptedId(CONSENT_ID);
+        Optional<String> actual = securityDataService.encryptId(CONSENT_ID);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
@@ -116,7 +126,7 @@ public class SecurityDataServiceTest {
         String encrypted = getEncryptedConsentId(CRYPTO_PROVIDER_ID);
 
         // When
-        Optional<String> actual = securityDataService.getDecryptedId(encrypted);
+        Optional<String> actual = securityDataService.decryptId(encrypted);
 
         // Then
         assertThat(actual.isPresent()).isTrue();
@@ -126,7 +136,7 @@ public class SecurityDataServiceTest {
     @Test
     public void getConsentId_Failure_WrongExternalIdFormat() {
         // When
-        Optional<String> actual = securityDataService.getDecryptedId(CONSENT_ID);
+        Optional<String> actual = securityDataService.decryptId(CONSENT_ID);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
@@ -138,7 +148,7 @@ public class SecurityDataServiceTest {
         String encrypted = getEncryptedConsentId(NON_EXISTING_CRYPT_PROVIDER_ID);
 
         // When
-        Optional<String> actual = securityDataService.getDecryptedId(encrypted);
+        Optional<String> actual = securityDataService.decryptId(encrypted);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
@@ -150,7 +160,7 @@ public class SecurityDataServiceTest {
         String encrypted = getEncryptedConsentId(FAILING_CRYPTO_PROVIDER_ID);
 
         // When
-        Optional<String> actual = securityDataService.getDecryptedId(encrypted);
+        Optional<String> actual = securityDataService.decryptId(encrypted);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
@@ -158,7 +168,7 @@ public class SecurityDataServiceTest {
 
     @Test
     public void encryptConsentData_Success() {
-        when(cryptoProviderFactory.getActualConsentDataCryptoProvider())
+        when(cryptoProviderFactory.actualConsentDataCryptoProvider())
             .thenReturn(CRYPTO_PROVIDER);
 
         // Given
@@ -177,7 +187,7 @@ public class SecurityDataServiceTest {
 
     @Test
     public void encryptConsentData_Failure_NonExistingAlgorithm() {
-        when(cryptoProviderFactory.getActualConsentDataCryptoProvider())
+        when(cryptoProviderFactory.actualConsentDataCryptoProvider())
             .thenReturn(CRYPTO_PROVIDER);
 
         // Given
@@ -192,7 +202,7 @@ public class SecurityDataServiceTest {
 
     @Test
     public void encryptConsentData_Failure_DecryptionError() {
-        when(cryptoProviderFactory.getActualConsentDataCryptoProvider())
+        when(cryptoProviderFactory.actualConsentDataCryptoProvider())
             .thenReturn(FAILING_CRYPTO_PROVIDER);
 
         // Given
@@ -207,7 +217,7 @@ public class SecurityDataServiceTest {
 
     @Test
     public void decryptConsentData_Success() throws Exception {
-        when(cryptoProviderFactory.getActualConsentDataCryptoProvider())
+        when(cryptoProviderFactory.actualConsentDataCryptoProvider())
             .thenReturn(CRYPTO_PROVIDER);
 
         // Given
@@ -238,7 +248,7 @@ public class SecurityDataServiceTest {
 
     @Test
     public void decryptConsentData_Failure_DecryptionError() throws Exception {
-        when(cryptoProviderFactory.getActualConsentDataCryptoProvider())
+        when(cryptoProviderFactory.actualConsentDataCryptoProvider())
             .thenReturn(FAILING_CRYPTO_PROVIDER);
 
         // Given
