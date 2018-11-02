@@ -66,7 +66,6 @@ public interface AccountSpi {
      * Requests an transaction by transactionId
      *
      * @param transactionId    String representation of ASPSP transaction primary identifier
-     * @param accountId        String representation of ASPSP account primary identifier
      * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return Transaction
