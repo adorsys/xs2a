@@ -649,7 +649,7 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, ACCOUNT_ID, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(spiTransaction));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
@@ -680,7 +680,7 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, ACCOUNT_ID, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(null));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
@@ -714,7 +714,7 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, ACCOUNT_ID, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
 
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction)))

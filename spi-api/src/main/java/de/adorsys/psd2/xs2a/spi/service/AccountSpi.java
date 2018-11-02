@@ -71,7 +71,7 @@ public interface AccountSpi {
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return Transaction
      */
-    SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull String transactionId, @NotNull String accountId, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull String transactionId, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests a list of account balances

@@ -345,7 +345,7 @@ public class AccountService {
 
         validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
-        SpiResponse<SpiTransaction> spiResponse = accountSpi.requestTransactionForAccountByTransactionId(transactionId, accountId, consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        SpiResponse<SpiTransaction> spiResponse = accountSpi.requestTransactionForAccountByTransactionId(transactionId, requestedAccountReference.get(), consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
 
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 

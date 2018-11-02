@@ -149,9 +149,9 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull String transactionId, @NotNull String accountId, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull String transactionId, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
-            SpiTransaction transaction = aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId);
+            SpiTransaction transaction = aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountReference.getResourceId());
             return SpiResponse.<SpiTransaction>builder()
                        .payload(transaction)
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
