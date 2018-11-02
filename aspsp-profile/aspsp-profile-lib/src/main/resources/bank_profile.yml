@@ -4,7 +4,7 @@ setting:
  combinedServiceIndicator: false
  availablePaymentProducts: SEPA, INSTANT_SEPA
  availablePaymentTypes: bulk, periodic, single
- scaApproach: EMBEDDED
+ scaApproach: REDIRECT
  tppSignatureRequired: false
  bankOfferedConsentSupport: false
  pisRedirectUrlToAspsp: http://localhost:4200/pis/
