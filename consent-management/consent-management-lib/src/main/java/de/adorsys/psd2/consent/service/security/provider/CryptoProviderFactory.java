@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.service.security.provider;
 
 import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
 import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,18 +26,11 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@Data
+@RequiredArgsConstructor
 public class CryptoProviderFactory {
     private final CryptoAlgorithmRepository cryptoAlgorithmRepository;
-    private CryptoProvider aesEcbCryptoProviderId;
-    private CryptoProvider jweCryptoProviderConsentData;
-
-    public CryptoProviderFactory(CryptoAlgorithmRepository cryptoAlgorithmRepository) {
-        this.cryptoAlgorithmRepository = cryptoAlgorithmRepository;
-
-        aesEcbCryptoProviderId = new AesEcbCryptoProviderImpl();
-        jweCryptoProviderConsentData = new JweCryptoProviderImpl();
-    }
+    private CryptoProvider aesEcbCryptoProviderId = new AesEcbCryptoProviderImpl();
+    private CryptoProvider jweCryptoProviderConsentData  = new JweCryptoProviderImpl();
 
     public Optional<CryptoProvider> getCryptoProviderByAlgorithmVersion(String algorithmVersion) {
         Optional<CryptoProvider> provider = cryptoAlgorithmRepository.findByExternalId(algorithmVersion)

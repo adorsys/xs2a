@@ -22,14 +22,12 @@ import com.nimbusds.jose.crypto.AESEncrypter;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
 @Slf4j
-@Service
 public class JweCryptoProviderImpl implements CryptoProvider {
     private static final EncryptionMethod METHOD = EncryptionMethod.A256GCM;
     private static final JWEAlgorithm ALGORITHM = JWEAlgorithm.A256GCMKW;

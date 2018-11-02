@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.service.security.provider;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -28,7 +27,6 @@ import java.security.Key;
 import java.util.Optional;
 
 @Slf4j
-@Service
 public class AesEcbCryptoProviderImpl implements CryptoProvider {
     private static final String METHOD = "AES/ECB/PKCS5Padding";
 
