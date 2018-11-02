@@ -23,7 +23,7 @@ import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class BulkPaymentErrorfulSteps {
 
     @When("^PSU sends the bulk payment initiating request with error$")
     public void sendBulkPaymentInitiatingRequest() throws IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = HttpEntityUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {

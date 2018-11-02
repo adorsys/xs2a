@@ -5,6 +5,7 @@ Feature: Payment Initiation Service - Common
     # Single Payment                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
+
     Scenario Outline: Failed payment initiation request for single payments (redirect)
         Given PSU initiates an errorful single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the single payment initiating request with error
