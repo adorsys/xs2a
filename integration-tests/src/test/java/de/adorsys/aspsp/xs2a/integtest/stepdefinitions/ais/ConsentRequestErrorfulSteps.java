@@ -19,12 +19,11 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.model.ConsentsResponse201;
 import de.adorsys.psd2.model.TppMessages;
@@ -32,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -43,29 +40,26 @@ import java.time.LocalDate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
-public class ConsentRequestSteps {
+public class ConsentRequestErrorfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<Consents, ConsentsResponse201> context;
+    private Context<Consents, TppMessages> context;
 
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to create a consent (.*)$")
+    @Given("^PSU wants to create an erroful consent (.*)$")
     public void loadTestData(String dataFileName) throws IOException {
 
-        TestData<Consents, ConsentsResponse201> data = mapper.readValue(
+        TestData<Consents, TppMessages> data = mapper.readValue(
             resourceToString("/data-input/ais/consent/" + dataFileName, UTF_8),
-            new TypeReference<TestData<Consents, ConsentsResponse201>>() {});
+            new TypeReference<TestData<Consents, TppMessages>>() {});
 
         context.setTestData(data);
 
@@ -73,32 +67,9 @@ public class ConsentRequestSteps {
         context.getTestData().getRequest().getBody().setValidUntil(validUntil.plusDays(7));
     }
 
-    @When("^PSU sends the create consent request$")
-    public void sendConsentRequest() throws HttpClientErrorException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(),
-            context.getAccessToken());
-        ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
-                context.getBaseUrl() + "/consents",
-                HttpMethod.POST,
-                entity,
-                ConsentsResponse201.class);
-
-        context.setActualResponse(response);
-    }
-
-    @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")
-    public void checkResponseCode() {
-        ResponseEntity<ConsentsResponse201> actualResponse = context.getActualResponse();
-        ConsentsResponse201 givenResponseBody = context.getTestData().getResponse().getBody();
-
-        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        assertThat(actualResponse.getBody().getConsentStatus(), equalTo(givenResponseBody.getConsentStatus()));
-        assertThat(actualResponse.getBody().getConsentId(), notNullValue());
-    }
-
     @When("^PSU sends the create consent request with error$")
     public void sendErrorfulConsentRequest() throws HttpClientErrorException, IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = HttpEntityUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
         try {
             restTemplate.exchange(
@@ -107,14 +78,10 @@ public class ConsentRequestSteps {
                 entity,
                 ConsentsResponse201.class);
         } catch (RestClientResponseException rex) {
-            handleRequestError(rex);
+            context.handleRequestError(rex);
         }
     }
 
-    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-        context.setTppMessages(tppMessages);
-    }
+    //@Then("^an error response code is displayed and an appropriate error response is shown$")
+    //See commonStep
 }
