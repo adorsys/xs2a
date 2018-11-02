@@ -28,24 +28,29 @@ public class PisConsentDataService {
     private final PisConsentService pisConsentService;
     private final Base64AspspDataService base64AspspDataService;
 
-    // TODO check on null
     public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
-        CmsAspspConsentDataBase64 consentData = pisConsentService.getAspspConsentDataByPaymentId(paymentId).orElse(null);
-
-        byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
-        return new AspspConsentData(bytePayload, consentData.getConsentId());
+        return pisConsentService.getAspspConsentDataByPaymentId(paymentId)
+                   .map(this::mapToAspspConsentData)
+                   .orElse(null);
     }
 
-    // TODO check on null
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        CmsAspspConsentDataBase64 consentData = pisConsentService.getAspspConsentDataByConsentId(consentId).orElse(null);
-
-        byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
-        return new AspspConsentData(bytePayload, consentData.getConsentId());
+        return pisConsentService.getAspspConsentDataByConsentId(consentId)
+                   .map(this::mapToAspspConsentData)
+                   .orElse(null);
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
         String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
         pisConsentService.updateAspspConsentDataInPisConsent(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload));
+    }
+
+    public String getInternalPaymentIdByEncryptedString(String encryptedId) {
+        return pisConsentService.getDecryptedId(encryptedId).orElse(null);
+    }
+
+    private AspspConsentData mapToAspspConsentData(CmsAspspConsentDataBase64 consentData) {
+        byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
+        return new AspspConsentData(bytePayload, consentData.getConsentId());
     }
 }

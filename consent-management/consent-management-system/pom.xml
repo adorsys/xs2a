@@ -120,7 +120,6 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-
         <!-- test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
