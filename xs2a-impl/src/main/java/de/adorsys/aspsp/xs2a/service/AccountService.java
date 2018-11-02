@@ -397,7 +397,7 @@ public class AccountService {
     }
 
     private void updateResourceId(Xs2aAccountAccess accountAccess, List<Xs2aAccountDetails> accountDetailsList) {
-        accountDetailsList.forEach(accountDetails -> {
+        for (Xs2aAccountDetails accountDetails: accountDetailsList) {
             if (CollectionUtils.isNotEmpty(accountAccess.getAccounts())) {
                 updateResourceId(accountAccess.getAccounts(), accountDetails, accountDetails.getResourceId());
             }
@@ -408,7 +408,7 @@ public class AccountService {
                 updateResourceId(accountAccess.getTransactions(), accountDetails,
                     accountDetails.getResourceId());
             }
-        });
+        }
     }
 
     private void updateResourceId(List<Xs2aAccountReference> consentAccountReferences, Xs2aAccountDetails spiAccountReference, String resourceId) {
@@ -419,11 +419,11 @@ public class AccountService {
     }
 
     private boolean isSameAccountReference(Xs2aAccountReference accountReference, Xs2aAccountDetails accountDetails) {
-        return accountReference.getIban().equals(accountDetails.getIban()) ||
-            accountReference.getBban().equals(accountDetails.getBban()) ||
-            accountReference.getMaskedPan().equals(accountDetails.getMaskedPan()) ||
-            accountReference.getMsisdn().equals(accountDetails.getMsisdn()) ||
-            accountReference.getPan().equals(accountDetails.getPan());
+        return StringUtils.equals(accountReference.getIban(), (accountDetails.getIban())) ||
+            StringUtils.equals(accountReference.getBban(), accountDetails.getBban()) ||
+            StringUtils.equals(accountReference.getMaskedPan(), accountDetails.getMaskedPan()) ||
+            StringUtils.equals(accountReference.getMsisdn(), accountDetails.getMsisdn()) ||
+            StringUtils.equals(accountReference.getPan(), accountDetails.getPan());
     }
 
     private Optional<SpiAccountReference> findAccountReference(List<Xs2aAccountReference> references, String resourceId) {
