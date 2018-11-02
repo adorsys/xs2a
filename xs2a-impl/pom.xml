@@ -33,6 +33,8 @@
     </properties>
 
     <dependencies>
+
+        <!-- project dependencies -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-server-api</artifactId>
