@@ -50,7 +50,7 @@ public class JweCryptoProviderImpl implements CryptoProvider {
             return Optional.of(new EncryptedData(encryptedData.getBytes()));
 
         } catch (GeneralSecurityException | JOSEException e) {
-            log.warn("Error encryption data: {}", e);
+            log.error("Error encryption data: {}", e);
         }
 
         return Optional.empty();
@@ -67,7 +67,7 @@ public class JweCryptoProviderImpl implements CryptoProvider {
 
             return Optional.of(new DecryptedData(jweObject.getPayload().toBytes()));
         } catch (Exception e) {
-            log.warn("Error encryption data. Data can't be parsed : {}", e);
+            log.error("Error encryption data. Data can't be parsed : {}", e);
         }
 
         return Optional.empty();

@@ -43,7 +43,7 @@ public class SecurityDataService {
         this.cryptoProviderFactory = cryptoProviderFactory;
         serverKey = environment.getProperty("server_key");
         if (StringUtils.isBlank(serverKey)) {
-            log.warn("The 'server_key' must be specified at CMS start");
+            log.error("The 'server_key' must be specified at CMS start");
             throw new IllegalArgumentException("CMS_SERVER_KEY_MISSING");
         }
     }
@@ -137,7 +137,7 @@ public class SecurityDataService {
         try {
             return Base64.getUrlDecoder().decode(raw);
         } catch (IllegalArgumentException ex) {
-            log.warn("Input id has wrong format: {}", raw);
+            log.error("Input id has wrong format: {}", raw);
             return null;
         }
     }

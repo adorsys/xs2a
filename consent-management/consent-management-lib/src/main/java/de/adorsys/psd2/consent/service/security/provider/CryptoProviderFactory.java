@@ -44,7 +44,7 @@ public class CryptoProviderFactory {
                                                 .map(CryptoAlgorithm::getAlgorithm)
                                                 .flatMap(this::mapCryptoProviderByAlgorithmName);
         if (!provider.isPresent()) {
-            log.warn("Crypto provider can not be identify by id: {}", algorithmVersion);
+            log.error("Crypto provider can not be identify by id: {}", algorithmVersion);
         }
         return provider;
     }
