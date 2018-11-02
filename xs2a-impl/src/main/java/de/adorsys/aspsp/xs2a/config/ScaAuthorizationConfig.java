@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.config;
 import de.adorsys.aspsp.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.*;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.*;
-import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
@@ -57,7 +57,7 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public AisAuthorizationService aisAuthorizationService(AisConsentService aisConsentService,
+    public AisAuthorizationService aisAuthorizationService(Xs2aAisConsentService aisConsentService,
                                                            Xs2aAisConsentMapper aisConsentMapper,
                                                            AisScaStageAuthorisationFactory scaStageAuthorisationFactory) {
         switch (getScaApproach()) {

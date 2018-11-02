@@ -21,7 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
-import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
@@ -46,7 +46,7 @@ import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseL
 @Service("AIS_STARTED")
 public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
 
-    public AisScaStartAuthorisationStage(AisConsentService aisConsentService,
+    public AisScaStartAuthorisationStage(Xs2aAisConsentService aisConsentService,
                                          AisConsentDataService aisConsentDataService,
                                          AisConsentSpi aisConsentSpi,
                                          Xs2aAisConsentMapper aisConsentMapper,

@@ -24,7 +24,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
-import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -65,7 +65,7 @@ public class AccountService {
 
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
-    private final AisConsentService aisConsentService;
+    private final Xs2aAisConsentService aisConsentService;
     private final Xs2aAisConsentMapper consentMapper;
     private final TppService tppService;
     private final AspspProfileServiceWrapper aspspProfileService;

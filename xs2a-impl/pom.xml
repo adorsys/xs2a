@@ -33,6 +33,8 @@
     </properties>
 
     <dependencies>
+
+        <!-- project dependencies -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-server-api</artifactId>
@@ -229,6 +231,7 @@
                                 <bannedDependencies>
                                     <excludes>
                                         <exclude>de.adorsys.psd2:consent-management-system</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-lib</exclude>
                                         <exclude>de.adorsys.psd2:cms-client</exclude>
                                         <exclude>de.adorsys.psd2:spi-mock</exclude>
                                     </excludes>

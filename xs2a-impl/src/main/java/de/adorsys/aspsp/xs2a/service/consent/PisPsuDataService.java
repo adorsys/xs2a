@@ -16,25 +16,23 @@
 
 package de.adorsys.aspsp.xs2a.service.consent;
 
-import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class PisPsuDataService {
-    @Qualifier("consentRestTemplate")
-    private final RestTemplate consentRestTemplate;
-    private final PisConsentRemoteUrls pisConsentRemoteUrls;
+    private final PisConsentService pisConsentService;
 
     public PsuIdData getPsuDataByPaymentId(String paymentId) {
-        return consentRestTemplate.getForEntity(pisConsentRemoteUrls.getPsuDataByPaymentId(), PsuIdData.class, paymentId).getBody();
+        return pisConsentService.getPsuDataByPaymentId(paymentId)
+                   .orElse(null);
     }
 
     public PsuIdData getPsuDataByConsentId(String consentId) {
-        return consentRestTemplate.getForEntity(pisConsentRemoteUrls.getPsuDataByConsentId(), PsuIdData.class, consentId).getBody();
+        return pisConsentService.getPsuDataByConsentId(consentId)
+                   .orElse(null);
     }
 }
