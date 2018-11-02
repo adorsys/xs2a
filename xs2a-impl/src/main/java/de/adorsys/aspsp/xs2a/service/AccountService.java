@@ -419,7 +419,7 @@ public class AccountService {
     }
 
     private boolean isSameAccountReference(Xs2aAccountReference accountReference, Xs2aAccountDetails accountDetails) {
-        return StringUtils.equals(accountReference.getIban(), (accountDetails.getIban())) ||
+        return StringUtils.equals(accountReference.getIban(), accountDetails.getIban()) ||
             StringUtils.equals(accountReference.getBban(), accountDetails.getBban()) ||
             StringUtils.equals(accountReference.getMaskedPan(), accountDetails.getMaskedPan()) ||
             StringUtils.equals(accountReference.getMsisdn(), accountDetails.getMsisdn()) ||
