@@ -236,7 +236,7 @@ public class AccountServiceTest {
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(spiAccountDetails));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
@@ -247,6 +247,9 @@ public class AccountServiceTest {
 
         when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
 
@@ -273,7 +276,10 @@ public class AccountServiceTest {
         when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
-        when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(null));
 
         ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
@@ -295,7 +301,7 @@ public class AccountServiceTest {
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiAccountDetails));
 
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
@@ -309,6 +315,9 @@ public class AccountServiceTest {
 
         when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
 
@@ -347,11 +356,14 @@ public class AccountServiceTest {
         when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
-        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(Collections.EMPTY_LIST));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(FORMAT_ERROR_CODE);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
 
@@ -378,7 +390,10 @@ public class AccountServiceTest {
         when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
-        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(null));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
@@ -403,7 +418,7 @@ public class AccountServiceTest {
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(Collections.EMPTY_LIST));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
@@ -428,7 +443,7 @@ public class AccountServiceTest {
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(Collections.EMPTY_LIST));
 
         when(balanceReportMapper.mapToXs2aBalancesReport(Collections.emptyList(), SPI_ACCOUNT_REFERENCE))
@@ -442,6 +457,9 @@ public class AccountServiceTest {
 
         when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
 
@@ -486,7 +504,10 @@ public class AccountServiceTest {
         when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(SPI_TRANSACTION_REPORT));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
@@ -523,7 +544,10 @@ public class AccountServiceTest {
         when(consentService.isValidAccountByAccess(anyString(), any()))
             .thenReturn(true);
 
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(null));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
@@ -557,7 +581,7 @@ public class AccountServiceTest {
        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList());
@@ -576,6 +600,9 @@ public class AccountServiceTest {
 
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
             .thenReturn(Collections.emptyList());
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
 
         ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 

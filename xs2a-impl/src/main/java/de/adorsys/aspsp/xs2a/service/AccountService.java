@@ -142,6 +142,7 @@ public class AccountService {
         }
 
         SpiResponse<SpiAccountDetails> spiResponse = accountSpi.requestAccountDetailForAccount(withBalance, requestedAccountReference.get(),
+            consentMapper.mapToSpiAccountConsent(accountConsent),
             aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
@@ -197,6 +198,7 @@ public class AccountService {
         }
 
         SpiResponse<List<SpiAccountBalance>> spiResponse = accountSpi.requestBalancesForAccount(requestedAccountReference.get(),
+            consentMapper.mapToSpiAccountConsent(accountConsent),
             aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
@@ -272,6 +274,7 @@ public class AccountService {
         SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(
             isTransactionsShouldContainBalances, dateFrom, dateToChecked,
             requestedAccountReference.get(),
+            consentMapper.mapToSpiAccountConsent(accountConsent),
             aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
@@ -419,11 +422,31 @@ public class AccountService {
     }
 
     private boolean isSameAccountReference(Xs2aAccountReference accountReference, Xs2aAccountDetails accountDetails) {
-        return StringUtils.equals(accountReference.getIban(), accountDetails.getIban()) ||
-            StringUtils.equals(accountReference.getBban(), accountDetails.getBban()) ||
-            StringUtils.equals(accountReference.getMaskedPan(), accountDetails.getMaskedPan()) ||
-            StringUtils.equals(accountReference.getMsisdn(), accountDetails.getMsisdn()) ||
-            StringUtils.equals(accountReference.getPan(), accountDetails.getPan());
+        boolean same = Optional.ofNullable(accountReference.getIban())
+            .map(iban -> StringUtils.equals(iban, accountDetails.getIban()))
+            .orElse(false);
+
+        if (!same) {
+            same = Optional.ofNullable(accountReference.getBban())
+                .map(bban -> StringUtils.equals(bban, accountDetails.getBban()))
+                .orElse(false);
+        }
+        if (!same) {
+            same = Optional.ofNullable(accountReference.getMaskedPan())
+                .map(maskedpan -> StringUtils.equals(maskedpan, accountDetails.getMaskedPan()))
+                .orElse(false);
+        }
+        if (!same) {
+            same = Optional.ofNullable(accountReference.getMsisdn())
+                .map(msisdn -> StringUtils.equals(msisdn, accountDetails.getMsisdn()))
+                .orElse(false);
+        }
+        if (!same) {
+            same = Optional.ofNullable(accountReference.getPan())
+                .map(pan -> StringUtils.equals(pan, accountDetails.getPan()))
+                .orElse(false);
+        }
+        return same;
     }
 
     private Optional<SpiAccountReference> findAccountReference(List<Xs2aAccountReference> references, String resourceId) {

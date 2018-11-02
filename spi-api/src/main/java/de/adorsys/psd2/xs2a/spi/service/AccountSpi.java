@@ -41,10 +41,11 @@ public interface AccountSpi {
      *
      * @param withBalance      Boolean representing if the responded AccountDetails should contain balance
      * @param accountReference   SpiAccountReference
+     * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return Account detail
      */
-    SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests a list of transactions
@@ -55,10 +56,11 @@ public interface AccountSpi {
      * @param dateTo           Date representing the ending of the search period. <br>
      *                         If null, transactions will not be limited by end date
      * @param accountReference   SpiAccountReference
+     * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of transactions
      */
-    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests an transaction by transactionId
@@ -75,8 +77,9 @@ public interface AccountSpi {
      * Requests a list of account balances
      *
      * @param accountReference   SpiAccountReference
+     * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of account balances
      */
-    SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiAccountReference accountReference, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 }
