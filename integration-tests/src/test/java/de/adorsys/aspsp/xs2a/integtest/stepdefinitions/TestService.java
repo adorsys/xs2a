@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -49,7 +49,7 @@ public class TestService {
     private ObjectMapper mapper;
 
     public void sendRestCall (HttpMethod httpMethod, String url) {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = HttpEntityUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<?> response = restTemplate.exchange(
@@ -72,7 +72,7 @@ public class TestService {
     }
 
     public void sendErrorfulRestCall (HttpMethod httpMethod, String url) throws IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = HttpEntityUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {

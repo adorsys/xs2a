@@ -27,7 +27,7 @@ import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,7 +158,7 @@ public class GlobalSuccessfulSteps {
     //Global Step for starting the authorisation and saving the authorisation id - Embedded Approach
     @And("^PSU sends the start authorisation request and receives the authorisationId$")
     public void startAuthorisationAndStoreId() throws IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntityWithoutBody(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity entity = HttpEntityUtils.getHttpEntityWithoutBody(context.getTestData().getRequest(), context.getAccessToken());
         testService.parseJson(("/data-input/pis/embedded/" + "startAuth-successful.json"), new TypeReference<TestData<HashMap, StartScaprocessResponse>>() {
         });
         testService.sendRestCall(HttpMethod.POST, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations", entity);
