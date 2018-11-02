@@ -29,11 +29,10 @@ public class AisConsentDataService {
     private final AisConsentService aisConsentService;
     private final Base64AspspDataService base64AspspDataService;
 
-    // TODO check on null
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        CmsAspspConsentDataBase64 aspspConsentData = aisConsentService.getAspspConsentData(consentId).orElse(null);
-        byte[] bytePayload = base64AspspDataService.decode(aspspConsentData.getAspspConsentDataBase64());
-        return new AspspConsentData(bytePayload, aspspConsentData.getConsentId());
+        return aisConsentService.getAspspConsentData(consentId)
+                   .map(this::mapToAspspConsentData)
+                   .orElse(null);
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
@@ -43,5 +42,10 @@ public class AisConsentDataService {
 
     public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
         aisConsentService.updateAccountAccess(consentId, aisAccountAccessInfo);
+    }
+
+    private AspspConsentData mapToAspspConsentData(CmsAspspConsentDataBase64 consentData) {
+        byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
+        return new AspspConsentData(bytePayload, consentData.getConsentId());
     }
 }
