@@ -116,6 +116,15 @@ public class PisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
     }
 
     /**
+     * Returns URL-string to CMS endpoint that gets decrypted payment id from encrypted string
+     *
+     * @return String
+     */
+    public String getPaymentIdByEncryptedString() {
+        return consentServiceBaseUrl + "/pis/payment/{payment-id}";
+    }
+
+    /**
      * Returns URL-string to CMS endpoint that updates payment data of consent by consent ID
      *
      * @return String

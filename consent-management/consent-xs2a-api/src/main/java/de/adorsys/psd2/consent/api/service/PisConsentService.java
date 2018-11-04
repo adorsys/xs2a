@@ -76,6 +76,14 @@ public interface PisConsentService {
     Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId);
 
     /**
+     * Get original decrypted Id from encrypted string
+     *
+     * @param encryptedId id to be decrypted
+     * @return Response containing original decrypted Id
+     */
+    Optional<String> getDecryptedId(String encryptedId);
+
+    /**
      * Update PIS consent aspsp consent data by id
      *
      * @param request   Aspsp provided pis consent data

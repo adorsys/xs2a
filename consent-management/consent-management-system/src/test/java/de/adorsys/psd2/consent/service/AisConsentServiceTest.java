@@ -26,7 +26,9 @@ import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.consent.service.security.EncryptedData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,9 +64,12 @@ public class AisConsentServiceTest {
     private PsuDataMapper psuDataMapper;
     @Mock
     private PsuData psuData;
+    @Mock
+    SecurityDataService securityDataService;
 
 
     private AisConsent aisConsent;
+    private CmsAspspConsentDataBase64 cmsAspspConsentDataBase64;
     private final long CONSENT_ID = 1;
     private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
@@ -73,6 +78,13 @@ public class AisConsentServiceTest {
     @Before
     public void setUp() {
         aisConsent = buildConsent();
+        cmsAspspConsentDataBase64 = buildUpdateBlobRequest();
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
+        when(securityDataService.encryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
+        when(securityDataService.encryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
+        when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, cmsAspspConsentDataBase64.getAspspConsentDataBase64()))
+            .thenReturn(Optional.of(new EncryptedData("test data".getBytes())));
     }
 
     @Test
@@ -190,16 +202,14 @@ public class AisConsentServiceTest {
     }
 
     private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {
-        CmsAspspConsentDataBase64 request = new CmsAspspConsentDataBase64();
-        request.setAspspConsentDataBase64("zdxcvvzzzxcvzzzz");
-        return request;
+        return new CmsAspspConsentDataBase64("encryptedId", Base64.getEncoder().encodeToString("decrypted consent data".getBytes()));
     }
 
     private AisAccountConsent buildSpiAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
-            null, false,
-            null, 0,
-            null, null,
-            false, false, null, null, null);
+                                     null, false,
+                                     null, 0,
+                                     null, null,
+                                     false, false, null, null, null);
     }
 }

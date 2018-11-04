@@ -36,11 +36,14 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
     private final SpiToXs2aSinglePaymentMapper xs2aPeriodicPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
 
-
     @Override
     public PaymentInformationResponse<SinglePayment> getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
         SpiSinglePayment payment = new SpiSinglePayment(paymentProduct);
-        payment.setPaymentId(paymentId);
+
+        // we need to get decrypted payment ID
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
+        payment.setPaymentId(internalPaymentId);
+
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
