@@ -25,19 +25,19 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
-import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.consent.PisPsuDataService;
+import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -63,7 +63,7 @@ import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 @AllArgsConstructor
 public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
-    private final PisConsentService pisConsentService;
+    private final Xs2aPisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
     private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
@@ -140,20 +140,22 @@ public class PaymentService {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
 
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
+        // we need to get decrypted payment ID
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
 
+        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
             SpiSinglePayment payment = new SpiSinglePayment(null);
-            payment.setPaymentId(paymentId);
+            payment.setPaymentId(internalPaymentId);
             spiResponse = singlePaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         } else if (paymentType == PERIODIC) {
             SpiPeriodicPayment payment = new SpiPeriodicPayment(null);
-            payment.setPaymentId(paymentId);
+            payment.setPaymentId(internalPaymentId);
             spiResponse = periodicPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         } else {
             SpiBulkPayment payment = new SpiBulkPayment();
-            payment.setPaymentId(paymentId);
+            payment.setPaymentId(internalPaymentId);
             spiResponse = bulkPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         }
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -161,7 +163,7 @@ public class PaymentService {
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse);
             return ResponseObject.<Xs2aTransactionStatus>builder()
-                       .fail(new MessageError(errorHolder.getErrorCode(),  errorHolder.getMessage()))
+                       .fail(new MessageError(errorHolder.getErrorCode(), errorHolder.getMessage()))
                        .build();
         }
 

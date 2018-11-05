@@ -18,9 +18,9 @@ package de.adorsys.psd2.consent.api;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 @ApiModel(description = "ASPSP Consent data", value = "CmsAspspConsentDataBase64")
 public class CmsAspspConsentDataBase64 {
 
