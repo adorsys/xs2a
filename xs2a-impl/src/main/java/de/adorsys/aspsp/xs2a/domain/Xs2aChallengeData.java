@@ -33,7 +33,7 @@ public class Xs2aChallengeData {
     private final String imageLink;
 
     @ApiModelProperty(value = "The maximal length for the OTP to be typed in by the PSU", example = "6")
-    private final int otpMaxLength;
+    private final Integer otpMaxLength;
 
     @ApiModelProperty(value = "The format type of the OTP to be typed in. The admitted values are 'characters' or 'integer'.", example = "integer")
     private final OtpFormat otpFormat;

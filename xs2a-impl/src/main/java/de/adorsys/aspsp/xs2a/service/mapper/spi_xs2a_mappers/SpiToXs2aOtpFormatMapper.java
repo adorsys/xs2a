@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.authorisation;
+package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.aspsp.xs2a.domain.OtpFormat;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiOtpFormat;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Data
-public class SpiAuthorizationCodeResult {
-    private byte [] image;
-    private String data;
-    private String imageLink;
-    private Integer otpMaxLength;
-    private SpiOtpFormat otpFormat;
-    private String additionalInformation;
+import java.util.Optional;
 
-    public boolean isEmpty() {
-        return image == null
-            && StringUtils.isEmpty(data)
-            && StringUtils.isEmpty(imageLink)
-            && otpMaxLength == null
-            && otpFormat == null
-            && StringUtils.isEmpty(additionalInformation);
+/**
+ * Created by cbr on 31.10.18.
+ */
+@Component
+@RequiredArgsConstructor
+public class SpiToXs2aOtpFormatMapper {
+    public OtpFormat mapToOtpFormat(SpiOtpFormat otpFormat) {
+        return Optional.ofNullable(otpFormat)
+            .map(SpiOtpFormat::name)
+            .map(OtpFormat::valueOf)
+            .orElse(null);
     }
 }
