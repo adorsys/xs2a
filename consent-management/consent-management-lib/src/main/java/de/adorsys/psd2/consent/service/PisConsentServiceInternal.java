@@ -26,9 +26,11 @@ import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.domain.AspspConsentData;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.repository.AspspConsentDataRepository;
 import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
@@ -66,6 +68,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     private final PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final SecurityDataService securityDataService;
+    private final AspspConsentDataRepository aspspConsentDataRepository;
 
     /**
      * Creates new pis consent with full information about payment
@@ -158,7 +161,8 @@ public class PisConsentServiceInternal implements PisConsentService {
     }
 
     private CmsAspspConsentDataBase64 prepareAspspConsentData(PisConsent consent, String encryptedConsentId) {
-        return Optional.ofNullable(consent.getAspspConsentData())
+        return aspspConsentDataRepository.findByConsentId(consent.getExternalId())
+                   .map(AspspConsentData::getAspspConsentData)
                    .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
                    .map(DecryptedData::getData)
                    .map(bytes -> Base64.getEncoder().encodeToString(bytes))
@@ -188,7 +192,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     @Transactional
     public Optional<String> updateAspspConsentDataInPisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
         return getActualPisConsent(encryptedConsentId)
-                   .flatMap(cons -> saveAspspConsentDataInPisConsent(request, cons, encryptedConsentId));
+                   .flatMap(cons -> saveAspspConsentDataForPisConsent(request, cons, encryptedConsentId));
     }
 
     /**
@@ -368,14 +372,18 @@ public class PisConsentServiceInternal implements PisConsentService {
         return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 
-    private Optional<String> saveAspspConsentDataInPisConsent(CmsAspspConsentDataBase64 request, PisConsent consent, String encryptedConsentId) {
+    private Optional<String> saveAspspConsentDataForPisConsent(CmsAspspConsentDataBase64 request, PisConsent consent, String encryptedConsentId) {
         return securityDataService.encryptConsentData(encryptedConsentId, request.getAspspConsentDataBase64())
-                   .map(encr -> updateConsentDataAndSaveConsent(consent, encr.getData()))
-                   .map(PisConsent::getExternalId);
+                   .map(encr -> updateAndSaveAspspConsentData(consent, encr.getData()))
+                   .map(a -> consent.getExternalId());
     }
 
-    private PisConsent updateConsentDataAndSaveConsent(PisConsent consent, byte[] consentData) {
-        consent.setAspspConsentData(consentData);
-        return pisConsentRepository.save(consent);
+    private AspspConsentData updateAndSaveAspspConsentData(PisConsent consent, byte[] consentData) {
+        String externalId = consent.getExternalId();
+        AspspConsentData aspspConsentData = aspspConsentDataRepository
+                                                .findByConsentId(externalId)
+                                                .orElseGet(() -> new AspspConsentData(externalId));
+        aspspConsentData.setAspspConsentData(consentData);
+        return aspspConsentDataRepository.save(aspspConsentData);
     }
 }

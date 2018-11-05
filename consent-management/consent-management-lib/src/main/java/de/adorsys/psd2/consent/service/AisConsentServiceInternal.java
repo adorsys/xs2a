@@ -20,10 +20,12 @@ import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.domain.AspspConsentData;
 import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.repository.AspspConsentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
@@ -55,6 +57,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final PsuDataMapper psuDataMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final SecurityDataService securityDataService;
+    private final AspspConsentDataRepository aspspConsentDataRepository;
 
     /**
      * Create AIS consent
@@ -246,7 +249,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
         return getActualAisConsent(consentId)
-            .map(ac -> psuDataMapper.mapToPsuIdData(ac.getPsuData()));
+                   .map(ac -> psuDataMapper.mapToPsuIdData(ac.getPsuData()));
     }
 
     private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
@@ -258,7 +261,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent, String encryptedConsentId) {
-        return Optional.ofNullable(consent.getAspspConsentData())
+        return aspspConsentDataRepository.findByConsentId(consent.getExternalId())
+                   .map(AspspConsentData::getAspspConsentData)
                    .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
                    .map(DecryptedData::getData)
                    .map(bytes -> Base64.getEncoder().encodeToString(bytes))
@@ -268,13 +272,17 @@ public class AisConsentServiceInternal implements AisConsentService {
 
     private Optional<String> saveAspspConsentDataInAisConsent(CmsAspspConsentDataBase64 request, AisConsent consent, String encryptedConsentId) {
         return securityDataService.encryptConsentData(encryptedConsentId, request.getAspspConsentDataBase64())
-                   .map(encr -> updateConsentDataAndSaveConsent(consent, encr.getData()))
+                   .map(encr -> updateAndSaveAspspConsentData(consent, encr.getData()))
                    .map(a -> encryptedConsentId);
     }
 
-    private AisConsent updateConsentDataAndSaveConsent(AisConsent consent, byte[] consentData) {
-        consent.setAspspConsentData(consentData);
-        return aisConsentRepository.save(consent);
+    private AspspConsentData updateAndSaveAspspConsentData(AisConsent consent, byte[] consentData) {
+        String externalId = consent.getExternalId();
+        AspspConsentData aspspConsentData = aspspConsentDataRepository
+                                                .findByConsentId(externalId)
+                                                .orElseGet(() -> new AspspConsentData(externalId));
+        aspspConsentData.setAspspConsentData(consentData);
+        return aspspConsentDataRepository.save(aspspConsentData);
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {

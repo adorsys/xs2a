@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
 import de.adorsys.psd2.consent.domain.ConsentType;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -110,11 +109,6 @@ public class AisConsent {
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @ApiModelProperty(value = "List of authorizations related to the consent", required = true)
     private List<AisConsentAuthorization> authorizations = new ArrayList<>();
-
-    @Lob
-    @JsonIgnore
-    @Column(name = "aspsp_consent_data")
-    private byte[] aspspConsentData;
 
     @Column(name = "ais_consent_request_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

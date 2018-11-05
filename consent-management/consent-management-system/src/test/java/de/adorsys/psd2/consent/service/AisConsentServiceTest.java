@@ -21,14 +21,16 @@ import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.domain.AspspConsentData;
+import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
-import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.repository.AspspConsentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.consent.service.security.EncryptedData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,8 +48,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -66,7 +67,8 @@ public class AisConsentServiceTest {
     private PsuData psuData;
     @Mock
     SecurityDataService securityDataService;
-
+    @Mock
+    private AspspConsentDataRepository aspspConsentDataRepository;
 
     private AisConsent aisConsent;
     private CmsAspspConsentDataBase64 cmsAspspConsentDataBase64;
@@ -74,6 +76,7 @@ public class AisConsentServiceTest {
     private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id-1", null, null, null);
+    private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
 
     @Before
     public void setUp() {
@@ -84,7 +87,8 @@ public class AisConsentServiceTest {
         when(securityDataService.encryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.encryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
         when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, cmsAspspConsentDataBase64.getAspspConsentDataBase64()))
-            .thenReturn(Optional.of(new EncryptedData("test data".getBytes())));
+            .thenReturn(Optional.of(new EncryptedData(ENCRYPTED_CONSENT_DATA)));
+        when(aspspConsentDataRepository.findByConsentId(eq(EXTERNAL_CONSENT_ID))).thenReturn(Optional.empty());
     }
 
     @Test
@@ -156,7 +160,8 @@ public class AisConsentServiceTest {
         // When
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
-        when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
+        when(aspspConsentDataRepository.save(any(AspspConsentData.class)))
+            .thenReturn(getAspspConsentData());
 
         // Then
         CmsAspspConsentDataBase64 request = this.buildUpdateBlobRequest();
@@ -211,5 +216,12 @@ public class AisConsentServiceTest {
                                      null, 0,
                                      null, null,
                                      false, false, null, null, null);
+    }
+
+    private AspspConsentData getAspspConsentData() {
+        AspspConsentData consentData = new AspspConsentData();
+        consentData.setConsentId(EXTERNAL_CONSENT_ID);
+        consentData.setAspspConsentData(ENCRYPTED_CONSENT_DATA);
+        return consentData;
     }
 }
