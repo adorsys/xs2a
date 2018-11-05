@@ -75,17 +75,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return false;
         }
 
-        Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorizationRepository.findByExternalId(authorisationId);
-
-        if (!aisConsentAuthorizationOptional.isPresent()) {
-            return false;
-        }
-
-        AisConsentAuthorization aisConsentAuthorization = aisConsentAuthorizationOptional.get();
-        aisConsentAuthorization.setScaStatus(status);
-        aisConsentAuthorization = aisConsentAuthorizationRepository.save(aisConsentAuthorization);
-
-        return aisConsentAuthorization.getExternalId() != null;
+        return aisConsentAuthorizationRepository.findByExternalId(authorisationId)
+                   .map(auth -> updateScaStatus(status, auth))
+                   .orElse(false);
     }
 
     @Override
@@ -131,20 +123,19 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private Optional<AisConsent> getActualAisConsent(String consentId) {
         return Optional.ofNullable(consentId)
-                   .flatMap(c -> aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
+                   .flatMap(c -> aisConsentRepository.findByExternalIdAndConsentStatusIn(c, EnumSet.of(RECEIVED, VALID)));
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status) {
         return getAisConsentById(consentId)
-                   .map(con -> setStatusAndSaveConsent(con, status))
-                   .map(con -> con.getConsentStatus() == status)
+                   .map(con -> updateConsentStatus(con, status))
                    .orElse(false);
     }
 
-    private AisConsent setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
+    private boolean updateConsentStatus(AisConsent consent, ConsentStatus status) {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
-        return aisConsentRepository.save(consent);
+        return aisConsentRepository.save(consent) != null;
     }
 
     private boolean updatePsuData(AisConsent consent, PsuIdData psuIdData) {
@@ -155,5 +146,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         psuData.setPsuCorporateIdType(psuIdData.getPsuCorporateIdType());
 
         return psuDataRepository.save(psuData) != null;
+    }
+
+    private boolean updateScaStatus(@NotNull ScaStatus status, AisConsentAuthorization auth) {
+        auth.setScaStatus(status);
+        return aisConsentAuthorizationRepository.save(auth) != null;
     }
 }
