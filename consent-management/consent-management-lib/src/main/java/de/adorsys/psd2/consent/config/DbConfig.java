@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi;
+package de.adorsys.psd2.consent.config;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication
-@ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2"})
-public class ASPSPXs2aApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(ASPSPXs2aApplication.class, args);
-    }
+@Configuration
+@EnableTransactionManagement
+@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository"})
+@EntityScan("de.adorsys.psd2.consent.domain")
+public class DbConfig {
 }
