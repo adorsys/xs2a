@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
 import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
@@ -44,8 +45,8 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 @Service("PIS_PSUAUTHENTICATED")
 public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> {
 
-    public PisScaAuthenticatedStage(PaymentAuthorisationSpi paymentAuthorisationSpi, PisConsentDataService pisConsentDataService, CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, Xs2aPisConsentMapper xs2aPisConsentMapper, SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
-        super(paymentAuthorisationSpi, pisConsentDataService, cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, spiToXs2aAuthenticationObjectMapper, xs2aPisConsentMapper, spiErrorMapper, xs2aToSpiPsuDataMapper);
+    public PisScaAuthenticatedStage(PaymentAuthorisationSpi paymentAuthorisationSpi, PisConsentDataService pisConsentDataService, CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, Xs2aPisConsentMapper xs2aPisConsentMapper, SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, SpiToXs2aOtpFormatMapper spiToXs2aOtpFormatMapper) {
+        super(paymentAuthorisationSpi, pisConsentDataService, cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, spiToXs2aAuthenticationObjectMapper, xs2aPisConsentMapper, spiErrorMapper, xs2aToSpiPsuDataMapper, spiToXs2aOtpFormatMapper);
     }
 
     @Override
@@ -53,6 +54,7 @@ public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDat
         PaymentType paymentType = pisConsentAuthorisationResponse.getPaymentType();
         SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType);
         String authenticationMethodId = request.getAuthenticationMethodId();
+        Xs2aChallengeData challengeData = null;
 
         PsuIdData psuData = request.getPsuData();
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
@@ -60,6 +62,15 @@ public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDat
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = paymentAuthorisationSpi.requestAuthorisationCode(xs2aToSpiPsuDataMapper.mapToSpiPsuData(psuData), authenticationMethodId, payment, aspspConsentData);
         aspspConsentData = spiResponse.getAspspConsentData();
         pisConsentDataService.updateAspspConsentData(aspspConsentData);
+        SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
+        if(authorizationCodeResult != null && !authorizationCodeResult.isEmpty()) {
+            challengeData = new Xs2aChallengeData(authorizationCodeResult.getImage(),
+                authorizationCodeResult.getData(),
+                authorizationCodeResult.getImageLink(),
+                authorizationCodeResult.getOtpMaxLength(),
+                spiToXs2aOtpFormatMapper.mapToOtpFormat(authorizationCodeResult.getOtpFormat()),
+                authorizationCodeResult.getAdditionalInformation());
+        }
 
         if (spiResponse.hasError()) {
             return new Xs2aUpdatePisConsentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
@@ -87,6 +98,7 @@ public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDat
         Xs2aUpdatePisConsentPsuDataResponse response = new Xs2aUpdatePisConsentPsuDataResponse(SCAMETHODSELECTED);
         response.setPsuId(psuData.getPsuId());
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(chosenScaMethod));
+        response.setChallengeData(challengeData);
         return response;
     }
 }
