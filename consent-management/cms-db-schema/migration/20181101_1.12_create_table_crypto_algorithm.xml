@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-10-22-1">
+        <comment>Create sequence for crypto_algorithm id.</comment>
+        <createSequence sequenceName="crypto_algorithm_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE crypto_algorithm_id_seq</sql>
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-10-22-2">
+        <comment>Create table crypto_algorithm</comment>
+        <createTable tableName="crypto_algorithm">
+            <column name="algorithm_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="external_id" type="VARCHAR(10)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="algorithm" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-10-29-3">
+        <comment>Increase length of requested_consent_id to 255</comment>
+
+        <modifyDataType
+            columnName="requested_consent_id"
+            newDataType="VARCHAR(255)"
+            tableName="ais_consent_action"/>
+        <!--
+            [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
+            Use <sql> and re-specify all configuration if this is the case
+        -->
+        <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY requested_consent_id VARCHAR(255) NOT NULL</sql>
+    </changeSet>
+
+</databaseChangeLog>

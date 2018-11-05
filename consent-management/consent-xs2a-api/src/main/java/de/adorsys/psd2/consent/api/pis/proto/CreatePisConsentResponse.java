@@ -16,11 +16,9 @@
 
 package de.adorsys.psd2.consent.api.pis.proto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Value;
 
-@Data
-@AllArgsConstructor
+@Value
 public class CreatePisConsentResponse {
     private String consentId;
 }
