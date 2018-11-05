@@ -54,26 +54,24 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
-    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(this::getAisConsentById)
+    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
+        return getAisConsentById(consentId)
                    .map(con -> updatePsuData(con, psuIdData))
                    .orElse(false);
     }
 
     @Override
-    public @NotNull Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(this::getAisConsentById)
+    @Transactional
+    public @NotNull Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
+        return getAisConsentById(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
     }
 
     @Override
     @Transactional
-    public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String encryptedConsentId, @NotNull String authorisationId, @NotNull ScaStatus status) {
-        Optional<AisConsent> actualAisConsent = securityDataService.decryptId(encryptedConsentId)
-                                                    .flatMap(this::getActualAisConsent);
+    public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status) {
+        Optional<AisConsent> actualAisConsent = getActualAisConsent(consentId);
 
         if (!actualAisConsent.isPresent()) {
             return false;
@@ -86,18 +84,14 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
-    public boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .map(consentId -> changeConsentStatus(consentId, VALID))
-                   .orElse(false);
+    public boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
+        return changeConsentStatus(consentId, VALID);
     }
 
     @Override
     @Transactional
-    public boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .map(consentId -> changeConsentStatus(consentId, REJECTED))
-                   .orElse(false);
+    public boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
+        return changeConsentStatus(consentId, REJECTED);
     }
 
     @Override
@@ -109,10 +103,14 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
-    public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
-            .map(consentId -> changeConsentStatus(consentId, REVOKED_BY_PSU))
-            .orElse(false);
+    public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
+        return changeConsentStatus(consentId, REVOKED_BY_PSU);
+    }
+
+    private boolean changeConsentStatus(String consentId, ConsentStatus status) {
+        return getAisConsentById(consentId)
+                   .map(con -> updateConsentStatus(con, status))
+                   .orElse(false);
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
@@ -125,19 +123,15 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return consent;
     }
 
-    private Optional<AisConsent> getActualAisConsent(String consentId) {
-        return Optional.ofNullable(consentId)
+    private Optional<AisConsent> getActualAisConsent(String encryptedConsentId) {
+        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
+        return consentIdDecrypted
                    .flatMap(c -> aisConsentRepository.findByExternalIdAndConsentStatusIn(c, EnumSet.of(RECEIVED, VALID)));
     }
 
-    private boolean changeConsentStatus(String consentId, ConsentStatus status) {
-        return getAisConsentById(consentId)
-                   .map(con -> updateConsentStatus(con, status))
-                   .orElse(false);
-    }
-
-    private Optional<AisConsent> getAisConsentById(String consentId) {
-        return Optional.ofNullable(consentId)
+    private Optional<AisConsent> getAisConsentById(String encryptedConsentId) {
+        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
+        return consentIdDecrypted
                    .flatMap(aisConsentRepository::findByExternalId);
     }
 
