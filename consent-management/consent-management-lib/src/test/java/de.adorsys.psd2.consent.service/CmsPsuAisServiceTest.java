@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -61,6 +62,8 @@ public class CmsPsuAisServiceTest {
     private PsuDataRepository psuDataRepository;
     @Spy
     private PsuDataMapper psuDataMapper;
+    @Mock
+    private SecurityDataService securityDataService;
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
@@ -95,6 +98,8 @@ public class CmsPsuAisServiceTest {
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.of(aisConsent));
         when(aisConsentRepository.findByPsuDataPsuId(PSU_ID)).thenReturn(aisConsents);
         when(psuDataRepository.save(psuData)).thenReturn(psuData);
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
     }
 
     private List<AisConsent> buildAisConsents() {

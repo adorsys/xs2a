@@ -74,7 +74,7 @@ public class CmsPsuAisConsentController {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return cmsPsuAisService.getConsent(psuIdData, consentId)
                    .map(aisAccountConsent -> new ResponseEntity<>(aisAccountConsent, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "consent/{consent-id}/authorizations/{authorization-id}/status/{status}")
