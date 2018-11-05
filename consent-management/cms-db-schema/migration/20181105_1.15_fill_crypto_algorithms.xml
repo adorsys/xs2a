@@ -22,10 +22,24 @@
         <comment>Fill in default values for crypto algorithms</comment>
         <!-- We believe that this sequence never comes to 1 000 000
         If it happens, donate us to fix this :) -->
-        <sql>
-            INSERT INTO crypto_algorithm (algorithm_id, external_id, algorithm, version) VALUES (1000500, 'nML0IXWdMa', 'AES/GCM/NoPadding', '1');
-            INSERT INTO crypto_algorithm (algorithm_id, external_id, algorithm, version) VALUES (1000501, 'bS6p6XvTWI', 'AES/ECB/PKCS5Padding', '2');
-            INSERT INTO crypto_algorithm (algorithm_id, external_id, algorithm, version) VALUES (1000502, 'gQ8wkMeo93', 'JWE/GCM/256', '3');
-        </sql>
+
+        <insert tableName="crypto_algorithm">
+            <column name="algorithm_id" value="1000500"/>
+            <column name="external_id" value="nML0IXWdMa"/>
+            <column name="algorithm" value="AES/GCM/NoPadding"/>
+            <column name="version" value="1"/>
+        </insert>
+        <insert tableName="crypto_algorithm">
+            <column name="algorithm_id" value="1000501"/>
+            <column name="external_id" value="bS6p6XvTWI"/>
+            <column name="algorithm" value="AES/ECB/PKCS5Padding"/>
+            <column name="version" value="2"/>
+        </insert>
+        <insert tableName="crypto_algorithm">
+            <column name="algorithm_id" value="1000502"/>
+            <column name="external_id" value="gQ8wkMeo93"/>
+            <column name="algorithm" value="JWE/GCM/256"/>
+            <column name="version" value="3"/>
+        </insert>
     </changeSet>
 </databaseChangeLog>
