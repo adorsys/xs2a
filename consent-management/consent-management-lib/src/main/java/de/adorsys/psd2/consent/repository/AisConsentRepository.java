@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.repository;
 
-import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.springframework.data.repository.CrudRepository;
@@ -32,5 +31,5 @@ public interface AisConsentRepository extends CrudRepository<AisConsent, Long> {
 
     Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
 
-    List<AisConsent> findByPsuData(PsuData psuData);
+    List<AisConsent>findByPsuDataPsuId(String psuId);
 }

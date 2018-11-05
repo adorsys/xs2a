@@ -25,7 +25,6 @@ import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -35,10 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
@@ -51,7 +47,6 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentMapper consentMapper;
-    private final PsuDataMapper psuDataMapper;
     private final PsuDataRepository psuDataRepository;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
 
@@ -67,7 +62,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Transactional
     public @NotNull Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
         return getAisConsentById(consentId)
-                   .map(con -> checkAndUpdateOnExpiration(con))
+                   .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
     }
 
@@ -108,11 +103,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData) {
-        List<PsuData> psuDataList = psuDataRepository.findByPsuId(psuIdData.getPsuId());
-        if (psuDataList.isEmpty()) {
-            return Arrays.asList();
-        }
-        return aisConsentRepository.findByPsuData(psuDataList.get(0)).stream()
+        return aisConsentRepository.findByPsuDataPsuId(psuIdData.getPsuId()).stream()
                    .map(consentMapper::mapToAisAccountConsent)
                    .collect(Collectors.toList());
     }

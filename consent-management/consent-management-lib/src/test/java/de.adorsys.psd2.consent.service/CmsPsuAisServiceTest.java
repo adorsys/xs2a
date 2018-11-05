@@ -93,8 +93,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(aisConsentAuthorization));
         when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID_NOT_EXIST)).thenReturn(Optional.empty());
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.of(aisConsent));
-        when(aisConsentRepository.findByPsuData(psuData)).thenReturn(aisConsents);
-        when(psuDataRepository.findByPsuId(PSU_ID)).thenReturn(Arrays.asList(psuData));
+        when(aisConsentRepository.findByPsuDataPsuId(PSU_ID)).thenReturn(aisConsents);
         when(psuDataRepository.save(psuData)).thenReturn(psuData);
     }
 

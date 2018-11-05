@@ -19,8 +19,5 @@ package de.adorsys.psd2.consent.repository;
 import de.adorsys.psd2.consent.domain.PsuData;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
-
 public interface PsuDataRepository extends CrudRepository<PsuData, Long> {
-   List<PsuData> findByPsuId(String id);
 }
