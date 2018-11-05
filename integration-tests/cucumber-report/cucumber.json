@@ -265,6 +265,7 @@
             }
           }
         ],
+<<<<<<< Updated upstream
         "line": 116,
         "name": "Request account list successfully",
         "description": "",
@@ -285,6 +286,7 @@
         "steps": [
           {
             "result": {
+<<<<<<< Updated upstream
               "duration": 145010553,
               "status": "passed"
             },
@@ -411,16 +413,16 @@
             "match": {
               "arguments": [
                 {
-                  "val": "singlePayInit-incorrect-payment-product.json",
+                  "val": "singlePayInit-no-ip-address.json",
                   "offset": 41
                 },
                 {
                   "val": "payments",
-                  "offset": 112
+                  "offset": 100
                 },
                 {
-                  "val": "sepa-credit-trans",
-                  "offset": 145
+                  "val": "sepa-credit-transfers",
+                  "offset": 133
                 }
               ],
               "location": "SinglePaymentErrorfulSteps.loadTestData(String,String,String)"
@@ -498,16 +500,16 @@
             "match": {
               "arguments": [
                 {
-                  "val": "singlePayInit-no-request-id.json",
+                  "val": "singlePayInit-wrong-format-request-id.json",
                   "offset": 41
                 },
                 {
                   "val": "payments",
-                  "offset": 100
+                  "offset": 110
                 },
                 {
                   "val": "sepa-credit-transfers",
-                  "offset": 133
+                  "offset": 143
                 }
               ],
               "location": "SinglePaymentErrorfulSteps.loadTestData(String,String,String)"
@@ -585,16 +587,16 @@
             "match": {
               "arguments": [
                 {
-                  "val": "singlePayInit-no-ip-address.json",
+                  "val": "singlePayInit-wrong-format-psu-ip-address.json",
                   "offset": 41
                 },
                 {
                   "val": "payments",
-                  "offset": 100
+                  "offset": 114
                 },
                 {
                   "val": "sepa-credit-transfers",
-                  "offset": 133
+                  "offset": 147
                 }
               ],
               "location": "SinglePaymentErrorfulSteps.loadTestData(String,String,String)"
@@ -690,7 +692,7 @@
                   "offset": 147
                 }
               ],
-              "location": "SinglePaymentErrorfulSteps.loadTestData(String,String,String)"
+              "location": "PeriodicPaymentErrorfulSteps.loadTestDataForErrorfulPeriodicPayment(String,String,String)"
             },
             "matchedColumns": [
               0,
@@ -708,7 +710,7 @@
             "line": 11,
             "name": "PSU sends the single payment initiating request with error",
             "match": {
-              "location": "SinglePaymentErrorfulSteps.sendPaymentInitiatingRequestWithError()"
+              "location": "PeriodicPaymentErrorfulSteps.sendFalsePeriodicPaymentInitiatingRequest()"
             },
             "keyword": "When "
           },
@@ -908,7 +910,7 @@
       {
         "before": [
           {
-            "result": {
+            "result":
               "duration": 13380363,
               "status": "passed"
             },
@@ -1157,6 +1159,7 @@
             "result": {
               "status": "skipped"
             },
+
             "line": 54,
             "name": "an error response code and the appropriate error response are received",
             "match": {
@@ -1384,6 +1387,7 @@
         "steps": [
           {
             "result": {
+
               "duration": 2059012,
               "error_message": "org.springframework.web.client.ResourceAccessException: I/O error on POST request for \"http://localhost:8080/v1/payments/sepa-credit-transfers\": Connection refused (Connection refused); nested exception is java.net.ConnectException: Connection refused (Connection refused)\n\tat org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:674)\n\tat org.springframework.web.client.RestTemplate.execute(RestTemplate.java:621)\n\tat org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:539)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService.sendRestCall(TestService.java:55)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.GlobalSuccessfulSteps.sendSinglePaymentInitiationRequestAndStoreId(GlobalSuccessfulSteps.java:125)\n\tat ✽.Given PSU sends the single payment initiation request and receives the paymentId(PIS_Common.feature:85)\nCaused by: java.net.ConnectException: Connection refused (Connection refused)\n\tat java.net.PlainSocketImpl.socketConnect(Native Method)\n\tat java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)\n\tat java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)\n\tat java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)\n\tat java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)\n\tat java.net.Socket.connect(Socket.java:589)\n\tat sun.net.NetworkClient.doConnect(NetworkClient.java:175)\n\tat sun.net.www.http.HttpClient.openServer(HttpClient.java:463)\n\tat sun.net.www.http.HttpClient.openServer(HttpClient.java:558)\n\tat sun.net.www.http.HttpClient.\u003cinit\u003e(HttpClient.java:242)\n\tat sun.net.www.http.HttpClient.New(HttpClient.java:339)\n\tat sun.net.www.http.HttpClient.New(HttpClient.java:357)\n\tat sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1202)\n\tat sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1138)\n\tat sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1032)\n\tat sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:966)\n\tat org.springframework.http.client.SimpleBufferingClientHttpRequest.executeInternal(SimpleBufferingClientHttpRequest.java:78)\n\tat org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)\n\tat org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:53)\n\tat org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:660)\n\tat org.springframework.web.client.RestTemplate.execute(RestTemplate.java:621)\n\tat org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:539)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService.sendRestCall(TestService.java:55)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.GlobalSuccessfulSteps.sendSinglePaymentInitiationRequestAndStoreId(GlobalSuccessfulSteps.java:125)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat cucumber.runtime.Utils$1.call(Utils.java:40)\n\tat cucumber.runtime.Timeout.timeout(Timeout.java:16)\n\tat cucumber.runtime.Utils.invoke(Utils.java:34)\n\tat cucumber.runtime.java.JavaStepDefinition.execute(JavaStepDefinition.java:38)\n\tat cucumber.runtime.StepDefinitionMatch.runStep(StepDefinitionMatch.java:37)\n\tat cucumber.runtime.Runtime.runStep(Runtime.java:300)\n\tat cucumber.runtime.model.StepContainer.runStep(StepContainer.java:44)\n\tat cucumber.runtime.model.StepContainer.runSteps(StepContainer.java:39)\n\tat cucumber.runtime.model.CucumberScenario.run(CucumberScenario.java:44)\n\tat cucumber.runtime.junit.ExecutionUnitRunner.run(ExecutionUnitRunner.java:102)\n\tat org.junit.runners.Suite.runChild(Suite.java:128)\n\tat org.junit.runners.Suite.runChild(Suite.java:27)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat cucumber.runtime.junit.ExamplesRunner.run(ExamplesRunner.java:59)\n\tat org.junit.runners.Suite.runChild(Suite.java:128)\n\tat org.junit.runners.Suite.runChild(Suite.java:27)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat cucumber.runtime.junit.ScenarioOutlineRunner.run(ScenarioOutlineRunner.java:53)\n\tat cucumber.runtime.junit.FeatureRunner.runChild(FeatureRunner.java:63)\n\tat cucumber.runtime.junit.FeatureRunner.runChild(FeatureRunner.java:18)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat cucumber.runtime.junit.FeatureRunner.run(FeatureRunner.java:70)\n\tat cucumber.api.junit.Cucumber.runChild(Cucumber.java:95)\n\tat cucumber.api.junit.Cucumber.runChild(Cucumber.java:38)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat cucumber.api.junit.Cucumber.run(Cucumber.java:100)\n\tat org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)\n\tat org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)\n\tat org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)\n\tat org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)\n\tat org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)\n\tat org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)\n\tat org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)\n",
               "status": "failed"
@@ -1553,6 +1557,7 @@
             }
           }
         ],
+
         "line": 121,
         "name": "Failed Payment Information Request",
         "description": "",
@@ -1616,7 +1621,7 @@
             "line": 115,
             "name": "PSU requests the information of the payment with error",
             "match": {
-              "location": "SinglePaymentInformationErrorfulSteps.sendPaymentInformationRequestWithError()"
+              "location": "PaymentInformationSuccessfulSteps.sendPaymentInformationRequest()"
             },
             "keyword": "When "
           },
@@ -1634,6 +1639,12 @@
         ]
       },
       {
+        "comments": [
+          {
+            "line": 118,
+            "value": "#           | singlePayInformation-not-existing-paymentId.json  | payments                    |"
+          }
+        ],
         "before": [
           {
             "result": {
@@ -1833,6 +1844,12 @@
     "line": 1,
     "elements": [
       {
+        "comments": [
+          {
+            "line": 147,
+            "value": "#            | paymentCancellation-not-existing-paymentId.json  | payments                    |"
+          }
+        ],
         "before": [
           {
             "result": {
@@ -1888,10 +1905,9 @@
             },
             "matchedColumns": [
               0,
-              1,
-              2
+              1
             ],
-            "keyword": "Given "
+            "keyword": "And "
           },
           {
             "result": {
@@ -2005,7 +2021,17 @@
             "keyword": "Then "
           }
         ]
-      },
+      }
+    ],
+    "name": "Payment Initiation Service - Common",
+    "description": "",
+    "id": "payment-initiation-service---common",
+    "keyword": "Feature",
+    "uri": "PIS_Common.feature"
+  },
+  {
+    "line": 1,
+    "elements": [
       {
         "comments": [
           {
@@ -2099,6 +2125,7 @@
             "name": "an error response code and the appropriate error response are received",
             "match": {
               "location": "GlobalErrorfulSteps.checkErrorCodeAndResponse()"
+
             },
             "keyword": "Then "
           }
@@ -2116,6 +2143,7 @@
             }
           }
         ],
+
         "line": 60,
         "name": "Successful update of identification data (embedded)",
         "description": "",
@@ -2124,6 +2152,7 @@
           {
             "result": {
               "duration": 198522,
+
               "status": "passed"
             },
             "match": {
@@ -2543,7 +2572,7 @@
         "before": [
           {
             "result": {
-              "duration": 13502204,
+              "duration": 13502204
               "status": "passed"
             },
             "match": {
@@ -2732,9 +2761,20 @@
               "location": "GlobalSuccessfulSteps.checkRedirectUrl()"
             },
             "keyword": "And "
+
           }
         ]
-      },
+      }
+    ],
+    "name": "Payment Initiation Service - Embedded approach",
+    "description": "",
+    "id": "payment-initiation-service---embedded-approach",
+    "keyword": "Feature",
+    "uri": "PIS_Embedded.feature"
+  },
+  {
+    "line": 1,
+    "elements": [
       {
         "before": [
           {
@@ -2838,13 +2878,13 @@
           {
             "result": {
               "duration": 12276730,
-              "status": "passed"
-            },
-            "match": {
-              "location": "GlobalSuccessfulSteps.loadTestDataIntoDb()"
-            }
-          }
-        ],
+        "status": "passed"
+      },
+      "match": {
+        "location": "GlobalSuccessfulSteps.loadTestDataIntoDb()"
+      }
+      }
+    ],
         "line": 51,
         "name": "Payment initiation request for recurring payments (redirect)",
         "description": "",
@@ -2896,6 +2936,7 @@
           },
           {
             "result": {
+<<<<<<< Updated upstream
               "duration": 1323800,
               "error_message": "org.springframework.web.client.ResourceAccessException: I/O error on POST request for \"http://localhost:8080/v1/periodic-payments/sepa-credit-transfers\": Connection refused (Connection refused); nested exception is java.net.ConnectException: Connection refused (Connection refused)\n\tat org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:674)\n\tat org.springframework.web.client.RestTemplate.execute(RestTemplate.java:621)\n\tat org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:539)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService.sendRestCall(TestService.java:55)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect.PeriodicPaymentSuccessfulSteps.sendSuccessfulPeriodicPaymentInitiatingRequest(PeriodicPaymentSuccessfulSteps.java:56)\n\tat ✽.When PSU sends the recurring payment initiating request(PIS_Redirect.feature:45)\nCaused by: java.net.ConnectException: Connection refused (Connection refused)\n\tat java.net.PlainSocketImpl.socketConnect(Native Method)\n\tat java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)\n\tat java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)\n\tat java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)\n\tat java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)\n\tat java.net.Socket.connect(Socket.java:589)\n\tat sun.net.NetworkClient.doConnect(NetworkClient.java:175)\n\tat sun.net.www.http.HttpClient.openServer(HttpClient.java:463)\n\tat sun.net.www.http.HttpClient.openServer(HttpClient.java:558)\n\tat sun.net.www.http.HttpClient.\u003cinit\u003e(HttpClient.java:242)\n\tat sun.net.www.http.HttpClient.New(HttpClient.java:339)\n\tat sun.net.www.http.HttpClient.New(HttpClient.java:357)\n\tat sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1202)\n\tat sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1138)\n\tat sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1032)\n\tat sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:966)\n\tat org.springframework.http.client.SimpleBufferingClientHttpRequest.executeInternal(SimpleBufferingClientHttpRequest.java:78)\n\tat org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)\n\tat org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:53)\n\tat org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:660)\n\tat org.springframework.web.client.RestTemplate.execute(RestTemplate.java:621)\n\tat org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:539)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService.sendRestCall(TestService.java:55)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect.PeriodicPaymentSuccessfulSteps.sendSuccessfulPeriodicPaymentInitiatingRequest(PeriodicPaymentSuccessfulSteps.java:56)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat cucumber.runtime.Utils$1.call(Utils.java:40)\n\tat cucumber.runtime.Timeout.timeout(Timeout.java:16)\n\tat cucumber.runtime.Utils.invoke(Utils.java:34)\n\tat cucumber.runtime.java.JavaStepDefinition.execute(JavaStepDefinition.java:38)\n\tat cucumber.runtime.StepDefinitionMatch.runStep(StepDefinitionMatch.java:37)\n\tat cucumber.runtime.Runtime.runStep(Runtime.java:300)\n\tat cucumber.runtime.model.StepContainer.runStep(StepContainer.java:44)\n\tat cucumber.runtime.model.StepContainer.runSteps(StepContainer.java:39)\n\tat cucumber.runtime.model.CucumberScenario.run(CucumberScenario.java:44)\n\tat cucumber.runtime.junit.ExecutionUnitRunner.run(ExecutionUnitRunner.java:102)\n\tat org.junit.runners.Suite.runChild(Suite.java:128)\n\tat org.junit.runners.Suite.runChild(Suite.java:27)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat cucumber.runtime.junit.ExamplesRunner.run(ExamplesRunner.java:59)\n\tat org.junit.runners.Suite.runChild(Suite.java:128)\n\tat org.junit.runners.Suite.runChild(Suite.java:27)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat cucumber.runtime.junit.ScenarioOutlineRunner.run(ScenarioOutlineRunner.java:53)\n\tat cucumber.runtime.junit.FeatureRunner.runChild(FeatureRunner.java:63)\n\tat cucumber.runtime.junit.FeatureRunner.runChild(FeatureRunner.java:18)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat cucumber.runtime.junit.FeatureRunner.run(FeatureRunner.java:70)\n\tat cucumber.api.junit.Cucumber.runChild(Cucumber.java:95)\n\tat cucumber.api.junit.Cucumber.runChild(Cucumber.java:38)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat cucumber.api.junit.Cucumber.run(Cucumber.java:100)\n\tat org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)\n\tat org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)\n\tat org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)\n\tat org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)\n\tat org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)\n\tat org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)\n\tat org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)\n",
               "status": "failed"

@@ -29,7 +29,7 @@
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
         <postgresql.version>42.2.4</postgresql.version>
-        <propertyFile>liquibase.properties</propertyFile>
+        <propertyFile>liquibase.example.properties</propertyFile>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
