@@ -52,7 +52,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
@@ -177,37 +176,37 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
-    public ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId, boolean withBalance) {
+    public ResponseObject<AccountConsent> getValidatedConsent(String consentId, boolean withBalance) {
         AccountConsent accountConsent = getValidatedAccountConsent(consentId);
 
         if (accountConsent == null) {
-            return ResponseObject.<Xs2aAccountAccess>builder()
+            return ResponseObject.<AccountConsent>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
         }
 
         if (withBalance && !accountConsent.isWithBalance()) {
-            return ResponseObject.<Xs2aAccountAccess>builder()
+            return ResponseObject.<AccountConsent>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_INVALID)))
                        .build();
         }
 
         if (LocalDate.now().compareTo(accountConsent.getValidUntil()) >= 0) {
-            return ResponseObject.<Xs2aAccountAccess>builder()
+            return ResponseObject.<AccountConsent>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
         }
 
         if (!accountConsent.isValidStatus()) {
-            return ResponseObject.<Xs2aAccountAccess>builder()
+            return ResponseObject.<AccountConsent>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
         }
         if (!accountConsent.isValidFrequency()) {
-            return ResponseObject.<Xs2aAccountAccess>builder()
+            return ResponseObject.<AccountConsent>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.ACCESS_EXCEEDED))).build();
         }
-        return ResponseObject.<Xs2aAccountAccess>builder().body(accountConsent.getAccess()).build();
+        return ResponseObject.<AccountConsent>builder().body(accountConsent).build();
     }
 
-    public ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId) {
+    public ResponseObject<AccountConsent> getValidatedConsent(String consentId) {
         return getValidatedConsent(consentId, false);
     }
 
@@ -281,12 +280,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                   ::build);
     }
 
-    // TODO remove when the new validation is ready https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
-    public boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
+    public boolean isValidAccountByAccess(String resourceId, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
-                          .anyMatch(a -> a.getIban().equals(iban)
-                                             && a.getCurrency() == currency);
+                          .anyMatch(a -> a.getResourceId().equals(resourceId));
     }
 
     private Boolean isNotEmptyAccess(Xs2aAccountAccess access) {

@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.domain.consent;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,7 @@ public class UpdateConsentPsuDataResponse {
     private ScaStatus scaStatus;
     private List<Xs2aAuthenticationObject> availableScaMethods;
     private Xs2aAuthenticationObject chosenScaMethod;
+    private Xs2aChallengeData challengeData;
     private String authenticationMethodId;
     private String scaAuthenticationData;
     private Links links;

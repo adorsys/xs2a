@@ -435,7 +435,7 @@ public class ConsentServiceTest {
     @Test
     public void getValidateConsent_DateValidAfter() {
         //When
-        ResponseObject<Xs2aAccountAccess> xs2aAccountAccessResponseObject = consentService.getValidatedConsent(CONSENT_ID_DATE_VALID_YESTERDAY);
+        ResponseObject<AccountConsent> xs2aAccountAccessResponseObject = consentService.getValidatedConsent(CONSENT_ID_DATE_VALID_YESTERDAY);
         //Then
         assertThat(xs2aAccountAccessResponseObject.getBody()).isNull();
         assertThat(xs2aAccountAccessResponseObject.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
