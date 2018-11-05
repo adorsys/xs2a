@@ -162,7 +162,7 @@ public class PisConsentServiceTest {
     private AspspConsentData getAspspConsentData() {
         AspspConsentData consentData = new AspspConsentData();
         consentData.setConsentId(EXTERNAL_CONSENT_ID);
-        consentData.setAspspConsentData(ENCRYPTED_CONSENT_DATA);
+        consentData.setData(ENCRYPTED_CONSENT_DATA);
         return consentData;
     }
 

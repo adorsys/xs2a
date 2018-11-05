@@ -262,7 +262,7 @@ public class AisConsentServiceInternal implements AisConsentService {
 
     private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent, String encryptedConsentId) {
         return aspspConsentDataRepository.findByConsentId(consent.getExternalId())
-                   .map(AspspConsentData::getAspspConsentData)
+                   .map(AspspConsentData::getData)
                    .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
                    .map(DecryptedData::getData)
                    .map(bytes -> Base64.getEncoder().encodeToString(bytes))
@@ -281,7 +281,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         AspspConsentData aspspConsentData = aspspConsentDataRepository
                                                 .findByConsentId(externalId)
                                                 .orElseGet(() -> new AspspConsentData(externalId));
-        aspspConsentData.setAspspConsentData(consentData);
+        aspspConsentData.setData(consentData);
         return aspspConsentDataRepository.save(aspspConsentData);
     }
 

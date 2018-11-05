@@ -33,8 +33,8 @@ public class AspspConsentData {
     private Long id;
 
     @Lob
-    @Column(name = "aspsp_consent_data")
-    private byte[] aspspConsentData;
+    @Column(name = "data")
+    private byte[] data;
 
     @Column(name = "consent_id", nullable = false, unique = true)
     private String consentId;
