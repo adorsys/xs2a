@@ -26,6 +26,7 @@ Feature: Account Information Service
             #| consent-all-psd2-wrong-psu-id.json    |
             #| consent-all-psd2-wrong-value.json          |
             | consent-dedicated-incorrect-iban.json |
+            | consent-dedicated-expired-consent.json|
 
     @ignore
     Scenario Outline: Successful consent status request (redirect)

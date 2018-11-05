@@ -25,14 +25,18 @@
           }
         ]
       },
-      "validUntil": "2022-01-01"
+      "combinedServiceIndicator": false,
+      "frequencyPerDay": 10,
+      "recurringIndicator": false,
+      "validUntil": "2018-01-01"
     }
   },
   "response": {
-    "code": "201",
+    "code": "200",
     "header": {},
     "body": {
-      "consentStatus": "received"
+      "category": "ERROR",
+      "code": "EXPIRED"
     }
   }
 }
