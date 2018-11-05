@@ -47,12 +47,6 @@
             <version>1.11-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>aspsp-profile-remote</artifactId>
-            <version>1.11-SNAPSHOT</version>
-        </dependency>
-
         <!-- spring dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
