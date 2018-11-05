@@ -34,6 +34,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -170,7 +171,7 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return String   consent id
      */
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<String> saveAspspConsentDataInAisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
         return getActualAisConsent(encryptedConsentId)
                    .flatMap(cons -> saveAspspConsentDataInAisConsent(request, cons, encryptedConsentId));
