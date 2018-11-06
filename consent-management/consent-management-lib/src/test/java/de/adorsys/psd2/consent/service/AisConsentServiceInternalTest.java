@@ -52,7 +52,7 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AisConsentServiceTest {
+public class AisConsentServiceInternalTest {
     @InjectMocks
     private AisConsentServiceInternal aisConsentService;
     @Mock

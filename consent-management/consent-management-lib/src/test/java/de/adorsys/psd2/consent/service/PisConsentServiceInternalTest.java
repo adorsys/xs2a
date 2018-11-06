@@ -48,7 +48,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PisConsentServiceTest {
+public class PisConsentServiceInternalTest {
     @InjectMocks
     private PisConsentServiceInternal pisConsentService;
     @Mock
