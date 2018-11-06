@@ -222,7 +222,7 @@ variables: &variables
   script:
     - cd devops/charts/xs2a
     - helm init --client-only
-    - oc login kubernetes.default.svc --token=${HELM_TOKEN} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    - oc login openshift.adorsys.de --token=${HELM_TOKEN}
     - echo "${VAULT_PWD}" > $ANSIBLE_VAULT_PASSWORD_FILE
     - ansible-vault view env/${HELM_VALUE}.enc > env/${HELM_VALUE}
     - >-
@@ -459,7 +459,7 @@ remove_deploy_review_branch:
   image: adorsys/ci-helm:2.10
   dependencies: []
   script:
-    - oc login kubernetes.default.svc --token=${HELM_TOKEN} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    - oc login openshift.adorsys.de --token=${HELM_TOKEN}
     - helm init --client-only
     - helm del --purge "${HELM_RELEASE}"
   variables:
