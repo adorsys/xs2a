@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
@@ -93,9 +92,9 @@ public class PisConsentServiceInternalTest {
     public void updateAspspDataById() {
 
         // When
-        Mockito.when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(pisConsent));
-        Mockito.when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
-        Mockito.when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class)))
+        when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(pisConsent));
+        when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
+        when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class)))
             .thenReturn(getAspspConsentData());
 
         // Then
@@ -113,9 +112,9 @@ public class PisConsentServiceInternalTest {
     @Test
     public void getAuthorisationByPaymentIdSuccess() {
         //When
-        Mockito.when(securityDataService.decryptId(paymentId)).thenReturn(Optional.of(paymentId));
-        Mockito.when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
-        Mockito.when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
+        when(securityDataService.decryptId(paymentId)).thenReturn(Optional.of(paymentId));
+        when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
         //Then
         Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
         //Assert
@@ -126,8 +125,8 @@ public class PisConsentServiceInternalTest {
     @Test
     public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
-        Mockito.when(securityDataService.decryptId(paymentIdWrong)).thenReturn(Optional.empty());
-        Mockito.when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
+        when(securityDataService.decryptId(paymentIdWrong)).thenReturn(Optional.empty());
+        when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
         //Then
         Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentIdWrong, CmsAuthorisationType.CANCELLED);
         //Assert
