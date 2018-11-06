@@ -49,12 +49,6 @@
 
         <!-- spring dependencies -->
         <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>consent-psu-api</artifactId>
-            <version>1.11-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>

@@ -132,6 +132,7 @@ public class PisPaymentData {
     private PisConsent consent;
 
     @Column(name = "transaction_status")
+    @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(name = "transactionStatus", example = "ACCP")
     private TransactionStatus transactionStatus;
 }

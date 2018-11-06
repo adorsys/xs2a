@@ -28,6 +28,7 @@ import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -77,6 +78,8 @@ public class CmsPsuPisServiceInternalTest {
     PisConsentServiceInternal pisConsentServiceInternal;
     @Mock
     PsuDataRepository psuDataRepository;
+    @Mock
+    PsuDataMapper psuDataMapper;
 
     @Before
     public void setUp() {
@@ -107,6 +110,8 @@ public class CmsPsuPisServiceInternalTest {
             .thenReturn(Optional.empty());
 
         when(psuDataRepository.save(any(PsuData.class)))
+            .thenReturn(psuData);
+        when(psuDataMapper.mapToPsuData(psuIdData))
             .thenReturn(psuData);
     }
 
@@ -252,12 +257,15 @@ public class CmsPsuPisServiceInternalTest {
 
     private PsuData buildPsuData() {
         PsuIdData psuIdData = buildPsuIdData();
-        return new PsuData(
+        PsuData psuData = new PsuData(
             psuIdData.getPsuId(),
             psuIdData.getPsuIdType(),
             psuIdData.getPsuCorporateId(),
             psuIdData.getPsuCorporateIdType()
         );
+        psuData.setId(1L);
+
+        return psuData;
     }
 
     private List<PisPaymentData> buildPisPaymentDataList() {

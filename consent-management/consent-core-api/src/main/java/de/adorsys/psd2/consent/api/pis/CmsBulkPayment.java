@@ -29,7 +29,7 @@ import java.util.List;
 public class CmsBulkPayment implements CmsPayment {
 
     private String paymentId;
-    private Boolean batchBookingPreferred;
+    private boolean batchBookingPreferred;
     private CmsAccountReference debtorAccount;
     private LocalDate requestedExecutionDate;
     private TransactionStatus paymentStatus;

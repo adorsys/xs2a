@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -49,6 +50,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final CmsPsuPisMapper cmsPsuPisMapper;
     private final PisConsentServiceInternal pisConsentServiceInternal;
     private final PsuDataRepository psuDataRepository;
+    private final PsuDataMapper psuDataMapper;
 
     @Override
     public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
@@ -56,23 +58,23 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .map(this::getFirstPaymentFromList)
                    .map(PisPaymentData::getConsent)
                    .map(c -> updatePsuData(c, psuIdData))
-                   .orElseGet(() -> Boolean.FALSE);
+                   .orElse(false);
     }
 
     @Override
     public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
-                   .flatMap(l -> isGivenPsuDataValid(getFirstPaymentFromList(l), psuIdData)
-                                     ? cmsPsuPisMapper.mapToCmsPayment(l)
-                                     : Optional.empty());
+                   .filter(l -> isGivenPsuDataValid(getFirstPaymentFromList(l), psuIdData))
+                   .flatMap(cmsPsuPisMapper::mapToCmsPayment);
     }
 
     @Override
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status) {
         return pisConsentAuthorizationRepository.findByExternalId(authorisationId)
-                   .map(a -> validateGivenData(a, paymentId, psuIdData) && updateAuthorisationStatusAndSaveAuthorization(a, status))
-                   .orElseGet(() -> Boolean.FALSE);
+                   .filter(a -> validateGivenData(a, paymentId, psuIdData))
+                   .map(a -> updateAuthorisationStatusAndSaveAuthorization(a, status))
+                   .orElse(false);
     }
 
     @Override
@@ -85,13 +87,10 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     private boolean updatePsuData(PisConsent pisConsent, PsuIdData psuIdData) {
-        PsuData psuData = pisConsent.getPsuData();
-        psuData.setPsuId(psuIdData.getPsuId());
-        psuData.setPsuIdType(psuIdData.getPsuIdType());
-        psuData.setPsuCorporateId(psuIdData.getPsuCorporateId());
-        psuData.setPsuCorporateIdType(psuIdData.getPsuCorporateIdType());
+        PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData);
+        newPsuData.setId(pisConsent.getPsuData().getId());
 
-        return Optional.ofNullable(psuDataRepository.save(psuData))
+        return Optional.ofNullable(psuDataRepository.save(newPsuData))
                    .isPresent();
     }
 
@@ -109,15 +108,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private boolean isGivenPsuDataValid(PisPaymentData pisPaymentData, PsuIdData psuIdData) {
         return pisConsentServiceInternal.getPsuDataByPaymentId(pisPaymentData.getPaymentId())
-                   .map(p -> comparePsuIdData(p, psuIdData))
+                   .map(p -> p.equals(psuIdData))
                    .orElseGet(() -> Boolean.FALSE);
-    }
-
-    private boolean comparePsuIdData(PsuIdData paymentPsuIdData, PsuIdData givenPsuIdData) {
-        return StringUtils.equals(paymentPsuIdData.getPsuId(), givenPsuIdData.getPsuId())
-                   && StringUtils.equals(paymentPsuIdData.getPsuCorporateId(), givenPsuIdData.getPsuCorporateId())
-                   && StringUtils.equals(paymentPsuIdData.getPsuCorporateIdType(), givenPsuIdData.getPsuCorporateIdType())
-                   && StringUtils.equals(paymentPsuIdData.getPsuIdType(), givenPsuIdData.getPsuIdType());
     }
 
     private PisPaymentData updateStatusInPayment(PisPaymentData pisPaymentData, TransactionStatus status) {

@@ -25,7 +25,5 @@ import java.util.Set;
 
 public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
     Optional<PisConsent> findByExternalId(String externalId);
-
     Optional<PisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
-
 }
