@@ -8,35 +8,38 @@
       "access": {
         "accounts": [
           {
-            "iban": "DE52500105173911841934",
-            "currency": "EUR"
+            "currency": "EUR",
+            "iban": "DE52500105173911841934"
           }
         ],
         "balances": [
           {
-            "iban": "DE52500105173911841934",
-            "currency": "EUR"
+            "currency": "EUR",
+            "iban": "DE52500105173911841934"
           }
         ],
         "transactions": [
           {
-            "iban": "DE52500105173911841934",
-            "currency": "EUR"
+            "currency": "EUR",
+            "iban": "DE52500105173911841934"
           }
         ]
       },
       "combinedServiceIndicator": false,
       "frequencyPerDay": 10,
       "recurringIndicator": false,
-      "validUntil": "2018-01-01"
+      "validUntil": "2017-10-30"
     }
   },
   "response": {
-    "code": "200",
+    "code": "400",
     "header": {},
-    "body": {
-      "category": "ERROR",
-      "code": "EXPIRED"
-    }
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "FORMAT_ERROR",
+        "text": "Format of certain request fields are not matching the XS2A requirements."
+      }
+    ]
   }
 }
