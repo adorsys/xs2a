@@ -38,6 +38,9 @@
             <column name="tpp_access_type" type="VARCHAR(15)">
                 <constraints nullable="false"/>
             </column>
+            <column name="allowed_frequency_per_day" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
     </changeSet>
