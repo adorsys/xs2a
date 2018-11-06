@@ -34,7 +34,7 @@
     <include file="migration/20181101_1.12_create_table_crypto_algorithm.xml"/>
     <include file="migration/20181105_1.14_rename_pis_account_reference_to_account_reference.xml"/>
     <include file="migration/20181105_1.15_fill_crypto_algorithms.xml"/>
-    <include file="migration/20181106_1.17_add_piis_consent.xml"/>
+    <include file="migration/20181106_1.16_add_piis_consent.xml"/>
 
 
 </databaseChangeLog>
