@@ -86,6 +86,6 @@ public class PiisConsent {
     private PiisConsentTppAccessType tppAccessType;
 
     @Column(name = "allowed_frequency_per_day", nullable = false)
-    @ApiModelProperty(value = "Maximum frequency for an access per day, based on tppFrequencyPerDate and inner calculations. For a once-off access, this attribute is set to 1", required = true, example = "4")
+    @ApiModelProperty(value = "Maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int allowedFrequencyPerDay;
 }
