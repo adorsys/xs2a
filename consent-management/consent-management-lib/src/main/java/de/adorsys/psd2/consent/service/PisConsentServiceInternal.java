@@ -26,7 +26,7 @@ import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
-import de.adorsys.psd2.consent.domain.AspspConsentData;
+import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
@@ -162,7 +162,7 @@ public class PisConsentServiceInternal implements PisConsentService {
 
     private CmsAspspConsentDataBase64 prepareAspspConsentData(PisConsent consent, String encryptedConsentId) {
         return aspspConsentDataRepository.findByConsentId(consent.getExternalId())
-                   .map(AspspConsentData::getData)
+                   .map(AspspConsentDataEntity::getData)
                    .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
                    .map(DecryptedData::getData)
                    .map(bytes -> Base64.getEncoder().encodeToString(bytes))
@@ -378,12 +378,12 @@ public class PisConsentServiceInternal implements PisConsentService {
                    .map(a -> consent.getExternalId());
     }
 
-    private AspspConsentData updateAndSaveAspspConsentData(PisConsent consent, byte[] consentData) {
+    private AspspConsentDataEntity updateAndSaveAspspConsentData(PisConsent consent, byte[] consentData) {
         String externalId = consent.getExternalId();
-        AspspConsentData aspspConsentData = aspspConsentDataRepository
+        AspspConsentDataEntity aspspConsentDataEntity = aspspConsentDataRepository
                                                 .findByConsentId(externalId)
-                                                .orElseGet(() -> new AspspConsentData(externalId));
-        aspspConsentData.setData(consentData);
-        return aspspConsentDataRepository.save(aspspConsentData);
+                                                            .orElseGet(() -> new AspspConsentDataEntity(externalId));
+        aspspConsentDataEntity.setData(consentData);
+        return aspspConsentDataRepository.save(aspspConsentDataEntity);
     }
 }

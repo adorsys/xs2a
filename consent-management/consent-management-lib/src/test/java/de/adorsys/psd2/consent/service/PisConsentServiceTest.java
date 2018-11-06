@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.domain.AspspConsentData;
+import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
@@ -92,9 +93,9 @@ public class PisConsentServiceTest {
     public void updateAspspDataById() {
 
         // When
-        when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(pisConsent));
-        when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
-        when(aspspConsentDataRepository.save(any(AspspConsentData.class)))
+        Mockito.when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(pisConsent));
+        Mockito.when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
+        Mockito.when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class)))
             .thenReturn(getAspspConsentData());
 
         // Then
@@ -112,9 +113,9 @@ public class PisConsentServiceTest {
     @Test
     public void getAuthorisationByPaymentIdSuccess() {
         //When
-        when(securityDataService.decryptId(paymentId)).thenReturn(Optional.of(paymentId));
-        when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
-        when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
+        Mockito.when(securityDataService.decryptId(paymentId)).thenReturn(Optional.of(paymentId));
+        Mockito.when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        Mockito.when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
         //Then
         Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
         //Assert
@@ -125,8 +126,8 @@ public class PisConsentServiceTest {
     @Test
     public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
-        when(securityDataService.decryptId(paymentIdWrong)).thenReturn(Optional.empty());
-        when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
+        Mockito.when(securityDataService.decryptId(paymentIdWrong)).thenReturn(Optional.empty());
+        Mockito.when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
         //Then
         Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentIdWrong, CmsAuthorisationType.CANCELLED);
         //Assert
@@ -159,8 +160,8 @@ public class PisConsentServiceTest {
         return paymentData;
     }
 
-    private AspspConsentData getAspspConsentData() {
-        AspspConsentData consentData = new AspspConsentData();
+    private AspspConsentDataEntity getAspspConsentData() {
+        AspspConsentDataEntity consentData = new AspspConsentDataEntity();
         consentData.setConsentId(EXTERNAL_CONSENT_ID);
         consentData.setData(ENCRYPTED_CONSENT_DATA);
         return consentData;

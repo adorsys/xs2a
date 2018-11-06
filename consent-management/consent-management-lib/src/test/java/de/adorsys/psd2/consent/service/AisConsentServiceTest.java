@@ -21,7 +21,7 @@ import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.consent.domain.AspspConsentData;
+import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
@@ -160,7 +160,7 @@ public class AisConsentServiceTest {
         // When
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
-        when(aspspConsentDataRepository.save(any(AspspConsentData.class)))
+        when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class)))
             .thenReturn(getAspspConsentData());
 
         // Then
@@ -218,8 +218,8 @@ public class AisConsentServiceTest {
                                      false, false, null, null, null);
     }
 
-    private AspspConsentData getAspspConsentData() {
-        AspspConsentData consentData = new AspspConsentData();
+    private AspspConsentDataEntity getAspspConsentData() {
+        AspspConsentDataEntity consentData = new AspspConsentDataEntity();
         consentData.setConsentId(EXTERNAL_CONSENT_ID);
         consentData.setData(ENCRYPTED_CONSENT_DATA);
         return consentData;

@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.consent.repository;
 
-import de.adorsys.psd2.consent.domain.AspspConsentData;
+import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface AspspConsentDataRepository extends CrudRepository<AspspConsentData, Long> {
-    Optional<AspspConsentData> findByConsentId(String externalConsentId);
+public interface AspspConsentDataRepository extends CrudRepository<AspspConsentDataEntity, String> {
+    Optional<AspspConsentDataEntity> findByConsentId(String externalConsentId);
 }

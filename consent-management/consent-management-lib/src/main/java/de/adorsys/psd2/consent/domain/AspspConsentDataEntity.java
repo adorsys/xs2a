@@ -20,26 +20,25 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Data
 @Entity(name = "aspsp_consent_data")
 @ApiModel(description = "Aspsp consent data", value = "AspspConsentData")
 @NoArgsConstructor
-public class AspspConsentData {
+public class AspspConsentDataEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "aspsp_consent_data_generator")
-    @SequenceGenerator(name = "aspsp_consent_data_generator", sequenceName = "aspsp_consent_data_id_seq")
-    private Long id;
+    @Column(name = "consent_id")
+    private String consentId;
 
     @Lob
     @Column(name = "data")
     private byte[] data;
 
-    @Column(name = "consent_id", nullable = false, unique = true)
-    private String consentId;
-
-    public AspspConsentData(String consentId) {
+    public AspspConsentDataEntity(String consentId) {
         this.consentId = consentId;
     }
 }
