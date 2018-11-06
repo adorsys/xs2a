@@ -5,7 +5,6 @@ Feature: Account Information Service
 #    # Consent Requests                                                                                                 #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-
     Scenario Outline: Successful consent request creation (redirect)
         Given PSU wants to create a consent <consent-resource>
         When PSU sends the create consent request
@@ -105,7 +104,7 @@ Feature: Account Information Service
     # Account Request                                                                                                  #
     #                                                                                                                  #
     ####################################################################################################################
-
+    @TestTag
     Scenario Outline: Request account list successfully
         Given PSU already has an existing valid consent <consent-id>
         And wants to get a list of accounts using <account-resource>
@@ -114,7 +113,6 @@ Feature: Account Information Service
         Examples:
             | account-resource                               | consent-id                   |
             | accountList-successful.json                    | account/accounts-create-consent.json |
-            #| accountList-with-more-accounts-successful.json | account/accounts-create-consent.json |
 
     @ignore
     Scenario Outline: Request account list errorful

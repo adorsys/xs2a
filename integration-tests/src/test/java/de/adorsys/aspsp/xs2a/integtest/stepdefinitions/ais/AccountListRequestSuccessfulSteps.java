@@ -41,6 +41,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -91,8 +92,7 @@ public class AccountListRequestSuccessfulSteps {
         AccountList givenResponseBody = context.getTestData().getResponse().getBody();
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        //TODO assert that the response body is what we expect
-        //we expect at least one accountDetail in the list
+        assertThat(actualResponse.getBody().getAccounts().get(0).getIban(), is(givenResponseBody.getAccounts().get(0).getIban()));
     }
 
 }
