@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.config.PiisConsentRemoteUrls;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PiisConsentServiceRemote implements PiisConsentService {
@@ -54,6 +56,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
                 accountIdentifier
             ).getBody();
         } catch (RestClientException e) {
+            log.error("Failed to retrieve piis consent validation data, message: {}, stackTrace: {}",  e.getMessage(), e);
             return Collections.emptyList();
         }
 
