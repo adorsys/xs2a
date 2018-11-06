@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.ais;
+package de.adorsys.psd2.xs2a.core.profile;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Currency;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-/**
- *
- * @deprecated since 1.11. Will be removed in 1.12. Use de.adorsys.psd2.xs2a.core.profile.AccountReference instead
- * @see de.adorsys.psd2.xs2a.core.profile.AccountReference
- *
- */
-@Deprecated
-public class CmsAccountReference {
+@ApiModel(description = "Account Reference", value = "Xs2aAccountReference")
+public class AccountReference {
+
     @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
     private String resourceId;
 
@@ -55,7 +52,22 @@ public class CmsAccountReference {
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
-    public CmsAccountReference(String resourceId, String iban, Currency currency) {
-        this(resourceId, iban, null, null, null, null, currency);
+    public AccountReferenceSelector getUsedAccountReferenceSelector() {
+        if (StringUtils.isNotBlank(iban)) {
+            return AccountReferenceSelector.IBAN;
+        }
+        if (StringUtils.isNotBlank(bban)) {
+            return AccountReferenceSelector.BBAN;
+        }
+        if (StringUtils.isNotBlank(pan)) {
+            return AccountReferenceSelector.PAN;
+        }
+        if (StringUtils.isNotBlank(msisdn)) {
+            return AccountReferenceSelector.MSISDN;
+        }
+        if (StringUtils.isNotBlank(maskedPan)) {
+            return AccountReferenceSelector.MASKED_PAN;
+        }
+        return null;
     }
 }
