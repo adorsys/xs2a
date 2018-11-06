@@ -89,7 +89,7 @@ public class SecurityDataService {
      * @return response contains encrypted data
      */
     public Optional<EncryptedData> encryptConsentData(String encryptedId, String aspspConsentDataBase64) {
-        byte[] aspspConsentData = decode64(aspspConsentDataBase64);
+        byte[] aspspConsentData = decode64(aspspConsentDataBase64, false);
 
         if (aspspConsentData == null) {
             return Optional.empty();
@@ -114,7 +114,7 @@ public class SecurityDataService {
     private Optional<String> decryptCompositeId(String encryptedId) {
         String encryptedCompositeId = encryptedId.substring(0, encryptedId.indexOf(SEPARATOR));
 
-        byte[] bytesCompositeId = decode64(encryptedCompositeId);
+        byte[] bytesCompositeId = decode64(encryptedCompositeId, true);
         if (bytesCompositeId == null) {
             return Optional.empty();
         }
@@ -133,9 +133,11 @@ public class SecurityDataService {
                    .map(comst -> comst.split(SEPARATOR)[1]);
     }
 
-    private byte[] decode64(String raw) {
+    private byte[] decode64(String raw, boolean urlsafe) {
         try {
-            return Base64.getUrlDecoder().decode(raw);
+            return urlsafe
+                ? Base64.getUrlDecoder().decode(raw)
+                : Base64.getDecoder().decode(raw);
         } catch (IllegalArgumentException ex) {
             log.error("Input id has wrong format: {}", raw);
             return null;
