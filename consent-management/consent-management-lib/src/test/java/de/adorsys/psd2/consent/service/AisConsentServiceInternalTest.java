@@ -68,7 +68,7 @@ public class AisConsentServiceInternalTest {
     @Mock
     SecurityDataService securityDataService;
     @Mock
-    private AspspConsentDataRepository aspspConsentDataRepository;
+    private AspspConsentDataRepository aspspConsentDataRepository; // TODO remove it after AspspConsentDataServiceTest is created https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/470
 
     private AisConsent aisConsent;
     private CmsAspspConsentDataBase64 cmsAspspConsentDataBase64;
