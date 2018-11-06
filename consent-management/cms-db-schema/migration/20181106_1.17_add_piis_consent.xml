@@ -1,43 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
 
 <databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet author="ssh@adorsys.com.ua" id="2018-11-01-1">
+    <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-1">
         <comment>Create sequence for piis consent id.</comment>
 
         <createSequence sequenceName="piis_consent_id_seq"/>
         <sql dbms="mariadb">CREATE SEQUENCE piis_consent_id_seq</sql>
     </changeSet>
 
-    <changeSet author="ssh@adorsys.com.ua" id="2018-11-01-2">
+    <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-2">
         <comment>Create table piis_consent.</comment>
 
         <createTable tableName="piis_consent">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="aspsp_consent_data" type="BLOB"/>
             <column name="consent_status" type="VARCHAR(25)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="consent_type" type="VARCHAR(5)">
                 <constraints nullable="false"/>
             </column>
             <column name="expire_date" type="DATE">
@@ -61,28 +42,7 @@
 
     </changeSet>
 
-    <changeSet author="ssh@adorsys.com.ua" id="2018-11-01-3">
-        <comment>Create table piis_account_reference.</comment>
-
-        <createTable tableName="piis_account_reference">
-            <column name="consent_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="iban" type="VARCHAR(30)"/>
-            <column name="bban" type="VARCHAR(30)"/>
-            <column name="pan" type="VARCHAR(19)"/>
-            <column name="masked_pan" type="VARCHAR(19)"/>
-            <column name="msisdn" type="VARCHAR(20)"/>
-            <column name="currency" type="VARCHAR(3)"/>
-        </createTable>
-
-        <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="piis_account_reference"
-                                 constraintName="fk__piis_account_reference__piis_consent" deferrable="false"
-                                 initiallyDeferred="false"
-                                 referencedColumnNames="id" referencedTableName="piis_consent"/>
-    </changeSet>
-
-    <changeSet author="ssh@adorsys.com.ua" id="2018-11-01-4">
+    <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-3">
         <comment>Add foreign keys to piis_consent</comment>
 
         <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="piis_consent"
@@ -94,6 +54,31 @@
                                  constraintName="fk__piis_consent__tpp_info" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
+    </changeSet>
+
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-4">
+        <comment>Create table piis_consent_account_reference.</comment>
+
+        <createTable tableName="piis_consent_account_reference">
+            <column name="piis_consent_id" type="BIGINT"/>
+            <column name="account_reference_id" type="BIGINT"/>
+        </createTable>
+
+        <addPrimaryKey columnNames="piis_consent_id, account_reference_id"
+                       constraintName="piis_cons_acc_ref_pkey"
+                       tableName="piis_consent_account_reference"/>
+
+        <addForeignKeyConstraint baseColumnNames="piis_consent_id" baseTableName="piis_consent_account_reference"
+                                 constraintName="fk__piis_acc_ref__piis_cons" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="piis_consent"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_reference_id" baseTableName="piis_consent_account_reference"
+                                 constraintName="fk__piis_acc_ref__acc_ref"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="account_reference_id" referencedTableName="account_reference"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.consent.domain.piis;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.api.piis.PiisConsentTppAccessType;
-import de.adorsys.psd2.consent.domain.ConsentType;
+import de.adorsys.psd2.consent.domain.AccountReference;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfo;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -75,23 +74,14 @@ public class PiisConsent {
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
 
-    @Column(name = "consent_type", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Type of the consent: AIS, PIS or PIIS.", required = true, example = "PIIS")
-    private ConsentType consentType = ConsentType.PIIS;
-
-    @ElementCollection
-    @CollectionTable(name = "piis_account_reference", joinColumns = @JoinColumn(name = "consent_id"))
-    @ApiModelProperty(value = "List of accounts", required = true)
-    private List<PiisAccountReference> accounts = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "piis_consent_account_reference",
+        joinColumns = @JoinColumn(name = "piis_consent_id"),
+        inverseJoinColumns = @JoinColumn(name = "account_reference_id"))
+    private List<AccountReference> accounts = new ArrayList<>();
 
     @Column(name = "tpp_access_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Type of the tpp access: SINGLE_TPP or ALL_TPP.", required = true, example = "ALL_TPP")
     private PiisConsentTppAccessType tppAccessType;
-
-    @Lob
-    @JsonIgnore
-    @Column(name = "aspsp_consent_data")
-    private byte[] aspspConsentData;
 }
