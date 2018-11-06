@@ -64,7 +64,6 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
         SinglePaymentInitiationResponse response = scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
-        singlePayment.setPaymentId(response.getPaymentId());
         singlePayment.setTransactionStatus(response.getTransactionStatus());
 
         pisConsentService.updateSinglePaymentInPisConsent(singlePayment, paymentInitiationParameters, pisConsent.getConsentId());
