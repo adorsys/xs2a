@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -26,6 +27,8 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfi
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.PiisConsentValidationService;
+import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
+import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
@@ -35,6 +38,8 @@ import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -47,6 +52,7 @@ public class FundsConfirmationService {
     private final TppService tppService;
     private final Xs2aToSpiFundsConfirmationRequestMapper xs2aToSpiFundsConfirmationRequestMapper;
     private final PiisConsentValidationService piisConsentValidationService;
+    private final PiisConsentService piisConsentService;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -54,18 +60,21 @@ public class FundsConfirmationService {
      * @param request Contains the requested balanceAmount in order to comparing with available balanceAmount on account
      * @return Response with result 'true' if there are enough funds on the account, 'false' if not
      */
-    public ResponseObject fundsConfirmation(FundsConfirmationRequest request) {
+    public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
         String consentId = null;
 
         if (profileService.isPiisConsentSupported()) {
+            List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(request.getPsuAccount().getCurrency(), getAccountIdentifierName(request.getPsuAccount()), getAccountIdentifier(request.getPsuAccount()));
             TppInfo tppInfo = tppService.getTppInfo();
-            ResponseObject<String> validationResponse = piisConsentValidationService.validatePaymentData(request.getPsuAccount(), tppInfo);
+            ResponseObject<String> validationResult = piisConsentValidationService.validatePiisConsentData(response, tppInfo);
 
-            if (validationResponse.hasError()) {
-                return validationResponse;
+            if (validationResult.hasError()) {
+                return ResponseObject.<FundsConfirmationResponse>builder()
+                           .fail(validationResult.getError())
+                           .build();
             }
 
-            consentId = validationResponse.getBody();
+            consentId = validationResult.getBody();
         }
 
         SpiFundsConfirmationRequest spiRequest = xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(request);
@@ -94,5 +103,33 @@ public class FundsConfirmationService {
         return ResponseObject.<FundsConfirmationResponse>builder()
                    .body(fundsConfirmationResponse)
                    .build();
+    }
+
+    private String getAccountIdentifier(Xs2aAccountReference accountReference) {
+        if (accountReference.getIban() != null) {
+            return accountReference.getIban();
+        } else if (accountReference.getBban() != null) {
+            return accountReference.getBban();
+        } else if (accountReference.getMsisdn() != null) {
+            return accountReference.getMsisdn();
+        } else if (accountReference.getMaskedPan() != null) {
+            return accountReference.getMaskedPan();
+        } else {
+            return accountReference.getPan();
+        }
+    }
+
+    private String getAccountIdentifierName(Xs2aAccountReference accountReference) {
+        if (accountReference.getIban() != null) {
+            return "iban";
+        } else if (accountReference.getBban() != null) {
+            return "bban";
+        } else if (accountReference.getMsisdn() != null) {
+            return "msisdn";
+        } else if (accountReference.getMaskedPan() != null) {
+            return "maskedPan";
+        } else {
+            return "pan";
+        }
     }
 }

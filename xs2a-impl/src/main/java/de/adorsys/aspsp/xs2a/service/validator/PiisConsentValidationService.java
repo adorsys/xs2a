@@ -18,12 +18,10 @@ package de.adorsys.aspsp.xs2a.service.validator;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aToCmsTppInfoMapper;
 import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
-import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -41,20 +39,17 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 @Service
 @RequiredArgsConstructor
 public class PiisConsentValidationService {
-    private final PiisConsentService piisConsentService;
     private final Xs2aToCmsTppInfoMapper xs2aToCmsTppInfoMapper;
 
-    public ResponseObject<String> validatePaymentData(Xs2aAccountReference accountReference, TppInfo tppInfo) {
-        List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(), getAccountIdentifierName(accountReference), getAccountIdentifier(accountReference));
-
-        if (CollectionUtils.isEmpty(response)) {
+    public ResponseObject<String> validatePiisConsentData(List<CmsPiisValidationInfo> cmsPiisValidationInfoList, TppInfo tppInfo) {
+        if (CollectionUtils.isEmpty(cmsPiisValidationInfoList)) {
             return ResponseObject.<String>builder()
                        .fail(new MessageError(NO_PIIS_ACTIVATION))
                        .build();
         }
 
         CmsTppInfo cmsTppInfo = xs2aToCmsTppInfoMapper.mapToCmsTppInfo(tppInfo);
-        List<CmsPiisValidationInfo> filteredResponse = response.stream()
+        List<CmsPiisValidationInfo> filteredResponse = cmsPiisValidationInfoList.stream()
                                                            .filter(e -> EnumSet.of(VALID, RECEIVED).contains(e.getConsentStatus()))
                                                            .filter(e -> e.getExpireDate().isAfter(LocalDate.now()))
                                                            .filter(e -> e.getPiisConsentTppAccessType() == ALL_TPP || e.getCmsTppInfo().equals(cmsTppInfo))
@@ -81,33 +76,5 @@ public class PiisConsentValidationService {
         return ResponseObject.<String>builder()
                    .body(consentId)
                    .build();
-    }
-
-    private String getAccountIdentifier(Xs2aAccountReference accountReference) {
-        if (accountReference.getIban() != null) {
-            return accountReference.getIban();
-        } else if (accountReference.getBban() != null) {
-            return accountReference.getBban();
-        } else if (accountReference.getMsisdn() != null) {
-            return accountReference.getMsisdn();
-        } else if (accountReference.getMaskedPan() != null) {
-            return accountReference.getMaskedPan();
-        } else {
-            return accountReference.getPan();
-        }
-    }
-
-    private String getAccountIdentifierName(Xs2aAccountReference accountReference) {
-        if (accountReference.getIban() != null) {
-            return "iban";
-        } else if (accountReference.getBban() != null) {
-            return "bban";
-        } else if (accountReference.getMsisdn() != null) {
-            return "msisdn";
-        } else if (accountReference.getMaskedPan() != null) {
-            return "maskedPan";
-        } else {
-            return "pan";
-        }
     }
 }
