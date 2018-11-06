@@ -65,6 +65,7 @@ public interface PisConsentService {
      * @param consentId id of the consent
      * @return Response containing aspsp consent data
      */
+    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
     Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId);
 
     /**
@@ -73,6 +74,7 @@ public interface PisConsentService {
      * @param paymentId id of the payment
      * @return Response containing aspsp consent data
      */
+    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
     Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId);
 
     /**
@@ -90,6 +92,7 @@ public interface PisConsentService {
      * @param consentId id of the consent to be updated
      * @return String consent id
      */
+    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
     Optional<String> updateAspspConsentDataInPisConsent(String consentId, CmsAspspConsentDataBase64 request);
 
     /**

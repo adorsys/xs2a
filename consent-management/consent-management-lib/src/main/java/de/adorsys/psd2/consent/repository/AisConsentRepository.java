@@ -30,4 +30,6 @@ public interface AisConsentRepository extends CrudRepository<AisConsent, Long> {
     Optional<AisConsent> findByExternalId(String externalId);
 
     Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
+
+    List<AisConsent>findByPsuDataPsuId(String psuId);
 }

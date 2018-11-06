@@ -31,13 +31,13 @@ public class PisConsentDataService {
     public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
         return pisConsentService.getAspspConsentDataByPaymentId(paymentId)
                    .map(this::mapToAspspConsentData)
-                   .orElse(null);
+                   .orElseGet(() -> new AspspConsentData(null, paymentId));
     }
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
         return pisConsentService.getAspspConsentDataByConsentId(consentId)
                    .map(this::mapToAspspConsentData)
-                   .orElse(null);
+                   .orElseGet(() -> new AspspConsentData(null, consentId));
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {

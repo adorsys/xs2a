@@ -45,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
@@ -189,7 +190,7 @@ public class PisConsentServiceInternal implements PisConsentService {
      * @return String consent id
      */
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<String> updateAspspConsentDataInPisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
         return getActualPisConsent(encryptedConsentId)
                    .flatMap(cons -> saveAspspConsentDataForPisConsent(request, cons, encryptedConsentId));
