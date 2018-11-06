@@ -30,13 +30,13 @@ public interface PiisConsentRepository extends CrudRepository<PiisConsent, Long>
 
     Optional<PiisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
 
-    List<PiisConsent> findAllByAccounts_IbanAndAccounts_Currency(String iban, Currency currency);
+    List<PiisConsent> findAllByAccountsIbanAndAccountsCurrency(String iban, Currency currency);
 
-    List<PiisConsent> findAllByAccounts_BbanAndAccounts_Currency(String bban, Currency currency);
+    List<PiisConsent> findAllByAccountsBbanAndAccountsCurrency(String bban, Currency currency);
 
-    List<PiisConsent> findAllByAccounts_MsisdnAndAccounts_Currency(String msisdn, Currency currency);
+    List<PiisConsent> findAllByAccountsMsisdnAndAccountsCurrency(String msisdn, Currency currency);
 
-    List<PiisConsent> findAllByAccounts_MaskedPanAndAccounts_Currency(String maskedPan, Currency currency);
+    List<PiisConsent> findAllByAccountsMaskedPanAndAccountsCurrency(String maskedPan, Currency currency);
 
-    List<PiisConsent> findAllByAccounts_PanAndAccounts_Currency(String pan, Currency currency);
+    List<PiisConsent> findAllByAccountsPanAndAccountsCurrency(String pan, Currency currency);
 }
