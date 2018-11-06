@@ -17,11 +17,12 @@
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aBalancesReport;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiBalanceReport;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,16 +30,10 @@ public class SpiToXs2aBalanceReportMapper {
     private final SpiToXs2aBalanceMapper balanceMapper;
     private final SpiToXs2aAccountReferenceMapper referenceMapper;
 
-    public Xs2aBalancesReport mapToXs2aBalancesReport(SpiBalanceReport balanceReport) {
-        return Optional.ofNullable(balanceReport)
-                   .map(r -> {
-                       Xs2aBalancesReport xs2aBalancesReport = new Xs2aBalancesReport();
-
-                       xs2aBalancesReport.setBalances(balanceMapper.mapToXs2aBalanceList(r.getBalances()));
-                       xs2aBalancesReport.setXs2aAccountReference(referenceMapper.mapToXs2aAccountReference(r.getAccountReference()).orElse(null));
-
-                       return xs2aBalancesReport;
-                   })
-                   .orElse(null);
+    public Xs2aBalancesReport mapToXs2aBalancesReport(List<SpiAccountBalance> balances, SpiAccountReference accountReference) {
+        Xs2aBalancesReport xs2aBalancesReport = new Xs2aBalancesReport();
+        xs2aBalancesReport.setBalances(balanceMapper.mapToXs2aBalanceList(balances));
+        xs2aBalancesReport.setXs2aAccountReference(referenceMapper.mapToXs2aAccountReference(accountReference).orElse(null));
+        return xs2aBalancesReport;
     }
 }

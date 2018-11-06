@@ -31,6 +31,8 @@
     <include file="migration/20181030_1.9_create_psu_data_table.xml"/>
     <include file="migration/20181030_1.10_add_fk_constraints_for_psu_id_columns.xml"/>
     <include file="migration/20181030_1.11_remove_password_column_from_ais_consent_authorization.xml"/>
+    <include file="migration/20181101_1.12_create_table_crypto_algorithm.xml"/>
     <include file="migration/20181101_1.13_add_pis_payment_data_transaction_status.xml"/>
+    <include file="migration/20181105_1.15_fill_crypto_algorithms.xml"/>
 
 </databaseChangeLog>

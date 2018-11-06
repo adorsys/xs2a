@@ -35,11 +35,12 @@
   "response": {
     "code": "400",
     "header": {},
-    "body": {
-      "tppMessage": {
+    "body": [
+      {
         "category": "ERROR",
-        "code": "FORMAT_ERROR"
+        "code": "FORMAT_ERROR",
+        "text": "Format of certain request fields are not matching the XS2A requirements."
       }
-    }
+    ]
   }
 }

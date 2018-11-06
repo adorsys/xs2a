@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.onlinebanking.web;
+package de.adorsys.psd2.consent.client.cms.model.pis;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
+import de.adorsys.psd2.consent.client.core.HttpMethod;
+import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 
-@RestController
-@RequestMapping(path = "index")
-public class IndexController {
+public class GetPaymentIdByEncryptedStringMethod extends RestCmsRequestMethod<Void, String> {
+    private static final String GET_PIS_CONSENT_ASPSP_DATA_URI = "api/v1/pis/payment/{payment-id}";
 
-    @GetMapping
-    public String index() {
-        return "^_^";
+    public GetPaymentIdByEncryptedStringMethod(HttpUriParams uriParams) {
+        super(HttpMethod.GET, GET_PIS_CONSENT_ASPSP_DATA_URI, uriParams);
     }
 }
+

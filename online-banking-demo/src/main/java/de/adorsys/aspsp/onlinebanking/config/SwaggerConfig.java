@@ -29,6 +29,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -40,22 +41,23 @@ public class SwaggerConfig {
     @Bean(name = "api")
     public Docket apiDocklet() {
         return new Docket(DocumentationType.SWAGGER_2)
-            .apiInfo(getApiInfo())
-            .select()
-            .apis(RequestHandlerSelectors.basePackage("de.adorsys.aspsp.onlinebanking.web"))
-            .paths(Predicates.not(PathSelectors.regex("/error.*?")))
-            .paths(Predicates.not(PathSelectors.regex("/connect.*")))
-            .paths(Predicates.not(PathSelectors.regex("/management.*")))
-            .build();
+                   .apiInfo(getApiInfo())
+                   .select()
+                   .apis(RequestHandlerSelectors.basePackage("de.adorsys.aspsp.onlinebanking.web"))
+                   .paths(Predicates.not(PathSelectors.regex("/error.*?")))
+                   .paths(Predicates.not(PathSelectors.regex("/connect.*")))
+                   .paths(Predicates.not(PathSelectors.regex("/management.*")))
+                   .build();
     }
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-            .title("Online banking rest API")
-            .contact(new Contact("adorsys GmbH & Co. KG", "http://www.adorsys.de", "office@adorsys.de"))
-            .version("1.0")
-            .license("Apache License 2.0")
-            .licenseUrl(licenseUrl)
-            .build();
+                   .title("Online banking rest API")
+                   .contact(new Contact("adorsys GmbH & Co. KG", "http://www.adorsys.de", "office@adorsys.de"))
+                   .version("1.0")
+                   .license("Apache License 2.0")
+                   .licenseUrl(licenseUrl)
+                   .build();
     }
+
 }

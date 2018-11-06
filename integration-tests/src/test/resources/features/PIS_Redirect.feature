@@ -5,6 +5,7 @@ Feature: Payment Initiation Service - Redirect approach
     # Single Payment Initiation                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
+
     Scenario Outline: Successful payment initiation request for single payments (redirect)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the single payment initiating request

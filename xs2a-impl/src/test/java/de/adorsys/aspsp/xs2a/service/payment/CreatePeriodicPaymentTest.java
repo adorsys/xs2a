@@ -29,6 +29,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -44,13 +45,14 @@ import java.util.Currency;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreatePeriodicPaymentTest {
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String CONSENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
-    private static final String PAYMENT_ID = "12345";
+    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
     private final TppInfo TPP_INFO = buildTppInfo();
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
@@ -65,11 +67,15 @@ public class CreatePeriodicPaymentTest {
     private AuthorisationMethodService authorisationMethodService;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
+    @Mock
+    private PisConsentDataService pisConsentDataService;
 
     @Test
     public void success_initiate_periodic_payment() {
         //When
+        when(pisConsentDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
         when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, PaymentProduct.SEPA, buildXs2aPisConsent())).thenReturn(buildPeriodicPaymentInitiationResponse());
+
         ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo(), buildXs2aPisConsent());
 
         //Then
@@ -81,6 +87,7 @@ public class CreatePeriodicPaymentTest {
     private PeriodicPayment buildPeriodicPayment() {
         PeriodicPayment payment = new PeriodicPayment();
         Xs2aAmount amount = buildXs2aAmount();
+        payment.setPaymentId(PAYMENT_ID);
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(buildReference());
         payment.setCreditorAccount(buildReference());

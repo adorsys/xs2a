@@ -43,6 +43,7 @@ public class Xs2aPisConsentService {
      * @param tppInfo    information about TPP
      * @return String consentId
      */
+    // TODO refactoring for orElse(null)
     public CreatePisConsentResponse createPisConsent(PaymentInitiationParameters parameters, TppInfo tppInfo) {
         PisConsentRequest request = new PisConsentRequest();
         request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));

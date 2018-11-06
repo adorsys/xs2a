@@ -28,8 +28,6 @@ import java.util.List;
 @Value
 public class SpiTransactionReport {
     @NotNull
-    private SpiAccountReference accountReference;
-    @NotNull
     private List<SpiTransaction> transactions;
     @Nullable
     private List<SpiAccountBalance> balances;

@@ -40,9 +40,12 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
     public PaymentInformationResponse<BulkPayment> getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
             SpiBulkPayment payment = new SpiBulkPayment();
             payment.setPaymentProduct(paymentProduct);
-            payment.setPaymentId(paymentId);
-            SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
+            // we need to get decrypted payment ID
+            String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
+            payment.setPaymentId(internalPaymentId);
+
+            SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
             SpiResponse<SpiBulkPayment> spiResponse = bulkPaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
             pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
