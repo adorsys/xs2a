@@ -18,13 +18,7 @@ package de.adorsys.aspsp.onlinebanking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EntityScan(basePackages = {"de.adorsys.psd2"})
-@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository"})
-@ComponentScan(basePackages = {"de.adorsys.psd2", "de.adorsys.aspsp"})
 @SpringBootApplication
 public class OnlineBankingDemoApplication {
     public static void main(String[] args) {

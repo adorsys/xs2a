@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
@@ -48,24 +49,27 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     private final CmsPsuPisMapper cmsPsuPisMapper;
-    private final PisConsentServiceInternal pisConsentServiceInternal;
+    private final PisConsentService pisConsentService;
     private final PsuDataRepository psuDataRepository;
     private final PsuDataMapper psuDataMapper;
 
     @Override
     public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
-        return pisPaymentDataRepository.findByPaymentId(paymentId)
-                   .map(this::getFirstPaymentFromList)
-                   .map(PisPaymentData::getConsent)
-                   .map(c -> updatePsuData(c, psuIdData))
+        return getDecryptedId(paymentId)
+                   .map(p -> pisPaymentDataRepository.findByPaymentId(p)
+                                 .map(this::getFirstPaymentFromList)
+                                 .map(PisPaymentData::getConsent)
+                                 .map(c -> updatePsuData(c, psuIdData))
+                                 .orElse(false))
                    .orElse(false);
     }
 
     @Override
     public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
-        return pisPaymentDataRepository.findByPaymentId(paymentId)
-                   .filter(l -> isGivenPsuDataValid(getFirstPaymentFromList(l), psuIdData))
-                   .flatMap(cmsPsuPisMapper::mapToCmsPayment);
+        return getDecryptedId(paymentId)
+                   .flatMap(p -> pisPaymentDataRepository.findByPaymentId(p)
+                                     .filter(l -> isGivenPsuDataValid(paymentId, psuIdData))
+                                     .flatMap(cmsPsuPisMapper::mapToCmsPayment));
     }
 
     @Override
@@ -79,11 +83,13 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
-        return pisPaymentDataRepository.findByPaymentId(paymentId)
-                   .map(l -> l.stream()
-                                 .map(p -> updateStatusInPayment(p, status))
-                                 .collect(Collectors.toList()))
-                   .isPresent();
+        return getDecryptedId(paymentId)
+                   .map(id -> pisPaymentDataRepository.findByPaymentId(id)
+                                  .map(l -> l.stream()
+                                                .map(p -> updateStatusInPayment(p, status))
+                                                .collect(Collectors.toList()))
+                                  .isPresent())
+                   .orElse(false);
     }
 
     private boolean updatePsuData(PisConsent pisConsent, PsuIdData psuIdData) {
@@ -96,8 +102,11 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private boolean validateGivenData(PisConsentAuthorization pisConsentAuthorization, String paymentId, PsuIdData psuIdData) {
         List<PisPaymentData> pisPaymentDataList = pisConsentAuthorization.getConsent().getPayments();
-        return StringUtils.equals(getFirstPaymentFromList(pisPaymentDataList).getPaymentId(), paymentId)
-                   && isGivenPsuDataValid(getFirstPaymentFromList(pisPaymentDataList), psuIdData);
+
+        return getDecryptedId(paymentId)
+                   .filter(p -> isGivenPsuDataValid(paymentId, psuIdData))
+                   .map(id -> StringUtils.equals(getFirstPaymentFromList(pisPaymentDataList).getPaymentId(), id))
+                   .orElse(false);
     }
 
     private boolean updateAuthorisationStatusAndSaveAuthorization(PisConsentAuthorization pisConsentAuthorization, ScaStatus status) {
@@ -106,10 +115,10 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .isPresent();
     }
 
-    private boolean isGivenPsuDataValid(PisPaymentData pisPaymentData, PsuIdData psuIdData) {
-        return pisConsentServiceInternal.getPsuDataByPaymentId(pisPaymentData.getPaymentId())
-                   .map(p -> p.equals(psuIdData))
-                   .orElseGet(() -> Boolean.FALSE);
+    private boolean isGivenPsuDataValid(String paymentId, PsuIdData psuIdData) {
+        return pisConsentService.getPsuDataByPaymentId(paymentId)
+                   .map(p -> comparePsuIdData(p, psuIdData))
+                   .orElse(false);
     }
 
     private PisPaymentData updateStatusInPayment(PisPaymentData pisPaymentData, TransactionStatus status) {
@@ -120,5 +129,16 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     //TODO It should be changed after BulkPayment will be added to the Database https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/446
     private PisPaymentData getFirstPaymentFromList(List<PisPaymentData> pisPaymentDataList) {
         return pisPaymentDataList.get(0);
+    }
+
+    private Optional<String> getDecryptedId(String paymentId) {
+        return pisConsentService.getDecryptedId(paymentId);
+    }
+
+    private boolean comparePsuIdData(PsuIdData paymentPsuIdData, PsuIdData givenPsuIdData) {
+        return StringUtils.equals(paymentPsuIdData.getPsuId(), givenPsuIdData.getPsuId())
+                   && StringUtils.equals(paymentPsuIdData.getPsuCorporateId(), givenPsuIdData.getPsuCorporateId())
+                   && StringUtils.equals(paymentPsuIdData.getPsuCorporateIdType(), givenPsuIdData.getPsuCorporateIdType())
+                   && StringUtils.equals(paymentPsuIdData.getPsuIdType(), givenPsuIdData.getPsuIdType());
     }
 }

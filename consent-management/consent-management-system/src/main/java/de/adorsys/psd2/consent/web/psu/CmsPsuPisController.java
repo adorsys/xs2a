@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.onlinebanking.web;
+package de.adorsys.psd2.consent.web.psu;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/psu/pis/consent")
-@Api(value = "api/v1/psu/pis/consent", tags = "CMS PSU PIS", description = "Test controller for cms-psu-api providing access for PIS consents")
+@Api(value = "api/v1/psu/pis/consent", tags = "PSU PIS, Consents", description = "Test controller for cms-psu-api providing access for PIS consents")
 public class CmsPsuPisController {
     private final CmsPsuPisService cmsPsuPisService;
 

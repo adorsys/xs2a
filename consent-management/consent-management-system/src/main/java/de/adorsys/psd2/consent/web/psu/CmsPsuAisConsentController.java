@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.onlinebanking.web;
+package de.adorsys.psd2.consent.web.psu;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
