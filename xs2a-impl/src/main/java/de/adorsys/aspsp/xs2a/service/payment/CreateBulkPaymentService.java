@@ -67,7 +67,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
         response.setPisConsentId(pisConsent.getConsentId());
 
         bulkPayment.setTransactionStatus(response.getTransactionStatus());
-        updateBulkPaymentIds(bulkPayment.getPayments(), response.getPaymentId());
+        updateBulkPaymentIds(bulkPayment.getPayments(), internalPaymentId);
 
         pisConsentService.updateBulkPaymentInPisConsent(bulkPayment, paymentInitiationParameters, pisConsent.getConsentId());
 
