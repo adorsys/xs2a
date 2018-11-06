@@ -16,5 +16,20 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
+
+import java.util.Currency;
+import java.util.List;
+
 public interface PiisConsentService {
+
+    /**
+     * Retrieves piis consent data for validation by account reference
+     *
+     * @param currency              Chosen currency
+     * @param accountIdentifierName The name of account reference identifier
+     * @param accountIdentifier     The value of account reference identifier
+     * @return Validation information about piis consents
+     */
+    List<CmsPiisValidationInfo> getPiisConsentListByAccountIdentifier(Currency currency, String accountIdentifierName, String accountIdentifier);
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.domain.piis;
+package de.adorsys.psd2.consent.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -27,7 +27,7 @@ import java.util.Currency;
 @Data
 @Embeddable
 @ApiModel(description = "Piis account reference", value = "Piis account reference")
-public class PiisAccountReference {
+public class AccountReference {
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private String iban;
 

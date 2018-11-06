@@ -20,6 +20,8 @@ import de.adorsys.psd2.consent.domain.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Currency;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,4 +29,14 @@ public interface PiisConsentRepository extends CrudRepository<PiisConsent, Long>
     Optional<PiisConsent> findByExternalId(String externalId);
 
     Optional<PiisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
+
+    List<PiisConsent> findAllByAccounts_IbanAndAccounts_Currency(String iban, Currency currency);
+
+    List<PiisConsent> findAllByAccounts_BbanAndAccounts_Currency(String bban, Currency currency);
+
+    List<PiisConsent> findAllByAccounts_MsisdnAndAccounts_Currency(String msisdn, Currency currency);
+
+    List<PiisConsent> findAllByAccounts_MaskedPanAndAccounts_Currency(String maskedPan, Currency currency);
+
+    List<PiisConsent> findAllByAccounts_PanAndAccounts_Currency(String pan, Currency currency);
 }

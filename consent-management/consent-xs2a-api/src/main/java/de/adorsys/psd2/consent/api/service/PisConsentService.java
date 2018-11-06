@@ -60,7 +60,7 @@ public interface PisConsentService {
     Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status);
 
     /**
-     * Get Pis aspsp consent data by consent id
+     * Gets Pis aspsp consent data by consent id
      *
      * @param consentId id of the consent
      * @return Response containing aspsp consent data
@@ -68,7 +68,7 @@ public interface PisConsentService {
     Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId);
 
     /**
-     * Get Pis aspsp consent data by payment id
+     * Gets Pis aspsp consent data by payment id
      *
      * @param paymentId id of the payment
      * @return Response containing aspsp consent data
@@ -76,7 +76,7 @@ public interface PisConsentService {
     Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId);
 
     /**
-     * Get original decrypted Id from encrypted string
+     * Gets original decrypted Id from encrypted string
      *
      * @param encryptedId id to be decrypted
      * @return Response containing original decrypted Id
@@ -93,19 +93,19 @@ public interface PisConsentService {
     Optional<String> updateAspspConsentDataInPisConsent(String consentId, CmsAspspConsentDataBase64 request);
 
     /**
-     * Create consent authorization
+     * Creates consent authorization
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
     /**
-     * Create consent authorization cancellation
+     * Creates consent authorization cancellation
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
     Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType);
 
     /**
-     * Update PIS consent payment data and stores it into database
+     * Updates PIS consent payment data and stores it into database
      *
      * @param request   PIS consent request for update payment data
      * @param consentId Consent ID
