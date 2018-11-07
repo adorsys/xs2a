@@ -32,14 +32,15 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,19 +57,19 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
-        return getDecryptedId(paymentId)
-                   .map(p -> pisPaymentDataRepository.findByPaymentId(p)
-                                 .map(this::getFirstPaymentFromList)
-                                 .map(PisPaymentData::getConsent)
-                                 .map(c -> updatePsuData(c, psuIdData))
-                                 .orElse(false))
-                   .orElse(false);
+        Optional<PisConsent> pisConsent = pisConsentService.getDecryptedId(paymentId)
+                                              .flatMap(p -> pisPaymentDataRepository.findByPaymentId(p)
+                                                                .map(l -> l.get(0))
+                                                                .map(PisPaymentData::getConsent));
+        if (pisConsent.isPresent()) {
+            return updatePsuData(pisConsent.get(), psuIdData);
+        }
+        return false;
     }
 
     @Override
-    @Transactional
     public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
-        return getDecryptedId(paymentId)
+        return pisConsentService.getDecryptedId(paymentId)
                    .flatMap(p -> pisPaymentDataRepository.findByPaymentId(p)
                                      .filter(l -> isPsuDataEquals(paymentId, psuIdData))
                                      .map(cmsPsuPisMapper::mapToCmsPayment));
@@ -78,22 +79,23 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Transactional
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status) {
-        return pisConsentAuthorizationRepository.findByExternalId(authorisationId)
-                   .filter(a -> validateGivenData(a, paymentId, psuIdData))
-                   .map(a -> updateAuthorisationStatusAndSaveAuthorization(a, status))
-                   .orElse(false);
+        Optional<PisConsentAuthorization> pisConsentAuthorization = pisConsentAuthorizationRepository.findByExternalId(authorisationId)
+                                                                        .filter(a -> validateGivenData(a, paymentId, psuIdData));
+        if (pisConsentAuthorization.isPresent()) {
+            return updateAuthorisationStatusAndSaveAuthorization(pisConsentAuthorization.get(), status);
+        }
+        return false;
     }
 
     @Override
     @Transactional
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
-        return getDecryptedId(paymentId)
-                   .map(id -> pisPaymentDataRepository.findByPaymentId(id)
-                                  .map(l -> l.stream()
-                                                .map(p -> updateStatusInPayment(p, status))
-                                                .collect(Collectors.toList()))
-                                  .isPresent())
-                   .orElse(false);
+        List<PisPaymentData> list = pisConsentService.getDecryptedId(paymentId)
+                                        .flatMap(pisPaymentDataRepository::findByPaymentId)
+                                        .orElse(Collections.emptyList());
+
+        return !CollectionUtils.isEmpty(list)
+                   && updateStatusInPaymentDataList(list, status);
     }
 
     private boolean updatePsuData(PisConsent pisConsent, PsuIdData psuIdData) {
@@ -107,9 +109,9 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private boolean validateGivenData(PisConsentAuthorization pisConsentAuthorization, String paymentId, PsuIdData psuIdData) {
         List<PisPaymentData> pisPaymentDataList = pisConsentAuthorization.getConsent().getPayments();
 
-        return getDecryptedId(paymentId)
+        return pisConsentService.getDecryptedId(paymentId)
                    .filter(p -> isPsuDataEquals(paymentId, psuIdData))
-                   .map(id -> StringUtils.equals(getFirstPaymentFromList(pisPaymentDataList).getPaymentId(), id))
+                   .map(id -> StringUtils.equals(pisPaymentDataList.get(0).getPaymentId(), id))
                    .orElse(false);
     }
 
@@ -125,17 +127,13 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .orElse(false);
     }
 
-    private PisPaymentData updateStatusInPayment(PisPaymentData pisPaymentData, TransactionStatus status) {
-        pisPaymentData.setTransactionStatus(status);
-        return pisPaymentData;
-    }
-
-    //TODO It should be changed after BulkPayment will be added to the Database https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/446
-    private PisPaymentData getFirstPaymentFromList(List<PisPaymentData> pisPaymentDataList) {
-        return pisPaymentDataList.get(0);
-    }
-
-    private Optional<String> getDecryptedId(String paymentId) {
-        return pisConsentService.getDecryptedId(paymentId);
+    private boolean updateStatusInPaymentDataList(List<PisPaymentData> dataList, TransactionStatus status) {
+        for (PisPaymentData pisPaymentData : dataList) {
+            pisPaymentData.setTransactionStatus(status);
+            if (pisPaymentDataRepository.save(pisPaymentData) == null) {
+                return false;
+            }
+        }
+        return true;
     }
 }
