@@ -19,6 +19,8 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
+    <include file="migration/_typedef.xml"/>
+
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-1">
         <comment>Create sequence for ais consent id.</comment>
         <createSequence sequenceName="ais_consent_id_seq"/>
@@ -80,7 +82,7 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="aspsp_consent_data" type="BLOB"/>
+            <column name="aspsp_consent_data" type="${blob.type}"/>
             <column name="combined_service_indicator" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
@@ -209,7 +211,7 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="aspsp_consent_data" type="BLOB"/>
+            <column name="aspsp_consent_data" type="${blob.type}"/>
             <column name="consent_status" type="VARCHAR(25)">
                 <constraints nullable="false"/>
             </column>
