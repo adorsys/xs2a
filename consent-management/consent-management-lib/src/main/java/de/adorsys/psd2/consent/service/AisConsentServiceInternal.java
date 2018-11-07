@@ -17,24 +17,24 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
-import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
-import de.adorsys.psd2.consent.repository.AspspConsentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,9 +47,11 @@ import static de.adorsys.psd2.consent.api.TypeAccess.*;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
+
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
+@Transactional(readOnly = true)
+// TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
@@ -58,7 +60,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final PsuDataMapper psuDataMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final SecurityDataService securityDataService;
-    private final AspspConsentDataRepository aspspConsentDataRepository;
+    private final AspspDataService aspspDataService;
 
     /**
      * Create AIS consent
@@ -162,8 +164,19 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     public Optional<CmsAspspConsentDataBase64> getAspspConsentData(String encryptedConsentId) {
-        return getActualAisConsent(encryptedConsentId)
-                   .map(aisConsent -> getConsentAspspData(aisConsent, encryptedConsentId));
+        Optional<AisConsent> aisConsent = getActualAisConsent(encryptedConsentId);
+
+        if (!aisConsent.isPresent()) {
+            return Optional.empty();
+        }
+
+        Optional<String> aspspConsentDataBase64 = aspspDataService.readAspspConsentData(encryptedConsentId)
+                                                      .map(AspspConsentData::getAspspConsentData)
+                                                      .map(Base64.getEncoder()::encodeToString);
+
+        CmsAspspConsentDataBase64 cmsAspspConsentDataBase64 = new CmsAspspConsentDataBase64(encryptedConsentId, aspspConsentDataBase64.orElse(null));
+
+        return Optional.of(cmsAspspConsentDataBase64);
     }
 
     /**
@@ -176,8 +189,18 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<String> saveAspspConsentDataInAisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
-        return getActualAisConsent(encryptedConsentId)
-                   .flatMap(cons -> saveAspspConsentDataInAisConsent(request, cons, encryptedConsentId));
+        Optional<AisConsent> aisConsent = getActualAisConsent(encryptedConsentId);
+
+        if (!aisConsent.isPresent()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(request.getAspspConsentDataBase64())
+                   .map(Base64.getDecoder()::decode)
+                   .map(aspspConsentData -> new AspspConsentData(aspspConsentData, encryptedConsentId))
+                   .map(aspspDataService::updateAspspConsentData)
+                   .filter(BooleanUtils::isTrue)
+                   .map(updated -> encryptedConsentId);
     }
 
     /**
@@ -261,30 +284,25 @@ public class AisConsentServiceInternal implements AisConsentService {
         return holder.getAccountAccesses();
     }
 
-    private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent, String encryptedConsentId) {
-        return aspspConsentDataRepository.findByConsentId(consent.getExternalId())
-                   .map(AspspConsentDataEntity::getData)
-                   .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
-                   .map(DecryptedData::getData)
-                   .map(bytes -> Base64.getEncoder().encodeToString(bytes))
-                   .map(str64 -> new CmsAspspConsentDataBase64(encryptedConsentId, str64))
-                   .orElseGet(() -> new CmsAspspConsentDataBase64(encryptedConsentId, null));
-    }
+//    private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent, String encryptedConsentId) {
+//        return aspspConsentDataRepository.findByConsentId(consent.getExternalId())
+//                   .map(AspspConsentDataEntity::getData)
+//                   .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
+//                   .map(DecryptedData::getData)
+//                   .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+//                   .map(str64 -> new CmsAspspConsentDataBase64(encryptedConsentId, str64))
+//                   .orElseGet(() -> new CmsAspspConsentDataBase64(encryptedConsentId, null));
+//    }
+//
+//
+//    private AspspConsentDataEntity updateConsentData(String externalId, byte[] consentData) {
+//        AspspConsentDataEntity aspspConsentDataEntity = aspspConsentDataRepository
+//                                                            .findByConsentId(externalId)
+//                                                            .orElseGet(() -> new AspspConsentDataEntity(externalId));
+//        aspspConsentDataEntity.setData(consentData);
+//        return aspspConsentDataRepository.save(aspspConsentDataEntity);
+//    }
 
-    private Optional<String> saveAspspConsentDataInAisConsent(CmsAspspConsentDataBase64 request, AisConsent consent, String encryptedConsentId) {
-        return securityDataService.encryptConsentData(encryptedConsentId, request.getAspspConsentDataBase64())
-                   .map(encr -> updateAndSaveAspspConsentData(consent, encr.getData()))
-                   .map(a -> encryptedConsentId);
-    }
-
-    private AspspConsentDataEntity updateAndSaveAspspConsentData(AisConsent consent, byte[] consentData) {
-        String externalId = consent.getExternalId();
-        AspspConsentDataEntity aspspConsentDataEntity = aspspConsentDataRepository
-                                                            .findByConsentId(externalId)
-                                                            .orElseGet(() -> new AspspConsentDataEntity(externalId));
-        aspspConsentDataEntity.setData(consentData);
-        return aspspConsentDataRepository.save(aspspConsentDataEntity);
-    }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
         int minFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
