@@ -33,7 +33,8 @@
     <include relativeToChangelogFile="true" file="migration/20181030_1.11_remove_password_column_from_ais_consent_authorization.xml"/>
     <include relativeToChangelogFile="true" file="migration/20181101_1.12_create_table_crypto_algorithm.xml"/>
     <include relativeToChangelogFile="true" file="migration/20181101_1.13_add_pis_payment_data_transaction_status.xml"/>
+    <include relativeToChangelogFile="true" file="migration/20181105_1.14_rename_pis_account_reference_to_account_reference.xml"/>
     <include relativeToChangelogFile="true" file="migration/20181105_1.15_fill_crypto_algorithms.xml"/>
-
+    <include relativeToChangelogFile="true" file="migration/20181106_1.16_add_piis_consent.xml"/>
 
 </databaseChangeLog>

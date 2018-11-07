@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-1">
+        <comment>Create sequence for piis consent id.</comment>
+
+        <createSequence sequenceName="piis_consent_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE piis_consent_id_seq</sql>
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-2">
+        <comment>Create table piis_consent.</comment>
+
+        <createTable tableName="piis_consent">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="consent_status" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expire_date" type="DATE">
+            </column>
+            <column name="external_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_action_date" type="DATE"/>
+            <column name="psu_id" type="BIGINT"/>
+            <column name="recurring_indicator" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="request_date_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tpp_info_id" type="BIGINT"/>
+            <column name="tpp_access_type" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="allowed_frequency_per_day" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-3">
+        <comment>Add foreign keys to piis_consent</comment>
+
+        <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="piis_consent"
+                                 constraintName="fk__piis_consent__psu_data" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="psu_data"/>
+
+        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="piis_consent"
+                                 constraintName="fk__piis_consent__tpp_info" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
+    </changeSet>
+
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-4">
+        <comment>Create table piis_consent_account_reference.</comment>
+
+        <createTable tableName="piis_consent_acc_reference">
+            <column name="piis_consent_id" type="BIGINT"/>
+            <column name="account_reference_id" type="BIGINT"/>
+        </createTable>
+
+        <addPrimaryKey columnNames="piis_consent_id, account_reference_id"
+                       constraintName="piis_cons_acc_ref_pkey"
+                       tableName="piis_consent_acc_reference"/>
+
+        <addForeignKeyConstraint baseColumnNames="piis_consent_id" baseTableName="piis_consent_acc_reference"
+                                 constraintName="fk__piis_acc_ref__piis_cons" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="piis_consent"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_reference_id" baseTableName="piis_consent_acc_reference"
+                                 constraintName="fk__piis_acc_ref__acc_ref"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="account_reference_id" referencedTableName="account_reference"/>
+    </changeSet>
+
+</databaseChangeLog>
