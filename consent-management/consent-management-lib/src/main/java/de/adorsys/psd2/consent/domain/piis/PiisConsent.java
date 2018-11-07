@@ -75,7 +75,7 @@ public class PiisConsent {
     private ConsentStatus consentStatus;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "piis_consent_account_reference",
+    @JoinTable(name = "piis_consent_acc_reference",
         joinColumns = @JoinColumn(name = "piis_consent_id"),
         inverseJoinColumns = @JoinColumn(name = "account_reference_id"))
     private List<AccountReference> accounts = new ArrayList<>();

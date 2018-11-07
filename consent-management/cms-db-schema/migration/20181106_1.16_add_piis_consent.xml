@@ -63,21 +63,21 @@
     <changeSet author="ssh@adorsys.com.ua" id="2018-11-06-4">
         <comment>Create table piis_consent_account_reference.</comment>
 
-        <createTable tableName="piis_consent_account_reference">
+        <createTable tableName="piis_consent_acc_reference">
             <column name="piis_consent_id" type="BIGINT"/>
             <column name="account_reference_id" type="BIGINT"/>
         </createTable>
 
         <addPrimaryKey columnNames="piis_consent_id, account_reference_id"
                        constraintName="piis_cons_acc_ref_pkey"
-                       tableName="piis_consent_account_reference"/>
+                       tableName="piis_consent_acc_reference"/>
 
-        <addForeignKeyConstraint baseColumnNames="piis_consent_id" baseTableName="piis_consent_account_reference"
+        <addForeignKeyConstraint baseColumnNames="piis_consent_id" baseTableName="piis_consent_acc_reference"
                                  constraintName="fk__piis_acc_ref__piis_cons" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="piis_consent"/>
 
-        <addForeignKeyConstraint baseColumnNames="account_reference_id" baseTableName="piis_consent_account_reference"
+        <addForeignKeyConstraint baseColumnNames="account_reference_id" baseTableName="piis_consent_acc_reference"
                                  constraintName="fk__piis_acc_ref__acc_ref"
                                  deferrable="false"
                                  initiallyDeferred="false"
