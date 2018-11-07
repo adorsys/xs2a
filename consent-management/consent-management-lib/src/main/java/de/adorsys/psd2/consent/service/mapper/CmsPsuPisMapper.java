@@ -50,24 +50,6 @@ public class CmsPsuPisMapper {
         }
     }
 
-    private CmsPayment mapToCmsSinglePayment(PisPaymentData pisPaymentData, PaymentProduct paymentProduct) {
-        CmsSinglePayment singlePayment = new CmsSinglePayment(paymentProduct);
-        singlePayment.setPaymentId(pisPaymentData.getPaymentId());
-        singlePayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
-        singlePayment.setDebtorAccount(mapToCmsAccountReference(pisPaymentData.getDebtorAccount()));
-        singlePayment.setInstructedAmount(new CmsAmount(pisPaymentData.getCurrency(), pisPaymentData.getAmount()));
-        singlePayment.setCreditorAccount(mapToCmsAccountReference(pisPaymentData.getCreditorAccount()));
-        singlePayment.setCreditorAgent(pisPaymentData.getCreditorAgent());
-        singlePayment.setCreditorName(pisPaymentData.getCreditorName());
-        singlePayment.setCreditorAddress(pisConsentMapper.mapToCmsAddress(pisPaymentData.getCreditorAddress()));
-        singlePayment.setRemittanceInformationUnstructured(pisPaymentData.getRemittanceInformationUnstructured());
-        singlePayment.setPaymentStatus(pisPaymentData.getTransactionStatus());
-        singlePayment.setRequestedExecutionDate(pisPaymentData.getRequestedExecutionDate());
-        singlePayment.setRequestedExecutionTime(pisPaymentData.getRequestedExecutionTime());
-
-        return singlePayment;
-    }
-
     private CmsPayment mapToCmsPeriodicPayment(PisPaymentData pisPaymentData, PaymentProduct paymentProduct) {
         CmsPeriodicPayment periodicPayment = new CmsPeriodicPayment(paymentProduct);
         periodicPayment.setPaymentId(pisPaymentData.getPaymentId());
@@ -106,6 +88,24 @@ public class CmsPsuPisMapper {
         bulkPayment.setPaymentStatus(bulkPisPaymentData.getTransactionStatus());
 
         return bulkPayment;
+    }
+
+    private CmsPayment mapToCmsSinglePayment(PisPaymentData pisPaymentData, PaymentProduct paymentProduct) {
+        CmsSinglePayment singlePayment = new CmsSinglePayment(paymentProduct);
+        singlePayment.setPaymentId(pisPaymentData.getPaymentId());
+        singlePayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
+        singlePayment.setDebtorAccount(mapToCmsAccountReference(pisPaymentData.getDebtorAccount()));
+        singlePayment.setInstructedAmount(new CmsAmount(pisPaymentData.getCurrency(), pisPaymentData.getAmount()));
+        singlePayment.setCreditorAccount(mapToCmsAccountReference(pisPaymentData.getCreditorAccount()));
+        singlePayment.setCreditorAgent(pisPaymentData.getCreditorAgent());
+        singlePayment.setCreditorName(pisPaymentData.getCreditorName());
+        singlePayment.setCreditorAddress(pisConsentMapper.mapToCmsAddress(pisPaymentData.getCreditorAddress()));
+        singlePayment.setRemittanceInformationUnstructured(pisPaymentData.getRemittanceInformationUnstructured());
+        singlePayment.setPaymentStatus(pisPaymentData.getTransactionStatus());
+        singlePayment.setRequestedExecutionDate(pisPaymentData.getRequestedExecutionDate());
+        singlePayment.setRequestedExecutionTime(pisPaymentData.getRequestedExecutionTime());
+
+        return singlePayment;
     }
 
     private CmsAccountReference mapToCmsAccountReference(PisAccountReference pisAccountReference) {
