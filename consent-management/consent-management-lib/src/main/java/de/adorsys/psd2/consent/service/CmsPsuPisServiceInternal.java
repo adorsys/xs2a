@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly=true)
 public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private final PisPaymentDataRepository pisPaymentDataRepository;
@@ -65,6 +65,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
+    @Transactional
     public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
         return getDecryptedId(paymentId)
                    .flatMap(p -> pisPaymentDataRepository.findByPaymentId(p)
@@ -73,6 +74,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
+    @Transactional
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status) {
         return pisConsentAuthorizationRepository.findByExternalId(authorisationId)
@@ -82,6 +84,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
+    @Transactional
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
         return getDecryptedId(paymentId)
                    .map(id -> pisPaymentDataRepository.findByPaymentId(id)
