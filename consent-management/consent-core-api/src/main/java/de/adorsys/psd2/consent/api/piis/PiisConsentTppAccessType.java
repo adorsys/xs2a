@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.api.piis;
 
 import io.swagger.annotations.ApiModel;
 
-@ApiModel(description = "Type of the tpp access, indicating which TPPs have access to the consent", value = "AisConsentRequestType")
+@ApiModel(description = "Type of the tpp access, indicating which TPPs have access to the consent", value = "PiisConsentTppAccessType")
 public enum PiisConsentTppAccessType {
     SINGLE_TPP,
     ALL_TPP
