@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
+import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PiisConsentRemoteUrls;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +55,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
                 accountIdentifierName,
                 accountIdentifier
             ).getBody();
-        } catch (RuntimeException e) {
+        } catch (CmsRestException e) {
             log.error("Failed to retrieve piis consent validation data, message: {}, stackTrace: {}.", e.getMessage(), e);
         }
 
