@@ -38,7 +38,7 @@ public class AccountReferenceMapper {
                    ).orElse(null);
     }
 
-    AccountReferenceEntity mapToAccountReference(CmsAccountReference cmsAccountReference) {
+    AccountReferenceEntity mapToAccountReferenceEntity(CmsAccountReference cmsAccountReference) {
         return Optional.ofNullable(cmsAccountReference)
                    .map(ref -> {
                        AccountReferenceEntity accountReferenceEntity = new AccountReferenceEntity();

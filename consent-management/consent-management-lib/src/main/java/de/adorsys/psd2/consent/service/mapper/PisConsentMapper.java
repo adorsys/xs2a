@@ -66,11 +66,11 @@ public class PisConsentMapper {
                 PisPaymentData pisPaymentData = new PisPaymentData();
                 pisPaymentData.setPaymentId(pm.getPaymentId());
                 pisPaymentData.setEndToEndIdentification(pm.getEndToEndIdentification());
-                pisPaymentData.setDebtorAccount(accountReferenceMapper.mapToAccountReference(pm.getDebtorAccount()));
+                pisPaymentData.setDebtorAccount(accountReferenceMapper.mapToAccountReferenceEntity(pm.getDebtorAccount()));
                 pisPaymentData.setUltimateDebtor(pm.getUltimateDebtor());
                 pisPaymentData.setAmount(pm.getAmount());
                 pisPaymentData.setCurrency(pm.getCurrency());
-                pisPaymentData.setCreditorAccount(accountReferenceMapper.mapToAccountReference(pm.getCreditorAccount()));
+                pisPaymentData.setCreditorAccount(accountReferenceMapper.mapToAccountReferenceEntity(pm.getCreditorAccount()));
                 pisPaymentData.setCreditorAgent(pm.getCreditorAgent());
                 pisPaymentData.setCreditorName(pm.getCreditorName());
                 pisPaymentData.setCreditorAddress(mapToPisAddress(pm.getCreditorAddress()));
