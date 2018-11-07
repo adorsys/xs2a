@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.domain.piis;
 
 import de.adorsys.psd2.consent.api.piis.PiisConsentTppAccessType;
-import de.adorsys.psd2.consent.domain.AccountReference;
+import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfo;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -78,7 +78,7 @@ public class PiisConsent {
     @JoinTable(name = "piis_consent_acc_reference",
         joinColumns = @JoinColumn(name = "piis_consent_id"),
         inverseJoinColumns = @JoinColumn(name = "account_reference_id"))
-    private List<AccountReference> accounts = new ArrayList<>();
+    private List<AccountReferenceEntity> accounts = new ArrayList<>();
 
     @Column(name = "tpp_access_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

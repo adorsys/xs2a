@@ -26,7 +26,7 @@ import java.util.Currency;
 @Data
 @Entity(name = "account_reference")
 @ApiModel(description = "Account reference", value = "Account reference")
-public class AccountReference {
+public class AccountReferenceEntity {
     @Id
     @Column(name = "account_reference_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_reference_generator")
