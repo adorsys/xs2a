@@ -44,7 +44,7 @@ public class PiisConsentMapper {
         info.setConsentStatus(piisConsent.getConsentStatus());
         info.setPiisConsentTppAccessType(piisConsent.getTppAccessType());
         info.setTppInfoId(Optional.ofNullable(piisConsent.getTppInfo()).map(TppInfo::getAuthorisationNumber).orElse(null));
-        //TODO set frequencyPerDay
+        info.setFrequencyPerDay(piisConsent.getAllowedFrequencyPerDay());
         return info;
     }
 }
