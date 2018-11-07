@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -48,7 +49,7 @@ public class PisPaymentData {
     @PrimaryKeyJoinColumn
     @ManyToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Debtor account", required = true)
-    private PisAccountReference debtorAccount;
+    private AccountReferenceEntity debtorAccount;
 
     @Column(name = "ultimate_debtor")
     @ApiModelProperty(value = "Name of the ultimate debtor", example = "Mueller")
@@ -65,7 +66,7 @@ public class PisPaymentData {
     @PrimaryKeyJoinColumn
     @ManyToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Creditor account", required = true)
-    private PisAccountReference creditorAccount;
+    private AccountReferenceEntity creditorAccount;
 
     @Column(name = "creditor_agent")
     @ApiModelProperty(value = "Creditor agent", example = "Telekom")
