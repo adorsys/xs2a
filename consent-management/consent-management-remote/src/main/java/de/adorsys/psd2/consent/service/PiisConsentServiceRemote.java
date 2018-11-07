@@ -42,7 +42,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
 
     @Override
     public List<CmsPiisValidationInfo> getPiisConsentListByAccountIdentifier(Currency currency, String accountIdentifierName, String accountIdentifier) {
-        List<CmsPiisValidationInfo> response = null;
+        List<CmsPiisValidationInfo> response = Collections.emptyList();
 
         try {
             response = consentRestTemplate.exchange(
@@ -55,9 +55,8 @@ public class PiisConsentServiceRemote implements PiisConsentService {
                 accountIdentifierName,
                 accountIdentifier
             ).getBody();
-        } catch (RestClientException e) {
-            log.error("Failed to retrieve piis consent validation data, message: {}, stackTrace: {}",  e.getMessage(), e);
-            return Collections.emptyList();
+        } catch (RuntimeException e) {
+            log.error("Failed to retrieve piis consent validation data, message: {}, stackTrace: {}.", e.getMessage(), e);
         }
 
         return response;

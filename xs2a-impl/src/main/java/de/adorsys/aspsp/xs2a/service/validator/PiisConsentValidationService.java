@@ -17,10 +17,8 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aToCmsTppInfoMapper;
-import de.adorsys.psd2.consent.api.CmsTppInfo;
+import de.adorsys.aspsp.xs2a.service.TppService;
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,20 +37,20 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 @Service
 @RequiredArgsConstructor
 public class PiisConsentValidationService {
-    private final Xs2aToCmsTppInfoMapper xs2aToCmsTppInfoMapper;
+    private final TppService tppService;
 
-    public ResponseObject<String> validatePiisConsentData(List<CmsPiisValidationInfo> cmsPiisValidationInfoList, TppInfo tppInfo) {
+    public ResponseObject<String> validatePiisConsentData(List<CmsPiisValidationInfo> cmsPiisValidationInfoList) {
         if (CollectionUtils.isEmpty(cmsPiisValidationInfoList)) {
             return ResponseObject.<String>builder()
                        .fail(new MessageError(NO_PIIS_ACTIVATION))
                        .build();
         }
 
-        CmsTppInfo cmsTppInfo = xs2aToCmsTppInfoMapper.mapToCmsTppInfo(tppInfo);
+        String tppId = tppService.getTppId();
         List<CmsPiisValidationInfo> filteredResponse = cmsPiisValidationInfoList.stream()
                                                            .filter(e -> EnumSet.of(VALID, RECEIVED).contains(e.getConsentStatus()))
                                                            .filter(e -> e.getExpireDate().isAfter(LocalDate.now()))
-                                                           .filter(e -> e.getPiisConsentTppAccessType() == ALL_TPP || e.getCmsTppInfo().equals(cmsTppInfo))
+                                                           .filter(e -> e.getPiisConsentTppAccessType() == ALL_TPP || tppId.equals(e.getTppInfoId()))
                                                            .collect(Collectors.toList());
 
         if (filteredResponse.isEmpty()) {

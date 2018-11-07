@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
@@ -49,7 +48,6 @@ public class FundsConfirmationService {
     private final FundsConfirmationConsentDataService fundsConfirmationConsentDataService;
     private final FundsConfirmationPsuDataService fundsConfirmationPsuDataService;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
-    private final TppService tppService;
     private final Xs2aToSpiFundsConfirmationRequestMapper xs2aToSpiFundsConfirmationRequestMapper;
     private final PiisConsentValidationService piisConsentValidationService;
     private final PiisConsentService piisConsentService;
@@ -65,8 +63,7 @@ public class FundsConfirmationService {
 
         if (profileService.isPiisConsentSupported()) {
             List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(request.getPsuAccount().getCurrency(), getAccountIdentifierName(request.getPsuAccount()), getAccountIdentifier(request.getPsuAccount()));
-            TppInfo tppInfo = tppService.getTppInfo();
-            ResponseObject<String> validationResult = piisConsentValidationService.validatePiisConsentData(response, tppInfo);
+            ResponseObject<String> validationResult = piisConsentValidationService.validatePiisConsentData(response);
 
             if (validationResult.hasError()) {
                 return ResponseObject.<FundsConfirmationResponse>builder()

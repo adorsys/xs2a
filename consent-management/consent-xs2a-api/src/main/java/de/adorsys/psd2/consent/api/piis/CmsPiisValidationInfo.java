@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.api.piis;
 
-import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.Data;
 
@@ -26,7 +25,7 @@ import java.time.LocalDate;
 public class CmsPiisValidationInfo {
     private String consentId;
     private int frequencyPerDay;
-    private CmsTppInfo cmsTppInfo;
+    private String tppInfoId;
     private LocalDate expireDate;
     private ConsentStatus consentStatus;
     private PiisConsentTppAccessType piisConsentTppAccessType;
