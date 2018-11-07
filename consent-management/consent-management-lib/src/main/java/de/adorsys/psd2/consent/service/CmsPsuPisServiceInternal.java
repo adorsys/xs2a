@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private final PisPaymentDataRepository pisPaymentDataRepository;
@@ -54,6 +54,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final PsuDataMapper psuDataMapper;
 
     @Override
+    @Transactional
     public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
         return getDecryptedId(paymentId)
                    .map(p -> pisPaymentDataRepository.findByPaymentId(p)
@@ -69,8 +70,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
         return getDecryptedId(paymentId)
                    .flatMap(p -> pisPaymentDataRepository.findByPaymentId(p)
-                                     .filter(l -> isGivenPsuDataValid(paymentId, psuIdData))
-                                     .flatMap(cmsPsuPisMapper::mapToCmsPayment));
+                                     .filter(l -> isPsuDataEquals(paymentId, psuIdData))
+                                     .map(cmsPsuPisMapper::mapToCmsPayment));
     }
 
     @Override
@@ -107,7 +108,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         List<PisPaymentData> pisPaymentDataList = pisConsentAuthorization.getConsent().getPayments();
 
         return getDecryptedId(paymentId)
-                   .filter(p -> isGivenPsuDataValid(paymentId, psuIdData))
+                   .filter(p -> isPsuDataEquals(paymentId, psuIdData))
                    .map(id -> StringUtils.equals(getFirstPaymentFromList(pisPaymentDataList).getPaymentId(), id))
                    .orElse(false);
     }
@@ -118,9 +119,9 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .isPresent();
     }
 
-    private boolean isGivenPsuDataValid(String paymentId, PsuIdData psuIdData) {
+    private boolean isPsuDataEquals(String paymentId, PsuIdData psuIdData) {
         return pisConsentService.getPsuDataByPaymentId(paymentId)
-                   .map(p -> comparePsuIdData(p, psuIdData))
+                   .map(p -> p.contentEquals(psuIdData))
                    .orElse(false);
     }
 
@@ -136,12 +137,5 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private Optional<String> getDecryptedId(String paymentId) {
         return pisConsentService.getDecryptedId(paymentId);
-    }
-
-    private boolean comparePsuIdData(PsuIdData paymentPsuIdData, PsuIdData givenPsuIdData) {
-        return StringUtils.equals(paymentPsuIdData.getPsuId(), givenPsuIdData.getPsuId())
-                   && StringUtils.equals(paymentPsuIdData.getPsuCorporateId(), givenPsuIdData.getPsuCorporateId())
-                   && StringUtils.equals(paymentPsuIdData.getPsuCorporateIdType(), givenPsuIdData.getPsuCorporateIdType())
-                   && StringUtils.equals(paymentPsuIdData.getPsuIdType(), givenPsuIdData.getPsuIdType());
     }
 }

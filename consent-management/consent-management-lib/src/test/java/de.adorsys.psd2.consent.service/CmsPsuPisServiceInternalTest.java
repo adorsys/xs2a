@@ -103,7 +103,7 @@ public class CmsPsuPisServiceInternalTest {
             .thenReturn(pisConsentAuthorisation);
 
         when(cmsPsuPisMapper.mapToCmsPayment(buildPisPaymentDataList()))
-            .thenReturn(Optional.of(cmsPayment));
+            .thenReturn(cmsPayment);
 
         when(pisConsentService.getPsuDataByPaymentId(PAYMENT_ID))
             .thenReturn(Optional.of(psuIdData));

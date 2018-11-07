@@ -23,7 +23,6 @@ import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,26 +34,23 @@ import java.util.stream.Collectors;
 public class CmsPsuPisMapper {
     private final PisConsentMapper pisConsentMapper;
 
-    public Optional<CmsPayment> mapToCmsPayment(List<PisPaymentData> pisPaymentDataList) {
-        if (CollectionUtils.isNotEmpty(pisPaymentDataList)) {
-            PaymentType paymentType = pisPaymentDataList.get(0).getConsent().getPaymentType();
-            PaymentProduct paymentProduct = pisPaymentDataList.get(0).getConsent().getPisPaymentProduct();
+    public CmsPayment mapToCmsPayment(List<PisPaymentData> pisPaymentDataList) {
+        PaymentType paymentType = pisPaymentDataList.get(0).getConsent().getPaymentType();
+        PaymentProduct paymentProduct = pisPaymentDataList.get(0).getConsent().getPisPaymentProduct();
 
-            switch (paymentType) {
-                case BULK:
-                    return mapToCmsBulkPayment(pisPaymentDataList, paymentProduct);
-                case PERIODIC:
-                    return mapToCmsPeriodicPayment(pisPaymentDataList.get(0), paymentProduct);
-                case SINGLE:
-                    return mapToCmsSinglePayment(pisPaymentDataList.get(0), paymentProduct);
-                default:
-                    return Optional.empty();
-            }
+        switch (paymentType) {
+            case BULK:
+                return mapToCmsBulkPayment(pisPaymentDataList, paymentProduct);
+            case PERIODIC:
+                return mapToCmsPeriodicPayment(pisPaymentDataList.get(0), paymentProduct);
+            case SINGLE:
+                return mapToCmsSinglePayment(pisPaymentDataList.get(0), paymentProduct);
+            default:
+                return null;
         }
-        return Optional.empty();
     }
 
-    private Optional<CmsPayment> mapToCmsSinglePayment(PisPaymentData pisPaymentData, PaymentProduct paymentProduct) {
+    private CmsPayment mapToCmsSinglePayment(PisPaymentData pisPaymentData, PaymentProduct paymentProduct) {
         CmsSinglePayment singlePayment = new CmsSinglePayment(paymentProduct);
         singlePayment.setPaymentId(pisPaymentData.getPaymentId());
         singlePayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
@@ -69,10 +65,10 @@ public class CmsPsuPisMapper {
         singlePayment.setRequestedExecutionDate(pisPaymentData.getRequestedExecutionDate());
         singlePayment.setRequestedExecutionTime(pisPaymentData.getRequestedExecutionTime());
 
-        return Optional.of(singlePayment);
+        return singlePayment;
     }
 
-    private Optional<CmsPayment> mapToCmsPeriodicPayment(PisPaymentData pisPaymentData, PaymentProduct paymentProduct) {
+    private CmsPayment mapToCmsPeriodicPayment(PisPaymentData pisPaymentData, PaymentProduct paymentProduct) {
         CmsPeriodicPayment periodicPayment = new CmsPeriodicPayment(paymentProduct);
         periodicPayment.setPaymentId(pisPaymentData.getPaymentId());
         periodicPayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
@@ -92,10 +88,10 @@ public class CmsPsuPisMapper {
         periodicPayment.setExecutionRule(pisPaymentData.getExecutionRule());
         periodicPayment.setFrequency(CmsFrequencyCode.valueOf(pisPaymentData.getFrequency()));
 
-        return Optional.of(periodicPayment);
+        return periodicPayment;
     }
 
-    private Optional<CmsPayment> mapToCmsBulkPayment(List<PisPaymentData> pisPaymentDataList, PaymentProduct paymentProduct) {
+    private CmsPayment mapToCmsBulkPayment(List<PisPaymentData> pisPaymentDataList, PaymentProduct paymentProduct) {
         PisPaymentData bulkPisPaymentData = pisPaymentDataList.get(0);
         CmsBulkPayment bulkPayment = new CmsBulkPayment();
         bulkPayment.setPaymentId(bulkPisPaymentData.getPaymentId());
@@ -103,13 +99,13 @@ public class CmsPsuPisMapper {
         bulkPayment.setDebtorAccount(mapToCmsAccountReference(bulkPisPaymentData.getDebtorAccount()));
         bulkPayment.setPaymentProduct(paymentProduct);
         List<CmsSinglePayment> payments = pisPaymentDataList.stream()
-                                              .map(p -> (CmsSinglePayment) mapToCmsSinglePayment(p, paymentProduct).get())
+                                              .map(p -> (CmsSinglePayment) mapToCmsSinglePayment(p, paymentProduct))
                                               .collect(Collectors.toList());
         bulkPayment.setPayments(payments);
         bulkPayment.setPaymentProduct(paymentProduct);
         bulkPayment.setPaymentStatus(bulkPisPaymentData.getTransactionStatus());
 
-        return Optional.of(bulkPayment);
+        return bulkPayment;
     }
 
     private CmsAccountReference mapToCmsAccountReference(PisAccountReference pisAccountReference) {
