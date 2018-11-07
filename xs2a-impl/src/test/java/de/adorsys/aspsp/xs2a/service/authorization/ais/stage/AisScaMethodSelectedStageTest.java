@@ -17,22 +17,26 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
+
+
+/*
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
-import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
@@ -80,7 +84,9 @@ public class AisScaMethodSelectedStageTest {
     @Mock
     private UpdateConsentPsuDataReq request;
     @Mock
-    private SpiAccountConsent accountConsent;
+    private SpiAccountConsent spiAccountConsent;
+    @Mock
+    private AccountConsent accountConsent;
     @Mock
     private SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
 
@@ -95,13 +101,16 @@ public class AisScaMethodSelectedStageTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(accountConsent);
 
+        when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
+            .thenReturn(spiAccountConsent);
+
         when(psuDataMapper.mapToSpiPsuData(any(PsuIdData.class)))
             .thenReturn(SPI_PSU_DATA);
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, accountConsent, ASPSP_CONSENT_DATA)).thenReturn(buildAvailableListSpiResponse());
+        when(aisConsentSpi.requestAvailableScaMethods(SPI_PSU_DATA, spiAccountConsent, ASPSP_CONSENT_DATA)).thenReturn(buildAvailableListSpiResponse());
 
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(buildSpiAuthenticationObject())).thenReturn(buildXs2aAuthenticationObject());
 
@@ -111,7 +120,7 @@ public class AisScaMethodSelectedStageTest {
 
     @Test
     public void apply_Success() {
-        when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, TEST_AUTHENTICATION_METHOD_ID, accountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse());
 
         UpdateConsentPsuDataResponse actualResponse = scaMethodSelectedStage.apply(request);
@@ -124,7 +133,7 @@ public class AisScaMethodSelectedStageTest {
 
     @Test
     public void apply_Failure_SpiResponseWithError() {
-        when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, TEST_AUTHENTICATION_METHOD_ID, accountConsent, ASPSP_CONSENT_DATA))
+        when(aisConsentSpi.requestAuthorisationCode(SPI_PSU_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse());
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(RESPONSE_STATUS))
@@ -172,3 +181,4 @@ public class AisScaMethodSelectedStageTest {
                    .success();
     }
 }
+*/

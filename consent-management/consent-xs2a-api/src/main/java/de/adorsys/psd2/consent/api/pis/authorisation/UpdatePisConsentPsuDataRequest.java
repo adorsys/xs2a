@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.pis.authorisation;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
@@ -23,7 +24,7 @@ import lombok.Data;
 public class UpdatePisConsentPsuDataRequest {
     private String paymentId;
     private String authorizationId;
-    private String psuId;
+    private PsuIdData psuData;
     private String password;
     private String authenticationMethodId;
     private ScaStatus scaStatus;

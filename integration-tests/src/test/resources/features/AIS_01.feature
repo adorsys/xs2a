@@ -5,6 +5,7 @@ Feature: Account Information Service
 #    # Consent Requests                                                                                                 #
 #    #                                                                                                                  #
 #    ####################################################################################################################
+
     Scenario Outline: Successful consent request creation (redirect)
         Given PSU wants to create a consent <consent-resource>
         When PSU sends the create consent request
@@ -15,15 +16,14 @@ Feature: Account Information Service
 #            | consent-all-psd2-accounts-successful.json  |
             | consent-all-accounts-successful.json |
 
-    @ignore
     Scenario Outline: Failed consent request creation (redirect)
-        Given PSU wants to create a consent <consent-resource>
+        Given PSU wants to create an erroful consent <consent-resource>
         When PSU sends the create consent request with error
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
             | consent-resource                      |
-            | consent-all-psd2-no-psu-id.json       |
-            | consent-all-psd2-wrong-psu-id.json    |
+            #| consent-all-psd2-no-psu-id.json       |
+            #| consent-all-psd2-wrong-psu-id.json    |
             #| consent-all-psd2-wrong-value.json          |
             | consent-dedicated-incorrect-iban.json |
 
@@ -105,16 +105,16 @@ Feature: Account Information Service
     # Account Request                                                                                                  #
     #                                                                                                                  #
     ####################################################################################################################
-    @ignore
+
     Scenario Outline: Request account list successfully
-        Given PSU already has an existing consent <consent-id>
+        Given PSU already has an existing valid consent <consent-id>
         And wants to get a list of accounts using <account-resource>
         When PSU requests the list of accounts
         Then a successful response code and the appropriate list of accounts get returned
         Examples:
             | account-resource                               | consent-id                   |
-            | accountList-successful.json                    | accounts-create-consent.json |
-            | accountList-with-more-accounts-successful.json | accounts-create-consent.json |
+            | accountList-successful.json                    | account/accounts-create-consent.json |
+            #| accountList-with-more-accounts-successful.json | account/accounts-create-consent.json |
 
     @ignore
     Scenario Outline: Request account list errorful

@@ -25,9 +25,11 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,14 +44,16 @@ import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateBulkPaymentServiceTest {
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String CONSENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
-    private static final String PAYMENT_ID = "12345";
+    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
+    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
     private final TppInfo TPP_INFO = buildTppInfo();
 
     @InjectMocks
@@ -57,15 +61,18 @@ public class CreateBulkPaymentServiceTest {
     @Mock
     private ScaPaymentService scaPaymentService;
     @Mock
-    private PisConsentService pisConsentService;
+    private Xs2aPisConsentService pisConsentService;
     @Mock
     private AuthorisationMethodService authorisationMethodService;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
+    @Mock
+    private PisConsentDataService pisConsentDataService;
 
     @Before
     public void init() {
         when(scaPaymentService.createBulkPayment(buildBulkPayment(), TPP_INFO, PaymentProduct.SEPA, buildXs2aPisConsent())).thenReturn(buildBulkPaymentInitiationResponse());
+        when(pisConsentDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
     }
 
     @Test
@@ -81,6 +88,7 @@ public class CreateBulkPaymentServiceTest {
 
     private BulkPayment buildBulkPayment() {
         BulkPayment payment = new BulkPayment();
+        payment.setPaymentId(PAYMENT_ID);
         payment.setPayments(buildListSinglePayment());
         payment.setDebtorAccount(buildReference());
         payment.setTransactionStatus(Xs2aTransactionStatus.RCVD);
@@ -114,7 +122,7 @@ public class CreateBulkPaymentServiceTest {
     }
 
     private Xs2aPisConsent buildXs2aPisConsent() {
-        return new Xs2aPisConsent(CONSENT_ID);
+        return new Xs2aPisConsent(CONSENT_ID, PSU_DATA);
     }
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {

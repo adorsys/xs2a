@@ -17,11 +17,16 @@
 package de.adorsys.psd2.consent.api.ais;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import lombok.Value;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AisAccountConsent {
     private String id;
     private AisAccountAccess access;
@@ -33,6 +38,6 @@ public class AisAccountConsent {
     private boolean withBalance;
     private boolean tppRedirectPreferred;
     private AisConsentRequestType aisConsentRequestType;
-    private String psuId;
+    private PsuIdData psuData;
     private String tppId;
 }

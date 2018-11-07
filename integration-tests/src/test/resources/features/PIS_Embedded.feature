@@ -39,7 +39,7 @@ Feature: Payment Initiation Service - Embedded approach
             | payment-service | authorisation-data                     |
 #            | payments                  | startAuth-not-existing-paymentId.json  |
             | payments                  | startAuth-no-request-id.json           |
-           | payments                  | startAuth-wrong-format-request-id.json |
+#           | payments                  | startAuth-wrong-format-request-id.json |
 #            | recurring-payments        | startAuth-wrong-payment-service.json   |
 
 
@@ -58,8 +58,8 @@ Feature: Payment Initiation Service - Embedded approach
         Examples:
             | identification-data                              |
             | updateIdentificationNoSca-successful.json        |
-            | updateIdentificationOneSca-successful.json       |
-#            | updateIdentificationMultipleSca-successful.json  |
+#            | updateIdentificationOneSca-successful.json       |
+            | updateIdentificationMultipleSca-successful.json  |
 
 
     Scenario Outline: Errorful update of identification data (embedded)
@@ -72,7 +72,7 @@ Feature: Payment Initiation Service - Embedded approach
             | payment-service               |  identification-data                               |
             | payments                      |  updateIdentification-no-request-id.json           |
 #            | payments                      |  updateIdentification-wrong-authorisation-id.json  |
-            | payments                      |  updateIdentification-wrong-format-request-id.json |
+#            | payments                      |  updateIdentification-wrong-format-request-id.json |
 #            | recurring-payments            |  updateIdentification-wrong-payment-service.json   |
 #            | recurring-payments            |  updateIdentification-not-existing-paymentId.json   |
 
@@ -107,7 +107,7 @@ Feature: Payment Initiation Service - Embedded approach
             | payment-service    | selection-data                           |
 #             | payments           | selectAuth-not-existing-paymentId.json   |
             | payments           | selectAuth-no-request-id.json            |
-            | payments           | selectAuth-wrong-format-request-id.json  |
+#            | payments           | selectAuth-wrong-format-request-id.json  |
 #            | payments            | selectAuth-wrong-sca-method.json         |
 #            | recurring-payments  | selectAuth-wrong-payment-service.json    |
 #            | payments            | selectAuth-wrong-authorisation-id.json   |

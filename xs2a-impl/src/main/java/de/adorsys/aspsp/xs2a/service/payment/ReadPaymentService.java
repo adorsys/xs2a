@@ -17,12 +17,16 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ReadPaymentService<T> {
     @Autowired
     protected PisConsentDataService pisConsentDataService;
+    @Autowired
+    protected Xs2aToSpiPsuDataMapper psuDataMapper;
 
-    public abstract T getPayment(String paymentId, PaymentProduct paymentProduct);
+    public abstract T getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData);
 }

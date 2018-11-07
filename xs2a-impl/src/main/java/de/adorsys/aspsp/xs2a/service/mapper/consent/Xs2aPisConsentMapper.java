@@ -19,13 +19,14 @@ package de.adorsys.aspsp.xs2a.service.mapper.consent;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.CmsTppRole;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import org.springframework.stereotype.Component;
@@ -50,8 +51,8 @@ public class Xs2aPisConsentMapper {
         return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(authorisationId)));
     }
 
-    public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response) {
-        return new Xs2aPisConsent(response.getConsentId());
+    public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response, PsuIdData psuData) {
+        return new Xs2aPisConsent(response.getConsentId(), psuData);
     }
 
     public CmsTppInfo mapToCmsTppInfo(TppInfo pisTppInfo) {
@@ -76,12 +77,12 @@ public class Xs2aPisConsentMapper {
                    }).orElse(null);
     }
 
-    public Xs2aUpdatePisConsentPsuDataRequest mapToSpiUpdateConsentPsuDataReq(Xs2aUpdatePisConsentPsuDataRequest updatePsuDataRequest,
+    public UpdatePisConsentPsuDataRequest mapToSpiUpdateConsentPsuDataReq(UpdatePisConsentPsuDataRequest updatePsuDataRequest,
                                                                               Xs2aUpdatePisConsentPsuDataResponse updatePsuDataResponse) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
-                       Xs2aUpdatePisConsentPsuDataRequest request = new Xs2aUpdatePisConsentPsuDataRequest();
-                       request.setPsuId(data.getPsuId());
+                       UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
+                       request.setPsuData(request.getPsuData());
                        request.setPaymentId(updatePsuDataRequest.getPaymentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));
@@ -97,12 +98,12 @@ public class Xs2aPisConsentMapper {
                    .orElse(null);
     }
 
-    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisConsentPsuDataRequest request, String consentId) {
+    public SpiScaConfirmation buildSpiScaConfirmation(UpdatePisConsentPsuDataRequest request, String consentId, String paymentId) {
         SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
-        paymentConfirmation.setPaymentId(request.getPaymentId());
+        paymentConfirmation.setPaymentId(paymentId);
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
         paymentConfirmation.setConsentId(consentId);
-        paymentConfirmation.setPsuId(request.getPsuId());
+        paymentConfirmation.setPsuId(Optional.ofNullable(request.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
         return paymentConfirmation;
     }
 

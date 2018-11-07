@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.domain.pis;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.Data;
 
 @Data
@@ -28,5 +29,5 @@ public class PaymentInitiationParameters {
     private String tppRedirectUri;
     private String tppNokRedirectUri;
     private boolean tppExplicitAuthorisationPreferred;
-    private String psuId;
+    private PsuIdData psuData;
 }

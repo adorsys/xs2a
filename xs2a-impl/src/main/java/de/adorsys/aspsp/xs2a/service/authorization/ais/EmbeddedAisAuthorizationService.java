@@ -19,8 +19,9 @@ package de.adorsys.aspsp.xs2a.service.authorization.ais;
 import de.adorsys.aspsp.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.stage.AisScaStage;
-import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,21 +37,21 @@ import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseL
 @Service
 @RequiredArgsConstructor
 public class EmbeddedAisAuthorizationService implements AisAuthorizationService {
-    private final AisConsentService aisConsentService;
+    private final Xs2aAisConsentService aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
-     * See {@link AisConsentService#createAisConsentAuthorization(String, ScaStatus, String)} for details
+     * See {@link Xs2aAisConsentService#createAisConsentAuthorization(String, ScaStatus, PsuIdData)} for details
      *
-     * @param psuId     String identification of PSU
+     * @param psuData   PsuIdData container of authorisation data about PSU
      * @param consentId String identification of consent
      * @return Optional of CreateConsentAuthorizationResponse with consent creating data
      */
     @Override
-    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
-        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.valueOf(ScaStatus.STARTED.name()), psuId)
+    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
+        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.valueOf(ScaStatus.STARTED.name()), psuData)
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -65,7 +66,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     /**
      * Gets AccountConsentAuthorization using provided authorization id and consent id by invoking CMS through AisConsentService.
-     * See {@link AisConsentService#getAccountConsentAuthorizationById(String, String)} for details
+     * See {@link Xs2aAisConsentService#getAccountConsentAuthorizationById(String, String)} for details
      *
      * @param authorizationId String identification of AccountConsentAuthorization
      * @param consentId       String identification of consent
@@ -82,7 +83,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      * Service returns UpdateConsentPsuDataResponse on invoking its apply() method
      * (e.g. see {@link de.adorsys.aspsp.xs2a.service.authorization.ais.stage.AisScaMethodSelectedStage#apply}).
      * If response has no errors, consent authorisation is updated by invoking CMS through AisConsentService
-     * See {@link AisConsentService#updateConsentAuthorization(UpdateConsentPsuDataReq)} for details.
+     * See {@link Xs2aAisConsentService#updateConsentAuthorization(UpdateConsentPsuDataReq)} for details.
      *
      * @param request UpdateConsentPsuDataReq request to update PSU data
      * @param consentAuthorization AccountConsentAuthorization instance with authorisation data

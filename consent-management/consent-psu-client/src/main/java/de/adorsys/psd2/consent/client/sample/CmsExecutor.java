@@ -32,6 +32,7 @@ import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,8 +52,8 @@ public class CmsExecutor {
     private static final String CMS_BASE_URL = "http://localhost:38080";
     private static final int CONNECTION_TIMEOUT = 5000;
     private static final int CONNECTION_REQUEST_TIMEOUT = 5000;
-    private static final String CONSENT_ID = "Test consent id";
-    private static final String PAYMENT_ID = "5bab5ff0a3cd5b05a56c9263";
+    private static final String CONSENT_ID = "sKrhvGddmlkItKsvBZwJyXG7Bm7Qbq2FnrJ3F2vB9mVKwiMoElPiohTItFBnfJsohO5sHYhMF_ymmQwlQdgkxA==_=_bS6p6XvTWI";
+    private static final String PAYMENT_ID = "sKrhvGddmlkItKsvBZwJyXG7Bm7Qbq2FnrJ3F2vB9mVKwiMoElPiohTItFBnfJsohO5sHYhMF_ymmQwlQdgkxA==_=_bS6p6XvTWI";
 
     /**
      * Makes calls to CMS PIS and AIS endpoints and logs the response
@@ -79,6 +80,7 @@ public class CmsExecutor {
         getPisConsentAspspData(cmsServiceInvoker);
         updatePisConsentAspspData(cmsServiceInvoker);
         updatePaymentConsentStatus(cmsServiceInvoker);
+        getPaymentIdByEncryptedString(cmsServiceInvoker);
     }
 
     /**
@@ -189,7 +191,7 @@ public class CmsExecutor {
         request.setAccess(buildAccess());
         request.setCombinedServiceIndicator(true);
         request.setFrequencyPerDay(10);
-        request.setPsuId("psu-id-1");
+        request.setPsuData(new PsuIdData("psu-id-1", null, null, null));
         request.setRecurringIndicator(true);
         request.setTppId("tpp-id-1");
         request.setValidUntil(LocalDate.of(2020, 12, 31));
@@ -214,10 +216,7 @@ public class CmsExecutor {
      * @return CmsAspspConsentDataBase64
      */
     private static CmsAspspConsentDataBase64 buildCmsAspspConsentDataBase64() {
-        CmsAspspConsentDataBase64 request = new CmsAspspConsentDataBase64();
-        byte[] aspspCnsentData = Base64.getEncoder().encode("zdxcvvzzzxcvzzzz".getBytes());
-        request.setAspspConsentDataBase64(Base64.getEncoder().encodeToString(aspspCnsentData));
-        return request;
+        return new CmsAspspConsentDataBase64("encryptedId", Base64.getEncoder().encodeToString("decrypted consent data".getBytes()));
     }
 
     /**
@@ -227,7 +226,7 @@ public class CmsExecutor {
      */
     private static void createPaymentConsent(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         Optional<CreatePisConsentResponse> createPisResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new CreatePaymentConsentMethod(buildPisConsentRequest())));
-        createPisResponse.ifPresent(resp ->  logger.info("Consent ID: " + resp.getConsentId()));
+        createPisResponse.ifPresent(resp -> logger.info("Consent ID: " + resp.getConsentId()));
     }
 
     /**
@@ -284,6 +283,20 @@ public class CmsExecutor {
     }
 
     /**
+     * Sends request to GET api/v1/pis/payment/{payment-id} endpoint
+     *
+     * @param cmsServiceInvoker Service, performing rest call
+     */
+    private static void getPaymentIdByEncryptedString(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("payment-id", PAYMENT_ID)
+                                      .build();
+
+        Optional<String> paymentId = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentIdByEncryptedStringMethod(uriParams)));
+        paymentId.ifPresent(resp -> logger.info("Payment id decrypted: " + resp));
+    }
+
+    /**
      * Sends request to PUT api/v1/pis/consent/{consent-id}/status/{status} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
@@ -307,10 +320,10 @@ public class CmsExecutor {
         request.setPaymentProduct(PaymentProduct.SEPA);
         request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
-            Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
-            "authority id", "authority name", "Germany", "Organisation",
-            "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
-            "Nok redirect URI"));
+                                           Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
+                                           "authority id", "authority name", "Germany", "Organisation",
+                                           "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
+                                           "Nok redirect URI"));
         return request;
     }
 
@@ -337,7 +350,7 @@ public class CmsExecutor {
         payment.setRemittanceInformationStructured(buildCmsRemittance("Ref Number Merchant", "reference type", "reference issuer"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, 1, 1));
         payment.setRequestedExecutionTime(OffsetDateTime.parse("2020-01-01T15:30:35.035Z",
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
+                                                               DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
         payment.setUltimateCreditor("Telekom");
         payment.setPurposeCode("BCENECEQ");
         payment.setStartDate(LocalDate.of(2020, 1, 1));

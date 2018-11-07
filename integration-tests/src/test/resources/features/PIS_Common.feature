@@ -5,6 +5,7 @@ Feature: Payment Initiation Service - Common
     # Single Payment                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
+
     Scenario Outline: Failed payment initiation request for single payments (redirect)
         Given PSU initiates an errorful single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the single payment initiating request with error
@@ -15,7 +16,7 @@ Feature: Payment Initiation Service - Common
             | payments            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
             | payments            | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
             | payments            | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
-            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
+#            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
             | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
 #            | recurring-payments  | sepa-credit-transfers         | singlePayInit-wrong-payment-service.json       |
 
@@ -59,7 +60,7 @@ Feature: Payment Initiation Service - Common
             | periodic-payments | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
             | periodic-payments | sepa-credit-transfers | recPayInit-no-request-id.json               |
             | periodic-payments | sepa-credit-transfers | recPayInit-no-ip-address.json               |
-            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |
             | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-psu-ip-address.json |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-start-date-in-past.json          |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-end-date-before-start-date.json  |
@@ -89,7 +90,7 @@ Feature: Payment Initiation Service - Common
             | payment-status-data                       | payment-service |
 #            |paymentStatus-not-existing-paymentId.json  | payments               |
             |paymentStatus-no-request-id.json           | payments               |
-            |paymentStatus-wrong-format-request-id.json | payments               |
+#            |paymentStatus-wrong-format-request-id.json | payments               |
 #            |paymentStatus-wrong-payment-service.json   | recurring-payments     |
 
 
@@ -116,7 +117,7 @@ Feature: Payment Initiation Service - Common
         Examples:
            | payment-information-data                          | payment-service |
 #           | singlePayInformation-not-existing-paymentId.json  | payments                    |
-           | singlePayInformation-wrong-format-request-id.json | payments                    |
+#           | singlePayInformation-wrong-format-request-id.json | payments                    |
            | singlePayInformation-no-request-id.json           | payments                    |
 #           | singlePayInformation-wrong-payment-service.json   | recurring-payments          |
 
@@ -126,7 +127,6 @@ Feature: Payment Initiation Service - Common
     # Payment Cancellation                                                                                             #
     #                                                                                                                  #
     ####################################################################################################################
-    @ignore
     Scenario Outline: Successful payment cancellation request
         Given PSU sends the single payment initiation request and receives the paymentId
         And PSU wants to cancel the payment by using a set of data <payment-cancellation-data>
@@ -145,6 +145,6 @@ Feature: Payment Initiation Service - Common
         Examples:
             | payment-cancellation-data                        | payment-service |
 #            | paymentCancellation-not-existing-paymentId.json  | payments                    |
-            | paymentCancellation-wrong-format-request-id.json | payments                    |
+#            | paymentCancellation-wrong-format-request-id.json | payments                    |
             | paymentCancellation-no-request-id.json           | payments                    |
 #           | paymentCancellation-wrong-payment-service.json   | recurring-payments          |

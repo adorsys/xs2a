@@ -39,6 +39,7 @@ public class SpiBulkPaymentMapper {
 
     public AspspBulkPayment mapToAspspBulkPayment(@NotNull SpiBulkPayment payment, SpiTransactionStatus transactionStatus) {
         AspspBulkPayment bulk = new AspspBulkPayment();
+        bulk.setPaymentId(payment.getPaymentId());
         bulk.setDebtorAccount(spiPaymentMapper.mapToAspspAccountReference(payment.getDebtorAccount()));
         bulk.setBatchBookingPreferred(payment.getBatchBookingPreferred());
         bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());

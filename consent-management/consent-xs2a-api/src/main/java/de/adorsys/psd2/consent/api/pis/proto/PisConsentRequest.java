@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -40,4 +41,7 @@ public class PisConsentRequest {
 
     @ApiModelProperty(value = "Tpp information", required = true)
     private CmsTppInfo tppInfo;
+
+    @ApiModelProperty(value = "Corresponding PSU", required = true)
+    private PsuIdData psuData;
 }

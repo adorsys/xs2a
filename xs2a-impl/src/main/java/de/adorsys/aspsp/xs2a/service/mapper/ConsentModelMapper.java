@@ -17,12 +17,15 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.domain.OtpFormat;
+import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.web.mapper.CoreObjectsMapper;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -83,6 +86,7 @@ public class ConsentModelMapper {
                                         .map(s -> ScaStatus.valueOf(s.name()))
                                         .orElse(null)
                                 )
+                                .challengeData(mapToChallengeData(response.getChallengeData()))
                                 .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
                    )
                    .orElse(null);
@@ -197,16 +201,16 @@ public class ConsentModelMapper {
         return objectMapper.convertValue(reference, Xs2aAccountReference.class);
     }
 
-    public UpdateConsentPsuDataReq mapToUpdatePsuData(String psuId, String consentId, String authorizationId, Map body) {
+    public UpdateConsentPsuDataReq mapToUpdatePsuData(PsuIdData psuData, String consentId, String authorizationId, Map body) {
         UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
-        updatePsuData.setPsuId(psuId);
+        updatePsuData.setPsuData(psuData);
         updatePsuData.setConsentId(consentId);
         updatePsuData.setAuthorizationId(authorizationId);
 
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuData -> updatePsuData.setPassword(psuData.get("password")));
+                .ifPresent(psuDataMap -> updatePsuData.setPassword(psuDataMap.get("password")));
 
             Optional.ofNullable(body.get("authenticationMethodId"))
                 .map(o -> (String) o)
@@ -222,16 +226,16 @@ public class ConsentModelMapper {
         return updatePsuData;
     }
 
-    public Xs2aUpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(String psuId, String paymentId, String authorisationId, String paymentService, Map body) {
-        Xs2aUpdatePisConsentPsuDataRequest request = new Xs2aUpdatePisConsentPsuDataRequest();
-        request.setPsuId(psuId);
+    public UpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(PsuIdData psuData, String paymentId, String authorisationId, String paymentService, Map body) {
+        UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
+        request.setPsuData(psuData);
         request.setPaymentId(paymentId);
         request.setAuthorizationId(authorisationId);
         request.setPaymentService(paymentService);
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuData -> request.setPassword(psuData.get("password")));
+                .ifPresent(psuDataMap -> request.setPassword(psuDataMap.get("password")));
 
             Optional.ofNullable(body.get("authenticationMethodId"))
                 .map(o -> (String) o)
@@ -248,9 +252,31 @@ public class ConsentModelMapper {
                    ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                    .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
                    .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
+                   .challengeData(mapToChallengeData(response.getChallengeData()))
                    .scaStatus(Optional.ofNullable(response.getScaStatus())
-                                  .map(s -> ScaStatus.fromValue(s.getValue()))
-                                  .orElse(ScaStatus.FAILED));
+                       .map(s -> ScaStatus.fromValue(s.getValue()))
+                       .orElse(ScaStatus.FAILED));
+    }
+
+    private ChallengeData mapToChallengeData(Xs2aChallengeData xs2aChallengeData) {
+        return Optional.ofNullable(xs2aChallengeData)
+            .map(cd -> {
+                    ChallengeData challengeData = new ChallengeData()
+                        .additionalInformation(cd.getAdditionalInformation())
+                        .image(cd.getImage())
+                        .imageLink(cd.getImageLink())
+                        .otpFormat(mapToOtpFormat(cd.getOtpFormat()))
+                        .otpMaxLength(cd.getOtpMaxLength())
+                        .data(cd.getData());
+                    return challengeData;
+                }).orElse(null);
+    }
+
+    private ChallengeData.OtpFormatEnum mapToOtpFormat(OtpFormat otpFormat) {
+        return Optional.ofNullable(otpFormat)
+            .map(OtpFormat::getValue)
+            .map(ChallengeData.OtpFormatEnum::fromValue)
+            .orElse(null);
     }
 
     private ScaMethods getAvailableScaMethods(List<Xs2aAuthenticationObject> availableScaMethods) {

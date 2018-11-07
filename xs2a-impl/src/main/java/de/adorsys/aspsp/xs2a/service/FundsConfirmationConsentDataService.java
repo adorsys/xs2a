@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import org.springframework.stereotype.Service;
 
 //TODO Implement this class properly during implementation of FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379

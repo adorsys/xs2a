@@ -28,7 +28,8 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,9 +41,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CreateBulkPaymentService implements CreatePaymentService<BulkPayment, BulkPaymentInitiationResponse> {
     private final ScaPaymentService scaPaymentService;
-    private final PisConsentService pisConsentService;
+    private final Xs2aPisConsentService pisConsentService;
     private final AuthorisationMethodService authorisationMethodService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
+    private final PisConsentDataService pisConsentDataService;
 
     /**
      * Initiates bulk payment
@@ -55,18 +57,23 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
      */
     @Override
     public ResponseObject<BulkPaymentInitiationResponse> createPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
+        String externalPaymentId = pisConsent.getConsentId();
+
+        // we need to get decrypted payment ID
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(externalPaymentId);
+        bulkPayment.setPaymentId(internalPaymentId);
+
         BulkPaymentInitiationResponse response = scaPaymentService.createBulkPayment(bulkPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
-        bulkPayment.setPaymentId(response.getPaymentId());
         bulkPayment.setTransactionStatus(response.getTransactionStatus());
-        updateBulkPaymentIds(bulkPayment.getPayments(), response.getPaymentId());
+        updateBulkPaymentIds(bulkPayment.getPayments(), internalPaymentId);
 
         pisConsentService.updateBulkPaymentInPisConsent(bulkPayment, paymentInitiationParameters, pisConsent.getConsentId());
 
         boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {
-            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(response.getPaymentId(), PaymentType.BULK);
+            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(externalPaymentId, PaymentType.BULK, paymentInitiationParameters.getPsuData());
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<BulkPaymentInitiationResponse>builder()
                            .fail(new MessageError(MessageErrorCode.CONSENT_INVALID))
@@ -76,6 +83,10 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
             response.setAuthorizationId(authorisationResponse.getAuthorizationId());
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
+
+        // we need to return encrypted payment ID
+        response.setPaymentId(externalPaymentId);
+
         return ResponseObject.<BulkPaymentInitiationResponse>builder()
                    .body(response)
                    .build();

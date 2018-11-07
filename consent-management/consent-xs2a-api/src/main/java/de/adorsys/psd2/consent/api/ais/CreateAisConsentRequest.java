@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,8 +27,8 @@ import java.time.LocalDate;
 @ApiModel(description = "Ais consent request", value = "AisConsentRequest")
 public class CreateAisConsentRequest {
 
-    @ApiModelProperty(value = "ID of the corresponding PSU", required = true, example = "32aad578-58a6-4d5d-8b0c-45546dd88f07")
-    private String psuId;
+    @ApiModelProperty(value = "Corresponding PSU", required = true)
+    private PsuIdData psuData;
 
     @ApiModelProperty(value = "ID of the corresponding TPP.", required = true, example = "testTPP")
     private String tppId;

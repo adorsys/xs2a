@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.domain.consent.pis;
 import de.adorsys.aspsp.xs2a.domain.ErrorHolder;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
@@ -35,6 +36,7 @@ public class Xs2aUpdatePisConsentPsuDataResponse {
     private ScaStatus scaStatus;
     private List<Xs2aAuthenticationObject> availableScaMethods;
     private Xs2aAuthenticationObject chosenScaMethod;
+    private Xs2aChallengeData challengeData;
     private Links links = new Links();
 
     public Xs2aUpdatePisConsentPsuDataResponse(ScaStatus scaStatus, List<Xs2aAuthenticationObject> availableScaMethods) {

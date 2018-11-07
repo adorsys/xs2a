@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationConsent;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
