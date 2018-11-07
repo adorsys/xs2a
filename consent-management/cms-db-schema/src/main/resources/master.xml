@@ -36,5 +36,7 @@
     <include relativeToChangelogFile="true" file="migration/20181105_1.14_rename_pis_account_reference_to_account_reference.xml"/>
     <include relativeToChangelogFile="true" file="migration/20181105_1.15_fill_crypto_algorithms.xml"/>
     <include relativeToChangelogFile="true" file="migration/20181106_1.16_add_piis_consent.xml"/>
+    <include relativeToChangelogFile="true" file="migration/20181107_1.17_create_aspsp_consent_data_table.xml"/>
+
 
 </databaseChangeLog>
