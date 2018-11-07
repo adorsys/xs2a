@@ -22,14 +22,23 @@
         <groupId>de.adorsys.psd2</groupId>
         <artifactId>consent-management</artifactId>
         <version>1.11-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
-        <postgresql.version>42.2.4</postgresql.version>
+
+        <!--
+        This property allows to put path to different files using command line:
+        mvn -DpropertyFile=liquibase.my-special.properties liquibase:update
+        -->
         <propertyFile>liquibase.properties</propertyFile>
+
+
+        <postgresql.version>42.2.4</postgresql.version>
+        <mariadb.version>2.3.0</mariadb.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -48,7 +57,7 @@
                     <dependency>
                         <groupId>org.mariadb.jdbc</groupId>
                         <artifactId>mariadb-java-client</artifactId>
-                        <version>2.3.0</version>
+                        <version>${mariadb.version}</version>
                     </dependency>
                 </dependencies>
 
