@@ -175,19 +175,7 @@ public class PisConsentMapper {
             .orElse(null);
     }
 
-    private CmsAccountReference mapToCmsAccountReference(PisAccountReference pisAccountReference) {
-        return Optional.ofNullable(pisAccountReference)
-                   .map(ref -> new CmsAccountReference(null,
-                       ref.getIban(),
-                       ref.getBban(),
-                       ref.getPan(),
-                       ref.getMaskedPan(),
-                       ref.getMsisdn(),
-                       ref.getCurrency())
-                   ).orElse(null);
-    }
-
-    private CmsAddress mapToCmsAddress(PisAddress pisAddress) {
+    public CmsAddress mapToCmsAddress(PisAddress pisAddress) {
         return Optional.ofNullable(pisAddress)
             .map(adr -> {
                 CmsAddress cmsAddress = new CmsAddress();

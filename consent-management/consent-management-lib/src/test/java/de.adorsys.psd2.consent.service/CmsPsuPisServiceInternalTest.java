@@ -20,8 +20,8 @@ import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.payment.PisAccountReference;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
@@ -300,8 +300,8 @@ public class CmsPsuPisServiceInternalTest {
         return Collections.singletonList(pisPaymentData);
     }
 
-    private PisAccountReference buildAccountReference() {
-        PisAccountReference pisAccountReference = new PisAccountReference();
+    private AccountReferenceEntity buildAccountReference() {
+        AccountReferenceEntity pisAccountReference = new AccountReferenceEntity();
         pisAccountReference.setIban("iban");
         pisAccountReference.setCurrency(Currency.getInstance("EUR"));
 

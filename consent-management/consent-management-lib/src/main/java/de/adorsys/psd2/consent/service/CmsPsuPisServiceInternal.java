@@ -56,42 +56,43 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     @Transactional
-    public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
-        Optional<PisConsent> pisConsent = pisConsentService.getDecryptedId(paymentId)
-                                              .flatMap(p -> pisPaymentDataRepository.findByPaymentId(p)
-                                                                .map(l -> l.get(0))
-                                                                .map(PisPaymentData::getConsent));
-        if (pisConsent.isPresent()) {
-            return updatePsuData(pisConsent.get(), psuIdData);
-        }
-        return false;
+    public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String encryptedPaymentId) {
+        Optional<PisConsent> pisConsent = getPaymentDataList(encryptedPaymentId)
+                                              .map(lst -> lst.get(0))
+                                              .map(PisPaymentData::getConsent);
+        return pisConsent.isPresent() && updatePsuData(pisConsent.get(), psuIdData);
     }
 
     @Override
-    public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId) {
-        return pisConsentService.getDecryptedId(paymentId)
-                   .flatMap(p -> pisPaymentDataRepository.findByPaymentId(p)
-                                     .filter(l -> isPsuDataEquals(paymentId, psuIdData))
-                                     .map(cmsPsuPisMapper::mapToCmsPayment));
+    public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String encryptedPaymentId) {
+        if (isPsuDataEquals(encryptedPaymentId, psuIdData)) {
+
+            return getPaymentDataList(encryptedPaymentId)
+                       .filter(CollectionUtils::isNotEmpty)
+                       .map(cmsPsuPisMapper::mapToCmsPayment);
+        }
+
+        return Optional.empty();
     }
 
     @Override
     @Transactional
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status) {
-        Optional<PisConsentAuthorization> pisConsentAuthorization = pisConsentAuthorizationRepository.findByExternalId(authorisationId)
-                                                                        .filter(a -> validateGivenData(a, paymentId, psuIdData));
-        if (pisConsentAuthorization.isPresent()) {
-            return updateAuthorisationStatusAndSaveAuthorization(pisConsentAuthorization.get(), status);
-        }
-        return false;
+
+        Optional<PisConsentAuthorization> pisConsentAuthorization = pisConsentAuthorizationRepository.findByExternalId(authorisationId);
+
+        boolean isValid = pisConsentAuthorization
+                              .map(auth -> auth.getConsent().getPayments().get(0).getPaymentId())
+                              .map(id -> validateGivenData(id, paymentId, psuIdData))
+                              .orElse(false);
+        return isValid && updateAuthorisationStatusAndSaveAuthorization(pisConsentAuthorization.get(), status);
     }
 
     @Override
     @Transactional
-    public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
-        List<PisPaymentData> list = pisConsentService.getDecryptedId(paymentId)
-                                        .flatMap(pisPaymentDataRepository::findByPaymentId)
+    public boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
+        List<PisPaymentData> list = getPaymentDataList(encryptedPaymentId)
                                         .orElse(Collections.emptyList());
 
         return !CollectionUtils.isEmpty(list)
@@ -106,12 +107,10 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .isPresent();
     }
 
-    private boolean validateGivenData(PisConsentAuthorization pisConsentAuthorization, String paymentId, PsuIdData psuIdData) {
-        List<PisPaymentData> pisPaymentDataList = pisConsentAuthorization.getConsent().getPayments();
-
-        return pisConsentService.getDecryptedId(paymentId)
-                   .filter(p -> isPsuDataEquals(paymentId, psuIdData))
-                   .map(id -> StringUtils.equals(pisPaymentDataList.get(0).getPaymentId(), id))
+    private boolean validateGivenData(String paymentId, String givenPaymentId, PsuIdData psuIdData) {
+        return pisConsentService.getDecryptedId(givenPaymentId)
+                   .filter(p -> isPsuDataEquals(givenPaymentId, psuIdData))
+                   .map(id -> StringUtils.equals(paymentId, id))
                    .orElse(false);
     }
 
@@ -121,8 +120,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .isPresent();
     }
 
-    private boolean isPsuDataEquals(String paymentId, PsuIdData psuIdData) {
-        return pisConsentService.getPsuDataByPaymentId(paymentId)
+    private boolean isPsuDataEquals(String encryptedPaymentId, PsuIdData psuIdData) {
+        return pisConsentService.getPsuDataByPaymentId(encryptedPaymentId)
                    .map(p -> p.contentEquals(psuIdData))
                    .orElse(false);
     }
@@ -135,5 +134,10 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             }
         }
         return true;
+    }
+
+    private Optional<List<PisPaymentData>> getPaymentDataList(String encryptedPaymentId) {
+        return pisConsentService.getDecryptedId(encryptedPaymentId)
+                   .flatMap(pisPaymentDataRepository::findByPaymentId);
     }
 }

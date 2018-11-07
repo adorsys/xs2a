@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.*;
-import de.adorsys.psd2.consent.domain.payment.PisAccountReference;
+import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -108,7 +108,7 @@ public class CmsPsuPisMapper {
         return singlePayment;
     }
 
-    private CmsAccountReference mapToCmsAccountReference(PisAccountReference pisAccountReference) {
+    private CmsAccountReference mapToCmsAccountReference(AccountReferenceEntity pisAccountReference) {
         return Optional.ofNullable(pisAccountReference)
                    .map(ref -> new CmsAccountReference(null,
                        ref.getIban(),
