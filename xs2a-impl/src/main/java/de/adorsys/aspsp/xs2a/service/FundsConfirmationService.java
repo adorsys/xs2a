@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -29,6 +28,8 @@ import de.adorsys.aspsp.xs2a.service.validator.PiisConsentValidationService;
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -62,7 +63,8 @@ public class FundsConfirmationService {
         String consentId = null;
 
         if (profileService.isPiisConsentSupported()) {
-            List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(request.getPsuAccount().getCurrency(), getAccountIdentifierName(request.getPsuAccount()), getAccountIdentifier(request.getPsuAccount()));
+            AccountReferenceSelector selector = request.getPsuAccount().getUsedAccountReferenceSelector();
+            List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(request.getPsuAccount().getCurrency(), selector.name(), selector.getAccountReferenceValue(request.getPsuAccount()));
             ResponseObject<String> validationResult = piisConsentValidationService.validatePiisConsentData(response);
 
             if (validationResult.hasError()) {
@@ -100,33 +102,5 @@ public class FundsConfirmationService {
         return ResponseObject.<FundsConfirmationResponse>builder()
                    .body(fundsConfirmationResponse)
                    .build();
-    }
-
-    private String getAccountIdentifier(Xs2aAccountReference accountReference) {
-        if (accountReference.getIban() != null) {
-            return accountReference.getIban();
-        } else if (accountReference.getBban() != null) {
-            return accountReference.getBban();
-        } else if (accountReference.getMsisdn() != null) {
-            return accountReference.getMsisdn();
-        } else if (accountReference.getMaskedPan() != null) {
-            return accountReference.getMaskedPan();
-        } else {
-            return accountReference.getPan();
-        }
-    }
-
-    private String getAccountIdentifierName(Xs2aAccountReference accountReference) {
-        if (accountReference.getIban() != null) {
-            return "iban";
-        } else if (accountReference.getBban() != null) {
-            return "bban";
-        } else if (accountReference.getMsisdn() != null) {
-            return "msisdn";
-        } else if (accountReference.getMaskedPan() != null) {
-            return "maskedPan";
-        } else {
-            return "pan";
-        }
     }
 }

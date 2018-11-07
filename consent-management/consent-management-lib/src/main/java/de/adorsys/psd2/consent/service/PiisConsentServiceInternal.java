@@ -44,13 +44,13 @@ public class PiisConsentServiceInternal implements PiisConsentService {
     }
 
     private List<PiisConsent> extractPiisConsentList(Currency currency, String accountIdentifierName, String accountIdentifier) {
-        if (accountIdentifierName.equals("iban")) {
+        if (accountIdentifierName.equals("IBAN")) {
             return piisConsentRepository.findAllByAccountsIbanAndAccountsCurrency(accountIdentifier, currency);
-        } else if (accountIdentifierName.equals("bban")) {
+        } else if (accountIdentifierName.equals("BBAN")) {
             return piisConsentRepository.findAllByAccountsBbanAndAccountsCurrency(accountIdentifier, currency);
-        } else if (accountIdentifierName.equals("msisdn")) {
+        } else if (accountIdentifierName.equals("MSISDN")) {
             return piisConsentRepository.findAllByAccountsMsisdnAndAccountsCurrency(accountIdentifier, currency);
-        } else if (accountIdentifierName.equals("maskedPan")) {
+        } else if (accountIdentifierName.equals("MASKED_PAN")) {
             return piisConsentRepository.findAllByAccountsMaskedPanAndAccountsCurrency(accountIdentifier, currency);
         } else {
             return piisConsentRepository.findAllByAccountsPanAndAccountsCurrency(accountIdentifier, currency);
