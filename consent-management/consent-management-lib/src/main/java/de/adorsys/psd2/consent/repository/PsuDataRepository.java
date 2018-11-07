@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.onlinebanking.web;
+package de.adorsys.psd2.consent.repository;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import de.adorsys.psd2.consent.domain.PsuData;
+import org.springframework.data.repository.CrudRepository;
 
-@RestController
-public class IndexController {
-
-    @GetMapping
-    public String index() {
-        return "^_^";
-    }
+public interface PsuDataRepository extends CrudRepository<PsuData, Long> {
 }
