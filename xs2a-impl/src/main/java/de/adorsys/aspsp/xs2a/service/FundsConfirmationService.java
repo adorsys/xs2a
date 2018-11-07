@@ -28,7 +28,6 @@ import de.adorsys.aspsp.xs2a.service.validator.PiisConsentValidationService;
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
