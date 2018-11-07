@@ -44,7 +44,7 @@ public class PiisConsentController {
     public ResponseEntity getPiisConsentListByAccountReference(
         @ApiParam(name = "currency", value = "3 capital letters of currency name.", example = "EUR")
         @PathVariable("currency") String currency,
-        @ApiParam(name = "accountIdentifierName", value = "Account identifier, can be either iban, bban, pan, msisdn or maskedpan.", example = "iban")
+        @ApiParam(name = "accountIdentifierName", value = "Account identifier, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
         @PathVariable("accountIdentifierName") String accountIdentifierName,
         @ApiParam(name = "accountIdentifier", value = "The value of account identifier.", example = "DE2310010010123456789")
         @PathVariable("accountIdentifier") String accountIdentifier) {
