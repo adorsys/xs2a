@@ -17,13 +17,11 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.psd2.consent.domain.ConsentType;
 import de.adorsys.psd2.consent.domain.payment.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +38,7 @@ import java.util.stream.Collectors;
 public class PisConsentMapper {
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
+    private final AccountReferenceMapper accountReferenceMapper;
 
     public PisConsent mapToPisConsent(PisConsentRequest request) {
         PisConsent consent = new PisConsent();
@@ -47,7 +46,6 @@ public class PisConsentMapper {
         consent.setTppInfo(tppInfoMapper.mapToTppInfo(request.getTppInfo()));
         consent.setPaymentType(request.getPaymentType());
         consent.setPisPaymentProduct(request.getPaymentProduct());
-        consent.setConsentType(ConsentType.PIS);
         consent.setConsentStatus(ConsentStatus.RECEIVED);
         consent.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
         return consent;
@@ -68,11 +66,11 @@ public class PisConsentMapper {
                 PisPaymentData pisPaymentData = new PisPaymentData();
                 pisPaymentData.setPaymentId(pm.getPaymentId());
                 pisPaymentData.setEndToEndIdentification(pm.getEndToEndIdentification());
-                pisPaymentData.setDebtorAccount(mapToPisAccountReference(pm.getDebtorAccount()));
+                pisPaymentData.setDebtorAccount(accountReferenceMapper.mapToAccountReferenceEntity(pm.getDebtorAccount()));
                 pisPaymentData.setUltimateDebtor(pm.getUltimateDebtor());
                 pisPaymentData.setAmount(pm.getAmount());
                 pisPaymentData.setCurrency(pm.getCurrency());
-                pisPaymentData.setCreditorAccount(mapToPisAccountReference(pm.getCreditorAccount()));
+                pisPaymentData.setCreditorAccount(accountReferenceMapper.mapToAccountReferenceEntity(pm.getCreditorAccount()));
                 pisPaymentData.setCreditorAgent(pm.getCreditorAgent());
                 pisPaymentData.setCreditorName(pm.getCreditorName());
                 pisPaymentData.setCreditorAddress(mapToPisAddress(pm.getCreditorAddress()));
@@ -129,11 +127,11 @@ public class PisConsentMapper {
                 PisPayment pisPayment = new PisPayment();
                 pisPayment.setPaymentId(pm.getPaymentId());
                 pisPayment.setEndToEndIdentification(pm.getEndToEndIdentification());
-                pisPayment.setDebtorAccount(mapToCmsAccountReference(pm.getDebtorAccount()));
+                pisPayment.setDebtorAccount(accountReferenceMapper.mapToCmsAccountReference(pm.getDebtorAccount()));
                 pisPayment.setUltimateDebtor(pm.getUltimateDebtor());
                 pisPayment.setCurrency(pm.getCurrency());
                 pisPayment.setAmount(pm.getAmount());
-                pisPayment.setCreditorAccount(mapToCmsAccountReference(pm.getCreditorAccount()));
+                pisPayment.setCreditorAccount(accountReferenceMapper.mapToCmsAccountReference(pm.getCreditorAccount()));
                 pisPayment.setCreditorAgent(pm.getCreditorAgent());
                 pisPayment.setCreditorName(pm.getCreditorName());
                 pisPayment.setCreditorAddress(mapToCmsAddress(pm.getCreditorAddress()));
@@ -177,18 +175,6 @@ public class PisConsentMapper {
             .orElse(null);
     }
 
-    private CmsAccountReference mapToCmsAccountReference(PisAccountReference pisAccountReference) {
-        return Optional.ofNullable(pisAccountReference)
-            .map(ref -> new CmsAccountReference(null,
-                ref.getIban(),
-                ref.getBban(),
-                ref.getPan(),
-                ref.getMaskedPan(),
-                ref.getMsisdn(),
-                ref.getCurrency())
-            ).orElse(null);
-    }
-
     private CmsAddress mapToCmsAddress(PisAddress pisAddress) {
         return Optional.ofNullable(pisAddress)
             .map(adr -> {
@@ -202,20 +188,6 @@ public class PisConsentMapper {
             }).orElse(null);
     }
 
-    private PisAccountReference mapToPisAccountReference(CmsAccountReference cmsAccountReference) {
-        return Optional.ofNullable(cmsAccountReference)
-            .map(ref -> {
-                PisAccountReference pisAccountReference = new PisAccountReference();
-                pisAccountReference.setIban(cmsAccountReference.getIban());
-                pisAccountReference.setBban(cmsAccountReference.getBban());
-                pisAccountReference.setPan(cmsAccountReference.getPan());
-                pisAccountReference.setMaskedPan(cmsAccountReference.getMaskedPan());
-                pisAccountReference.setMsisdn(cmsAccountReference.getMsisdn());
-                pisAccountReference.setCurrency(cmsAccountReference.getCurrency());
-
-                return pisAccountReference;
-            }).orElse(null);
-    }
 
     private PisAddress mapToPisAddress(CmsAddress cmsAddress) {
         return Optional.ofNullable(cmsAddress)
