@@ -27,7 +27,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class PiisConsent {
 
     @Column(name = "request_date_time", nullable = false)
     @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-10-25T15:30:35.035Z")
-    private LocalDateTime requestDateTime;
+    private OffsetDateTime requestDateTime;
 
     @Column(name = "last_action_date")
     @ApiModelProperty(value = "Date of the last action for this consent. The content is the local ASPSP date in ISODate Format", example = "2018-05-04")
