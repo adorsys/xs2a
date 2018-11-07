@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.domain.payment;
+package de.adorsys.psd2.consent.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -24,13 +24,13 @@ import javax.persistence.*;
 import java.util.Currency;
 
 @Data
-@Entity(name = "pis_account_reference")
-@ApiModel(description = "Pis account reference", value = "Pis account reference")
-public class PisAccountReference {
+@Entity(name = "account_reference")
+@ApiModel(description = "Account reference", value = "Account reference")
+public class AccountReferenceEntity {
     @Id
     @Column(name = "account_reference_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_account_reference_generator")
-    @SequenceGenerator(name = "pis_account_reference_generator", sequenceName = "pis_account_reference_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_reference_generator")
+    @SequenceGenerator(name = "account_reference_generator", sequenceName = "account_reference_id_seq")
     private Long id;
 
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
