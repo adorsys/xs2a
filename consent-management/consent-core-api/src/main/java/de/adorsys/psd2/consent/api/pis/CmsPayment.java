@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
+package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import org.springframework.stereotype.Service;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 
-import java.util.Optional;
-
-@Service
-public class SpiToXs2aTransactionalStatusMapper {
-
-    public TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
-        return Optional.ofNullable(spiTransactionStatus)
-                   .map(ts -> TransactionStatus.valueOf(ts.name()))
-                   .orElse(null);
-    }
+public interface CmsPayment {
+    String getPaymentId();
+    PaymentType getPaymentType();
+    PaymentProduct getPaymentProduct();
 }

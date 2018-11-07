@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     private AuthorisationMethodService authorisationMethodService;

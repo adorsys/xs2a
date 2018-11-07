@@ -33,6 +33,7 @@ import de.adorsys.aspsp.xs2a.service.payment.CreatePeriodicPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.CreateSinglePaymentService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -53,7 +54,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.*;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -113,8 +114,8 @@ public class PaymentServiceTest {
     public void setUp() {
         //Mapper
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RCVD)).thenReturn(RCVD);
-        when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.ACCP)).thenReturn(Xs2aTransactionStatus.ACCP);
-        when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(Xs2aTransactionStatus.RJCT);
+        when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.ACCP)).thenReturn(TransactionStatus.ACCP);
+        when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(TransactionStatus.RJCT);
         when(paymentMapper.mapToTransactionStatus(null)).thenReturn(null);
         when(xs2aPisConsentMapper.mapToXs2aPisConsent(any(), any())).thenReturn(getXs2aPisConsent());
         when(psuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
@@ -201,7 +202,7 @@ public class PaymentServiceTest {
         return reference;
     }
 
-    private BulkPaymentInitiationResponse getBulkResponses(Xs2aTransactionStatus status, MessageErrorCode errorCode) {
+    private BulkPaymentInitiationResponse getBulkResponses(TransactionStatus status, MessageErrorCode errorCode) {
         BulkPaymentInitiationResponse response = new BulkPaymentInitiationResponse();
         response.setTransactionStatus(status);
 
@@ -271,7 +272,7 @@ public class PaymentServiceTest {
         return ResponseObject.<BulkPaymentInitiationResponse>builder().body(getBulkResponses(RCVD, null)).build();
     }
 
-    private CancelPaymentResponse getCancelPaymentResponse(boolean authorisationRequired, Xs2aTransactionStatus transactionStatus) {
+    private CancelPaymentResponse getCancelPaymentResponse(boolean authorisationRequired, TransactionStatus transactionStatus) {
         CancelPaymentResponse response = new CancelPaymentResponse();
         response.setStartAuthorisationRequired(authorisationRequired);
         response.setTransactionStatus(transactionStatus);

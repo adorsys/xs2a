@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -50,5 +50,5 @@ public class BulkPayment {
     List<SinglePayment> payments;
 
     @ApiModelProperty(value = "Transaction status", example = "Pending")
-    private Xs2aTransactionStatus transactionStatus;
+    private TransactionStatus transactionStatus;
 }

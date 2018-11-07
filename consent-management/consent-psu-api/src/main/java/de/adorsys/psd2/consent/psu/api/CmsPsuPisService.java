@@ -16,10 +16,13 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
+import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 
 public interface CmsPsuPisService {
     /**
@@ -38,9 +41,8 @@ public interface CmsPsuPisService {
      * @param paymentId ID of Payment
      * @return Payment object if it was found and it corresponds to the user data given in parameter
      */
-    //TODO Create common Payment object in consent-core-api (analog to SpiPayment) and use it here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/456
     @NotNull
-    Object/*Payment*/ getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
+    Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
 
     /**
      * Updates a Status of Payment's autorisation by its ID and PSU ID
@@ -60,6 +62,5 @@ public interface CmsPsuPisService {
      * @param status    Status of Payment to be set
      * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
      */
-    //TODO Move Xs2aTransactionStatus to xs2a-core (de.adorsys.psd2.xs2a.core.pis.TransactionStatus) and use it here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/456
-    boolean updatePaymentStatus(@NotNull String paymentId, @NotNull Object/*TransactionStatus*/ status);
+    boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status);
 }

@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
@@ -61,7 +61,7 @@ public class CancelPaymentService {
         }
 
         CancelPaymentResponse cancelPaymentResponse = new CancelPaymentResponse();
-        cancelPaymentResponse.setTransactionStatus(Xs2aTransactionStatus.CANC);
+        cancelPaymentResponse.setTransactionStatus(TransactionStatus.CANC);
 
         return ResponseObject.<CancelPaymentResponse>builder()
                    .body(cancelPaymentResponse)
