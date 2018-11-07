@@ -19,7 +19,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <include file="migration/_typedef.xml"/>
+    <include relativeToChangelogFile="true" file="_typedef.xml"/>
 
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-1">
         <comment>Create sequence for ais consent id.</comment>
