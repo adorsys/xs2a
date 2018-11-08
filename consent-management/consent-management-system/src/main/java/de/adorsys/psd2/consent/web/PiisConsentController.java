@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.web;
 
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -46,7 +47,7 @@ public class PiisConsentController {
         @ApiParam(name = "currency", value = "3 capital letters of currency name.", example = "EUR")
         @PathVariable("currency") String currency,
         @ApiParam(name = "account-identifier-name", value = "Account identifier, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
-        @PathVariable("account-identifier-name") String accountIdentifierName,
+        @PathVariable("account-identifier-name") AccountReferenceSelector accountIdentifierName,
         @ApiParam(name = "account-identifier", value = "The value of account identifier.", example = "DE2310010010123456789")
         @PathVariable("account-identifier") String accountIdentifier) {
         List<CmsPiisValidationInfo> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(Currency.getInstance(currency), accountIdentifierName, accountIdentifier);

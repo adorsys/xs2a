@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PiisConsentRemoteUrls;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +42,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
     private final PiisConsentRemoteUrls remotePiisConsentUrls;
 
     @Override
-    public List<CmsPiisValidationInfo> getPiisConsentListByAccountIdentifier(Currency currency, String accountIdentifierName, String accountIdentifier) {
+    public List<CmsPiisValidationInfo> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier) {
         List<CmsPiisValidationInfo> response = Collections.emptyList();
 
         try {
@@ -52,7 +53,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
                 new ParameterizedTypeReference<List<CmsPiisValidationInfo>>() {
                 },
                 currency.toString(),
-                accountIdentifierName,
+                accountIdentifierName.name(),
                 accountIdentifier
             ).getBody();
         } catch (CmsRestException e) {

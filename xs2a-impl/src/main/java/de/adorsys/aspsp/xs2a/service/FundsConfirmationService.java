@@ -63,7 +63,7 @@ public class FundsConfirmationService {
 
         if (profileService.isPiisConsentSupported()) {
             AccountReferenceSelector selector = request.getPsuAccount().getUsedAccountReferenceSelector();
-            List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(request.getPsuAccount().getCurrency(), selector.name(), selector.getAccountReferenceValue(request.getPsuAccount()));
+            List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(request.getPsuAccount().getCurrency(), selector, selector.getAccountReferenceValue(request.getPsuAccount()));
             ResponseObject<String> validationResult = piisConsentValidationService.validatePiisConsentData(response);
 
             if (validationResult.hasError()) {

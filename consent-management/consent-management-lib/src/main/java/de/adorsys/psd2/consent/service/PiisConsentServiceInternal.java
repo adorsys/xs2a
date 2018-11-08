@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.domain.piis.PiisConsent;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
+
+import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector.*;
 
 @Slf4j
 @Service
@@ -39,21 +42,21 @@ public class PiisConsentServiceInternal implements PiisConsentService {
     private final PiisConsentMapper piisConsentMapper;
 
     @Override
-    public List<CmsPiisValidationInfo> getPiisConsentListByAccountIdentifier(Currency currency, String accountIdentifierName, String accountIdentifier) {
+    public List<CmsPiisValidationInfo> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier) {
         List<PiisConsent> consents = extractPiisConsentList(currency, accountIdentifierName, accountIdentifier);
         return piisConsentMapper.mapToListCmsPiisValidationInfo(consents);
     }
 
-    private List<PiisConsent> extractPiisConsentList(Currency currency, String accountIdentifierName, String accountIdentifier) {
-        if (accountIdentifierName.equals("IBAN")) {
+    private List<PiisConsent> extractPiisConsentList(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier) {
+        if (accountIdentifierName == IBAN) {
             return piisConsentRepository.findAllByAccountsIbanAndAccountsCurrency(accountIdentifier, currency);
-        } else if (accountIdentifierName.equals("BBAN")) {
+        } else if (accountIdentifierName == BBAN) {
             return piisConsentRepository.findAllByAccountsBbanAndAccountsCurrency(accountIdentifier, currency);
-        } else if (accountIdentifierName.equals("MSISDN")) {
+        } else if (accountIdentifierName == MSISDN) {
             return piisConsentRepository.findAllByAccountsMsisdnAndAccountsCurrency(accountIdentifier, currency);
-        } else if (accountIdentifierName.equals("MASKED_PAN")) {
+        } else if (accountIdentifierName == MASKED_PAN) {
             return piisConsentRepository.findAllByAccountsMaskedPanAndAccountsCurrency(accountIdentifier, currency);
-        } else if (accountIdentifierName.equals("PAN")) {
+        } else if (accountIdentifierName == PAN) {
             return piisConsentRepository.findAllByAccountsPanAndAccountsCurrency(accountIdentifier, currency);
         } else {
             return Collections.emptyList();
