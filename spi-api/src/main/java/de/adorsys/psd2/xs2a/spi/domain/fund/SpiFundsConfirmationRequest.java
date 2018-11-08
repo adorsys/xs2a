@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.client.cms.model.pis;
+package de.adorsys.psd2.xs2a.spi.domain.fund;
 
-import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
-import de.adorsys.psd2.consent.client.core.HttpMethod;
-import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import lombok.Data;
 
-public class GetPaymentIdByEncryptedStringMethod extends RestCmsRequestMethod<Void, String> {
-    private static final String GET_PIS_CONSENT_ASPSP_DATA_URI = "api/v1/pis/payment/{payment-id}";
-
-    public GetPaymentIdByEncryptedStringMethod(HttpUriParams uriParams) {
-        super(HttpMethod.GET, GET_PIS_CONSENT_ASPSP_DATA_URI, uriParams);
-    }
+@Data
+public class SpiFundsConfirmationRequest {
+    private SpiAccountReference psuAccount;
+    private SpiAmount instructedAmount;
+    private String cardNumber;
+    private String payee;
 }
-

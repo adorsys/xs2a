@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.fund;
+package de.adorsys.psd2.consent.config;
 
-//TODO A core class to implement as a part of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
-public class SpiFundsConfirmationConsent {
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class PiisConsentRemoteUrls {
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
+
+    /**
+     * Returns URL-string to CMS endpoint that gets piis validation data
+     *
+     * @return String
+     */
+    public String getPiisConsent() {
+        return consentServiceBaseUrl + "/piis/consent/{currency}/{account-identifier-name}/{account-identifier}";
+    }
 }

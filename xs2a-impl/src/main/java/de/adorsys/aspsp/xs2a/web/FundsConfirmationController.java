@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
 import de.adorsys.aspsp.xs2a.service.mapper.FundsConfirmationModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -35,13 +36,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @Api(value = "v1", description = "Provides access to the funds confirmation", tags = {"Confirmation of Funds Service"})
 public class FundsConfirmationController implements FundsConfirmationApi {
-
     private final ResponseMapper responseMapper;
     private final FundsConfirmationService fundsConfirmationService;
     private final FundsConfirmationModelMapper fundsConfirmationModelMapper;
 
     @Override
     public ResponseEntity checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
-        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body)));
+        ResponseObject responseObject = fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body));
+        return responseMapper.ok(responseObject);
     }
 }

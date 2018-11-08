@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.client.cms.model.pis;
+package de.adorsys.psd2.consent.client.cms.model.piis;
 
 import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
 import de.adorsys.psd2.consent.client.core.HttpMethod;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 
-public class GetPaymentIdByEncryptedStringMethod extends RestCmsRequestMethod<Void, String> {
-    private static final String GET_PIS_CONSENT_ASPSP_DATA_URI = "api/v1/pis/payment/{payment-id}";
+import java.util.List;
 
-    public GetPaymentIdByEncryptedStringMethod(HttpUriParams uriParams) {
-        super(HttpMethod.GET, GET_PIS_CONSENT_ASPSP_DATA_URI, uriParams);
+public class GetPiisConsentListByAccountReferenceMethod extends RestCmsRequestMethod<Void, List> {
+    private static final String GET_PIIS_CONSENT_LIST_BY_ACCOUNT_REFERENCE_URI = "api/v1/piis/consent/{currency}/{account-identifier-name}/{account-identifier}";
+
+    public GetPiisConsentListByAccountReferenceMethod(HttpUriParams uriParams) {
+        super(HttpMethod.GET, GET_PIIS_CONSENT_LIST_BY_ACCOUNT_REFERENCE_URI, uriParams);
     }
 }
-

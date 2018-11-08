@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.client.cms.model.pis;
+package de.adorsys.psd2.consent.api.piis;
 
-import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
-import de.adorsys.psd2.consent.client.core.HttpMethod;
-import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import lombok.Data;
 
-public class GetPaymentIdByEncryptedStringMethod extends RestCmsRequestMethod<Void, String> {
-    private static final String GET_PIS_CONSENT_ASPSP_DATA_URI = "api/v1/pis/payment/{payment-id}";
+import java.time.LocalDate;
 
-    public GetPaymentIdByEncryptedStringMethod(HttpUriParams uriParams) {
-        super(HttpMethod.GET, GET_PIS_CONSENT_ASPSP_DATA_URI, uriParams);
-    }
+@Data
+public class CmsPiisValidationInfo {
+    private String consentId;
+    private int frequencyPerDay;
+    private String tppInfoId;
+    private LocalDate expireDate;
+    private ConsentStatus consentStatus;
+    private PiisConsentTppAccessType piisConsentTppAccessType;
+
 }
-
