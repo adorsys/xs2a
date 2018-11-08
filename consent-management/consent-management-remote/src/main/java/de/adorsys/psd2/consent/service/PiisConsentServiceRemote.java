@@ -56,7 +56,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
                 accountIdentifier
             ).getBody();
         } catch (CmsRestException e) {
-            log.error("Failed to retrieve piis consent validation data, message: {}, stackTrace: {}.", e.getMessage(), e);
+            log.error("Failed to retrieve piis consent validation data!");
         }
 
         return response;

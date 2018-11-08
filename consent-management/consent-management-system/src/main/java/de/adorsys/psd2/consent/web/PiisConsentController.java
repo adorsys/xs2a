@@ -44,10 +44,10 @@ public class PiisConsentController {
     public ResponseEntity getPiisConsentListByAccountReference(
         @ApiParam(name = "currency", value = "3 capital letters of currency name.", example = "EUR")
         @PathVariable("currency") String currency,
-        @ApiParam(name = "accountIdentifierName", value = "Account identifier, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
-        @PathVariable("accountIdentifierName") String accountIdentifierName,
-        @ApiParam(name = "accountIdentifier", value = "The value of account identifier.", example = "DE2310010010123456789")
-        @PathVariable("accountIdentifier") String accountIdentifier) {
+        @ApiParam(name = "account-identifier-name", value = "Account identifier, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
+        @PathVariable("account-identifier-name") String accountIdentifierName,
+        @ApiParam(name = "account-identifier", value = "The value of account identifier.", example = "DE2310010010123456789")
+        @PathVariable("account-identifier") String accountIdentifier) {
         List<CmsPiisValidationInfo> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(Currency.getInstance(currency), accountIdentifierName, accountIdentifier);
         return responseList.isEmpty()
                    ? ResponseEntity.notFound().build()
