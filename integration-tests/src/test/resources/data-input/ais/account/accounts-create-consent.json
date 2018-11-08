@@ -2,6 +2,7 @@
   "access": {
     "accounts": [
       {
+        "resourceId": "11111-999999999",
         "currency": "EUR",
         "iban": "DE89370400440532013000"
       }
@@ -9,12 +10,14 @@
 
     "balances": [
       {
+        "resourceId": "11111-999999999",
         "currency": "EUR",
         "iban": "DE89370400440532013000"
       }
     ],
     "transactions": [
       {
+        "resourceId": "11111-999999999",
         "currency": "EUR",
         "iban": "DE89370400440532013000"
       }

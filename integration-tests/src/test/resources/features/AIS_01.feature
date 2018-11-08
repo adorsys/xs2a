@@ -104,7 +104,6 @@ Feature: Account Information Service
     # Account Request                                                                                                  #
     #                                                                                                                  #
     ####################################################################################################################
-    @TestTag
     Scenario Outline: Request account list successfully
         Given PSU already has an existing valid consent <consent-id>
         And wants to get a list of accounts using <account-resource>
@@ -144,16 +143,15 @@ Feature: Account Information Service
             | account-resource                      | consent                              |
             | accountList-with-expired-consent.json | accounts-create-expired-consent.json |
 
-    @ignore
     Scenario Outline: Request account details successfully
-        Given PSU already has an existing consent <consent-id>
+        Given PSU already has an existing valid consent <consent-id>
         And account id <account-id>
-        And wants to get a list of accounts using <account-resource>
+        And wants to get account details using <account-resource>
         When PSU requests the account details
         Then a successful response code and the appropriate details of accounts get returned
         Examples:
-            | account-resource              | account-id                           | consent-id                   |
-            | accountDetail-successful.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
+            | account-resource              | account-id      | consent-id                   |
+            | accountDetail-successful.json | 11111-999999999 | account/accounts-create-consent.json |
 
     @ignore
     Scenario Outline: Request account details errorful

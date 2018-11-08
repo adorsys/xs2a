@@ -25,13 +25,14 @@ import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
+import de.adorsys.psd2.model.AccountDetails;
 import de.adorsys.psd2.model.AccountList;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -43,58 +44,61 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @FeatureFileSteps
-public class AccountListRequestSuccessfulSteps {
+public class AccountDetailRequestSuccessfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<HashMap, AccountList> context;
+    private Context<HashMap, AccountDetails> context;
 
     @Autowired
     private ObjectMapper mapper;
 
 
-
     //@Given("^PSU already has an existing (.*) consent (.*)$")
     //in commonStep
 
-    @And("^wants to get a list of accounts using (.*)$")
-    public void wants_to_get_a_list_of_accounts_using(String dataFileName) throws IOException {
-        TestData<HashMap, AccountList> data = mapper.readValue(
+   @And("^account id (.*)$")
+    public void account_id(String accountId)  {
+        context.setRessourceId(accountId);
+    }
+
+    @And("^wants to get account details using (.*)$")
+    public void wants_to_get_account_details_using(String dataFileName) throws IOException {
+        TestData<HashMap, AccountDetails> data = mapper.readValue(
                 resourceToString("/data-input/ais/account/" + dataFileName, UTF_8),
-                new TypeReference<TestData<HashMap, AccountList>>() {});
+                new TypeReference<TestData<HashMap, AccountDetails>>() {});
 
         context.setTestData(data);
         context.getTestData().getRequest().getHeader().put("Consent-ID", context.getConsentId());
     }
 
-    @When("^PSU requests the list of accounts$")
-    public void psu_requests_the_list_of_accounts() {
+    @When("^PSU requests the account details$")
+    public void psu_requests_the_account_details() {
         HttpEntity entity = HttpEntityUtils.getHttpEntity(context.getTestData().getRequest(),
                 context.getAccessToken());
-        log.info("////entity request list account////  "+entity.toString());
-        ResponseEntity<AccountList> response = restTemplate.exchange(
-                context.getBaseUrl() + "/accounts",
+        log.info("////entity request account detail////  "+entity.toString());
+        ResponseEntity<AccountDetails> response = restTemplate.exchange(
+                context.getBaseUrl() + "/accounts/"+context.getRessourceId()+"?withBalance=false",
                 HttpMethod.GET,
                 entity,
-                AccountList.class);
+                AccountDetails.class);
 
         context.setActualResponse(response);
     }
 
-    @Then("^a successful response code and the appropriate list of accounts get returned$")
-    public void a_successful_response_code_and_the_appropriate_list_of_accounts_get_returned() {
-        ResponseEntity<AccountList> actualResponse = context.getActualResponse();
-        AccountList givenResponseBody = context.getTestData().getResponse().getBody();
+    @Then("^a successful response code and the appropriate details of accounts get returned$")
+    public void a_successful_response_code_and_the_appropriate_details_of_accounts_get_returned() {
+        ResponseEntity<AccountDetails> actualResponse = context.getActualResponse();
+        AccountDetails givenResponseBody = context.getTestData().getResponse().getBody();
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        assertThat(actualResponse.getBody().getAccounts().get(0).getIban(), is(givenResponseBody.getAccounts().get(0).getIban()));
+        assertThat(actualResponse.getBody().getIban(), is(givenResponseBody.getIban()));
+        assertThat(actualResponse.getBody().getResourceId(), is(givenResponseBody.getResourceId()));
     }
 
 }
