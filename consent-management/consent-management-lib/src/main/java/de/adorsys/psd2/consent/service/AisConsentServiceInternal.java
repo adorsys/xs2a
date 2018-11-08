@@ -17,20 +17,18 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
-import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
-import de.adorsys.psd2.consent.repository.AspspConsentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.security.DecryptedData;
-import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -50,7 +48,8 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
+@Transactional(readOnly = true)
+// TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
@@ -59,7 +58,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final PsuDataMapper psuDataMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final SecurityDataService securityDataService;
-    private final AspspConsentDataRepository aspspConsentDataRepository;
+    private final AspspDataService aspspDataService;
 
     /**
      * Create AIS consent
@@ -163,8 +162,19 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     public Optional<CmsAspspConsentDataBase64> getAspspConsentData(String encryptedConsentId) {
-        return getActualAisConsent(encryptedConsentId)
-                   .map(aisConsent -> getConsentAspspData(aisConsent, encryptedConsentId));
+        Optional<AisConsent> aisConsent = getActualAisConsent(encryptedConsentId);
+
+        if (!aisConsent.isPresent()) {
+            return Optional.empty();
+        }
+
+        Optional<String> aspspConsentDataBase64 = aspspDataService.readAspspConsentData(encryptedConsentId)
+                                                      .map(AspspConsentData::getAspspConsentData)
+                                                      .map(Base64.getEncoder()::encodeToString);
+
+        CmsAspspConsentDataBase64 cmsAspspConsentDataBase64 = new CmsAspspConsentDataBase64(encryptedConsentId, aspspConsentDataBase64.orElse(null));
+
+        return Optional.of(cmsAspspConsentDataBase64);
     }
 
     /**
@@ -177,18 +187,22 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<String> saveAspspConsentDataInAisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
-        Optional<AisConsent> consent = getActualAisConsent(encryptedConsentId);
-        if (!consent.isPresent()) {
+        Optional<AisConsent> aisConsent = getActualAisConsent(encryptedConsentId);
+
+        if (!aisConsent.isPresent()) {
             return Optional.empty();
         }
 
-        Optional<EncryptedData> encryptedConsentData = securityDataService.encryptConsentData(encryptedConsentId, request.getAspspConsentDataBase64());
-        if (!encryptedConsentData.isPresent()) {
-            return Optional.empty();
+        Optional<AspspConsentData> aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
+                                                          .map(Base64.getDecoder()::decode)
+                                                          .map(dta -> new AspspConsentData(dta, encryptedConsentId));
+        if (aspspConsentData.isPresent()) {
+            return aspspDataService.updateAspspConsentData(aspspConsentData.get())
+                       ? Optional.of(encryptedConsentId)
+                       : Optional.empty();
         }
 
-        updateConsentData(consent.get().getExternalId(), encryptedConsentData.get().getData());
-        return Optional.of(encryptedConsentId);
+        return Optional.empty();
     }
 
     /**
@@ -270,24 +284,6 @@ public class AisConsentServiceInternal implements AisConsentService {
         holder.fillAccess(access.getBalances(), BALANCE);
         holder.fillAccess(access.getTransactions(), TRANSACTION);
         return holder.getAccountAccesses();
-    }
-
-    private CmsAspspConsentDataBase64 getConsentAspspData(AisConsent consent, String encryptedConsentId) {
-        return aspspConsentDataRepository.findByConsentId(consent.getExternalId())
-                   .map(AspspConsentDataEntity::getData)
-                   .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
-                   .map(DecryptedData::getData)
-                   .map(bytes -> Base64.getEncoder().encodeToString(bytes))
-                   .map(str64 -> new CmsAspspConsentDataBase64(encryptedConsentId, str64))
-                   .orElseGet(() -> new CmsAspspConsentDataBase64(encryptedConsentId, null));
-    }
-
-    private AspspConsentDataEntity updateConsentData(String externalId, byte[] consentData) {
-        AspspConsentDataEntity aspspConsentDataEntity = aspspConsentDataRepository
-                                                            .findByConsentId(externalId)
-                                                            .orElseGet(() -> new AspspConsentDataEntity(externalId));
-        aspspConsentDataEntity.setData(consentData);
-        return aspspConsentDataRepository.save(aspspConsentDataEntity);
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
