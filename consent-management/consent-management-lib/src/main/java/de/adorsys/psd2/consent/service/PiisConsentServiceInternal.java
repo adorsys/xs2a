@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class PiisConsentServiceInternal implements PiisConsentService {
         } else if (accountIdentifierName.equals("PAN")) {
             return piisConsentRepository.findAllByAccountsPanAndAccountsCurrency(accountIdentifier, currency);
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 }
