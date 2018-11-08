@@ -6,7 +6,8 @@
     },
     "body": {
       "access": {
-        "accounts": [
+        "accounts": [4
+
           {
             "currency": "EUR",
             "iban": "DE52500105173911841934"

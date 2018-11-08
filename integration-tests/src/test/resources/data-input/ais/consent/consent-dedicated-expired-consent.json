@@ -37,8 +37,8 @@
     "body": [
       {
         "category": "ERROR",
-        "code": "FORMAT_ERROR",
-        "text": "Format of certain request fields are not matching the XS2A requirements."
+        "code": "PERIOD_INVALID",
+        "text": "Requested time period out of bound."
       }
     ]
   }
