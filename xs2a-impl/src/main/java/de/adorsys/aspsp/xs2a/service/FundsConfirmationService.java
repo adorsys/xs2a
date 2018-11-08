@@ -40,6 +40,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
+
 @Service
 @AllArgsConstructor
 public class FundsConfirmationService {
@@ -63,6 +65,13 @@ public class FundsConfirmationService {
 
         if (profileService.isPiisConsentSupported()) {
             AccountReferenceSelector selector = request.getPsuAccount().getUsedAccountReferenceSelector();
+
+            if (selector == null) {
+                return ResponseObject.<FundsConfirmationResponse>builder()
+                           .fail(new MessageError(FORMAT_ERROR))
+                           .build();
+            }
+
             List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(request.getPsuAccount().getCurrency(), selector, selector.getAccountReferenceValue(request.getPsuAccount()));
             ResponseObject<String> validationResult = piisConsentValidationService.validatePiisConsentData(response);
 
