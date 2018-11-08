@@ -1,0 +1,32 @@
+@startuml
+skinparam componentStyle uml2
+
+component "TPP" as TPP
+component "ASPSP" as ASPSP
+component "ASPSP Auth" as auth
+component "Certification\nAuthority" as CA
+interface XS2A #white
+
+TPP .> XS2A : access\nASPSP
+
+component "XS2A Service \n" {
+    component "XS2A-Impl" as xs2aimpl #white
+    component "CMS" as cms #white
+    component "ASPSP\nProfile" as profile #white
+    interface "SPI-API" as spi #white
+    component "ASPSP-Connector" as connector #lightblue
+
+    XS2A - xs2aimpl
+    xs2aimpl -- spi
+    spi <|--connector
+    xs2aimpl .> cms : manage\nconsent
+    xs2aimpl .> profile
+    cms ..> profile
+
+    CA <.. xs2aimpl : validate\nTPP
+
+    connector .> ASPSP : process\nrequest
+    connector ..> auth : authorise\nuser
+}
+
+@enduml

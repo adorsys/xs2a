@@ -19,9 +19,11 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.repository.AspspConsentDataRepository;
 import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
@@ -41,11 +43,11 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PisConsentServiceTest {
-
+public class PisConsentServiceInternalTest {
     @InjectMocks
     private PisConsentServiceInternal pisConsentService;
     @Mock
@@ -58,6 +60,8 @@ public class PisConsentServiceTest {
     private PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     @Mock
     SecurityDataService securityDataService;
+    @Mock
+    private AspspConsentDataRepository aspspConsentDataRepository;  // TODO remove it after AspspConsentDataServiceTest is created https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/470
 
     private PisConsent pisConsent;
     private final long CONSENT_ID = 1;
@@ -65,6 +69,7 @@ public class PisConsentServiceTest {
     private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
     private final String paymentId = "5bbde955ca10e8e4035a10c2";
     private final String paymentIdWrong = "5bbdcb28ca10e8e14a41b12f";
+    private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
     private PisPaymentData pisPaymentData;
     private List<PisConsentAuthorization> pisConsentAuthorizationList = new ArrayList();
     private CmsAspspConsentDataBase64 cmsAspspConsentDataBase64;
@@ -79,7 +84,8 @@ public class PisConsentServiceTest {
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
         when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, cmsAspspConsentDataBase64.getAspspConsentDataBase64()))
-            .thenReturn(Optional.of(new EncryptedData("test data".getBytes())));
+            .thenReturn(Optional.of(new EncryptedData(ENCRYPTED_CONSENT_DATA)));
+        when(aspspConsentDataRepository.findByConsentId(eq(EXTERNAL_CONSENT_ID))).thenReturn(Optional.empty());
     }
 
     @Test
@@ -88,7 +94,8 @@ public class PisConsentServiceTest {
         // When
         when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(pisConsent));
         when(pisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
-        when(pisConsentRepository.save(any(PisConsent.class))).thenReturn(pisConsent);
+        when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class)))
+            .thenReturn(getAspspConsentData());
 
         // Then
         CmsAspspConsentDataBase64 request = this.buildUpdateBlobRequest();
@@ -135,7 +142,8 @@ public class PisConsentServiceTest {
     }
 
     private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {
-        return new CmsAspspConsentDataBase64("encryptedId", Base64.getEncoder().encodeToString("decrypted consent data".getBytes()));
+        return new CmsAspspConsentDataBase64("encryptedId",
+                                             Base64.getEncoder().encodeToString("decrypted consent data".getBytes()));
     }
 
     private PisConsentAuthorization buildPisConsentAuthorisation(String externalId) {
@@ -149,6 +157,13 @@ public class PisConsentServiceTest {
         paymentData.setPaymentId(paymentId);
         paymentData.setConsent(pisConsent);
         return paymentData;
+    }
+
+    private AspspConsentDataEntity getAspspConsentData() {
+        AspspConsentDataEntity consentData = new AspspConsentDataEntity();
+        consentData.setConsentId(EXTERNAL_CONSENT_ID);
+        consentData.setData(ENCRYPTED_CONSENT_DATA);
+        return consentData;
     }
 
 

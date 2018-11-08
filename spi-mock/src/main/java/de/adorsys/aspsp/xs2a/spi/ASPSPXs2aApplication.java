@@ -18,19 +18,10 @@ package de.adorsys.aspsp.xs2a.spi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2"})
-/* Needs only for CMS embeddable mode */
-@EnableScheduling
-@EnableTransactionManagement
-@EntityScan("de.adorsys.psd2.consent.domain")
-@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository"})
 public class ASPSPXs2aApplication {
 
     public static void main(String[] args) {

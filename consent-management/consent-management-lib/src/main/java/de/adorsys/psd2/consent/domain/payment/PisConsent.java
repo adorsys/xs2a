@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.domain.ConsentType;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfo;
@@ -80,9 +79,4 @@ public class PisConsent {
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
-
-    @Lob
-    @JsonIgnore
-    @Column(name = "aspsp_consent_data")
-    private byte[] aspspConsentData;
 }

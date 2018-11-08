@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.onlinebanking.web;
+package de.adorsys.psd2.consent.repository;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
+import org.springframework.data.repository.CrudRepository;
 
-@RestController
-public class IndexController {
+import java.util.Optional;
 
-    @GetMapping
-    public String index() {
-        return "^_^";
-    }
+public interface AspspConsentDataRepository extends CrudRepository<AspspConsentDataEntity, String> {
+    Optional<AspspConsentDataEntity> findByConsentId(String externalConsentId);
 }
