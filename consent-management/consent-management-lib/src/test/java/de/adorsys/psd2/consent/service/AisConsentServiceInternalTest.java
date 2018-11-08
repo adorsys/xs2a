@@ -51,8 +51,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -137,7 +136,7 @@ public class AisConsentServiceInternalTest {
         AisAccountAccessInfo info = new AisAccountAccessInfo();
         info.setAccounts(Arrays.asList(
             new AccountInfo(UUID.randomUUID().toString(), "iban-1", "EUR"),
-            new AccountInfo(UUID.randomUUID().toString(),"iban-1", "USD")
+            new AccountInfo(UUID.randomUUID().toString(), "iban-1", "USD")
         ));
         Optional<String> consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
@@ -146,10 +145,10 @@ public class AisConsentServiceInternalTest {
         // Then
         info = new AisAccountAccessInfo();
         info.setAccounts(Arrays.asList(
-            new AccountInfo(UUID.randomUUID().toString(),"iban-1", "EUR"),
-            new AccountInfo(UUID.randomUUID().toString(),"iban-2", "USD"),
-            new AccountInfo(UUID.randomUUID().toString(),"iban-2", "EUR"),
-            new AccountInfo(UUID.randomUUID().toString(),"iban-3", "USD")
+            new AccountInfo(UUID.randomUUID().toString(), "iban-1", "EUR"),
+            new AccountInfo(UUID.randomUUID().toString(), "iban-2", "USD"),
+            new AccountInfo(UUID.randomUUID().toString(), "iban-2", "EUR"),
+            new AccountInfo(UUID.randomUUID().toString(), "iban-3", "USD")
         ));
         consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
@@ -167,14 +166,10 @@ public class AisConsentServiceInternalTest {
         CmsAspspConsentDataBase64 request = this.buildUpdateBlobRequest();
         Function<String, byte[]> decode = Base64.getDecoder()::decode;
         AspspConsentData aspspConsentDataConsentExist = new AspspConsentData(decode.apply(request.getAspspConsentDataBase64()), EXTERNAL_CONSENT_ID);
-        AspspConsentData aspspConsentDataConsentNotExist = new AspspConsentData(decode.apply(request.getAspspConsentDataBase64()), EXTERNAL_CONSENT_ID_NOT_EXIST);
         when(aspspDataService.updateAspspConsentData(aspspConsentDataConsentExist)).thenReturn(true);
-        when(aspspDataService.updateAspspConsentData(aspspConsentDataConsentNotExist)).thenReturn(true);
-
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
-        when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class)))
-            .thenReturn(getAspspConsentData());
+        when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class))).thenReturn(getAspspConsentData());
 
         // Then
         Optional<String> consentId = aisConsentService.saveAspspConsentDataInAisConsent(EXTERNAL_CONSENT_ID, request);
@@ -215,7 +210,7 @@ public class AisConsentServiceInternalTest {
     }
 
     private List<AccountInfo> buildAccountsInfo() {
-        return Collections.singletonList(new AccountInfo(UUID.randomUUID().toString(),"iban-1", "EUR"));
+        return Collections.singletonList(new AccountInfo(UUID.randomUUID().toString(), "iban-1", "EUR"));
     }
 
     private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {
@@ -224,10 +219,10 @@ public class AisConsentServiceInternalTest {
 
     private AisAccountConsent buildSpiAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
-                                     null, false,
-                                     null, 0,
-                                     null, null,
-                                     false, false, null, null, null);
+            null, false,
+            null, 0,
+            null, null,
+            false, false, null, null, null);
     }
 
     private AspspConsentDataEntity getAspspConsentData() {

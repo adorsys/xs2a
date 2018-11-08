@@ -60,6 +60,7 @@ public class AspspDataServiceInternalTest {
         when(securityDataService.decryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA)).thenReturn(Optional.of(new DecryptedData(ENCRYPTED_CONSENT_DATA)));
         when(aspspConsentDataRepository.findByConsentId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(aspspConsentDataEntity));
         when(aspspConsentDataRepository.findByConsentId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
+        when(aspspConsentDataRepository.save(aspspConsentDataEntity)).thenReturn(aspspConsentDataEntity);
     }
 
     @Test

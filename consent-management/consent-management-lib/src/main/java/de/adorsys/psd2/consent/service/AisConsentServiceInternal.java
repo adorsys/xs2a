@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +48,8 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
+@Transactional(readOnly = true)
+// TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
@@ -193,12 +193,16 @@ public class AisConsentServiceInternal implements AisConsentService {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(request.getAspspConsentDataBase64())
-                   .map(Base64.getDecoder()::decode)
-                   .map(aspspConsentData -> new AspspConsentData(aspspConsentData, encryptedConsentId))
-                   .map(aspspDataService::updateAspspConsentData)
-                   .filter(BooleanUtils::isTrue)
-                   .map(updated -> encryptedConsentId);
+        Optional<AspspConsentData> aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
+                                                          .map(Base64.getDecoder()::decode)
+                                                          .map(dta -> new AspspConsentData(dta, encryptedConsentId));
+        if (aspspConsentData.isPresent()) {
+            return aspspDataService.updateAspspConsentData(aspspConsentData.get())
+                       ? Optional.of(encryptedConsentId)
+                       : Optional.empty();
+        }
+
+        return Optional.empty();
     }
 
     /**
