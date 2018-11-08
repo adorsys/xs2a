@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.fund;
+package de.adorsys.psd2.xs2a.spi.domain.fund;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotNull;
 
 @Data
-@NoArgsConstructor
-public class FundsConfirmationRequest {
-
+public class SpiFundsConfirmationRequest {
+    private SpiAccountReference psuAccount;
+    private SpiAmount instructedAmount;
     private String cardNumber;
-
-    @NotNull
-    private AccountReference psuAccount;
-
     private String payee;
-
-    @NotNull
-    private Xs2aAmount instructedAmount;
 }
-

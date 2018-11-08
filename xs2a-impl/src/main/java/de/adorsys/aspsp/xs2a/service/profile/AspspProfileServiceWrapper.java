@@ -164,6 +164,10 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().isPaymentCancellationAuthorizationMandated();
     }
 
+    public boolean isPiisConsentSupported() {
+        return readAspspSettings().isPiisConsentSupported();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

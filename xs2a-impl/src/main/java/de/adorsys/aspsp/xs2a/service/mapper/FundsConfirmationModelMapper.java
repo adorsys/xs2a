@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -37,14 +37,14 @@ public class FundsConfirmationModelMapper {
                        FundsConfirmationRequest fundsConfirmationRequest = new FundsConfirmationRequest();
                        fundsConfirmationRequest.setCardNumber(conf.getCardNumber());
                        fundsConfirmationRequest.setPayee(conf.getPayee());
-                       fundsConfirmationRequest.setPsuAccount(mapToXs2aAccountReferenceInner(conf.getAccount()));
+                       fundsConfirmationRequest.setPsuAccount(mapToAccountReferenceInner(conf.getAccount()));
                        fundsConfirmationRequest.setInstructedAmount(AmountModelMapper.mapToXs2aAmount(conf.getInstructedAmount()));
                        return fundsConfirmationRequest;
                    })
                    .orElse(null);
     }
 
-    private Xs2aAccountReference mapToXs2aAccountReferenceInner(Object reference) {
-        return objectMapper.convertValue(reference, Xs2aAccountReference.class);
+    private AccountReference mapToAccountReferenceInner(Object reference) {
+        return objectMapper.convertValue(reference, AccountReference.class);
     }
 }

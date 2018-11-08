@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.fund;
+package de.adorsys.psd2.consent.config;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
+@Component
+public class PiisConsentRemoteUrls {
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
 
-@Data
-@NoArgsConstructor
-public class FundsConfirmationRequest {
-
-    private String cardNumber;
-
-    @NotNull
-    private AccountReference psuAccount;
-
-    private String payee;
-
-    @NotNull
-    private Xs2aAmount instructedAmount;
+    /**
+     * Returns URL-string to CMS endpoint that gets piis validation data
+     *
+     * @return String
+     */
+    public String getPiisConsent() {
+        return consentServiceBaseUrl + "/piis/consent/{currency}/{account-identifier-name}/{account-identifier}";
+    }
 }
-
