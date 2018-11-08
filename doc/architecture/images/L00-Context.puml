@@ -1,0 +1,19 @@
+@startuml
+
+skinparam componentStyle uml2
+
+actor PSU
+component "TPP" as TPP
+component "ASPSP" as ASPSP
+component "ASPSP Auth" as auth
+component "XS2A Service" as xs2a #white
+component "Certification\nAuthority" as CA
+
+PSU ..> TPP : request\na service
+TPP .> xs2a : access\nASPSP
+xs2a .> ASPSP : process\nrequest
+CA <.. xs2a : validate\nTPP
+xs2a ..> auth : authorise\nuser
+ASPSP <.. auth : process\nrequest
+
+@enduml

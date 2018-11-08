@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
@@ -93,11 +92,11 @@ public class PaymentModelMapperPsd2 {
         }
     }
 
-    public static PaymentInitiationStatusResponse200Json mapToStatusResponse12(Xs2aTransactionStatus status) {
+    public static PaymentInitiationStatusResponse200Json mapToStatusResponse12(de.adorsys.psd2.xs2a.core.pis.TransactionStatus status) {
         return new PaymentInitiationStatusResponse200Json().transactionStatus(mapToTransactionStatus12(status));
     }
 
-    public static TransactionStatus mapToTransactionStatus12(Xs2aTransactionStatus responseObject) {
+    public static TransactionStatus mapToTransactionStatus12(de.adorsys.psd2.xs2a.core.pis.TransactionStatus responseObject) {
         return Optional.ofNullable(responseObject)
                    .map(r -> TransactionStatus.valueOf(r.name()))
                    .orElse(null);

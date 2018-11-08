@@ -13,7 +13,7 @@
 - SCA method for PSU is added
 
 
-## version 1.8 (Planned date: 28.09.2018)
+## version 1.8 (release date: 28.09.2018)
 - Update bulk payments and consent requests according to specification 1.2
 - Support of Embedded SCA approach for bulk payment.
 - Support of Embedded SCA approach for periodic payment.
@@ -26,7 +26,7 @@
 - Remove empty links in the responses.
 
 
-## version 1.9 (planned date: 11.10.2018)
+## version 1.9 (release date: 11.10.2018)
 - Confirmation of funds request. Interface on side of SPI is added.
 - Validation of TPP data is added.
 - Change logic of implicit/explicit method of authorisation
@@ -36,4 +36,14 @@
 - Get balances for a given account. Embedded approach.
 - Migration to package and Maven GroupId "de.adorsys.psd2": Consent Management
 - cms-client to work with AspspConsentData endpoints is exended.
+
+
+## version 1.10 (release date: 26.10.2018) 
+- version 2.0 of SPI-API
+- Payment cancellation request according to specification 1.2. New endpoints.
+- Remove delayed payments,  use single payments
+- Prototype online banking (PSU-ASPSP interface)
+    - Payment initiation
+    - Account information service. Bank offered.
+    - Account information service. Dedicated accounts.
 

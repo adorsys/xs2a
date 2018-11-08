@@ -28,6 +28,13 @@ import java.util.Currency;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(description = "Account Reference", value = "Xs2aAccountReference")
+/**
+ *
+ * @deprecated since 1.11. Will be removed in 1.12. Use de.adorsys.psd2.xs2a.core.profile.AccountReference instead
+ * @see de.adorsys.psd2.xs2a.core.profile.AccountReference
+ *
+ */
+@Deprecated
 public class Xs2aAccountReference {
 
     @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")

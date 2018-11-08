@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
@@ -77,8 +77,8 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToTransactionStatus12() {
         //Given
-        Xs2aTransactionStatus[] xs2aStatuses = Xs2aTransactionStatus.values();
-        TransactionStatus[] statuses12 = TransactionStatus.values();
+        TransactionStatus[] xs2aStatuses = TransactionStatus.values();
+        de.adorsys.psd2.model.TransactionStatus[] statuses12 = de.adorsys.psd2.model.TransactionStatus.values();
         //When
         assertThat(xs2aStatuses.length).isEqualTo(statuses12.length);
         for (int i = 0; i < xs2aStatuses.length; i++) {
@@ -86,9 +86,9 @@ public class PaymentModelMapperTest {
         }
     }
 
-    private void testTransactionStatus12(Xs2aTransactionStatus status, TransactionStatus expected) {
+    private void testTransactionStatus12(de.adorsys.psd2.xs2a.core.pis.TransactionStatus status, de.adorsys.psd2.model.TransactionStatus expected) {
         //When
-        TransactionStatus result = PaymentModelMapperPsd2.mapToTransactionStatus12(status);
+        de.adorsys.psd2.model.TransactionStatus result = PaymentModelMapperPsd2.mapToTransactionStatus12(status);
         //Then
         assertThat(result).isEqualTo(expected);
     }
