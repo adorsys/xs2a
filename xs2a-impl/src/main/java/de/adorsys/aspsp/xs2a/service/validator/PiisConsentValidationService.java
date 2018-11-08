@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
@@ -50,7 +50,10 @@ public class PiisConsentValidationService {
         String tppId = tppService.getTppId();
         List<CmsPiisValidationInfo> filteredResponse = cmsPiisValidationInfoList.stream()
                                                            .filter(e -> EnumSet.of(VALID, RECEIVED).contains(e.getConsentStatus()))
-                                                           .filter(e -> Objects.nonNull(e.getExpireDate()) && e.getExpireDate().compareTo(LocalDate.now()) >= 0)
+                                                           .filter(e -> Optional.ofNullable(e.getExpireDate())
+                                                                            .map(d -> d.compareTo(LocalDate.now()) >= 0)
+                                                                            .orElse(true)
+                                                           )
                                                            .filter(e -> e.getPiisConsentTppAccessType() == ALL_TPP || tppId.equals(e.getTppInfoId()))
                                                            .collect(Collectors.toList());
 
