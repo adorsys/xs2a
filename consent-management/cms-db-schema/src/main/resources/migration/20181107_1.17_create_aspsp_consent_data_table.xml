@@ -19,6 +19,8 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
+    <include relativeToChangelogFile="true" file="_typedef.xml"/>
+
     <changeSet author="ssh@adorsys.com.ua" id="2018-11-07-1">
         <comment>Create table aspsp_consent_data</comment>
 
@@ -26,7 +28,7 @@
             <column name="consent_id" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="data" type="BLOB"/>
+            <column name="data" type="${blob.type}"/>
         </createTable>
     </changeSet>
 
