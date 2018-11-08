@@ -54,6 +54,8 @@ public class PiisConsentServiceInternal implements PiisConsentService {
             return piisConsentRepository.findAllByAccountsMaskedPanAndAccountsCurrency(accountIdentifier, currency);
         } else if (accountIdentifierName.equals("PAN")) {
             return piisConsentRepository.findAllByAccountsPanAndAccountsCurrency(accountIdentifier, currency);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 }
