@@ -35,6 +35,7 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class FundsConfirmationService {
@@ -67,6 +69,7 @@ public class FundsConfirmationService {
             AccountReferenceSelector selector = request.getPsuAccount().getUsedAccountReferenceSelector();
 
             if (selector == null) {
+                log.warn("No account identifier in the request {}", request.getPsuAccount());
                 return ResponseObject.<FundsConfirmationResponse>builder()
                            .fail(new MessageError(FORMAT_ERROR))
                            .build();
