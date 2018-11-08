@@ -30,6 +30,6 @@ public class PiisConsentRemoteUrls {
      * @return String
      */
     public String getPiisConsent() {
-        return consentServiceBaseUrl + "/piis/consent/{currency}/{accountIdentifierName}/{accountIdentifier}";
+        return consentServiceBaseUrl + "/piis/consent/{currency}/{account-identifier-name}/{account-identifier}";
     }
 }

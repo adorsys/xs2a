@@ -36,7 +36,7 @@ import java.util.List;
 public class PiisConsentController {
     private final PiisConsentService piisConsentService;
 
-    @GetMapping(path = "/{currency}/{accountIdentifierName}/{accountIdentifier}")
+    @GetMapping(path = "/{currency}/{account-identifier-name}/{account-identifier}")
     @ApiOperation(value = "Get consent by account reference data.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
