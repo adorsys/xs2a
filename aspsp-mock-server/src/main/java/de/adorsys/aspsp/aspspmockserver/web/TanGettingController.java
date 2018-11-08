@@ -45,6 +45,6 @@ public class TanGettingController {
     public ResponseEntity<TanHolder> getTan(@PathVariable("psu-id") String psuId) {
         return tanGettingService.getUnusedTanNumberByPsuId(psuId)
                    .map(tanHolder -> new ResponseEntity<>(tanHolder, HttpStatus.OK))
-                   .orElseGet(() -> ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 }
