@@ -59,6 +59,7 @@ public class PiisConsentServiceInternal implements PiisConsentService {
         } else if (accountIdentifierName == PAN) {
             return piisConsentRepository.findAllByAccountsPanAndAccountsCurrency(accountIdentifier, currency);
         } else {
+            log.warn("Account identifier is unknown!");
             return Collections.emptyList();
         }
     }
