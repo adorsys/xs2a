@@ -50,10 +50,19 @@ public class AspspDataServiceInternal implements AspspDataService {
         Optional<String> aspspConsentDataBase64 = Optional.ofNullable(aspspConsentData.getAspspConsentData())
                                                       .map(Base64.getEncoder()::encodeToString);
 
-        if (aspspConsentDataBase64.isPresent()) {
-            return encryptAndUpdateAspspConsentDataEntity(aspspConsentData.getConsentId(), aspspConsentDataBase64.get());
+        Optional<String> consentId = securityDataService.decryptId(aspspConsentData.getConsentId());
+
+        if (!aspspConsentDataBase64.isPresent() || !consentId.isPresent()) {
+            return false;
         }
-        return false;
+
+        Optional<EncryptedData> encryptedData = encryptConsentData(aspspConsentData.getConsentId(), aspspConsentDataBase64.get());
+
+        if (!encryptedData.isPresent()) {
+            return false;
+        }
+
+        return updateAndSaveAspspConsentData(consentId.get(), encryptedData.get().getData());
     }
 
     private Optional<AspspConsentDataEntity> getAspspConsentDataEntity(String encryptedConsentId) {
@@ -61,17 +70,8 @@ public class AspspDataServiceInternal implements AspspDataService {
                    .flatMap(aspspConsentDataRepository::findByConsentId);
     }
 
-    private boolean encryptAndUpdateAspspConsentDataEntity(String encryptedConsentId, String aspspConsentDataBase64) {
-        Optional<String> consentId = securityDataService.decryptId(encryptedConsentId);
-        if (consentId.isPresent()) {
-            Optional<EncryptedData> encryptedData = securityDataService.encryptConsentData(encryptedConsentId, aspspConsentDataBase64);
-
-            if (encryptedData.isPresent()) {
-                return updateAndSaveAspspConsentData(consentId.get(), encryptedData.get().getData());
-            }
-        }
-
-        return false;
+    private Optional<EncryptedData> encryptConsentData(String encryptedConsentId, String aspspConsentDataBase64) {
+        return securityDataService.encryptConsentData(encryptedConsentId, aspspConsentDataBase64);
     }
 
     private boolean updateAndSaveAspspConsentData(String consentId, byte[] encryptConsentData) {
