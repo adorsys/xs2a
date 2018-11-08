@@ -64,7 +64,6 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
         PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
-        periodicPayment.setPaymentId(response.getPaymentId());
         periodicPayment.setTransactionStatus(response.getTransactionStatus());
 
         pisConsentService.updatePeriodicPaymentInPisConsent(periodicPayment, paymentInitiationParameters, pisConsent.getConsentId());

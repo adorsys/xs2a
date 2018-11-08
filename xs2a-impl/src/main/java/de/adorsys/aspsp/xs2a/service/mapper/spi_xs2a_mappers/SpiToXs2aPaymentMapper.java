@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class SpiToXs2aPaymentMapper {
     public <T extends SpiPaymentInitiationResponse, R extends PaymentInitiationResponse> R mapToPaymentInitiateResponse(T spi, Supplier<R> xs2a) {
         R response = xs2a.get();
         response.setPaymentId(spi.getPaymentId());
-        response.setTransactionStatus(Xs2aTransactionStatus.getByValue(spi.getTransactionStatus().getName()));
+        response.setTransactionStatus(TransactionStatus.getByValue(spi.getTransactionStatus().getName()));
         return response;
     }
 }
