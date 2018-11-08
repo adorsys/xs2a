@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
@@ -25,6 +28,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.Xs2aPisConsentService;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -39,7 +43,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
 
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -89,7 +93,7 @@ public class CreatePeriodicPaymentTest {
         payment.setCreditorAccount(buildReference());
         payment.setStartDate(LocalDate.now());
         payment.setEndDate(LocalDate.now().plusMonths(4));
-        payment.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        payment.setTransactionStatus(TransactionStatus.RCVD);
         return payment;
     }
 
@@ -121,7 +125,7 @@ public class CreatePeriodicPaymentTest {
     private PeriodicPaymentInitiationResponse buildPeriodicPaymentInitiationResponse() {
         PeriodicPaymentInitiationResponse response = new PeriodicPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
-        response.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        response.setTransactionStatus(TransactionStatus.RCVD);
         response.setPisConsentId(CONSENT_ID);
         return response;
     }

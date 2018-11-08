@@ -20,4 +20,5 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import org.springframework.data.repository.CrudRepository;
 
 public interface PsuDataRepository extends CrudRepository<PsuData, Long> {
+
 }

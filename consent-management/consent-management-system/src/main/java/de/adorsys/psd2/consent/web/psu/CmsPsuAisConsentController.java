@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.onlinebanking.web;
+package de.adorsys.psd2.consent.web.psu;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
@@ -30,12 +30,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/psu/ais")
-@Api(value = "api/v1/ais/psu", tags = "PSU AIS, Consents", description = "Provides access to consent management system for PSU AIS")
+@RequestMapping(path = "psu-api/v1/ais/consent")
+@Api(value = "psu-api/v1/ais/consent", tags = "PSU AIS, Consents", description = "Provides access to consent management system for PSU AIS")
 public class CmsPsuAisConsentController {
     private final CmsPsuAisService cmsPsuAisService;
 
-    @PutMapping(path = "/consent/{consent-id}/update-psu-data")
+    @PutMapping(path = "/{consent-id}/update-psu-data")
     @ApiOperation(value = "Updates PSU Data in consent, based on the trusted information about PSU known to ASPSP (i.e. after authorisation).")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
@@ -55,7 +55,7 @@ public class CmsPsuAisConsentController {
         return new ResponseEntity<>(cmsPsuAisService.updatePsuDataInConsent(psuIdData, consentId), HttpStatus.OK);
     }
 
-    @GetMapping(path = "consent/{consent-id}")
+    @GetMapping(path = "/{consent-id}")
     @ApiOperation(value = "Returns AIS Consent object by its ID.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = AisAccountConsent.class),
@@ -77,7 +77,7 @@ public class CmsPsuAisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(path = "consent/{consent-id}/authorizations/{authorization-id}/status/{status}")
+    @PutMapping(path = "/{consent-id}/authorizations/{authorization-id}/status/{status}")
     @ApiOperation(value = "Updates a Status of AIS Consent Authorisation by its ID and PSU ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
@@ -101,7 +101,7 @@ public class CmsPsuAisConsentController {
         return new ResponseEntity<>(cmsPsuAisService.updateAuthorisationStatus(psuIdData, consentId, authorizationId, ScaStatus.valueOf(status)), HttpStatus.OK);
     }
 
-    @PutMapping(path = "consent/{consent-id}/confirm-consent")
+    @PutMapping(path = "/{consent-id}/confirm-consent")
     @ApiOperation(value = "Puts a Status of AIS Consent object by its ID and PSU ID to VALID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
@@ -121,7 +121,7 @@ public class CmsPsuAisConsentController {
         return new ResponseEntity<>(cmsPsuAisService.confirmConsent(psuIdData, consentId), HttpStatus.OK);
     }
 
-    @PutMapping(path = "consent/{consent-id}/reject-consent")
+    @PutMapping(path = "/{consent-id}/reject-consent")
     @ApiOperation(value = "Puts a Status of AIS Consent object by its ID and PSU ID to REJECTED")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),
@@ -141,7 +141,7 @@ public class CmsPsuAisConsentController {
         return new ResponseEntity<>(cmsPsuAisService.rejectConsent(psuIdData, consentId), HttpStatus.OK);
     }
 
-    @GetMapping(path = "consents")
+    @GetMapping(path = "/consents")
     @ApiOperation(value = "Returns a list of AIS Consent objects by PSU ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -159,7 +159,7 @@ public class CmsPsuAisConsentController {
         return new ResponseEntity<>(cmsPsuAisService.getConsentsForPsu(psuIdData), HttpStatus.OK);
     }
 
-    @PutMapping(path = "consent/{consent-id}/revoke-consent")
+    @PutMapping(path = "/{consent-id}/revoke-consent")
     @ApiOperation(value = "Revokes AIS Consent object by its ID. Consent gets status Revoked by PSU.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Boolean.class),

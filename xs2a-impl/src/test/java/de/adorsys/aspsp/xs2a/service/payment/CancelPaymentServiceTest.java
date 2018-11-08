@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
@@ -40,8 +40,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.ACTC;
-import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.CANC;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.ACTC;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.CANC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -136,7 +136,7 @@ public class CancelPaymentServiceTest {
         return response;
     }
 
-    private CancelPaymentResponse getCancelPaymentResponse(boolean authorisationRequired, Xs2aTransactionStatus transactionStatus) {
+    private CancelPaymentResponse getCancelPaymentResponse(boolean authorisationRequired, TransactionStatus transactionStatus) {
         CancelPaymentResponse response = new CancelPaymentResponse();
         response.setStartAuthorisationRequired(authorisationRequired);
         response.setTransactionStatus(transactionStatus);

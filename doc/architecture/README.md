@@ -1,30 +1,26 @@
 # Architecture documentation
 
-This implementation provides a REST-interface and corresponding services, that could be operated as a proxy to 
-underlying ASPSP-Systems,
-providing capabilities to interoperate with TPP by defined XS2A Standard Interface of Berlin Group.
+* [About arc42](about-arc42.md)
+* [**1. Requirements and Goals**](01_introduction_and_goals.md)
+* [**2. Constraints**](02_architecture_constraints.md)
+* [**3. Scope & Context**](03_system_scope_and_context.md)
+* [**4. Solution Strategy**](04_solution_strategy.md)
+* [**5. Building Block View**](05_building_block_view.md)
+* [**6. Runtime View**](06_runtime_view.md)
+* [**7. Deployment View**](07_deployment_view.md)
+* [**8. Crosscutting Concepts**](08_concepts.md)
+* [**9. Architecture Decisions**](09_design_decisions.md)
+* [**10. Quality Scenarios**](10_quality_scenarios.md)
+* [**11. Risks & Technical Debt**](11_technical_risks.md)
+* [**12. Glossary**](12_glossary.md)
 
-### Brief modules description
-The maven modules provided by this implementation are:
-* [**aspsp-idp**](../../aspsp-idp/README.md) - provides identity provider for the service based on 
-[Keycloak](https://www.keycloak.org/) with extension for OpenID dynamic client registration
-* **aspsp-mock-api** - API Domain objects for intercommunication with ASPSP-Mock-Server
-* [**aspsp-mock-server**](../../aspsp-mock-server/README.md) - a mock-implementation of ASPSP for the purposes of 
-testing and introspecting of xs2a-functionality. Provides also a demo TAN application to grant XS2A consents by end-user 
-(PSU)
-* [**aspsp-profile**](../../aspsp-profile/README.md) - a service that provides static configuration of features, those 
-are supported by actual ASPSP 
-* **consent-api** - API Domain objects for intercommunication with Consent Management System
-* [**consent-management-system**](../../consent-management-system/README.md) - a service that stores and manages 
-consents given by the end user
-* **psd2-validator** - a reusable component to verify client certificate and signature according to PSD2 requirements
-* **spi-api** - internal Java interface to provide a universal way to implement connectors to underlying ASPSP Systems
-* **spi-mock** - an implementation of spi-api interface to connect XS2A-services with ASPSP-Mock-Server
-* [**xs2a-impl**](../../xs2a-impl/README.md) - a REST-interface and corresponding validators and services operating to 
-serve TPPs according to a Berlin Group operational rules
+
+Old Building Block View
+===================
+
+![Old component diagram](Whitebox.png)
 
 ### Components description
-![Component diagram](Whitebox.png)
 
 #### TLS Client Certificate Validator
 According to the operational rules, connections between TPP and ASPSP must be secured by TLS/HTTPS connection with a 
@@ -41,11 +37,6 @@ serving corresponding redirect links in case of need.
 Includes ASPSP-specific implementation of SPI-API interface to communicate processing orders to ASPSP systems.
  
 Technically utilizes connections to ASPSP systems, as well as to ASPSP Profile and Consent Management System.
-
-#### Identity provider (IDP)
-A keycloak based implementation of OAuth2/OpenID Server that may be used as a ready solution to provide authentication 
-to the other components. Depending on the SCA aproach choosen by the ASPSP configuration is used to authorize all 
-connections between services or only access to the data in the mock-implementation.
 
 #### ASPSP-Profile
 ASPSP-Profile serves a configuration of XS2A features and options supported by the actual ASPSP to other components. 
@@ -66,4 +57,6 @@ Provides a relational DB storage connector.
 References to core banking systems responsible for processing payments, accounts management and other typical banking 
 processes. In XS2A Service ASPSP acts as an end-actor, who is reponsible to do the end-job with user data, based on TPP 
 request and consents given TPP by PSU.
+
+
 

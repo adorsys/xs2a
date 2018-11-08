@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.domain.pis;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
@@ -101,7 +101,7 @@ public class SinglePayment implements AccountReferenceCollector {
     private OffsetDateTime requestedExecutionTime;
 
     @ApiModelProperty(value = "Transaction status", example = "Pending")
-    private Xs2aTransactionStatus transactionStatus;
+    private TransactionStatus transactionStatus;
 
     @JsonIgnore
     @Override
