@@ -13,10 +13,7 @@ import cucumber.api.cli.Main;
     glue = "de.adorsys.aspsp.xs2a.integtest.stepdefinitions",
     format = {"json:cucumber-report/cucumber.json"},
     tags = {"~@ignore", "~@TestTag"})
-public class CucumberTest {
-    public static void main(String[] args) throws Throwable {
-
-        JUnitCore.main("CucumberTest.class");
-    }
+public class CucumberIT {
+   
 }
 
