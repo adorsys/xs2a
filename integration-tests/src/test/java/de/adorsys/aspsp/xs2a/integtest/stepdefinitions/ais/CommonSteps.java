@@ -55,7 +55,6 @@ public class CommonSteps{
             assertThat(actualTppMessages.get(i).getCategory(), equalTo(givenTppMessages.get(i).getCategory()));
             assertThat(actualTppMessages.get(i).getCode(), equalTo(givenTppMessages.get(i).getCode()));
         }
-        context.cleanUp();
     }
 
     @Given("^PSU already has an existing (.*) consent (.*)$")
