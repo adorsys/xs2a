@@ -47,7 +47,7 @@ public class PisPaymentData {
     @ApiModelProperty(value = "End to end identification", example = "RI-123456789")
     private String endToEndIdentification;
 
-    @PrimaryKeyJoinColumn(referencedColumnName = "account_reference_id", name = "debtor_acc_reference_id")
+    @JoinColumn(name = "debtor_acc_reference_id")
     @ManyToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Debtor account", required = true)
     private AccountReferenceEntity debtorAccount;
@@ -64,7 +64,7 @@ public class PisPaymentData {
     @ApiModelProperty(value = "Payment amount", required = true, example = "1000")
     private BigDecimal amount;
 
-    @PrimaryKeyJoinColumn(referencedColumnName = "account_reference_id", name = "creditor_acc_reference_id")
+    @JoinColumn(name = "creditor_acc_reference_id")
     @ManyToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Creditor account", required = true)
     private AccountReferenceEntity creditorAccount;
