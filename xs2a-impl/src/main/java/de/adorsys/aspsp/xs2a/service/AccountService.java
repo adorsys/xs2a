@@ -74,6 +74,7 @@ public class AccountService {
      * AccountAccess in AIS-consent Balances are passed along with AccountDetails.
      *
      * @param consentId   String representing an AccountConsent identification
+     * @param consentId   String representing an AccountConsent identification
      * @param withBalance boolean representing if the responded AccountDetails should contain
      * @return List of AccountDetails with Balances if requested and granted by consent
      */
