@@ -72,7 +72,7 @@
     <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-2">
         <comment>Create sequence for pis consent authorization.</comment>
         <createSequence sequenceName="pis_consent_auth_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_consent_authorization_id_seq</sql>
+        <sql dbms="mariadb">CREATE SEQUENCE pis_consent_auth_id_seq</sql>
     </changeSet>
 
     <changeSet author="mpo@adorsys.com.ua" id="2018-05-09-1">
