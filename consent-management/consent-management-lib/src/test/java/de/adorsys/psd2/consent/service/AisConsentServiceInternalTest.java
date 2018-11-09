@@ -59,8 +59,6 @@ public class AisConsentServiceInternalTest {
     @InjectMocks
     private AisConsentServiceInternal aisConsentService;
     @Mock
-    private FrequencyPerDateCalculationService frequencyPerDateCalculationService;
-    @Mock
     private AisConsentMapper consentMapper;
     @Mock
     private AisConsentRepository aisConsentRepository;
@@ -70,23 +68,22 @@ public class AisConsentServiceInternalTest {
     private PsuData psuData;
     @Mock
     SecurityDataService securityDataService;
-    @Mock
+@Mock
     private AspspConsentDataRepository aspspConsentDataRepository; // TODO remove it after AspspConsentDataServiceTest is created https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/470
     @Mock
     private AspspDataService aspspDataService;
 
     private AisConsent aisConsent;
-    private CmsAspspConsentDataBase64 cmsAspspConsentDataBase64;
-    private final long CONSENT_ID = 1;
-    private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
-    private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id-1", null, null, null);
+
+    private static final long CONSENT_ID = 1;
+    private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id-1", null, null, null);
     private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
 
     @Before
     public void setUp() {
         aisConsent = buildConsent();
-        cmsAspspConsentDataBase64 = buildUpdateBlobRequest();
+        CmsAspspConsentDataBase64 cmsAspspConsentDataBase64 = buildUpdateBlobRequest();
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
         when(securityDataService.encryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
@@ -114,7 +111,6 @@ public class AisConsentServiceInternalTest {
     public void shouldReturnExternalId_WhenCreateConsentIsCalled() {
         // When
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
-        when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt())).thenReturn(anyInt());
         when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(psuData);
 
         // Then
@@ -194,7 +190,8 @@ public class AisConsentServiceInternalTest {
         CreateAisConsentRequest request = new CreateAisConsentRequest();
         request.setAccess(buildAccess());
         request.setCombinedServiceIndicator(true);
-        request.setFrequencyPerDay(5);
+        request.setAllowedFrequencyPerDay(2);
+        request.setRequestedFrequencyPerDay(5);
         request.setPsuData(PSU_ID_DATA);
         request.setRecurringIndicator(true);
         request.setTppId("tpp-id-1");

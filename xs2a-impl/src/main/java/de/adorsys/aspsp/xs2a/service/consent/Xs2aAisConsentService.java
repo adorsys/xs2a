@@ -28,6 +28,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,7 @@ public class Xs2aAisConsentService {
     private final AisConsentService aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
+    private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
 
     /**
      * Sends a POST request to CMS to store created AISconsent
@@ -49,7 +51,8 @@ public class Xs2aAisConsentService {
      * @return String representation of identifier of stored consent
      */
     public String createConsent(CreateConsentReq request, PsuIdData psuData, String tppId) {
-        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppId);
+        int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppId, allowedFrequencyPerDay);
         Optional<String> consent = aisConsentService.createConsent(createAisConsentRequest);
         return consent.orElse(null);
     }

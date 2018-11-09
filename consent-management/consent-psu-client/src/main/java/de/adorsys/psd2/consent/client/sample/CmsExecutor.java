@@ -196,7 +196,8 @@ public class CmsExecutor {
         CreateAisConsentRequest request = new CreateAisConsentRequest();
         request.setAccess(buildAccess());
         request.setCombinedServiceIndicator(true);
-        request.setFrequencyPerDay(10);
+        request.setAllowedFrequencyPerDay(8);
+        request.setRequestedFrequencyPerDay(10);
         request.setPsuData(new PsuIdData("psu-id-1", null, null, null));
         request.setRecurringIndicator(true);
         request.setTppId("tpp-id-1");
