@@ -19,7 +19,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet author="ssh@adorsys.com.ua" id="2018-11-05-1">
+    <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-5">
         <preConditions onFail="MARK_RAN">
             <or>
                 <dbms type="postgresql"/>
@@ -27,10 +27,10 @@
             </or>
         </preConditions>
 
-        <comment>Rename sequence for pis_account_reference_id if used database is either PostgreSQL or MariaDB</comment>
+        <comment>Rename sequence for pis_acc_reference_id if used database is either PostgreSQL or MariaDB</comment>
 
-        <sql dbms="postgresql">ALTER SEQUENCE pis_account_reference_id_seq RENAME TO account_reference_id_seq</sql>
-        <sql dbms="mariadb">RENAME TABLE pis_account_reference_id_seq TO account_reference_id_seq</sql>
+        <sql dbms="postgresql">ALTER SEQUENCE pis_acc_reference_id_seq RENAME TO account_reference_id_seq</sql>
+        <sql dbms="mariadb">RENAME TABLE pis_acc_reference_id_seq TO account_reference_id_seq</sql>
     </changeSet>
 
     <changeSet author="ssh@adorsys.com.ua" id="2018-11-05-2">
@@ -43,7 +43,7 @@
 
         <comment>Recreate sequence for account_reference_id for all other databases.</comment>
 
-        <dropSequence sequenceName="pis_account_reference_id_seq"/>
+        <dropSequence sequenceName="pis_acc_reference_id_seq"/>
         <createSequence sequenceName="account_reference_id_seq"/>
     </changeSet>
 

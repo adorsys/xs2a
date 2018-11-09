@@ -47,7 +47,7 @@ public class PisPaymentData {
     @ApiModelProperty(value = "End to end identification", example = "RI-123456789")
     private String endToEndIdentification;
 
-    @PrimaryKeyJoinColumn
+    @PrimaryKeyJoinColumn(referencedColumnName = "account_reference_id", name = "debtor_acc_reference_id")
     @ManyToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Debtor account", required = true)
     private AccountReferenceEntity debtorAccount;
@@ -64,7 +64,7 @@ public class PisPaymentData {
     @ApiModelProperty(value = "Payment amount", required = true, example = "1000")
     private BigDecimal amount;
 
-    @PrimaryKeyJoinColumn
+    @PrimaryKeyJoinColumn(referencedColumnName = "account_reference_id", name = "creditor_acc_reference_id")
     @ManyToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Creditor account", required = true)
     private AccountReferenceEntity creditorAccount;
@@ -82,7 +82,7 @@ public class PisPaymentData {
     @JoinColumn(name = "address_id")
     private PisAddress creditorAddress;
 
-    @Column(name = "remittance_information_unstructured")
+    @Column(name = "remittance_info_unstruct")
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
