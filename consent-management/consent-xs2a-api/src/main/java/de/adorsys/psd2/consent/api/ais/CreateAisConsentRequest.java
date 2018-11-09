@@ -33,8 +33,11 @@ public class CreateAisConsentRequest {
     @ApiModelProperty(value = "ID of the corresponding TPP.", required = true, example = "testTPP")
     private String tppId;
 
+    @ApiModelProperty(value = "Allowed maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
+    private int allowedFrequencyPerDay;
+
     @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
-    private int frequencyPerDay;
+    private int requestedFrequencyPerDay;
 
     @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
     private AisAccountAccessInfo access;

@@ -126,16 +126,25 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     /**
+     * Returns status of requested consent
+     *
      * @param consentId String representation of AccountConsent identification
      * @return ConsentStatus
-     * Returns status of requested consent
      */
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
-        return Optional.ofNullable(getValidatedAccountConsent(consentId))
-                   .map(consent -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(consent.getConsentStatus())).build())
-                   .orElseGet(ResponseObject.<ConsentStatusResponse>builder()
-                                  .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
-                                  ::build);
+        AccountConsent validatedAccountConsent = getValidatedAccountConsent(consentId);
+        Optional<ConsentStatus> consentStatus =
+            Optional.ofNullable(validatedAccountConsent)
+                .map(AccountConsent::getConsentStatus);
+
+        ResponseObject.ResponseBuilder<ConsentStatusResponse> responseBuilder = ResponseObject.builder();
+        if (consentStatus.isPresent()) {
+            responseBuilder = responseBuilder.body(new ConsentStatusResponse(consentStatus.get()));
+        }
+        else {
+            responseBuilder = responseBuilder.fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)));
+        }
+        return responseBuilder.build();
     }
 
     /**
@@ -176,7 +185,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
-    public ResponseObject<AccountConsent> getValidatedConsent(String consentId, boolean withBalance) {
+    ResponseObject<AccountConsent> getValidatedConsent(String consentId, boolean withBalance) {
         AccountConsent accountConsent = getValidatedAccountConsent(consentId);
 
         if (accountConsent == null) {
@@ -206,7 +215,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return ResponseObject.<AccountConsent>builder().body(accountConsent).build();
     }
 
-    public ResponseObject<AccountConsent> getValidatedConsent(String consentId) {
+    ResponseObject<AccountConsent> getValidatedConsent(String consentId) {
         return getValidatedConsent(consentId, false);
     }
 
@@ -280,7 +289,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                   ::build);
     }
 
-    public boolean isValidAccountByAccess(String resourceId, List<Xs2aAccountReference> allowedAccountData) {
+    boolean isValidAccountByAccess(String resourceId, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
                           .anyMatch(a -> a.getResourceId().equals(resourceId));

@@ -56,7 +56,6 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
     private final AisConsentMapper consentMapper;
     private final PsuDataMapper psuDataMapper;
-    private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final SecurityDataService securityDataService;
     private final AspspDataService aspspDataService;
 
@@ -287,12 +286,12 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
-        int minFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+
         AisConsent consent = new AisConsent();
         consent.setConsentStatus(RECEIVED);
-        consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
-        consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
-        consent.setUsageCounter(minFrequencyPerDay);
+        consent.setAllowedFrequencyPerDay(request.getAllowedFrequencyPerDay());
+        consent.setTppFrequencyPerDay(request.getRequestedFrequencyPerDay());
+        consent.setUsageCounter(request.getAllowedFrequencyPerDay()); // Initially we set maximum and then decrement it by usage
         consent.setRequestDateTime(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
