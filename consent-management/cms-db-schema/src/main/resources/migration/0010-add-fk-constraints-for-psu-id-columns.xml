@@ -25,7 +25,7 @@
         <modifyDataType columnName="psu_id" tableName="ais_consent" newDataType="BIGINT"/>
 
         <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="ais_consent"
-                                 constraintName="fk__ais_consent__psu_data" deferrable="false"
+                                 constraintName="fk_ais_consent_psu_data" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="psu_data"/>
     </changeSet>
@@ -36,7 +36,7 @@
         <modifyDataType columnName="psu_id" tableName="ais_consent_authorization" newDataType="BIGINT"/>
 
         <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="ais_consent_authorization"
-                                 constraintName="fk__ais_consent_authorization__psu_data" deferrable="false"
+                                 constraintName="fk_aisconsent_auth_psu_data" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="psu_data"/>
     </changeSet>
@@ -49,7 +49,7 @@
         </addColumn>
 
         <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="pis_consent"
-                                 constraintName="fk__pis_consent__psu_data" deferrable="false"
+                                 constraintName="fk_pis_consent_psu_data" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="psu_data"/>
     </changeSet>
@@ -62,7 +62,7 @@
         </addColumn>
 
         <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="pis_consent_authorization"
-                                 constraintName="fk__pis_consent_authorization__psu_data" deferrable="false"
+                                 constraintName="fk_pisconsent_auth_psu_data" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="psu_data"/>
     </changeSet>
