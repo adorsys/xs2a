@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest;
+package de.adorsys.psd2.xs2a.spi.domain.fund;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import lombok.Data;
 
-
-@SpringBootApplication
-public class IntegrationTestApp {
-    public static void main(String[] args) {
-
-        SpringApplication.run(IntegrationTestApp.class, args);
-    }
+@Data
+public class SpiFundsConfirmationRequest {
+    private SpiAccountReference psuAccount;
+    private SpiAmount instructedAmount;
+    private String cardNumber;
+    private String payee;
 }

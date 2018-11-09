@@ -18,78 +18,88 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cucumber.api.java.en.Given;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
-import de.adorsys.psd2.model.Consents;
-import de.adorsys.psd2.model.ConsentsResponse201;
+import de.adorsys.psd2.model.AccountDetails;
+import de.adorsys.psd2.model.AccountList;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.is;
 
+@Slf4j
 @FeatureFileSteps
-public class ConsentRequestSuccessfulSteps {
+public class AccountDetailRequestSuccessfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<Consents, ConsentsResponse201> context;
+    private Context<HashMap, AccountDetails> context;
 
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to create a consent (.*)$")
-    public void loadTestData(String dataFileName) throws IOException {
 
-        TestData<Consents, ConsentsResponse201> data = mapper.readValue(
-            resourceToString("/data-input/ais/consent/" + dataFileName, UTF_8),
-            new TypeReference<TestData<Consents, ConsentsResponse201>>() {});
+    //@Given("^PSU already has an existing (.*) consent (.*)$")
+    //in commonStep
 
-        context.setTestData(data);
-
-        LocalDate validUntil = context.getTestData().getRequest().getBody().getValidUntil();
-        context.getTestData().getRequest().getBody().setValidUntil(validUntil.plusDays(7));
+   @And("^account id (.*)$")
+    public void account_id(String accountId)  {
+        context.setRessourceId(accountId);
     }
 
-    @When("^PSU sends the create consent request$")
-    public void sendConsentRequest() throws HttpClientErrorException {
+    @And("^wants to get account details using (.*)$")
+    public void wants_to_get_account_details_using(String dataFileName) throws IOException {
+        TestData<HashMap, AccountDetails> data = mapper.readValue(
+                resourceToString("/data-input/ais/account/" + dataFileName, UTF_8),
+                new TypeReference<TestData<HashMap, AccountDetails>>() {});
+
+        context.setTestData(data);
+        context.getTestData().getRequest().getHeader().put("Consent-ID", context.getConsentId());
+    }
+
+    @When("^PSU requests the account details$")
+    public void psu_requests_the_account_details() {
         HttpEntity entity = HttpEntityUtils.getHttpEntity(context.getTestData().getRequest(),
-            context.getAccessToken());
-        ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
-                context.getBaseUrl() + "/consents",
-                HttpMethod.POST,
+                context.getAccessToken());
+        log.info("////entity request account detail////  "+entity.toString());
+        ResponseEntity<AccountDetails> response = restTemplate.exchange(
+                context.getBaseUrl() + "/accounts/"+context.getRessourceId()+"?withBalance=false",
+                HttpMethod.GET,
                 entity,
-                ConsentsResponse201.class);
+                AccountDetails.class);
 
         context.setActualResponse(response);
     }
 
-    @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")
-    public void checkResponseCode() {
-        ResponseEntity<ConsentsResponse201> actualResponse = context.getActualResponse();
-        ConsentsResponse201 givenResponseBody = context.getTestData().getResponse().getBody();
+    @Then("^a successful response code and the appropriate details of accounts get returned$")
+    public void a_successful_response_code_and_the_appropriate_details_of_accounts_get_returned() {
+        ResponseEntity<AccountDetails> actualResponse = context.getActualResponse();
+        AccountDetails givenResponseBody = context.getTestData().getResponse().getBody();
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        assertThat(actualResponse.getBody().getConsentStatus(), equalTo(givenResponseBody.getConsentStatus()));
-        assertThat(actualResponse.getBody().getConsentId(), notNullValue());
+        assertThat(actualResponse.getBody().getIban(), is(givenResponseBody.getIban()));
+        assertThat(actualResponse.getBody().getResourceId(), is(givenResponseBody.getResourceId()));
     }
+
 }
+

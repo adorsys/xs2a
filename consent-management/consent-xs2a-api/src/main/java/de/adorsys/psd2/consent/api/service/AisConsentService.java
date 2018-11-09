@@ -34,7 +34,7 @@ public interface AisConsentService {
     Optional<String> createConsent(CreateAisConsentRequest request);
 
     /**
-     * Read status of consent by id
+     * Reads status of consent by id
      *
      * @param consentId id of consent
      * @return ConsentStatus
@@ -42,7 +42,7 @@ public interface AisConsentService {
     Optional<ConsentStatus> getConsentStatusById(String consentId);
 
     /**
-     * Update consent status by id
+     * Updates consent status by id
      *
      * @param consentId id of consent
      * @param status    new consent status
@@ -51,7 +51,7 @@ public interface AisConsentService {
     boolean updateConsentStatusById(String consentId, ConsentStatus status);
 
     /**
-     * Read full information of consent by id
+     * Reads full information of consent by id
      *
      * @param consentId id of consent
      * @return AisAccountConsent
@@ -59,14 +59,14 @@ public interface AisConsentService {
     Optional<AisAccountConsent> getAisAccountConsentById(String consentId);
 
     /**
-     * Save information about uses of consent
+     * Saves information about uses of consent
      *
      * @param request needed parameters for logging usage AIS consent
      */
     void checkConsentAndSaveActionLog(AisConsentActionRequest request);
 
     /**
-     * Update AIS consent account access by id
+     * Updates AIS consent account access by id
      *
      * @param request   needed parameters for updating AIS consent
      * @param consentId id of the consent to be updated
@@ -75,7 +75,7 @@ public interface AisConsentService {
     Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request);
 
     /**
-     * Get Ais aspsp consent data by id
+     * Gets Ais aspsp consent data by id
      *
      * @param consentId id of the consent
      * @return Response containing aspsp consent data
@@ -83,7 +83,7 @@ public interface AisConsentService {
     Optional<CmsAspspConsentDataBase64> getAspspConsentData(String consentId);
 
     /**
-     * Update AIS consent aspsp consent data by id
+     * Updates AIS consent aspsp consent data by id
      *
      * @param request   Aspsp provided ais consent data
      * @param consentId id of the consent to be updated
@@ -92,7 +92,7 @@ public interface AisConsentService {
     Optional<String> saveAspspConsentDataInAisConsent(String consentId, CmsAspspConsentDataBase64 request);
 
     /**
-     * Create consent authorization
+     * Creates consent authorization
      *
      * @param consentId id of consent
      * @param request   needed parameters for creating consent authorization
@@ -101,7 +101,7 @@ public interface AisConsentService {
     Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request);
 
     /**
-     * Get consent authorization
+     * Gets consent authorization
      *
      * @param consentId       id of consent
      * @param authorizationId id of authorisation session
@@ -110,7 +110,7 @@ public interface AisConsentService {
     Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId);
 
     /**
-     * Update consent authorization
+     * Updates consent authorization
      *
      * @param authorizationId id of authorisation session
      * @param request         needed parameters for updating consent authorization

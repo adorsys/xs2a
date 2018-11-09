@@ -41,6 +41,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,6 +61,8 @@ public class AccountListRequestSuccessfulSteps {
 
 
 
+    //@Given("^PSU already has an existing (.*) consent (.*)$")
+    //in commonStep
 
     @And("^wants to get a list of accounts using (.*)$")
     public void wants_to_get_a_list_of_accounts_using(String dataFileName) throws IOException {
@@ -91,8 +94,7 @@ public class AccountListRequestSuccessfulSteps {
         AccountList givenResponseBody = context.getTestData().getResponse().getBody();
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        //TODO assert that the response body is what we expect
-        //we expect at least one accountDetail in the list
+        assertThat(actualResponse.getBody().getAccounts().get(0).getIban(), is(givenResponseBody.getAccounts().get(0).getIban()));
     }
 
 }

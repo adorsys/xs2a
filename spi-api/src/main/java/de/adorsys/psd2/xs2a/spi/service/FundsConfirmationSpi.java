@@ -16,10 +16,8 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationConsent;
+import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -29,14 +27,13 @@ public interface FundsConfirmationSpi {
     /**
      * Queries ASPSP to check the sufficiency of requested account funds
      *
-     * @param psuData          ASPSP identifier(s) of the psu
-     * @param consent          Consent for funds confirmation
-     * @param reference        PSU account data
-     * @param amount           Requested amount of funds
-     * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request.<br>
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param psuData                     ASPSP identifier(s) of the psu
+     * @param consentId                   ConsentId for funds confirmation
+     * @param spiFundsConfirmationRequest Object, that contains all request data from TPP
+     * @param aspspConsentData            Encrypted data that may be stored in the consent management system in the consent linked to a request.<br>
+     *                                    May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return 'true' if the requested amount can be booked on the account, 'false' otherwise
      */
     @NotNull
-    SpiResponse<Boolean> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable SpiFundsConfirmationConsent consent, @NotNull SpiAccountReference reference, @NotNull SpiAmount amount, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<Boolean> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable String consentId, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData);
 }

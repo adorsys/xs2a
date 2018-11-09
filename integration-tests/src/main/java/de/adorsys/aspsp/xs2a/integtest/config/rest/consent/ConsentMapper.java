@@ -41,7 +41,7 @@ public class ConsentMapper {
                    .map(r -> {
                        CreateAisConsentRequest request = new CreateAisConsentRequest();
                        request.setTppId(tppId);
-                       request.setFrequencyPerDay(r.getFrequencyPerDay());
+                       request.setAllowedFrequencyPerDay(r.getFrequencyPerDay());
                        request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
                        request.setValidUntil(r.getValidUntil());
                        request.setRecurringIndicator(r.isRecurringIndicator());

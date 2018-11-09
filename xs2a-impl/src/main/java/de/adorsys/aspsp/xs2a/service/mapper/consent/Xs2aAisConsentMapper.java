@@ -48,13 +48,14 @@ public class Xs2aAisConsentMapper {
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final Xs2aToSpiAccountAccessMapper xs2aToSpiAccountAccessMapper;
 
-    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, PsuIdData psuData, String tppId) {
+    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, PsuIdData psuData, String tppId, int allowedFrequencyPerDay) {
         return Optional.ofNullable(req)
                    .map(r -> {
                        CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
                        aisRequest.setPsuData(psuData);
                        aisRequest.setTppId(tppId);
-                       aisRequest.setFrequencyPerDay(r.getFrequencyPerDay());
+                       aisRequest.setRequestedFrequencyPerDay(r.getFrequencyPerDay());
+                       aisRequest.setAllowedFrequencyPerDay(allowedFrequencyPerDay);
                        aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
                        aisRequest.setValidUntil(r.getValidUntil());
                        aisRequest.setRecurringIndicator(r.isRecurringIndicator());

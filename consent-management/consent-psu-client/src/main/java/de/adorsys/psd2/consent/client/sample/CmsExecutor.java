@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.client.cms.CmsServiceInvoker;
 import de.adorsys.psd2.consent.client.cms.model.ais.*;
+import de.adorsys.psd2.consent.client.cms.model.piis.GetPiisConsentListByAccountReferenceMethod;
 import de.adorsys.psd2.consent.client.cms.model.pis.*;
 import de.adorsys.psd2.consent.client.core.Configuration;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
@@ -54,6 +55,9 @@ public class CmsExecutor {
     private static final int CONNECTION_REQUEST_TIMEOUT = 5000;
     private static final String CONSENT_ID = "sKrhvGddmlkItKsvBZwJyXG7Bm7Qbq2FnrJ3F2vB9mVKwiMoElPiohTItFBnfJsohO5sHYhMF_ymmQwlQdgkxA==_=_bS6p6XvTWI";
     private static final String PAYMENT_ID = "sKrhvGddmlkItKsvBZwJyXG7Bm7Qbq2FnrJ3F2vB9mVKwiMoElPiohTItFBnfJsohO5sHYhMF_ymmQwlQdgkxA==_=_bS6p6XvTWI";
+    private static final String CURRENCY = "EUR";
+    private static final String ACCOUNT_IDENTIFIER_NAME = "IBAN";
+    private static final String ACCOUNT_IDENTIFIER_VALUE = "DE89370400440532013000";
 
     /**
      * Makes calls to CMS PIS and AIS endpoints and logs the response
@@ -81,6 +85,8 @@ public class CmsExecutor {
         updatePisConsentAspspData(cmsServiceInvoker);
         updatePaymentConsentStatus(cmsServiceInvoker);
         getPaymentIdByEncryptedString(cmsServiceInvoker);
+
+        getPiisConsentListByAccountReference(cmsServiceInvoker);
     }
 
     /**
@@ -113,7 +119,7 @@ public class CmsExecutor {
      */
     private static void saveConsentActionLog(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         cmsServiceInvoker.invoke(new SaveConsentActionLogMethod(new AisConsentActionRequest("tpp-id",
-                                                                                            CONSENT_ID, ActionStatus.SUCCESS)));
+            CONSENT_ID, ActionStatus.SUCCESS)));
     }
 
     /**
@@ -190,7 +196,8 @@ public class CmsExecutor {
         CreateAisConsentRequest request = new CreateAisConsentRequest();
         request.setAccess(buildAccess());
         request.setCombinedServiceIndicator(true);
-        request.setFrequencyPerDay(10);
+        request.setAllowedFrequencyPerDay(8);
+        request.setRequestedFrequencyPerDay(10);
         request.setPsuData(new PsuIdData("psu-id-1", null, null, null));
         request.setRecurringIndicator(true);
         request.setTppId("tpp-id-1");
@@ -320,10 +327,10 @@ public class CmsExecutor {
         request.setPaymentProduct(PaymentProduct.SEPA);
         request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
-                                           Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
-                                           "authority id", "authority name", "Germany", "Organisation",
-                                           "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
-                                           "Nok redirect URI"));
+            Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
+            "authority id", "authority name", "Germany", "Organisation",
+            "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
+            "Nok redirect URI"));
         return request;
     }
 
@@ -341,7 +348,7 @@ public class CmsExecutor {
         payment.setUltimateDebtor("Mueller");
         payment.setCurrency(Currency.getInstance("EUR"));
         payment.setAmount(BigDecimal.valueOf(1000));
-        payment.setCreditorAccount(new CmsAccountReference(UUID.randomUUID().toString(),"DE89370400440532013000", "89370400440532010000", "2356 5746 3217 1234",
+        payment.setCreditorAccount(new CmsAccountReference(UUID.randomUUID().toString(), "DE89370400440532013000", "89370400440532010000", "2356 5746 3217 1234",
             "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setCreditorAgent("Telekom");
         payment.setCreditorName("Telekom");
@@ -350,7 +357,7 @@ public class CmsExecutor {
         payment.setRemittanceInformationStructured(buildCmsRemittance("Ref Number Merchant", "reference type", "reference issuer"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, 1, 1));
         payment.setRequestedExecutionTime(OffsetDateTime.parse("2020-01-01T15:30:35.035Z",
-                                                               DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
         payment.setUltimateCreditor("Telekom");
         payment.setPurposeCode("BCENECEQ");
         payment.setStartDate(LocalDate.of(2020, 1, 1));
@@ -433,5 +440,20 @@ public class CmsExecutor {
         tppInfo.setRedirectUri(redirectUri);
         tppInfo.setNokRedirectUri(nokRedirectUri);
         return tppInfo;
+    }
+
+    /**
+     * Sends request to GET api/v1/piis/consent/{currency}/{account-identifier-name}/{account-identifier} endpoint
+     *
+     * @param cmsServiceInvoker Service, performing rest call
+     */
+    private static void getPiisConsentListByAccountReference(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("currency", CURRENCY)
+                                      .addPathVariable("account-identifier-name", ACCOUNT_IDENTIFIER_NAME)
+                                      .addPathVariable("account-identifier", ACCOUNT_IDENTIFIER_VALUE)
+                                      .build();
+        Optional<List> validationInfo = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPiisConsentListByAccountReferenceMethod(uriParams)));
+        validationInfo.ifPresent(response -> logger.info("Validation info: " + response));
     }
 }

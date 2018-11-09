@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.web.exception;
 
-import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +34,5 @@ public class GlobalExceptionHandler {
 
         HttpStatus status = INTERNAL_SERVER_ERROR;
         return new ResponseEntity<>(status.getReasonPhrase(), status);
-    }
-
-    @ExceptionHandler(value = AspspProfileRestException.class)
-    public ResponseEntity<String> consentException(AspspProfileRestException ex, HandlerMethod handlerMethod) {
-        log.warn("ConsentException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        return new ResponseEntity<>(ex.getMessage(), INTERNAL_SERVER_ERROR);
     }
 }

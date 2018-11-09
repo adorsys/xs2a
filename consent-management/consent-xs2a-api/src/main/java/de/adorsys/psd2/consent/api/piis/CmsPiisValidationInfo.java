@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.fund;
+package de.adorsys.psd2.consent.api.piis;
 
-//TODO A core class to implement as a part of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
-public class SpiFundsConfirmationConsent {
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Data
+public class CmsPiisValidationInfo {
+    private String consentId;
+    private int frequencyPerDay;
+    private String tppInfoId;
+    private LocalDate expireDate;
+    private ConsentStatus consentStatus;
+    private PiisConsentTppAccessType piisConsentTppAccessType;
+
 }

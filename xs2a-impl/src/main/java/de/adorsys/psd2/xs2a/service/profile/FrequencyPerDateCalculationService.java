@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service;
+package de.adorsys.psd2.xs2a.service.profile;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import lombok.RequiredArgsConstructor;

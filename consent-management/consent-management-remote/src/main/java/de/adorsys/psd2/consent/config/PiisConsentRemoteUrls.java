@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest;
+package de.adorsys.psd2.consent.config;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
+public class PiisConsentRemoteUrls {
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
 
-@SpringBootApplication
-public class IntegrationTestApp {
-    public static void main(String[] args) {
-
-        SpringApplication.run(IntegrationTestApp.class, args);
+    /**
+     * Returns URL-string to CMS endpoint that gets piis validation data
+     *
+     * @return String
+     */
+    public String getPiisConsent() {
+        return consentServiceBaseUrl + "/piis/consent/{currency}/{account-identifier-name}/{account-identifier}";
     }
 }

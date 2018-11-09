@@ -91,7 +91,7 @@ public class AisConsent {
 
     @Column(name = "expected_frequency_per_day", nullable = false)
     @ApiModelProperty(value = "Maximum frequency for an access per day, based on tppFrequencyPerDate and inner calculations. For a once-off access, this attribute is set to 1", required = true, example = "4")
-    private int expectedFrequencyPerDay;
+    private int allowedFrequencyPerDay;
 
     @Column(name = "tpp_frequency_per_day", nullable = false)
     @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")

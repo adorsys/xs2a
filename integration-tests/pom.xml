@@ -106,19 +106,16 @@
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
             <version>${cucumber.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
             <version>${cucumber.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-spring</artifactId>
             <version>${cucumber.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -144,15 +141,20 @@
             <artifactId>xs2a-adapter</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>xs2a-integtests</finalName>
         <plugins>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
                     <mainClass>de.adorsys.aspsp.xs2a.integtest.IntegrationTestApp</mainClass>
@@ -185,7 +187,6 @@
                         <Custom_Parameter>Please check the timestamp above to ensure it is the latest report</Custom_Parameter>
                     </customParameters>
                 </configuration>
-
             </plugin>
         </plugins>
     </build>
