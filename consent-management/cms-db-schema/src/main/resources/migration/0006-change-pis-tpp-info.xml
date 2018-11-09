@@ -38,7 +38,7 @@
 
         <dropColumn columnName="tpp_role"
                     tableName="tpp_info"/>
-        <dropColumn columnName="national_competent_authority"
+        <dropColumn columnName="national_competent_auth"
                     tableName="tpp_info"/>
 
         <dropNotNullConstraint columnName="redirect_uri"

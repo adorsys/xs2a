@@ -21,7 +21,7 @@
 
     <include relativeToChangelogFile="true" file="_typedef.xml"/>
 
-    <changeSet author="pru@adorsys.com.ua" id="2018-07-24-1">
+    <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-7">
         <comment>Create sequence for ais consent id.</comment>
         <createSequence sequenceName="ais_consent_id_seq"/>
         <sql dbms="mariadb">CREATE SEQUENCE ais_consent_id_seq</sql>
@@ -39,10 +39,10 @@
         <sql dbms="mariadb">CREATE SEQUENCE pis_consent_id_seq</sql>
     </changeSet>
 
-    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-1">
+    <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-1">
         <comment>Create sequence for pis account reference id.</comment>
-        <createSequence sequenceName="pis_account_reference_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_account_reference_id_seq</sql>
+        <createSequence sequenceName="pis_acc_reference_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE pis_acc_reference_id_seq</sql>
     </changeSet>
 
     <changeSet author="msh@adorsys.com.ua" id="2018-08-14-2">
@@ -69,10 +69,10 @@
         <sql dbms="mariadb">CREATE SEQUENCE pis_tpp_info_id_seq</sql>
     </changeSet>
 
-    <changeSet author="pru@adorsys.com.ua" id="2018-09-07-1">
+    <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-2">
         <comment>Create sequence for pis consent authorization.</comment>
-        <createSequence sequenceName="pis_consent_authorization_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE pis_consent_authorization_id_seq</sql>
+        <createSequence sequenceName="pis_consent_auth_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE pis_consent_auth_id_seq</sql>
     </changeSet>
 
     <changeSet author="mpo@adorsys.com.ua" id="2018-05-09-1">
@@ -149,7 +149,7 @@
                        tableName="ais_account_access"/>
 
         <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="ais_account_access"
-                                 constraintName="fk__ais_account_access__ais_consent" deferrable="false"
+                                 constraintName="fk_ais_access_ais_consent" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="ais_consent"/>
     </changeSet>
@@ -176,7 +176,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-6">
+    <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-3">
         <comment>Create table pis_tpp_info.</comment>
 
         <createTable tableName="pis_tpp_info">
@@ -192,7 +192,7 @@
             <column name="tpp_role" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="national_competent_authority" type="VARCHAR(100)">
+            <column name="national_competent_auth" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
             <column name="redirect_uri" type="VARCHAR(255)">
@@ -231,7 +231,7 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="pis_consent"
-                                 constraintName="fk__tpp_info_id__pis_tpp_info" deferrable="false"
+                                 constraintName="fk_tpp_info_id_pis_tpp_info" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="tpp_info_id" referencedTableName="pis_tpp_info"/>
     </changeSet>
@@ -280,7 +280,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="pru@adorsys.com.ua" id="2018-08-14-10">
+    <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-4">
         <comment>Create table pis_payment_data.</comment>
 
         <createTable tableName="pis_payment_data">
@@ -291,7 +291,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="end_to_end_identification" type="VARCHAR(20)"/>
-            <column name="debtor_account_account_reference_id" type="BIGINT"/>
+            <column name="debtor_acc_reference_id" type="BIGINT"/>
             <column name="ultimate_debtor" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
@@ -301,7 +301,7 @@
             <column name="amount" type="numeric(19, 2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="creditor_account_account_reference_id" type="BIGINT"/>
+            <column name="creditor_acc_reference_id" type="BIGINT"/>
             <column name="creditor_agent" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
@@ -309,7 +309,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="address_id" type="BIGINT"/>
-            <column name="remittance_information_unstructured" type="VARCHAR(1000)"/>
+            <column name="remittance_info_unstruct" type="VARCHAR(1000)"/>
             <column name="remittance_id" type="BIGINT"/>
             <column name="requested_execution_date" type="DATE">
                 <constraints nullable="false"/>
@@ -329,39 +329,39 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="debtor_account_account_reference_id" baseTableName="pis_payment_data"
-                                 constraintName="fk__pis_payment_data__pis_account_reference__debtor" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="debtor_acc_reference_id" baseTableName="pis_payment_data"
+                                 constraintName="fk_pis_payment_pis_debtor" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="account_reference_id"
                                  referencedTableName="pis_account_reference"/>
 
-        <addForeignKeyConstraint baseColumnNames="creditor_account_account_reference_id"
+        <addForeignKeyConstraint baseColumnNames="creditor_acc_reference_id"
                                  baseTableName="pis_payment_data"
-                                 constraintName="fk__pis_payment_data__pis_account_reference__creditor" deferrable="false"
+                                 constraintName="fk_pis_payment_pis_creditor" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="account_reference_id"
                                  referencedTableName="pis_account_reference"/>
 
         <addForeignKeyConstraint baseColumnNames="address_id" baseTableName="pis_payment_data"
-                                 constraintName="fk__pis_payment_data__pis_address" deferrable="false"
+                                 constraintName="fk_pis_payment_pis_address" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="address_id" referencedTableName="pis_address"/>
 
         <addForeignKeyConstraint baseColumnNames="remittance_id" baseTableName="pis_payment_data"
-                                 constraintName="fk__pis_payment_data__pis_remittance" deferrable="false"
+                                 constraintName="fk_pis_payment_remittance" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="remittance_id" referencedTableName="pis_remittance"/>
 
         <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="pis_payment_data"
-                                 constraintName="fk__pis_payment_data__pis_consent" deferrable="false"
+                                 constraintName="fk_pis_payment_pis_consent" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="pis_consent"/>
     </changeSet>
 
-    <changeSet author="age@adorsys.de" id="2018-08-28-1">
+    <changeSet author="mpo@adorsys.de" id="2018-11-08-6">
         <comment>Create sequence for ais consent authorization id.</comment>
-        <createSequence sequenceName="ais_consent_authorization_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE ais_consent_authorization_id_seq</sql>
+        <createSequence sequenceName="ais_consent_auth_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE ais_consent_auth_id_seq</sql>
     </changeSet>
 
     <changeSet author="age@adorsys.de" id="2018-08-28-2">
@@ -387,7 +387,7 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="ais_consent_authorization"
-                                 constraintName="fk__ais_consent_authorization__ais_consent" deferrable="false"
+                                 constraintName="fk_ais_auth_ais_consent" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="ais_consent"/>
     </changeSet>
@@ -416,7 +416,7 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="pis_consent_authorization"
-                                 constraintName="fk__pis_consent_authorization__pis_consent" deferrable="false"
+                                 constraintName="fk_pis_auth_pis_consent" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="pis_consent"/>
     </changeSet>
