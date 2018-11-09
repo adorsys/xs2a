@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.web.filter;
 
-import de.adorsys.aspsp.xs2a.web.filter.QwacCertificateFilter;
+import de.adorsys.psd2.xs2a.web.filter.QwacCertificateFilter;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

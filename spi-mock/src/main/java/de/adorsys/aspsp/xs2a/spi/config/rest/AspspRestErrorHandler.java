@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.config.rest;
 
-import de.adorsys.aspsp.xs2a.exception.RestException;
+import de.adorsys.psd2.xs2a.exception.RestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
