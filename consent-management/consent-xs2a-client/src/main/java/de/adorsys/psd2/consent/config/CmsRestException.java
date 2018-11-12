@@ -24,11 +24,11 @@ public class CmsRestException extends RuntimeException {
     private HttpStatus httpStatus;
     private String message;
 
-    public CmsRestException(HttpStatus httpStatus) {
+    CmsRestException(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
     }
 
-    public CmsRestException(HttpStatus httpStatus, String message) {
+    CmsRestException(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
     }
