@@ -41,6 +41,7 @@
         <module>consent-xs2a-web</module>
         <module>cms-standalone-service</module>
         <module>consent-core-web</module>
+        <module>consent-psu-web</module>
     </modules>
 
 </project>
