@@ -32,7 +32,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>consent-management-system</artifactId>
+    <artifactId>cms-standalone-service</artifactId>
 
 
     <dependencies>
@@ -55,6 +55,13 @@
             <version>1.12-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-xs2a-web</artifactId>
+            <version>1.12-SNAPSHOT</version>
+        </dependency>
+
+
         <!-- other dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -76,12 +83,14 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

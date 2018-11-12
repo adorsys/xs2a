@@ -35,10 +35,10 @@
         <module>consent-psu-api</module>
         <module>consent-psu-client</module>
         <module>consent-aspsp-api</module>
-        <module>consent-management-lib</module>
-        <module>consent-management-system</module>
         <module>consent-core-api</module>
         <module>consent-management-remote</module>
+        <module>consent-management-lib</module>
+        <module>cms-standalone-service</module>
     </modules>
 
 </project>
