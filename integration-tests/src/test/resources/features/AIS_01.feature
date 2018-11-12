@@ -25,6 +25,13 @@ Feature: Account Information Service
             #| consent-all-psd2-wrong-psu-id.json    |
             #| consent-all-psd2-wrong-value.json          |
             | consent-dedicated-incorrect-iban.json |
+
+    Scenario Outline: Expired consent request creation (redirect)
+        Given PSU wants to create an expired consent <consent-resource>
+        When PSU sends the create consent request with error
+        Then an error response code is displayed and an appropriate error response is shown
+        Examples:
+            | consent-resource                      |
             | consent-dedicated-expired-consent.json|
 
     @ignore
