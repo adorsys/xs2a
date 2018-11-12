@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
-import de.adorsys.psd2.consent.domain.TppInfo;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.piis.PiisConsent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class PiisConsentMapper {
-    private final TppInfoMapper tppInfoMapper;
 
     public List<CmsPiisValidationInfo> mapToListCmsPiisValidationInfo(List<PiisConsent> consents) {
         return consents.stream()
@@ -43,7 +42,7 @@ public class PiisConsentMapper {
         info.setExpireDate(piisConsent.getExpireDate());
         info.setConsentStatus(piisConsent.getConsentStatus());
         info.setPiisConsentTppAccessType(piisConsent.getTppAccessType());
-        info.setTppInfoId(Optional.ofNullable(piisConsent.getTppInfo()).map(TppInfo::getAuthorisationNumber).orElse(null));
+        info.setTppInfoId(Optional.ofNullable(piisConsent.getTppInfo()).map(TppInfoEntity::getAuthorisationNumber).orElse(null));
         info.setFrequencyPerDay(piisConsent.getAllowedFrequencyPerDay());
         return info;
     }

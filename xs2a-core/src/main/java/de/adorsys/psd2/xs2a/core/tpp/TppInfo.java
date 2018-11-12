@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain;
+package de.adorsys.psd2.xs2a.core.tpp;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class TppInfo {
     private String tppName;
 
     @ApiModelProperty(value = "Tpp role", required = true)
-    private List<Xs2aTppRole> tppRoles;
+    private List<TppRole> tppRoles;
 
     @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
     private String authorityId;
@@ -58,4 +58,7 @@ public class TppInfo {
 
     @ApiModelProperty(value = "Nok redirect URI", example = "Nok redirect URI")
     private String nokRedirectUri;
+
+    @ApiModelProperty(value = "Status of the TPP in XS2A Service", example = "ENABLED", allowableValues = "ENABLED,BLOCKED")
+    private TppStatus status = TppStatus.ENABLED;
 }

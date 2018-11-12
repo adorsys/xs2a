@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.consent.domain;
 
-import de.adorsys.psd2.consent.api.CmsTppRole;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,9 +26,8 @@ import java.util.List;
 
 @Data
 @Entity(name = "tpp_info")
-@ApiModel(description = "Tpp info", value = "TppInfo")
 @NoArgsConstructor
-public class TppInfo {
+public class TppInfoEntity {
     @Id
     @Column(name = "tpp_info_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpp_info_generator")
@@ -37,53 +35,44 @@ public class TppInfo {
     private Long id;
 
     @Column(name = "authorisation_number", nullable = false)
-    @ApiModelProperty(value = "Authorisation number", required = true, example = "1234_authorisationNumber")
     private String authorisationNumber;
 
     @Column(name = "tpp_name", nullable = false)
-    @ApiModelProperty(value = "Tpp name", required = true, example = "Tpp company")
     private String tppName;
 
     @ElementCollection
     @CollectionTable(name = "tpp_info_role", joinColumns = @JoinColumn(name = "tpp_info_id"))
     @Column(name = "tpp_role")
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Tpp roles", required = true, dataType = "array")
-    private List<CmsTppRole> tppRoles;
+    private List<TppRole> tppRoles;
 
     @Column(name = "authority_id", nullable = false)
-    @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
     private String authorityId;
 
     @Column(name = "authority_name", nullable = false)
-    @ApiModelProperty(value = "National competent authority name", required = true, example = "authority name")
     private String authorityName;
 
     @Column(name = "country", nullable = false)
-    @ApiModelProperty(value = "Country", required = true, example = "Germany")
     private String country;
 
     @Column(name = "organisation", nullable = false)
-    @ApiModelProperty(value = "Organisation", required = true, example = "Organisation")
     private String organisation;
 
     @Column(name = "organisation_unit", nullable = false)
-    @ApiModelProperty(value = "Organisation unit", required = true, example = "Organisation unit")
     private String organisationUnit;
 
     @Column(name = "city", nullable = false)
-    @ApiModelProperty(value = "City", required = true, example = "Nuremberg")
     private String city;
 
     @Column(name = "state", nullable = false)
-    @ApiModelProperty(value = "State", required = true, example = "Bayern")
     private String state;
 
     @Column(name = "redirect_uri", nullable = false)
-    @ApiModelProperty(value = "Redirect URI", example = "Redirect URI")
     private String redirectUri;
 
     @Column(name = "nok_redirect_uri", nullable = false)
-    @ApiModelProperty(value = "Nok redirect URI", example = "Nok redirect URI")
     private String nokRedirectUri;
+
+    //TODO put column into database
+    private TppStatus status;
 }
