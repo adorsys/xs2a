@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api;
 
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -28,8 +29,7 @@ public interface AspspDataService {
      * @return <code>AspspConsentData</code> if consent was found. <code>false</code> otherwise.
      */
     @NotNull
-    //TODO Move AspspConsentData class to xs2a-core (de.adorsys.psd2.xs2a.core.consent) and use it here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/453
-    Optional<Object/*AspspConsentData*/> readAspspConsentData(@NotNull String id);
+    Optional<AspspConsentData> readAspspConsentData(@NotNull String id);
 
     /**
      * Writes/Updates an AspspConsentData by the consent ID given in it
@@ -37,6 +37,5 @@ public interface AspspDataService {
      * @param aspspConsentData aspspConsentData to be put
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
-    //TODO Move AspspConsentData class to xs2a-core (de.adorsys.psd2.xs2a.core.consent) and use it here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/453
-    boolean updateAspspConsentData(@NotNull Object /*AspspConsentData*/ aspspConsentData);
+    boolean updateAspspConsentData(@NotNull AspspConsentData aspspConsentData);
 }

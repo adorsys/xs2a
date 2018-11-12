@@ -16,13 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.integtest.config.rest.consent;
 
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +41,7 @@ public class ConsentMapper {
                    .map(r -> {
                        CreateAisConsentRequest request = new CreateAisConsentRequest();
                        request.setTppId(tppId);
-                       request.setFrequencyPerDay(r.getFrequencyPerDay());
+                       request.setAllowedFrequencyPerDay(r.getFrequencyPerDay());
                        request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
                        request.setValidUntil(r.getValidUntil());
                        request.setRecurringIndicator(r.isRecurringIndicator());

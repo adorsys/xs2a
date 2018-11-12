@@ -16,15 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
-import de.adorsys.aspsp.xs2a.exception.RestException;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationConsent;
+import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
@@ -56,22 +56,24 @@ public class FundsConfirmationSpiImpl implements FundsConfirmationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<Boolean> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable SpiFundsConfirmationConsent consent, @NotNull SpiAccountReference reference, @NotNull SpiAmount amount, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<Boolean> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable String consentId, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData) {
         try {
             //TODO Account data reads should be performed through specially created endpoint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/383
+            SpiAccountReference psuAccount = spiFundsConfirmationRequest.getPsuAccount();
             List<SpiAccountDetails> accounts = Optional.ofNullable(
                 aspspRestTemplate.exchange(
                     remoteSpiUrls.getAccountDetailsByIban(),
                     HttpMethod.GET,
                     new HttpEntity<>(null), new ParameterizedTypeReference<List<SpiAccountDetails>>() {
-                    }, reference.getIban())
+                    },
+                    psuAccount.getIban())
                     .getBody())
                                                    .orElseGet(Collections::emptyList);
-            List<SpiAccountBalance> balances = extractAccountBalancesByCurrency(accounts, reference.getCurrency());
+            List<SpiAccountBalance> balances = extractAccountBalancesByCurrency(accounts, psuAccount.getCurrency());
 
             return SpiResponse.<Boolean>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                       .payload(isBalancesSufficient(balances, amount))
+                       .payload(isBalancesSufficient(balances, spiFundsConfirmationRequest.getInstructedAmount()))
                        .success();
 
         } catch (RestException e) {

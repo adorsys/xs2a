@@ -35,6 +35,7 @@ public class Context<T, U> {
     private String paymentId;
     private String authorisationId;
     private String consentId;
+    private String ressourceId;
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
     private TppMessages tppMessages;
@@ -57,6 +58,7 @@ public class Context<T, U> {
         this.paymentId = null;
         this.authorisationId = null;
         this.consentId = null;
+        this.ressourceId = null;
         this.testData = null;
         this.actualResponse = null;
         this.tppMessages = null;
