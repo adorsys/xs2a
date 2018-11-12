@@ -159,7 +159,7 @@ variables: &variables
     - docker build -t "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG" spi-mock
     - docker build -t "$DOCKER_IMAGE_NAME_MOCKSRV:$DOCKER_TAG" aspsp-mock-server
     - docker build -t "$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
-    - docker build -t "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/consent-management-system
+    - docker build -t "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
     - docker build -t "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
     - docker build -t "$DOCKER_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG" integration-tests
     - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
