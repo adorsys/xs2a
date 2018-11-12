@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web;
+package de.adorsys.psd2.consent.web.xs2a;
 
 
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
