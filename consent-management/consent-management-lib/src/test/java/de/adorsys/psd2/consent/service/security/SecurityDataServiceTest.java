@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.server.service.security;
+package de.adorsys.psd2.consent.service.security;
 
-import de.adorsys.psd2.consent.service.security.DecryptedData;
-import de.adorsys.psd2.consent.service.security.EncryptedData;
-import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import org.apache.commons.lang3.ArrayUtils;
