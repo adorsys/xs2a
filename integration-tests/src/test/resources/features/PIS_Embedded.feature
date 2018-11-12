@@ -138,7 +138,11 @@ Feature: Payment Initiation Service - Embedded approach
     Scenario Outline: get authorisations (embedded)
         Given PSU sends the single payment initiation request and receives the paymentId
         And PSU sends the start authorisation request and receives the authorisationId
+        And PSU prepares the successful data <selection-data> request
         When PSU sends the successful authorisation IDs data request
         Then a successful response code and the appropriate list of authorisation Ids are received
         Examples:
+            | selection-data                        |
+            |RequestAuthorisationIDs-successful.json|
+
 

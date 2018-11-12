@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
@@ -47,13 +48,14 @@ public class SuccessfulRequestForAuthorisationsIDs {
     // @And("^PSU sends the start authorisation request and receives the authorisationId$")
     // See GlobalSuccessfulSteps
 
+    @And("PSU prepares the successful data (.*)request$")
+    public void prepareData(String dataFileName) throws IOException{
+        testService.parseJson("/data-input/pis/embedded/RequestAuthorisationIDs-successful.json",
+            new TypeReference<TestData<HashMap, Authorisations>>(){});
+    }
 
     @When("^PSU sends the successful authorisation IDs data request$")
     public void sendGetAuthorisationIdsRequest() throws IOException{
-
-        testService.parseJson("/data-input/pis/embedded/RequestAuthorisationIDs-successful.json",
-            new TypeReference<TestData<HashMap, Authorisations>>(){});
-
         testService.sendRestCall(HttpMethod.GET,
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/");
     }
