@@ -40,6 +40,7 @@
         <module>consent-management-lib</module>
         <module>consent-xs2a-web</module>
         <module>cms-standalone-service</module>
+        <module>consent-core-web</module>
     </modules>
 
 </project>

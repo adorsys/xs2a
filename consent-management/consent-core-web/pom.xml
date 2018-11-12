@@ -22,10 +22,11 @@
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
         <version>1.12-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>consent-xs2a-web</artifactId>
+    <artifactId>consent-core-web</artifactId>
 
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
@@ -35,11 +36,27 @@
         <!-- project dependencies -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>consent-core-web</artifactId>
+            <artifactId>consent-management-lib</artifactId>
             <version>1.12-SNAPSHOT</version>
         </dependency>
 
         <!-- other dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
@@ -61,4 +78,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

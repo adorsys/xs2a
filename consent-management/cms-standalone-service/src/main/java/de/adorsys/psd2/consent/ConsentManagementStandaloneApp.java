@@ -22,10 +22,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan("de.adorsys.psd2")
-public class ConsentManagementApplication {
+public class ConsentManagementStandaloneApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(ConsentManagementApplication.class, args);
+        SpringApplication.run(ConsentManagementStandaloneApp.class, args);
     }
 }
 
