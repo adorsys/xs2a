@@ -91,7 +91,5 @@ public class ConsentRequestSuccessfulSteps {
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getConsentStatus(), equalTo(givenResponseBody.getConsentStatus()));
         assertThat(actualResponse.getBody().getConsentId(), notNullValue());
-
-        context.cleanUp();
     }
 }

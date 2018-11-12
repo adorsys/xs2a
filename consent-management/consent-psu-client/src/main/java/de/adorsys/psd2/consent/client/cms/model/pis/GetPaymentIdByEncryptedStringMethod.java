@@ -21,10 +21,10 @@ import de.adorsys.psd2.consent.client.core.HttpMethod;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 
 public class GetPaymentIdByEncryptedStringMethod extends RestCmsRequestMethod<Void, String> {
-    private static final String GET_PAYMENT_ID_BY_ENCRYPTED_STRING = "api/v1/pis/payment/{payment-id}";
+    private static final String GET_PIS_CONSENT_ASPSP_DATA_URI = "api/v1/pis/payment/{payment-id}";
 
     public GetPaymentIdByEncryptedStringMethod(HttpUriParams uriParams) {
-        super(HttpMethod.GET, GET_PAYMENT_ID_BY_ENCRYPTED_STRING, uriParams);
+        super(HttpMethod.GET, GET_PIS_CONSENT_ASPSP_DATA_URI, uriParams);
     }
 }
 

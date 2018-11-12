@@ -127,7 +127,8 @@ Feature: Payment Initiation Service - Common
     # Payment Cancellation                                                                                             #
     #                                                                                                                  #
     ####################################################################################################################
-    Scenario Outline: Successful payment cancellation request
+@ignore
+  Scenario Outline: Successful payment cancellation request
         Given PSU sends the single payment initiation request and receives the paymentId
         And PSU wants to cancel the payment by using a set of data <payment-cancellation-data>
         When PSU initiates the cancellation of the payment

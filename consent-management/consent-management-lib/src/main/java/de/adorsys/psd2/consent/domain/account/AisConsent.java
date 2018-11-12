@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
 import de.adorsys.psd2.consent.domain.ConsentType;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -92,7 +91,7 @@ public class AisConsent {
 
     @Column(name = "expected_frequency_per_day", nullable = false)
     @ApiModelProperty(value = "Maximum frequency for an access per day, based on tppFrequencyPerDate and inner calculations. For a once-off access, this attribute is set to 1", required = true, example = "4")
-    private int expectedFrequencyPerDay;
+    private int allowedFrequencyPerDay;
 
     @Column(name = "tpp_frequency_per_day", nullable = false)
     @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
@@ -110,11 +109,6 @@ public class AisConsent {
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @ApiModelProperty(value = "List of authorizations related to the consent", required = true)
     private List<AisConsentAuthorization> authorizations = new ArrayList<>();
-
-    @Lob
-    @JsonIgnore
-    @Column(name = "aspsp_consent_data")
-    private byte[] aspspConsentData;
 
     @Column(name = "ais_consent_request_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

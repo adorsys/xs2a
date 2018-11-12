@@ -175,7 +175,7 @@ public class PisConsentMapper {
             .orElse(null);
     }
 
-    private CmsAddress mapToCmsAddress(PisAddress pisAddress) {
+    public CmsAddress mapToCmsAddress(PisAddress pisAddress) {
         return Optional.ofNullable(pisAddress)
             .map(adr -> {
                 CmsAddress cmsAddress = new CmsAddress();

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
@@ -34,8 +35,8 @@ import de.adorsys.psd2.consent.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     private final PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final SecurityDataService securityDataService;
+    private final AspspDataService aspspDataService;
 
     /**
      * Creates new pis consent with full information about payment
@@ -136,7 +138,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     @Override
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String encryptedConsentId) {
         return getPisConsentById(encryptedConsentId)
-                   .map(dta -> prepareAspspConsentData(dta, encryptedConsentId));
+                   .map(pisConsent -> prepareAspspConsentData(encryptedConsentId));
     }
 
     /**
@@ -152,19 +154,19 @@ public class PisConsentServiceInternal implements PisConsentService {
             log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
             return Optional.empty();
         }
+
         return pisPaymentDataRepository.findByPaymentId(paymentId.get())
                    .map(dta -> dta.get(0))
                    .map(PisPaymentData::getConsent)
-                   .map(dta -> prepareAspspConsentData(dta, encryptedPaymentId));
+                   .map(pisConsent -> prepareAspspConsentData(encryptedPaymentId));
     }
 
-    private CmsAspspConsentDataBase64 prepareAspspConsentData(PisConsent consent, String encryptedConsentId) {
-        return Optional.ofNullable(consent.getAspspConsentData())
-                   .flatMap(dta -> securityDataService.decryptConsentData(encryptedConsentId, dta))
-                   .map(DecryptedData::getData)
-                   .map(bytes -> Base64.getEncoder().encodeToString(bytes))
-                   .map(str64 -> new CmsAspspConsentDataBase64(encryptedConsentId, str64))
-                   .orElseGet(() -> new CmsAspspConsentDataBase64(encryptedConsentId, null));
+    private CmsAspspConsentDataBase64 prepareAspspConsentData(String encryptedConsentId) {
+        Optional<String> aspspConsentDataBase64 = aspspDataService.readAspspConsentData(encryptedConsentId)
+                                                      .map(AspspConsentData::getAspspConsentData)
+                                                      .map(Base64.getEncoder()::encodeToString);
+
+        return new CmsAspspConsentDataBase64(encryptedConsentId, aspspConsentDataBase64.orElse(null));
     }
 
     /**
@@ -188,8 +190,21 @@ public class PisConsentServiceInternal implements PisConsentService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<String> updateAspspConsentDataInPisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
-        return getActualPisConsent(encryptedConsentId)
-                   .flatMap(cons -> saveAspspConsentDataInPisConsent(request, cons, encryptedConsentId));
+        Optional<PisConsent> consent = getActualPisConsent(encryptedConsentId);
+        if (!consent.isPresent()) {
+            return Optional.empty();
+        }
+
+        Optional<AspspConsentData> aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
+                                                          .map(Base64.getDecoder()::decode)
+                                                          .map(dta -> new AspspConsentData(dta, encryptedConsentId));
+        if (aspspConsentData.isPresent()) {
+            return aspspDataService.updateAspspConsentData(aspspConsentData.get())
+                       ? Optional.of(encryptedConsentId)
+                       : Optional.empty();
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -367,16 +382,5 @@ public class PisConsentServiceInternal implements PisConsentService {
         consentAuthorization.setAuthorizationType(authorizationType);
         consentAuthorization.setPsuData(psuDataMapper.mapToPsuData(psuData));
         return pisConsentAuthorizationRepository.save(consentAuthorization);
-    }
-
-    private Optional<String> saveAspspConsentDataInPisConsent(CmsAspspConsentDataBase64 request, PisConsent consent, String encryptedConsentId) {
-        return securityDataService.encryptConsentData(encryptedConsentId, request.getAspspConsentDataBase64())
-                   .map(encr -> updateConsentDataAndSaveConsent(consent, encr.getData()))
-                   .map(PisConsent::getExternalId);
-    }
-
-    private PisConsent updateConsentDataAndSaveConsent(PisConsent consent, byte[] consentData) {
-        consent.setAspspConsentData(consentData);
-        return pisConsentRepository.save(consent);
     }
 }
