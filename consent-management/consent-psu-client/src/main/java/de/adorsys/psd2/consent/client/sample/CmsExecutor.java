@@ -16,7 +16,10 @@
 
 package de.adorsys.psd2.consent.client.sample;
 
-import de.adorsys.psd2.consent.api.*;
+import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsAddress;
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
@@ -34,6 +37,8 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -327,7 +332,7 @@ public class CmsExecutor {
         request.setPaymentProduct(PaymentProduct.SEPA);
         request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
-            Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
+            Arrays.asList(TppRole.PISP, TppRole.AISP, TppRole.PIISP, TppRole.ASPSP),
             "authority id", "authority name", "Germany", "Organisation",
             "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
             "Nok redirect URI"));
@@ -422,11 +427,11 @@ public class CmsExecutor {
      * @param nokRedirectUri      Nok redirect URI
      * @return CmsTppInfo
      */
-    private static CmsTppInfo buildCmsTppInfo(String authorisationNumber, String tppName, List<CmsTppRole> tppRoles,
-                                              String authorityId, String authorityName, String country,
-                                              String organisation, String organisationUnit, String city, String state,
-                                              String redirectUri, String nokRedirectUri) {
-        CmsTppInfo tppInfo = new CmsTppInfo();
+    private static TppInfo buildCmsTppInfo(String authorisationNumber, String tppName, List<TppRole> tppRoles,
+                                           String authorityId, String authorityName, String country,
+                                           String organisation, String organisationUnit, String city, String state,
+                                           String redirectUri, String nokRedirectUri) {
+        TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(authorisationNumber);
         tppInfo.setTppName(tppName);
         tppInfo.setTppRoles(tppRoles);

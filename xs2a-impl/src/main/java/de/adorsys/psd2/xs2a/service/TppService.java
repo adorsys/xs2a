@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.xs2a.domain.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.exception.CertificateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

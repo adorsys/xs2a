@@ -17,13 +17,13 @@
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
@@ -48,7 +48,7 @@ public class Xs2aToCmsPisConsentRequest {
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
         request.setPaymentProduct(paymentProduct);
         // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
-        request.setTppInfo(new CmsTppInfo());
+        request.setTppInfo(new TppInfo());
         return request;
     }
 
@@ -57,7 +57,7 @@ public class Xs2aToCmsPisConsentRequest {
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(periodicPayment)));
         request.setPaymentProduct(paymentProduct);
         // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
-        request.setTppInfo(new CmsTppInfo());
+        request.setTppInfo(new TppInfo());
         return request;
     }
 
@@ -67,7 +67,7 @@ public class Xs2aToCmsPisConsentRequest {
         request.setPaymentProduct(paymentProduct);
         request.setPaymentType(PaymentType.BULK);
         // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
-        request.setTppInfo(new CmsTppInfo());
+        request.setTppInfo(new TppInfo());
         return request;
 
     }
