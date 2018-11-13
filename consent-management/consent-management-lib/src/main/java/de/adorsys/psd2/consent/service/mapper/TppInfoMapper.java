@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @Service
 public class TppInfoMapper {
-    TppInfoEntity mapToTppInfoEntity(TppInfo tppInfo) {
+    public TppInfoEntity mapToTppInfoEntity(TppInfo tppInfo) {
         return Optional.ofNullable(tppInfo)
                    .map(tin -> {
                        TppInfoEntity pisTppInfo = new TppInfoEntity();

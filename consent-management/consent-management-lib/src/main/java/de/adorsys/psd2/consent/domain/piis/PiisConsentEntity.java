@@ -33,8 +33,8 @@ import java.util.List;
 
 @Data
 @Entity(name = "piis_consent")
-@ApiModel(description = "Piis consent entity", value = "PiisConsent")
-public class PiisConsent {
+@ApiModel(description = "Piis consent entity", value = "PiisConsentEntity")
+public class PiisConsentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "piis_consent_generator")
     @SequenceGenerator(name = "piis_consent_generator", sequenceName = "piis_consent_id_seq")
