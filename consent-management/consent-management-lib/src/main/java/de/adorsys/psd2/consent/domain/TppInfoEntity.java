@@ -73,6 +73,7 @@ public class TppInfoEntity {
     @Column(name = "nok_redirect_uri", nullable = false)
     private String nokRedirectUri;
 
-    //TODO put column into database
+    @Column(name = "status", nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private TppStatus status;
 }
