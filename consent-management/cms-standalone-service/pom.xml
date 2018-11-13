@@ -15,106 +15,105 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
-        <artifactId>xs2a</artifactId>
+        <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
         <version>1.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>spi-mock</artifactId>
-    <packaging>jar</packaging>
-
-    <description>Mock spi interfaces for aspsp</description>
-
     <properties>
-        <ruleset.basedir>..</ruleset.basedir>
+        <ruleset.basedir>../..</ruleset.basedir>
+        <hibernate.version>5.3.6.Final</hibernate.version>
     </properties>
 
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>cms-standalone-service</artifactId>
+
+
     <dependencies>
-
         <!-- project dependencies -->
-
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>spi-api</artifactId>
+            <artifactId>consent-xs2a-web</artifactId>
+            <version>1.12-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-psu-web</artifactId>
+            <version>1.12-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-aspsp-web</artifactId>
             <version>1.12-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>aspsp-profile-remote</artifactId>
-            <version>1.12-SNAPSHOT</version>
-        </dependency>
-
-        <!-- CMS remote mode -->
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>consent-xs2a-client</artifactId>
-            <version>1.12-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>xs2a-impl</artifactId>
-            <version>1.12-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>aspsp-mock-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
-        </dependency>
-
-        <!-- spring dependencies -->
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
 
         <!-- other dependencies -->
-
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-            <version>${keycloak.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
+        <finalName>consent-management</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
-                    <profiles>
-                        <profile>mockspi</profile>
-                    </profiles>
                 </configuration>
                 <executions>
                     <execution>
