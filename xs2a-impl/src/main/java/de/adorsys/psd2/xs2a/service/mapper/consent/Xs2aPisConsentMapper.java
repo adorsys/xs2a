@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.TppInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aTppRole;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import org.springframework.stereotype.Component;
@@ -77,8 +78,8 @@ public class Xs2aPisConsentMapper {
                    }).orElse(null);
     }
 
-    public UpdatePisConsentPsuDataRequest mapToSpiUpdateConsentPsuDataReq(UpdatePisConsentPsuDataRequest updatePsuDataRequest,
-                                                                              Xs2aUpdatePisConsentPsuDataResponse updatePsuDataResponse) {
+    public UpdatePisConsentPsuDataRequest mapToCmsUpdateConsentPsuDataReq(Xs2aUpdatePisConsentPsuDataRequest updatePsuDataRequest,
+                                                                          Xs2aUpdatePisConsentPsuDataResponse updatePsuDataResponse) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
@@ -98,7 +99,7 @@ public class Xs2aPisConsentMapper {
                    .orElse(null);
     }
 
-    public SpiScaConfirmation buildSpiScaConfirmation(UpdatePisConsentPsuDataRequest request, String consentId, String paymentId) {
+    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisConsentPsuDataRequest request, String consentId, String paymentId) {
         SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
         paymentConfirmation.setPaymentId(paymentId);
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());

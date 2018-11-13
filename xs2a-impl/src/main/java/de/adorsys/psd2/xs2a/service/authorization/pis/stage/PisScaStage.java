@@ -37,6 +37,7 @@ import java.util.function.BiFunction;
 @RequiredArgsConstructor
 public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected final PaymentAuthorisationSpi paymentAuthorisationSpi;
+    protected final PaymentCancellationSpi paymentCancellationSpi;
     protected final PisConsentDataService pisConsentDataService;
     protected final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     protected final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;

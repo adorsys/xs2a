@@ -105,9 +105,15 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
-    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType) {
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
                                                                 UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
+    }
+
+    @Override
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
+        return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentCancellationAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
+            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
     }
 
     @Override
@@ -116,8 +122,14 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
-    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType) {
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, null, GetPisConsentAuthorisationResponse.class, authorizationId)
+                                       .getBody());
+    }
+
+    @Override
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorizationById(String cancellationId) {
+        return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentCancellationAuthorisationById(), HttpMethod.GET, null, GetPisConsentAuthorisationResponse.class, cancellationId)
                                        .getBody());
     }
 

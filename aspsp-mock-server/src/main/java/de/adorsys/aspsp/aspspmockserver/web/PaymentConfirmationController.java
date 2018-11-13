@@ -62,6 +62,18 @@ public class PaymentConfirmationController {
                    : new ResponseEntity<>(new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request"), HttpStatus.BAD_REQUEST);
     }
 
+    @DeleteMapping
+    @ApiOperation(value = "Confirm TAN", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Success"),
+        @ApiResponse(code = 400, message = "Bad request")
+    })
+    public ResponseEntity confirmTanAndCancelPayment(@RequestBody Confirmation confirmation) {
+        return CollectionUtils.isNotEmpty(paymentService.getPaymentById(confirmation.getPaymentId()))
+                   ? tanConfirmationService.confirmTan(confirmation.getPsuId(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.PAYMENT)
+                   : new ResponseEntity<>(new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request"), HttpStatus.BAD_REQUEST);
+    }
+
     @PutMapping(path = "/{consent-id}/{status}")
     @ApiOperation(value = "Update pis consent status of the corresponding consent", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity updatePisConsentStatus(@PathVariable("consent-id") String consentId,

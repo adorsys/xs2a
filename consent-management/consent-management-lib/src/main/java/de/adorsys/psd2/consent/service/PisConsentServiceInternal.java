@@ -239,14 +239,40 @@ public class PisConsentServiceInternal implements PisConsentService {
      *
      * @param authorizationId   id of the authorization to be updated
      * @param request           contains data for updating authorization
-     * @param authorizationType type of authorization required to update. Can be  CREATED or CANCELLED
      * @return response contains updated data
      */
     @Override
     @Transactional
-    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType) {
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
         Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(
-            authorizationId, authorizationType);
+            authorizationId, CmsAuthorisationType.CREATED);
+        if (pisConsentAuthorisationOptional.isPresent()) {
+            PisConsentAuthorization consentAuthorization = pisConsentAuthorisationOptional.get();
+
+            if (SCAMETHODSELECTED == request.getScaStatus()) {
+                String chosenMethod = request.getAuthenticationMethodId();
+                if (StringUtils.isNotBlank(chosenMethod)) {
+                    consentAuthorization.setChosenScaMethod(chosenMethod);
+                }
+            }
+            consentAuthorization.setScaStatus(request.getScaStatus());
+            pisConsentAuthorizationRepository.save(consentAuthorization);
+        }
+        return pisConsentAuthorisationOptional.map(p -> new UpdatePisConsentPsuDataResponse(p.getScaStatus()));
+    }
+
+    /**
+     * Update consent cancellation authorization
+     *
+     * @param cancellationId   id of the authorization to be updated
+     * @param request           contains data for updating authorization
+     * @return response contains updated data
+     */
+    @Override
+    @Transactional
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorization(String cancellationId, UpdatePisConsentPsuDataRequest request) {
+        Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(
+            cancellationId, CmsAuthorisationType.CANCELLED);
         if (pisConsentAuthorisationOptional.isPresent()) {
             PisConsentAuthorization consentAuthorization = pisConsentAuthorisationOptional.get();
 
@@ -281,12 +307,23 @@ public class PisConsentServiceInternal implements PisConsentService {
      * Reads authorization data by authorization Id
      *
      * @param authorizationId   id of the authorization to be updated
-     * @param authorizationType type of authorization. Can be  CREATED or CANCELLED
      * @return response contains authorization data
      */
     @Override
-    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType) {
-        return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(authorizationId, authorizationType)
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
+        return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(authorizationId, CmsAuthorisationType.CREATED)
+                   .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
+    }
+
+    /**
+     * Reads cancellation authorization data by authorization Id
+     *
+     * @param cancellationId   id of the authorization to be updated
+     * @return response contains authorization data
+     */
+    @Override
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorizationById(String cancellationId) {
+        return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(cancellationId, CmsAuthorisationType.CANCELLED)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }
 

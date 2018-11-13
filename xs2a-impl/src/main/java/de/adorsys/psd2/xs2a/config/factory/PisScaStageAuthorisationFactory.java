@@ -23,4 +23,5 @@ package de.adorsys.psd2.xs2a.config.factory;
  */
 public interface PisScaStageAuthorisationFactory extends ServiceFactory {
     String SERVICE_PREFIX = "PIS_";
+    String CANCELLATION_SERVICE_PREFIX = "PIS_CANC_";
 }
