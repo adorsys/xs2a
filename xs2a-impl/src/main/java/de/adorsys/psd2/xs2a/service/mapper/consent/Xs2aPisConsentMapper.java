@@ -50,8 +50,8 @@ public class Xs2aPisConsentMapper {
         return new Xs2aPisConsent(response.getConsentId(), psuData);
     }
 
-    public UpdatePisConsentPsuDataRequest mapToSpiUpdateConsentPsuDataReq(UpdatePisConsentPsuDataRequest updatePsuDataRequest,
-                                                                              Xs2aUpdatePisConsentPsuDataResponse updatePsuDataResponse) {
+    public UpdatePisConsentPsuDataRequest mapToCmsUpdateConsentPsuDataReq(Xs2aUpdatePisConsentPsuDataRequest updatePsuDataRequest,
+                                                                          Xs2aUpdatePisConsentPsuDataResponse updatePsuDataResponse) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
