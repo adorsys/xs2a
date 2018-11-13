@@ -17,9 +17,11 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
+import de.adorsys.psd2.consent.api.ConsentType;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
+import de.adorsys.psd2.consent.config.CommonAspspConsentDataRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,7 @@ public class AisConsentServiceRemote implements AisConsentService {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final AisConsentRemoteUrls remoteAisConsentUrls;
+    private final CommonAspspConsentDataRemoteUrls commonAspspConsentDataRemoteUrls;
 
     @Override
     public Optional<String> createConsent(CreateAisConsentRequest request) {
@@ -77,14 +80,14 @@ public class AisConsentServiceRemote implements AisConsentService {
 
     @Override
     public Optional<CmsAspspConsentDataBase64> getAspspConsentData(String consentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getAspspConsentData(), CmsAspspConsentDataBase64.class, consentId)
+        return Optional.ofNullable(consentRestTemplate.getForEntity(commonAspspConsentDataRemoteUrls.getAspspConsentDataByConsentId(), CmsAspspConsentDataBase64.class, consentId, ConsentType.AIS)
                                        .getBody());
     }
 
     @Override
     public Optional<String> saveAspspConsentDataInAisConsent(String consentId, CmsAspspConsentDataBase64 request) {
-        CreateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAspspConsentData(), HttpMethod.PUT,
-            new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
+        CreateAisConsentResponse response = consentRestTemplate.exchange(commonAspspConsentDataRemoteUrls.updateAspspConsentData(), HttpMethod.PUT,
+            new HttpEntity<>(request), CreateAisConsentResponse.class, consentId, ConsentType.AIS).getBody();
         return Optional.ofNullable(response.getConsentId());
     }
 

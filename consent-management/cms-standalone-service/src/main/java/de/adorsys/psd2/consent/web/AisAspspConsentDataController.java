@@ -17,8 +17,10 @@
 package de.adorsys.psd2.consent.web;
 
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
+import de.adorsys.psd2.consent.api.ConsentType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.api.service.CommonConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(value = "api/v1/ais/consent", tags = "AIS, Aspsp Consent Data", description = "Provides access to consent management system for AspspDataConsent")
 public class AisAspspConsentDataController {
     private final AisConsentService aisConsentService;
+    private final CommonConsentService commonConsentService;
 
     @GetMapping(path = "/{consent-id}/aspsp-consent-data")
     @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
@@ -40,7 +43,7 @@ public class AisAspspConsentDataController {
     public ResponseEntity<CmsAspspConsentDataBase64> getAspspConsentData(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
-        return aisConsentService.getAspspConsentData(consentId)
+        return commonConsentService.getAspspConsentDataByConsentId(consentId, ConsentType.AIS)
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

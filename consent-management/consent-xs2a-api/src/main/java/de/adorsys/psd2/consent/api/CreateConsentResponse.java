@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.domain;
+package de.adorsys.psd2.consent.api;
 
-import io.swagger.annotations.ApiModel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@ApiModel(description = "Type of the consent", value = "ConsentType")
-public enum ConsentType {
-    AIS,
-    PIS,
-    PIIS
+@Data
+@AllArgsConstructor
+public class CreateConsentResponse {
+    private String consentId;
 }

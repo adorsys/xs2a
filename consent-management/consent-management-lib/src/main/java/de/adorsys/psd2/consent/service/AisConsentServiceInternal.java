@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.api.service.ConsentService;
 import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
@@ -50,7 +51,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
-public class AisConsentServiceInternal implements AisConsentService {
+public class AisConsentServiceInternal implements AisConsentService, ConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
@@ -275,6 +276,11 @@ public class AisConsentServiceInternal implements AisConsentService {
     public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
         return getActualAisConsent(consentId)
                    .map(ac -> psuDataMapper.mapToPsuIdData(ac.getPsuData()));
+    }
+
+    @Override
+    public boolean isConsentExist(String consentId) {
+        return getActualAisConsent(consentId).isPresent();
     }
 
     private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
