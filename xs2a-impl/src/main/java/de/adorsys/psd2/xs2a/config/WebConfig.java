@@ -26,11 +26,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.psd2.xs2a.component.DateTimeDeserializer;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
+import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -106,6 +108,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()));
+        // Logging interceptors:
+        registry.addInterceptor(new AccountLoggingInterceptor(tppService())).addPathPatterns("/v1/accounts/**");
+        registry.addInterceptor(new ConsentLoggingInterceptor(tppService())).addPathPatterns("/v1/consents/**");
+        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService())).addPathPatterns("/v1/funds-confirmations/**");
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService())).addPathPatterns("/v1/payments/**", "/v1/bulk-payments/**", "/v1/periodic-payments/**");
+        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService())).addPathPatterns("/v1/signing-baskets/**");
     }
 
     @Bean
@@ -137,6 +145,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public MessageErrorMapper messageErrorMapper() {
         return new MessageErrorMapper(new MessageService(messageSource()));
+    }
+
+    @Bean
+    public TppService tppService() {
+        return new TppService();
     }
 
     @Override
