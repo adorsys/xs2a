@@ -1,0 +1,11 @@
+# Release notes for version 1.8 (release date: 28.09.2018)
+- Update bulk payments and consent requests according to specification 1.2
+- Support of Embedded SCA approach for bulk payment.
+- Support of Embedded SCA approach for periodic payment.
+- Support of Embedded SCA approach for consent request.
+- Validate Qwac certificate.
+- Support get transaction information for a given account. Embedded approach.
+- Migration to package and Maven GroupId "de.adorsys.psd2": aspsp-profile 
+- Fix the account consent information request to return link information.
+- Add endpoint updateAspspConsentData for PIS consent to Consent Management Service.
+- Remove empty links in the responses.
