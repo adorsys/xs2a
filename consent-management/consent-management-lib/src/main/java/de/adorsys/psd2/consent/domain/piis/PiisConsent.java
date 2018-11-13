@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.domain.piis;
 import de.adorsys.psd2.consent.api.piis.PiisConsentTppAccessType;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfo;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -67,7 +67,7 @@ public class PiisConsent {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id")
     @ApiModelProperty(value = "Information about TPP")
-    private TppInfo tppInfo;
+    private TppInfoEntity tppInfo;
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)

@@ -16,8 +16,9 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.CmsTppInfo;
-import de.adorsys.psd2.consent.domain.TppInfo;
+
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,10 +26,10 @@ import java.util.Optional;
 
 @Service
 public class TppInfoMapper {
-    public TppInfo mapToTppInfo(CmsTppInfo tppInfo) {
+    TppInfoEntity mapToTppInfoEntity(TppInfo tppInfo) {
         return Optional.ofNullable(tppInfo)
                    .map(tin -> {
-                       TppInfo pisTppInfo = new TppInfo();
+                       TppInfoEntity pisTppInfo = new TppInfoEntity();
                        pisTppInfo.setAuthorisationNumber(tin.getAuthorisationNumber());
                        pisTppInfo.setTppName(tin.getTppName());
                        pisTppInfo.setTppRoles(new ArrayList<>(tin.getTppRoles()));
@@ -41,15 +42,16 @@ public class TppInfoMapper {
                        pisTppInfo.setState(tin.getState());
                        pisTppInfo.setRedirectUri(tin.getRedirectUri());
                        pisTppInfo.setNokRedirectUri(tin.getNokRedirectUri());
+                       pisTppInfo.setStatus(tin.getStatus());
 
                        return pisTppInfo;
                    }).orElse(null);
     }
 
-    public CmsTppInfo mapToCmsTppInfo(TppInfo pisTppInfo) {
-        return Optional.ofNullable(pisTppInfo)
+    TppInfo mapToTppInfo(TppInfoEntity tppInfoEntity) {
+        return Optional.ofNullable(tppInfoEntity)
                    .map(tpp -> {
-                       CmsTppInfo tppInfo = new CmsTppInfo();
+                       TppInfo tppInfo = new TppInfo();
 
                        tppInfo.setAuthorisationNumber(tpp.getAuthorisationNumber());
                        tppInfo.setTppName(tpp.getTppName());
@@ -63,6 +65,7 @@ public class TppInfoMapper {
                        tppInfo.setState(tpp.getState());
                        tppInfo.setRedirectUri(tpp.getRedirectUri());
                        tppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
+                       tppInfo.setStatus(tpp.getStatus());
 
                        return tppInfo;
                    }).orElse(null);

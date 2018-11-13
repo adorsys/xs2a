@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.consent.api.pis.proto;
 
-import de.adorsys.psd2.consent.api.CmsTppInfo;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,7 +41,7 @@ public class PisConsentResponse {
     private PaymentType paymentType;
 
     @ApiModelProperty(value = "Tpp information", required = true)
-    private CmsTppInfo tppInfo;
+    private TppInfo tppInfo;
 
     @ApiModelProperty(value = "An external exposed identification of the created payment consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;

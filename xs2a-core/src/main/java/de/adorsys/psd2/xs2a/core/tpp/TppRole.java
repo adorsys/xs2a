@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.xs2a.core.tpp;
 
-public enum CmsTppRole {
+public enum TppRole {
     PISP,
     AISP,
     PIISP,

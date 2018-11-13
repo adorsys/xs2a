@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain;
+package de.adorsys.psd2.xs2a.core.tpp;
 
-public enum Xs2aTppRole {
-    PISP,
-    AISP,
-    PIISP,
-    ASPSP
+public enum TppStatus {
+    ENABLED,
+    BLOCKED
 }
