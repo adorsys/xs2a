@@ -17,8 +17,9 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
+import de.adorsys.psd2.consent.aspsp.api.piis.PiisConsent;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
-import de.adorsys.psd2.consent.domain.piis.PiisConsent;
+import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -29,14 +30,17 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class PiisConsentMapper {
+    private final PsuDataMapper psuDataMapper;
+    private final TppInfoMapper tppInfoMapper;
+    private final AccountReferenceMapper accountReferenceMapper;
 
-    public List<CmsPiisValidationInfo> mapToListCmsPiisValidationInfo(List<PiisConsent> consents) {
+    public List<CmsPiisValidationInfo> mapToListCmsPiisValidationInfo(List<PiisConsentEntity> consents) {
         return consents.stream()
                    .map(this::mapToCmsPiisValidationInfo)
                    .collect(Collectors.toList());
     }
 
-    private CmsPiisValidationInfo mapToCmsPiisValidationInfo(PiisConsent piisConsent) {
+    private CmsPiisValidationInfo mapToCmsPiisValidationInfo(PiisConsentEntity piisConsent) {
         CmsPiisValidationInfo info = new CmsPiisValidationInfo();
         info.setConsentId(piisConsent.getExternalId());
         info.setExpireDate(piisConsent.getExpireDate());
@@ -45,5 +49,19 @@ public class PiisConsentMapper {
         info.setTppInfoId(Optional.ofNullable(piisConsent.getTppInfo()).map(TppInfoEntity::getAuthorisationNumber).orElse(null));
         info.setFrequencyPerDay(piisConsent.getAllowedFrequencyPerDay());
         return info;
+    }
+
+    public PiisConsent mapToPiisConsent(PiisConsentEntity piisConsentEntity) {
+        return new PiisConsent(piisConsentEntity.getExternalId(),
+                               piisConsentEntity.isRecurringIndicator(),
+                               piisConsentEntity.getRequestDateTime(),
+                               piisConsentEntity.getLastActionDate(),
+                               piisConsentEntity.getExpireDate(),
+                               psuDataMapper.mapToPsuIdData(piisConsentEntity.getPsuData()),
+                               tppInfoMapper.mapToTppInfo(piisConsentEntity.getTppInfo()),
+                               piisConsentEntity.getConsentStatus(),
+                               accountReferenceMapper.mapToAccountReferenceList(piisConsentEntity.getAccounts()),
+                               piisConsentEntity.getTppAccessType(),
+                               piisConsentEntity.getAllowedFrequencyPerDay());
     }
 }

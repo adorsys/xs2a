@@ -45,7 +45,7 @@ As a requested by PSD2 specification every AIS consent contains a counter field 
 This value should be decremented each time the TPP of PSU requests any consent related information from CMS.
  
 **WARNING:** `The counter is not decremented automatically! To perform decrement and logging developer should trigger the corresponding endpoint at AIS controller!`
-##AIS:
+## AIS:
 - An endpoint to create AIS consent
 - An endpoint to update consent usage counter (decrements usage value by 1 use) and log the information on account/operation etc the consent was used for
 - An endpoint to retrieve the AIS consent by its external identifier. 
@@ -53,12 +53,17 @@ This value should be decremented each time the TPP of PSU requests any consent r
 - An endpoint to update the AIS consent status by its external identifier. 
 - An endpoint to update the AIS consent aspsp data.
 
-##PIS:
+## PIS:
 - An endpoint to create PIS consent.
 - An endpoint to retrieve the PIS consent status by its external identifier.
 - An endpoint to retrieve the PIS consent by its external identifier. 
 - An endpoint to update the PIS consent aspsp data.
 - An endpoint to update the PIS consent status by its external identifier.
+
+## PIIS:
+- An endpoint to create PIIS consent.
+- An endpoint to retrieve PIIS consents by PSU.
+- An endpoint to terminate PIIS consent by its external identifier.
 
 ## CORS
 By default, allow credentials, all origins and all headers are disabled.
