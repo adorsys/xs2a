@@ -72,7 +72,7 @@ public class Xs2aPisConsentService {
         pisConsentService.updatePaymentConsent(pisConsentRequest, consentId);
     }
 
-    public Optional<Boolean> revokePaymentById(String consentId) {
+    public Optional<Boolean> revokeConsentById(String consentId) {
         return pisConsentService.updateConsentStatusById(consentId, ConsentStatus.REVOKED_BY_PSU);
     }
 }
