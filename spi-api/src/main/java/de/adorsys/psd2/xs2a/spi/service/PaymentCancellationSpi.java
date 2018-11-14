@@ -50,10 +50,11 @@ public interface PaymentCancellationSpi extends AuthorisationSpi<SpiPayment> {
     /**
      * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation cancels payment at ASPSP.
      *
-     * @param psuData          ASPSP identifier(s) of the psu
-     * @param payment          Payment to be cancelled
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @param psuData            ASPSP identifier(s) of the psu
+     * @param spiScaConfirmation payment cancellation confirmation information
+     * @param payment            Payment to be cancelled
+     * @param aspspConsentData   Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                           May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
