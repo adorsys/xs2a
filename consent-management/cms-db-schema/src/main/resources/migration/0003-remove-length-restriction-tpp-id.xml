@@ -29,7 +29,7 @@
             [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
             Use <sql> and re-specify all configuration if this is the case
          -->
-        <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY tpp_id LONGTEXT NOT NULL</sql>
+        <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY tpp_id VARCHAR(50) NOT NULL</sql>
         <modifyDataType
             columnName="tpp_id"
             newDataType="VARCHAR(50)"
@@ -38,7 +38,7 @@
             [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
             Use <sql> and re-specify all configuration if this is the case
         -->
-        <sql dbms="mariadb">ALTER TABLE ais_consent MODIFY tpp_id LONGTEXT NOT NULL</sql>
+        <sql dbms="mariadb">ALTER TABLE ais_consent MODIFY tpp_id VARCHAR(50) NOT NULL</sql>
     </changeSet>
 
 </databaseChangeLog>
