@@ -243,7 +243,7 @@ public class PisConsentServiceInternal implements PisConsentService {
      */
     @Override
     @Transactional
-    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorizationId, UpdatePisConsentPsuDataRequest request) {
         Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(
             authorizationId, CmsAuthorisationType.CREATED);
         pisConsentAuthorisationOptional.ifPresent(pisConsentAuthorization -> doUpdateConsentAuthorisation(request, pisConsentAuthorization));
@@ -284,12 +284,12 @@ public class PisConsentServiceInternal implements PisConsentService {
     /**
      * Reads authorisation data by authorisation Id
      *
-     * @param authorizationId id of the authorisation
+     * @param authorisationId id of the authorisation
      * @return response contains authorisation data
      */
     @Override
-    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
-        return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(authorizationId, CmsAuthorisationType.CREATED)
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorisationById(String authorisationId) {
+        return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(authorisationId, CmsAuthorisationType.CREATED)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }
 

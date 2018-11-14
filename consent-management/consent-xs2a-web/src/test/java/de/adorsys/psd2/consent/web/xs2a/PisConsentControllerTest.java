@@ -76,7 +76,7 @@ public class PisConsentControllerTest {
         when(pisConsentService.getConsentById(CONSENT_ID)).thenReturn(Optional.of(getPisConsentResponse()));
         when(pisConsentService.updateConsentStatusById(CONSENT_ID, RECEIVED)).thenReturn(Optional.of(Boolean.TRUE));
         when(pisConsentService.createAuthorization(PAYMENT_ID, CmsAuthorisationType.CREATED, PSU_DATA)).thenReturn(Optional.of(getCreatePisConsentAuthorisationResponse()));
-        when(pisConsentService.updateConsentAuthorization(AUTHORISATION_ID, getUpdatePisConsentPsuDataRequest())).thenReturn(Optional.of(getUpdatePisConsentPsuDataResponse()));
+        when(pisConsentService.updateConsentAuthorisation(AUTHORISATION_ID, getUpdatePisConsentPsuDataRequest())).thenReturn(Optional.of(getUpdatePisConsentPsuDataResponse()));
     }
 
     @Test
@@ -220,7 +220,7 @@ public class PisConsentControllerTest {
     @Test
     public void updateConsentAuthorization_Failure() {
         //Given
-        when(pisConsentService.updateConsentAuthorization(WRONG_AUTHORISATION_ID, getUpdatePisConsentPsuDataRequest())).thenReturn(Optional.empty());
+        when(pisConsentService.updateConsentAuthorisation(WRONG_AUTHORISATION_ID, getUpdatePisConsentPsuDataRequest())).thenReturn(Optional.empty());
         ResponseEntity<UpdatePisConsentPsuDataResponse> expected = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         //When
@@ -233,7 +233,7 @@ public class PisConsentControllerTest {
     @Test
     public void getConsentAuthorization_Success() {
         GetPisConsentAuthorisationResponse response = getGetPisConsentAuthorisationResponse();
-        when(pisConsentService.getPisConsentAuthorizationById(any())).thenReturn(Optional.of(response));
+        when(pisConsentService.getPisConsentAuthorisationById(any())).thenReturn(Optional.of(response));
 
         // Given
         GetPisConsentAuthorisationResponse expectedResponse = getGetPisConsentAuthorisationResponse();
@@ -249,7 +249,7 @@ public class PisConsentControllerTest {
 
     @Test
     public void getConsentAuthorization_Failure() {
-        when(pisConsentService.getPisConsentAuthorizationById(any())).thenReturn(Optional.empty());
+        when(pisConsentService.getPisConsentAuthorisationById(any())).thenReturn(Optional.empty());
 
         // When
         ResponseEntity<GetPisConsentAuthorisationResponse> result =

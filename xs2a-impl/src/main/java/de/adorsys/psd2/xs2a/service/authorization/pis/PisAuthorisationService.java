@@ -60,7 +60,7 @@ public class PisAuthorisationService {
      * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
      */
     public Xs2aUpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
-        GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentAuthorizationById(request.getAuthorizationId())
+        GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentAuthorisationById(request.getAuthorizationId())
                                                           .orElse(null);
 
         PisScaStage<Xs2aUpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(SERVICE_PREFIX + response.getScaStatus().name());
@@ -74,10 +74,10 @@ public class PisAuthorisationService {
     }
 
     /**
-     * Updates PIS consent cancellation authorization according to psu's sca methods
+     * Updates PIS consent cancellation authorisation according to psu's sca methods
      *
-     * @param request Provides transporting data when updating consent cancellation authorization
-     * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
+     * @param request Provides transporting data when updating consent cancellation authorisation
+     * @return update consent authorisation response, which contains payment id, authorisation id, sca status, psu message and links
      */
     public Xs2aUpdatePisConsentPsuDataResponse updatePisConsentCancellationAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
         GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentCancellationAuthorisationById(request.getAuthorizationId())
@@ -94,7 +94,7 @@ public class PisAuthorisationService {
     }
 
     public void doUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
-        pisConsentService.updateConsentAuthorization(request.getAuthorizationId(), request);
+        pisConsentService.updateConsentAuthorisation(request.getAuthorizationId(), request);
     }
 
     public void doUpdatePisConsentCancellationAuthorisation(UpdatePisConsentPsuDataRequest request) {

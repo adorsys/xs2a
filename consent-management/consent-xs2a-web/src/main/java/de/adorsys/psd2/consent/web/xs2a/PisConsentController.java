@@ -129,7 +129,7 @@ public class PisConsentController {
         @ApiParam(name = "authorization-id", value = "The consent authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorization-id") String authorizationId,
         @RequestBody UpdatePisConsentPsuDataRequest request) {
-        return pisConsentService.updateConsentAuthorization(authorizationId, request)
+        return pisConsentService.updateConsentAuthorisation(authorizationId, request)
                    .map(updated -> new ResponseEntity<>(updated, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -142,7 +142,7 @@ public class PisConsentController {
     public ResponseEntity<GetPisConsentAuthorisationResponse> getConsentAuthorization(
         @ApiParam(name = "authorization-id", value = "The consent authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorization-id") String authorizationId) {
-        return pisConsentService.getPisConsentAuthorizationById(authorizationId)
+        return pisConsentService.getPisConsentAuthorisationById(authorizationId)
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
