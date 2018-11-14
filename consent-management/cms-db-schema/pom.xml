@@ -29,8 +29,16 @@
 
     <properties>
         <ruleset.basedir>../..</ruleset.basedir>
+
+        <!--
+        This property allows to put path to different files using command line:
+        mvn -DpropertyFile=liquibase.my-special.properties liquibase:update
+        -->
+        <propertyFile>liquibase.properties</propertyFile>
+
+
         <postgresql.version>42.2.4</postgresql.version>
-        <propertyFile>liquibase.example.properties</propertyFile>
+        <mariadb.version>2.3.0</mariadb.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
