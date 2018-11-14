@@ -23,7 +23,7 @@
         <comment>Remove length restriction tppId</comment>
         <modifyDataType
             columnName="tpp_id"
-            newDataType="CLOB"
+            newDataType="VARCHAR(50)"
             tableName="ais_consent_action"/>
         <!--
             [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
@@ -32,7 +32,7 @@
         <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY tpp_id LONGTEXT NOT NULL</sql>
         <modifyDataType
             columnName="tpp_id"
-            newDataType="CLOB"
+            newDataType="VARCHAR(50)"
             tableName="ais_consent"/>
         <!--
             [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
