@@ -43,7 +43,7 @@ public class PisConsentMapper {
     public PisConsent mapToPisConsent(PisConsentRequest request) {
         PisConsent consent = new PisConsent();
         consent.setPayments(mapToPisPaymentDataList(request.getPayments(), consent));
-        consent.setTppInfo(tppInfoMapper.mapToTppInfo(request.getTppInfo()));
+        consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
         consent.setPaymentType(request.getPaymentType());
         consent.setPisPaymentProduct(request.getPaymentProduct());
         consent.setConsentStatus(ConsentStatus.RECEIVED);
@@ -109,7 +109,7 @@ public class PisConsentMapper {
                        response.setConsentStatus(pc.getConsentStatus());
                        response.setPaymentType(pc.getPaymentType());
                        response.setPaymentProduct(pc.getPisPaymentProduct());
-                       response.setTppInfo(tppInfoMapper.mapToCmsTppInfo(pc.getTppInfo()));
+                       response.setTppInfo(tppInfoMapper.mapToTppInfo(pc.getTppInfo()));
                        response.setPsuData(psuDataMapper.mapToPsuIdData(pisConsent.getPsuData()));
                        return response;
                    });
@@ -175,7 +175,7 @@ public class PisConsentMapper {
             .orElse(null);
     }
 
-    public CmsAddress mapToCmsAddress(PisAddress pisAddress) {
+    CmsAddress mapToCmsAddress(PisAddress pisAddress) {
         return Optional.ofNullable(pisAddress)
             .map(adr -> {
                 CmsAddress cmsAddress = new CmsAddress();

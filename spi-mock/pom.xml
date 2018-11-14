@@ -55,7 +55,7 @@
         <!-- CMS remote mode -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>consent-management-remote</artifactId>
+            <artifactId>consent-xs2a-client</artifactId>
             <version>1.12-SNAPSHOT</version>
         </dependency>
 
