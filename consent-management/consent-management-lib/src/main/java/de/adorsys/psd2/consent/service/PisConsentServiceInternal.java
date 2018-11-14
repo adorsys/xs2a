@@ -48,12 +48,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 
@@ -365,7 +363,7 @@ public class PisConsentServiceInternal implements PisConsentService {
         }
 
         return consentIdDecrypted
-                   .flatMap(id -> pisConsentRepository.findByExternalIdAndConsentStatusIn(id, EnumSet.of(RECEIVED, VALID)));
+                   .flatMap(pisConsentRepository::findByExternalId);
     }
 
     private Optional<PisConsent> getPisConsentById(String encryptedConsentId) {
