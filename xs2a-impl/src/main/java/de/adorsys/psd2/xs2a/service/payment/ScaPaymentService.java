@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import de.adorsys.psd2.xs2a.domain.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 

@@ -22,9 +22,9 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -183,21 +183,24 @@ public class PaymentService {
      * @return Response containing information about cancelled payment or corresponding error
      */
     public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentId) {
+        // we need to get decrypted payment ID
+        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
+
         SpiPayment payment;
         switch (paymentType) {
             case SINGLE:
                 SpiSinglePayment singlePayment = new SpiSinglePayment(null);
-                singlePayment.setPaymentId(paymentId);
+                singlePayment.setPaymentId(internalPaymentId);
                 payment = singlePayment;
                 break;
             case PERIODIC:
                 SpiPeriodicPayment periodicPayment = new SpiPeriodicPayment(null);
-                periodicPayment.setPaymentId(paymentId);
+                periodicPayment.setPaymentId(internalPaymentId);
                 payment = periodicPayment;
                 break;
             case BULK:
                 SpiBulkPayment bulkPayment = new SpiBulkPayment();
-                bulkPayment.setPaymentId(paymentId);
+                bulkPayment.setPaymentId(internalPaymentId);
                 payment = bulkPayment;
                 break;
             default:

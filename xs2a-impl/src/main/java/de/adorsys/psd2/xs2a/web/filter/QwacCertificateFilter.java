@@ -18,9 +18,8 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
-import de.adorsys.psd2.validator.certificate.util.TppRole;
-import de.adorsys.psd2.xs2a.domain.TppInfo;
-import de.adorsys.psd2.xs2a.domain.Xs2aTppRole;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
 import org.apache.commons.lang3.StringUtils;
@@ -84,9 +83,9 @@ public class QwacCertificateFilter extends GenericFilterBean {
                     tppInfo.setCity(tppCertificateData.getCity());
                     tppInfo.setState(tppCertificateData.getState());
 
-                    List<TppRole> tppRoles = tppCertificateData.getPspRoles();
-                    List<Xs2aTppRole> xs2aTppRoles = tppRoles.stream()
-                                                         .map(role -> Xs2aTppRole.valueOf(role.name()))
+                    List<de.adorsys.psd2.validator.certificate.util.TppRole> tppRoles = tppCertificateData.getPspRoles();
+                    List<TppRole> xs2aTppRoles = tppRoles.stream()
+                                                         .map(role -> TppRole.valueOf(role.name()))
                                                          .collect(Collectors.toList());
                     tppInfo.setTppRoles(xs2aTppRoles);
 

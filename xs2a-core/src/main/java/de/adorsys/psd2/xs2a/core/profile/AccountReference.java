@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.core.profile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -52,6 +53,7 @@ public class AccountReference {
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
+    @JsonIgnore
     public AccountReferenceSelector getUsedAccountReferenceSelector() {
         if (StringUtils.isNotBlank(iban)) {
             return AccountReferenceSelector.IBAN;

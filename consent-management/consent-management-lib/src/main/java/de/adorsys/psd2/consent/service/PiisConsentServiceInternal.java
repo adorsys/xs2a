@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
-import de.adorsys.psd2.consent.domain.piis.PiisConsent;
+import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -43,11 +43,11 @@ public class PiisConsentServiceInternal implements PiisConsentService {
 
     @Override
     public List<CmsPiisValidationInfo> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier) {
-        List<PiisConsent> consents = extractPiisConsentList(currency, accountIdentifierName, accountIdentifier);
+        List<PiisConsentEntity> consents = extractPiisConsentList(currency, accountIdentifierName, accountIdentifier);
         return piisConsentMapper.mapToListCmsPiisValidationInfo(consents);
     }
 
-    private List<PiisConsent> extractPiisConsentList(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier) {
+    private List<PiisConsentEntity> extractPiisConsentList(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier) {
         if (accountIdentifierName == IBAN) {
             return piisConsentRepository.findAllByAccountsIbanAndAccountsCurrency(accountIdentifier, currency);
         } else if (accountIdentifierName == BBAN) {

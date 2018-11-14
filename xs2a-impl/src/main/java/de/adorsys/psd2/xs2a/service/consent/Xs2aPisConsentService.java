@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.consent;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
-import de.adorsys.psd2.xs2a.domain.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -46,7 +46,7 @@ public class Xs2aPisConsentService {
     // TODO refactoring for orElse(null)
     public CreatePisConsentResponse createPisConsent(PaymentInitiationParameters parameters, TppInfo tppInfo) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));
+        request.setTppInfo(tppInfo);
         request.setPaymentProduct(parameters.getPaymentProduct());
         request.setPaymentType(parameters.getPaymentType());
         request.setPsuData(parameters.getPsuData());
