@@ -284,7 +284,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     /**
      * Reads authorisation data by authorisation Id
      *
-     * @param authorizationId id of the authorisation to be updated
+     * @param authorizationId id of the authorisation
      * @return response contains authorisation data
      */
     @Override
@@ -294,9 +294,9 @@ public class PisConsentServiceInternal implements PisConsentService {
     }
 
     /**
-     * Reads cancellation authorisation data by authorisation Id
+     * Reads cancellation authorisation data by cancellation Id
      *
-     * @param cancellationId id of the authorisation to be updated
+     * @param cancellationId id of the authorisation
      * @return response contains authorisation data
      */
     @Override
