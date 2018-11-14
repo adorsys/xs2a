@@ -21,24 +21,29 @@
 
     <changeSet author="iku@adorsys.com.ua" id="2018-09-21-1">
         <comment>Remove length restriction tppId</comment>
-        <modifyDataType
-            columnName="tpp_id"
-            newDataType="VARCHAR(50)"
-            tableName="ais_consent_action"/>
         <!--
             [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
             Use <sql> and re-specify all configuration if this is the case
          -->
-        <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY tpp_id VARCHAR(50) NOT NULL</sql>
-        <modifyDataType
-            columnName="tpp_id"
-            newDataType="VARCHAR(50)"
-            tableName="ais_consent"/>
+        <sql dbms="postgresql">ALTER TABLE ais_consent_action ALTER COLUMN tpp_id TYPE BYTEA USING(tpp_id::BYTEA)</sql>
+        <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY tpp_id LONGTEXT NOT NULL</sql>
+        <sql dbms="oracle">
+            ALTER TABLE ais_consent_action ADD tpp_id_tmp CLOB;
+            UPDATE ais_consent_action SET tpp_id_tmp=tpp_id;
+            ALTER TABLE ais_consent_action DROP COLUMN tpp_id;
+            ALTER TABLE ais_consent_action RENAME COLUMN tpp_id_tmp to tpp_id;
+        </sql>
         <!--
             [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
             Use <sql> and re-specify all configuration if this is the case
         -->
-        <sql dbms="mariadb">ALTER TABLE ais_consent MODIFY tpp_id VARCHAR(50) NOT NULL</sql>
+        <sql dbms="postgresql">ALTER TABLE ais_consent ALTER COLUMN tpp_id TYPE BYTEA USING(tpp_id::BYTEA)</sql>
+        <sql dbms="mariadb">ALTER TABLE ais_consent MODIFY tpp_id LONGTEXT NOT NULL</sql>
+        <sql dbms="oracle">
+            ALTER TABLE ais_consent ADD tpp_id_tmp CLOB;
+            UPDATE ais_consent SET tpp_id_tmp=tpp_id;
+            ALTER TABLE ais_consent DROP COLUMN tpp_id;
+            ALTER TABLE ais_consent RENAME COLUMN tpp_id_tmp to tpp_id;
+        </sql>
     </changeSet>
-
 </databaseChangeLog>
