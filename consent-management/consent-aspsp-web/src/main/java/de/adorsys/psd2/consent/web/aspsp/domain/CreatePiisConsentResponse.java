@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.domain.piis;
+package de.adorsys.psd2.consent.web.aspsp.domain;
 
 import lombok.Value;
 
