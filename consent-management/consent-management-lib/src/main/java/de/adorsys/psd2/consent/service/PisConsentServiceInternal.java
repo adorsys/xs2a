@@ -235,10 +235,10 @@ public class PisConsentServiceInternal implements PisConsentService {
     }
 
     /**
-     * Update consent authorization
+     * Update consent authorisation
      *
-     * @param authorizationId   id of the authorization to be updated
-     * @param request           contains data for updating authorization
+     * @param authorizationId id of the authorisation to be updated
+     * @param request         contains data for updating authorisation
      * @return response contains updated data
      */
     @Override
@@ -246,45 +246,23 @@ public class PisConsentServiceInternal implements PisConsentService {
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
         Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(
             authorizationId, CmsAuthorisationType.CREATED);
-        if (pisConsentAuthorisationOptional.isPresent()) {
-            PisConsentAuthorization consentAuthorization = pisConsentAuthorisationOptional.get();
-
-            if (SCAMETHODSELECTED == request.getScaStatus()) {
-                String chosenMethod = request.getAuthenticationMethodId();
-                if (StringUtils.isNotBlank(chosenMethod)) {
-                    consentAuthorization.setChosenScaMethod(chosenMethod);
-                }
-            }
-            consentAuthorization.setScaStatus(request.getScaStatus());
-            pisConsentAuthorizationRepository.save(consentAuthorization);
-        }
+        pisConsentAuthorisationOptional.ifPresent(pisConsentAuthorization -> doUpdateConsentAuthorisation(request, pisConsentAuthorization));
         return pisConsentAuthorisationOptional.map(p -> new UpdatePisConsentPsuDataResponse(p.getScaStatus()));
     }
 
     /**
-     * Update consent cancellation authorization
+     * Update consent cancellation authorisation
      *
-     * @param cancellationId   id of the authorization to be updated
-     * @param request           contains data for updating authorization
+     * @param cancellationId id of the authorisation to be updated
+     * @param request        contains data for updating authorisation
      * @return response contains updated data
      */
     @Override
     @Transactional
-    public Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorization(String cancellationId, UpdatePisConsentPsuDataRequest request) {
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String cancellationId, UpdatePisConsentPsuDataRequest request) {
         Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(
             cancellationId, CmsAuthorisationType.CANCELLED);
-        if (pisConsentAuthorisationOptional.isPresent()) {
-            PisConsentAuthorization consentAuthorization = pisConsentAuthorisationOptional.get();
-
-            if (SCAMETHODSELECTED == request.getScaStatus()) {
-                String chosenMethod = request.getAuthenticationMethodId();
-                if (StringUtils.isNotBlank(chosenMethod)) {
-                    consentAuthorization.setChosenScaMethod(chosenMethod);
-                }
-            }
-            consentAuthorization.setScaStatus(request.getScaStatus());
-            pisConsentAuthorizationRepository.save(consentAuthorization);
-        }
+        pisConsentAuthorisationOptional.ifPresent(pisConsentAuthorization -> doUpdateConsentAuthorisation(request, pisConsentAuthorization));
         return pisConsentAuthorisationOptional.map(p -> new UpdatePisConsentPsuDataResponse(p.getScaStatus()));
     }
 
@@ -304,10 +282,10 @@ public class PisConsentServiceInternal implements PisConsentService {
     }
 
     /**
-     * Reads authorization data by authorization Id
+     * Reads authorisation data by authorisation Id
      *
-     * @param authorizationId   id of the authorization to be updated
-     * @return response contains authorization data
+     * @param authorizationId id of the authorisation to be updated
+     * @return response contains authorisation data
      */
     @Override
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
@@ -316,13 +294,13 @@ public class PisConsentServiceInternal implements PisConsentService {
     }
 
     /**
-     * Reads cancellation authorization data by authorization Id
+     * Reads cancellation authorisation data by authorisation Id
      *
-     * @param cancellationId   id of the authorization to be updated
-     * @return response contains authorization data
+     * @param cancellationId id of the authorisation to be updated
+     * @return response contains authorisation data
      */
     @Override
-    public Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorizationById(String cancellationId) {
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorisationById(String cancellationId) {
         return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(cancellationId, CmsAuthorisationType.CANCELLED)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }
@@ -419,5 +397,16 @@ public class PisConsentServiceInternal implements PisConsentService {
         consentAuthorization.setAuthorizationType(authorizationType);
         consentAuthorization.setPsuData(psuDataMapper.mapToPsuData(psuData));
         return pisConsentAuthorizationRepository.save(consentAuthorization);
+    }
+
+    private void doUpdateConsentAuthorisation(UpdatePisConsentPsuDataRequest request, PisConsentAuthorization pisConsentAuthorisation) {
+        if (SCAMETHODSELECTED == request.getScaStatus()) {
+            String chosenMethod = request.getAuthenticationMethodId();
+            if (StringUtils.isNotBlank(chosenMethod)) {
+                pisConsentAuthorisation.setChosenScaMethod(chosenMethod);
+            }
+        }
+        pisConsentAuthorisation.setScaStatus(request.getScaStatus());
+        pisConsentAuthorizationRepository.save(pisConsentAuthorisation);
     }
 }

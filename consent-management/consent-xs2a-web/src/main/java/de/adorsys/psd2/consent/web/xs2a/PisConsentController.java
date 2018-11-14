@@ -148,28 +148,28 @@ public class PisConsentController {
     }
 
     @PutMapping(path = "/cancellation-authorisations/{cancellation-id}")
-    @ApiOperation(value = "Update pis consent cancellation authorization.")
+    @ApiOperation(value = "Update pis consent cancellation authorisation.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorization(
-        @ApiParam(name = "cancellation-id", value = "The consent cancellation authorization identification assigned to the created cancellation authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "cancellation-id", value = "The consent cancellation authorisation identification assigned to the created cancellation authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("cancellation-id") String cancellationId,
         @RequestBody UpdatePisConsentPsuDataRequest request) {
-        return pisConsentService.updateConsentCancellationAuthorization(cancellationId, request)
+        return pisConsentService.updateConsentCancellationAuthorisation(cancellationId, request)
                    .map(updated -> new ResponseEntity<>(updated, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(path = "/cancellation-authorisations/{cancellation-id}")
-    @ApiOperation(value = "Getting pis consent cancellation authorization.")
+    @ApiOperation(value = "Getting pis consent cancellation authorisation.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<GetPisConsentAuthorisationResponse> getConsentAuthorizationCancellation(
-        @ApiParam(name = "cancellation-id", value = "The consent cancellation authorization identification assigned to the created cancellation authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "cancellation-id", value = "The consent cancellation authorisation identification assigned to the created cancellation authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("cancellation-id") String cancellationId) {
-        return pisConsentService.getPisConsentCancellationAuthorizationById(cancellationId)
+        return pisConsentService.getPisConsentCancellationAuthorisationById(cancellationId)
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

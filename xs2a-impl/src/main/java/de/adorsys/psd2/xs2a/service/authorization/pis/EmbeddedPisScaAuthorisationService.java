@@ -82,10 +82,10 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
     }
 
     /**
-     * Updates cancellation authorization for pis consent
+     * Updates cancellation authorisation for pis consent
      *
      * @param request Provides transporting data when updating consent psu data
-     * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
+     * @return update consent authorisation response, which contains payment id, authorisation id, sca status, psu message and links
      */
     @Override
     public Xs2aUpdatePisConsentPsuDataResponse updateConsentCancellationPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {

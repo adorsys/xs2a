@@ -48,6 +48,8 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
 
     private Links buildLink(String paymentService, String paymentId, String authorizationId) {
         Links links = new Links();
+        links.setSelf(buildPath("/v1/{payment-service}/{payment-id}", paymentService, paymentId));
+        links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status", paymentService, paymentId));
         links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{paymentId}/cancellation-authorisations/{authorizationId}", paymentService, paymentId, authorizationId));
         return links;
     }

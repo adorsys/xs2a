@@ -80,7 +80,7 @@ public class PisAuthorisationService {
      * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
      */
     public Xs2aUpdatePisConsentPsuDataResponse updatePisConsentCancellationAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
-        GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentCancellationAuthorizationById(request.getAuthorizationId())
+        GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentCancellationAuthorisationById(request.getAuthorizationId())
                                                           .orElse(null);
 
         PisScaStage<Xs2aUpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(CANCELLATION_SERVICE_PREFIX + response.getScaStatus().name());
@@ -98,7 +98,7 @@ public class PisAuthorisationService {
     }
 
     public void doUpdatePisConsentCancellationAuthorisation(UpdatePisConsentPsuDataRequest request) {
-        pisConsentService.updateConsentCancellationAuthorization(request.getAuthorizationId(), request);
+        pisConsentService.updateConsentCancellationAuthorisation(request.getAuthorizationId(), request);
     }
 
     /**

@@ -115,7 +115,7 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
-    public Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorizationId, UpdatePisConsentPsuDataRequest request) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentCancellationAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
             UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
     }
@@ -132,7 +132,7 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
-    public Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorizationById(String cancellationId) {
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorisationById(String cancellationId) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentCancellationAuthorisationById(), HttpMethod.GET, null, GetPisConsentAuthorisationResponse.class, cancellationId)
                                        .getBody());
     }
