@@ -105,7 +105,9 @@ public interface PisConsentService {
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
-    Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType);
+    Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request);
+
+    Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorizationId, UpdatePisConsentPsuDataRequest request);
 
     /**
      * Updates PIS consent payment data and stores it into database
@@ -115,7 +117,9 @@ public interface PisConsentService {
      */
     void updatePaymentConsent(PisConsentRequest request, String consentId);
 
-    Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType);
+    Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorisationById(String authorisationId);
+
+    Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorisationById(String cancellationId);
 
     Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType);
 
