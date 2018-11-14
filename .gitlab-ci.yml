@@ -74,7 +74,7 @@ variables: &variables
   # Build variables         #
   ###########################
 
-  JAVA_TOOL_OPTIONS: "-Xmx350M"
+  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 
@@ -112,6 +112,8 @@ variables: &variables
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -DskipTests clean install
 
 .build_angular: &build_angular
@@ -254,6 +256,8 @@ pmd_report:
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:pmd
   artifacts:
     paths:
@@ -267,12 +271,16 @@ check_pmd:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:check
 
 check_javadoc:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package javadoc:javadoc
   artifacts:
     paths:
@@ -284,6 +292,8 @@ unit_tests:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn --fail-at-end clean install
   artifacts:
     paths:
