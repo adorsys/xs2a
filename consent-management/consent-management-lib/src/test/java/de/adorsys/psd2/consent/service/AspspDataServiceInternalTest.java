@@ -28,12 +28,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.verification.VerificationMode;
 
 import java.util.Base64;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AspspDataServiceInternalTest {
@@ -45,11 +46,13 @@ public class AspspDataServiceInternalTest {
     private AspspConsentDataRepository aspspConsentDataRepository;
 
     private AspspConsentDataEntity aspspConsentDataEntity;
-    private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
-    private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
+    private final String EXTERNAL_CONSENT_ID = "UjXVCgkxoLmfueAWXkT4dZrAMdaZMBMUFckGwTgY4sV_ZSG9MeQUuGwve3cT85V5sAD6jPgqqholJCbEQmjZIQ==_=_bS6p6XvTWI";
+    private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "5o5Wldx-YSWcc2l9iWBmTFQA5W5RGQocLAiyj2W6dRwuTkoi-tFw54Sv5qXjLeHd0gdfoYGRQSQPzXco-i5-YQ==_=_bS6p6XvTWI";
+    private final String CONSENT_ID_NOT_ENCRYPTED = "4b112130-6a96-4941-a220-2da8a4af2c63";
     private static final String CONSENT_DATA = "test data";
     private static final byte[] ENCRYPTED_CONSENT_DATA = CONSENT_DATA.getBytes();
     private static final String ENCRYPTED_CONSENT_DATA_BASE64_ENCODED = Base64.getEncoder().encodeToString(ENCRYPTED_CONSENT_DATA);
+    VerificationMode once = times(1);
 
     @Before
     public void setUp() {
@@ -60,7 +63,31 @@ public class AspspDataServiceInternalTest {
         when(securityDataService.decryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA)).thenReturn(Optional.of(new DecryptedData(ENCRYPTED_CONSENT_DATA)));
         when(aspspConsentDataRepository.findByConsentId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(aspspConsentDataEntity));
         when(aspspConsentDataRepository.findByConsentId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
+        when(aspspConsentDataRepository.findByConsentId(CONSENT_ID_NOT_ENCRYPTED)).thenReturn(Optional.of(aspspConsentDataEntity));
         when(aspspConsentDataRepository.save(aspspConsentDataEntity)).thenReturn(aspspConsentDataEntity);
+    }
+
+
+    @Test
+    public void checkIsConsentIdEncryptedRead() {
+        aspspDataServiceInternal.readAspspConsentData(EXTERNAL_CONSENT_ID);
+        verify(securityDataService, once).decryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA);
+        verify(securityDataService, once).decryptId(EXTERNAL_CONSENT_ID);
+
+        aspspDataServiceInternal.readAspspConsentData(CONSENT_ID_NOT_ENCRYPTED);
+        verify(securityDataService, never()).decryptConsentData(CONSENT_ID_NOT_ENCRYPTED, ENCRYPTED_CONSENT_DATA);
+        verify(securityDataService, never()).decryptId(CONSENT_ID_NOT_ENCRYPTED);
+    }
+
+    @Test
+    public void checkIsConsentIdEncryptedUpdate() {
+        aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(ENCRYPTED_CONSENT_DATA, EXTERNAL_CONSENT_ID));
+        verify(securityDataService, once).decryptId(EXTERNAL_CONSENT_ID);
+        verify(securityDataService, once).encryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA_BASE64_ENCODED);
+
+        aspspDataServiceInternal.updateAspspConsentData(buildAspspConsentData(ENCRYPTED_CONSENT_DATA, CONSENT_ID_NOT_ENCRYPTED));
+        verify(securityDataService, never()).decryptId(CONSENT_ID_NOT_ENCRYPTED);
+        verify(securityDataService, never()).encryptConsentData(CONSENT_ID_NOT_ENCRYPTED, ENCRYPTED_CONSENT_DATA_BASE64_ENCODED);
     }
 
     @Test

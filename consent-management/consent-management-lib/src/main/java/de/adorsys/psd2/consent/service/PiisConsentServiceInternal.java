@@ -72,13 +72,7 @@ public class PiisConsentServiceInternal implements PiisConsentService, ConsentSe
         return getActualPiisConsent(consentId).isPresent();
     }
 
-    private Optional<PiisConsentEntity> getActualPiisConsent(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
-        if (!consentIdDecrypted.isPresent()) {
-            log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
-        }
-
-        return consentIdDecrypted
-                   .flatMap(id -> piisConsentRepository.findByExternalIdAndConsentStatusIn(id, EnumSet.of(RECEIVED, VALID)));
+    private Optional<PiisConsentEntity> getActualPiisConsent(String consentId) {
+        return piisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID));
     }
 }

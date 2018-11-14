@@ -104,7 +104,6 @@ public class PisConsentServiceInternalTest {
         assertFalse(authorizationByPaymentId.isPresent());
     }
 
-
     private PisConsent buildConsent() {
         PisConsent pisConsent = new PisConsent();
         pisConsent.setId(CONSENT_ID);
