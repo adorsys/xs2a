@@ -20,11 +20,8 @@ import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +30,6 @@ import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
 public class ConsentLoggingInterceptor extends HandlerInterceptorAdapter {
     private final TppService tppService;
@@ -55,7 +51,7 @@ public class ConsentLoggingInterceptor extends HandlerInterceptorAdapter {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         log.info("Response: TPP ID - {}, X-Request-ID - {}, Status - {}",
             tppService.getTppId(),
             response.getHeader("X-Request-ID"),

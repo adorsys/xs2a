@@ -20,21 +20,16 @@ import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
 public class SigningBasketLoggingInterceptor extends HandlerInterceptorAdapter {
     private final TppService tppService;
@@ -44,20 +39,19 @@ public class SigningBasketLoggingInterceptor extends HandlerInterceptorAdapter {
         String ipAddress = request.getHeader("PSU-IP-Address");
         Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-        log.info("Request: TPP ID - {}, IP - {}, X-Request-ID - {}, URI - {}, Basket ID - {}, Consent ID - {}",
+        log.info("Request: TPP ID - {}, IP - {}, X-Request-ID - {}, URI - {}, Basket ID - {}",
             tppService.getTppId(),
             StringUtils.isNotBlank(ipAddress) ? ipAddress : request.getRemoteAddr(),
             request.getHeader("X-Request-ID"),
             request.getRequestURI(),
-            pathVariables.getOrDefault("basketId", "Not exist in URI"),
-            Optional.ofNullable(request.getHeader("Consent-ID")).orElse("Not exist in headers")
+            pathVariables.getOrDefault("basketId", "Not exist in URI")
         );
 
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         log.info("Response: TPP ID - {}, X-Request-ID - {}, Status - {}",
             tppService.getTppId(),
             response.getHeader("X-Request-ID"),

@@ -61,6 +61,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
     private final CorsConfigProperties corsConfigProperties;
+    private final TppService tppService;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -107,13 +108,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()));
+        // Please, keep this interceptor's order, because it is important, that logging interceptors will be called before the validation ones to log all the requests (even wrong ones).
+        // The interceptors are executed in the order in which they are declared for preHandle(...) and visa versa for postHandle(...).
         // Logging interceptors:
-        registry.addInterceptor(new AccountLoggingInterceptor(tppService())).addPathPatterns("/v1/accounts/**");
-        registry.addInterceptor(new ConsentLoggingInterceptor(tppService())).addPathPatterns("/v1/consents/**");
-        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService())).addPathPatterns("/v1/funds-confirmations/**");
-        registry.addInterceptor(new PaymentLoggingInterceptor(tppService())).addPathPatterns("/v1/payments/**", "/v1/bulk-payments/**", "/v1/periodic-payments/**");
-        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService())).addPathPatterns("/v1/signing-baskets/**");
+        registry.addInterceptor(new AccountLoggingInterceptor(tppService)).addPathPatterns("/v1/accounts/**");
+        registry.addInterceptor(new ConsentLoggingInterceptor(tppService)).addPathPatterns("/v1/consents/**");
+        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns("/v1/funds-confirmations/**");
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns("/v1/payments/**", "/v1/bulk-payments/**", "/v1/periodic-payments/**");
+        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns("/v1/signing-baskets/**");
+
+        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()));
     }
 
     @Bean
@@ -145,11 +149,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public MessageErrorMapper messageErrorMapper() {
         return new MessageErrorMapper(new MessageService(messageSource()));
-    }
-
-    @Bean
-    public TppService tppService() {
-        return new TppService();
     }
 
     @Override
