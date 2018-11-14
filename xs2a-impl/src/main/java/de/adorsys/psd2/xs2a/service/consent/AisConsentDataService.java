@@ -17,8 +17,10 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
+import de.adorsys.psd2.consent.api.ConsentType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.api.service.CommonConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,16 +30,17 @@ import org.springframework.stereotype.Service;
 public class AisConsentDataService {
     private final AisConsentService aisConsentService;
     private final Base64AspspDataService base64AspspDataService;
+    private final CommonConsentService commonConsentService;
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return aisConsentService.getAspspConsentData(consentId)
+        return commonConsentService.getAspspConsentDataByConsentId(consentId, ConsentType.AIS)
                    .map(this::mapToAspspConsentData)
                    .orElse(null);
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
         String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
-        aisConsentService.saveAspspConsentDataInAisConsent(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload));
+        commonConsentService.saveAspspConsentData(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload), ConsentType.AIS);
     }
 
     public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {

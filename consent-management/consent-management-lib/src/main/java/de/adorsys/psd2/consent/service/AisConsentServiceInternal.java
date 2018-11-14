@@ -17,8 +17,6 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.AspspDataService;
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.api.service.ConsentService;
@@ -29,19 +27,20 @@ import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import static de.adorsys.psd2.consent.api.TypeAccess.*;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
@@ -58,7 +57,6 @@ public class AisConsentServiceInternal implements AisConsentService, ConsentServ
     private final AisConsentMapper consentMapper;
     private final PsuDataMapper psuDataMapper;
     private final SecurityDataService securityDataService;
-    private final AspspDataService aspspDataService;
 
     /**
      * Create AIS consent
@@ -152,57 +150,6 @@ public class AisConsentServiceInternal implements AisConsentService, ConsentServ
                        return aisConsentRepository.save(consent)
                                   .getExternalId();
                    });
-    }
-
-    /**
-     * Get Ais aspsp consent data by id
-     *
-     * @param encryptedConsentId id of the consent
-     * @return Response containing aspsp consent data
-     */
-    @Override
-    public Optional<CmsAspspConsentDataBase64> getAspspConsentData(String encryptedConsentId) {
-        Optional<AisConsent> aisConsent = getActualAisConsent(encryptedConsentId);
-
-        if (!aisConsent.isPresent()) {
-            return Optional.empty();
-        }
-
-        Optional<String> aspspConsentDataBase64 = aspspDataService.readAspspConsentData(encryptedConsentId)
-                                                      .map(AspspConsentData::getAspspConsentData)
-                                                      .map(Base64.getEncoder()::encodeToString);
-
-        CmsAspspConsentDataBase64 cmsAspspConsentDataBase64 = new CmsAspspConsentDataBase64(encryptedConsentId, aspspConsentDataBase64.orElse(null));
-
-        return Optional.of(cmsAspspConsentDataBase64);
-    }
-
-    /**
-     * Update AIS consent aspsp consent data by id
-     *
-     * @param request            Aspsp provided ais consent data
-     * @param encryptedConsentId id of the consent to be updated
-     * @return String   consent id
-     */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Optional<String> saveAspspConsentDataInAisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
-        Optional<AisConsent> aisConsent = getActualAisConsent(encryptedConsentId);
-
-        if (!aisConsent.isPresent()) {
-            return Optional.empty();
-        }
-
-        Optional<AspspConsentData> aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
-                                                          .map(Base64.getDecoder()::decode)
-                                                          .map(dta -> new AspspConsentData(dta, encryptedConsentId));
-        if (aspspConsentData.isPresent()) {
-            return aspspDataService.updateAspspConsentData(aspspConsentData.get())
-                       ? Optional.of(encryptedConsentId)
-                       : Optional.empty();
-        }
-
-        return Optional.empty();
     }
 
     /**

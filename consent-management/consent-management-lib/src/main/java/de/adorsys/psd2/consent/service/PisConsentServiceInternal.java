@@ -16,8 +16,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.AspspDataService;
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
@@ -37,7 +35,6 @@ import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -45,10 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
@@ -69,7 +64,6 @@ public class PisConsentServiceInternal implements PisConsentService, ConsentServ
     private final PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final SecurityDataService securityDataService;
-    private final AspspDataService aspspDataService;
 
     /**
      * Creates new pis consent with full information about payment
@@ -131,46 +125,6 @@ public class PisConsentServiceInternal implements PisConsentService, ConsentServ
     }
 
     /**
-     * Get Pis aspsp consent data by consent id
-     *
-     * @param encryptedConsentId id of the consent
-     * @return Response containing aspsp consent data
-     */
-    @Override
-    public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String encryptedConsentId) {
-        return getPisConsentById(encryptedConsentId)
-                   .map(pisConsent -> prepareAspspConsentData(encryptedConsentId));
-    }
-
-    /**
-     * Get Pis aspsp consent data by payment id
-     *
-     * @param encryptedPaymentId encrypted id of the payment
-     * @return Response containing aspsp consent data
-     */
-    @Override
-    public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String encryptedPaymentId) {
-        Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
-        if (!paymentId.isPresent()) {
-            log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
-            return Optional.empty();
-        }
-
-        return pisPaymentDataRepository.findByPaymentId(paymentId.get())
-                   .map(dta -> dta.get(0))
-                   .map(PisPaymentData::getConsent)
-                   .map(pisConsent -> prepareAspspConsentData(encryptedPaymentId));
-    }
-
-    private CmsAspspConsentDataBase64 prepareAspspConsentData(String encryptedConsentId) {
-        Optional<String> aspspConsentDataBase64 = aspspDataService.readAspspConsentData(encryptedConsentId)
-                                                      .map(AspspConsentData::getAspspConsentData)
-                                                      .map(Base64.getEncoder()::encodeToString);
-
-        return new CmsAspspConsentDataBase64(encryptedConsentId, aspspConsentDataBase64.orElse(null));
-    }
-
-    /**
      * Get original decrypted Id from encrypted string
      *
      * @param encryptedId id to be decrypted
@@ -179,33 +133,6 @@ public class PisConsentServiceInternal implements PisConsentService, ConsentServ
     @Override
     public Optional<String> getDecryptedId(String encryptedId) {
         return securityDataService.decryptId(encryptedId);
-    }
-
-    /**
-     * Update PIS consent aspsp consent data by id
-     *
-     * @param request            Aspsp provided pis consent data
-     * @param encryptedConsentId id of the consent to be updated
-     * @return String consent id
-     */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Optional<String> updateAspspConsentDataInPisConsent(String encryptedConsentId, CmsAspspConsentDataBase64 request) {
-        Optional<PisConsent> consent = getActualPisConsent(encryptedConsentId);
-        if (!consent.isPresent()) {
-            return Optional.empty();
-        }
-
-        Optional<AspspConsentData> aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
-                                                          .map(Base64.getDecoder()::decode)
-                                                          .map(dta -> new AspspConsentData(dta, encryptedConsentId));
-        if (aspspConsentData.isPresent()) {
-            return aspspDataService.updateAspspConsentData(aspspConsentData.get())
-                       ? Optional.of(encryptedConsentId)
-                       : Optional.empty();
-        }
-
-        return Optional.empty();
     }
 
     /**

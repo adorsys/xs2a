@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
@@ -60,40 +59,12 @@ public interface PisConsentService {
     Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status);
 
     /**
-     * Gets Pis aspsp consent data by consent id
-     *
-     * @param consentId id of the consent
-     * @return Response containing aspsp consent data
-     */
-    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
-    Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId);
-
-    /**
-     * Gets Pis aspsp consent data by payment id
-     *
-     * @param paymentId id of the payment
-     * @return Response containing aspsp consent data
-     */
-    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
-    Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId);
-
-    /**
      * Gets original decrypted Id from encrypted string
      *
      * @param encryptedId id to be decrypted
      * @return Response containing original decrypted Id
      */
     Optional<String> getDecryptedId(String encryptedId);
-
-    /**
-     * Update PIS consent aspsp consent data by id
-     *
-     * @param request   Aspsp provided pis consent data
-     * @param consentId id of the consent to be updated
-     * @return String consent id
-     */
-    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
-    Optional<String> updateAspspConsentDataInPisConsent(String consentId, CmsAspspConsentDataBase64 request);
 
     /**
      * Creates consent authorization

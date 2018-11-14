@@ -17,6 +17,8 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
+import de.adorsys.psd2.consent.api.ConsentType;
+import de.adorsys.psd2.consent.api.service.CommonConsentService;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
@@ -27,22 +29,23 @@ import org.springframework.stereotype.Service;
 public class PisConsentDataService {
     private final PisConsentService pisConsentService;
     private final Base64AspspDataService base64AspspDataService;
+    private final CommonConsentService commonConsentService;
 
     public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
-        return pisConsentService.getAspspConsentDataByPaymentId(paymentId)
+        return commonConsentService.getAspspConsentDataByPaymentId(paymentId)
                    .map(this::mapToAspspConsentData)
                    .orElseGet(() -> new AspspConsentData(null, paymentId));
     }
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return pisConsentService.getAspspConsentDataByConsentId(consentId)
+        return commonConsentService.getAspspConsentDataByConsentId(consentId, ConsentType.PIS)
                    .map(this::mapToAspspConsentData)
                    .orElseGet(() -> new AspspConsentData(null, consentId));
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
         String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
-        pisConsentService.updateAspspConsentDataInPisConsent(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload));
+        commonConsentService.saveAspspConsentData(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload), ConsentType.PIS);
     }
 
     public String getInternalPaymentIdByEncryptedString(String encryptedId) {

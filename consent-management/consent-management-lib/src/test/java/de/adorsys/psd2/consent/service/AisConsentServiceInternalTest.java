@@ -17,12 +17,10 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
@@ -31,7 +29,6 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +39,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
@@ -51,7 +47,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,10 +65,9 @@ public class AisConsentServiceInternalTest {
     private PsuData psuData;
     @Mock
     SecurityDataService securityDataService;
-@Mock
-    private AspspConsentDataRepository aspspConsentDataRepository; // TODO remove it after AspspConsentDataServiceTest is created https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/470
     @Mock
-    private AspspDataService aspspDataService;
+    private AspspConsentDataRepository aspspConsentDataRepository; // TODO remove it after AspspConsentDataServiceTest is created https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/470
+
 
     private AisConsent aisConsent;
 
@@ -156,28 +152,6 @@ public class AisConsentServiceInternalTest {
         assertFalse(consentId_notExist.isPresent());
     }
 
-    @Test
-    public void updateAspspDataById() {
-        // When
-        CmsAspspConsentDataBase64 request = this.buildUpdateBlobRequest();
-        Function<String, byte[]> decode = Base64.getDecoder()::decode;
-        AspspConsentData aspspConsentDataConsentExist = new AspspConsentData(decode.apply(request.getAspspConsentDataBase64()), EXTERNAL_CONSENT_ID);
-        when(aspspDataService.updateAspspConsentData(aspspConsentDataConsentExist)).thenReturn(true);
-        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
-        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
-        when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class))).thenReturn(getAspspConsentData());
-
-        // Then
-        Optional<String> consentId = aisConsentService.saveAspspConsentDataInAisConsent(EXTERNAL_CONSENT_ID, request);
-        // Assert
-        assertTrue(consentId.isPresent());
-
-        //Then
-        Optional<String> consentId_notExists = aisConsentService.saveAspspConsentDataInAisConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
-        // Assert
-        assertFalse(consentId_notExists.isPresent());
-    }
-
     private AisConsent buildConsent() {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
@@ -220,12 +194,5 @@ public class AisConsentServiceInternalTest {
             null, 0,
             null, null,
             false, false, null, null, null);
-    }
-
-    private AspspConsentDataEntity getAspspConsentData() {
-        AspspConsentDataEntity consentData = new AspspConsentDataEntity();
-        consentData.setConsentId(EXTERNAL_CONSENT_ID);
-        consentData.setData(ENCRYPTED_CONSENT_DATA);
-        return consentData;
     }
 }
