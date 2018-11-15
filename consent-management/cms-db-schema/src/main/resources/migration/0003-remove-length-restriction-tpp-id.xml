@@ -27,6 +27,11 @@
          -->
         <sql dbms="postgresql">ALTER TABLE ais_consent_action ALTER COLUMN tpp_id TYPE BYTEA USING(tpp_id::BYTEA)</sql>
         <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY tpp_id LONGTEXT NOT NULL</sql>
+
+        <!--
+            [WARNING] Script "ALTER TABLE ais_consent_action MODIFY tpp_id CLOB" in Oracle generates an error: ORA-22858
+            In this case with changing VARCHAR2 to CLOB in Oracle we need to use the following script
+         -->
         <sql dbms="oracle">
             ALTER TABLE ais_consent_action ADD tpp_id_tmp CLOB;
             UPDATE ais_consent_action SET tpp_id_tmp=tpp_id;
@@ -39,6 +44,11 @@
         -->
         <sql dbms="postgresql">ALTER TABLE ais_consent ALTER COLUMN tpp_id TYPE BYTEA USING(tpp_id::BYTEA)</sql>
         <sql dbms="mariadb">ALTER TABLE ais_consent MODIFY tpp_id LONGTEXT NOT NULL</sql>
+
+        <!--
+          [WARNING] Script "ALTER TABLE ais_consent MODIFY tpp_id CLOB" in Oracle generates an error: ORA-22858
+          In this case with changing VARCHAR2 to CLOB in Oracle we need to use the following script
+       -->
         <sql dbms="oracle">
             ALTER TABLE ais_consent ADD tpp_id_tmp CLOB;
             UPDATE ais_consent SET tpp_id_tmp=tpp_id;
