@@ -33,7 +33,7 @@ public class FundsConfirmationLoggingInterceptor extends HandlerInterceptorAdapt
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        log.info("Request: TPP ID - {}, IP - {}, X-Request-ID - {}, URI - {}",
+        log.info("Request: TPP ID - {}, TPP IP - {}, X-Request-ID - {}, URI - {}",
             tppService.getTppId(),
             request.getRemoteAddr(),
             request.getHeader("X-Request-ID"),

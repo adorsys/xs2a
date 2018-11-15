@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.web.interceptor.logging;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -36,12 +35,11 @@ public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String ipAddress = request.getHeader("PSU-IP-Address");
         Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-        log.info("Request: TPP ID - {}, IP - {}, X-Request-ID - {}, URI - {}, Payment ID - {}",
+        log.info("Request: TPP ID - {}, TPP IP - {}, X-Request-ID - {}, URI - {}, Payment ID - {}",
             tppService.getTppId(),
-            StringUtils.isNotBlank(ipAddress) ? ipAddress : request.getRemoteAddr(),
+            request.getRemoteAddr(),
             request.getHeader("X-Request-ID"),
             request.getRequestURI(),
             pathVariables.getOrDefault("paymentId", "Not exist in URI")
