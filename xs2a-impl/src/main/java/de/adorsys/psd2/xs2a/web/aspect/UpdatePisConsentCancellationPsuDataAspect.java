@@ -31,15 +31,15 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentController> {
-    private final static String PSU_AUTHORISATION_URL = "/v1/{paymentService}/{paymentId}/authorisations/{authorisationId}";
+public class UpdatePisConsentCancellationPsuDataAspect extends AbstractLinkAspect<PaymentController> {
+    private final static String PSU_CANCELLATION_AUTHORISATION_URL = "/v1/{paymentService}/{paymentId}/cancellation-authorisations/{authorisationId}";
 
-    public UpdatePisConsentPsuDataAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService) {
+    public UpdatePisConsentCancellationPsuDataAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService) {
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updatePisConsentPsuData(..)) && args(request)", returning = "result", argNames = "result,request")
-    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentAuthorizationAspect(ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> result, Xs2aUpdatePisConsentPsuDataRequest request) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updatePisConsentCancellationPsuData(..)) && args(request)", returning = "result", argNames = "result,request")
+    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentCancellationAuthorizationAspect(ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> result, Xs2aUpdatePisConsentPsuDataRequest request) {
         if (!result.hasError()) {
             Xs2aUpdatePisConsentPsuDataResponse body = result.getBody();
             Links links = buildLink(request);
@@ -71,7 +71,7 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
     }
 
     private String buildAuthorisationLink(String paymentService, String paymentId, String authorisationId) {
-        return buildPath(PSU_AUTHORISATION_URL, paymentService, paymentId, authorisationId);
+        return buildPath(PSU_CANCELLATION_AUTHORISATION_URL, paymentService, paymentId, authorisationId);
     }
 
     private boolean isScaStatusFinalised(ScaStatus scaStatus) {

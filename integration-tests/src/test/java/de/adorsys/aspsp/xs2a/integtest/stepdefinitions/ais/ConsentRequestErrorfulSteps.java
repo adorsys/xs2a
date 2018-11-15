@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.model.ConsentsResponse201;
 import de.adorsys.psd2.model.TppMessages;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -41,6 +42,7 @@ import java.time.LocalDate;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
+@Slf4j
 @FeatureFileSteps
 public class ConsentRequestErrorfulSteps {
 
@@ -66,6 +68,20 @@ public class ConsentRequestErrorfulSteps {
         LocalDate validUntil = context.getTestData().getRequest().getBody().getValidUntil();
         context.getTestData().getRequest().getBody().setValidUntil(validUntil.plusDays(7));
     }
+
+    @Given("^PSU wants to create an expired consent (.*)$")
+    public void loadTestDataExpired(String dataFileName) throws IOException {
+
+        TestData<Consents, TppMessages> data = mapper.readValue(
+            resourceToString("/data-input/ais/consent/" + dataFileName, UTF_8),
+            new TypeReference<TestData<Consents, TppMessages>>() {});
+
+        context.setTestData(data);
+
+        LocalDate validUntil = context.getTestData().getRequest().getBody().getValidUntil();
+        context.getTestData().getRequest().getBody().setValidUntil(validUntil.minusYears(3));
+    }
+
 
     @When("^PSU sends the create consent request with error$")
     public void sendErrorfulConsentRequest() throws HttpClientErrorException, IOException {

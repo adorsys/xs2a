@@ -217,7 +217,9 @@ public class PaymentService {
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
             return cancelPaymentService.initiatePaymentCancellation(spiPsuData, payment, consentData);
         } else {
-            return cancelPaymentService.cancelPaymentWithoutAuthorisation(spiPsuData, payment, consentData);
+            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(spiPsuData, payment, consentData);
+            pisConsentService.revokeConsentById(paymentId);
+            return cancellationResponse;
         }
     }
 }

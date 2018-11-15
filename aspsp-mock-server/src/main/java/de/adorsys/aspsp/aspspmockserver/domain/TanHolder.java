@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.config.factory;
+package de.adorsys.aspsp.aspspmockserver.domain;
 
-/**
- * This is specific factory intended to retrieve specific, stage-dependent SCA update authorisation services for PIS.
- * It is used ServiceLocatorFactoryBean for implementing a factory pattern.
- * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
- */
-public interface PisScaStageAuthorisationFactory extends ServiceFactory {
-    String SERVICE_PREFIX = "PIS_";
-    String CANCELLATION_SERVICE_PREFIX = "PIS_CANC_";
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Value;
+
+@Value
+public class TanHolder {
+    @ApiModelProperty(value = "Tan number", example = "3bkmVn")
+    private String tanNumber;
 }

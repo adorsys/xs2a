@@ -91,10 +91,11 @@ public interface PisConsentService {
      *
      * @param authorizationId String representation of the authorisation identifier
      * @param request Incoming request for updating authorization
-     * @param authorizationType Type of authorisation
      * @return Response containing SCA status, available and chosen Sca method
      */
-    Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType);
+    Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request);
+
+    Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorizationId, UpdatePisConsentPsuDataRequest request);
 
     /**
      * Updates PIS consent payment data and stores it into database
@@ -108,10 +109,17 @@ public interface PisConsentService {
      * Get information about Authorisation by authorisation identifier
      *
      * @param authorizationId String representation of the authorisation identifier
-     * @param authorizationType Type of authorisation
      * @return Response containing information about Authorisation
      */
-    Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType);
+    Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorisationById(String authorisationId);
+
+    /**
+     * Get information about Authorisation by cancellation identifier
+     *
+     * @param cancellationId String representation of the cancellation identifier
+     * @return Response containing information about Authorisation
+     */
+    Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorisationById(String cancellationId);
 
     /**
      * Get information about Authorisation by payment identifier
