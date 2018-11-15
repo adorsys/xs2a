@@ -11,4 +11,4 @@ i.e. online-banking system. This module can be used in any setup of CMS (embedde
 This module can be used in any setup of CMS (embedded and standalone).
 
 ## Payment cancellation is added
-A PSU may want to cancel payment. The flow of payment cancellation for embedded and redirect approches was added.
+A PSU may want to cancel the payment. The flow of payment cancellation for embedded and redirect approches was added.
