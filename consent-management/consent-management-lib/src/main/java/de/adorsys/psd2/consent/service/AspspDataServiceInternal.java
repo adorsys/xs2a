@@ -96,7 +96,8 @@ public class AspspDataServiceInternal implements AspspDataService {
 
     @Override
     @Transactional
-    public boolean deleteAspspConsentData(@NotNull String consentId) {
+    public boolean deleteAspspConsentData(@NotNull String id) {
+        String consentId = id;
         if (isConsentIdEncrypted(consentId)) {
             Optional<String> decryptConsentId = securityDataService.decryptId(consentId);
 

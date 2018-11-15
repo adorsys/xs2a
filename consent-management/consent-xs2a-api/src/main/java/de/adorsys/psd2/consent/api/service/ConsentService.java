@@ -20,7 +20,7 @@ public interface ConsentService {
     /**
      * Check for consent existing
      *
-     * @param * @param consentId id of consent
+     * @param consentId id of consent
      * @return boolean
      */
     boolean isConsentExist(String consentId);

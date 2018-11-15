@@ -89,12 +89,19 @@ public interface PisConsentService {
     /**
      * Updates consent authorization
      *
-     * @param authorizationId String representation of the authorisation identifier
+     * @param authorisationId String representation of the authorisation identifier
      * @param request Incoming request for updating authorization
      * @return Response containing SCA status, available and chosen Sca method
      */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request);
 
+    /**
+     * Updates consent cancellation authorization
+     *
+     * @param authorizationId String representation of the authorisation identifier
+     * @param request Incoming request for updating authorization
+     * @return Response containing SCA status, available and chosen Sca method
+     */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorizationId, UpdatePisConsentPsuDataRequest request);
 
     /**
@@ -108,7 +115,7 @@ public interface PisConsentService {
     /**
      * Get information about Authorisation by authorisation identifier
      *
-     * @param authorizationId String representation of the authorisation identifier
+     * @param authorisationId String representation of the authorisation identifier
      * @return Response containing information about Authorisation
      */
     Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorisationById(String authorisationId);
