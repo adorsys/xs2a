@@ -23,12 +23,15 @@ Some of these parameters you can obtain after installing and running PostgreSQL 
 - Create a database with default settings, add the name of the database to your application.properties file instead of "yourDatabaseName"
 ```
 
+**WARNING:**  `For encryption\decryption of aspsp data we use secret server key ('server_key') which is read from Environment variables.  
+So, before starting project you need to create environment variables and set value, as example:  'server_key=12345678' or run app with this parameter` 
+
 To run consent-management-system app from command line:
 
 1. Without test data
 ```
 mvn clean install 
-mvn spring-boot:run
+mvn -Drun.arguments=--server_key=12345678 spring-boot:run
  
 ```
 
