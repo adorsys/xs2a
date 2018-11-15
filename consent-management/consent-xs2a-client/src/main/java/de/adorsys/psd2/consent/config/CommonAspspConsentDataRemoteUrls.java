@@ -50,4 +50,13 @@ public class CommonAspspConsentDataRemoteUrls {
     public String updateAspspConsentData() {
         return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}/consent-type/{consent-type}";
     }
+
+    /**
+     * Returns URL-string to CMS endpoint that delete aspsp consent data by consent ID
+     *
+     * @return String
+     */
+    public String deleteAspspConsentData() {
+        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}/consent-type/{consent-type}";
+    }
 }

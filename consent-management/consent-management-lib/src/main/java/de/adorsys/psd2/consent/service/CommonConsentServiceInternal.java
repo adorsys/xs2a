@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-//@RequiredArgsConstructor
 @Transactional(readOnly = true)
 // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class CommonConsentServiceInternal implements CommonConsentService {
@@ -78,6 +77,15 @@ public class CommonConsentServiceInternal implements CommonConsentService {
         return aspspDataService.updateAspspConsentData(aspspConsentData.get())
                    ? Optional.of(encryptedConsentId)
                    : Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteAspspConsentDataByConsentId(String consentId, ConsentType consentType) {
+        if (!isConsentExist(consentId, consentType)) {
+            return false;
+        }
+        return aspspDataService.deleteAspspConsentData(consentId);
     }
 
     private boolean isConsentExist(String encryptedConsentId, ConsentType consentType) {

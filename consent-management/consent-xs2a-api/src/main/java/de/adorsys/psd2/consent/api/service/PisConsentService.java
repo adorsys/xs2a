@@ -68,14 +68,32 @@ public interface PisConsentService {
 
     /**
      * Creates consent authorization
+     *
+     * @param paymentId String representation of the payment identifier
+     * @param authorizationType Type of authorisation
+     * @param psuData Information about PSU
+     * @return Response containing authorization id
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
     /**
      * Creates consent authorization cancellation
+     *
+     * @param paymentId String representation of the payment identifier
+     * @param authorizationType Type of authorisation
+     * @param psuData Information about PSU
+     * @return Response containing authorization id
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
+    /**
+     * Updates consent authorization
+     *
+     * @param authorizationId String representation of the authorisation identifier
+     * @param request Incoming request for updating authorization
+     * @param authorizationType Type of authorisation
+     * @return Response containing SCA status, available and chosen Sca method
+     */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorisationType authorizationType);
 
     /**
@@ -86,11 +104,37 @@ public interface PisConsentService {
      */
     void updatePaymentConsent(PisConsentRequest request, String consentId);
 
+    /**
+     * Get information about Authorisation by authorisation identifier
+     *
+     * @param authorizationId String representation of the authorisation identifier
+     * @param authorizationType Type of authorisation
+     * @return Response containing information about Authorisation
+     */
     Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorisationType authorizationType);
 
+    /**
+     * Get information about Authorisation by payment identifier
+     *
+     * @param paymentId String representation of the payment identifier
+     * @param authorizationType Type of authorisation
+     * @return Response containing information about Authorisation
+     */
     Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType);
 
+    /**
+     * Get information about PSU by payment identifier
+     *
+     * @param paymentId String representation of the payment identifier
+     * @return Response containing information about PSU
+     */
     Optional<PsuIdData> getPsuDataByPaymentId(String paymentId);
 
+    /**
+     * Get information about PSU by consent identifier
+     *
+     * @param consentId String representation of pis consent identifier
+     * @return Response containing information about PSU
+     */
     Optional<PsuIdData> getPsuDataByConsentId(String consentId);
 }

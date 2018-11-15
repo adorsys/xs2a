@@ -79,4 +79,19 @@ public class AspspConsentDataController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
+
+    @DeleteMapping(path = "consent/{consent-id}/consent-type/{consent-type}")
+    @ApiOperation(value = "Delete aspsp consent data identified by given consent id.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 202, message = "Accepted"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity deleteAspspConsentDataByConsentId(
+        @ApiParam(name = "consent-type", value = "Type of the consent: AIS, PIS, PIIS.", example = "AIS")
+        @PathVariable("consent-type") ConsentType consentType,
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI")
+        @PathVariable("consent-id") String encryptedConsentId) {
+        return commonConsentService.deleteAspspConsentDataByConsentId(encryptedConsentId, consentType)
+                   ? ResponseEntity.noContent().build()
+                   : ResponseEntity.notFound().build();
+    }
 }

@@ -55,4 +55,10 @@ public class CommonConsentServiceRemote implements CommonConsentService {
             new HttpEntity<>(request), CreateAisConsentResponse.class, consentId, consentType).getBody();
         return Optional.ofNullable(response.getConsentId());
     }
+
+    @Override
+    public boolean deleteAspspConsentDataByConsentId(String consentId, ConsentType consentType) {
+        consentRestTemplate.exchange(commonAspspConsentDataRemoteUrls.deleteAspspConsentData(), HttpMethod.DELETE, null, Boolean.class, consentId, consentType);
+        return true;
+    }
 }

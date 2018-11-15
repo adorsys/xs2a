@@ -73,9 +73,8 @@ public class AspspDataServiceInternal implements AspspDataService {
         }
 
         String consentId = aspspConsentData.getConsentId();
-        boolean isConsentIdEncrypted = isConsentIdEncrypted(consentId);
 
-        if (isConsentIdEncrypted) {
+        if (isConsentIdEncrypted(consentId)) {
             Optional<String> decryptConsentId = securityDataService.decryptId(consentId);
 
             if (!decryptConsentId.isPresent()) {
@@ -93,6 +92,27 @@ public class AspspDataServiceInternal implements AspspDataService {
         }
 
         return updateAndSaveAspspConsentData(consentId, data);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteAspspConsentData(@NotNull String consentId) {
+        if (isConsentIdEncrypted(consentId)) {
+            Optional<String> decryptConsentId = securityDataService.decryptId(consentId);
+
+            if (!decryptConsentId.isPresent()) {
+                return false;
+            }
+
+            consentId = decryptConsentId.get();
+        }
+
+        if (aspspConsentDataRepository.exists(consentId)) {
+            aspspConsentDataRepository.delete(consentId);
+            return true;
+        }
+
+        return false;
     }
 
     private Optional<AspspConsentDataEntity> getAspspConsentDataEntity(String consentId, boolean isConsentIdEncrypted) {

@@ -25,7 +25,8 @@ public interface CommonConsentService {
     /**
      * Gets aspsp consent data by id
      *
-     * @param consentId id of the consent
+     * @param consentId String representation of consent identifier
+     * @param consentType Type of the consent
      * @return Response containing aspsp consent data
      */
     Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId, ConsentType consentType);
@@ -33,7 +34,7 @@ public interface CommonConsentService {
     /**
      * Gets Pis aspsp consent data by payment id
      *
-     * @param paymentId id of the payment
+     * @param paymentId String representation of payment identifier
      * @return Response containing aspsp consent data
      */
      Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId);
@@ -41,9 +42,18 @@ public interface CommonConsentService {
     /**
      * Updates consent aspsp consent data by id
      *
+     * @param consentId String representation of consent identifier
      * @param request   Aspsp provided consent data
-     * @param consentId id of the consent to be updated
+     * @param consentType Type of the consent
      * @return String   consent id
      */
     Optional<String> saveAspspConsentData(String consentId, CmsAspspConsentDataBase64 request, ConsentType consentType);
+
+    /**
+     *
+     * @param consentId String representation of consent identifier
+     * @param consentType Type of the consent
+     * @return true if AspspConsentData is deleted, false if doesn't
+     */
+    boolean deleteAspspConsentDataByConsentId(String consentId, ConsentType consentType);
 }
