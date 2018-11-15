@@ -109,7 +109,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Please, keep this interceptor's order, because it is important, that logging interceptors will be called before the validation ones to log all the requests (even wrong ones).
-        // The interceptors are executed in the order in which they are declared for preHandle(...) and visa versa for postHandle(...).
+        // The interceptors are executed in the order in which they are declared for preHandle(...) and vice versa for postHandle(...).
         // Logging interceptors:
         registry.addInterceptor(new AccountLoggingInterceptor(tppService)).addPathPatterns("/v1/accounts/**");
         registry.addInterceptor(new ConsentLoggingInterceptor(tppService)).addPathPatterns("/v1/consents/**");
