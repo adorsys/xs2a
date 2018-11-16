@@ -117,9 +117,12 @@ public class AspspDataServiceInternal implements AspspDataService {
     }
 
     private Optional<AspspConsentDataEntity> getAspspConsentDataEntity(String encryptedConsentId, boolean isConsentIdEncrypted) {
-        return isConsentIdEncrypted
-                   ? securityDataService.decryptId(encryptedConsentId).flatMap(aspspConsentDataRepository::findByConsentId)
-                   : aspspConsentDataRepository.findByConsentId(encryptedConsentId);
+        if (isConsentIdEncrypted) {
+            return securityDataService.decryptId(encryptedConsentId)
+                       .flatMap(aspspConsentDataRepository::findByConsentId);
+        }
+
+        return aspspConsentDataRepository.findByConsentId(encryptedConsentId);
     }
 
     private Optional<EncryptedData> encryptConsentData(String encryptedConsentId, String aspspConsentDataBase64) {

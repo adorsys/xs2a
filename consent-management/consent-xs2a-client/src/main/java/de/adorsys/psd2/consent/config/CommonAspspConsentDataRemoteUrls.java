@@ -30,7 +30,7 @@ public class CommonAspspConsentDataRemoteUrls {
      * @return String
      */
     public String getAspspConsentDataByConsentId() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}/consent-type/{consent-type}";
+        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}/type/{consent-type}";
     }
 
     /**
@@ -48,7 +48,7 @@ public class CommonAspspConsentDataRemoteUrls {
      * @return String
      */
     public String updateAspspConsentData() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}/consent-type/{consent-type}";
+        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}/type/{consent-type}";
     }
 
     /**
@@ -57,6 +57,6 @@ public class CommonAspspConsentDataRemoteUrls {
      * @return String
      */
     public String deleteAspspConsentData() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}/consent-type/{consent-type}";
+        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}/type/{consent-type}";
     }
 }

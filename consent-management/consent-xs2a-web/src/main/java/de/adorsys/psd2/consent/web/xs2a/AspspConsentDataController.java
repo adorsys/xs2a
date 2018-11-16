@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 public class AspspConsentDataController {
     private final CommonConsentService commonConsentService;
 
-    @GetMapping(path = "/consent/{consent-id}/consent-type/{consent-type}")
+    @GetMapping(path = "/consent/{consent-id}/type/{consent-type}")
     @ApiOperation(value = "Get aspsp consent data identified by given consent id and consent type.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -61,7 +61,7 @@ public class AspspConsentDataController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(path = "/consent/{consent-id}/consent-type/{consent-type}")
+    @PutMapping(path = "/consent/{consent-id}/type/{consent-type}")
     @ApiOperation(value = "Update aspsp consent data identified by given consent id and consent type.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -78,7 +78,7 @@ public class AspspConsentDataController {
 
     }
 
-    @DeleteMapping(path = "/consent/{consent-id}/consent-type/{consent-type}")
+    @DeleteMapping(path = "/consent/{consent-id}/type/{consent-type}")
     @ApiOperation(value = "Delete aspsp consent data identified by given consent id and consent type.")
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "No Content"),

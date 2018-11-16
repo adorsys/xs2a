@@ -40,10 +40,10 @@ public interface AspspDataService {
     boolean updateAspspConsentData(@NotNull AspspConsentData aspspConsentData);
 
     /**
-     * Delete an AspspConsentData object by the Consent ID / Payment ID
+     * Deletes an AspspConsentData object by the Consent ID / Payment ID
      *
      * @param id AIS/PIIS Consent ID / Payment ID that identifies the data
-     * @return true if AspspConsentData is deleted, false if doesn't
+     * @return <code>true</code> if consent was found and data was deleted. <code>false</code> otherwise.
      */
     boolean deleteAspspConsentData(@NotNull String id);
 }

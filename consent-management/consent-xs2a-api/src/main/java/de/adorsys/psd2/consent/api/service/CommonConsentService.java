@@ -23,9 +23,9 @@ import java.util.Optional;
 
 public interface CommonConsentService {
     /**
-     * Gets aspsp consent data by id
+     * Gets aspsp consent data by consent id and consent type
      *
-     * @param consentId String representation of consent identifier
+     * @param consentId   String representation of consent identifier
      * @param consentType Type of the consent
      * @return Response containing aspsp consent data
      */
@@ -37,23 +37,24 @@ public interface CommonConsentService {
      * @param paymentId String representation of payment identifier
      * @return Response containing aspsp consent data
      */
-     Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId);
+    Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId);
 
     /**
-     * Updates consent aspsp consent data by id
+     * Updates consent aspsp consent data by consent id and consent type
      *
-     * @param consentId String representation of consent identifier
-     * @param request   Aspsp provided consent data
+     * @param consentId   String representation of consent identifier
+     * @param request     Aspsp provided consent data
      * @param consentType Type of the consent
      * @return String   consent id
      */
     Optional<String> saveAspspConsentData(String consentId, CmsAspspConsentDataBase64 request, ConsentType consentType);
 
     /**
+     * Deletes aspsp consent data by consent id and consent type
      *
-     * @param consentId String representation of consent identifier
+     * @param consentId   String representation of consent identifier
      * @param consentType Type of the consent
-     * @return true if AspspConsentData is deleted, false if doesn't
+     * @return <code>true</code> if consent was found and data was deleted. <code>false</code> otherwise.
      */
     boolean deleteAspspConsentDataByConsentId(String consentId, ConsentType consentType);
 }

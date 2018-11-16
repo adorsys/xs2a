@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.api.service;
 
 public interface ConsentService {
     /**
-     * Check for consent existing
+     * Checks whether consent exists
      *
      * @param consentId id of consent
      * @return boolean
