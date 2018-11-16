@@ -34,7 +34,7 @@ public class CreateAisConsentRequest {
     private String tppId;
 
     @ApiModelProperty(value = "Allowed maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
-    private int allowedFrequencyPerDay;
+    private Integer allowedFrequencyPerDay;
 
     @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int requestedFrequencyPerDay;

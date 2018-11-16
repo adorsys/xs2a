@@ -142,6 +142,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
                        .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
@@ -165,6 +166,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
                        .success();
 
         } catch (RestException e) {

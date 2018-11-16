@@ -68,6 +68,9 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public Optional<String> createConsent(CreateAisConsentRequest request) {
+        if (request.getAllowedFrequencyPerDay() == null) {
+            return Optional.empty();
+        }
         AisConsent consent = createConsentFromRequest(request);
         consent.setExternalId(UUID.randomUUID().toString());
         AisConsent saved = aisConsentRepository.save(consent);
