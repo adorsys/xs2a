@@ -24,3 +24,6 @@ This is done to avoid unnecessary additional call to list all available methods 
 Due to importance of having not-nullable results in SPI API nullability checks by SpiResponse object construction were added.
 Please note, that this also implies, if you need to return VoidResponse.
 Please use SpiResponse.voidResponse() static method for that.
+
+## Support Oracle DB
+Migrations scripts were modified in order to fix oracle supporting issues. You may be required to regenerate local schemes.
