@@ -91,8 +91,16 @@ public class PisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
         return consentServiceBaseUrl + "/pis/consent/authorizations/{authorization-id}";
     }
 
+    public String updatePisConsentCancellationAuthorisation() {
+        return consentServiceBaseUrl + "/pis/consent/cancellation-authorisations/{cancellation-id}";
+    }
+
     public String getPisConsentAuthorisationById() {
         return consentServiceBaseUrl + "/pis/consent/authorizations/{authorization-id}";
+    }
+
+    public String getPisConsentCancellationAuthorisationById() {
+        return consentServiceBaseUrl + "/pis/consent/cancellation-authorisations/{cancellation-id}";
     }
 
     /**

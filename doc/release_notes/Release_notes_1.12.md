@@ -10,6 +10,9 @@ i.e. online-banking system. This module can be used in any setup of CMS (embedde
 * consent-aspsp-web is used to provide other endpoints available for banking systems.
 This module can be used in any setup of CMS (embedded and standalone).
 
+## Payment cancellation is added
+A PSU may want to cancel the payment. The flow of payment cancellation for embedded and redirect approches was added.
+
 ## Log TPP requests and responses
 Now all the requests and responses from TPP to XS2A are logged.
 To make logging work, one of the following options should be done:

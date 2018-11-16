@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -26,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -140,8 +140,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         ResponseObject.ResponseBuilder<ConsentStatusResponse> responseBuilder = ResponseObject.builder();
         if (consentStatus.isPresent()) {
             responseBuilder = responseBuilder.body(new ConsentStatusResponse(consentStatus.get()));
-        }
-        else {
+        } else {
             responseBuilder = responseBuilder.fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)));
         }
         return responseBuilder.build();
@@ -257,7 +256,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                   ::build);
     }
 
-    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(UpdatePisConsentPsuDataRequest request) {
+    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
         Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentPsuData(request);
 
         if (response.hasError()) {
@@ -279,6 +278,19 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .orElseGet(ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
                                   .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
                                   ::build);
+    }
+
+    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentCancellationPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+        Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentCancellationPsuData(request);
+
+        if (response.hasError()) {
+            return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+                       .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
+                       .build();
+        }
+        return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+                   .body(response)
+                   .build();
     }
 
     public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {

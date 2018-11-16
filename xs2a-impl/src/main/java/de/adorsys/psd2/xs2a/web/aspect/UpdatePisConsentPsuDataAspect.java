@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -39,7 +39,7 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updatePisConsentPsuData(..)) && args(request)", returning = "result", argNames = "result,request")
-    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentAuthorizationAspect(ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> result, UpdatePisConsentPsuDataRequest request) {
+    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentAuthorizationAspect(ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> result, Xs2aUpdatePisConsentPsuDataRequest request) {
         if (!result.hasError()) {
             Xs2aUpdatePisConsentPsuDataResponse body = result.getBody();
             Links links = buildLink(request);
@@ -63,7 +63,7 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLink(UpdatePisConsentPsuDataRequest request) {
+    private Links buildLink(Xs2aUpdatePisConsentPsuDataRequest request) {
         Links links = new Links();
         links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", request.getPaymentService(), request.getPaymentId()));
         links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", request.getPaymentService(), request.getPaymentId()));

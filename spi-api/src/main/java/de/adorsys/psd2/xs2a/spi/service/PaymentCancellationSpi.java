@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -34,10 +35,6 @@ public interface PaymentCancellationSpi extends AuthorisationSpi<SpiPayment> {
     @NotNull
     SpiResponse<SpiPaymentCancellationResponse> initiatePaymentCancellation(@NotNull SpiPsuData psuData, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData);
 
-    // TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
-    @NotNull
-    SpiResponse<SpiResponse.VoidResponse> executePaymentCancellationWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData);
-
     /**
      * Cancels payment without performing strong customer authentication
      *
@@ -49,4 +46,17 @@ public interface PaymentCancellationSpi extends AuthorisationSpi<SpiPayment> {
      */
     @NotNull
     SpiResponse<SpiResponse.VoidResponse> cancelPaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData);
+
+    /**
+     * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation cancels payment at ASPSP.
+     *
+     * @param psuData            ASPSP identifier(s) of the psu
+     * @param spiScaConfirmation payment cancellation confirmation information
+     * @param payment            Payment to be cancelled
+     * @param aspspConsentData   Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                           May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return Return a positive or negative response as part of SpiResponse
+     */
+    @NotNull
+    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndCancelPayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData);
 }

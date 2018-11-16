@@ -67,10 +67,10 @@ public class TppInfoEntity {
     @Column(name = "state", nullable = false)
     private String state;
 
-    @Column(name = "redirect_uri", nullable = false)
+    @Column(name = "redirect_uri")
     private String redirectUri;
 
-    @Column(name = "nok_redirect_uri", nullable = false)
+    @Column(name = "nok_redirect_uri")
     private String nokRedirectUri;
 
     @Column(name = "status", nullable = false)
