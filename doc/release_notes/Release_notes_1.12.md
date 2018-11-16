@@ -12,3 +12,8 @@ This module can be used in any setup of CMS (embedded and standalone).
 
 ## Payment cancellation is added
 A PSU may want to cancel the payment. The flow of payment cancellation for embedded and redirect approches was added.
+
+## Create one endpoint in CMS for working with AspspConsentData 
+Moved interactions with AspspConsentData from different services into one service
+Added ability to delete AspspConsentData
+
