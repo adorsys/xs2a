@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.AccountDetails;
-import de.adorsys.psd2.model.AccountList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -81,7 +80,6 @@ public class AccountDetailRequestSuccessfulSteps {
     public void psu_requests_the_account_details() {
         HttpEntity entity = HttpEntityUtils.getHttpEntity(context.getTestData().getRequest(),
                 context.getAccessToken());
-        log.info("////entity request account detail////  "+entity.toString());
         ResponseEntity<AccountDetails> response = restTemplate.exchange(
                 context.getBaseUrl() + "/accounts/"+context.getRessourceId()+"?withBalance=false",
                 HttpMethod.GET,

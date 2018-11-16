@@ -30,23 +30,24 @@ import java.util.Currency;
 @Data
 @Embeddable
 @ApiModel(description = "Account access", value = "AccountAccess")
+//TODO refactor class and change DB scheme https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/491
 public class AccountAccess {
 
-    @Column(name = "resource_id", nullable = false)
+    @Column(name = "resource_id")
     @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
     private String resourceId;
 
-    @Column(name = "iban", nullable = false, length = 34)
-    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", required = true, example = "DE2310010010123456789")
+    @Column(name = "iban", length = 34)
+    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789")
     private String iban;
 
     @Column(name = "currency", length = 3)
-    @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
+    @ApiModelProperty(value = "Currency Type", example = "EUR")
     private Currency currency;
 
-    @Column(name = "type_access", nullable = false, length = 15)
+    @Column(name = "type_access", length = 15)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Types of given accesses: account, balance, transaction, payment", required = true, example = "ACCOUNT")
+    @ApiModelProperty(value = "Types of given accesses: account, balance, transaction, payment", example = "ACCOUNT")
     private TypeAccess typeAccess;
 
     public AccountAccess() {

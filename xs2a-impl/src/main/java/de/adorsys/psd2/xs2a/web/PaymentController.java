@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -62,9 +63,9 @@ public class PaymentController implements PaymentApi {
                                                      String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<TransactionStatus> response = PaymentType.getByValue(paymentService)
-                                                             .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId))
-                                                             .orElseGet(ResponseObject.<TransactionStatus>builder()
-                                                                            .fail(new MessageError(FORMAT_ERROR))::build);
+                                                         .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId))
+                                                         .orElseGet(ResponseObject.<TransactionStatus>builder()
+                                                                        .fail(new MessageError(FORMAT_ERROR))::build);
 
         return responseMapper.ok(response, PaymentModelMapperPsd2::mapToStatusResponse12);
     }
@@ -84,7 +85,7 @@ public class PaymentController implements PaymentApi {
         return response.hasError()
                    ? responseMapper.ok(response)
                    : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(),
-                                                                                                                      PaymentProduct.SEPA)).build());
+            PaymentProduct.SEPA)).build());
     }
 
     @Override
@@ -163,7 +164,9 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity updatePaymentCancellationPsuData(String paymentService, String paymentId, String cancellationId, UUID xRequestID, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null; //TODO implement
+        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
+        ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> response = consentService.updatePisConsentCancellationPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, cancellationId, paymentService, (HashMap) body));
+        return responseMapper.ok(response, consentModelMapper::mapToUpdatePsuAuthenticationResponse);
     }
 
     @Override

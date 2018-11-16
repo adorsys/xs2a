@@ -9,3 +9,6 @@ This is normally needed if CMS is deployed as a separate service.
 i.e. online-banking system. This module can be used in any setup of CMS (embedded and standalone).
 * consent-aspsp-web is used to provide other endpoints available for banking systems.
 This module can be used in any setup of CMS (embedded and standalone).
+
+## Payment cancellation is added
+A PSU may want to cancel the payment. The flow of payment cancellation for embedded and redirect approches was added.

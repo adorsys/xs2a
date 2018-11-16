@@ -1,4 +1,6 @@
 # Reference Java implementation of PSD2 XS2A Interface of Berlin Group
+[![Build Status](https://travis-ci.com/adorsys/xs2a.svg?branch=develop)](https://travis-ci.com/adorsys/xs2a)
+
 With **PSD2** (Directive (EU) 2015/2366 of the European Parliament and of the Council on Payment Services in the
 Internal Market, published 25 November 2016) the European Union has published a new directive on payment services
 in the internal market.
