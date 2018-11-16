@@ -213,7 +213,7 @@ public class AccountControllerTest {
         transaction.setPurposeCode(new Xs2aPurposeCode("BKDF"));
         transaction.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
         List<Transactions> booked = Collections.singletonList(new Transactions());
-        Xs2aAccountReport accountReport = new Xs2aAccountReport(booked, Collections.emptyList());
+        Xs2aAccountReport accountReport = new Xs2aAccountReport(booked, Collections.emptyList(), null);
         return ResponseObject.<Xs2aAccountReport>builder().body(accountReport).build();
     }
 

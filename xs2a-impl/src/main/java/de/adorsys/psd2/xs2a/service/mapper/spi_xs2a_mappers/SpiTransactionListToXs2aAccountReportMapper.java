@@ -31,24 +31,27 @@ import java.util.stream.Collectors;
 public class SpiTransactionListToXs2aAccountReportMapper {
     private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
 
-    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(List<SpiTransaction> spiTransactions) {
+    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(List<SpiTransaction> spiTransactions, String rawTransactionsResponse) {
+        return Optional.ofNullable(rawTransactionsResponse)
+            .map(s -> Optional.of(new Xs2aAccountReport(null, null, rawTransactionsResponse)))
+            .orElseGet(() -> {
+                if (spiTransactions.isEmpty()) {
+                    return Optional.empty();
+                }
 
-        if (spiTransactions.isEmpty()) {
-            return Optional.empty();
-        }
+                List<Transactions> booked = spiTransactions
+                    .stream()
+                    .filter(transaction -> transaction.getBookingDate() != null)
+                    .map(toXs2aTransactionMapper::mapToXs2aTransaction)
+                    .collect(Collectors.toList());
 
-        List<Transactions> booked = spiTransactions
-                                    .stream()
-                                    .filter(transaction -> transaction.getBookingDate() != null)
-                                    .map(toXs2aTransactionMapper::mapToXs2aTransaction)
-                                    .collect(Collectors.toList());
+                List<Transactions> pending = spiTransactions
+                    .stream()
+                    .filter(transaction -> transaction.getBookingDate() == null)
+                    .map(toXs2aTransactionMapper::mapToXs2aTransaction)
+                    .collect(Collectors.toList());
 
-        List<Transactions> pending = spiTransactions
-                                     .stream()
-                                     .filter(transaction -> transaction.getBookingDate() == null)
-                                     .map(toXs2aTransactionMapper::mapToXs2aTransaction)
-                                     .collect(Collectors.toList());
-
-        return Optional.of(new Xs2aAccountReport(booked, pending));
+                return Optional.of(new Xs2aAccountReport(booked, pending, rawTransactionsResponse));
+            });
     }
 }

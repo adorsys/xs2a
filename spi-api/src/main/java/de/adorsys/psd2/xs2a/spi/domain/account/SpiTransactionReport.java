@@ -27,8 +27,10 @@ import java.util.List;
  */
 @Value
 public class SpiTransactionReport {
-    @NotNull
+
     private List<SpiTransaction> transactions;
     @Nullable
     private List<SpiAccountBalance> balances;
+
+    private String transactionsRaw;
 }

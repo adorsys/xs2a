@@ -47,6 +47,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -477,7 +478,7 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -507,13 +508,13 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(SPI_TRANSACTION_REPORT));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(FORMAT_ERROR_CODE);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -547,13 +548,13 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(null));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -581,12 +582,12 @@ public class AccountServiceTest {
        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
-        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList());
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
 
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList()))
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
 
         when(referenceMapper.mapToXs2aAccountReference(SPI_ACCOUNT_REFERENCE))
@@ -604,7 +605,7 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
@@ -717,7 +718,7 @@ public class AccountServiceTest {
         when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
 
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction)))
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
             .thenReturn(Optional.of(xs2aAccountReport));
 
         ResponseObject<Xs2aAccountReport> actualResponse = accountService.getAccountReportByTransactionId(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
@@ -757,7 +758,7 @@ public class AccountServiceTest {
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it
     private static SpiTransactionReport buildSpiTransactionReport() {
-        return new SpiTransactionReport(Collections.emptyList(), Collections.emptyList());
+        return new SpiTransactionReport(Collections.emptyList(), Collections.emptyList(), null);
     }
 
     // Needed because ResponseObject is final, so it's impossible to mock it
