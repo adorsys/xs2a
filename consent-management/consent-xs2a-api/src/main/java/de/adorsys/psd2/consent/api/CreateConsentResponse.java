@@ -17,9 +17,9 @@
 package de.adorsys.psd2.consent.api;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 @AllArgsConstructor
 public class CreateConsentResponse {
     private String consentId;

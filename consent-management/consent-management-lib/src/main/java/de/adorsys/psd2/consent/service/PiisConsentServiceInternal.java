@@ -22,7 +22,6 @@ import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
-import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +41,6 @@ import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector.*;
 public class PiisConsentServiceInternal implements PiisConsentService, ConsentService {
     private final PiisConsentRepository piisConsentRepository;
     private final PiisConsentMapper piisConsentMapper;
-    private final SecurityDataService securityDataService;
 
     @Override
     public List<CmsPiisValidationInfo> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier) {

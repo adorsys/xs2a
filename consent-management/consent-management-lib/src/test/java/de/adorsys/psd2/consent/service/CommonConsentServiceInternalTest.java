@@ -46,6 +46,8 @@ public class CommonConsentServiceInternalTest {
     private PisConsentServiceInternal pisConsentService;
     @Mock
     private PiisConsentServiceInternal piisConsentService;
+    @Mock
+    private ConsentServiceFactory consentServiceFactory;
 
     private static CmsAspspConsentDataBase64 CMS_ASPSP_CONSENT_DATA_BASE_64, CMS_ASPSP_CONSENT_DATA_BASE_64_NO_CONSENT_DATA;
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
@@ -76,6 +78,10 @@ public class CommonConsentServiceInternalTest {
 
         when(pisConsentService.isConsentExist(PAYMENT_ID)).thenReturn(true);
         when(pisConsentService.isConsentExist(PAYMENT_ID_NOT_EXIST)).thenReturn(false);
+
+        when(consentServiceFactory.getConsentServiceByConsentType(ConsentType.AIS)).thenReturn(aisConsentService);
+        when(consentServiceFactory.getConsentServiceByConsentType(ConsentType.PIS)).thenReturn(pisConsentService);
+        when(consentServiceFactory.getConsentServiceByConsentType(ConsentType.PIIS)).thenReturn(piisConsentService);
     }
 
     @Test

@@ -22,12 +22,10 @@ import de.adorsys.psd2.consent.api.CreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.CommonConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/aspsp-consent-data")
@@ -35,8 +33,8 @@ import org.springframework.web.bind.annotation.*;
 public class AspspConsentDataController {
     private final CommonConsentService commonConsentService;
 
-    @GetMapping(path = "consent/{consent-id}/consent-type/{consent-type}")
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
+    @GetMapping(path = "/consent/{consent-id}/consent-type/{consent-type}")
+    @ApiOperation(value = "Get aspsp consent data identified by given consent id and consent type.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
@@ -50,7 +48,7 @@ public class AspspConsentDataController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping(path = "payment/{payment-id}")
+    @GetMapping(path = "/payment/{payment-id}")
     @ApiOperation(value = "Get aspsp consent data identified by given payment id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -63,8 +61,8 @@ public class AspspConsentDataController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(path = "consent/{consent-id}/consent-type/{consent-type}")
-    @ApiOperation(value = "Update aspsp consent data identified by given consent id.")
+    @PutMapping(path = "/consent/{consent-id}/consent-type/{consent-type}")
+    @ApiOperation(value = "Update aspsp consent data identified by given consent id and consent type.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
@@ -80,10 +78,10 @@ public class AspspConsentDataController {
 
     }
 
-    @DeleteMapping(path = "consent/{consent-id}/consent-type/{consent-type}")
-    @ApiOperation(value = "Delete aspsp consent data identified by given consent id.")
+    @DeleteMapping(path = "/consent/{consent-id}/consent-type/{consent-type}")
+    @ApiOperation(value = "Delete aspsp consent data identified by given consent id and consent type.")
     @ApiResponses(value = {
-        @ApiResponse(code = 202, message = "Accepted"),
+        @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity deleteAspspConsentDataByConsentId(
         @ApiParam(name = "consent-type", value = "Type of the consent: AIS, PIS, PIIS.", example = "AIS")

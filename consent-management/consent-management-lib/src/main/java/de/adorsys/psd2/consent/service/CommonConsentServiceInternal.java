@@ -19,29 +19,22 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ConsentType;
-import de.adorsys.psd2.consent.api.service.*;
+import de.adorsys.psd2.consent.api.service.CommonConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 // TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class CommonConsentServiceInternal implements CommonConsentService {
     private final AspspDataService aspspDataService;
-    private final Map<ConsentType, ConsentService> services = new HashMap<>();
-
-    public CommonConsentServiceInternal(AspspDataService aspspDataService, AisConsentService aisConsentService, PisConsentService pisConsentService, PiisConsentService piisConsentService) {
-        this.aspspDataService = aspspDataService;
-        services.put(ConsentType.AIS, (ConsentService) aisConsentService);
-        services.put(ConsentType.PIS, (ConsentService) pisConsentService);
-        services.put(ConsentType.PIIS, (ConsentService) piisConsentService);
-    }
+    private final ConsentServiceFactory consentServiceFactory;
 
     @Override
     public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String encryptedConsentId, ConsentType consentType) {
@@ -81,15 +74,15 @@ public class CommonConsentServiceInternal implements CommonConsentService {
 
     @Override
     @Transactional
-    public boolean deleteAspspConsentDataByConsentId(String consentId, ConsentType consentType) {
-        if (!isConsentExist(consentId, consentType)) {
+    public boolean deleteAspspConsentDataByConsentId(String encryptedConsentId, ConsentType consentType) {
+        if (!isConsentExist(encryptedConsentId, consentType)) {
             return false;
         }
-        return aspspDataService.deleteAspspConsentData(consentId);
+        return aspspDataService.deleteAspspConsentData(encryptedConsentId);
     }
 
     private boolean isConsentExist(String encryptedConsentId, ConsentType consentType) {
-        return services.get(consentType).isConsentExist(encryptedConsentId);
+        return consentServiceFactory.getConsentServiceByConsentType(consentType).isConsentExist(encryptedConsentId);
     }
 
     private CmsAspspConsentDataBase64 getCmsAspspConsentDataBase64(String encryptedConsentId) {
