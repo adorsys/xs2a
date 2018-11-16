@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-@Slf4j
+@Slf4j(topic = "access-log")
 @RequiredArgsConstructor
 @Component
 public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
