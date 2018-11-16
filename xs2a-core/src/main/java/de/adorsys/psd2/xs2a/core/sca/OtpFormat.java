@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain;
+package de.adorsys.psd2.xs2a.core.sca;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
