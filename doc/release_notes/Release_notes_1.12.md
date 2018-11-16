@@ -25,6 +25,9 @@ Due to importance of having not-nullable results in SPI API nullability checks b
 Please note, that this also implies, if you need to return VoidResponse.
 Please use SpiResponse.voidResponse() static method for that.
 
+## Support Oracle DB
+Migrations scripts were modified in order to fix oracle supporting issues. You may be required to regenerate local schemes.
+
 ## Log TPP requests and responses
 Now all the requests and responses from TPP to XS2A are logged.
 To make logging work, one of the following options should be done:
