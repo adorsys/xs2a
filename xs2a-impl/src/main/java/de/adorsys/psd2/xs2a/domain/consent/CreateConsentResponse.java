@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.Xs2aChallengeData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,7 +41,7 @@ public class CreateConsentResponse {
     private final Xs2aAuthenticationObject chosenScaMethod;
 
     @ApiModelProperty(value = "It is contained in addition to the data element chosenScaMethod if challenge data is needed for SCA")
-    private final Xs2aChallengeData challengeData;
+    private final ChallengeData challengeData;
 
     @ApiModelProperty(value = "A list of hyperlinks to be recognized by Tpp", required = true)
     @JsonProperty("_links")

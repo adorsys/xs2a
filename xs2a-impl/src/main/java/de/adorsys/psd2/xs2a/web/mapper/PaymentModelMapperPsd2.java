@@ -21,7 +21,6 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
@@ -42,6 +41,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper.mapToAmount;
 @RequiredArgsConstructor
 public class PaymentModelMapperPsd2 {
     private final ObjectMapper mapper;
+    private final CoreObjectsMapper coreObjectsMapper;
     private final MessageErrorMapper messageErrorMapper;
     private final AccountModelMapper accountModelMapper;
 
@@ -110,7 +110,7 @@ public class PaymentModelMapperPsd2 {
         response201.setTransactionFees(mapToAmount(specificResponse.getTransactionFees()));
         response201.setTransactionFeeIndicator(specificResponse.isTransactionFeeIndicator());
         response201.setScaMethods(mapToScaMethods(specificResponse.getScaMethods()));
-        response201.setChallengeData(mapToChallengeData(specificResponse.getChallengeData()));
+        response201.setChallengeData(coreObjectsMapper.mapToChallengeData(specificResponse.getChallengeData()));
         response201.setLinks(mapper.convertValue(((PaymentInitiationResponse) response).getLinks(), Map.class));
         response201.setPsuMessage(specificResponse.getPsuMessage());
         response201.setTppMessages(messageErrorMapper.mapToTppMessages(specificResponse.getTppMessages()));
@@ -152,7 +152,7 @@ public class PaymentModelMapperPsd2 {
         response.setTransactionStatus(mapToTransactionStatus12(cancelPaymentResponse.getTransactionStatus()));
         response.setScaMethods(mapToScaMethods(cancelPaymentResponse.getScaMethods()));
         response.setChosenScaMethod(mapToChosenScaMethod(cancelPaymentResponse.getChosenScaMethod()));
-        response.setChallengeData(mapToChallengeData(cancelPaymentResponse.getChallengeData()));
+        response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(mapper.convertValue(cancelPaymentResponse.getLinks(), Map.class));
         return response;
     }
@@ -194,18 +194,5 @@ public class PaymentModelMapperPsd2 {
                    }).orElse(null);
     }
 
-    private ChallengeData mapToChallengeData(Xs2aChallengeData xs2aChallengeData) {
-        return Optional.ofNullable(xs2aChallengeData)
-                   .map(xs2aChallenge -> {
-                       ChallengeData psd2Challenge = new ChallengeData();
-                       psd2Challenge.setImage(xs2aChallengeData.getImage());
-                       psd2Challenge.setData(xs2aChallengeData.getData());
-                       psd2Challenge.setImageLink(xs2aChallengeData.getImageLink());
-                       psd2Challenge.setOtpMaxLength(xs2aChallengeData.getOtpMaxLength());
-                       psd2Challenge.setOtpFormat(ChallengeData.OtpFormatEnum.fromValue(xs2aChallengeData.getOtpFormat().getValue()));
-                       psd2Challenge.setAdditionalInformation(xs2aChallengeData.getAdditionalInformation());
-                       return psd2Challenge;
-                   })
-                   .orElse(null);
-    }
+
 }

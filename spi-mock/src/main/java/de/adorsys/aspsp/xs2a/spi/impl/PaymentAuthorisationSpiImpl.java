@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -110,6 +111,8 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
 
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       // TODO We need to return real payload data from ASPSP https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/489
+                       .payload(getDefaultSpiAuthorizationCodeResult())
                        .success();
 
         } catch (RestException e) {
@@ -123,5 +126,19 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
+    }
+
+    private SpiAuthorizationCodeResult getDefaultSpiAuthorizationCodeResult() {
+        SpiAuthenticationObject method = new SpiAuthenticationObject();
+        method.setAuthenticationMethodId("sms");
+        method.setAuthenticationType("SMS_OTP");
+
+        ChallengeData challengeData = new ChallengeData(null, "some data", "some link", 100, null, "info");
+
+        SpiAuthorizationCodeResult resultTmp = new SpiAuthorizationCodeResult();
+        resultTmp.setChallengeData(challengeData);
+        resultTmp.setSelectedScaMethod(method);
+
+        return resultTmp;
     }
 }

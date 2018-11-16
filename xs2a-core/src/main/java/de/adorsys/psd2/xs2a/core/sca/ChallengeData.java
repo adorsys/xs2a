@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain;
+package de.adorsys.psd2.xs2a.core.sca;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Value
 @ApiModel(description = "Challenge data needed for SCA", value = "ChallengeData")
-public class Xs2aChallengeData {
+public class ChallengeData {
     @ApiModelProperty(value = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method.")
     private final byte[] image;
 
@@ -40,4 +43,16 @@ public class Xs2aChallengeData {
 
     @ApiModelProperty(value = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU.", example = "Additional information")
     private final String additionalInformation;
+
+    @JsonIgnore
+    public boolean isEmpty() {
+        return ArrayUtils.isEmpty(image)
+                   && StringUtils.isBlank(data)
+                   && StringUtils.isBlank(imageLink)
+                   && otpMaxLength == null
+                   && otpFormat == null
+                   && StringUtils.isBlank(additionalInformation);
+
+    }
+
 }

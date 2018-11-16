@@ -142,6 +142,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
                        .success();
 
         } catch (RestException e) {
@@ -164,6 +165,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
             aspspRestTemplate.postForEntity(aspspRemoteUrls.createBulkPayment(), request, AspspBulkPayment.class);
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .payload(SpiResponse.voidResponse())
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .success();
 

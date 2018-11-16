@@ -17,9 +17,13 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.ScaStatus;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
+import de.adorsys.psd2.xs2a.core.sca.OtpFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
@@ -28,4 +32,26 @@ public class CoreObjectsMapper {
     public ScaStatus mapToModelScaStatus(@NotNull de.adorsys.psd2.xs2a.core.sca.ScaStatus scaStatus) {
         return ScaStatus.fromValue(scaStatus.getValue());
     }
+
+    @Nullable
+    public de.adorsys.psd2.model.ChallengeData mapToChallengeData(ChallengeData challengeData) {
+        return Optional.ofNullable(challengeData)
+                   .map(cd -> new de.adorsys.psd2.model.ChallengeData()
+                                  .image(cd.getImage())
+                                  .data(cd.getData())
+                                  .imageLink(cd.getImageLink())
+                                  .otpMaxLength(cd.getOtpMaxLength())
+                                  .otpFormat(mapToOtpFormat(cd.getOtpFormat()))
+                                  .additionalInformation(cd.getAdditionalInformation())
+                       ).orElse(null);
+    }
+
+    @Nullable
+    private de.adorsys.psd2.model.ChallengeData.OtpFormatEnum mapToOtpFormat(OtpFormat otpFormat) {
+        return Optional.ofNullable(otpFormat)
+                   .map(OtpFormat::getValue)
+                   .map(de.adorsys.psd2.model.ChallengeData.OtpFormatEnum::fromValue)
+               .orElse(null);
+    }
+
 }
