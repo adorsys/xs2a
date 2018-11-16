@@ -8,13 +8,13 @@
 - Provide an interface to lock TPP Access by any ASPSP Fraud Application
 - Create one endpoint to read AspspConsentData
 - Set finalised statuses for Consents, payment transaction and authorisation
+- Move logic of Getting a confirmation on the availability of funds to the SPI level
 
 ## version 1.13 (Planned date 07.12.2018)
 - Get list of consents by psu-id in Consent Management System
-- Move logic of Getting a confirmation on the availability of funds to the SPI level
 - Support delta access for transaction list
-- Multitier support in Consent Manager
-- Support XML based endpoints
+- Support Pain endpoints for initiation of payments
+- Support of returning list of transactions in MT94x format
 
 ## version 1.14 (Planned date 21.12.2018)
 - Support of multicurrency account
@@ -24,3 +24,4 @@
 - PIS Support a matrix payment-product/payment-type in aspsp-profile and corresponding services.
 - Implement Get Authorisation Sub-Resources Request
 - Implmement Get SCA Status Request
+
