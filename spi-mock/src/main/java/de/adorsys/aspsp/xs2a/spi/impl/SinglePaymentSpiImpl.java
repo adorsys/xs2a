@@ -146,6 +146,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
                        .success();
 
         } catch (RestException e) {
@@ -170,6 +171,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
                        .success();
 
         } catch (RestException e) {

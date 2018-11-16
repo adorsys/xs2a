@@ -20,8 +20,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.*;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,7 +40,7 @@ public abstract class PaymentInitiationResponse {
     private boolean transactionFeeIndicator;
     private String paymentId;
     private Xs2aAuthenticationObject[] scaMethods;
-    private Xs2aChallengeData challengeData;
+    private ChallengeData challengeData;
     private String psuMessage;
     private MessageErrorCode[] tppMessages;
     @JsonProperty("_links")

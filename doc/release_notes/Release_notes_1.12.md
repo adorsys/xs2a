@@ -11,7 +11,22 @@ i.e. online-banking system. This module can be used in any setup of CMS (embedde
 This module can be used in any setup of CMS (embedded and standalone).
 
 ## Payment cancellation is added
-A PSU may want to cancel the payment. The flow of payment cancellation for embedded and redirect approches was added.
+A PSU may want to cancel the payment. The flow of payment cancellation for embedded and redirect approaches was added.
+SPI Developer needs to implement PaymentCancellationSpi in order to support it.
+
+## Return full SCA Object from SPI during request to send TAN
+By invoking `requestAuthorisationCode` method SPI developer now obliged
+to return full SCA Authentification Object for choosen SCA Method.
+This is done to avoid unnecessary additional call to list all available methods second time.
+`SpiAuthorizationCodeResult` now adjusted accordingly.
+
+## Improved nullability checks in SpiResponse
+Due to importance of having not-nullable results in SPI API nullability checks by SpiResponse object construction were added.
+Please note, that this also implies, if you need to return VoidResponse.
+Please use SpiResponse.voidResponse() static method for that.
+
+## Support Oracle DB
+Migrations scripts were modified in order to fix oracle supporting issues. You may be required to regenerate local schemes.
 
 ## Create one endpoint in CMS for working with AspspConsentData 
 Moved interactions with AspspConsentData from different services into one service

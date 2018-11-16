@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiChallengeData;
 import lombok.Data;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public abstract class SpiPaymentInitiationResponse {
     private List<String> scaMethods;
     // TODO Make extendable list of scaMethods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/411
     private String chosenScaMethod;
-    private SpiChallengeData challengeData;
+    private ChallengeData challengeData;
     private String psuMessage;
     private List<String> tppMessages;
 }

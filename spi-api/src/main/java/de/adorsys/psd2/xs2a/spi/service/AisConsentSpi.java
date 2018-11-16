@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
@@ -29,22 +29,37 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
 
-    // TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
+    /**
+     * Initiates AIS consent
+     *
+     * @param psuData                 SpiPsuData container of authorisation data about PSU
+     * @param accountConsent          Account consent
+     * @param initialAspspConsentData Encrypted data that is stored in the consent management system
+     * @return Return a positive or negative response as part of SpiResponse
+     */
     SpiResponse<VoidResponse> initiateAisConsent(@NotNull SpiPsuData psuData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData);
 
-    // TODO add javadoc https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/438
+    /**
+     * Revokes AIS consent
+     *
+     * @param psuData          SpiPsuData container of authorisation data about PSU
+     * @param accountConsent   Account consent
+     * @param aspspConsentData Encrypted data that is stored in the consent management system.
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return Return a positive or negative response as part of SpiResponse
+     */
     SpiResponse<VoidResponse> revokeAisConsent(@NotNull SpiPsuData psuData, SpiAccountConsent accountConsent, AspspConsentData aspspConsentData);
 
     /**
      * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful returns success response. Used only with embedded SCA Approach.
      *
-     * @param psuData            ASPSP identifier(s) of the psu
+     * @param psuData            SpiPsuData container of authorisation data about PSU
      * @param spiScaConfirmation payment confirmation information
      * @param accountConsent     Account consent
-     * @param aspspConsentData   Encrypted data that may stored in the consent management system in the consent linked to a request.
+     * @param aspspConsentData   Encrypted data that is stored in the consent management system.
      *                           May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
-    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisation(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<VoidResponse> verifyScaAuthorisation(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 }

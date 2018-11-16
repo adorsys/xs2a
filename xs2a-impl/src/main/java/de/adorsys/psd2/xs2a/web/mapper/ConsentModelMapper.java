@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.mapper;
+package de.adorsys.psd2.xs2a.web.mapper;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.OtpFormat;
-import de.adorsys.psd2.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.web.mapper.CoreObjectsMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -77,7 +75,6 @@ public class ConsentModelMapper {
     public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
                    .map(r ->
-                            // TODO add mapping of chosenScaMethod after ChosenScaMethod generated entity will be updated in the specification https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/335
                             new UpdatePsuAuthenticationResponse()
                                 ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                                 .scaMethods(getAvailableScaMethods(r.getAvailableScaMethods()))
@@ -86,7 +83,7 @@ public class ConsentModelMapper {
                                         .map(s -> ScaStatus.valueOf(s.name()))
                                         .orElse(null)
                                 )
-                                .challengeData(mapToChallengeData(response.getChallengeData()))
+                                .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
                                 .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
                    )
                    .orElse(null);
@@ -252,31 +249,10 @@ public class ConsentModelMapper {
                    ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                    .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
                    .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
-                   .challengeData(mapToChallengeData(response.getChallengeData()))
+                   .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
                    .scaStatus(Optional.ofNullable(response.getScaStatus())
-                                  .map(s -> ScaStatus.fromValue(s.getValue()))
-                                  .orElse(ScaStatus.FAILED));
-    }
-
-    private ChallengeData mapToChallengeData(Xs2aChallengeData xs2aChallengeData) {
-        return Optional.ofNullable(xs2aChallengeData)
-                   .map(cd -> {
-                       ChallengeData challengeData = new ChallengeData()
-                                                         .additionalInformation(cd.getAdditionalInformation())
-                                                         .image(cd.getImage())
-                                                         .imageLink(cd.getImageLink())
-                                                         .otpFormat(mapToOtpFormat(cd.getOtpFormat()))
-                                                         .otpMaxLength(cd.getOtpMaxLength())
-                                                         .data(cd.getData());
-                       return challengeData;
-                   }).orElse(null);
-    }
-
-    private ChallengeData.OtpFormatEnum mapToOtpFormat(OtpFormat otpFormat) {
-        return Optional.ofNullable(otpFormat)
-                   .map(OtpFormat::getValue)
-                   .map(ChallengeData.OtpFormatEnum::fromValue)
-                   .orElse(null);
+                       .map(s -> ScaStatus.fromValue(s.getValue()))
+                       .orElse(ScaStatus.FAILED));
     }
 
     private ScaMethods getAvailableScaMethods(List<Xs2aAuthenticationObject> availableScaMethods) {
