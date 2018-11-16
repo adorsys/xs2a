@@ -19,41 +19,50 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
+
     <changeSet author="iku@adorsys.com.ua" id="2018-09-21-1">
-        <comment>Remove length restriction tppId</comment>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <dbms type="oracle"/>
+            </not>
+        </preConditions>
+        <comment>Remove length restriction tppId (except ORACLE)</comment>
+        <modifyDataType
+            columnName="tpp_id"
+            newDataType="CLOB"
+            tableName="ais_consent_action"/>
         <!--
             [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
             Use <sql> and re-specify all configuration if this is the case
          -->
-        <sql dbms="postgresql">ALTER TABLE ais_consent_action ALTER COLUMN tpp_id TYPE BYTEA USING(tpp_id::BYTEA)</sql>
         <sql dbms="mariadb">ALTER TABLE ais_consent_action MODIFY tpp_id LONGTEXT NOT NULL</sql>
-
-        <!--
-            [WARNING] Script "ALTER TABLE ais_consent_action MODIFY tpp_id CLOB" in Oracle generates an error: ORA-22858
-            In this case with changing VARCHAR2 to CLOB in Oracle we need to use the following script
-         -->
-        <sql dbms="oracle">
-            ALTER TABLE ais_consent_action ADD tpp_id_tmp CLOB;
-            UPDATE ais_consent_action SET tpp_id_tmp=tpp_id;
-            ALTER TABLE ais_consent_action DROP COLUMN tpp_id;
-            ALTER TABLE ais_consent_action RENAME COLUMN tpp_id_tmp to tpp_id;
-        </sql>
+        <modifyDataType
+            columnName="tpp_id"
+            newDataType="CLOB"
+            tableName="ais_consent"/>
         <!--
             [WARNING] modifyDataType will lose primary key/autoincrement/not null settings for mysql.
             Use <sql> and re-specify all configuration if this is the case
         -->
-        <sql dbms="postgresql">ALTER TABLE ais_consent ALTER COLUMN tpp_id TYPE BYTEA USING(tpp_id::BYTEA)</sql>
         <sql dbms="mariadb">ALTER TABLE ais_consent MODIFY tpp_id LONGTEXT NOT NULL</sql>
+    </changeSet>
 
-        <!--
-          [WARNING] Script "ALTER TABLE ais_consent MODIFY tpp_id CLOB" in Oracle generates an error: ORA-22858
-          In this case with changing VARCHAR2 to CLOB in Oracle we need to use the following script
-       -->
+    <changeSet author="iku@adorsys.com.ua" id="2018-09-21-2">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="oracle"/>
+        </preConditions>
+        <comment>Remove length restriction tppId</comment>
+        <sql dbms="oracle">
+            ALTER TABLE ais_consent_action ADD tpp_id_tmp CLOB;
+            UPDATE ais_consent_action SET tpp_id_tmp=tpp_id;
+            ALTER TABLE ais_consent_action DROP COLUMN tpp_id;
+            ALTER TABLE ais_consent_action RENAME COLUMN tpp_id_tmp TO tpp_id;
+        </sql>
         <sql dbms="oracle">
             ALTER TABLE ais_consent ADD tpp_id_tmp CLOB;
             UPDATE ais_consent SET tpp_id_tmp=tpp_id;
             ALTER TABLE ais_consent DROP COLUMN tpp_id;
-            ALTER TABLE ais_consent RENAME COLUMN tpp_id_tmp to tpp_id;
+            ALTER TABLE ais_consent RENAME COLUMN tpp_id_tmp TO tpp_id;
         </sql>
     </changeSet>
 </databaseChangeLog>
