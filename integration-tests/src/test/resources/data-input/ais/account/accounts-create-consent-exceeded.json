@@ -27,7 +27,7 @@
     "psuId": null
   },
   "combinedServiceIndicator": false,
-  "allowedFrequencyPerDay": 4,
+  "allowedFrequencyPerDay": 0,
   "recurringIndicator": false,
   "tppId": "12345987",
   "tppRedirectPreferred": true,
