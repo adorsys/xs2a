@@ -16,11 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
-import de.adorsys.psd2.consent.api.ConsentType;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.service.AisConsentService;
-import de.adorsys.psd2.consent.api.service.CommonConsentService;
+import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,27 +24,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AisConsentDataService {
-    private final AisConsentService aisConsentService;
-    private final Base64AspspDataService base64AspspDataService;
-    private final CommonConsentService commonConsentService;
+    private final AspspDataService aspspDataService;
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return commonConsentService.getAspspConsentDataByConsentId(consentId, ConsentType.AIS)
-                   .map(this::mapToAspspConsentData)
-                   .orElse(null);
+        return aspspDataService.readAspspConsentData(consentId)
+                   .orElse(new AspspConsentData(null, consentId));
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
-        String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
-        commonConsentService.saveAspspConsentData(consentData.getConsentId(), new CmsAspspConsentDataBase64(consentData.getConsentId(), base64Payload), ConsentType.AIS);
-    }
-
-    public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
-        aisConsentService.updateAccountAccess(consentId, aisAccountAccessInfo);
-    }
-
-    private AspspConsentData mapToAspspConsentData(CmsAspspConsentDataBase64 consentData) {
-        byte[] bytePayload = base64AspspDataService.decode(consentData.getAspspConsentDataBase64());
-        return new AspspConsentData(bytePayload, consentData.getConsentId());
+        aspspDataService.updateAspspConsentData(consentData);
     }
 }

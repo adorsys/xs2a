@@ -24,7 +24,6 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResp
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.psd2.consent.api.service.ConsentService;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
@@ -55,7 +54,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class PisConsentServiceInternal implements PisConsentService, ConsentService {
+public class PisConsentServiceInternal implements PisConsentService {
     private final PisConsentRepository pisConsentRepository;
     private final PisConsentMapper pisConsentMapper;
     private final PsuDataMapper psuDataMapper;
@@ -282,11 +281,6 @@ public class PisConsentServiceInternal implements PisConsentService, ConsentServ
     public Optional<PsuIdData> getPsuDataByConsentId(String encryptedConsentId) {
         return getPisConsentById(encryptedConsentId)
                    .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
-    }
-
-    @Override
-    public boolean isConsentExist(String consentId) {
-        return getActualPisConsent(consentId).isPresent();
     }
 
     private Optional<PisConsent> getActualPisConsent(String encryptedConsentId) {

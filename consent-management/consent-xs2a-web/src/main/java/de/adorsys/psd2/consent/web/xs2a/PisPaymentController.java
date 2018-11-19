@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web;
+package de.adorsys.psd2.consent.web.xs2a;
 
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import io.swagger.annotations.*;
@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/pis")
-@Api(value = "api/v1/pis", tags = "PIS, Aspsp Consent Data", description = "Provides access to consent management system for AspspDataConsent")
-public class PisAspspConsentDataController {
+@Api(value = "api/v1/pis", tags = "PIS, Payments", description = "Provides access to consent management system for PIS")
+public class PisPaymentController {
     private final PisConsentService pisConsentService;
 
     @GetMapping(path = "/payment/{payment-id}")

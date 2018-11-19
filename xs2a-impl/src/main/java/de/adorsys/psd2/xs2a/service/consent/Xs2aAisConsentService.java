@@ -148,4 +148,14 @@ public class Xs2aAisConsentService {
                 aisConsentService.updateConsentAuthorization(authorizationId, request);
             });
     }
+
+    /**
+     * Sends a PUT request to CMS to update AIS account access information by consent ID
+     *
+     * @param consentId consentId String representation of identifier of stored consent
+     * @param aisAccountAccessInfo AIS account access information
+     */
+    public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
+        aisConsentService.updateAccountAccess(consentId, aisAccountAccessInfo);
+    }
 }

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
-import de.adorsys.psd2.consent.api.service.ConsentService;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
@@ -28,17 +27,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
 
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector.*;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class PiisConsentServiceInternal implements PiisConsentService, ConsentService {
+public class PiisConsentServiceInternal implements PiisConsentService {
     private final PiisConsentRepository piisConsentRepository;
     private final PiisConsentMapper piisConsentMapper;
 
@@ -63,14 +62,5 @@ public class PiisConsentServiceInternal implements PiisConsentService, ConsentSe
             log.warn("Account identifier is unknown!");
             return Collections.emptyList();
         }
-    }
-
-    @Override
-    public boolean isConsentExist(String consentId) {
-        return getActualPiisConsent(consentId).isPresent();
-    }
-
-    private Optional<PiisConsentEntity> getActualPiisConsent(String consentId) {
-        return piisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID));
     }
 }
