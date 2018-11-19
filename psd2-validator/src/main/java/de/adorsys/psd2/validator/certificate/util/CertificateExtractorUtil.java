@@ -87,11 +87,7 @@ public class CertificateExtractorUtil {
             .anyMatch(ans1Obj -> {
                 return asn1ObjectIdentifier.equals(ans1Obj);
             });
-        if (exist == true) {
-            return IETFUtils.valueToString(x500Name.getRDNs(asn1ObjectIdentifier)[0].getFirst().getValue());
-        } else {
-            return null;
-        }
+        return  exist ? IETFUtils.valueToString(x500Name.getRDNs(asn1ObjectIdentifier)[0].getFirst().getValue()) : null;
     }
 
 }
