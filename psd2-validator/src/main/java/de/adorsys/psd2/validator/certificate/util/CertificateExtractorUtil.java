@@ -33,6 +33,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -82,7 +83,15 @@ public class CertificateExtractorUtil {
     }
 
     private static String getValueFromX500Name(X500Name x500Name, ASN1ObjectIdentifier asn1ObjectIdentifier) {
-        return IETFUtils.valueToString(x500Name.getRDNs(asn1ObjectIdentifier)[0].getFirst().getValue());
+        boolean exist = Arrays.stream(x500Name.getAttributeTypes())
+            .anyMatch(ans1Obj -> {
+                return asn1ObjectIdentifier.equals(ans1Obj);
+            });
+        if (exist == true) {
+            return IETFUtils.valueToString(x500Name.getRDNs(asn1ObjectIdentifier)[0].getFirst().getValue());
+        } else {
+            return null;
+        }
     }
 
 }
