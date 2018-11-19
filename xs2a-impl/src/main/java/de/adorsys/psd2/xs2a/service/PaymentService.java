@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -114,10 +116,21 @@ public class PaymentService {
      * @return Response containing information about payment or corresponding error
      */
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
-        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
+        PisPayment payment = pisConsentService.getPisConsentById(aspspConsentData.getConsentId())
+                                    .map(PisConsentResponse::getPayments)
+                                    .map(payments -> payments.get(0))
+                                    .orElse(null);
 
+        if (payment == null) {
+            return ResponseObject.builder()
+                       .fail(new MessageError(FORMAT_ERROR))
+                       .build();
+        }
+
+        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
-        PaymentInformationResponse response = readPaymentService.getPayment(paymentId, PaymentProduct.SEPA, psuData); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        PaymentInformationResponse response = readPaymentService.getPayment(payment, PaymentProduct.SEPA, psuData, aspspConsentData); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 
         if (response.hasError()) {
             return ResponseObject.builder()

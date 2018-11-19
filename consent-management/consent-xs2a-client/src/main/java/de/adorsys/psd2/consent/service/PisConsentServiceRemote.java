@@ -58,7 +58,8 @@ public class PisConsentServiceRemote implements PisConsentService {
 
     @Override
     public Optional<PisConsentResponse> getConsentById(String consentId) {
-        return Optional.empty();
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId)
+                                       .getBody());
     }
 
     @Override
