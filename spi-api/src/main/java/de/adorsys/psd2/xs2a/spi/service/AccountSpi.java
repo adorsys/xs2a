@@ -50,6 +50,7 @@ public interface AccountSpi {
     /**
      * Requests a list of transactions
      *
+     * @param acceptMediaType  tpp requested response media type e.g. text/plain
      * @param withBalance      boolean representing if the responded AccountDetails should contain balance
      * @param dateFrom         Date representing the beginning of the search period.<br>
      *                         If null, transactions will not be limited by start date

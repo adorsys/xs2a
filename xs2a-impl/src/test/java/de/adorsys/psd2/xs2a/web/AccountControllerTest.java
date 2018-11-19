@@ -40,6 +40,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.Exception;
 import java.nio.charset.Charset;
@@ -73,6 +74,8 @@ public class AccountControllerTest {
     private ResponseMapper responseMapper;
     @Mock
     private AccountModelMapper accountModelMapper;
+    @Mock
+    private HttpServletRequest request;
 
     @Before
     public void setUp() throws Exception {
@@ -139,8 +142,13 @@ public class AccountControllerTest {
     public void getTransactions_ResultTest() throws IOException {
         doReturn(new ResponseEntity<>(createAccountReport(ACCOUNT_REPORT_SOURCE).getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
+
+        Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
+        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));;
+
+        doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
+            .when(accountService).getTransactionsReportByPeriod(anyString(), anyString(), anyString(), anyBoolean(), any(), any(), any());
         //Given:
-        boolean psuInvolved = true;
         AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
             AccountReport.class).get();
 

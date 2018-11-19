@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
 import lombok.Value;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
