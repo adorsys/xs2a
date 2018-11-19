@@ -26,11 +26,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.psd2.xs2a.component.DateTimeDeserializer;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
+import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -59,6 +61,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
     private final CorsConfigProperties corsConfigProperties;
+    private final TppService tppService;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -105,6 +108,15 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // Please, keep this interceptor's order, because it is important, that logging interceptors will be called before the validation ones to log all the requests (even wrong ones).
+        // The interceptors are executed in the order in which they are declared for preHandle(...) and vice versa for postHandle(...).
+        // Logging interceptors:
+        registry.addInterceptor(new AccountLoggingInterceptor(tppService)).addPathPatterns("/v1/accounts/**");
+        registry.addInterceptor(new ConsentLoggingInterceptor(tppService)).addPathPatterns("/v1/consents/**");
+        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns("/v1/funds-confirmations/**");
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns("/v1/payments/**", "/v1/bulk-payments/**", "/v1/periodic-payments/**");
+        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns("/v1/signing-baskets/**");
+
         registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()));
     }
 
