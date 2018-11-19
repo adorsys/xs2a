@@ -32,6 +32,7 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,14 +45,13 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,7 +68,7 @@ public class AisConsentServiceInternalTest {
     private PsuData psuData;
     @Mock
     SecurityDataService securityDataService;
-@Mock
+    @Mock
     private AspspConsentDataRepository aspspConsentDataRepository; // TODO remove it after AspspConsentDataServiceTest is created https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/470
     @Mock
     private AspspDataService aspspDataService;
@@ -77,8 +77,11 @@ public class AisConsentServiceInternalTest {
 
     private static final long CONSENT_ID = 1;
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
-    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id-1", null, null, null);
+    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id-1", null, null, null);
     private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
+    private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
+
 
     @Before
     public void setUp() {
@@ -91,6 +94,7 @@ public class AisConsentServiceInternalTest {
         when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, cmsAspspConsentDataBase64.getAspspConsentDataBase64()))
             .thenReturn(Optional.of(new EncryptedData(ENCRYPTED_CONSENT_DATA)));
         when(aspspConsentDataRepository.findByConsentId(eq(EXTERNAL_CONSENT_ID))).thenReturn(Optional.empty());
+
     }
 
     @Test
@@ -124,8 +128,8 @@ public class AisConsentServiceInternalTest {
     @Test
     public void updateAccountAccessById() {
         // When
-        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
-        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
 
         // Then
@@ -163,8 +167,8 @@ public class AisConsentServiceInternalTest {
         Function<String, byte[]> decode = Base64.getDecoder()::decode;
         AspspConsentData aspspConsentDataConsentExist = new AspspConsentData(decode.apply(request.getAspspConsentDataBase64()), EXTERNAL_CONSENT_ID);
         when(aspspDataService.updateAspspConsentData(aspspConsentDataConsentExist)).thenReturn(true);
-        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
-        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
         when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class))).thenReturn(getAspspConsentData());
 
         // Then
@@ -178,11 +182,26 @@ public class AisConsentServiceInternalTest {
         assertFalse(consentId_notExists.isPresent());
     }
 
+    @Test
+    public void updateConsentStatusById_UpdateFinalisedStatus_Fail() {
+        //Given
+        AisConsent finalisedConsent = buildFinalisedConsent();
+        when(securityDataService.decryptId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(FINALISED_CONSENT_ID));
+        when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
+
+        //When
+        boolean result = aisConsentService.updateConsentStatusById(FINALISED_CONSENT_ID, ConsentStatus.EXPIRED);
+
+        //Then
+        assertFalse(result);
+    }
+
     private AisConsent buildConsent() {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
         aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
         aisConsent.setExpireDate(LocalDate.now());
+        aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         return aisConsent;
     }
 
@@ -227,5 +246,14 @@ public class AisConsentServiceInternalTest {
         consentData.setConsentId(EXTERNAL_CONSENT_ID);
         consentData.setData(ENCRYPTED_CONSENT_DATA);
         return consentData;
+    }
+
+    private AisConsent buildFinalisedConsent() {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setId(CONSENT_ID);
+        aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
+        aisConsent.setExpireDate(LocalDate.now());
+        aisConsent.setConsentStatus(ConsentStatus.REJECTED);
+        return aisConsent;
     }
 }

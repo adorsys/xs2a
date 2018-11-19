@@ -20,6 +20,8 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
@@ -32,6 +34,7 @@ import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,6 +53,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisConsentServiceInternalTest {
+
     @InjectMocks
     private PisConsentServiceInternal pisConsentService;
     @Mock
@@ -77,7 +81,8 @@ public class PisConsentServiceInternalTest {
     private PisPaymentData pisPaymentData;
     private List<PisConsentAuthorization> pisConsentAuthorizationList = new ArrayList();
     private CmsAspspConsentDataBase64 cmsAspspConsentDataBase64;
-
+    private static final String FINALISED_AUTHORISATION_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final String FINALISED_CANCELLATION_AUTHORISATION_ID = "2a112130-6a96-4941-a220-2da8a4af2c65";
 
     @Before
     public void setUp() {
@@ -139,11 +144,66 @@ public class PisConsentServiceInternalTest {
         assertFalse(authorizationByPaymentId.isPresent());
     }
 
+    @Test
+    public void updateConsentAuthorisation_FinalisedStatus_Fail() {
+        //Given
+        ScaStatus expectedScaStatus = ScaStatus.STARTED;
+        ScaStatus actualScaStatus = ScaStatus.FINALISED;
+
+        UpdatePisConsentPsuDataRequest updatePisConsentPsuDataRequest = buildUpdatePisConsentPsuDataRequest(expectedScaStatus);
+        PisConsentAuthorization finalisedConsentAuthorization = buildFinalisedConsentAuthorisation(actualScaStatus);
+
+        when(pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(FINALISED_AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.of(finalisedConsentAuthorization));
+
+        //When
+        Optional<UpdatePisConsentPsuDataResponse> updatePisConsentPsuDataResponse = pisConsentService.updateConsentAuthorisation(FINALISED_AUTHORISATION_ID, updatePisConsentPsuDataRequest);
+
+        //Then
+        assertTrue(updatePisConsentPsuDataResponse.isPresent());
+        assertNotEquals(updatePisConsentPsuDataResponse.get().getScaStatus(), expectedScaStatus);
+    }
+
+    @Test
+    public void updateConsentCancellationAuthorisation_FinalisedStatus_Fail() {
+        //Given
+        ScaStatus expectedScaStatus = ScaStatus.STARTED;
+        ScaStatus actualScaStatus = ScaStatus.FINALISED;
+
+        PisConsentAuthorization finalisedCancellationAuthorization = buildFinalisedConsentAuthorisation(actualScaStatus);
+        UpdatePisConsentPsuDataRequest updatePisConsentPsuDataRequest = buildUpdatePisConsentPsuDataRequest(expectedScaStatus);
+
+        when(pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(FINALISED_CANCELLATION_AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
+            .thenReturn(Optional.of(finalisedCancellationAuthorization));
+
+        //When
+        Optional<UpdatePisConsentPsuDataResponse> updatePisConsentPsuDataResponse = pisConsentService.updateConsentCancellationAuthorisation(FINALISED_CANCELLATION_AUTHORISATION_ID, updatePisConsentPsuDataRequest);
+
+        //Then
+        assertTrue(updatePisConsentPsuDataResponse.isPresent());
+        assertNotEquals(updatePisConsentPsuDataResponse.get().getScaStatus(), expectedScaStatus);
+
+    }
+
+    private UpdatePisConsentPsuDataRequest buildUpdatePisConsentPsuDataRequest(ScaStatus status) {
+        UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
+        request.setAuthorizationId(FINALISED_AUTHORISATION_ID);
+        request.setScaStatus(status);
+        return request;
+    }
+
+    private PisConsentAuthorization buildFinalisedConsentAuthorisation(ScaStatus status) {
+        PisConsentAuthorization pisConsentAuthorization = new PisConsentAuthorization();
+        pisConsentAuthorization.setExternalId(FINALISED_AUTHORISATION_ID);
+        pisConsentAuthorization.setScaStatus(status);
+        return pisConsentAuthorization;
+    }
 
     private PisConsent buildConsent() {
         PisConsent pisConsent = new PisConsent();
         pisConsent.setId(CONSENT_ID);
         pisConsent.setExternalId(EXTERNAL_CONSENT_ID);
+        pisConsent.setConsentStatus(RECEIVED);
         return pisConsent;
     }
 

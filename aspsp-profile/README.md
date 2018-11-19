@@ -20,6 +20,7 @@ Please note that other components, also on ASPSP side, may also need to access A
 Please refer for documentation of components for details of running and usage.
 
 ## Configuration
+
 Configuration can be supplied using the yaml-file in the file system.
 If no file is supplied, default configuration will be used.
 To supply file please provide a property to spring framework (i.e. via application.properties of your app or environment variable):
