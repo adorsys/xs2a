@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.interceptor.logging;
 
+import de.adorsys.psd2.xs2a.component.TppLogger;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-@Slf4j(topic = "access-log")
 @RequiredArgsConstructor
 @Component
 public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
@@ -35,26 +34,26 @@ public class AccountLoggingInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-        log.info("Request: TPP ID - {}, TPP IP - {}, X-Request-ID - {}, URI - {}, Account ID - {}, Consent ID - {}",
-            tppService.getTppId(),
-            request.getRemoteAddr(),
-            request.getHeader("X-Request-ID"),
-            request.getRequestURI(),
-            pathVariables.getOrDefault("account-id", "Not exist in URI"),
-            request.getHeader("Consent-ID")
-        );
+        TppLogger.logRequest()
+            .withParam("TPP ID", tppService.getTppId())
+            .withParam("TPP IP", request.getRemoteAddr())
+            .withParam("X-Request-ID", request.getHeader("X-Request-ID"))
+            .withParam("URI", request.getRequestURI())
+            .withParam("Account ID", pathVariables.getOrDefault("account-id", "Not exist in URI"))
+            .withParam("Consent ID", request.getHeader("Consent-ID"))
+            .perform();
 
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        log.info("Response: TPP ID - {}, X-Request-ID - {}, Status - {}",
-            tppService.getTppId(),
-            response.getHeader("X-Request-ID"),
-            response.getStatus()
-        );
+        TppLogger.logResponse()
+            .withParam("TPP ID", tppService.getTppId())
+            .withParam("X-Request-ID", response.getHeader("X-Request-ID"))
+            .withParam("Status", String.valueOf(response.getStatus()))
+            .perform();
     }
 }
