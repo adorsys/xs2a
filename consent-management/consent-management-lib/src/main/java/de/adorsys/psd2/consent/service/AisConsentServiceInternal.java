@@ -44,7 +44,6 @@ import java.util.*;
 
 import static de.adorsys.psd2.consent.api.TypeAccess.*;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Service
 @RequiredArgsConstructor
@@ -103,8 +102,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
         return getActualAisConsent(consentId)
-                   .map(con -> setStatusAndSaveConsent(con, status))
-                   .map(con -> con.getConsentStatus() == status)
+                   .map(c -> setStatusAndSaveConsent(c, status))
                    .orElse(false);
     }
 
@@ -218,7 +216,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public Optional<String> createAuthorization(String encryptedConsentId, AisConsentAuthorizationRequest request) {
         return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(consentId -> aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)))
+                   .flatMap(aisConsentRepository::findByExternalId)
+                   .filter(con -> !con.getConsentStatus().isFinalisedStatus())
                    .map(aisConsent -> saveNewAuthorization(aisConsent, request));
     }
 
@@ -235,7 +234,11 @@ public class AisConsentServiceInternal implements AisConsentService {
         if (!consentId.isPresent()) {
             return Optional.empty();
         }
-        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId.get(), EnumSet.of(RECEIVED, VALID)).isPresent()
+        boolean consentPresent = aisConsentRepository.findByExternalId(consentId.get())
+                                     .filter(c -> !c.getConsentStatus().isFinalisedStatus())
+                                     .isPresent();
+
+        return consentPresent
                    ? aisConsentAuthorizationRepository.findByExternalId(authorizationId)
                          .map(consentMapper::mapToAisConsentAuthorizationResponse)
                    : Optional.empty();
@@ -258,6 +261,10 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         AisConsentAuthorization aisConsentAuthorization = aisConsentAuthorizationOptional.get();
+
+        if (aisConsentAuthorization.getScaStatus().isFinalisedStatus()) {
+            return false;
+        }
 
         if (ScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
             aisConsentAuthorization.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
@@ -353,7 +360,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     private Optional<AisConsent> getActualAisConsent(String encryptedConsentId) {
         Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
         return consentIdDecrypted
-                   .flatMap(c -> aisConsentRepository.findByExternalIdAndConsentStatusIn(c, EnumSet.of(RECEIVED, VALID)));
+                   .flatMap(aisConsentRepository::findByExternalId)
+                   .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
     private Optional<AisConsent> getAisConsentById(String encryptedConsentId) {
@@ -372,10 +380,14 @@ public class AisConsentServiceInternal implements AisConsentService {
         return consent;
     }
 
-    private AisConsent setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
+    private boolean setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
+        if (consent.getConsentStatus().isFinalisedStatus()) {
+            return false;
+        }
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
-        return aisConsentRepository.save(consent);
+        return Optional.ofNullable(aisConsentRepository.save(consent))
+                   .isPresent();
     }
 
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {

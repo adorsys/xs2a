@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.domain.payment.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -86,6 +87,7 @@ public class PisConsentMapper {
                 pisPaymentData.setFrequency(pm.getFrequency());
                 pisPaymentData.setDayOfExecution(pm.getDayOfExecution());
                 pisPaymentData.setConsent(consent);
+                pisPaymentData.setTransactionStatus(TransactionStatus.RCVD);
 
                 return pisPaymentData;
             }).orElse(null);

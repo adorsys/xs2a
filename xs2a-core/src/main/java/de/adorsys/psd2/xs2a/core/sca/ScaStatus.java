@@ -30,40 +30,40 @@ public enum ScaStatus {
      * An authorisation or cancellation-authorisation resource has been created
      * successfully.
      */
-    RECEIVED("received"),
+    RECEIVED("received", false),
     /**
      * The PSU related to the authorisation or cancellation-authorisation resource has
      * been identified.
      */
-    PSUIDENTIFIED("psuIdentified"),
+    PSUIDENTIFIED("psuIdentified", false),
     /**
      * The PSU related to the authorisation or cancellation-authorisation resource
      * has been identified and authenticated e.g. by a password or by an access token.
      */
-    PSUAUTHENTICATED("psuAuthenticated"),
+    PSUAUTHENTICATED("psuAuthenticated", false),
     /**
      * The PSU/TPP has selected the related SCA routine.
      * If the SCA method is chosen implicitly since only one SCA method is available,
      * then this is the first status to be reported instead of {@link #RECEIVED}
      */
-    SCAMETHODSELECTED("scaMethodSelected"),
+    SCAMETHODSELECTED("scaMethodSelected", false),
     /**
      * The addressed SCA routine has been started.
      */
-    STARTED("started"),
+    STARTED("started", false),
     /**
      * The SCA routine has been finalised successfully.
      */
-    FINALISED("finalised"),
+    FINALISED("finalised", true),
     /**
      * The SCA routine failed.
      */
-    FAILED("failed"),
+    FAILED("failed", true),
     /**
      * SCA was exempted for the related transaction,
      * the related authorisation is successful.
      */
-    EXEMPTED("exempted");
+    EXEMPTED("exempted", false);
 
     private static final Map<String, ScaStatus> HOLDER = new HashMap<>();
 
@@ -74,9 +74,15 @@ public enum ScaStatus {
     }
 
     private String value;
+    private final boolean finalisedStatus;
 
-    ScaStatus(String value) {
+    public boolean isFinalisedStatus() {
+        return finalisedStatus;
+    }
+
+    ScaStatus(String value, boolean finalisedStatus) {
         this.value = value;
+        this.finalisedStatus = finalisedStatus;
     }
 
     /**

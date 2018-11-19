@@ -39,17 +39,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsPsuAisServiceTest {
+
     @InjectMocks
     CmsPsuAisServiceInternal cmsPsuAisService;
     @Mock
@@ -78,6 +76,8 @@ public class CmsPsuAisServiceTest {
     private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
     private final String AUTHORISATION_ID = "9304a6a0-8f02-4b79-aeab-00aa7e03a06d";
     private final String AUTHORISATION_ID_NOT_EXIST = "248eae68-e4fa-4d43-8b3f-2ae2b584cdd9";
+    private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final String FINALISED_AUTHORISATION_ID = "6b112130-6a96-4941-a220-2da8a4af2c65";
 
     @Before
     public void setUp() {
@@ -95,21 +95,12 @@ public class CmsPsuAisServiceTest {
         when(aisConsentAuthorizationRepository.save(aisConsentAuthorization)).thenReturn(aisConsentAuthorization);
         when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(aisConsentAuthorization));
         when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID_NOT_EXIST)).thenReturn(Optional.empty());
-        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.of(aisConsent));
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
         when(aisConsentRepository.findByPsuDataPsuId(PSU_ID)).thenReturn(aisConsents);
         when(psuDataRepository.save(psuData)).thenReturn(psuData);
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
-    }
-
-    private List<AisConsent> buildAisConsents() {
-        return Arrays.asList(aisConsent, aisConsent, aisConsent);
-    }
-
-    private AisConsentAuthorization buildAisConsentAuthorisation() {
-        AisConsentAuthorization aisConsentAuthorization = new AisConsentAuthorization();
-        aisConsentAuthorization.setExternalId(AUTHORISATION_ID);
-        return aisConsentAuthorization;
     }
 
     @Test
@@ -245,6 +236,91 @@ public class CmsPsuAisServiceTest {
         assertFalse(updateAuthorisationStatus);
     }
 
+    @Test
+    public void confirmConsent_FinalisedStatus_Fail() {
+        //Given
+        AisConsent finalisedConsent = buildFinalisedConsent();
+        when(securityDataService.decryptId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(FINALISED_CONSENT_ID));
+        when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
+
+        //When
+        boolean result = cmsPsuAisService.confirmConsent(psuIdData, FINALISED_CONSENT_ID);
+
+        //Then
+        assertFalse(result);
+    }
+
+    @Test
+    public void rejectConsent_FinalisedStatus_Fail() {
+        //Given
+        AisConsent finalisedConsent = buildFinalisedConsent();
+        when(securityDataService.decryptId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(FINALISED_CONSENT_ID));
+        when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
+
+        //When
+        boolean result = cmsPsuAisService.rejectConsent(psuIdData, FINALISED_CONSENT_ID);
+
+        //Then
+        assertFalse(result);
+    }
+
+    @Test
+    public void revokeConsent_FinalisedStatus_Fail() {
+        //Given
+        AisConsent finalisedConsent = buildFinalisedConsent();
+        when(securityDataService.decryptId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(FINALISED_CONSENT_ID));
+        when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
+
+        //When
+        boolean result = cmsPsuAisService.revokeConsent(psuIdData, FINALISED_CONSENT_ID);
+
+        //Then
+        assertFalse(result);
+    }
+
+    @Test
+    public void updateAuthorisationStatus_FinalisedStatus_Fail() {
+        //Given
+        AisConsent consent = buildConsent();
+        AisConsentAuthorization finalisedAuthorisation = buildFinalisedAuthorisation();
+        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(consent));
+        when(aisConsentAuthorizationRepository.findByExternalId(FINALISED_AUTHORISATION_ID)).thenReturn(Optional.of(finalisedAuthorisation));
+
+        //When
+        boolean result = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, FINALISED_AUTHORISATION_ID, ScaStatus.SCAMETHODSELECTED);
+
+        //Then
+        assertFalse(result);
+    }
+
+    private AisConsent buildFinalisedConsent() {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setId(CONSENT_ID);
+        aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
+        aisConsent.setExpireDate(LocalDate.now());
+        aisConsent.setConsentStatus(ConsentStatus.REJECTED);
+        return aisConsent;
+    }
+
+    private List<AisConsent> buildAisConsents() {
+        return Arrays.asList(aisConsent, aisConsent, aisConsent);
+    }
+
+    private AisConsentAuthorization buildAisConsentAuthorisation() {
+        AisConsentAuthorization aisConsentAuthorization = new AisConsentAuthorization();
+        aisConsentAuthorization.setExternalId(AUTHORISATION_ID);
+        aisConsentAuthorization.setScaStatus(ScaStatus.RECEIVED);
+        return aisConsentAuthorization;
+    }
+
+    private AisConsentAuthorization buildFinalisedAuthorisation() {
+        AisConsentAuthorization aisConsentAuthorization = new AisConsentAuthorization();
+        aisConsentAuthorization.setExternalId(FINALISED_AUTHORISATION_ID);
+        aisConsentAuthorization.setScaStatus(ScaStatus.FINALISED);
+        return aisConsentAuthorization;
+    }
+
     private AisConsent buildConsent() {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
@@ -252,6 +328,7 @@ public class CmsPsuAisServiceTest {
         aisConsent.setExpireDate(LocalDate.now().plusDays(1));
         aisConsent.setLastActionDate(LocalDate.now());
         aisConsent.setPsuData(psuData);
+        aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         return aisConsent;
     }
 
