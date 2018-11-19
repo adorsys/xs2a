@@ -33,7 +33,7 @@ public class ErrorHolder {
         if (CollectionUtils.isEmpty(messages)) {
             return "";
         }
-        return String.join(",", messages);
+        return String.join(", ", messages);
     }
 
     public MessageErrorCode getErrorCode() {
