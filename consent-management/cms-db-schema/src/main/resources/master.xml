@@ -38,5 +38,6 @@
     <include relativeToChangelogFile="true" file="migration/0016-add-piis-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0017-create-aspsp-consent-data-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0018-add-status-to-tpp-info.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0019-create_event_table.xml"/>
 
 </databaseChangeLog>
