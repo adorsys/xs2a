@@ -67,14 +67,16 @@ Feature: Account Information Service
             | consent-resource        |
             | consent-successful.json |
 
-    @ignore
+
     Scenario Outline: Successful deletion of consent (redirect)
-        Given PSU wants to delete the consent <consent-resource>
+        Given PSU wants to create a consent <consent-id>
+        And PSU sends the create consent request
+        And PSU wants to delete the consent <consent-resource>
         When PSU deletes consent
         Then a successful response code and the appropriate messages get returned
         Examples:
-            | consent-resource                 |
-            | consent-deletion-successful.json |
+            | consent-resource                 |        consent-id                 |
+            | consent-deletion-successful.json | consent-dedicated-successful.json |
 
     @ignore
     Scenario Outline: Errorful deletion of consent (redirect)
