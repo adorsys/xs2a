@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
@@ -31,7 +30,6 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
@@ -43,7 +41,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -70,11 +67,8 @@ public class AisConsentServiceInternalTest {
     SecurityDataService securityDataService;
     @Mock
     private AspspConsentDataRepository aspspConsentDataRepository; // TODO remove it after AspspConsentDataServiceTest is created https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/470
-    @Mock
-    private AspspDataService aspspDataService;
 
     private AisConsent aisConsent;
-
     private static final long CONSENT_ID = 1;
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
@@ -158,28 +152,6 @@ public class AisConsentServiceInternalTest {
         Optional<String> consentId_notExist = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
         // Assert
         assertFalse(consentId_notExist.isPresent());
-    }
-
-    @Test
-    public void updateAspspDataById() {
-        // When
-        CmsAspspConsentDataBase64 request = this.buildUpdateBlobRequest();
-        Function<String, byte[]> decode = Base64.getDecoder()::decode;
-        AspspConsentData aspspConsentDataConsentExist = new AspspConsentData(decode.apply(request.getAspspConsentDataBase64()), EXTERNAL_CONSENT_ID);
-        when(aspspDataService.updateAspspConsentData(aspspConsentDataConsentExist)).thenReturn(true);
-        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
-        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
-        when(aspspConsentDataRepository.save(any(AspspConsentDataEntity.class))).thenReturn(getAspspConsentData());
-
-        // Then
-        Optional<String> consentId = aisConsentService.saveAspspConsentDataInAisConsent(EXTERNAL_CONSENT_ID, request);
-        // Assert
-        assertTrue(consentId.isPresent());
-
-        //Then
-        Optional<String> consentId_notExists = aisConsentService.saveAspspConsentDataInAisConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
-        // Assert
-        assertFalse(consentId_notExists.isPresent());
     }
 
     @Test
