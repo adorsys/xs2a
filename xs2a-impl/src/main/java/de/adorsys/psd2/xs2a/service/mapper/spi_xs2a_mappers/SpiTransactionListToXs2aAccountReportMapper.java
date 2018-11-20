@@ -33,9 +33,10 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class SpiTransactionListToXs2aAccountReportMapper {
-    private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
     private static final Predicate<SpiTransaction> BOOKED_PREDICATE = SpiTransaction::isBookedTransaction;
     private static final Predicate<SpiTransaction> PENDING_PREDICATE = SpiTransaction::isPendingTransaction;
+
+    private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
 
     public Optional<Xs2aAccountReport> mapToXs2aAccountReport(List<SpiTransaction> spiTransactions, String rawTransactionsResponse) {
         if (StringUtils.isNotBlank(rawTransactionsResponse)) {
