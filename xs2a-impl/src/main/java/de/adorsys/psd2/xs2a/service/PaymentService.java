@@ -124,7 +124,7 @@ public class PaymentService {
 
         if (payment == null) {
             return ResponseObject.builder()
-                       .fail(new MessageError(FORMAT_ERROR))
+                       .fail(new MessageError(FORMAT_ERROR, "Payment not found"))
                        .build();
         }
 
