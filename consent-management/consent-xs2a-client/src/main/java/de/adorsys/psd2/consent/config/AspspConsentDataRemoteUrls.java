@@ -30,7 +30,7 @@ public class AspspConsentDataRemoteUrls {
      * @return String
      */
     public String getAspspConsentDataByConsentId() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}";
+        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
     }
 
     /**
@@ -39,7 +39,7 @@ public class AspspConsentDataRemoteUrls {
      * @return String
      */
     public String getAspspConsentDataByPaymentId() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/payment/{payment-id}";
+        return consentServiceBaseUrl + "/aspsp-consent-data/payments/{payment-id}";
     }
 
     /**
@@ -48,7 +48,7 @@ public class AspspConsentDataRemoteUrls {
      * @return String
      */
     public String updateAspspConsentData() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}";
+        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
     }
 
     /**
@@ -57,6 +57,6 @@ public class AspspConsentDataRemoteUrls {
      * @return String
      */
     public String deleteAspspConsentData() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consent/{consent-id}";
+        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
     }
 }

@@ -35,7 +35,7 @@ import java.util.Optional;
 public class AspspConsentDataController {
     private final AspspDataService aspspDataService;
 
-    @GetMapping(path = "/consent/{consent-id}")
+    @GetMapping(path = "/consents/{consent-id}")
     @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -49,10 +49,9 @@ public class AspspConsentDataController {
             .map(aspspConsentDataBase64 -> new CmsAspspConsentDataBase64(encryptedConsentId, aspspConsentDataBase64))
             .map(cmsAspspConsentDataBase64 -> new ResponseEntity<>(cmsAspspConsentDataBase64, HttpStatus.OK))
             .orElseGet(ResponseEntity.notFound()::build);
-
     }
 
-    @GetMapping(path = "/payment/{payment-id}")
+    @GetMapping(path = "/payments/{payment-id}")
     @ApiOperation(value = "Get aspsp consent data identified by given payment id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -68,7 +67,7 @@ public class AspspConsentDataController {
                    .orElseGet(ResponseEntity.notFound()::build);
     }
 
-    @PutMapping(path = "/consent/{consent-id}")
+    @PutMapping(path = "/consents/{consent-id}")
     @ApiOperation(value = "Update aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -91,7 +90,7 @@ public class AspspConsentDataController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(path = "/consent/{consent-id}")
+    @DeleteMapping(path = "/consents/{consent-id}")
     @ApiOperation(value = "Delete aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "No Content"),

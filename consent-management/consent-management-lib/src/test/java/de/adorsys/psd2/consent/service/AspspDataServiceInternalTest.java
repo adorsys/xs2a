@@ -70,7 +70,6 @@ public class AspspDataServiceInternalTest {
         when(securityDataService.isConsentIdEncrypted(CONSENT_ID_NOT_ENCRYPTED)).thenReturn(false);
     }
 
-
     @Test
     public void checkIsConsentIdEncryptedRead() {
         aspspDataServiceInternal.readAspspConsentData(EXTERNAL_CONSENT_ID);

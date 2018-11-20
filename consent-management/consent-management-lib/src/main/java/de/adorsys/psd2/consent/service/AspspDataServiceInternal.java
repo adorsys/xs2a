@@ -50,7 +50,7 @@ public class AspspDataServiceInternal implements AspspDataService {
         return getAspspConsentDataEntity(externalId)
                    .map(AspspConsentDataEntity::getData)
                    .flatMap(data -> securityDataService.decryptConsentData(externalId, data))
-                   .map(aspspConsentDataEntity -> new AspspConsentData(aspspConsentDataEntity.getData(), externalId));
+                   .map(dta -> new AspspConsentData(dta.getData(), externalId));
     }
 
     @Override

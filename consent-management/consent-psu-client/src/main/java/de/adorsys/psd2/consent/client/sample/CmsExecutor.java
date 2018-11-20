@@ -154,7 +154,7 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to GET api/v1/ais/consent/{consent-id}/aspsp-consent-data endpoint
+     * Sends request to GET api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -167,7 +167,7 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to PUT api/v1/ais/consent/{consent-id}/aspspConsentData endpoint
+     * Sends request to PUT api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -268,7 +268,7 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to GET api/v1/pis/consent/{consent-id}/aspsp-consent-data endpoint
+     * Sends request to GET api/v1/aspsp-consent-data/payments/{payment-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -282,7 +282,7 @@ public class CmsExecutor {
 
 
     /**
-     * Sends request to PUT api/v1/pis/consent/{consent-id}/aspspConsentData endpoint
+     * Sends request to PUT  api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
