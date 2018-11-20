@@ -171,22 +171,20 @@ public class AccountModelMapper {
         }
 
         T accountReference = null;
+        String currency = Optional.ofNullable(reference.getCurrency())
+            .map(Currency::getCurrencyCode)
+            .orElse(null);
 
         if (StringUtils.isNotBlank(reference.getIban())) {
-            accountReference = (T) new AccountReferenceIban().iban(reference.getIban());
-            ((AccountReferenceIban) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+            accountReference = (T) new AccountReferenceIban().iban(reference.getIban()).currency(currency);
         } else if (StringUtils.isNotBlank(reference.getBban())) {
-            accountReference = (T) new AccountReferenceBban().bban(reference.getBban());
-            ((AccountReferenceBban) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+            accountReference = (T) new AccountReferenceBban().bban(reference.getBban()).currency(currency);
         } else if (StringUtils.isNotBlank(reference.getPan())) {
-            accountReference = (T) new AccountReferencePan().pan(reference.getPan());
-            ((AccountReferencePan) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+            accountReference = (T) new AccountReferencePan().pan(reference.getPan()).currency(currency);
         } else if (StringUtils.isNotBlank(reference.getMaskedPan())) {
-            accountReference = (T) new AccountReferenceMaskedPan().maskedPan(reference.getMaskedPan());
-            ((AccountReferenceMaskedPan) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+            accountReference = (T) new AccountReferenceMaskedPan().maskedPan(reference.getMaskedPan()).currency(currency);
         } else if (StringUtils.isNotBlank(reference.getMsisdn())) {
-            accountReference = (T) new AccountReferenceMsisdn().msisdn(reference.getMsisdn());
-            ((AccountReferenceMsisdn) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+            accountReference = (T) new AccountReferenceMsisdn().msisdn(reference.getMsisdn()).currency(currency);
         }
         return accountReference;
     }

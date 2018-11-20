@@ -31,13 +31,13 @@ import java.util.Optional;
  * this API definition as well.
  */
 public enum ConsentStatus {
-    RECEIVED("received"),
-    REJECTED("rejected"),
-    VALID("valid"),
-    REVOKED_BY_PSU("revokedByPsu"),
-    EXPIRED("expired"),
-    TERMINATED_BY_TPP("terminatedByTpp"),
-    TERMINATED_BY_ASPSP("terminatedByAspsp");
+    RECEIVED("received", false),
+    REJECTED("rejected", true),
+    VALID("valid", false),
+    REVOKED_BY_PSU("revokedByPsu", true),
+    EXPIRED("expired", true),
+    TERMINATED_BY_TPP("terminatedByTpp", true),
+    TERMINATED_BY_ASPSP("terminatedByAspsp", true);
 
     private static final Map<String, ConsentStatus> CONTAINER = new HashMap<>();
 
@@ -48,9 +48,15 @@ public enum ConsentStatus {
     }
 
     private String value;
+    private boolean finalisedStatus;
 
-    ConsentStatus(String value) {
+    public boolean isFinalisedStatus() {
+        return finalisedStatus;
+    }
+
+    ConsentStatus(String value, boolean finalisedStatus) {
         this.value = value;
+        this.finalisedStatus = finalisedStatus;
     }
 
     public static Optional<ConsentStatus> fromValue(String text) {

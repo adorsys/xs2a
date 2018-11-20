@@ -119,6 +119,6 @@ public class CmsPsuPisController {
         @PathVariable("status") String status) {
         return cmsPsuPisService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status))
                    ? ResponseEntity.ok().build()
-                   : ResponseEntity.notFound().build();
+                   : ResponseEntity.badRequest().build();
     }
 }

@@ -80,13 +80,14 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status) {
 
-        Optional<PisConsentAuthorization> pisConsentAuthorization = pisConsentAuthorizationRepository.findByExternalId(authorisationId);
+        Optional<PisConsentAuthorization> pisConsentAuthorisation = pisConsentAuthorizationRepository.findByExternalId(authorisationId);
 
-        boolean isValid = pisConsentAuthorization
+        boolean isValid = pisConsentAuthorisation
                               .map(auth -> auth.getConsent().getPayments().get(0).getPaymentId())
                               .map(id -> validateGivenData(id, paymentId, psuIdData))
                               .orElse(false);
-        return isValid && updateAuthorisationStatusAndSaveAuthorization(pisConsentAuthorization.get(), status);
+
+        return isValid && updateAuthorisationStatusAndSaveAuthorisation(pisConsentAuthorisation.get(), status);
     }
 
     @Override
@@ -114,9 +115,12 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .orElse(false);
     }
 
-    private boolean updateAuthorisationStatusAndSaveAuthorization(PisConsentAuthorization pisConsentAuthorization, ScaStatus status) {
-        pisConsentAuthorization.setScaStatus(status);
-        return Optional.ofNullable(pisConsentAuthorizationRepository.save(pisConsentAuthorization))
+    private boolean updateAuthorisationStatusAndSaveAuthorisation(PisConsentAuthorization pisConsentAuthorisation, ScaStatus status) {
+        if (pisConsentAuthorisation.getScaStatus().isFinalisedStatus()) {
+            return false;
+        }
+        pisConsentAuthorisation.setScaStatus(status);
+        return Optional.ofNullable(pisConsentAuthorizationRepository.save(pisConsentAuthorisation))
                    .isPresent();
     }
 
@@ -126,12 +130,13 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .orElse(false);
     }
 
-    private boolean updateStatusInPaymentDataList(List<PisPaymentData> dataList, TransactionStatus status) {
+    private boolean updateStatusInPaymentDataList(List<PisPaymentData> dataList, TransactionStatus givenStatus) {
         for (PisPaymentData pisPaymentData : dataList) {
-            pisPaymentData.setTransactionStatus(status);
-            if (pisPaymentDataRepository.save(pisPaymentData) == null) {
+            if (pisPaymentData.getTransactionStatus().isFinalisedStatus()) {
                 return false;
             }
+            pisPaymentData.setTransactionStatus(givenStatus);
+            pisPaymentDataRepository.save(pisPaymentData);
         }
         return true;
     }
