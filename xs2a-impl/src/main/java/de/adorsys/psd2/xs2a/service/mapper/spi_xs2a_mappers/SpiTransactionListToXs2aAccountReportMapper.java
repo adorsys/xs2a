@@ -20,10 +20,14 @@ import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,27 +35,29 @@ import java.util.stream.Collectors;
 public class SpiTransactionListToXs2aAccountReportMapper {
     private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
 
+    private Predicate<SpiTransaction> BOOKED_PREDICATE = SpiTransaction::isBookedTransaction;
+    private Predicate<SpiTransaction> PENDING_PREDICATE = SpiTransaction::isPendingTransaction;
+
     public Optional<Xs2aAccountReport> mapToXs2aAccountReport(List<SpiTransaction> spiTransactions, String rawTransactionsResponse) {
-        return Optional.ofNullable(rawTransactionsResponse)
-            .map(s -> Optional.of(new Xs2aAccountReport(null, null, rawTransactionsResponse)))
-            .orElseGet(() -> {
-                if (spiTransactions.isEmpty()) {
-                    return Optional.empty();
-                }
+        if (StringUtils.isNotBlank(rawTransactionsResponse)) {
+            return Optional.of(new Xs2aAccountReport(null, null, rawTransactionsResponse));
+        }
+        if (CollectionUtils.isEmpty(spiTransactions)) {
+            return Optional.empty();
+        }
 
-                List<Transactions> booked = spiTransactions
-                    .stream()
-                    .filter(transaction -> transaction.getBookingDate() != null)
-                    .map(toXs2aTransactionMapper::mapToXs2aTransaction)
-                    .collect(Collectors.toList());
+        List<Transactions> booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
+        List<Transactions> pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
 
-                List<Transactions> pending = spiTransactions
-                    .stream()
-                    .filter(transaction -> transaction.getBookingDate() == null)
-                    .map(toXs2aTransactionMapper::mapToXs2aTransaction)
-                    .collect(Collectors.toList());
+        return Optional.of(new Xs2aAccountReport(booked, pending, rawTransactionsResponse));
+    }
 
-                return Optional.of(new Xs2aAccountReport(booked, pending, rawTransactionsResponse));
-            });
+    @NotNull
+    private List<Transactions> filterTransaction(List<SpiTransaction> spiTransactions, Predicate<SpiTransaction> predicate) {
+        return spiTransactions
+                   .stream()
+                   .filter(predicate)
+                   .map(toXs2aTransactionMapper::mapToXs2aTransaction)
+                   .collect(Collectors.toList());
     }
 }
