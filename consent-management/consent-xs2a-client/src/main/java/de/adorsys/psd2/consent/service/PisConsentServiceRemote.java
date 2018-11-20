@@ -39,6 +39,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
+// TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/498
 @Service
 @RequiredArgsConstructor
 public class PisConsentServiceRemote implements PisConsentService {
