@@ -88,6 +88,7 @@ public class SecurityDataService {
      * @param aspspConsentDataBase64 original data encoded in Base64 to be encrypted
      * @return response contains encrypted data
      */
+    //TODO this method should work with incoming byte[] https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/502
     public Optional<EncryptedData> encryptConsentData(String encryptedId, String aspspConsentDataBase64) {
         byte[] aspspConsentData = decode64(aspspConsentDataBase64, false);
 

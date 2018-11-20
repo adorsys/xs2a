@@ -48,7 +48,7 @@ public class AspspConsentDataController {
             .map(Base64.getEncoder()::encodeToString)
             .map(aspspConsentDataBase64 -> new CmsAspspConsentDataBase64(encryptedConsentId, aspspConsentDataBase64))
             .map(cmsAspspConsentDataBase64 -> new ResponseEntity<>(cmsAspspConsentDataBase64, HttpStatus.OK))
-            .orElse(ResponseEntity.notFound().build());
+            .orElseGet(ResponseEntity.notFound()::build);
 
     }
 
@@ -65,7 +65,7 @@ public class AspspConsentDataController {
                    .map(Base64.getEncoder()::encodeToString)
                    .map(aspspConsentDataBase64 -> new CmsAspspConsentDataBase64(encryptedPaymentId, aspspConsentDataBase64))
                    .map(cmsAspspConsentDataBase64 -> new ResponseEntity<>(cmsAspspConsentDataBase64, HttpStatus.OK))
-                   .orElse(ResponseEntity.notFound().build());
+                   .orElseGet(ResponseEntity.notFound()::build);
     }
 
     @PutMapping(path = "/consent/{consent-id}")
