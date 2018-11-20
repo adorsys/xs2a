@@ -35,3 +35,9 @@ If there is a need to rewrite logging configurations, the following should be do
 * logback file (logback.xml or logback.groovy (if Groovy is on the classpath)) should be created inside the project. 
 
 Please, use only mentioned names for logback files to make rewriting configs work.
+
+## New Java Interface for locking TPP Access provided in CMS-ASPSP-API
+With the de.adorsys.psd2.consent.aspsp.api.CmsAspspTppService ASPSP can implement a functionality of locking TPP by a certain
+time or forever or unlocking it. This may be required to provide temporary solutions to block requests from inappropriately
+behaving TPP before its certificate will be revoked.
+Functional implementation for this Java interface is planned to provided in the upcoming weeks. See [Roadmap](../roadmap.md)
