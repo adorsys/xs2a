@@ -30,7 +30,9 @@ Migrations scripts were modified in order to fix oracle supporting issues. You m
 
 ## Log TPP requests and responses
 Now all the requests and responses from TPP to XS2A are logged.
-Logging flow is configured in logback-spring.xml file.
+Logging flow is configured in logback-spring.xml file. By default, all such logs are written to console only. 
+It is possible to change this behaviour by uncommenting the lines inside logback-spring.xml (see the hints inside this logback file).
+
 If there is a need to rewrite logging configurations, the following should be done:
 * logback file (logback.xml or logback.groovy (if Groovy is on the classpath)) should be created inside the project. 
 
