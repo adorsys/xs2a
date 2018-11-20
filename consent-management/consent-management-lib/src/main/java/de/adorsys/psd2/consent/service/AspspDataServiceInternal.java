@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.repository.AspspConsentDataRepository;
-import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
@@ -42,28 +41,16 @@ public class AspspDataServiceInternal implements AspspDataService {
 
     @Override
     public @NotNull Optional<AspspConsentData> readAspspConsentData(@NotNull String externalId) {
-        boolean isConsentIdEncrypted = isConsentIdEncrypted(externalId);
-        Optional<AspspConsentDataEntity> aspspConsentDataEntity = getAspspConsentDataEntity(externalId, isConsentIdEncrypted);
-        if (!aspspConsentDataEntity.isPresent()) {
-            return Optional.empty();
+        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
+        if (!isConsentIdEncrypted(externalId)) {
+            return aspspConsentDataRepository.findByConsentId(externalId)
+                       .map(aspspConsentDataEntity -> new AspspConsentData(aspspConsentDataEntity.getData(), externalId));
         }
 
-        byte[] data = aspspConsentDataEntity.get()
-                          .getData();
-
-        if (isConsentIdEncrypted) {
-            Optional<DecryptedData> decryptedData = securityDataService.decryptConsentData(externalId, data);
-            if (!decryptedData.isPresent()) {
-                return Optional.empty();
-            }
-
-            AspspConsentData aspspConsentData = new AspspConsentData(decryptedData.get()
-                                                                         .getData(), externalId);
-            return Optional.of(aspspConsentData);
-        }
-
-        AspspConsentData aspspConsentData = new AspspConsentData(data, externalId);
-        return Optional.of(aspspConsentData);
+        return getAspspConsentDataEntity(externalId)
+                   .map(AspspConsentDataEntity::getData)
+                   .flatMap(data -> securityDataService.decryptConsentData(externalId, data))
+                   .map(aspspConsentDataEntity -> new AspspConsentData(aspspConsentDataEntity.getData(), externalId));
     }
 
     @Override
@@ -75,56 +62,48 @@ public class AspspDataServiceInternal implements AspspDataService {
         }
 
         String encryptedConsentId = aspspConsentData.getConsentId();
-        String consentId = encryptedConsentId;
-        if (isConsentIdEncrypted(encryptedConsentId)) {
-            Optional<String> decryptConsentId = securityDataService.decryptId(encryptedConsentId);
-
-            if (!decryptConsentId.isPresent()) {
-                return false;
-            }
-
-            Optional<EncryptedData> encryptedData = encryptConsentData(encryptedConsentId, Base64.getEncoder().encodeToString(data));
-
-            if (!encryptedData.isPresent()) {
-                return false;
-            }
-
-            data = encryptedData.get().getData();
-            consentId = decryptConsentId.get();
+        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
+        if (!isConsentIdEncrypted(encryptedConsentId)) {
+            return updateAndSaveAspspConsentData(encryptedConsentId, data);
         }
 
-        return updateAndSaveAspspConsentData(consentId, data);
+        Optional<String> decryptConsentId = securityDataService.decryptId(encryptedConsentId);
+        if (!decryptConsentId.isPresent()) {
+            return false;
+        }
+
+        Optional<EncryptedData> encryptedData = encryptConsentData(encryptedConsentId, Base64.getEncoder().encodeToString(data));
+        if (!encryptedData.isPresent()) {
+            return false;
+        }
+
+        return updateAndSaveAspspConsentData(decryptConsentId.get(), encryptedData.get().getData());
     }
 
     @Override
     @Transactional
     public boolean deleteAspspConsentData(@NotNull String externalId) {
-        String consentId = externalId;
-        if (isConsentIdEncrypted(externalId)) {
-            Optional<String> decryptConsentId = securityDataService.decryptId(externalId);
-
-            if (!decryptConsentId.isPresent()) {
-                return false;
-            }
-
-            consentId = decryptConsentId.get();
+        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
+        if (!isConsentIdEncrypted(externalId)) {
+            return deleteAspspConsentDataIfExist(externalId);
         }
 
+        return securityDataService.decryptId(externalId)
+                   .map(this::deleteAspspConsentDataIfExist)
+                   .orElse(false);
+    }
+
+    private boolean deleteAspspConsentDataIfExist(@NotNull String consentId) {
         if (aspspConsentDataRepository.exists(consentId)) {
             aspspConsentDataRepository.delete(consentId);
             return true;
         }
-
         return false;
     }
 
-    private Optional<AspspConsentDataEntity> getAspspConsentDataEntity(String externalId, boolean isConsentIdEncrypted) {
-        if (isConsentIdEncrypted) {
-            return securityDataService.decryptId(externalId)
-                       .flatMap(aspspConsentDataRepository::findByConsentId);
-        }
-
-        return aspspConsentDataRepository.findByConsentId(externalId);
+    private Optional<AspspConsentDataEntity> getAspspConsentDataEntity(String externalId) {
+        return securityDataService.decryptId(externalId)
+                   .flatMap(aspspConsentDataRepository::findByConsentId);
     }
 
     private Optional<EncryptedData> encryptConsentData(String externalId, String aspspConsentDataBase64) {

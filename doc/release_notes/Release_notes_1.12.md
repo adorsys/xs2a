@@ -36,6 +36,25 @@ If there is a need to rewrite logging configurations, the following should be do
 
 Please, use only mentioned names for logback files to make rewriting configs work.
 
-## Create one endpoint in CMS for working with AspspConsentData 
-Moved interactions with AspspConsentData from different services into one service
-Added ability to delete AspspConsentData
+## Create one endpoint in CMS for working with AspspConsentData
+* Supported all types of services: AIS, PIS, PIIS
+* Added ability to delete AspspConsentData
+
+| Method | Path                                           | Description                                              |
+|--------|------------------------------------------------|----------------------------------------------------------|
+| GET    | api/v1/aspsp-consent-data/consent/{consent-id} | Get aspsp consent data identified by given consent id    |
+| GET    | api/v1/aspsp-consent-data/payment/{payment-id} | Get aspsp consent data identified by given payment id    |
+| PUT    | api/v1/aspsp-consent-data/consent/{consent-id} | Update aspsp consent data identified by given consent id |
+| DELETE | api/v1/aspsp-consent-data/consent/{consent-id} | Delete aspsp consent data identified by given consent id |
+
+Next old endpoints are not supported:
+* api/v1/ais/consent/{consent-id}/aspsp-consent-data
+* api/v1/pis/payment/{payment-id}/aspsp-consent-data
+* api/v1/pis/consent/{consent-id}/aspsp-consent-data
+
+Developer should change them according to the information in the table above.
+
+
+
+
+

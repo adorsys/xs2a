@@ -36,7 +36,7 @@ public class AspspConsentDataController {
     private final AspspDataService aspspDataService;
 
     @GetMapping(path = "/consent/{consent-id}")
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id and consent type.")
+    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
@@ -69,7 +69,7 @@ public class AspspConsentDataController {
     }
 
     @PutMapping(path = "/consent/{consent-id}")
-    @ApiOperation(value = "Update aspsp consent data identified by given consent id and consent type.")
+    @ApiOperation(value = "Update aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
@@ -92,7 +92,7 @@ public class AspspConsentDataController {
     }
 
     @DeleteMapping(path = "/consent/{consent-id}")
-    @ApiOperation(value = "Delete aspsp consent data identified by given consent id and consent type.")
+    @ApiOperation(value = "Delete aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
