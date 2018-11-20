@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.config.AspspConsentDataRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -33,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AspspDataServiceRemote implements AspspDataService {
@@ -48,6 +50,7 @@ public class AspspDataServiceRemote implements AspspDataService {
             return Optional.of(request.getBody())
                        .map(this::mapToAspspConsentData);
         } catch (CmsRestException e) {
+            log.warn("Failed to read AspspConsentData! Consent ID {}", externalId);
             return Optional.empty();
         }
     }
@@ -61,6 +64,7 @@ public class AspspDataServiceRemote implements AspspDataService {
             return consentRestTemplate.exchange(aspspConsentDataRemoteUrls.updateAspspConsentData(), HttpMethod.PUT, new HttpEntity<>(cmsAspspConsentDataBase64), Void.class, consentId)
                        .getStatusCode() == HttpStatus.OK;
         } catch (CmsRestException e) {
+            log.warn("Failed to update AspspConsentData! Consent ID {}", aspspConsentData.getConsentId());
             return false;
         }
     }
@@ -71,6 +75,7 @@ public class AspspDataServiceRemote implements AspspDataService {
             ResponseEntity<Boolean> request = consentRestTemplate.exchange(aspspConsentDataRemoteUrls.deleteAspspConsentData(), HttpMethod.DELETE, null, Boolean.class, externalId);
             return request.getBody();
         } catch (CmsRestException e) {
+            log.warn("Failed to delete AspspConsentData! Consent ID {}", externalId);
             return false;
         }
     }

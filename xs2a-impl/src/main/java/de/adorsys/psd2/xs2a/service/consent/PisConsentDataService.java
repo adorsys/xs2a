@@ -30,12 +30,12 @@ public class PisConsentDataService {
 
     public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
         return aspspDataService.readAspspConsentData(paymentId)
-                   .orElse(new AspspConsentData(null, paymentId));
+                   .orElseGet(() -> new AspspConsentData(null, paymentId));
     }
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
         return aspspDataService.readAspspConsentData(consentId)
-                   .orElse(new AspspConsentData(null, consentId));
+                   .orElseGet(() -> new AspspConsentData(null, consentId));
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {

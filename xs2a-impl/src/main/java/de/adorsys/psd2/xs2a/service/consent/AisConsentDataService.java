@@ -28,7 +28,7 @@ public class AisConsentDataService {
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
         return aspspDataService.readAspspConsentData(consentId)
-                   .orElse(new AspspConsentData(null, consentId));
+                   .orElseGet(() -> new AspspConsentData(null, consentId));
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {

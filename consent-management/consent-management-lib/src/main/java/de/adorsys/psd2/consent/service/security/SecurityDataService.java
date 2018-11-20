@@ -112,6 +112,16 @@ public class SecurityDataService {
                    .flatMap(consentKey -> consentDataCP().decryptData(aspspConsentData, consentKey));
     }
 
+    /**
+     * Checks whether consentId is encrypted or not
+     *
+     * @param consentId id of consent
+     * @return <code>true</code> if consentId is encrypted. <code>false</code> otherwise.
+     */
+    public boolean isConsentIdEncrypted(String consentId) {
+        return consentId.contains(SEPARATOR);
+    }
+
     private Optional<String> decryptCompositeId(String encryptedId) {
         String encryptedCompositeId = encryptedId.substring(0, encryptedId.indexOf(SEPARATOR));
 

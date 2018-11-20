@@ -65,6 +65,9 @@ public class AspspDataServiceInternalTest {
         when(aspspConsentDataRepository.findByConsentId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
         when(aspspConsentDataRepository.findByConsentId(CONSENT_ID_NOT_ENCRYPTED)).thenReturn(Optional.of(aspspConsentDataEntity));
         when(aspspConsentDataRepository.save(aspspConsentDataEntity)).thenReturn(aspspConsentDataEntity);
+        when(securityDataService.isConsentIdEncrypted(EXTERNAL_CONSENT_ID)).thenReturn(true);
+        when(securityDataService.isConsentIdEncrypted(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(true);
+        when(securityDataService.isConsentIdEncrypted(CONSENT_ID_NOT_ENCRYPTED)).thenReturn(false);
     }
 
 
