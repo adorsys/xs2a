@@ -39,7 +39,7 @@ If there is a need to rewrite logging configurations, the following should be do
 Please, use only mentioned names for logback files to make rewriting configs work.
 
 ## New Java Interface for locking TPP Access provided in CMS-ASPSP-API
-With the de.adorsys.psd2.consent.aspsp.api.CmsAspspTppService ASPSP can implement a functionality of locking TPP by a certain
+With the de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService ASPSP can implement a functionality of locking TPP by a certain
 time or forever or unlocking it. This may be required to provide temporary solutions to block requests from inappropriately
 behaving TPP before its certificate will be revoked.
 Functional implementation for this Java interface is planned to provided in the upcoming weeks. See [Roadmap](../roadmap.md)
@@ -61,3 +61,9 @@ Next old endpoints are not supported:
 * api/v1/pis/consent/{consent-id}/aspsp-consent-data
 
 Developer should change them according to the information in the table above.
+
+## New Java Interfaces for exporting consents and payments provided in CMS-ASPSP-API
+With the de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService and
+de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService ASPSP can implement a functionality of exporting AIS Consents
+and Payments by certain TPP or PSU and certain period of time.
+Functional implementation for this Java interface is planned to provided in the upcoming weeks. See [Roadmap](../roadmap.md)
