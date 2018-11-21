@@ -67,3 +67,23 @@ With the de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService and
 de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService ASPSP can implement a functionality of exporting AIS Consents
 and Payments by certain TPP or PSU and certain period of time.
 Functional implementation for this Java interface is planned to provided in the upcoming weeks. See [Roadmap](../roadmap.md)
+
+## New Java interface and CMS endpoints for creating, terminating and retrieving PIIS consents in CMS-ASPSP-API
+With the de.adorsys.psd2.consent.aspsp.api.service.CmsAspspPiisService ASPSP can now create new PIIS consents,
+terminate them by their Ids and retrieve them by PSU Id.
+Appropriate endpoints were added to the CMS in consent-aspsp-web module.
+
+## Record TPP requests
+From now on all TPP request are recorded to the CMS database. Requests are recorder and stored as events,
+with event type that corresponds to specific request.
+Recorded event contains:
+ * event timestamp, indicating when the event has occurred
+ * consent id or payment id if it they were contained in the request
+ * origin and type of the event
+ * payload with: information about the TPP, TPP's ip address, unique identifier of the request, request URI,
+ request headers and body
+ 
+Added Java interface de.adorsys.psd2.consent.aspsp.api.CmsAspspEventService that allows ASPSP to retrieve list
+of events by the requested. Appropriate endpoints were added to the CMS in consent-aspsp-web module.
+ 
+Developers should apply new liquibase migration scripts in order to update the database.
