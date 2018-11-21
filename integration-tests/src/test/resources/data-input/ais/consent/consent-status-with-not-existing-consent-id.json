@@ -6,13 +6,11 @@
     "body": {}
   },
   "response": {
-    "code": "404",
+    "code": "400",
     "header": {},
-    "body": {
-      "tppMessage": {
+    "body": [{
         "category": "ERROR",
-        "code": "RESOURCE_UNKNOWN"
-      }
+        "code": "CONSENT_UNKNOWN"
+      }]
     }
-  }
 }

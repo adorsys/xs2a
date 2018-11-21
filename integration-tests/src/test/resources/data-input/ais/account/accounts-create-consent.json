@@ -17,6 +17,7 @@
     ],
     "transactions": [
       {
+
         "resourceId": "11111-999999999",
         "currency": "EUR",
         "iban": "DE89370400440532013000"

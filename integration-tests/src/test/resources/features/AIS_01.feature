@@ -34,29 +34,34 @@ Feature: Account Information Service
             | consent-resource                      |
             | consent-dedicated-expired-consent.json|
 
-    @ignore
     Scenario Outline: Successful consent status request (redirect)
         Given PSU created a consent resource <consent-id>
-        And AISP wants to get the status of that consent and the data <consent-resource>
+        And AISP wants to get the status <consent-status> of that consent
         When AISP requests consent status
         Then a successful response code and the appropriate consent status gets returned
         Examples:
-            | consent-resource                      | consent-id                   |
-            | consent-status-expired.json           | consents-create-consent.json |
-            | consent-status-received.json          | consents-create-consent.json |
-            | consent-status-rejected.json          | consents-create-consent.json |
-            | consent-status-revoked-by-psu.json    | consents-create-consent.json |
-            | consent-status-terminated-by-tpp.json | consents-create-consent.json |
-            | consent-status-valid.json             | consents-create-consent.json |
+            | consent-status                      | consent-id                             |
+            | consent-status-expired.json           | consent-dedicated-successful.json    |
+            | consent-status-received.json          | consent-dedicated-successful.json    |
+            | consent-status-rejected.json          | consent-dedicated-successful.json    |
+            | consent-status-revoked-by-psu.json    | consent-dedicated-successful.json    |
+            | consent-status-terminated-by-tpp.json | consent-dedicated-successful.json    |
+            | consent-status-valid.json             | consent-dedicated-successful.json    |
+            | consent-status-expired.json           | consent-all-accounts-successful.json |
+            | consent-status-received.json          | consent-all-accounts-successful.json |
+            | consent-status-rejected.json          | consent-all-accounts-successful.json |
+            | consent-status-revoked-by-psu.json    | consent-all-accounts-successful.json |
+            | consent-status-terminated-by-tpp.json | consent-all-accounts-successful.json |
+            | consent-status-valid.json             | consent-all-accounts-successful.json |
 
-    @ignore
+
     Scenario Outline: Errorful consent status request (redirect)
-        Given AISP wants to get the status of that consent and the data <consent-resource> without a consent id
-        When AISP requests consent status
+        Given AISP wants to get the status of that consent and the data <consent-resource> with not existing consent id
+        When AISP requests errorFull consent status
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
-            | consent-resource                       |
-            | consent-status-missing-consent-id.json |
+            | consent-resource                                 |
+            | consent-status-with-not-existing-consent-id.json |
 
     @ignore
     Scenario Outline: Successful consent request (redirect)

@@ -16,16 +16,23 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais;
 
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.AisConsentService;
+import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -39,7 +46,9 @@ public class CommonSteps{
     private Context context;
     @Autowired
     private AisConsentService aisConsentService;
-
+    @Autowired
+    @Qualifier("aspsp-profile")
+    private RestTemplate restTemplate;
     // Common errorful step for checking response code and error response
     @Then("^an error response code is displayed and an appropriate error response is shown$")
     public void checkErrorCodeAndResponse() {
@@ -62,4 +71,19 @@ public class CommonSteps{
         String consentId = aisConsentService.createConsentWithStatus(consentStatus, dataFileName);
         context.setConsentId(consentId);
     }
+
+
+    @And("^ASPSP-profile contains parameter signingBasketSupported is (.*)$")
+    public void signingBasketSupportedIsTrue(Boolean signingBasketSupported)  {
+        HttpEntity entity = HttpEntityUtils.getHttpEntity(signingBasketSupported);
+        this.restTemplate.put(context.getProfileUrl() + "/aspsp-profile/for-debug/signing-basket-supported", entity);
+
+    }
+
+    @And("^parameter TPP-Explicit-Authorisation-Preferred is (.*)$")
+    public void tppExplicitAuthorisationPreferredHeaderIsTrue(Boolean authPreferred) throws HttpClientErrorException {
+        context.getTestData().getRequest().getHeader()
+            .put("TPP-Explicit-Authorisation-Preferred", Objects.nonNull(authPreferred)?authPreferred.toString() :null);
+    }
+
 }
