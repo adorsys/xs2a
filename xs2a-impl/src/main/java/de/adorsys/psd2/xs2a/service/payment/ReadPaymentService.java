@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
@@ -28,5 +30,5 @@ public abstract class ReadPaymentService<T> {
     @Autowired
     protected Xs2aToSpiPsuDataMapper psuDataMapper;
 
-    public abstract T getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData);
+    public abstract T getPayment(PisPayment pisPayment, PaymentProduct paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData);
 }
