@@ -17,18 +17,15 @@ import java.util.Objects;
  */
 @ApiModel(description = "JSON Body for a bulk SCT INST payment initation. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class BulkPaymentInitiationSctInstJson {
-
     @JsonProperty("batchBookingPreferred")
     private Boolean batchBookingPreferred = null;
-
     @JsonProperty("requestedExecutionDate")
     private LocalDate requestedExecutionDate = null;
-
     @JsonProperty("debtorAccount")
     private Object debtorAccount = null;
-
     @JsonProperty("payments")
     @Valid
     private List<PaymentInitiationSctInstBulkElementJson> payments = new ArrayList<>();
@@ -43,7 +40,7 @@ public class BulkPaymentInitiationSctInstJson {
      *
      * @return batchBookingPreferred
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public Boolean getBatchBookingPreferred() {
         return batchBookingPreferred;
     }
@@ -62,7 +59,7 @@ public class BulkPaymentInitiationSctInstJson {
      *
      * @return requestedExecutionDate
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public LocalDate getRequestedExecutionDate() {
         return requestedExecutionDate;
@@ -82,9 +79,8 @@ public class BulkPaymentInitiationSctInstJson {
      *
      * @return debtorAccount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public Object getDebtorAccount() {
         return debtorAccount;
     }
@@ -128,10 +124,7 @@ public class BulkPaymentInitiationSctInstJson {
             return false;
         }
         BulkPaymentInitiationSctInstJson bulkPaymentInitiationSctInstJson = (BulkPaymentInitiationSctInstJson) o;
-        return Objects.equals(this.batchBookingPreferred, bulkPaymentInitiationSctInstJson.batchBookingPreferred) &&
-            Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationSctInstJson.requestedExecutionDate) &&
-            Objects.equals(this.debtorAccount, bulkPaymentInitiationSctInstJson.debtorAccount) &&
-            Objects.equals(this.payments, bulkPaymentInitiationSctInstJson.payments);
+        return Objects.equals(this.batchBookingPreferred, bulkPaymentInitiationSctInstJson.batchBookingPreferred) && Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationSctInstJson.requestedExecutionDate) && Objects.equals(this.debtorAccount, bulkPaymentInitiationSctInstJson.debtorAccount) && Objects.equals(this.payments, bulkPaymentInitiationSctInstJson.payments);
     }
 
     @Override
@@ -143,7 +136,6 @@ public class BulkPaymentInitiationSctInstJson {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class BulkPaymentInitiationSctInstJson {\n");
-
         sb.append("    batchBookingPreferred: ").append(toIndentedString(batchBookingPreferred)).append("\n");
         sb.append("    requestedExecutionDate: ").append(toIndentedString(requestedExecutionDate)).append("\n");
         sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
@@ -163,3 +155,4 @@ public class BulkPaymentInitiationSctInstJson {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

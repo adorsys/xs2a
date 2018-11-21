@@ -16,42 +16,31 @@ import java.util.Objects;
  */
 @ApiModel(description = "JSON body for a periodic cross-border payment initation. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PeriodicPaymentInitiationCrossBorderJson {
-
     @JsonProperty("debtorAccount")
     private Object debtorAccount = null;
-
     @JsonProperty("instructedAmount")
     private Amount instructedAmount = null;
-
     @JsonProperty("creditorAccount")
     private Object creditorAccount = null;
-
     @JsonProperty("creditorAgent")
     private String creditorAgent = null;
-
     @JsonProperty("creditorName")
     private String creditorName = null;
-
     @JsonProperty("creditorAddress")
     private Address creditorAddress = null;
-
     @JsonProperty("remittanceInformationUnstructured")
     private String remittanceInformationUnstructured = null;
-
     @JsonProperty("startDate")
     private LocalDate startDate = null;
-
     @JsonProperty("endDate")
     private LocalDate endDate = null;
-
     @JsonProperty("executionRule")
     private ExecutionRule executionRule = null;
-
     @JsonProperty("frequency")
     private FrequencyCode frequency = null;
-
     @JsonProperty("dayOfExecution")
     private DayOfExecution dayOfExecution = null;
 
@@ -65,9 +54,8 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return debtorAccount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public Object getDebtorAccount() {
         return debtorAccount;
     }
@@ -86,7 +74,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return instructedAmount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public Amount getInstructedAmount() {
@@ -107,9 +95,8 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return creditorAccount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public Object getCreditorAccount() {
         return creditorAccount;
     }
@@ -128,7 +115,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return creditorAgent
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getCreditorAgent() {
         return creditorAgent;
     }
@@ -147,9 +134,8 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return creditorName
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getCreditorName() {
         return creditorName;
     }
@@ -168,7 +154,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return creditorAddress
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public Address getCreditorAddress() {
         return creditorAddress;
@@ -188,7 +174,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return remittanceInformationUnstructured
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 140)
     public String getRemittanceInformationUnstructured() {
         return remittanceInformationUnstructured;
@@ -208,7 +194,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return startDate
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public LocalDate getStartDate() {
@@ -229,7 +215,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return endDate
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public LocalDate getEndDate() {
         return endDate;
@@ -249,7 +235,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return executionRule
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ExecutionRule getExecutionRule() {
         return executionRule;
@@ -269,7 +255,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return frequency
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public FrequencyCode getFrequency() {
@@ -290,7 +276,7 @@ public class PeriodicPaymentInitiationCrossBorderJson {
      *
      * @return dayOfExecution
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public DayOfExecution getDayOfExecution() {
         return dayOfExecution;
@@ -308,31 +294,22 @@ public class PeriodicPaymentInitiationCrossBorderJson {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PeriodicPaymentInitiationCrossBorderJson periodicPaymentInitiationCrossBorderJson = (PeriodicPaymentInitiationCrossBorderJson) o;
-        return Objects.equals(this.debtorAccount, periodicPaymentInitiationCrossBorderJson.debtorAccount) &&
-            Objects.equals(this.instructedAmount, periodicPaymentInitiationCrossBorderJson.instructedAmount) &&
-            Objects.equals(this.creditorAccount, periodicPaymentInitiationCrossBorderJson.creditorAccount) &&
-            Objects.equals(this.creditorAgent, periodicPaymentInitiationCrossBorderJson.creditorAgent) &&
-            Objects.equals(this.creditorName, periodicPaymentInitiationCrossBorderJson.creditorName) &&
-            Objects.equals(this.creditorAddress, periodicPaymentInitiationCrossBorderJson.creditorAddress) &&
-            Objects.equals(this.remittanceInformationUnstructured, periodicPaymentInitiationCrossBorderJson.remittanceInformationUnstructured) &&
-            Objects.equals(this.startDate, periodicPaymentInitiationCrossBorderJson.startDate) &&
-            Objects.equals(this.endDate, periodicPaymentInitiationCrossBorderJson.endDate) &&
-            Objects.equals(this.executionRule, periodicPaymentInitiationCrossBorderJson.executionRule) &&
-            Objects.equals(this.frequency, periodicPaymentInitiationCrossBorderJson.frequency) &&
-            Objects.equals(this.dayOfExecution, periodicPaymentInitiationCrossBorderJson.dayOfExecution);
+        PeriodicPaymentInitiationCrossBorderJson periodicPaymentInitiationCrossBorderJson =
+            (PeriodicPaymentInitiationCrossBorderJson) o;
+        return Objects.equals(this.debtorAccount, periodicPaymentInitiationCrossBorderJson.debtorAccount) && Objects.equals(this.instructedAmount, periodicPaymentInitiationCrossBorderJson.instructedAmount) && Objects.equals(this.creditorAccount, periodicPaymentInitiationCrossBorderJson.creditorAccount) && Objects.equals(this.creditorAgent, periodicPaymentInitiationCrossBorderJson.creditorAgent) && Objects.equals(this.creditorName, periodicPaymentInitiationCrossBorderJson.creditorName) && Objects.equals(this.creditorAddress, periodicPaymentInitiationCrossBorderJson.creditorAddress) && Objects.equals(this.remittanceInformationUnstructured, periodicPaymentInitiationCrossBorderJson.remittanceInformationUnstructured) && Objects.equals(this.startDate, periodicPaymentInitiationCrossBorderJson.startDate) && Objects.equals(this.endDate, periodicPaymentInitiationCrossBorderJson.endDate) && Objects.equals(this.executionRule, periodicPaymentInitiationCrossBorderJson.executionRule) && Objects.equals(this.frequency, periodicPaymentInitiationCrossBorderJson.frequency) && Objects.equals(this.dayOfExecution, periodicPaymentInitiationCrossBorderJson.dayOfExecution);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(debtorAccount, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, remittanceInformationUnstructured, startDate, endDate, executionRule, frequency, dayOfExecution);
+        return Objects.hash(debtorAccount, instructedAmount, creditorAccount, creditorAgent, creditorName,
+            creditorAddress, remittanceInformationUnstructured, startDate, endDate, executionRule, frequency,
+            dayOfExecution);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PeriodicPaymentInitiationCrossBorderJson {\n");
-
         sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
         sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");
         sb.append("    creditorAccount: ").append(toIndentedString(creditorAccount)).append("\n");
@@ -360,3 +337,4 @@ public class PeriodicPaymentInitiationCrossBorderJson {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

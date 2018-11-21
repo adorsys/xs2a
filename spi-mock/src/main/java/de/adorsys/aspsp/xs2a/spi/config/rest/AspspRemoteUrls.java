@@ -100,7 +100,7 @@ public class AspspRemoteUrls {
     }
 
     /**
-     * Returns URL-string to ASPSP-Mock endpoint that Creates a new Transaction with body SpiTransaction
+     * Returns URL-string to ASPSP-Mock endpoint that Creates a new Transaction with body AspspTransaction
      *
      * @return URL
      */
@@ -162,6 +162,10 @@ public class AspspRemoteUrls {
     }
 
     public String cancelPayment() {
-        return "/payments/{paymentId}";
+        return spiMockBaseUrl + "/payments/{paymentId}";
+    }
+
+    public String initiatePaymentCancellation() {
+        return spiMockBaseUrl + "/payments/{paymentId}/cancel";
     }
 }

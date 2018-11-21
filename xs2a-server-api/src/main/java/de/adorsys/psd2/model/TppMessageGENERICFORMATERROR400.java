@@ -12,13 +12,15 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * Format of certain request fields are not matching the XS2A requirements. An explicit path to the corresponding field might be added in the return message.
+ * Format of certain request fields are not matching the XS2A requirements. An explicit path to the corresponding
+ * field might be added in the return message.
  */
-@ApiModel(description = "Format of certain request fields are not matching the XS2A requirements. An explicit path to the corresponding field might be added in the return message. ")
+@ApiModel(description = "Format of certain request fields are not matching the XS2A requirements. An explicit path to" +
+    " the corresponding field might be added in the return message. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessageGENERICFORMATERROR400 {
-
     @JsonProperty("category")
     private TppMessageCategory category = null;
     @JsonProperty("code")
@@ -38,7 +40,7 @@ public class TppMessageGENERICFORMATERROR400 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -59,9 +61,8 @@ public class TppMessageGENERICFORMATERROR400 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public CodeEnum getCode() {
         return code;
     }
@@ -80,7 +81,7 @@ public class TppMessageGENERICFORMATERROR400 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -99,7 +100,7 @@ public class TppMessageGENERICFORMATERROR400 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -117,10 +118,8 @@ public class TppMessageGENERICFORMATERROR400 {
             return false;
         }
         TppMessageGENERICFORMATERROR400 tppMessageGENERICFORMATERROR400 = (TppMessageGENERICFORMATERROR400) o;
-        return Objects.equals(this.category, tppMessageGENERICFORMATERROR400.category) &&
-            Objects.equals(this.code, tppMessageGENERICFORMATERROR400.code) &&
-            Objects.equals(this.path, tppMessageGENERICFORMATERROR400.path) &&
-            Objects.equals(this.text, tppMessageGENERICFORMATERROR400.text);
+        return Objects.equals(this.category, tppMessageGENERICFORMATERROR400.category) && Objects.equals(this.code,
+            tppMessageGENERICFORMATERROR400.code) && Objects.equals(this.path, tppMessageGENERICFORMATERROR400.path) && Objects.equals(this.text, tppMessageGENERICFORMATERROR400.text);
     }
 
     @Override
@@ -132,7 +131,6 @@ public class TppMessageGENERICFORMATERROR400 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessageGENERICFORMATERROR400 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -157,7 +155,6 @@ public class TppMessageGENERICFORMATERROR400 {
      */
     public enum CodeEnum {
         ERROR("FORMAT_ERROR");
-
         private String value;
 
         CodeEnum(String value) {
@@ -181,3 +178,4 @@ public class TppMessageGENERICFORMATERROR400 {
         }
     }
 }
+

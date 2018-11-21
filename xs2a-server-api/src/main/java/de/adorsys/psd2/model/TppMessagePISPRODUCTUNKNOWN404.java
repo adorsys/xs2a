@@ -16,9 +16,9 @@ import java.util.Objects;
  */
 @ApiModel(description = "The addressed payment product is not supported by the ASPSP. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessagePISPRODUCTUNKNOWN404 {
-
     @JsonProperty("category")
     private TppMessageCategory category = null;
     @JsonProperty("code")
@@ -38,7 +38,7 @@ public class TppMessagePISPRODUCTUNKNOWN404 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -59,9 +59,8 @@ public class TppMessagePISPRODUCTUNKNOWN404 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public CodeEnum getCode() {
         return code;
     }
@@ -80,7 +79,7 @@ public class TppMessagePISPRODUCTUNKNOWN404 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -99,7 +98,7 @@ public class TppMessagePISPRODUCTUNKNOWN404 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -117,10 +116,8 @@ public class TppMessagePISPRODUCTUNKNOWN404 {
             return false;
         }
         TppMessagePISPRODUCTUNKNOWN404 tppMessagePISPRODUCTUNKNOWN404 = (TppMessagePISPRODUCTUNKNOWN404) o;
-        return Objects.equals(this.category, tppMessagePISPRODUCTUNKNOWN404.category) &&
-            Objects.equals(this.code, tppMessagePISPRODUCTUNKNOWN404.code) &&
-            Objects.equals(this.path, tppMessagePISPRODUCTUNKNOWN404.path) &&
-            Objects.equals(this.text, tppMessagePISPRODUCTUNKNOWN404.text);
+        return Objects.equals(this.category, tppMessagePISPRODUCTUNKNOWN404.category) && Objects.equals(this.code,
+            tppMessagePISPRODUCTUNKNOWN404.code) && Objects.equals(this.path, tppMessagePISPRODUCTUNKNOWN404.path) && Objects.equals(this.text, tppMessagePISPRODUCTUNKNOWN404.text);
     }
 
     @Override
@@ -132,7 +129,6 @@ public class TppMessagePISPRODUCTUNKNOWN404 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessagePISPRODUCTUNKNOWN404 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -157,7 +153,6 @@ public class TppMessagePISPRODUCTUNKNOWN404 {
      */
     public enum CodeEnum {
         UNKNOWN("PRODUCT_UNKNOWN");
-
         private String value;
 
         CodeEnum(String value) {
@@ -181,3 +176,4 @@ public class TppMessagePISPRODUCTUNKNOWN404 {
         }
     }
 }
+

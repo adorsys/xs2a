@@ -17,10 +17,10 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.FutureBookingsService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountBalance;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspBalanceType;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,10 @@ import org.springframework.http.ResponseEntity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -55,7 +58,7 @@ public class FutureBookingsControllerTest {
     @Before
     public void setUp() {
         when(futureBookingsService.changeBalances(IBAN, "EUR"))
-            .thenReturn(getSpiAccountDetails((BALANCE.subtract(AMOUNT_TO_BE_CHARGED))));
+            .thenReturn(getAspspAccountDetails((BALANCE.subtract(AMOUNT_TO_BE_CHARGED))));
         when(futureBookingsService.changeBalances(WRONG_IBAN, "EUR"))
             .thenReturn(Optional.empty());
     }
@@ -67,11 +70,11 @@ public class FutureBookingsControllerTest {
         BigDecimal expectedAmount = BALANCE.subtract(AMOUNT_TO_BE_CHARGED);
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(IBAN, "EUR");
+        ResponseEntity<AspspAccountDetails> actualResult = futureBookingsController.changeBalances(IBAN, "EUR");
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResult.getBody()).isEqualTo(getSpiAccountDetails(expectedAmount).get());
+        assertThat(actualResult.getBody()).isEqualTo(getAspspAccountDetails(expectedAmount).get());
     }
 
     @Test
@@ -80,28 +83,28 @@ public class FutureBookingsControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(WRONG_IBAN, "EUR");
+        ResponseEntity<AspspAccountDetails> actualResult = futureBookingsController.changeBalances(WRONG_IBAN, "EUR");
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
     }
 
-    private Optional<SpiAccountDetails> getSpiAccountDetails(BigDecimal amount) {
-        return Optional.of(new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
-            "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
-            null, null, "ACVB222", null, null, null, getNewBalanceList(amount)));
+    private Optional<AspspAccountDetails> getAspspAccountDetails(BigDecimal amount) {
+        return Optional.of(new AspspAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
+                                                   "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
+                                                   null, null, "ACVB222", null, null, null, getNewBalanceList(amount)));
     }
 
-    private List<SpiAccountBalance> getNewBalanceList(BigDecimal amount) {
-        return Collections.singletonList(getNewSingleBalances(new SpiAmount(Currency.getInstance("EUR"), amount)));
+    private List<AspspAccountBalance> getNewBalanceList(BigDecimal amount) {
+        return Collections.singletonList(getNewSingleBalances(new AspspAmount(Currency.getInstance("EUR"), amount)));
     }
 
-    private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
-        SpiAccountBalance sb = new SpiAccountBalance();
+    private AspspAccountBalance getNewSingleBalances(AspspAmount aspspAmount) {
+        AspspAccountBalance sb = new AspspAccountBalance();
         sb.setReferenceDate(LocalDate.parse("2019-03-03"));
-        sb.setSpiBalanceAmount(spiAmount);
+        sb.setSpiBalanceAmount(aspspAmount);
         sb.setLastChangeDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
-        sb.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        sb.setSpiBalanceType(AspspBalanceType.INTERIM_AVAILABLE);
         sb.setLastCommittedTransaction("abc");
         return sb;
     }

@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountBalance;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,43 +41,43 @@ public class FutureBookingsService {
      * @param currency Currency for searching payments
      * @return sca approach method which is stored in profile
      */
-    public Optional<SpiAccountDetails> changeBalances(String iban, String currency) {
+    public Optional<AspspAccountDetails> changeBalances(String iban, String currency) {
         return accountService.getAccountsByIban(iban).stream()
                    .filter(acc -> areCurrenciesEqual(acc.getCurrency(), currency))
                    .findFirst()
                    .flatMap(this::updateAccountBalance);
     }
 
-    private Optional<SpiAccountDetails> updateAccountBalance(SpiAccountDetails account) {
+    private Optional<AspspAccountDetails> updateAccountBalance(AspspAccountDetails account) {
         return calculateNewBalance(account)
                    .flatMap(bal -> saveNewBalanceToAccount(account, bal));
     }
 
-    private Optional<SpiAccountDetails> saveNewBalanceToAccount(SpiAccountDetails account, SpiAccountBalance balance) {
+    private Optional<AspspAccountDetails> saveNewBalanceToAccount(AspspAccountDetails account, AspspAccountBalance balance) {
         account.updateFirstBalance(balance);
         return accountService.updateAccount(account);
     }
 
-    private Optional<SpiAccountBalance> calculateNewBalance(SpiAccountDetails account) {
+    private Optional<AspspAccountBalance> calculateNewBalance(AspspAccountDetails account) {
         return account.getFirstBalance()
                    .map(bal -> getNewBalance(account, bal));
     }
 
-    private SpiAccountBalance getNewBalance(SpiAccountDetails account, SpiAccountBalance balance) {
-        SpiAccountBalance newAccountBalance = new SpiAccountBalance();
+    private AspspAccountBalance getNewBalance(AspspAccountDetails account, AspspAccountBalance balance) {
+        AspspAccountBalance newAccountBalance = new AspspAccountBalance();
         newAccountBalance.setSpiBalanceAmount(getNewAmount(account, balance));
         newAccountBalance.setLastChangeDateTime(LocalDateTime.now());
         newAccountBalance.setReferenceDate(LocalDate.now());
         return balance;
     }
 
-    private SpiAmount getNewAmount(SpiAccountDetails account, SpiAccountBalance b) {
-        return new SpiAmount(Currency.getInstance("EUR"), getNewBalanceAmount(account, b));
+    private AspspAmount getNewAmount(AspspAccountDetails account, AspspAccountBalance b) {
+        return new AspspAmount(Currency.getInstance("EUR"), getNewBalanceAmount(account, b));
     }
 
-    private BigDecimal getNewBalanceAmount(SpiAccountDetails account, SpiAccountBalance balance) {
+    private BigDecimal getNewBalanceAmount(AspspAccountDetails account, AspspAccountBalance balance) {
         BigDecimal oldBalanceAmount = balance.getSpiBalanceAmount().getAmount();
-        return oldBalanceAmount.subtract(paymentService.calculateAmountToBeCharged(account.getId()));
+        return oldBalanceAmount.subtract(paymentService.calculateAmountToBeCharged(account.getResourceId()));
     }
 
     private boolean areCurrenciesEqual(Currency accountCurrency, String givenCurrency) {

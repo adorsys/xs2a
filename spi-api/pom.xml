@@ -19,8 +19,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
-        <version>1.9-SNAPSHOT</version>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>1.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,48 +33,91 @@
     <description>xs2a spi interfaces for aspsp</description>
 
     <properties>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <swagger.annotations.version>1.5.19</swagger.annotations.version>
-        <apache.commons.version>3.7</apache.commons.version>
-        <java.version>1.8</java.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
 
     <dependencies>
+
+        <!-- project dependencies -->
+
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-core</artifactId>
+            <version>1.12-SNAPSHOT</version>
         </dependency>
+
+        <!-- other dependencies -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${apache.commons.version}</version>
+            <version>${apache.commons-lang3.version}</version>
         </dependency>
 
+        <!-- test dependencies -->
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
-            <artifactId>consent-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>de.adorsys.psd2:consent-management</exclude>
+                                        <exclude>de.adorsys.psd2:consent-xs2a-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-psu-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-aspsp-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-psu-client</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-lib</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-remote</exclude>
+                                        <exclude>de.adorsys.psd2:consent-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-system</exclude>
+                                        <exclude>de.adorsys.psd2:cms-client</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-server-api</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-impl</exclude>
+                                        <exclude>de.adorsys.psd2:spi-mock</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
 </project>

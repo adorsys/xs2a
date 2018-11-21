@@ -17,7 +17,13 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
-import de.adorsys.psd2.aspsp.profile.domain.*;
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +44,8 @@ import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceFiel
 public class AspspProfileServiceTest {
     private static final int FREQUENCY_PER_DAY = 5;
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
-    private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
-    private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
+    private static final List<PaymentProduct> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
+    private static final List<PaymentType> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
@@ -51,10 +57,10 @@ public class AspspProfileServiceTest {
     private static final int TRANSACTION_LIFETIME = 0;
     private static final boolean ALL_PSD_2_SUPPORT = false;
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
-    private static final AuthorisationStartType AUTHORIZATION_START_TYPE = AuthorisationStartType.IMPLICIT;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
+    private static final boolean PIIS_CONSENT_SUPPORTED = false;
 
     private AspspProfileService aspspProfileService;
 
@@ -93,12 +99,12 @@ public class AspspProfileServiceTest {
             .thenReturn(ALL_PSD_2_SUPPORT);
         Mockito.when(profileConfiguration.isBankOfferedConsentSupport())
             .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
-        Mockito.when(profileConfiguration.getAuthorisationStartType())
-            .thenReturn(AUTHORIZATION_START_TYPE);
          Mockito.when(profileConfiguration.isSigningBasketSupported()    )
              .thenReturn(SIGNING_BASKET_SUPPORTED);
         Mockito.when(profileConfiguration.isPaymentCancellationAuthorizationMandated())
             .thenReturn(PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
+        Mockito.when(profileConfiguration.isPiisConsentSupported())
+            .thenReturn(PIIS_CONSENT_SUPPORTED);
 
         aspspProfileService = new AspspProfileServiceImpl(profileConfiguration);
         MockitoAnnotations.initMocks(aspspProfileService);
@@ -138,27 +144,27 @@ public class AspspProfileServiceTest {
             CONSENT_LIFETIME,
             TRANSACTION_LIFETIME,
             ALL_PSD_2_SUPPORT,
-            AUTHORIZATION_START_TYPE,
             TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
             SIGNING_BASKET_SUPPORTED,
-            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
+            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
+            PIIS_CONSENT_SUPPORTED);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
         return Collections.singletonList(IBAN);
     }
 
-    private static List<String> getPaymentProducts() {
+    private static List<PaymentProduct> getPaymentProducts() {
         return Arrays.asList(
-            "sepa-credit-transfers",
-            "instant-sepa-credit-transfers");
+            PaymentProduct.SEPA,
+            PaymentProduct.INSTANT_SEPA);
     }
 
-    private static List<String> getPaymentTypes() {
+    private static List<PaymentType> getPaymentTypes() {
         return Arrays.asList(
-            "periodic",
-            "delayed",
-            "bulk");
+            PaymentType.PERIODIC,
+            PaymentType.BULK
+        );
     }
 
     private static List<BookingStatus> getBookingStatuses() {

@@ -8,9 +8,9 @@ import java.util.Objects;
  * ChosenScaMethod
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
-public class ChosenScaMethod {
-
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
+public class ChosenScaMethod extends AuthenticationObject {
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -24,14 +24,14 @@ public class ChosenScaMethod {
 
     @Override
     public int hashCode() {
-        return Objects.hash();
+        return Objects.hash(super.hashCode());
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class ChosenScaMethod {\n");
-
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -47,3 +47,4 @@ public class ChosenScaMethod {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

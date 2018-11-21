@@ -10,9 +10,9 @@ import java.util.Objects;
  */
 @ApiModel(description = "Resource identification of the related SCA")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class AuthorisationId {
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -33,7 +33,6 @@ public class AuthorisationId {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class AuthorisationId {\n");
-
         sb.append("}");
         return sb.toString();
     }
@@ -49,3 +48,4 @@ public class AuthorisationId {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

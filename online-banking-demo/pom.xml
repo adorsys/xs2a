@@ -20,8 +20,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
-        <version>1.9-SNAPSHOT</version>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>1.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -34,6 +34,7 @@
     <artifactId>online-banking-demo</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

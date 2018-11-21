@@ -11,8 +11,19 @@
     "code": "200",
     "header": {},
     "body": {
-      "iban": "DE52500105173911841934",
-      "name": "Alexander Mueller"
+      "links": {
+        "viewTransactions": "http://localhost:8080/v1/accounts/11111-999999999/transactions"
+      },
+      "resourceId": "11111-999999999",
+      "iban": "DE89370400440532013000",
+      "bban": "9370400440532013000",
+      "currency": "EUR",
+      "name": "Müller",
+      "product": "SCT",
+      "bic": "DEUTDE8EXXX",
+      "_links": {
+        "viewTransactions": "http://localhost:8080/v1/accounts/11111-999999999/transactions"
+      }
     }
   }
 }

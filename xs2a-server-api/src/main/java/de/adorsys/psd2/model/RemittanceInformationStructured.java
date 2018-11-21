@@ -14,15 +14,13 @@ import java.util.Objects;
  */
 @ApiModel(description = "Structured remittance information ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class RemittanceInformationStructured {
-
     @JsonProperty("reference")
     private String reference = null;
-
     @JsonProperty("referenceType")
     private String referenceType = null;
-
     @JsonProperty("referenceIssuer")
     private String referenceIssuer = null;
 
@@ -36,9 +34,8 @@ public class RemittanceInformationStructured {
      *
      * @return reference
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     @Size(max = 35)
     public String getReference() {
         return reference;
@@ -58,7 +55,7 @@ public class RemittanceInformationStructured {
      *
      * @return referenceType
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 35)
     public String getReferenceType() {
         return referenceType;
@@ -78,7 +75,7 @@ public class RemittanceInformationStructured {
      *
      * @return referenceIssuer
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 35)
     public String getReferenceIssuer() {
         return referenceIssuer;
@@ -97,9 +94,7 @@ public class RemittanceInformationStructured {
             return false;
         }
         RemittanceInformationStructured remittanceInformationStructured = (RemittanceInformationStructured) o;
-        return Objects.equals(this.reference, remittanceInformationStructured.reference) &&
-            Objects.equals(this.referenceType, remittanceInformationStructured.referenceType) &&
-            Objects.equals(this.referenceIssuer, remittanceInformationStructured.referenceIssuer);
+        return Objects.equals(this.reference, remittanceInformationStructured.reference) && Objects.equals(this.referenceType, remittanceInformationStructured.referenceType) && Objects.equals(this.referenceIssuer, remittanceInformationStructured.referenceIssuer);
     }
 
     @Override
@@ -111,7 +106,6 @@ public class RemittanceInformationStructured {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class RemittanceInformationStructured {\n");
-
         sb.append("    reference: ").append(toIndentedString(reference)).append("\n");
         sb.append("    referenceType: ").append(toIndentedString(referenceType)).append("\n");
         sb.append("    referenceIssuer: ").append(toIndentedString(referenceIssuer)).append("\n");
@@ -130,3 +124,4 @@ public class RemittanceInformationStructured {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

@@ -16,12 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.integtest.config.rest.consent;
 
-import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.*;
-import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
-import de.adorsys.aspsp.xs2a.spi.domain.account.*;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.domain.*;
+import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
+import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
+import de.adorsys.psd2.xs2a.spi.domain.account.*;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -33,7 +33,7 @@ public class AccountMapper {
     public Xs2aAccountDetails mapToAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
                    .map(ad -> new Xs2aAccountDetails(
-                           ad.getId(),
+                           ad.getResourceId(),
                            ad.getIban(),
                            ad.getBban(),
                            ad.getPan(),
@@ -71,17 +71,17 @@ public class AccountMapper {
             return Optional.empty();
         }
 
-        Transactions[] booked = spiTransactions
+        List<Transactions> booked = spiTransactions
                                     .stream()
                                     .filter(transaction -> transaction.getBookingDate() != null)
                                     .map(this::mapToTransaction)
-                                    .toArray(Transactions[]::new);
+                                    .collect(Collectors.toList());
 
-        Transactions[] pending = spiTransactions
+        List<Transactions> pending = spiTransactions
                                      .stream()
                                      .filter(transaction -> transaction.getBookingDate() == null)
                                      .map(this::mapToTransaction)
-                                     .toArray(Transactions[]::new);
+                                     .collect(Collectors.toList());
 
         return Optional.of(new Xs2aAccountReport(booked, pending));
     }
@@ -104,6 +104,7 @@ public class AccountMapper {
     public SpiAccountReference mapToSpiAccountReference(Xs2aAccountReference account) {
         return Optional.ofNullable(account)
                    .map(ac -> new SpiAccountReference(
+                       ac.getResourceId(),
                        ac.getIban(),
                        ac.getBban(),
                        ac.getPan(),

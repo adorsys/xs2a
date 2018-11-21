@@ -17,8 +17,8 @@
 package de.adorsys.psd2.aspsp.profile.web;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

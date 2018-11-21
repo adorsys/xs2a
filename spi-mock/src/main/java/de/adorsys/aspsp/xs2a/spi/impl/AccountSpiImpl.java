@@ -16,175 +16,252 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.security.AspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
-import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConfirmation;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
-import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import lombok.AllArgsConstructor;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.exception.RestException;
+import de.adorsys.psd2.xs2a.spi.domain.account.*;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
+import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.*;
-
-import static de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
-import static de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
+import java.util.stream.Collectors;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccountSpiImpl implements AccountSpi {
+    // Test data is used there for testing purposes to have the possibility to see if AccountSpiImpl is being invoked from xs2a.
+    // TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+    private static final String TEST_ASPSP_DATA = "Test aspsp data";
+
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
-    private final KeycloakInvokerService keycloakInvokerService;
-    private final JsonConverter jsonConverter;
 
-    /**
-     * For detailed description see {@link AccountSpi#readAccountDetailsByIban(String, AspspConsentData)}
-     */
     @Override
-    public SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIban(String iban, AspspConsentData aspspConsentData) {
-        List<SpiAccountDetails> response = Optional.ofNullable(
+    public SpiResponse<List<SpiAccountDetails>> requestAccountList(boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+        try {
+            List<SpiAccountDetails> accountDetailsList;
+
+            if (isBankOfferedConsent(accountConsent.getAccess())) {
+                accountDetailsList = getAccountDetailsByConsentId(accountConsent);
+            } else {
+                accountDetailsList = getAccountDetailsFromReferences(withBalance, accountConsent);
+            }
+
+            return SpiResponse.<List<SpiAccountDetails>>builder()
+                .payload(filterAccountDetailsByWithBalance(withBalance, accountDetailsList))
+                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<List<SpiAccountDetails>>builder()
+                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<List<SpiAccountDetails>>builder()
+                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    @Override
+    public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
+        try {
+            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
+
+            if (!withBalance) {
+                accountDetails.emptyBalances();
+            }
+
+            return SpiResponse.<SpiAccountDetails>builder()
+                .payload(accountDetails)
+                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiAccountDetails>builder()
+                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiAccountDetails>builder()
+                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    @Override
+    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
+        try {
+            SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
+
+            Map<String, String> uriParams = new HashMap<>();
+            uriParams.put("account-id", accountReference.getResourceId());
+
+            UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
+                .queryParam("dateFrom", dateFrom)
+                .queryParam("dateTo", dateTo)
+                .buildAndExpand(uriParams);
+
+            Optional<List<SpiTransaction>> transactionsOptional = Optional.ofNullable(aspspRestTemplate.exchange(
+                uriComponents.toUriString(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<SpiTransaction>>() {
+                }
+            ).getBody());
+
+            List<SpiTransaction> transactions = transactionsOptional.orElseGet(ArrayList::new);
+            List<SpiAccountBalance> balances = null;
+
+            if (withBalance) {
+                balances = accountDetails.getBalances();
+            }
+
+            SpiTransactionReport transactionReport = new SpiTransactionReport(transactions, balances);
+
+            return SpiResponse.<SpiTransactionReport>builder()
+                .payload(transactionReport)
+                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiTransactionReport>builder()
+                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiTransactionReport>builder()
+                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    @Override
+    public SpiResponse<SpiTransaction> requestTransactionForAccountByTransactionId(@NotNull String transactionId, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+        try {
+            SpiTransaction transaction = aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountReference.getResourceId());
+            return SpiResponse.<SpiTransaction>builder()
+                .payload(transaction)
+                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiTransaction>builder()
+                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiTransaction>builder()
+                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    @Override
+    public SpiResponse<List<SpiAccountBalance>> requestBalancesForAccount(@NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
+        try {
+            List<SpiAccountBalance> accountBalances = aspspRestTemplate.exchange(
+                remoteSpiUrls.getBalancesByAccountId(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<SpiAccountBalance>>() {
+                },
+                accountReference.getResourceId()
+            ).getBody();
+
+            return SpiResponse.<List<SpiAccountBalance>>builder()
+                .payload(accountBalances)
+                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<List<SpiAccountBalance>>builder()
+                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<List<SpiAccountBalance>>builder()
+                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    private boolean isBankOfferedConsent(SpiAccountAccess accountAccess) {
+        return CollectionUtils.isEmpty(accountAccess.getBalances())
+            && CollectionUtils.isEmpty(accountAccess.getTransactions())
+            && CollectionUtils.isEmpty(accountAccess.getAccounts());
+    }
+
+    private List<SpiAccountDetails> getAccountDetailsByConsentId(SpiAccountConsent accountConsent) {
+        return Optional.ofNullable(aspspRestTemplate.exchange(
+            remoteSpiUrls.getAccountDetailsByPsuId(),
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<SpiAccountDetails>>() {
+            },
+            Optional.ofNullable(accountConsent.getPsuData()).map(SpiPsuData::getPsuId).orElse(null)
+        ).getBody())
+            .orElseGet(Collections::emptyList);
+    }
+
+    private List<SpiAccountDetails> getAccountDetailsFromReferences(boolean withBalance, SpiAccountConsent accountConsent) { // TODO remove consentId param, when SpiAccountConsent contains it https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/430
+        SpiAccountAccess accountAccess = accountConsent.getAccess();
+
+        List<SpiAccountReference> references = withBalance
+            ? accountAccess.getBalances()
+            : accountAccess.getAccounts();
+
+        return getAccountDetailsFromReferences(references);
+    }
+
+    private List<SpiAccountDetails> getAccountDetailsFromReferences(List<SpiAccountReference> references) {
+        if (CollectionUtils.isEmpty(references)) {
+            return Collections.emptyList();
+        }
+
+        return references.stream()
+            .map(this::getAccountDetailsByAccountReference)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toList());
+    }
+
+    private Optional<SpiAccountDetails> getAccountDetailsByAccountReference(SpiAccountReference reference) {
+        if (reference == null) {
+            return Optional.empty();
+        }
+
+        // TODO don't use IBAN as an account identifier https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
+        List<SpiAccountDetails> accountDetails = Optional.ofNullable(
             aspspRestTemplate.exchange(
                 remoteSpiUrls.getAccountDetailsByIban(),
                 HttpMethod.GET,
                 new HttpEntity<>(null), new ParameterizedTypeReference<List<SpiAccountDetails>>() {
-                }, iban)
-                .getBody()
+                },
+                reference.getIban()
+            ).getBody()
         )
-                                               .orElse(Collections.emptyList());
-        return new SpiResponse<>(response, aspspConsentData);
+            .orElseGet(Collections::emptyList);
+
+        // TODO don't use currency as an account identifier https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
+        return accountDetails.stream()
+            .filter(acc -> acc.getCurrency() == reference.getCurrency())
+            .findFirst();
     }
 
-    /**
-     * For detailed description see {@link AccountSpi#readTransactionsByPeriod(String, LocalDate, LocalDate, AspspConsentData)}
-     */
-    @Override
-    public SpiResponse<List<SpiTransaction>> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, AspspConsentData aspspConsentData) {
-        Map<String, String> uriParams = new ObjectHolder<String, String>()
-                                            .addValue("account-id", accountId)
-                                            .getValues();
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
-                                           .queryParam("dateFrom", dateFrom)
-                                           .queryParam("dateTo", dateTo);
-
-        Optional<List<SpiTransaction>> response = Optional.ofNullable(aspspRestTemplate.exchange(
-            builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {
-            }).getBody());
-        return new SpiResponse<>(response.orElseGet(ArrayList::new), aspspConsentData);
-    }
-
-    /**
-     * For detailed description see {@link AccountSpi#readTransactionById(String, String, AspspConsentData)}
-     */
-    @Override
-    public SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, AspspConsentData aspspConsentData) {
-        Optional<SpiTransaction> response = Optional.ofNullable(aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId));
-        return new SpiResponse<>(response, aspspConsentData);
-    }
-
-    /**
-     * For detailed description see {@link AccountSpi#readAccountDetails(String, AspspConsentData)}
-     */
-    @Override
-    public SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, AspspConsentData aspspConsentData) {
-        SpiAccountDetails response = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
-        return new SpiResponse<>(response, aspspConsentData);
-    }
-
-    /**
-     * For detailed description see {@link AccountSpi#readAccountsByPsuId(String, AspspConsentData)}
-     */
-    @Override
-    public SpiResponse<List<SpiAccountDetails>> readAccountsByPsuId(String psuId, AspspConsentData aspspConsentData) {
-        List<SpiAccountDetails> response = Optional.ofNullable(aspspRestTemplate.exchange(
-            remoteSpiUrls.getAccountDetailsByPsuId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
-            }, psuId).getBody())
-                                               .orElse(Collections.emptyList());
-        return new SpiResponse<>(response, aspspConsentData);
-    }
-
-    /**
-     * For detailed description see {@link AccountSpi#readAccountDetailsByIbans(Collection, AspspConsentData)}
-     */
-    @Override
-    public SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIbans(Collection<String> ibans, AspspConsentData aspspConsentData) {
-        List<SpiAccountDetails> accountDetails = new ArrayList<>();
-        for (String iban : ibans) {
-            List<SpiAccountDetails> det = readAccountDetailsByIban(iban, aspspConsentData).getPayload();
-            if (CollectionUtils.isEmpty(det)) {
-                return new SpiResponse<>(Collections.emptyList(), aspspConsentData);
-            }
-            accountDetails.addAll(det);
+    private List<SpiAccountDetails> filterAccountDetailsByWithBalance(boolean withBalance, List<SpiAccountDetails> details) {
+        if (!withBalance) {
+            details.forEach(SpiAccountDetails::emptyBalances);
         }
 
-        return new SpiResponse<>(accountDetails, aspspConsentData);
-    }
-
-    /**
-     * For detailed description see {@link AccountSpi#readPsuAllowedPaymentProductList(SpiAccountReference, AspspConsentData)}
-     */
-    @Override
-    public SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData) {
-        List<String> response = Optional.ofNullable(aspspRestTemplate.exchange(remoteSpiUrls.getAllowedPaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
-        }, reference.getIban()).getBody())
-                                    .orElse(Collections.emptyList());
-        return new SpiResponse<>(response, aspspConsentData);
-    }
-
-    @Override
-    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password, AspspConsentData aspspConsentData) {
-        ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
-            remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
-            }, psuId);
-        List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
-                                               .orElse(Collections.emptyList());
-        return new SpiResponse<>(spiScaMethods, aspspConsentData);
-    }
-
-    /**
-     * For detailed description see {@link PaymentSpi#authorisePsu(String, String, AspspConsentData)}
-     */
-    @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData) {
-        Optional<AspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuId, password);
-        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
-                                                            .orElse(FAILURE);
-        byte[] payload = accessToken.flatMap(jsonConverter::toJson)
-                             .map(String::getBytes)
-                             .orElse(null);
-        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(payload, aspspConsentData.getConsentId()));
-    }
-
-    /**
-     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, SpiScaMethod, AspspConsentData)}
-     */
-    @Override
-    public void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData) {
-        aspspRestTemplate.exchange(remoteSpiUrls.getGenerateTanConfirmationForAis(), HttpMethod.POST, null, Void.class, psuId);
-    }
-
-    @Override
-    public void applyStrongUserAuthorisation(SpiAccountConfirmation confirmation, AspspConsentData aspspConsentData) {
-        aspspRestTemplate.exchange(remoteSpiUrls.applyStrongUserAuthorisationForAis(), HttpMethod.PUT, new HttpEntity<>(confirmation), ResponseEntity.class);
+        return details;
     }
 }

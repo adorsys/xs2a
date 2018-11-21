@@ -1,4 +1,17 @@
 # ------------------------------------------------------------------
+# stages
+# ------------------------------------------------------------------
+
+stages:
+- "build:src"    # build jar and provide as artifact
+- "build:qa"     # run tests and code quality checks
+- "build:image"  # dockerize jar and push to docker registry
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
+- "deploy"       # push to openshift registry (snapshot deployment) or release registry
+- "deploy:static"  # push to openshift deployment helm configuration
+
+
+# ------------------------------------------------------------------
 # variables
 # ------------------------------------------------------------------
 
@@ -11,39 +24,49 @@ variables: &variables
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
   GITLAB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
 
+  DOCKER_NAMESPACE: "adorsys"
+
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
   OPENSHIFT_NAMESPACE: "multibanking-xs2a"
 
   # XS2A Service
   GITLAB_IMAGE_NAME_XS2A: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}"
+  DOCKER_IMAGE_NAME_XS2A: "${DOCKER_NAMESPACE}/xs2a-service"
   OPENSHIFT_IMAGE_NAME_XS2A: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-xs2a"
 
   # Content management service
   GITLAB_IMAGE_NAME_CNT_MGMNT: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/cnt-mgmnt"
+  DOCKER_IMAGE_NAME_CNT_MGMNT: "${DOCKER_NAMESPACE}/xs2a-consent-management"
   OPENSHIFT_IMAGE_NAME_CNT_MGMNT: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-cnt-mgmnt"
 
   # ASPSP Mock Server
   GITLAB_IMAGE_NAME_MOCKSRV: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/aspsp-mock-server"
+  DOCKER_IMAGE_NAME_MOCKSRV: "${DOCKER_NAMESPACE}/xs2a-mock-server"
   OPENSHIFT_IMAGE_NAME_MOCKSRV: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-mock-server"
 
   # XS2A IDP Keycloak
   GITLAB_IMAGE_NAME_KEYCLOAK: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/keycloak-xs2a"
+  DOCKER_IMAGE_NAME_KEYCLOAK: "${DOCKER_NAMESPACE}/xs2a-idp"
   OPENSHIFT_IMAGE_NAME_KEYCLOAK: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/keycloak-xs2a"
 
   # XS2A IDP ASPSP Profile
   GITLAB_IMAGE_NAME_ASPSP_PROFILE: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-aspsp-profile"
+  DOCKER_IMAGE_NAME_ASPSP_PROFILE: "${DOCKER_NAMESPACE}/xs2a-aspsp-profile"
   OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-aspsp-profile"
 
   # XS2A Integration Tests
   GITLAB_IMAGE_NAME_INTEG_TESTS: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-integtests"
+  DOCKER_IMAGE_NAME_INTEG_TESTS: "${DOCKER_NAMESPACE}/xs2a-integration-tests"
   OPENSHIFT_IMAGE_NAME_INTEG_TESTS: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-integtests"
 
   # Online banking demo
   GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-demo"
+  DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO: "${DOCKER_NAMESPACE}/xs2a-mock-online-banking-backend"
   OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-demo"
 
   # Online banking UIapp
-  GITLAB_IMAGE_NAME_ONLINE_BANKING_UI: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-demo/src/main/ui"
+  GITLAB_IMAGE_NAME_ONLINE_BANKING_UI: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-ui"
+  DOCKER_IMAGE_NAME_ONLINE_BANKING_UI: "${DOCKER_NAMESPACE}/xs2a-mock-online-banking-ui"
   OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-ui"
 
 
@@ -51,7 +74,7 @@ variables: &variables
   # Build variables         #
   ###########################
 
-  JAVA_TOOL_OPTIONS: "-Xmx350M"
+  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 
@@ -72,7 +95,7 @@ variables: &variables
 .java_artifacts: &java_artifacts
   paths:
     - "spi-mock/target/spi-mock*jar"
-    - "consent-management-system/target/consent-management*jar"
+    - "consent-management/cms-standalone-service/target/consent-management*jar"
     - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
     - "aspsp-idp/keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"
@@ -80,13 +103,29 @@ variables: &variables
     - "online-banking-demo/target/online-banking-demo*jar"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
+.angular_artifacts: &angular_artifacts
+  paths:
+    - "online-banking-demo-ui/dist"
+  name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
+
 .build_java: &build_java
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -DskipTests clean install
 
+.build_angular: &build_angular
+  stage: "build:src"
+  image: "alexsuch/angular-cli:6.0.1"
+  script:
+    - cd online-banking-demo-ui
+    - npm install
+    - npm run build --prod
+
 # Build docker images and put them to GITLAB repo
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 .build_docker_image: &build_docker_image
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
@@ -100,7 +139,7 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
     - docker push "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG"
 
-    - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management-system
+    - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
     - docker push "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
 
     - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
@@ -112,7 +151,37 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
     - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
 
+    - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-demo-ui
+    - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
+
+
+# Build docker images and put them to DOCKER HUB repo
+.build_dockerhub_image: &build_dockerhub_image
+  script:
+    - docker build -t "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG" spi-mock
+    - docker build -t "$DOCKER_IMAGE_NAME_MOCKSRV:$DOCKER_TAG" aspsp-mock-server
+    - docker build -t "$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
+    - docker build -t "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
+    - docker build -t "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
+    - docker build -t "$DOCKER_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG" integration-tests
+    - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
+    - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-demo-ui
+
+    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASS
+
+    - docker push "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_MOCKSRV:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
+
+    - docker logout
+
 # Pull docker images and put them to OPENSHIFT repo
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 .push_docker_openshift: &push_docker_openshift
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
@@ -146,14 +215,18 @@ variables: &variables
     - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
 
+    - docker pull $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
+
 .helm_env_deploy: &helm_env_deploy
   image: adorsys/ci-helm:2.10
   script:
     - cd devops/charts/xs2a
     - helm init --client-only
-    - oc login kubernetes.default.svc --token=${HELM_TOKEN} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    - oc login openshift.adorsys.de --token=${HELM_TOKEN}
     - echo "${VAULT_PWD}" > $ANSIBLE_VAULT_PASSWORD_FILE
-    - ansible-vault view env/develop.yaml.enc > env/develop.yaml
+    - ansible-vault view env/${HELM_VALUE}.enc > env/${HELM_VALUE}
     - >-
       helm diff upgrade ${HELM_RELEASE} .
       --allow-unreleased -q
@@ -162,17 +235,6 @@ variables: &variables
       helm upgrade -i ${HELM_RELEASE} .
       --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600
       -f env/${HELM_VALUE}
-# ------------------------------------------------------------------
-# stages
-# ------------------------------------------------------------------
-
-stages:
-  - "build:src"    # build jar and provide as artifact
-  - "build:qa"     # run tests and code quality checks
-  - "build:image"  # dockerize jar and push to gitlab registry
-  - "deploy"       # push to openshift registry (snapshot deployment) or release registry
-  - "deploy:static"      # push to openshift registry (snapshot deployment) or release registry
-
 
 # ------------------------------------------------------------------
 # jobs
@@ -184,10 +246,18 @@ build_package:
     <<: *java_artifacts
     expire_in: "1 day"
 
+build_frontend:
+  <<: *build_angular
+  artifacts:
+    <<: *angular_artifacts
+    expire_in: "1 day"
+
 pmd_report:
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:pmd
   artifacts:
     paths:
@@ -201,12 +271,16 @@ check_pmd:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:check
 
 check_javadoc:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package javadoc:javadoc
   artifacts:
     paths:
@@ -218,6 +292,8 @@ unit_tests:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
   script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn --fail-at-end clean install
   artifacts:
     paths:
@@ -228,42 +304,15 @@ unit_tests:
 
 # Develop
 
-deploy_develop_stage:
-  stage: "deploy:static"
-  <<: *build_docker_image
-  <<: *push_docker_openshift
-  <<: *helm_env_deploy
+deploy_dockerhub_stage:
+  stage: "build:image"
   only:
     - develop
   variables:
-    <<: *variables
-    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
-    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
-    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
-    HELM_VALUE: develop.yaml
-  environment:
-    name: dev
-    url: ~
+    DOCKER_TAG: develop
+  <<: *build_dockerhub_image
 
-# Branches with -helm- in naming are used for testing deployment scripts
-deploy_branch_stage:
-  stage: "deploy:static"
-  <<: *build_docker_image
-  <<: *push_docker_openshift
-  <<: *helm_env_deploy
-  when: manual
-  only:
-    - /^.*-helm-.*$/
-  variables:
-    <<: *variables
-    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
-    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
-    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
-    HELM_VALUE: develop.yaml
-  environment:
-    name: dev
-    url: ~
-
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 build_image_integ:
   stage: "build:image"
   only:
@@ -275,6 +324,7 @@ build_image_integ:
     url: https://xs2a.integ.cloud.adorsys.de
   <<: *build_docker_image
 
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 deploy_image_integ:
   stage: deploy
   only:
@@ -286,8 +336,24 @@ deploy_image_integ:
     DOCKER_TAG: integ
   <<: *push_docker_openshift
 
+deploy_develop_stage:
+  stage: "deploy:static"
+  <<: *helm_env_deploy
+  only:
+    - develop
+  variables:
+    <<: *variables
+    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
+    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
+    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
+    HELM_VALUE: develop.yaml
+  environment:
+    name: dev
+    url: ~
+
 # Master
 
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 build_image_master:
   stage: "build:image"
   only:
@@ -296,9 +362,19 @@ build_image_master:
     DOCKER_TAG: latest
   environment:
     name: demo
-    url: https://xs2a.cloud.adorsys.de
   <<: *build_docker_image
 
+build_dockerhub_image_master:
+  stage: "build:image"
+  only:
+    - master
+  variables:
+    DOCKER_TAG: latest
+  environment:
+    name: demo
+  <<: *build_dockerhub_image
+
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 deploy_image_master:
   stage: deploy
   only:
@@ -307,11 +383,11 @@ deploy_image_master:
     DOCKER_TAG: latest
   environment:
     name: demo
-    url: https://xs2a.cloud.adorsys.de
   <<: *push_docker_openshift
 
 # Release
 
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 build_image_release:
   stage: "build:image"
   only:
@@ -320,6 +396,15 @@ build_image_release:
     DOCKER_TAG: $CI_COMMIT_TAG
   <<: *build_docker_image
 
+build_dockerhub_image_release:
+  stage: "build:image"
+  only:
+    - tags
+  variables:
+    DOCKER_TAG: $CI_COMMIT_TAG
+  <<: *build_dockerhub_image
+
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 deploy_image_release:
   stage: deploy
   only:
@@ -331,6 +416,7 @@ deploy_image_release:
 
 # Integ tests
 
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 build_image_integtest:
   stage: "build:image"
   only:
@@ -339,10 +425,57 @@ build_image_integtest:
     DOCKER_TAG: nightly
   <<: *build_docker_image
 
-deploy_image_integtest:
-  stage: deploy
+push_dockerhub_image_nightly:
+  stage: "build:image"
   only:
     - schedules
   variables:
     DOCKER_TAG: nightly
+  <<: *build_dockerhub_image
+
+# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
+deploy_image_integtest:
+  stage: deploy
+  only:
+  - schedules
+  variables:
+    DOCKER_TAG: nightly
   <<: *push_docker_openshift
+
+
+# Branches with -helm- in naming are used for testing deployment scripts
+deploy_branch_stage:
+  stage: "deploy:static"
+  <<: *helm_env_deploy
+  when: manual
+  only:
+  - /^.*-helm-.*$/
+  variables:
+    <<: *variables
+    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
+    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
+    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
+    HELM_VALUE: develop.yaml
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://${CI_ENVIRONMENT_SLUG}-backend-datev-sb.cloud.adorsys.de
+    on_stop: remove_deploy_review_branch
+
+remove_deploy_review_branch:
+  stage: "deploy:static"
+  when: manual
+  only:
+  - /^.*-helm-.*$/
+  image: adorsys/ci-helm:2.10
+  dependencies: []
+  script:
+    - oc login openshift.adorsys.de --token=${HELM_TOKEN}
+    - helm init --client-only
+    - helm del --purge "${HELM_RELEASE}"
+  variables:
+    <<: *variables
+    GIT_STRATEGY: none
+    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop

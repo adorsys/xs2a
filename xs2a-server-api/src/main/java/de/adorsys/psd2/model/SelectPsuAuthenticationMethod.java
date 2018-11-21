@@ -13,9 +13,9 @@ import java.util.Objects;
  */
 @ApiModel(description = "Content of the body of a Select PSU Authentication Method Request ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class SelectPsuAuthenticationMethod {
-
     @JsonProperty("authenticationMethodId")
     private String authenticationMethodId = null;
 
@@ -29,9 +29,8 @@ public class SelectPsuAuthenticationMethod {
      *
      * @return authenticationMethodId
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getAuthenticationMethodId() {
         return authenticationMethodId;
     }
@@ -61,7 +60,6 @@ public class SelectPsuAuthenticationMethod {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class SelectPsuAuthenticationMethod {\n");
-
         sb.append("    authenticationMethodId: ").append(toIndentedString(authenticationMethodId)).append("\n");
         sb.append("}");
         return sb.toString();
@@ -78,3 +76,4 @@ public class SelectPsuAuthenticationMethod {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

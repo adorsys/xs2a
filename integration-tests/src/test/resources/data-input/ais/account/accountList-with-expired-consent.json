@@ -8,11 +8,14 @@
     }
   },
   "response": {
-    "code": "400",
+    "code": "401",
     "header": {},
-    "body": {
-      "category": "ERROR",
-      "code": "to-be-done"
-    }
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "CONSENT_EXPIRED",
+        "text": "The consent was created by this TPP but has expired and needs to be renewed"
+      }
+    ]
   }
 }

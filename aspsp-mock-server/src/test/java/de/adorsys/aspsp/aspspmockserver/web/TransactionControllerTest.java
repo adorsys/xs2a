@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.TransactionService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspTransaction;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -114,9 +114,9 @@ public class TransactionControllerTest {
         assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
-    private SpiTransaction getTransaction() {
-        return new SpiTransaction(TRANSACTION_ID, null, null, null, null, "Creditor_id", DATE, DATE, new SpiAmount(EUR, BigDecimal.valueOf(1000)), null, "Creditor",
-            new SpiAccountReference(IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
-            new SpiAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
+    private AspspTransaction getTransaction() {
+        return new AspspTransaction(TRANSACTION_ID, null, null, null, null, "Creditor_id", DATE, DATE, new AspspAmount(EUR, BigDecimal.valueOf(1000)), null, "Creditor",
+                                    new AspspAccountReference(null, IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
+                                    new AspspAccountReference(null, IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
     }
 }

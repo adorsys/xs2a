@@ -10,13 +10,19 @@ import java.util.HashMap;
 import java.util.Objects;
 
 /**
- * A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response:   - \&quot;download\&quot;: a link to a resource, where the transaction report might be downloaded from in    case where transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested which has a huge size.
+ * A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response:   - \&quot;
+ * download\&quot;: a link to a resource, where the transaction report might be downloaded from in   case where
+ * transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested which
+ * has a huge size.
  */
-@ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response:   - \"download\": a link to a resource, where the transaction report might be downloaded from in    case where transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested which has a huge size. ")
+@ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response: " +
+    "  - \"download\": a link to a resource, where the transaction report might be downloaded from in   case where " +
+    "transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested " +
+    "which has a huge size. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class LinksDownload extends HashMap<String, String> {
-
     @JsonProperty("download")
     private String download = null;
 
@@ -30,9 +36,8 @@ public class LinksDownload extends HashMap<String, String> {
      *
      * @return download
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getDownload() {
         return download;
     }
@@ -50,8 +55,7 @@ public class LinksDownload extends HashMap<String, String> {
             return false;
         }
         LinksDownload _linksDownload = (LinksDownload) o;
-        return Objects.equals(this.download, _linksDownload.download) &&
-            super.equals(o);
+        return Objects.equals(this.download, _linksDownload.download) && super.equals(o);
     }
 
     @Override
@@ -80,3 +84,4 @@ public class LinksDownload extends HashMap<String, String> {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

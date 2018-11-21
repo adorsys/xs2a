@@ -16,7 +16,12 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
-import de.adorsys.psd2.aspsp.profile.domain.*;
+import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +38,6 @@ import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
 @PropertySource(value = {"classpath:bank_profile.yml", "file:${bank_profile.path}"}, ignoreResourceNotFound = true)
 @ConfigurationProperties
 public class ProfileConfiguration {
-    private final static boolean isDelayedPaymentTypeAllowedAlways = true;
-
     /**
      * This field indicates the requested maximum frequency for an access per day
      */
@@ -48,12 +51,12 @@ public class ProfileConfiguration {
     /**
      * List of payment products supported by ASPSP
      */
-    private List<String> availablePaymentProducts = new ArrayList<>();
+    private List<PaymentProduct> availablePaymentProducts = new ArrayList<>();
 
     /**
      * List of payment types supported by ASPSP
      */
-    private List<String> availablePaymentTypes = new ArrayList<>();
+    private List<PaymentType> availablePaymentTypes = new ArrayList<>();
 
     /**
      * SCA Approach supported by ASPSP
@@ -113,11 +116,6 @@ public class ProfileConfiguration {
     private boolean allPsd2Support;
 
     /**
-     * Type of authorisation start: IMPLICIT or EXPLICIT
-     */
-    private AuthorisationStartType authorisationStartType;
-
-    /**
      * If "false" indicates that an ASPSP might add balance information to transactions list
      */
     private boolean transactionsWithoutBalancesSupported;
@@ -132,9 +130,13 @@ public class ProfileConfiguration {
      */
     private boolean paymentCancellationAuthorizationMandated;
 
+    /**
+     * If the option is set to "true", than PIIS consent should be stored in CMS
+     */
+    private boolean piisConsentSupported;
+
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
-        setDefaultPaymentType(PaymentType.FUTURE_DATED);
         setDefaultPaymentType(PaymentType.SINGLE);
         setDefaultBookingStatus(BOOKED);
         setAvailableAccountReferenceField(SupportedAccountReferenceField.IBAN); //Sets default Account Reference Field
@@ -147,8 +149,8 @@ public class ProfileConfiguration {
     }
 
     private void setDefaultPaymentType(PaymentType necessaryType) {
-        if (!availablePaymentTypes.contains(necessaryType.getValue())) {
-            availablePaymentTypes.add(necessaryType.getValue());
+        if (!availablePaymentTypes.contains(necessaryType)) {
+            availablePaymentTypes.add(necessaryType);
         }
     }
 

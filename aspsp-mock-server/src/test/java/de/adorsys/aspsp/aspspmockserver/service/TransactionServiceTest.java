@@ -17,10 +17,10 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspTransaction;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,7 +75,7 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionById_Success() {
         //When
-        Optional<SpiTransaction> respondedTransaction = transactionService.getTransactionById(TRANSACTION_ID, ACCOUNT_ID);
+        Optional<AspspTransaction> respondedTransaction = transactionService.getTransactionById(TRANSACTION_ID, ACCOUNT_ID);
 
         //Then
         assertThat(respondedTransaction.get()).isEqualTo(getTransaction());
@@ -84,7 +84,7 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionById_Failure_Wrong_TrId() {
         //When
-        Optional<SpiTransaction> respondedTransaction = transactionService.getTransactionById(WRONG_TRANSACTION_ID, ACCOUNT_ID);
+        Optional<AspspTransaction> respondedTransaction = transactionService.getTransactionById(WRONG_TRANSACTION_ID, ACCOUNT_ID);
 
         //Then
         assertThat(respondedTransaction).isEqualTo(Optional.empty());
@@ -93,7 +93,7 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionById_Failure_Wrong_AccId() {
         //When
-        Optional<SpiTransaction> respondedTransaction = transactionService.getTransactionById(TRANSACTION_ID, WRONG_ACCOUNT_ID);
+        Optional<AspspTransaction> respondedTransaction = transactionService.getTransactionById(TRANSACTION_ID, WRONG_ACCOUNT_ID);
 
         //Then
         assertThat(respondedTransaction).isEqualTo(Optional.empty());
@@ -111,7 +111,7 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionsByPeriod() {
         //When
-        List<SpiTransaction> transactionList = transactionService.getTransactionsByPeriod(ACCOUNT_ID, DATE, DATE);
+        List<AspspTransaction> transactionList = transactionService.getTransactionsByPeriod(ACCOUNT_ID, DATE, DATE);
 
         //Then
         assertThat(transactionList).isNotEmpty();
@@ -120,20 +120,20 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionByPeriod_Failure_Wrong_AccId() {
         //When
-        List<SpiTransaction> respondedTransaction = transactionService.getTransactionsByPeriod(WRONG_ACCOUNT_ID, DATE, DATE);
+        List<AspspTransaction> respondedTransaction = transactionService.getTransactionsByPeriod(WRONG_ACCOUNT_ID, DATE, DATE);
 
         //Then
         assertThat(respondedTransaction).isEmpty();
     }
 
-    private SpiTransaction getTransaction() {
-        return new SpiTransaction(TRANSACTION_ID, null, null, "Creditor_id", null, null, DATE, DATE, new SpiAmount(EUR, BigDecimal.valueOf(1000)), null, "Creditor",
-            new SpiAccountReference(IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
-            new SpiAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
+    private AspspTransaction getTransaction() {
+        return new AspspTransaction(TRANSACTION_ID, null, null, "Creditor_id", null, null, DATE, DATE, new AspspAmount(EUR, BigDecimal.valueOf(1000)), null, "Creditor",
+                                    new AspspAccountReference(null, IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
+                                    new AspspAccountReference(null, IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
     }
 
-    private SpiAccountDetails getDetails() {
-        return new SpiAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null, null, null, null, null);
+    private AspspAccountDetails getDetails() {
+        return new AspspAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null, null, null, null, null);
     }
 
 }

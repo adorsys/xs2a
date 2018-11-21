@@ -17,10 +17,10 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.AccountService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountBalance;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspBalanceType;
+import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,21 +52,21 @@ public class AccountControllerTest {
     private AccountService accountService;
     @InjectMocks
     private AccountController accountController;
-    private List<SpiAccountDetails> accountList = new ArrayList<>();
+    private List<AspspAccountDetails> accountList = new ArrayList<>();
 
     @Before
     public void setUpAccountServiceMock() {
-        accountList.add(getSpiAccountDetails_1());
-        accountList.add(getSpiAccountDetails_2());
+        accountList.add(getAspspAccountDetails_1());
+        accountList.add(getAspspAccountDetails_2());
 
         when(accountService.getAccountById(ACCOUNT_ID))
-            .thenReturn(Optional.of(getSpiAccountDetails_1()));
+            .thenReturn(Optional.of(getAspspAccountDetails_1()));
         when(accountService.getAccountById(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
         when(accountService.getAllAccounts())
             .thenReturn(accountList);
-        when(accountService.addAccount(PSU_ID, getSpiAccountDetails_1()))
-            .thenReturn(Optional.of(getSpiAccountDetails_1()));
+        when(accountService.addAccount(PSU_ID, getAspspAccountDetails_1()))
+            .thenReturn(Optional.of(getAspspAccountDetails_1()));
         when(accountService.getAccountBalancesById(ACCOUNT_ID))
             .thenReturn(getNewBalanceList());
         when(accountService.getAccountBalancesById(WRONG_ACCOUNT_ID))
@@ -87,7 +87,7 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAllAccounts();
+        ResponseEntity<List<AspspAccountDetails>> actualResponse = accountController.readAllAccounts();
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
@@ -100,14 +100,14 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountById(ACCOUNT_ID);
+        ResponseEntity<AspspAccountDetails> actualResponse = accountController.readAccountById(ACCOUNT_ID);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        SpiAccountDetails actualResult = actualResponse.getBody();
+        AspspAccountDetails actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResult).isEqualTo(getSpiAccountDetails_1());
+        assertThat(actualResult).isEqualTo(getAspspAccountDetails_1());
     }
 
     @Test
@@ -116,11 +116,11 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountById(WRONG_ACCOUNT_ID);
+        ResponseEntity<AspspAccountDetails> actualResponse = accountController.readAccountById(WRONG_ACCOUNT_ID);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        SpiAccountDetails actualResult = actualResponse.getBody();
+        AspspAccountDetails actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isNull();
@@ -132,11 +132,11 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAccountsByIban(IBAN);
+        ResponseEntity<List<AspspAccountDetails>> actualResponse = accountController.readAccountsByIban(IBAN);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        List<SpiAccountDetails> actualResult = actualResponse.getBody();
+        List<AspspAccountDetails> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(accountList);
@@ -148,11 +148,11 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
-        ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAccountsByIban(WRONG_IBAN);
+        ResponseEntity<List<AspspAccountDetails>> actualResponse = accountController.readAccountsByIban(WRONG_IBAN);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        List<SpiAccountDetails> actualResult = actualResponse.getBody();
+        List<AspspAccountDetails> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isNull();
@@ -161,11 +161,11 @@ public class AccountControllerTest {
     @Test
     public void createAccount() {
         //Given
-        SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
+        AspspAccountDetails expectedAspspAccountDetails = getAspspAccountDetails_1();
         HttpStatus expectedStatusCode = HttpStatus.CREATED;
 
         //When
-        ResponseEntity actualResponse = accountController.createAccount(PSU_ID, expectedSpiAccountDetails);
+        ResponseEntity actualResponse = accountController.createAccount(PSU_ID, expectedAspspAccountDetails);
 
         //Then
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
@@ -189,7 +189,7 @@ public class AccountControllerTest {
     public void readBalancesById() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        List<SpiAccountBalance> expectedBalanceList = getNewBalanceList();
+        List<AspspAccountBalance> expectedBalanceList = getNewBalanceList();
 
         //When:
         ResponseEntity actualResponse = accountController.readBalancesById(ACCOUNT_ID);
@@ -219,7 +219,7 @@ public class AccountControllerTest {
         //Given:
         HttpStatus expectedStatus = HttpStatus.OK;
         //When:
-        ResponseEntity<List<SpiAccountDetails>> response = accountController.readAccountsByPsuId(PSU_ID);
+        ResponseEntity<List<AspspAccountDetails>> response = accountController.readAccountsByPsuId(PSU_ID);
         //Then:
         assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
         assertThat(response.getBody()).isEqualTo(accountList);
@@ -230,34 +230,34 @@ public class AccountControllerTest {
         //Given:
         HttpStatus expectedStatus = HttpStatus.NO_CONTENT;
         //When:
-        ResponseEntity<List<SpiAccountDetails>> response = accountController.readAccountsByPsuId(WRONG_PSU_ID);
+        ResponseEntity<List<AspspAccountDetails>> response = accountController.readAccountsByPsuId(WRONG_PSU_ID);
         //Then:
         assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
         assertThat(response.getBody()).isNullOrEmpty();
     }
 
-    private SpiAccountDetails getSpiAccountDetails_1() {
-        return new SpiAccountDetails(ACCOUNT_ID, IBAN, null, "1111222233334444",
-            "111122xxxxxx44", null, CURRENCY, "Jack", "GIRO",
-            null, null, "XE3DDD", null, null, null, getNewBalanceList());
+    private AspspAccountDetails getAspspAccountDetails_1() {
+        return new AspspAccountDetails(ACCOUNT_ID, IBAN, null, "1111222233334444",
+                                       "111122xxxxxx44", null, CURRENCY, "Jack", "GIRO",
+                                       null, null, "XE3DDD", null, null, null, getNewBalanceList());
     }
 
-    private SpiAccountDetails getSpiAccountDetails_2() {
-        return new SpiAccountDetails("qwertyuiop12345678", IBAN, null, "4444333322221111",
-            "444433xxxxxx1111", null, null, "Emily", "GIRO",
-            null, null, "ACVB222", null, null, null, getNewBalanceList());
+    private AspspAccountDetails getAspspAccountDetails_2() {
+        return new AspspAccountDetails("qwertyuiop12345678", IBAN, null, "4444333322221111",
+                                       "444433xxxxxx1111", null, null, "Emily", "GIRO",
+                                       null, null, "ACVB222", null, null, null, getNewBalanceList());
     }
 
-    private List<SpiAccountBalance> getNewBalanceList() {
-        return Collections.singletonList(getNewSingleBalances(new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(1000))));
+    private List<AspspAccountBalance> getNewBalanceList() {
+        return Collections.singletonList(getNewSingleBalances(new AspspAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(1000))));
     }
 
-    private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
-        SpiAccountBalance sb = new SpiAccountBalance();
+    private AspspAccountBalance getNewSingleBalances(AspspAmount aspspAmount) {
+        AspspAccountBalance sb = new AspspAccountBalance();
         sb.setReferenceDate(LocalDate.parse("2019-03-03"));
-        sb.setSpiBalanceAmount(spiAmount);
+        sb.setSpiBalanceAmount(aspspAmount);
         sb.setLastChangeDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
-        sb.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        sb.setSpiBalanceType(AspspBalanceType.INTERIM_AVAILABLE);
         sb.setLastCommittedTransaction("abc");
         return sb;
     }

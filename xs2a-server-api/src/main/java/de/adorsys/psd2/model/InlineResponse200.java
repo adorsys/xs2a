@@ -8,13 +8,15 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * Equals \&quot;true\&quot; if sufficient funds are available at the time of the request,  \&quot;false\&quot; otherwise.
+ * Equals \&quot;true\&quot; if sufficient funds are available at the time of the request, \&quot;false\&quot;
+ * otherwise.
  */
-@ApiModel(description = "Equals \"true\" if sufficient funds are available at the time of the request,  \"false\" otherwise. ")
+@ApiModel(description = "Equals \"true\" if sufficient funds are available at the time of the request, \"false\" " +
+    "otherwise. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class InlineResponse200 {
-
     @JsonProperty("fundsAvailable")
     private Boolean fundsAvailable = null;
 
@@ -28,7 +30,7 @@ public class InlineResponse200 {
      *
      * @return fundsAvailable
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public Boolean isFundsAvailable() {
         return fundsAvailable;
     }
@@ -58,7 +60,6 @@ public class InlineResponse200 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class InlineResponse200 {\n");
-
         sb.append("    fundsAvailable: ").append(toIndentedString(fundsAvailable)).append("\n");
         sb.append("}");
         return sb.toString();
@@ -75,3 +76,4 @@ public class InlineResponse200 {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

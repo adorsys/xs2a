@@ -14,11 +14,12 @@ import java.util.Objects;
 /**
  * The PSU has not activated the addressed account for the usage of the PIIS associated with the TPP.
  */
-@ApiModel(description = "The PSU has not activated the addressed account for the usage of the PIIS associated with the TPP.")
+@ApiModel(description = "The PSU has not activated the addressed account for the usage of the PIIS associated with " +
+    "the TPP.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessagePIISNOPIISACTIVATION400 {
-
     @JsonProperty("category")
     private TppMessageCategory category = null;
     @JsonProperty("code")
@@ -38,7 +39,7 @@ public class TppMessagePIISNOPIISACTIVATION400 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -59,9 +60,8 @@ public class TppMessagePIISNOPIISACTIVATION400 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public CodeEnum getCode() {
         return code;
     }
@@ -80,7 +80,7 @@ public class TppMessagePIISNOPIISACTIVATION400 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -99,7 +99,7 @@ public class TppMessagePIISNOPIISACTIVATION400 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -117,10 +117,10 @@ public class TppMessagePIISNOPIISACTIVATION400 {
             return false;
         }
         TppMessagePIISNOPIISACTIVATION400 tppMessagePIISNOPIISACTIVATION400 = (TppMessagePIISNOPIISACTIVATION400) o;
-        return Objects.equals(this.category, tppMessagePIISNOPIISACTIVATION400.category) &&
-            Objects.equals(this.code, tppMessagePIISNOPIISACTIVATION400.code) &&
-            Objects.equals(this.path, tppMessagePIISNOPIISACTIVATION400.path) &&
-            Objects.equals(this.text, tppMessagePIISNOPIISACTIVATION400.text);
+        return Objects.equals(this.category, tppMessagePIISNOPIISACTIVATION400.category) && Objects.equals(this.code,
+            tppMessagePIISNOPIISACTIVATION400.code) && Objects.equals(this.path,
+            tppMessagePIISNOPIISACTIVATION400.path) && Objects.equals(this.text,
+            tppMessagePIISNOPIISACTIVATION400.text);
     }
 
     @Override
@@ -132,7 +132,6 @@ public class TppMessagePIISNOPIISACTIVATION400 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessagePIISNOPIISACTIVATION400 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -157,7 +156,6 @@ public class TppMessagePIISNOPIISACTIVATION400 {
      */
     public enum CodeEnum {
         ACTIVATION("NO_PIIS_ACTIVATION");
-
         private String value;
 
         CodeEnum(String value) {
@@ -181,3 +179,4 @@ public class TppMessagePIISNOPIISACTIVATION400 {
         }
     }
 }
+

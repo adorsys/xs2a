@@ -12,6 +12,7 @@ volumes:
 services:
 # ASPSP-IDP
   xs2a-idp:
+    image: adorsys/xs2a-idp
     build:
       context: aspsp-idp
       dockerfile: Dockerfile
@@ -47,6 +48,7 @@ services:
 
 # ASPSP-MOCK-SERVER
   aspsp-mock-server:
+    image: adorsys/xs2a-mock-server
     build:
       context: aspsp-mock-server
       dockerfile: Dockerfile
@@ -78,6 +80,7 @@ services:
 
 # ASPSP-PROFILE
   aspsp-profile:
+    image: adorsys/xs2a-aspsp-profile
     build:
       context: aspsp-profile/aspsp-profile-server
       dockerfile: Dockerfile
@@ -92,8 +95,9 @@ services:
 
 # CONSENT-MANAGEMENT-SYSTEM
   consent-management:
+    image: adorsys/xs2a-consent-management
     build:
-      context: consent-management-system
+      context: consent-management/cms-standalone-service
       dockerfile: Dockerfile
     restart: on-failure
     ports:
@@ -115,7 +119,7 @@ services:
     image: centos/postgresql-95-centos7
     volumes:
       - consent-management-data:/var/lib/pgsql/data
-      - ./cms-db-schema/util/pg-create-schema.sh:/usr/share/container-scripts/postgresql/start/zzz-create-schema.sh
+      - ./consent-management/cms-db-schema/util/pg-create-schema.sh:/usr/share/container-scripts/postgresql/start/zzz-create-schema.sh
     restart: on-failure
     ports:
       - "5432:5432"
@@ -128,3 +132,23 @@ services:
       - POSTGRESQL_PASSWORD=cms
     expose:
       - 5432
+
+  online-banking-demo-ui:
+    image: adorsys/xs2a-mock-online-banking-ui
+    build:
+      context: online-banking-demo-ui
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - "4200:4200"
+    networks:
+      - xs2a-net
+    environment:
+      - XS2A_URL=http://localhost:8080
+      - MOCKSERVER_URL=http://localhost:28080
+      - ONLINE_BANKING_SERVER_URL=http://localhost:28081
+      - CONSENT_MANAGEMENT_URL=http://localhost:38080
+      - PROFILE_SERVER_URL=http://localhost:48080
+    expose:
+      - 4200
+

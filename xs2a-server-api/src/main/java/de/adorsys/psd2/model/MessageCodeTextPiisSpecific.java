@@ -7,9 +7,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets messageCodeTextPiisSpecific
  */
 public enum MessageCodeTextPiisSpecific {
-    CARD_INVALID("CARD_INVALID"),
-    NO_PIIS_ACTIVATION("NO_PIIS_ACTIVATION");
-
+    CARD_INVALID("CARD_INVALID"), NO_PIIS_ACTIVATION("NO_PIIS_ACTIVATION");
     private String value;
 
     MessageCodeTextPiisSpecific(String value) {
@@ -32,3 +30,4 @@ public enum MessageCodeTextPiisSpecific {
         return String.valueOf(value);
     }
 }
+

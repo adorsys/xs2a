@@ -47,3 +47,4 @@ log
 cms-db-schema/liquibase.properties
 **/META-INF
 **/main/java/META-INF
+xs2a-server-api/.idea

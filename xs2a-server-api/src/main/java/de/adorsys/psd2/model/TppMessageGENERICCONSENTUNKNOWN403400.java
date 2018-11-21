@@ -14,11 +14,12 @@ import java.util.Objects;
 /**
  * The Consent-ID cannot be matched by the ASPSP relative to the TPP.   - 403 (if path)   - 400 (if payload)
  */
-@ApiModel(description = "The Consent-ID cannot be matched by the ASPSP relative to the TPP.   - 403 (if path)   - 400 (if payload) ")
+@ApiModel(description = "The Consent-ID cannot be matched by the ASPSP relative to the TPP.   - 403 (if path)   - 400" +
+    " (if payload) ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessageGENERICCONSENTUNKNOWN403400 {
-
     @JsonProperty("category")
     private TppMessageCategory category = null;
     @JsonProperty("code")
@@ -38,7 +39,7 @@ public class TppMessageGENERICCONSENTUNKNOWN403400 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -59,9 +60,8 @@ public class TppMessageGENERICCONSENTUNKNOWN403400 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public CodeEnum getCode() {
         return code;
     }
@@ -80,7 +80,7 @@ public class TppMessageGENERICCONSENTUNKNOWN403400 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -99,7 +99,7 @@ public class TppMessageGENERICCONSENTUNKNOWN403400 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -116,11 +116,9 @@ public class TppMessageGENERICCONSENTUNKNOWN403400 {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TppMessageGENERICCONSENTUNKNOWN403400 tppMessageGENERICCONSENTUNKNOWN403400 = (TppMessageGENERICCONSENTUNKNOWN403400) o;
-        return Objects.equals(this.category, tppMessageGENERICCONSENTUNKNOWN403400.category) &&
-            Objects.equals(this.code, tppMessageGENERICCONSENTUNKNOWN403400.code) &&
-            Objects.equals(this.path, tppMessageGENERICCONSENTUNKNOWN403400.path) &&
-            Objects.equals(this.text, tppMessageGENERICCONSENTUNKNOWN403400.text);
+        TppMessageGENERICCONSENTUNKNOWN403400 tppMessageGENERICCONSENTUNKNOWN403400 =
+            (TppMessageGENERICCONSENTUNKNOWN403400) o;
+        return Objects.equals(this.category, tppMessageGENERICCONSENTUNKNOWN403400.category) && Objects.equals(this.code, tppMessageGENERICCONSENTUNKNOWN403400.code) && Objects.equals(this.path, tppMessageGENERICCONSENTUNKNOWN403400.path) && Objects.equals(this.text, tppMessageGENERICCONSENTUNKNOWN403400.text);
     }
 
     @Override
@@ -132,7 +130,6 @@ public class TppMessageGENERICCONSENTUNKNOWN403400 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessageGENERICCONSENTUNKNOWN403400 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -157,7 +154,6 @@ public class TppMessageGENERICCONSENTUNKNOWN403400 {
      */
     public enum CodeEnum {
         UNKNOWN("CONSENT_UNKNOWN");
-
         private String value;
 
         CodeEnum(String value) {
@@ -181,3 +177,4 @@ public class TppMessageGENERICCONSENTUNKNOWN403400 {
         }
     }
 }
+

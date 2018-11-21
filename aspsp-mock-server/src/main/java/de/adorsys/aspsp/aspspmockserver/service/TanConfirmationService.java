@@ -19,9 +19,10 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
+import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
+import de.adorsys.psd2.aspsp.mock.api.psu.Tan;
+import de.adorsys.psd2.aspsp.mock.api.psu.TanStatus;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +40,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED;
-import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.UNUSED;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Slf4j
@@ -63,14 +63,17 @@ public class TanConfirmationService {
     /**
      * Sends Authorization Request to user with selected Sca Method
      *
-     * @param psuId             PSU id
-     * @param scaMethodSelected Sca method selected by PSU
+     * @param psuId                  PSU id
+     * @param authenticationMethodId An Id of Sca method selected by PSU
      * @return true if PSU was found and Authorisation request sent successfully
      */
-    public boolean sendUserAuthRequestWithPreSelectedScaMethod(String psuId, SpiScaMethod scaMethodSelected) {
+    public boolean sendUserAuthRequestWithPreSelectedScaMethod(String psuId, String authenticationMethodId) {
         return accountService.getPsuByPsuId(psuId)
                    .map(psu -> {
-                       if (psu.getScaMethods().contains(scaMethodSelected)) {
+                       Optional<AspspAuthenticationObject> scaMethod = psu.getScaMethods().stream()
+                                                                           .filter(m -> authenticationMethodId.equals(m.getAuthenticationMethodId()))
+                                                                           .findFirst();
+                       if (scaMethod.isPresent()) {
                            return generateAndSendTanForPsuById(psuId);
                        }
                        return false;
@@ -117,14 +120,14 @@ public class TanConfirmationService {
 
     private int getTanNumberOfAttempts(String psuId) {
         return accountService.getPsuByPsuId(psuId)
-                   .flatMap(psu -> tanRepository.findByPsuIdAndTanStatus(psu.getPsuId(), UNUSED).stream()
+                   .flatMap(psu -> tanRepository.findByPsuIdAndTanStatus(psu.getPsuId(), TanStatus.UNUSED).stream()
                                        .findFirst()
                                        .map(Tan::getNumberOfAttempts))
                    .orElse(maximumNumberOfTanAttempts);
     }
 
     private boolean isPsuTanNumberValid(String psuId, String tanNumber) {
-        return tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED).stream()
+        return tanRepository.findByPsuIdAndTanStatus(psuId, TanStatus.UNUSED).stream()
                    .findFirst()
                    .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                    .orElse(false);
@@ -139,7 +142,7 @@ public class TanConfirmationService {
     }
 
     private void changeOldTansToInvalid(String psuId) {
-        List<Tan> tans = tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED);
+        List<Tan> tans = tanRepository.findByPsuIdAndTanStatus(psuId, TanStatus.UNUSED);
         if (isNotEmpty(tans)) {
             for (Tan oldTan : tans) {
                 oldTan.setTanStatus(TanStatus.INVALID);
@@ -204,9 +207,9 @@ public class TanConfirmationService {
 
     private void changeConsentStatusToRejected(String consentId, ConfirmationType confirmationType) {
         if (confirmationType == ConfirmationType.PAYMENT) {
-            paymentService.updatePaymentConsentStatus(consentId, REJECTED);
+            paymentService.updatePaymentConsentStatus(consentId, AspspConsentStatus.REJECTED);
         } else {
-            consentService.updateAisConsentStatus(consentId, REJECTED);
+            consentService.updateAisConsentStatus(consentId, AspspConsentStatus.REJECTED);
         }
     }
 }

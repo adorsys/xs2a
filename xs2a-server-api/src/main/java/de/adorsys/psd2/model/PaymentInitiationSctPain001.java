@@ -8,11 +8,12 @@ import java.util.Objects;
 /**
  * A pain.001 structure corresponding to the SCT schema  urn:iso:std:iso:20022:tech:xsd:pain.001.001.03
  */
-@ApiModel(description = "A pain.001 structure corresponding to the SCT schema  urn:iso:std:iso:20022:tech:xsd:pain.001.001.03 ")
+@ApiModel(description = "A pain.001 structure corresponding to the SCT schema  urn:iso:std:iso:20022:tech:xsd:pain" +
+    ".001.001.03 ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PaymentInitiationSctPain001 {
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -33,7 +34,6 @@ public class PaymentInitiationSctPain001 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PaymentInitiationSctPain001 {\n");
-
         sb.append("}");
         return sb.toString();
     }
@@ -49,3 +49,4 @@ public class PaymentInitiationSctPain001 {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

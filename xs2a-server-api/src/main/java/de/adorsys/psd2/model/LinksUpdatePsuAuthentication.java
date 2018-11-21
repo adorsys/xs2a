@@ -9,19 +9,37 @@ import java.util.HashMap;
 import java.util.Objects;
 
 /**
- * A list of hyperlinks to be recognised by the TPP. Might be contained, if several authentication methods  are available for the PSU. Type of links admitted in this response:   * &#x27;selectAuthenticationMethod&#x27;:      This is a link to a resource, where the TPP can select the applicable second factor authentication      methods for the PSU, if there were several available authentication methods.      This link is only contained, if the PSU is already identified or authenticated with the first relevant      factor or alternatively an access token, if SCA is required and if the PSU has a choice between different      authentication methods.      If this link is contained, then there is also the data element &#x27;scaMethods&#x27; contained in the response body.   * &#x27;authoriseTransaction&#x27;:      The link to the resource, where the \&quot;Transaction Authorisation Request\&quot; is sent to.      This is the link to the resource which will authorise the transaction by checking the SCA authentication      data within the Embedded SCA approach.   * &#x27;scaStatus&#x27;:      The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
+ * A list of hyperlinks to be recognised by the TPP. Might be contained, if several authentication methods are
+ * available for the PSU. Type of links admitted in this response:   * &#39;selectAuthenticationMethod&#39;:     This
+ * is a link to a resource, where the TPP can select the applicable second factor authentication     methods for the
+ * PSU, if there were several available authentication methods.     This link is only contained, if the PSU is
+ * already identified or authenticated with the first relevant     factor or alternatively an access token, if SCA is
+ * required and if the PSU has a choice between different     authentication methods.     If this link is contained,
+ * then there is also the data element &#39;scaMethods&#39; contained in the response body.   * &#39;
+ * authoriseTransaction&#39;:     The link to the resource, where the \&quot;Transaction Authorisation Request\&quot;
+ * is sent to.     This is the link to the resource which will authorise the transaction by checking the SCA
+ * authentication     data within the Embedded SCA approach.   * &#39;scaStatus&#39;:     The link to retrieve the
+ * scaStatus of the corresponding authorisation sub-resource.
  */
-@ApiModel(description = "A list of hyperlinks to be recognised by the TPP. Might be contained, if several authentication methods  are available for the PSU. Type of links admitted in this response:   * 'selectAuthenticationMethod':      This is a link to a resource, where the TPP can select the applicable second factor authentication      methods for the PSU, if there were several available authentication methods.      This link is only contained, if the PSU is already identified or authenticated with the first relevant      factor or alternatively an access token, if SCA is required and if the PSU has a choice between different      authentication methods.      If this link is contained, then there is also the data element 'scaMethods' contained in the response body.   * 'authoriseTransaction':      The link to the resource, where the \"Transaction Authorisation Request\" is sent to.      This is the link to the resource which will authorise the transaction by checking the SCA authentication      data within the Embedded SCA approach.   * 'scaStatus':      The link to retrieve the scaStatus of the corresponding authorisation sub-resource. ")
+@ApiModel(description = "A list of hyperlinks to be recognised by the TPP. Might be contained, if several " +
+    "authentication methods are available for the PSU. Type of links admitted in this response:   * " +
+    "'selectAuthenticationMethod':     This is a link to a resource, where the TPP can select the applicable second " +
+    "factor authentication     methods for the PSU, if there were several available authentication methods.     This " +
+    "link is only contained, if the PSU is already identified or authenticated with the first relevant     factor or " +
+    "alternatively an access token, if SCA is required and if the PSU has a choice between different     " +
+    "authentication methods.     If this link is contained, then there is also the data element 'scaMethods' " +
+    "contained in the response body.   * 'authoriseTransaction':     The link to the resource, where the " +
+    "\"Transaction Authorisation Request\" is sent to.     This is the link to the resource which will authorise the " +
+    "transaction by checking the SCA authentication     data within the Embedded SCA approach.   * 'scaStatus':     " +
+    "The link to retrieve the scaStatus of the corresponding authorisation sub-resource. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class LinksUpdatePsuAuthentication extends HashMap<String, String> {
-
     @JsonProperty("selectAuthenticationMethod")
     private String selectAuthenticationMethod = null;
-
     @JsonProperty("authoriseTransaction")
     private String authoriseTransaction = null;
-
     @JsonProperty("scaStatus")
     private String scaStatus = null;
 
@@ -35,7 +53,7 @@ public class LinksUpdatePsuAuthentication extends HashMap<String, String> {
      *
      * @return selectAuthenticationMethod
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getSelectAuthenticationMethod() {
         return selectAuthenticationMethod;
     }
@@ -54,7 +72,7 @@ public class LinksUpdatePsuAuthentication extends HashMap<String, String> {
      *
      * @return authoriseTransaction
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getAuthoriseTransaction() {
         return authoriseTransaction;
     }
@@ -73,7 +91,7 @@ public class LinksUpdatePsuAuthentication extends HashMap<String, String> {
      *
      * @return scaStatus
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getScaStatus() {
         return scaStatus;
     }
@@ -91,10 +109,10 @@ public class LinksUpdatePsuAuthentication extends HashMap<String, String> {
             return false;
         }
         LinksUpdatePsuAuthentication _linksUpdatePsuAuthentication = (LinksUpdatePsuAuthentication) o;
-        return Objects.equals(this.selectAuthenticationMethod, _linksUpdatePsuAuthentication.selectAuthenticationMethod) &&
-            Objects.equals(this.authoriseTransaction, _linksUpdatePsuAuthentication.authoriseTransaction) &&
-            Objects.equals(this.scaStatus, _linksUpdatePsuAuthentication.scaStatus) &&
-            super.equals(o);
+        return Objects.equals(this.selectAuthenticationMethod,
+            _linksUpdatePsuAuthentication.selectAuthenticationMethod) && Objects.equals(this.authoriseTransaction,
+            _linksUpdatePsuAuthentication.authoriseTransaction) && Objects.equals(this.scaStatus,
+            _linksUpdatePsuAuthentication.scaStatus) && super.equals(o);
     }
 
     @Override
@@ -125,3 +143,4 @@ public class LinksUpdatePsuAuthentication extends HashMap<String, String> {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

@@ -17,7 +17,12 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
-import de.adorsys.psd2.aspsp.profile.domain.*;
+import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
+import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +72,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * @param availablePaymentProducts List of payment product values
      */
     @Override
-    public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
+    public void updateAvailablePaymentProducts(List<PaymentProduct> availablePaymentProducts) {
         profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
     }
 
@@ -77,7 +82,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * @param availablePaymentTypes List of payment type values
      */
     @Override
-    public void updateAvailablePaymentTypes(List<String> availablePaymentTypes) {
+    public void updateAvailablePaymentTypes(List<PaymentType> availablePaymentTypes) {
         profileConfiguration.setAvailablePaymentTypes(availablePaymentTypes);
     }
 
@@ -188,16 +193,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     }
 
     /**
-     * Update type of authorization start to implicit or explicit
-     *
-     * @param authorisationStartType AllPsd2Support status to substitute existing one
-     */
-    @Override
-    public void updateAuthorisationStartType(AuthorisationStartType authorisationStartType) {
-        profileConfiguration.setAuthorisationStartType(authorisationStartType);
-    }
-
-    /**
      * Update the value of transactions without balances supported
      *
      * @param transactionsWithoutBalancesSupported the value of transactions without balances supported
@@ -225,5 +220,15 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     @Override
     public void updatePaymentCancellationAuthorizationMandated(boolean paymentCancellationAuthorizationMandated) {
         profileConfiguration.setPaymentCancellationAuthorizationMandated(paymentCancellationAuthorizationMandated);
+    }
+
+    /**
+     * Update the value of PIIS consent supported
+     *
+     * @param piisConsentSupported the value of PIIS consent supported
+     */
+    @Override
+    public void updatePiisConsentSupported(boolean piisConsentSupported) {
+        profileConfiguration.setPiisConsentSupported(piisConsentSupported);
     }
 }

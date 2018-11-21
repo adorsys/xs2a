@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspTransaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,22 +33,22 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountService accountService;
 
-    public List<SpiTransaction> getAllTransactions() {
+    public List<AspspTransaction> getAllTransactions() {
         return transactionRepository.findAll();
     }
 
-    public Optional<SpiTransaction> getTransactionById(String transactionId, String accountId) {
-        Optional<SpiAccountDetails> details = accountService.getAccountById(accountId);
+    public Optional<AspspTransaction> getTransactionById(String transactionId, String accountId) {
+        Optional<AspspAccountDetails> details = accountService.getAccountById(accountId);
         return details.map(det -> transactionRepository.findOneByTransactionIdAndAccount(det.getIban(), det.getCurrency(), transactionId));
     }
 
-    public Optional<String> saveTransaction(SpiTransaction transaction) {
+    public Optional<String> saveTransaction(AspspTransaction transaction) {
         return Optional.ofNullable(transactionRepository.save(transaction))
-                   .map(SpiTransaction::getTransactionId);
+                   .map(AspspTransaction::getTransactionId);
     }
 
-    public List<SpiTransaction> getTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
-        Optional<SpiAccountDetails> details = accountService.getAccountById(accountId);
+    public List<AspspTransaction> getTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
+        Optional<AspspAccountDetails> details = accountService.getAccountById(accountId);
         return details.map(det -> transactionRepository.findAllByDates(det.getIban(), det.getCurrency(), dateFrom, dateTo))
                    .orElseGet(Collections::emptyList);
     }

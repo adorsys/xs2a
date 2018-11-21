@@ -11,37 +11,31 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
- * JSON response body consistion of the corresponding SCT INST payment initation JSON body together with an optional transaction status field.
+ * JSON response body consistion of the corresponding SCT INST payment initation JSON body together with an optional
+ * transaction status field.
  */
-@ApiModel(description = "JSON response body consistion of the corresponding SCT INST payment initation JSON body together with an optional transaction status field. ")
+@ApiModel(description = "JSON response body consistion of the corresponding SCT INST payment initation JSON body " +
+    "together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PaymentInitiationSctInstWithStatusResponse {
-
     @JsonProperty("endToEndIdentification")
     private String endToEndIdentification = null;
-
     @JsonProperty("debtorAccount")
     private Object debtorAccount = null;
-
     @JsonProperty("instructedAmount")
     private Amount instructedAmount = null;
-
     @JsonProperty("creditorAccount")
     private Object creditorAccount = null;
-
     @JsonProperty("creditorAgent")
     private String creditorAgent = null;
-
     @JsonProperty("creditorName")
     private String creditorName = null;
-
     @JsonProperty("creditorAddress")
     private Address creditorAddress = null;
-
     @JsonProperty("remittanceInformationUnstructured")
     private String remittanceInformationUnstructured = null;
-
     @JsonProperty("transactionStatus")
     private TransactionStatus transactionStatus = null;
 
@@ -55,7 +49,7 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return endToEndIdentification
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 35)
     public String getEndToEndIdentification() {
         return endToEndIdentification;
@@ -75,9 +69,8 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return debtorAccount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public Object getDebtorAccount() {
         return debtorAccount;
     }
@@ -96,7 +89,7 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return instructedAmount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public Amount getInstructedAmount() {
@@ -117,9 +110,8 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return creditorAccount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public Object getCreditorAccount() {
         return creditorAccount;
     }
@@ -138,7 +130,7 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return creditorAgent
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getCreditorAgent() {
         return creditorAgent;
     }
@@ -157,9 +149,8 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return creditorName
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getCreditorName() {
         return creditorName;
     }
@@ -178,7 +169,7 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return creditorAddress
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public Address getCreditorAddress() {
         return creditorAddress;
@@ -198,7 +189,7 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return remittanceInformationUnstructured
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 140)
     public String getRemittanceInformationUnstructured() {
         return remittanceInformationUnstructured;
@@ -218,7 +209,7 @@ public class PaymentInitiationSctInstWithStatusResponse {
      *
      * @return transactionStatus
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public TransactionStatus getTransactionStatus() {
         return transactionStatus;
@@ -236,28 +227,28 @@ public class PaymentInitiationSctInstWithStatusResponse {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PaymentInitiationSctInstWithStatusResponse paymentInitiationSctInstWithStatusResponse = (PaymentInitiationSctInstWithStatusResponse) o;
-        return Objects.equals(this.endToEndIdentification, paymentInitiationSctInstWithStatusResponse.endToEndIdentification) &&
-            Objects.equals(this.debtorAccount, paymentInitiationSctInstWithStatusResponse.debtorAccount) &&
-            Objects.equals(this.instructedAmount, paymentInitiationSctInstWithStatusResponse.instructedAmount) &&
-            Objects.equals(this.creditorAccount, paymentInitiationSctInstWithStatusResponse.creditorAccount) &&
-            Objects.equals(this.creditorAgent, paymentInitiationSctInstWithStatusResponse.creditorAgent) &&
-            Objects.equals(this.creditorName, paymentInitiationSctInstWithStatusResponse.creditorName) &&
-            Objects.equals(this.creditorAddress, paymentInitiationSctInstWithStatusResponse.creditorAddress) &&
-            Objects.equals(this.remittanceInformationUnstructured, paymentInitiationSctInstWithStatusResponse.remittanceInformationUnstructured) &&
-            Objects.equals(this.transactionStatus, paymentInitiationSctInstWithStatusResponse.transactionStatus);
+        PaymentInitiationSctInstWithStatusResponse paymentInitiationSctInstWithStatusResponse =
+            (PaymentInitiationSctInstWithStatusResponse) o;
+        return Objects.equals(this.endToEndIdentification,
+            paymentInitiationSctInstWithStatusResponse.endToEndIdentification) && Objects.equals(this.debtorAccount,
+            paymentInitiationSctInstWithStatusResponse.debtorAccount) && Objects.equals(this.instructedAmount,
+            paymentInitiationSctInstWithStatusResponse.instructedAmount) && Objects.equals(this.creditorAccount,
+            paymentInitiationSctInstWithStatusResponse.creditorAccount) && Objects.equals(this.creditorAgent,
+            paymentInitiationSctInstWithStatusResponse.creditorAgent) && Objects.equals(this.creditorName,
+            paymentInitiationSctInstWithStatusResponse.creditorName) && Objects.equals(this.creditorAddress,
+            paymentInitiationSctInstWithStatusResponse.creditorAddress) && Objects.equals(this.remittanceInformationUnstructured, paymentInitiationSctInstWithStatusResponse.remittanceInformationUnstructured) && Objects.equals(this.transactionStatus, paymentInitiationSctInstWithStatusResponse.transactionStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(endToEndIdentification, debtorAccount, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, remittanceInformationUnstructured, transactionStatus);
+        return Objects.hash(endToEndIdentification, debtorAccount, instructedAmount, creditorAccount, creditorAgent,
+            creditorName, creditorAddress, remittanceInformationUnstructured, transactionStatus);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PaymentInitiationSctInstWithStatusResponse {\n");
-
         sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
         sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
         sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");
@@ -282,3 +273,4 @@ public class PaymentInitiationSctInstWithStatusResponse {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

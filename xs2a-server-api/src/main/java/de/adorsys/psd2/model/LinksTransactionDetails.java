@@ -12,9 +12,9 @@ import java.util.Objects;
  * LinksTransactionDetails
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class LinksTransactionDetails extends HashMap<String, String> {
-
     @JsonProperty("transactionDetails")
     private String transactionDetails = null;
 
@@ -28,9 +28,8 @@ public class LinksTransactionDetails extends HashMap<String, String> {
      *
      * @return transactionDetails
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getTransactionDetails() {
         return transactionDetails;
     }
@@ -48,8 +47,7 @@ public class LinksTransactionDetails extends HashMap<String, String> {
             return false;
         }
         LinksTransactionDetails _linksTransactionDetails = (LinksTransactionDetails) o;
-        return Objects.equals(this.transactionDetails, _linksTransactionDetails.transactionDetails) &&
-            super.equals(o);
+        return Objects.equals(this.transactionDetails, _linksTransactionDetails.transactionDetails) && super.equals(o);
     }
 
     @Override
@@ -78,3 +76,4 @@ public class LinksTransactionDetails extends HashMap<String, String> {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

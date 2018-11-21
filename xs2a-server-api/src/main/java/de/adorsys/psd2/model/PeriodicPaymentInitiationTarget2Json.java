@@ -16,45 +16,33 @@ import java.util.Objects;
  */
 @ApiModel(description = "JSON Body for a periodic target-2 payment initation. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PeriodicPaymentInitiationTarget2Json {
-
     @JsonProperty("endToEndIdentification")
     private String endToEndIdentification = null;
-
     @JsonProperty("debtorAccount")
     private Object debtorAccount = null;
-
     @JsonProperty("instructedAmount")
     private Amount instructedAmount = null;
-
     @JsonProperty("creditorAccount")
     private Object creditorAccount = null;
-
     @JsonProperty("creditorAgent")
     private String creditorAgent = null;
-
     @JsonProperty("creditorName")
     private String creditorName = null;
-
     @JsonProperty("creditorAddress")
     private Address creditorAddress = null;
-
     @JsonProperty("remittanceInformationUnstructured")
     private String remittanceInformationUnstructured = null;
-
     @JsonProperty("startDate")
     private LocalDate startDate = null;
-
     @JsonProperty("endDate")
     private LocalDate endDate = null;
-
     @JsonProperty("executionRule")
     private ExecutionRule executionRule = null;
-
     @JsonProperty("frequency")
     private FrequencyCode frequency = null;
-
     @JsonProperty("dayOfExecution")
     private DayOfExecution dayOfExecution = null;
 
@@ -68,7 +56,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return endToEndIdentification
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 35)
     public String getEndToEndIdentification() {
         return endToEndIdentification;
@@ -88,9 +76,8 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return debtorAccount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public Object getDebtorAccount() {
         return debtorAccount;
     }
@@ -109,7 +96,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return instructedAmount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public Amount getInstructedAmount() {
@@ -130,9 +117,8 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return creditorAccount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public Object getCreditorAccount() {
         return creditorAccount;
     }
@@ -151,7 +137,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return creditorAgent
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getCreditorAgent() {
         return creditorAgent;
     }
@@ -170,9 +156,8 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return creditorName
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getCreditorName() {
         return creditorName;
     }
@@ -191,7 +176,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return creditorAddress
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public Address getCreditorAddress() {
         return creditorAddress;
@@ -211,7 +196,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return remittanceInformationUnstructured
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 140)
     public String getRemittanceInformationUnstructured() {
         return remittanceInformationUnstructured;
@@ -231,7 +216,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return startDate
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public LocalDate getStartDate() {
@@ -252,7 +237,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return endDate
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public LocalDate getEndDate() {
         return endDate;
@@ -272,7 +257,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return executionRule
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ExecutionRule getExecutionRule() {
         return executionRule;
@@ -292,7 +277,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return frequency
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public FrequencyCode getFrequency() {
@@ -313,7 +298,7 @@ public class PeriodicPaymentInitiationTarget2Json {
      *
      * @return dayOfExecution
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public DayOfExecution getDayOfExecution() {
         return dayOfExecution;
@@ -331,32 +316,29 @@ public class PeriodicPaymentInitiationTarget2Json {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PeriodicPaymentInitiationTarget2Json periodicPaymentInitiationTarget2Json = (PeriodicPaymentInitiationTarget2Json) o;
-        return Objects.equals(this.endToEndIdentification, periodicPaymentInitiationTarget2Json.endToEndIdentification) &&
-            Objects.equals(this.debtorAccount, periodicPaymentInitiationTarget2Json.debtorAccount) &&
-            Objects.equals(this.instructedAmount, periodicPaymentInitiationTarget2Json.instructedAmount) &&
-            Objects.equals(this.creditorAccount, periodicPaymentInitiationTarget2Json.creditorAccount) &&
-            Objects.equals(this.creditorAgent, periodicPaymentInitiationTarget2Json.creditorAgent) &&
-            Objects.equals(this.creditorName, periodicPaymentInitiationTarget2Json.creditorName) &&
-            Objects.equals(this.creditorAddress, periodicPaymentInitiationTarget2Json.creditorAddress) &&
-            Objects.equals(this.remittanceInformationUnstructured, periodicPaymentInitiationTarget2Json.remittanceInformationUnstructured) &&
-            Objects.equals(this.startDate, periodicPaymentInitiationTarget2Json.startDate) &&
-            Objects.equals(this.endDate, periodicPaymentInitiationTarget2Json.endDate) &&
-            Objects.equals(this.executionRule, periodicPaymentInitiationTarget2Json.executionRule) &&
-            Objects.equals(this.frequency, periodicPaymentInitiationTarget2Json.frequency) &&
-            Objects.equals(this.dayOfExecution, periodicPaymentInitiationTarget2Json.dayOfExecution);
+        PeriodicPaymentInitiationTarget2Json periodicPaymentInitiationTarget2Json =
+            (PeriodicPaymentInitiationTarget2Json) o;
+        return Objects.equals(this.endToEndIdentification,
+            periodicPaymentInitiationTarget2Json.endToEndIdentification) && Objects.equals(this.debtorAccount,
+            periodicPaymentInitiationTarget2Json.debtorAccount) && Objects.equals(this.instructedAmount,
+            periodicPaymentInitiationTarget2Json.instructedAmount) && Objects.equals(this.creditorAccount,
+            periodicPaymentInitiationTarget2Json.creditorAccount) && Objects.equals(this.creditorAgent,
+            periodicPaymentInitiationTarget2Json.creditorAgent) && Objects.equals(this.creditorName,
+            periodicPaymentInitiationTarget2Json.creditorName) && Objects.equals(this.creditorAddress,
+            periodicPaymentInitiationTarget2Json.creditorAddress) && Objects.equals(this.remittanceInformationUnstructured, periodicPaymentInitiationTarget2Json.remittanceInformationUnstructured) && Objects.equals(this.startDate, periodicPaymentInitiationTarget2Json.startDate) && Objects.equals(this.endDate, periodicPaymentInitiationTarget2Json.endDate) && Objects.equals(this.executionRule, periodicPaymentInitiationTarget2Json.executionRule) && Objects.equals(this.frequency, periodicPaymentInitiationTarget2Json.frequency) && Objects.equals(this.dayOfExecution, periodicPaymentInitiationTarget2Json.dayOfExecution);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(endToEndIdentification, debtorAccount, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, remittanceInformationUnstructured, startDate, endDate, executionRule, frequency, dayOfExecution);
+        return Objects.hash(endToEndIdentification, debtorAccount, instructedAmount, creditorAccount, creditorAgent,
+            creditorName, creditorAddress, remittanceInformationUnstructured, startDate, endDate, executionRule,
+            frequency, dayOfExecution);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PeriodicPaymentInitiationTarget2Json {\n");
-
         sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
         sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
         sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");
@@ -385,3 +367,4 @@ public class PeriodicPaymentInitiationTarget2Json {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

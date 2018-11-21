@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountBalance;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,10 +40,10 @@ public class AccountService {
      * @param accountDetails account details to be added
      * @return Optional of saved account details
      */
-    public Optional<SpiAccountDetails> addAccount(String psuId, SpiAccountDetails accountDetails) {
+    public Optional<AspspAccountDetails> addAccount(String psuId, AspspAccountDetails accountDetails) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
                    .map(psu -> addAccountToPsuAndSave(psu, accountDetails))
-                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
+                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getResourceId()));
     }
 
     /**
@@ -51,7 +51,7 @@ public class AccountService {
      *
      * @return list of all accounts at ASPSP
      */
-    public List<SpiAccountDetails> getAllAccounts() {
+    public List<AspspAccountDetails> getAllAccounts() {
         return psuRepository.findAll().stream()
                    .flatMap(psu -> psu.getAccountDetailsList().stream())
                    .collect(Collectors.toList());
@@ -63,8 +63,8 @@ public class AccountService {
      * @param accountId accounts primary ASPSP identifier
      * @return Optional of account details
      */
-    public Optional<SpiAccountDetails> getAccountById(String accountId) {
-        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+    public Optional<AspspAccountDetails> getAccountById(String accountId) {
+        return psuRepository.findPsuByAccountDetailsList_ResourceId(accountId)
                    .flatMap(psu -> findAccountInPsuById(psu, accountId));
     }
 
@@ -74,12 +74,12 @@ public class AccountService {
      * @param iban account IBAN
      * @return list of account details
      */
-    public List<SpiAccountDetails> getAccountsByIban(String iban) {
+    public List<AspspAccountDetails> getAccountsByIban(String iban) {
         return psuRepository.findPsuByAccountDetailsList_Iban(iban)
                    .map(psu -> psu.getAccountDetailsList().stream()
                                    .filter(aD -> aD.getIban().equals(iban))
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     Optional<String> getPsuIdByIban(String iban) {
@@ -97,11 +97,11 @@ public class AccountService {
      * @param accountId accounts primary ASPSP identifier
      * @return list of account balances
      */
-    public List<SpiAccountBalance> getAccountBalancesById(String accountId) {
-        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+    public List<AspspAccountBalance> getAccountBalancesById(String accountId) {
+        return psuRepository.findPsuByAccountDetailsList_ResourceId(accountId)
                    .flatMap(psu -> findAccountInPsuById(psu, accountId))
-                   .map(SpiAccountDetails::getBalances)
-                   .orElse(Collections.emptyList());
+                   .map(AspspAccountDetails::getBalances)
+                   .orElseGet(Collections::emptyList);
     }
 
     /**
@@ -110,10 +110,10 @@ public class AccountService {
      * @param psuId PSU's primary ASPSP identifier
      * @return list of account details
      */
-    public List<SpiAccountDetails> getAccountsByPsuId(String psuId) {
+    public List<AspspAccountDetails> getAccountsByPsuId(String psuId) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
                    .map(Psu::getAccountDetailsList)
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     /**
@@ -122,26 +122,26 @@ public class AccountService {
      * @param accountId accounts primary ASPSP identifier
      */
     public void deleteAccountById(String accountId) {
-        psuRepository.findPsuByAccountDetailsList_Id(accountId)
+        psuRepository.findPsuByAccountDetailsList_ResourceId(accountId)
             .map(psu -> getPsuWithFilteredAccountListById(psu, accountId))
             .map(psuRepository::save);
     }
 
-    Optional<SpiAccountDetails> updateAccount(SpiAccountDetails accountDetails) {
-        return Optional.ofNullable(accountDetails.getId())
-                   .flatMap(psuRepository::findPsuByAccountDetailsList_Id)
+    Optional<AspspAccountDetails> updateAccount(AspspAccountDetails accountDetails) {
+        return Optional.ofNullable(accountDetails.getResourceId())
+                   .flatMap(psuRepository::findPsuByAccountDetailsList_ResourceId)
                    .map(psu -> updateAccountInPsu(psu, accountDetails))
-                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
+                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getResourceId()));
     }
 
-    private Psu updateAccountInPsu(Psu psu, SpiAccountDetails accountDetails) {
-        Psu filteredPsu = getPsuWithFilteredAccountListById(psu, accountDetails.getId());
+    private Psu updateAccountInPsu(Psu psu, AspspAccountDetails accountDetails) {
+        Psu filteredPsu = getPsuWithFilteredAccountListById(psu, accountDetails.getResourceId());
         return addAccountToPsuAndSave(filteredPsu, accountDetails);
     }
 
-    private Optional<SpiAccountDetails> findAccountInPsuById(Psu psu, String accountId) {
+    private Optional<AspspAccountDetails> findAccountInPsuById(Psu psu, String accountId) {
         return psu.getAccountDetailsList().stream()
-                   .filter(acc -> acc.getId().equals(accountId))
+                   .filter(acc -> acc.getResourceId().equals(accountId))
                    .findFirst();
     }
 
@@ -150,14 +150,14 @@ public class AccountService {
         return psu;
     }
 
-    private Psu addAccountToPsuAndSave(Psu psu, SpiAccountDetails accountDetails) {
+    private Psu addAccountToPsuAndSave(Psu psu, AspspAccountDetails accountDetails) {
         psu.getAccountDetailsList().add(accountDetails);
         return psuRepository.save(psu);
     }
 
-    private List<SpiAccountDetails> getFilteredAccountDetailsListFromPsuById(Psu psu, String accountId) {
+    private List<AspspAccountDetails> getFilteredAccountDetailsListFromPsuById(Psu psu, String accountId) {
         return psu.getAccountDetailsList().stream()
-                   .filter(ad -> !ad.getId().equals(accountId))
+                   .filter(ad -> !ad.getResourceId().equals(accountId))
                    .collect(Collectors.toList());
     }
 }

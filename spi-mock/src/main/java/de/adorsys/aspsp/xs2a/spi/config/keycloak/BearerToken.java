@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
+import static de.adorsys.aspsp.xs2a.spi.config.keycloak.AuthorizationConstant.BEARER_TOKEN_PREFIX;
 
 @Data
 @AllArgsConstructor

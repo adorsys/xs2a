@@ -9,16 +9,19 @@ import javax.validation.Valid;
 import java.util.Objects;
 
 /**
- * The multipart message definition for the initiation of a periodic payment initiation  where the information of the payment is contained in an pain.001 message (Part 1) and  the additional informations related to the periodic payment is an additional JSON message (Part 2).
+ * The multipart message definition for the initiation of a periodic payment initiation where the information of the
+ * payment is contained in an pain.001 message (Part 1) and the additional informations related to the periodic
+ * payment is an additional JSON message (Part 2).
  */
-@ApiModel(description = "The multipart message definition for the initiation of a periodic payment initiation  where the information of the payment is contained in an pain.001 message (Part 1) and  the additional informations related to the periodic payment is an additional JSON message (Part 2). ")
+@ApiModel(description = "The multipart message definition for the initiation of a periodic payment initiation where " +
+    "the information of the payment is contained in an pain.001 message (Part 1) and the additional informations " +
+    "related to the periodic payment is an additional JSON message (Part 2). ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PeriodicPaymentInitiationMultipartBody {
-
     @JsonProperty("xml_sct")
     private Object xmlSct = null;
-
     @JsonProperty("json_standingorderType")
     private PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonStandingorderType = null;
 
@@ -32,7 +35,7 @@ public class PeriodicPaymentInitiationMultipartBody {
      *
      * @return xmlSct
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public Object getXmlSct() {
         return xmlSct;
     }
@@ -51,7 +54,7 @@ public class PeriodicPaymentInitiationMultipartBody {
      *
      * @return jsonStandingorderType
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson getJsonStandingorderType() {
         return jsonStandingorderType;
@@ -69,9 +72,9 @@ public class PeriodicPaymentInitiationMultipartBody {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PeriodicPaymentInitiationMultipartBody periodicPaymentInitiationMultipartBody = (PeriodicPaymentInitiationMultipartBody) o;
-        return Objects.equals(this.xmlSct, periodicPaymentInitiationMultipartBody.xmlSct) &&
-            Objects.equals(this.jsonStandingorderType, periodicPaymentInitiationMultipartBody.jsonStandingorderType);
+        PeriodicPaymentInitiationMultipartBody periodicPaymentInitiationMultipartBody =
+            (PeriodicPaymentInitiationMultipartBody) o;
+        return Objects.equals(this.xmlSct, periodicPaymentInitiationMultipartBody.xmlSct) && Objects.equals(this.jsonStandingorderType, periodicPaymentInitiationMultipartBody.jsonStandingorderType);
     }
 
     @Override
@@ -83,7 +86,6 @@ public class PeriodicPaymentInitiationMultipartBody {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PeriodicPaymentInitiationMultipartBody {\n");
-
         sb.append("    xmlSct: ").append(toIndentedString(xmlSct)).append("\n");
         sb.append("    jsonStandingorderType: ").append(toIndentedString(jsonStandingorderType)).append("\n");
         sb.append("}");
@@ -101,3 +103,4 @@ public class PeriodicPaymentInitiationMultipartBody {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

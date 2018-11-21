@@ -8,11 +8,12 @@ import java.util.Objects;
 /**
  * This identification is given by the attribute resourceId of the corresponding entry of a transaction list.
  */
-@ApiModel(description = "This identification is given by the attribute resourceId of the corresponding entry of a transaction list. ")
+@ApiModel(description = "This identification is given by the attribute resourceId of the corresponding entry of a " +
+    "transaction list. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class ResourceId {
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -33,7 +34,6 @@ public class ResourceId {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class ResourceId {\n");
-
         sb.append("}");
         return sb.toString();
     }
@@ -49,3 +49,4 @@ public class ResourceId {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

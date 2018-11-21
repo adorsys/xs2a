@@ -16,9 +16,9 @@ import java.util.Objects;
  */
 @ApiModel(description = "The OAuth2 token cannot be matched by the ASPSP relative to the TPP.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessageGENERICTOKENUNKNOWN401 {
-
     @JsonProperty("category")
     private TppMessageCategory category = null;
     @JsonProperty("code")
@@ -38,7 +38,7 @@ public class TppMessageGENERICTOKENUNKNOWN401 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -59,9 +59,8 @@ public class TppMessageGENERICTOKENUNKNOWN401 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public CodeEnum getCode() {
         return code;
     }
@@ -80,7 +79,7 @@ public class TppMessageGENERICTOKENUNKNOWN401 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -99,7 +98,7 @@ public class TppMessageGENERICTOKENUNKNOWN401 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -117,10 +116,9 @@ public class TppMessageGENERICTOKENUNKNOWN401 {
             return false;
         }
         TppMessageGENERICTOKENUNKNOWN401 tppMessageGENERICTOKENUNKNOWN401 = (TppMessageGENERICTOKENUNKNOWN401) o;
-        return Objects.equals(this.category, tppMessageGENERICTOKENUNKNOWN401.category) &&
-            Objects.equals(this.code, tppMessageGENERICTOKENUNKNOWN401.code) &&
-            Objects.equals(this.path, tppMessageGENERICTOKENUNKNOWN401.path) &&
-            Objects.equals(this.text, tppMessageGENERICTOKENUNKNOWN401.text);
+        return Objects.equals(this.category, tppMessageGENERICTOKENUNKNOWN401.category) && Objects.equals(this.code,
+            tppMessageGENERICTOKENUNKNOWN401.code) && Objects.equals(this.path,
+            tppMessageGENERICTOKENUNKNOWN401.path) && Objects.equals(this.text, tppMessageGENERICTOKENUNKNOWN401.text);
     }
 
     @Override
@@ -132,7 +130,6 @@ public class TppMessageGENERICTOKENUNKNOWN401 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessageGENERICTOKENUNKNOWN401 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -157,7 +154,6 @@ public class TppMessageGENERICTOKENUNKNOWN401 {
      */
     public enum CodeEnum {
         UNKNOWN("TOKEN_UNKNOWN");
-
         private String value;
 
         CodeEnum(String value) {
@@ -181,3 +177,4 @@ public class TppMessageGENERICTOKENUNKNOWN401 {
         }
     }
 }
+

@@ -16,45 +16,43 @@
 
 package de.adorsys.aspsp.aspspmockserver.service.mapper;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.aspspmockserver.domain.pis.AspspPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 public class PaymentMapper {
-    public List<AspspPayment> mapToAspspPaymentList(List<SpiSinglePayment> payments) {
-        String bulkId = generateId();
+    public List<AspspPayment> mapToAspspPaymentList(List<AspspSinglePayment> payments, String bulkId) {
         return payments.stream()
                    .map(p -> mapToBulkAspspPayment(p, bulkId))
                    .collect(Collectors.toList());
     }
 
-    private AspspPayment mapToBulkAspspPayment(SpiSinglePayment spiSinglePayment, String bulkId) {
-        AspspPayment aspspPayment = mapToAspspPayment(spiSinglePayment, PisPaymentType.BULK);
+    private AspspPayment mapToBulkAspspPayment(AspspSinglePayment aspspSinglePayment, String bulkId) {
+        AspspPayment aspspPayment = mapToAspspPayment(aspspSinglePayment, PisPaymentType.BULK);
         aspspPayment.setBulkId(bulkId);
         return aspspPayment;
     }
 
-    public List<SpiSinglePayment> mapToSpiSinglePaymentList(List<AspspPayment> payments) {
+    public List<AspspSinglePayment> mapToAspspSinglePaymentList(List<AspspPayment> payments) {
         return payments.stream()
-                   .map(this::mapToSpiSinglePayment)
+                   .map(this::mapToAspspSinglePayment)
                    .collect(Collectors.toList());
     }
 
-    public AspspPayment mapToAspspPayment(SpiSinglePayment singlePayment, PisPaymentType paymentType) {
+    public AspspPayment mapToAspspPayment(AspspSinglePayment singlePayment, PisPaymentType paymentType) {
         return Optional.ofNullable(singlePayment)
                    .map(s -> buildAspspPayment(s, paymentType))
                    .orElse(null);
     }
 
-    public AspspPayment mapToAspspPayment(SpiPeriodicPayment periodicPayment, PisPaymentType paymentType) {
+    public AspspPayment mapToAspspPayment(AspspPeriodicPayment periodicPayment, PisPaymentType paymentType) {
         return Optional.ofNullable(periodicPayment)
                    .map(s -> {
                        AspspPayment aspsp = buildAspspPayment(periodicPayment, paymentType);
@@ -68,7 +66,7 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    private AspspPayment buildAspspPayment(SpiSinglePayment single, PisPaymentType paymentType) {
+    private AspspPayment buildAspspPayment(AspspSinglePayment single, PisPaymentType paymentType) {
         AspspPayment aspsp = new AspspPayment(paymentType);
         aspsp.setPaymentId(single.getPaymentId());
         aspsp.setEndToEndIdentification(single.getEndToEndIdentification());
@@ -89,10 +87,10 @@ public class PaymentMapper {
         return aspsp;
     }
 
-    public SpiSinglePayment mapToSpiSinglePayment(AspspPayment aspspPayment) {
+    public AspspSinglePayment mapToAspspSinglePayment(AspspPayment aspspPayment) {
         return Optional.ofNullable(aspspPayment)
                    .map(aspsp -> {
-                       SpiSinglePayment single = new SpiSinglePayment();
+                       AspspSinglePayment single = new AspspSinglePayment();
                        single.setPaymentId(aspsp.getPaymentId());
                        single.setEndToEndIdentification(aspsp.getEndToEndIdentification());
                        single.setDebtorAccount(aspsp.getDebtorAccount());
@@ -114,10 +112,10 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public SpiPeriodicPayment mapToSpiPeriodicPayment(AspspPayment aspspPayment) {
+    public AspspPeriodicPayment mapToAspspPeriodicPayment(AspspPayment aspspPayment) {
         return Optional.ofNullable(aspspPayment)
                    .map(aspsp -> {
-                       SpiPeriodicPayment periodic = new SpiPeriodicPayment();
+                       AspspPeriodicPayment periodic = new AspspPeriodicPayment();
                        periodic.setPaymentId(aspsp.getPaymentId());
                        periodic.setEndToEndIdentification(aspsp.getEndToEndIdentification());
                        periodic.setDebtorAccount(aspsp.getDebtorAccount());
@@ -141,9 +139,5 @@ public class PaymentMapper {
                        return periodic;
                    })
                    .orElse(null);
-    }
-
-    private String generateId() {
-        return UUID.randomUUID().toString();
     }
 }

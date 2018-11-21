@@ -1,0 +1,18 @@
+{
+  "request": {
+    "header": {
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT",
+      "bookingStatus": "booked"
+    },
+    "body": {
+    }
+  },
+  "response": {
+    "code": "400",
+    "header": {},
+    "body": {
+      "category": "ERROR",
+      "code": "FORMAT_ERROR"
+    }
+  }
+}

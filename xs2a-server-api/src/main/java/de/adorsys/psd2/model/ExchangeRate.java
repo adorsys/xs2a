@@ -15,24 +15,19 @@ import java.util.Objects;
  */
 @ApiModel(description = "Exchange Rate")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class ExchangeRate {
-
     @JsonProperty("currencyFrom")
     private String currencyFrom = null;
-
     @JsonProperty("rateFrom")
     private String rateFrom = null;
-
     @JsonProperty("currencyTo")
     private String currencyTo = null;
-
     @JsonProperty("rateTo")
     private String rateTo = null;
-
     @JsonProperty("rateDate")
     private LocalDate rateDate = null;
-
     @JsonProperty("rateContract")
     private String rateContract = null;
 
@@ -46,9 +41,8 @@ public class ExchangeRate {
      *
      * @return currencyFrom
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getCurrencyFrom() {
         return currencyFrom;
     }
@@ -67,9 +61,8 @@ public class ExchangeRate {
      *
      * @return rateFrom
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getRateFrom() {
         return rateFrom;
     }
@@ -88,9 +81,8 @@ public class ExchangeRate {
      *
      * @return currencyTo
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getCurrencyTo() {
         return currencyTo;
     }
@@ -109,9 +101,8 @@ public class ExchangeRate {
      *
      * @return rateTo
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getRateTo() {
         return rateTo;
     }
@@ -130,7 +121,7 @@ public class ExchangeRate {
      *
      * @return rateDate
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public LocalDate getRateDate() {
@@ -151,7 +142,7 @@ public class ExchangeRate {
      *
      * @return rateContract
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getRateContract() {
         return rateContract;
     }
@@ -169,12 +160,8 @@ public class ExchangeRate {
             return false;
         }
         ExchangeRate exchangeRate = (ExchangeRate) o;
-        return Objects.equals(this.currencyFrom, exchangeRate.currencyFrom) &&
-            Objects.equals(this.rateFrom, exchangeRate.rateFrom) &&
-            Objects.equals(this.currencyTo, exchangeRate.currencyTo) &&
-            Objects.equals(this.rateTo, exchangeRate.rateTo) &&
-            Objects.equals(this.rateDate, exchangeRate.rateDate) &&
-            Objects.equals(this.rateContract, exchangeRate.rateContract);
+        return Objects.equals(this.currencyFrom, exchangeRate.currencyFrom) && Objects.equals(this.rateFrom,
+            exchangeRate.rateFrom) && Objects.equals(this.currencyTo, exchangeRate.currencyTo) && Objects.equals(this.rateTo, exchangeRate.rateTo) && Objects.equals(this.rateDate, exchangeRate.rateDate) && Objects.equals(this.rateContract, exchangeRate.rateContract);
     }
 
     @Override
@@ -186,7 +173,6 @@ public class ExchangeRate {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class ExchangeRate {\n");
-
         sb.append("    currencyFrom: ").append(toIndentedString(currencyFrom)).append("\n");
         sb.append("    rateFrom: ").append(toIndentedString(rateFrom)).append("\n");
         sb.append("    currencyTo: ").append(toIndentedString(currencyTo)).append("\n");
@@ -208,3 +194,4 @@ public class ExchangeRate {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

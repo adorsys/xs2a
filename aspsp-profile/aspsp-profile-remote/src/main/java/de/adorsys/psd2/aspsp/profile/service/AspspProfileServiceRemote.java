@@ -18,7 +18,7 @@ package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.AspspProfileRemoteUrls;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;

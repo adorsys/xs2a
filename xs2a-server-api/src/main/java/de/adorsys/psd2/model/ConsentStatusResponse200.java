@@ -14,9 +14,9 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successful get status request for a consent.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class ConsentStatusResponse200 {
-
     @JsonProperty("consentStatus")
     private ConsentStatus consentStatus = null;
 
@@ -30,7 +30,7 @@ public class ConsentStatusResponse200 {
      *
      * @return consentStatus
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public ConsentStatus getConsentStatus() {
@@ -62,7 +62,6 @@ public class ConsentStatusResponse200 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class ConsentStatusResponse200 {\n");
-
         sb.append("    consentStatus: ").append(toIndentedString(consentStatus)).append("\n");
         sb.append("}");
         return sb.toString();
@@ -79,3 +78,4 @@ public class ConsentStatusResponse200 {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

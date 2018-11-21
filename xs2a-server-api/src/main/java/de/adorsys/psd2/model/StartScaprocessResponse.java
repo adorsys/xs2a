@@ -15,24 +15,19 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a Start SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class StartScaprocessResponse {
-
     @JsonProperty("scaStatus")
     private ScaStatus scaStatus = null;
-
     @JsonProperty("scaMethods")
     private ScaMethods scaMethods = null;
-
     @JsonProperty("chosenScaMethod")
     private ChosenScaMethod chosenScaMethod = null;
-
     @JsonProperty("challengeData")
     private ChallengeData challengeData = null;
-
     @JsonProperty("_links")
     private Map _links = null;
-
     @JsonProperty("psuMessage")
     private String psuMessage = null;
 
@@ -46,7 +41,7 @@ public class StartScaprocessResponse {
      *
      * @return scaStatus
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public ScaStatus getScaStatus() {
@@ -67,7 +62,7 @@ public class StartScaprocessResponse {
      *
      * @return scaMethods
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ScaMethods getScaMethods() {
         return scaMethods;
@@ -87,7 +82,7 @@ public class StartScaprocessResponse {
      *
      * @return chosenScaMethod
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ChosenScaMethod getChosenScaMethod() {
         return chosenScaMethod;
@@ -107,7 +102,7 @@ public class StartScaprocessResponse {
      *
      * @return challengeData
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ChallengeData getChallengeData() {
         return challengeData;
@@ -127,7 +122,7 @@ public class StartScaprocessResponse {
      *
      * @return _links
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public Map getLinks() {
@@ -148,7 +143,7 @@ public class StartScaprocessResponse {
      *
      * @return psuMessage
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPsuMessage() {
         return psuMessage;
     }
@@ -166,12 +161,10 @@ public class StartScaprocessResponse {
             return false;
         }
         StartScaprocessResponse startScaprocessResponse = (StartScaprocessResponse) o;
-        return Objects.equals(this.scaStatus, startScaprocessResponse.scaStatus) &&
-            Objects.equals(this.scaMethods, startScaprocessResponse.scaMethods) &&
-            Objects.equals(this.chosenScaMethod, startScaprocessResponse.chosenScaMethod) &&
-            Objects.equals(this.challengeData, startScaprocessResponse.challengeData) &&
-            Objects.equals(this._links, startScaprocessResponse._links) &&
-            Objects.equals(this.psuMessage, startScaprocessResponse.psuMessage);
+        return Objects.equals(this.scaStatus, startScaprocessResponse.scaStatus) && Objects.equals(this.scaMethods,
+            startScaprocessResponse.scaMethods) && Objects.equals(this.chosenScaMethod,
+            startScaprocessResponse.chosenScaMethod) && Objects.equals(this.challengeData,
+            startScaprocessResponse.challengeData) && Objects.equals(this._links, startScaprocessResponse._links) && Objects.equals(this.psuMessage, startScaprocessResponse.psuMessage);
     }
 
     @Override
@@ -183,7 +176,6 @@ public class StartScaprocessResponse {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class StartScaprocessResponse {\n");
-
         sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
         sb.append("    scaMethods: ").append(toIndentedString(scaMethods)).append("\n");
         sb.append("    chosenScaMethod: ").append(toIndentedString(chosenScaMethod)).append("\n");
@@ -205,3 +197,4 @@ public class StartScaprocessResponse {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

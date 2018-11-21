@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.config.rest.consent.AisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +41,7 @@ public class ConsentService {
      * @param consentId Consent primary identifier
      * @param consentStatus New status of the AIS consent
      */
-    public void updateAisConsentStatus(@NotNull String consentId, SpiConsentStatus consentStatus) {
+    public void updateAisConsentStatus(@NotNull String consentId, AspspConsentStatus consentStatus) {
         consentRestTemplate.put(aisConsentRemoteUrls.updateAisConsentStatus(), null, consentId, consentStatus.name());
     }
 }

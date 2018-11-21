@@ -13,12 +13,11 @@ import java.util.Objects;
  */
 @ApiModel(description = "An alias to access a payment account via a registered mobile phone number. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class AccountReferenceMsisdn {
-
     @JsonProperty("msisdn")
     private String msisdn = null;
-
     @JsonProperty("currency")
     private String currency = null;
 
@@ -32,9 +31,8 @@ public class AccountReferenceMsisdn {
      *
      * @return msisdn
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getMsisdn() {
         return msisdn;
     }
@@ -53,7 +51,7 @@ public class AccountReferenceMsisdn {
      *
      * @return currency
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getCurrency() {
         return currency;
     }
@@ -71,8 +69,8 @@ public class AccountReferenceMsisdn {
             return false;
         }
         AccountReferenceMsisdn accountReferenceMsisdn = (AccountReferenceMsisdn) o;
-        return Objects.equals(this.msisdn, accountReferenceMsisdn.msisdn) &&
-            Objects.equals(this.currency, accountReferenceMsisdn.currency);
+        return Objects.equals(this.msisdn, accountReferenceMsisdn.msisdn) && Objects.equals(this.currency,
+            accountReferenceMsisdn.currency);
     }
 
     @Override
@@ -84,7 +82,6 @@ public class AccountReferenceMsisdn {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class AccountReferenceMsisdn {\n");
-
         sb.append("    msisdn: ").append(toIndentedString(msisdn)).append("\n");
         sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
         sb.append("}");
@@ -102,3 +99,4 @@ public class AccountReferenceMsisdn {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

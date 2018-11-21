@@ -23,14 +23,22 @@ public class Context<T, U> {
     @Value("${aspspMock.baseUrl}")
     private String mockUrl;
 
+    @Value("${aspspProfile.baseUrl}")
+    private String profileUrl;
+
     @Autowired
     private ObjectMapper mapper;
 
     private String scaApproach;
+    private String scaMethod;
+    private String tanValue;
     private String paymentProduct;
     private String paymentService;
     private String accessToken;
     private String paymentId;
+    private String authorisationId;
+    private String consentId;
+    private String ressourceId;
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
     private TppMessages tppMessages;
@@ -45,10 +53,15 @@ public class Context<T, U> {
 
     public void cleanUp() {
         this.scaApproach = null;
+        this.scaMethod = null;
+        this.tanValue = null;
         this.paymentProduct = null;
         this.paymentService = null;
         this.accessToken = null;
         this.paymentId = null;
+        this.authorisationId = null;
+        this.consentId = null;
+        this.ressourceId = null;
         this.testData = null;
         this.actualResponse = null;
         this.tppMessages = null;

@@ -19,24 +19,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.adorsys.aspsp</groupId>
+    <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.9-SNAPSHOT</version>
+    <version>1.12-SNAPSHOT</version>
     <modules>
-        <module>aspsp-idp</module>
+        <module>xs2a-server-api</module>
+        <module>xs2a-core</module>
+        <module>aspsp-profile</module>
+        <module>xs2a-impl</module>
         <module>spi-api</module>
         <module>spi-mock</module>
+        <module>consent-management</module>
+        <module>aspsp-idp</module>
+        <module>aspsp-mock-api</module>
         <module>aspsp-mock-server</module>
-        <module>xs2a-server-api</module>
-        <module>xs2a-impl</module>
         <module>psd2-validator</module>
-        <module>consent-management-system</module>
-        <module>consent-api</module>
-        <module>aspsp-profile</module>
         <module>integration-tests</module>
-        <module>cms-db-schema</module>
         <module>online-banking-demo</module>
-        <module>cms-client</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -131,6 +130,8 @@
         <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
         <commons-validator.version>1.6</commons-validator.version>
         <swagger.annotations.version>1.5.20</swagger.annotations.version>
+        <jetbrains.annotations.version>15.0</jetbrains.annotations.version>
+        <archunit-junit4.version>0.9.1</archunit-junit4.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
@@ -153,6 +154,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>${apache.commons.collections}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${jetbrains.annotations.version}</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
@@ -237,7 +244,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <additionalOptions>-Xdoclint:none</additionalOptions>
                         </configuration>
                         <executions>
                             <execution>

@@ -17,18 +17,19 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
-        <version>1.9-SNAPSHOT</version>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>1.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>spi-mock</artifactId>
     <packaging>jar</packaging>
 
-    <name>spi-mock</name>
     <description>Mock spi interfaces for aspsp</description>
 
     <properties>
@@ -37,22 +38,40 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
-            <artifactId>spi-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
-        </dependency>
+        <!-- project dependencies -->
+
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>aspsp-profile-remote</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <artifactId>spi-api</artifactId>
+            <version>1.12-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-remote</artifactId>
+            <version>1.12-SNAPSHOT</version>
         </dependency>
+
+        <!-- CMS remote mode -->
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-xs2a-client</artifactId>
+            <version>1.12-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-impl</artifactId>
+            <version>1.12-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-mock-api</artifactId>
+            <version>1.12-SNAPSHOT</version>
+        </dependency>
+
+        <!-- spring dependencies -->
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -64,10 +83,12 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
+        <!-- other dependencies -->
+
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
-            <artifactId>xs2a-impl</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.annotations.version}</version>
         </dependency>
 
         <dependency>
@@ -81,6 +102,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
     </dependencies>
 
     <build>

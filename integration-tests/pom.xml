@@ -22,8 +22,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
-        <version>1.9-SNAPSHOT</version>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>1.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -106,25 +106,22 @@
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
             <version>${cucumber.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
             <version>${cucumber.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-spring</artifactId>
             <version>${cucumber.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.12-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -134,9 +131,9 @@
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
-            <artifactId>consent-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-xs2a-api</artifactId>
+            <version>1.12-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -144,15 +141,20 @@
             <artifactId>xs2a-adapter</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>xs2a-integtests</finalName>
         <plugins>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
                     <mainClass>de.adorsys.aspsp.xs2a.integtest.IntegrationTestApp</mainClass>
@@ -165,7 +167,27 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cluecumber-report-plugin</artifactId>
+                <version>1.4.2</version>
+                <executions>
+                    <execution>
+                        <id>report</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>reporting</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceJsonReportDirectory>${project.basedir}/cucumber-report</sourceJsonReportDirectory>
+                    <generatedHtmlReportDirectory>${project.build.directory}/generated-report</generatedHtmlReportDirectory>
+                    <customParameters>
+                        <Custom_Parameter>Please check the timestamp above to ensure it is the latest report</Custom_Parameter>
+                    </customParameters>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

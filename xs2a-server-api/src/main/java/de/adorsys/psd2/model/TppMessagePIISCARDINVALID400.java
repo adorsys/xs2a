@@ -16,9 +16,9 @@ import java.util.Objects;
  */
 @ApiModel(description = "Addressed card number is unknown to the ASPSP or not associated to the PSU. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessagePIISCARDINVALID400 {
-
     @JsonProperty("category")
     private TppMessageCategory category = null;
     @JsonProperty("code")
@@ -38,7 +38,7 @@ public class TppMessagePIISCARDINVALID400 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -59,9 +59,8 @@ public class TppMessagePIISCARDINVALID400 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public CodeEnum getCode() {
         return code;
     }
@@ -80,7 +79,7 @@ public class TppMessagePIISCARDINVALID400 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -99,7 +98,7 @@ public class TppMessagePIISCARDINVALID400 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -117,10 +116,8 @@ public class TppMessagePIISCARDINVALID400 {
             return false;
         }
         TppMessagePIISCARDINVALID400 tppMessagePIISCARDINVALID400 = (TppMessagePIISCARDINVALID400) o;
-        return Objects.equals(this.category, tppMessagePIISCARDINVALID400.category) &&
-            Objects.equals(this.code, tppMessagePIISCARDINVALID400.code) &&
-            Objects.equals(this.path, tppMessagePIISCARDINVALID400.path) &&
-            Objects.equals(this.text, tppMessagePIISCARDINVALID400.text);
+        return Objects.equals(this.category, tppMessagePIISCARDINVALID400.category) && Objects.equals(this.code,
+            tppMessagePIISCARDINVALID400.code) && Objects.equals(this.path, tppMessagePIISCARDINVALID400.path) && Objects.equals(this.text, tppMessagePIISCARDINVALID400.text);
     }
 
     @Override
@@ -132,7 +129,6 @@ public class TppMessagePIISCARDINVALID400 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessagePIISCARDINVALID400 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -157,7 +153,6 @@ public class TppMessagePIISCARDINVALID400 {
      */
     public enum CodeEnum {
         INVALID("CARD_INVALID");
-
         private String value;
 
         CodeEnum(String value) {
@@ -181,3 +176,4 @@ public class TppMessagePIISCARDINVALID400 {
         }
     }
 }
+

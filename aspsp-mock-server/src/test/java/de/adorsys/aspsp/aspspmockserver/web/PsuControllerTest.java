@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
+import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -163,14 +163,14 @@ public class PsuControllerTest {
         return Collections.singletonList(CORRECT_PAYMENT_PRODUCT);
     }
 
-    private Psu getPsu(String psuId, String email, List<SpiAccountDetails> details, List<String> products) {
-        return new Psu(ASPSP_PSU_ID, email, PSU_ID, PSU_PASSWORD, details, products, Collections.singletonList(SpiScaMethod.SMS_OTP));
+    private Psu getPsu(String psuId, String email, List<AspspAccountDetails> details, List<String> products) {
+        return new Psu(ASPSP_PSU_ID, email, PSU_ID, PSU_PASSWORD, details, products, Collections.singletonList(new AspspAuthenticationObject("SMS_OTP", "sms")));
     }
 
-    private List<SpiAccountDetails> getDetails(boolean isEmpty) {
+    private List<AspspAccountDetails> getDetails(boolean isEmpty) {
         return isEmpty
                    ? Collections.emptyList()
-                   : Collections.singletonList(new SpiAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, Collections.emptyList()));
+                   : Collections.singletonList(new AspspAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, Collections.emptyList()));
 
     }
 }

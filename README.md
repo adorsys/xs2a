@@ -1,4 +1,6 @@
 # Reference Java implementation of PSD2 XS2A Interface of Berlin Group
+[![Build Status](https://travis-ci.com/adorsys/xs2a.svg?branch=develop)](https://travis-ci.com/adorsys/xs2a)
+
 With **PSD2** (Directive (EU) 2015/2366 of the European Parliament and of the Council on Payment Services in the
 Internal Market, published 25 November 2016) the European Union has published a new directive on payment services
 in the internal market.
@@ -43,62 +45,10 @@ You can check your readiness for PSD2 Compliance and other information via [our 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-- Java JDK version 1.8.x, Maven 3.x
-- IDP-Server (we recommend Keycloak)
-- Docker (Optional)
-- MongoDB for persistent mocks (Optional)
+[These instructions](doc/GETTING_STARTED.md) will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
 ### Brief architecture documentation
 Available in [the documentation](doc/architecture/README.md)
-
-### Installing and running development environment
-
-Download and run keycloak (port 8081):
-
-`Windows`
-```bash
-> ...\bin\standalone.bat -Djboss.http.port=8081
-```
-`Linux`
-```bash
-$ .../bin/standalone.sh -Djboss.http.port=8081
-```
-
-Clone git repository and build a project:
-```bash
-$ git clone https://github.com/adorsys/xs2a.git
-$ cd xs2a
-$ mvn clean install
-```
-
-Run an ASPSP-Mock-Server:
-```bash
-$ cd aspsp-mock-server
-$ mvn spring-boot:run -Drun.profiles=fongo
-```
-Open a browser on page [http://localhost:28080/swagger-ui.html](http://localhost:28080/swagger-ui.html)
-
-Run an ASPSP-Profile:
-```bash
-$ cd aspsp-profile
-$ mvn spring-boot:run
-```
-
-Run a XS2A-Server:
-```bash
-$ cd spi-mock
-$ mvn spring-boot:run 
-```
-Open a browser on page [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
-Now you may try to put some data using the mock-server and to access it using the xs2a-interface.
-See [detailed documentation](doc/spec/README.md) for a requests specification.
-If you are not using a real MongoDB server on port localhost:27017, the InMemory database will be used instead.
-this means that all mock data will be lost upon restart.
 
 ## Deployment
 
@@ -117,25 +67,25 @@ More details see in [instruction](doc/deployment.md)
 
 Please read [CONTRIBUTING](doc/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Versioning and Releasing
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
-
-Release is being done using the [release scripts](https://github.com/borisskert/release-scripts) ( (C) by [Boris Skert](https://github.com/borisskert) ) located under scripts/release-scripts.
-For detailed info see [README for release-scripts](scripts/release-scripts/README.md).
-
-### Steps to make a release
-
-**Release is made from local copy! Ensure that you have enough rights to push to master and develop branches**
-```bash
-$ git submodule update --init --remote
-$ scripts/release-scripts/release.sh <release-version> <next-develop-version>
-``` 
-Example
-```bash
-$ scripts/release-scripts/release.sh 1.0 1.1
-```
+## Release notes
+  
+  * [Release notes](doc/releasenotes.md) 
  
+### Testing API with Postman json collections
+ 
+ For testing API of xs2a it is used Postman https://www.getpostman.com/
+ Environment jsons with global parameter’s sets and Collections of jsons for imitation of processes flows are stored in /scripts/tests/postman folder.
+ To import Postman collections and environments follow next steps:
+ 1.     Download Postman jsons with collections and environments to your local machine.
+ 2.     Open Postman, press button “Import”.
+ 3.     Choose “Import file” to import one json or “Import folder” to import all jsons within the folder, then press button “Choose Files” or “Choose Folders” and open necessary files/folders.
+ 4.     To change settings of environments - go to “Manage Environments”, press the environment name and change variables.
+ 
+ To start testing with Postman collections it is necessary to have all services running.
+ 
+## Roadmap
+ 
+ * [Roadmap](doc/roadmap.md) - The up-to-date project's roadmap
 
 ## Authors
 

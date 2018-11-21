@@ -1,3 +1,20 @@
 Deployment done!
 
-
+{{- if .Values.xs2a.enabled }}
+XS2A URL:  https://{{ tpl .Values.xs2a.route.host $ }}/
+{{- end }}
+{{- if .Values.cms.enabled }}
+CMS URL: https://{{ tpl .Values.cms.route.host $ }}/
+{{- end }}
+{{- if .Values.keycloak.enabled }}
+Keycloak URL: https://{{ tpl .Values.keycloak.route.host $ }}/
+{{- end }}
+{{- if and .Values.aspspProfile.enabled }}
+aspspProfile URL:    https://{{ tpl .Values.aspspProfile.route.host $ }}/
+{{- end }}
+{{- if and .Values.cmsPortal.enabled }}
+cmsPortal URL:    https://{{ tpl .Values.cmsPortal.route.host $ }}/
+{{- end }}
+{{- if and .Values.aspspMock.enabled }}
+aspspMock URL:    https://{{ tpl .Values.aspspMock.route.host $ }}/
+{{- end }}

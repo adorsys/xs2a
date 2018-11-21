@@ -6,13 +6,15 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * If \&quot;true\&quot; indicates that a payment initiation service will be addressed in the same \&quot;session\&quot;.
+ * If \&quot;true\&quot; indicates that a payment initiation service will be addressed in the same \&quot;
+ * session\&quot;.
  */
-@ApiModel(description = "If \"true\" indicates that a payment initiation service will be addressed in the same \"session\". ")
+@ApiModel(description = "If \"true\" indicates that a payment initiation service will be addressed in the same " +
+    "\"session\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class CombinedServiceIndicator {
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -33,7 +35,6 @@ public class CombinedServiceIndicator {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class CombinedServiceIndicator {\n");
-
         sb.append("}");
         return sb.toString();
     }
@@ -49,3 +50,4 @@ public class CombinedServiceIndicator {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

@@ -19,10 +19,10 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
+import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
+import de.adorsys.psd2.aspsp.mock.api.psu.Tan;
+import de.adorsys.psd2.aspsp.mock.api.psu.TanStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -133,11 +133,11 @@ public class ConfirmationServiceTest {
     }
 
     private Psu getPsu1() {
-        return new Psu(PSU_ID_1, "test1@gmail.com", "aspsp1", "zzz", null, null, Collections.singletonList(SpiScaMethod.SMS_OTP));
+        return new Psu(PSU_ID_1, "test1@gmail.com", "aspsp1", "zzz", null, null, Collections.singletonList(new AspspAuthenticationObject("SMS_OTP", "sms")));
     }
 
     private Psu getPsu2() {
-        return new Psu(PSU_ID_2, "test2@gmail.com", "aspsp2", "zzz", null, null, Collections.singletonList(SpiScaMethod.SMS_OTP));
+        return new Psu(PSU_ID_2, "test2@gmail.com", "aspsp2", "zzz", null, null, Collections.singletonList(new AspspAuthenticationObject("SMS_OTP", "sms")));
     }
 
     private Tan getUnusedTan() {

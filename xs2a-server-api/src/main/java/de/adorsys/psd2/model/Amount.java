@@ -11,12 +11,11 @@ import java.util.Objects;
  * Amount
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class Amount {
-
     @JsonProperty("currency")
     private String currency = null;
-
     @JsonProperty("amount")
     private String amount = null;
 
@@ -30,9 +29,8 @@ public class Amount {
      *
      * @return currency
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getCurrency() {
         return currency;
     }
@@ -51,9 +49,8 @@ public class Amount {
      *
      * @return amount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public String getAmount() {
         return amount;
     }
@@ -71,8 +68,7 @@ public class Amount {
             return false;
         }
         Amount amount = (Amount) o;
-        return Objects.equals(this.currency, amount.currency) &&
-            Objects.equals(this.amount, amount.amount);
+        return Objects.equals(this.currency, amount.currency) && Objects.equals(this.amount, amount.amount);
     }
 
     @Override
@@ -84,7 +80,6 @@ public class Amount {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Amount {\n");
-
         sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
         sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
         sb.append("}");
@@ -102,3 +97,4 @@ public class Amount {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

@@ -12,13 +12,15 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * The parameter is not supported by the API provider. This code should only be used for parameters that are described as
+ * The parameter is not supported by the API provider. This code should only be used for parameters that are
+ * described as
  */
-@ApiModel(description = "The parameter is not supported by the API provider. This code should only be used for parameters that are described as ")
+@ApiModel(description = "The parameter is not supported by the API provider. This code should only be used for " +
+    "parameters that are described as ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
-
     @JsonProperty("category")
     private TppMessageCategory category = null;
     @JsonProperty("code")
@@ -38,7 +40,7 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -59,9 +61,8 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public CodeEnum getCode() {
         return code;
     }
@@ -80,7 +81,7 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -99,7 +100,7 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -116,11 +117,9 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TppMessageGENERICPARAMETERNOTSUPPORTED400 tppMessageGENERICPARAMETERNOTSUPPORTED400 = (TppMessageGENERICPARAMETERNOTSUPPORTED400) o;
-        return Objects.equals(this.category, tppMessageGENERICPARAMETERNOTSUPPORTED400.category) &&
-            Objects.equals(this.code, tppMessageGENERICPARAMETERNOTSUPPORTED400.code) &&
-            Objects.equals(this.path, tppMessageGENERICPARAMETERNOTSUPPORTED400.path) &&
-            Objects.equals(this.text, tppMessageGENERICPARAMETERNOTSUPPORTED400.text);
+        TppMessageGENERICPARAMETERNOTSUPPORTED400 tppMessageGENERICPARAMETERNOTSUPPORTED400 =
+            (TppMessageGENERICPARAMETERNOTSUPPORTED400) o;
+        return Objects.equals(this.category, tppMessageGENERICPARAMETERNOTSUPPORTED400.category) && Objects.equals(this.code, tppMessageGENERICPARAMETERNOTSUPPORTED400.code) && Objects.equals(this.path, tppMessageGENERICPARAMETERNOTSUPPORTED400.path) && Objects.equals(this.text, tppMessageGENERICPARAMETERNOTSUPPORTED400.text);
     }
 
     @Override
@@ -132,7 +131,6 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessageGENERICPARAMETERNOTSUPPORTED400 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -157,7 +155,6 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      */
     public enum CodeEnum {
         SUPPORTED("PARAMETER_NOT_SUPPORTED");
-
         private String value;
 
         CodeEnum(String value) {
@@ -181,3 +178,4 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
         }
     }
 }
+

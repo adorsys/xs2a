@@ -17,18 +17,15 @@ import java.util.Objects;
  */
 @ApiModel(description = "JSON Body for a bulk TARGET-2 payment initation. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class BulkPaymentInitiationTarget2Json {
-
     @JsonProperty("batchBookingPreferred")
     private Boolean batchBookingPreferred = null;
-
     @JsonProperty("requestedExecutionDate")
     private LocalDate requestedExecutionDate = null;
-
     @JsonProperty("debtorAccount")
     private Object debtorAccount = null;
-
     @JsonProperty("payments")
     @Valid
     private List<PaymentInitiationTarget2BulkElementJson> payments = new ArrayList<>();
@@ -43,7 +40,7 @@ public class BulkPaymentInitiationTarget2Json {
      *
      * @return batchBookingPreferred
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public Boolean getBatchBookingPreferred() {
         return batchBookingPreferred;
     }
@@ -62,7 +59,7 @@ public class BulkPaymentInitiationTarget2Json {
      *
      * @return requestedExecutionDate
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public LocalDate getRequestedExecutionDate() {
         return requestedExecutionDate;
@@ -82,9 +79,8 @@ public class BulkPaymentInitiationTarget2Json {
      *
      * @return debtorAccount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
-
     public Object getDebtorAccount() {
         return debtorAccount;
     }
@@ -128,10 +124,7 @@ public class BulkPaymentInitiationTarget2Json {
             return false;
         }
         BulkPaymentInitiationTarget2Json bulkPaymentInitiationTarget2Json = (BulkPaymentInitiationTarget2Json) o;
-        return Objects.equals(this.batchBookingPreferred, bulkPaymentInitiationTarget2Json.batchBookingPreferred) &&
-            Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationTarget2Json.requestedExecutionDate) &&
-            Objects.equals(this.debtorAccount, bulkPaymentInitiationTarget2Json.debtorAccount) &&
-            Objects.equals(this.payments, bulkPaymentInitiationTarget2Json.payments);
+        return Objects.equals(this.batchBookingPreferred, bulkPaymentInitiationTarget2Json.batchBookingPreferred) && Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationTarget2Json.requestedExecutionDate) && Objects.equals(this.debtorAccount, bulkPaymentInitiationTarget2Json.debtorAccount) && Objects.equals(this.payments, bulkPaymentInitiationTarget2Json.payments);
     }
 
     @Override
@@ -143,7 +136,6 @@ public class BulkPaymentInitiationTarget2Json {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class BulkPaymentInitiationTarget2Json {\n");
-
         sb.append("    batchBookingPreferred: ").append(toIndentedString(batchBookingPreferred)).append("\n");
         sb.append("    requestedExecutionDate: ").append(toIndentedString(requestedExecutionDate)).append("\n");
         sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
@@ -163,3 +155,4 @@ public class BulkPaymentInitiationTarget2Json {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

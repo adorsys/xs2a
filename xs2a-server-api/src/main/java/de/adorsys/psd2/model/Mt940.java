@@ -8,11 +8,11 @@ import java.util.Objects;
 /**
  * Data MT940 format in a text structure.
  */
-@ApiModel(description = "Data MT940 format in a text structure.  ")
+@ApiModel(description = "Data MT940 format in a text structure. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class Mt940 {
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -33,7 +33,6 @@ public class Mt940 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Mt940 {\n");
-
         sb.append("}");
         return sb.toString();
     }
@@ -49,3 +48,4 @@ public class Mt940 {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

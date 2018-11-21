@@ -6,13 +6,15 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * This field indicates the requested maximum frequency for an access per day. For a one-off access, this attribute is set to \&quot;1\&quot;.
+ * This field indicates the requested maximum frequency for an access per day. For a one-off access, this attribute
+ * is set to \&quot;1\&quot;.
  */
-@ApiModel(description = "This field indicates the requested maximum frequency for an access per day. For a one-off access, this attribute is set to \"1\". ")
+@ApiModel(description = "This field indicates the requested maximum frequency for an access per day. For a one-off " +
+    "access, this attribute is set to \"1\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class FrequencyPerDay {
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -33,7 +35,6 @@ public class FrequencyPerDay {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class FrequencyPerDay {\n");
-
         sb.append("}");
         return sb.toString();
     }
@@ -49,3 +50,4 @@ public class FrequencyPerDay {
         return o.toString().replace("\n", "\n    ");
     }
 }
+
