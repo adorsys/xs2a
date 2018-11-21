@@ -1,258 +1,128 @@
 {
-	"info": {
-		"_postman_id": "86b56192-d9f6-41cd-9ce9-56f9ccea1df2",
-		"name": "2_6 Confirmation of funds",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Success Confirmation of funds",
-			"item": [
-				{
-					"name": "1 True Confirmation of Funds Request",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "a460ce63-d09b-4a27-9c5f-a38d9ae59302",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"fundsAvailable is true\", () => {",
-									"    pm.expect(jsonData.fundsAvailable).to.eql(true);",
-									"});",
-									"",
-									"// Check mandatory Header Fields",
-									"pm.test(\"X-Request-ID is present\", function () {",
-									"    pm.response.to.have.header(\"X-Request-ID\");",
-									"});",
-									"",
-									"pm.test(\"Location is present\", function () {",
-									"    pm.response.to.have.header(\"Location\");",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Digest",
-								"value": "{{Digest}}",
-								"disabled": true
-							},
-							{
-								"key": "Signature",
-								"value": "{{Signature}}",
-								"disabled": true
-							},
-							{
-								"key": "TPP-Signature-Certificate",
-								"value": "{{TPP-Signature-Certificate}}",
-								"disabled": true
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"account\": {\n   \"currency\": \"EUR\",\n   \"iban\": \"DE89370400440532013000\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"160.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"funds-confirmations"
-							]
-						},
-						"description": "Creates a confirmation of funds request at the ASPSP. Checks whether a specific amount is available at point of time of the request on an account linked to a given tuple card issuer(TPP)/card number, or addressed by IBAN and TPP respectively"
-					},
-					"response": []
-				},
-				{
-					"name": "2 False Confirmation of Funds Request",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6e256f04-1a94-405f-bb10-97145ebdae83",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"fundsAvailable is false\", () => {",
-									"    pm.expect(jsonData.fundsAvailable).to.eql(false);",
-									"});",
-									"",
-									"// Check mandatory Header Fields",
-									"pm.test(\"X-Request-ID is present\", function () {",
-									"    pm.response.to.have.header(\"X-Request-ID\");",
-									"});",
-									"",
-									"pm.test(\"Location is present\", function () {",
-									"    pm.response.to.have.header(\"Location\");",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Digest",
-								"value": "{{Digest}}",
-								"disabled": true
-							},
-							{
-								"key": "Signature",
-								"value": "{{Signature}}",
-								"disabled": true
-							},
-							{
-								"key": "TPP-Signature-Certificate",
-								"value": "{{TPP-Signature-Certificate}}",
-								"disabled": true
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"account\": {\n   \"currency\": \"EUR\",\n   \"iban\": \"DE89370400440532013000\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"1600.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"funds-confirmations"
-							]
-						},
-						"description": "Creates a confirmation of funds request at the ASPSP. Checks whether a specific amount is available at point of time of the request on an account linked to a given tuple card issuer(TPP)/card number, or addressed by IBAN and TPP respectively"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Fail Confirmation of funds",
-			"item": [
-				{
-					"name": "1 Fail Confirmation of Funds Request",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "5a75b2b5-f3f0-431f-b4b1-8917f1bd1f7a",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"",
-									"// Check mandatory Header Fields",
-									"pm.test(\"X-Request-ID is present\", function () {",
-									"    pm.response.to.have.header(\"X-Request-ID\");",
-									"});",
-									"",
-									"pm.test(\"Location is present\", function () {",
-									"    pm.response.to.have.header(\"Location\");",
-									"});",
-									"",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Digest",
-								"value": "{{Digest}}",
-								"disabled": true
-							},
-							{
-								"key": "Signature",
-								"value": "{{Signature}}",
-								"disabled": true
-							},
-							{
-								"key": "TPP-Signature-Certificate",
-								"value": "{{TPP-Signature-Certificate}}",
-								"disabled": true
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"account\": {\n   \"currency\": \"EUR\",\n   \"iban\": \"WRONG\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"1600.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/funds-confirmations",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"funds-confirmations"
-							]
-						},
-						"description": "Creates a confirmation of funds request at the ASPSP. Checks whether a specific amount is available at point of time of the request on an account linked to a given tuple card issuer(TPP)/card number, or addressed by IBAN and TPP respectively"
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "4c16a8e1-c995-459c-a784-6bd1bdab52f5",
+    "name": "Funds Confirmation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Local",
+      "item": [
+        {
+          "name": "Fund confirmation request(sufficient)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "02b43079-3a6d-4e12-b69f-0a6d74a5c9b9",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Funds are available\", () => {",
+                  "    pm.expect(jsonData).to.have.property('fundsAvailable', true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Request-ID",
+                "value": "{{x_request_id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account\": {\n   \"currency\": \"EUR\",\n   \"iban\": \"DE89370400440532013000\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"160.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/v1/funds-confirmations",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "v1",
+                "funds-confirmations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fund confirmation request(insufficient)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "ff8da433-7a07-44be-8f3b-18b88ed71393",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Funds are available\", () => {",
+                  "    pm.expect(jsonData).to.have.property('fundsAvailable', false);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Request-ID",
+                "value": "{{x_request_id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account\": {\n   \"currency\": \"EUR\",\n   \"iban\": \"DE89370400440532013000\"\n},\n  \"cardNumber\": \"12345\",\n  \"instructedAmount\": {\n    \"amount\": \"1600.00\",\n    \"currency\": \"EUR\"\n  },\n  \"payee\": \"Check24\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/v1/funds-confirmations",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "v1",
+                "funds-confirmations"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
 }
