@@ -10,7 +10,7 @@
     "header": {
     },
     "body": {
-      "consentStatus": "terminated_by_tpp"
+      "consentStatus": "terminatedByTpp"
     }
   }
 }
