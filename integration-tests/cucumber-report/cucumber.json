@@ -6,7 +6,7 @@
         "before": [
           {
             "result": {
-              "duration": 63514170,
+              "duration": 219739709,
               "status": "passed"
             },
             "match": {
@@ -21,7 +21,7 @@
         "after": [
           {
             "result": {
-              "duration": 216468,
+              "duration": 224456,
               "status": "passed"
             },
             "match": {
@@ -34,7 +34,7 @@
         "steps": [
           {
             "result": {
-              "duration": 226691609,
+              "duration": 220050115,
               "status": "passed"
             },
             "line": 9,
@@ -55,7 +55,7 @@
           },
           {
             "result": {
-              "duration": 1712761584,
+              "duration": 1564594245,
               "status": "passed"
             },
             "line": 10,
@@ -67,7 +67,7 @@
           },
           {
             "result": {
-              "duration": 3677489,
+              "duration": 3659533,
               "status": "passed"
             },
             "line": 11,
@@ -89,7 +89,7 @@
         "before": [
           {
             "result": {
-              "duration": 11477269,
+              "duration": 14176029,
               "status": "passed"
             },
             "match": {
@@ -104,7 +104,7 @@
         "after": [
           {
             "result": {
-              "duration": 182289,
+              "duration": 214319,
               "status": "passed"
             },
             "match": {
@@ -117,7 +117,7 @@
         "steps": [
           {
             "result": {
-              "duration": 1344868,
+              "duration": 1285370,
               "status": "passed"
             },
             "line": 9,
@@ -138,7 +138,7 @@
           },
           {
             "result": {
-              "duration": 1676433246,
+              "duration": 1505332125,
               "status": "passed"
             },
             "line": 10,
@@ -150,7 +150,7 @@
           },
           {
             "result": {
-              "duration": 39034,
+              "duration": 43802,
               "status": "passed"
             },
             "line": 11,
@@ -180,7 +180,7 @@
         "before": [
           {
             "result": {
-              "duration": 12014080,
+              "duration": 16403773,
               "status": "passed"
             },
             "match": {
@@ -195,7 +195,7 @@
         "after": [
           {
             "result": {
-              "duration": 225321,
+              "duration": 518355,
               "status": "passed"
             },
             "match": {
@@ -208,7 +208,7 @@
         "steps": [
           {
             "result": {
-              "duration": 8783069,
+              "duration": 17566830,
               "status": "passed"
             },
             "line": 19,
@@ -229,7 +229,7 @@
           },
           {
             "result": {
-              "duration": 16369156,
+              "duration": 20503395,
               "status": "passed"
             },
             "line": 20,
@@ -241,7 +241,7 @@
           },
           {
             "result": {
-              "duration": 3957586,
+              "duration": 4942491,
               "status": "passed"
             },
             "line": 21,
@@ -257,7 +257,7 @@
         "before": [
           {
             "result": {
-              "duration": 13743636,
+              "duration": 13104161,
               "status": "passed"
             },
             "match": {
@@ -272,7 +272,7 @@
         "after": [
           {
             "result": {
-              "duration": 145829,
+              "duration": 226674,
               "status": "passed"
             },
             "match": {
@@ -285,7 +285,7 @@
         "steps": [
           {
             "result": {
-              "duration": 1478960,
+              "duration": 1293766,
               "status": "passed"
             },
             "line": 30,
@@ -306,7 +306,7 @@
           },
           {
             "result": {
-              "duration": 14932168,
+              "duration": 33614025,
               "status": "passed"
             },
             "line": 31,
@@ -318,7 +318,7 @@
           },
           {
             "result": {
-              "duration": 238675,
+              "duration": 356211,
               "status": "passed"
             },
             "line": 32,
@@ -334,7 +334,7 @@
         "before": [
           {
             "result": {
-              "duration": 11734582,
+              "duration": 13893118,
               "status": "passed"
             },
             "match": {
@@ -342,14 +342,14 @@
             }
           }
         ],
-        "line": 122,
-        "name": "Request account list successfully",
+        "line": 79,
+        "name": "Successful deletion of consent (redirect)",
         "description": "",
-        "id": "account-information-service;request-account-list-successfully;;2",
+        "id": "account-information-service;successful-deletion-of-consent-(redirect);;2",
         "after": [
           {
             "result": {
-              "duration": 254018,
+              "duration": 198862,
               "status": "passed"
             },
             "match": {
@@ -362,10 +362,120 @@
         "steps": [
           {
             "result": {
-              "duration": 467582799,
+              "duration": 775783,
               "status": "passed"
             },
-            "line": 116,
+            "line": 72,
+            "name": "PSU wants to create a consent consent-dedicated-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "consent-dedicated-successful.json",
+                  "offset": 30
+                }
+              ],
+              "location": "ConsentRequestSuccessfulSteps.loadTestData(String)"
+            },
+            "matchedColumns": [
+              1
+            ],
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "duration": 1471122218,
+              "status": "passed"
+            },
+            "line": 73,
+            "name": "PSU sends the create consent request",
+            "match": {
+              "location": "ConsentRequestSuccessfulSteps.sendConsentRequest()"
+            },
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 8801040,
+              "status": "passed"
+            },
+            "line": 74,
+            "name": "PSU wants to delete the consent consent-deletion-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "consent-deletion-successful.json",
+                  "offset": 32
+                }
+              ],
+              "location": "ConsentDeletionSuccessfulSteps.loadTestData(String)"
+            },
+            "matchedColumns": [
+              0
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 1640947738,
+              "status": "passed"
+            },
+            "line": 75,
+            "name": "PSU deletes consent",
+            "match": {
+              "location": "ConsentDeletionSuccessfulSteps.initiateDeletion()"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "duration": 58097,
+              "status": "passed"
+            },
+            "line": 76,
+            "name": "a successful response code and the appropriate messages get returned",
+            "match": {
+              "location": "ConsentDeletionSuccessfulSteps.checkResponse()"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "before": [
+          {
+            "result": {
+              "duration": 14520051,
+              "status": "passed"
+            },
+            "match": {
+              "location": "GlobalSuccessfulSteps.loadTestDataIntoDb()"
+            }
+          }
+        ],
+        "line": 124,
+        "name": "Request account list successfully",
+        "description": "",
+        "id": "account-information-service;request-account-list-successfully;;2",
+        "after": [
+          {
+            "result": {
+              "duration": 197095,
+              "status": "passed"
+            },
+            "match": {
+              "location": "GlobalSuccessfulSteps.afterScenario()"
+            }
+          }
+        ],
+        "type": "scenario",
+        "keyword": "Scenario Outline",
+        "steps": [
+          {
+            "result": {
+              "duration": 450313409,
+              "status": "passed"
+            },
+            "line": 118,
             "name": "PSU already has an existing valid consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -388,10 +498,10 @@
           },
           {
             "result": {
-              "duration": 15944253,
+              "duration": 21584362,
               "status": "passed"
             },
-            "line": 117,
+            "line": 119,
             "name": "wants to get a list of accounts using accountList-successful.json",
             "match": {
               "arguments": [
@@ -409,10 +519,10 @@
           },
           {
             "result": {
-              "duration": 2019067367,
+              "duration": 1864646430,
               "status": "passed"
             },
-            "line": 118,
+            "line": 120,
             "name": "PSU requests the list of accounts",
             "match": {
               "location": "AccountListRequestSuccessfulSteps.psu_requests_the_list_of_accounts()"
@@ -421,10 +531,10 @@
           },
           {
             "result": {
-              "duration": 119018,
+              "duration": 117144,
               "status": "passed"
             },
-            "line": 119,
+            "line": 121,
             "name": "a successful response code and the appropriate list of accounts get returned",
             "match": {
               "location": "AccountListRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_list_of_accounts_get_returned()"
@@ -437,7 +547,7 @@
         "before": [
           {
             "result": {
-              "duration": 11616318,
+              "duration": 10648855,
               "status": "passed"
             },
             "match": {
@@ -445,14 +555,14 @@
             }
           }
         ],
-        "line": 132,
+        "line": 134,
         "name": "Request account list errorful",
         "description": "",
         "id": "account-information-service;request-account-list-errorful;;2",
         "after": [
           {
             "result": {
-              "duration": 132439,
+              "duration": 210924,
               "status": "passed"
             },
             "match": {
@@ -465,10 +575,10 @@
         "steps": [
           {
             "result": {
-              "duration": 480633601,
+              "duration": 419158712,
               "status": "passed"
             },
-            "line": 126,
+            "line": 128,
             "name": "PSU already has an existing valid consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -491,10 +601,10 @@
           },
           {
             "result": {
-              "duration": 4335980,
+              "duration": 6802818,
               "status": "passed"
             },
-            "line": 127,
+            "line": 129,
             "name": "PSU wants to get a list of accounts errorful using accountList-no-request-id.json",
             "match": {
               "arguments": [
@@ -512,10 +622,10 @@
           },
           {
             "result": {
-              "duration": 6514714,
+              "duration": 32597917,
               "status": "passed"
             },
-            "line": 128,
+            "line": 130,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -524,10 +634,10 @@
           },
           {
             "result": {
-              "duration": 43199,
+              "duration": 39139,
               "status": "passed"
             },
-            "line": 129,
+            "line": 131,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -540,7 +650,7 @@
         "before": [
           {
             "result": {
-              "duration": 14399870,
+              "duration": 10989767,
               "status": "passed"
             },
             "match": {
@@ -548,14 +658,14 @@
             }
           }
         ],
-        "line": 133,
+        "line": 135,
         "name": "Request account list errorful",
         "description": "",
         "id": "account-information-service;request-account-list-errorful;;3",
         "after": [
           {
             "result": {
-              "duration": 161305,
+              "duration": 210198,
               "status": "passed"
             },
             "match": {
@@ -568,10 +678,10 @@
         "steps": [
           {
             "result": {
-              "duration": 529200692,
+              "duration": 430986506,
               "status": "passed"
             },
-            "line": 126,
+            "line": 128,
             "name": "PSU already has an existing valid consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -594,10 +704,10 @@
           },
           {
             "result": {
-              "duration": 680079,
+              "duration": 996996,
               "status": "passed"
             },
-            "line": 127,
+            "line": 129,
             "name": "PSU wants to get a list of accounts errorful using accountList-wrong-format-request-id.json",
             "match": {
               "arguments": [
@@ -615,10 +725,10 @@
           },
           {
             "result": {
-              "duration": 5923344,
+              "duration": 10939431,
               "status": "passed"
             },
-            "line": 128,
+            "line": 130,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -627,10 +737,10 @@
           },
           {
             "result": {
-              "duration": 53529,
+              "duration": 60253,
               "status": "passed"
             },
-            "line": 129,
+            "line": 131,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -643,7 +753,7 @@
         "before": [
           {
             "result": {
-              "duration": 10587847,
+              "duration": 16587852,
               "status": "passed"
             },
             "match": {
@@ -651,14 +761,14 @@
             }
           }
         ],
-        "line": 134,
+        "line": 136,
         "name": "Request account list errorful",
         "description": "",
         "id": "account-information-service;request-account-list-errorful;;4",
         "after": [
           {
             "result": {
-              "duration": 132079,
+              "duration": 219023,
               "status": "passed"
             },
             "match": {
@@ -671,10 +781,10 @@
         "steps": [
           {
             "result": {
-              "duration": 446017711,
+              "duration": 417266963,
               "status": "passed"
             },
-            "line": 126,
+            "line": 128,
             "name": "PSU already has an existing expired consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -697,10 +807,10 @@
           },
           {
             "result": {
-              "duration": 715528,
+              "duration": 1966058,
               "status": "passed"
             },
-            "line": 127,
+            "line": 129,
             "name": "PSU wants to get a list of accounts errorful using accountList-with-expired-consent.json",
             "match": {
               "arguments": [
@@ -718,10 +828,10 @@
           },
           {
             "result": {
-              "duration": 227701210,
+              "duration": 225847001,
               "status": "passed"
             },
-            "line": 128,
+            "line": 130,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -730,10 +840,10 @@
           },
           {
             "result": {
-              "duration": 36119,
+              "duration": 38557,
               "status": "passed"
             },
-            "line": 129,
+            "line": 131,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -746,7 +856,7 @@
         "before": [
           {
             "result": {
-              "duration": 16680576,
+              "duration": 12021121,
               "status": "passed"
             },
             "match": {
@@ -754,14 +864,14 @@
             }
           }
         ],
-        "line": 135,
+        "line": 137,
         "name": "Request account list errorful",
         "description": "",
         "id": "account-information-service;request-account-list-errorful;;5",
         "after": [
           {
             "result": {
-              "duration": 150970,
+              "duration": 280960,
               "status": "passed"
             },
             "match": {
@@ -774,10 +884,10 @@
         "steps": [
           {
             "result": {
-              "duration": 445181821,
+              "duration": 415088100,
               "status": "passed"
             },
-            "line": 126,
+            "line": 128,
             "name": "PSU already has an existing received consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -800,10 +910,10 @@
           },
           {
             "result": {
-              "duration": 592404,
+              "duration": 833246,
               "status": "passed"
             },
-            "line": 127,
+            "line": 129,
             "name": "PSU wants to get a list of accounts errorful using accountList-with-received-consent.json",
             "match": {
               "arguments": [
@@ -821,10 +931,10 @@
           },
           {
             "result": {
-              "duration": 1988241110,
+              "duration": 1556261994,
               "status": "passed"
             },
-            "line": 128,
+            "line": 130,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -833,11 +943,11 @@
           },
           {
             "result": {
-              "duration": 1523322,
-              "error_message": "java.lang.AssertionError: \nExpected: \u003c401\u003e\n     but: was null\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais.CommonSteps.checkErrorCodeAndResponse(CommonSteps.java:50)\n\tat ✽.Then an error response code is displayed and an appropriate error response is shown(AIS_01.feature:129)\n",
+              "duration": 1346829,
+              "error_message": "java.lang.AssertionError: \nExpected: \u003c401\u003e\n     but: was null\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais.CommonSteps.checkErrorCodeAndResponse(CommonSteps.java:50)\n\tat ✽.Then an error response code is displayed and an appropriate error response is shown(AIS_01.feature:131)\n",
               "status": "failed"
             },
-            "line": 129,
+            "line": 131,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -850,7 +960,7 @@
         "before": [
           {
             "result": {
-              "duration": 11513801,
+              "duration": 10358020,
               "status": "passed"
             },
             "match": {
@@ -858,14 +968,14 @@
             }
           }
         ],
-        "line": 136,
+        "line": 138,
         "name": "Request account list errorful",
         "description": "",
         "id": "account-information-service;request-account-list-errorful;;6",
         "after": [
           {
             "result": {
-              "duration": 301137,
+              "duration": 229867,
               "status": "passed"
             },
             "match": {
@@ -878,10 +988,10 @@
         "steps": [
           {
             "result": {
-              "duration": 463721833,
+              "duration": 416683612,
               "status": "passed"
             },
-            "line": 126,
+            "line": 128,
             "name": "PSU already has an existing rejected consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -904,10 +1014,10 @@
           },
           {
             "result": {
-              "duration": 693015,
+              "duration": 825913,
               "status": "passed"
             },
-            "line": 127,
+            "line": 129,
             "name": "PSU wants to get a list of accounts errorful using accountList-with-rejected-consent.json",
             "match": {
               "arguments": [
@@ -925,10 +1035,10 @@
           },
           {
             "result": {
-              "duration": 223634962,
+              "duration": 214955767,
               "status": "passed"
             },
-            "line": 128,
+            "line": 130,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -937,10 +1047,10 @@
           },
           {
             "result": {
-              "duration": 34490,
+              "duration": 41353,
               "status": "passed"
             },
-            "line": 129,
+            "line": 131,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -953,7 +1063,7 @@
         "before": [
           {
             "result": {
-              "duration": 10764455,
+              "duration": 12391160,
               "status": "passed"
             },
             "match": {
@@ -961,14 +1071,14 @@
             }
           }
         ],
-        "line": 137,
+        "line": 139,
         "name": "Request account list errorful",
         "description": "",
         "id": "account-information-service;request-account-list-errorful;;7",
         "after": [
           {
             "result": {
-              "duration": 160858,
+              "duration": 156914,
               "status": "passed"
             },
             "match": {
@@ -981,10 +1091,10 @@
         "steps": [
           {
             "result": {
-              "duration": 450186983,
+              "duration": 412296186,
               "status": "passed"
             },
-            "line": 126,
+            "line": 128,
             "name": "PSU already has an existing revokedByPsu consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -1007,10 +1117,10 @@
           },
           {
             "result": {
-              "duration": 807144,
+              "duration": 793478,
               "status": "passed"
             },
-            "line": 127,
+            "line": 129,
             "name": "PSU wants to get a list of accounts errorful using accountList-with-revokedByPsu-consent.json",
             "match": {
               "arguments": [
@@ -1028,10 +1138,10 @@
           },
           {
             "result": {
-              "duration": 218734661,
+              "duration": 220075982,
               "status": "passed"
             },
-            "line": 128,
+            "line": 130,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -1040,10 +1150,10 @@
           },
           {
             "result": {
-              "duration": 33034,
+              "duration": 39697,
               "status": "passed"
             },
-            "line": 129,
+            "line": 131,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -1056,7 +1166,7 @@
         "before": [
           {
             "result": {
-              "duration": 10461787,
+              "duration": 12748164,
               "status": "passed"
             },
             "match": {
@@ -1064,14 +1174,14 @@
             }
           }
         ],
-        "line": 138,
+        "line": 140,
         "name": "Request account list errorful",
         "description": "",
         "id": "account-information-service;request-account-list-errorful;;8",
         "after": [
           {
             "result": {
-              "duration": 134784,
+              "duration": 222475,
               "status": "passed"
             },
             "match": {
@@ -1084,10 +1194,10 @@
         "steps": [
           {
             "result": {
-              "duration": 434150514,
+              "duration": 411308682,
               "status": "passed"
             },
-            "line": 126,
+            "line": 128,
             "name": "PSU already has an existing terminatedByTpp consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -1110,10 +1220,10 @@
           },
           {
             "result": {
-              "duration": 1623850,
+              "duration": 1520543,
               "status": "passed"
             },
-            "line": 127,
+            "line": 129,
             "name": "PSU wants to get a list of accounts errorful using accountList-with-terminatedByTpp-consent.json",
             "match": {
               "arguments": [
@@ -1131,10 +1241,10 @@
           },
           {
             "result": {
-              "duration": 220604418,
+              "duration": 214974753,
               "status": "passed"
             },
-            "line": 128,
+            "line": 130,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -1143,10 +1253,10 @@
           },
           {
             "result": {
-              "duration": 52265,
+              "duration": 38214,
               "status": "passed"
             },
-            "line": 129,
+            "line": 131,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -1159,7 +1269,7 @@
         "before": [
           {
             "result": {
-              "duration": 16681946,
+              "duration": 13336313,
               "status": "passed"
             },
             "match": {
@@ -1167,14 +1277,14 @@
             }
           }
         ],
-        "line": 139,
+        "line": 141,
         "name": "Request account list errorful",
         "description": "",
         "id": "account-information-service;request-account-list-errorful;;9",
         "after": [
           {
             "result": {
-              "duration": 157783,
+              "duration": 145271,
               "status": "passed"
             },
             "match": {
@@ -1187,10 +1297,10 @@
         "steps": [
           {
             "result": {
-              "duration": 433226524,
+              "duration": 412058588,
               "status": "passed"
             },
-            "line": 126,
+            "line": 128,
             "name": "PSU already has an existing valid consent account/accounts-create-consent-exceeded.json",
             "match": {
               "arguments": [
@@ -1213,10 +1323,10 @@
           },
           {
             "result": {
-              "duration": 943034,
+              "duration": 1046487,
               "status": "passed"
             },
-            "line": 127,
+            "line": 129,
             "name": "PSU wants to get a list of accounts errorful using accountList-with-exceeded-frequencePerDay-consent.json",
             "match": {
               "arguments": [
@@ -1234,10 +1344,10 @@
           },
           {
             "result": {
-              "duration": 219038660,
+              "duration": 219447497,
               "status": "passed"
             },
-            "line": 128,
+            "line": 130,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -1246,10 +1356,10 @@
           },
           {
             "result": {
-              "duration": 39300,
+              "duration": 40272,
               "status": "passed"
             },
-            "line": 129,
+            "line": 131,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -1262,7 +1372,7 @@
         "before": [
           {
             "result": {
-              "duration": 10661030,
+              "duration": 13403593,
               "status": "passed"
             },
             "match": {
@@ -1270,14 +1380,14 @@
             }
           }
         ],
-        "line": 149,
+        "line": 151,
         "name": "Request account list with no consent errorful",
         "description": "",
         "id": "account-information-service;request-account-list-with-no-consent-errorful;;2",
         "after": [
           {
             "result": {
-              "duration": 162564,
+              "duration": 142312,
               "status": "passed"
             },
             "match": {
@@ -1290,10 +1400,10 @@
         "steps": [
           {
             "result": {
-              "duration": 558846,
+              "duration": 1279604,
               "status": "passed"
             },
-            "line": 144,
+            "line": 146,
             "name": "PSU wants to get a list of accounts errorful using accountList-no-consent.json",
             "match": {
               "arguments": [
@@ -1311,11 +1421,11 @@
           },
           {
             "result": {
-              "duration": 11530343,
-              "error_message": "com.fasterxml.jackson.core.JsonParseException: Unrecognized token \u0027Internal\u0027: was expecting \u0027null\u0027, \u0027true\u0027, \u0027false\u0027 or NaN\n at [Source: Internal Server Error; line: 1, column: 9]\n\tat com.fasterxml.jackson.core.JsonParser._constructError(JsonParser.java:1702)\n\tat com.fasterxml.jackson.core.base.ParserMinimalBase._reportError(ParserMinimalBase.java:558)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._reportInvalidToken(ReaderBasedJsonParser.java:2839)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._reportInvalidToken(ReaderBasedJsonParser.java:2812)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._matchToken(ReaderBasedJsonParser.java:2619)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._handleOddValue(ReaderBasedJsonParser.java:1887)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser.nextToken(ReaderBasedJsonParser.java:749)\n\tat com.fasterxml.jackson.databind.ObjectMapper._initForReading(ObjectMapper.java:3850)\n\tat com.fasterxml.jackson.databind.ObjectMapper._readMapAndClose(ObjectMapper.java:3799)\n\tat com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:2858)\n\tat de.adorsys.aspsp.xs2a.integtest.util.Context.handleRequestError(Context.java:47)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais.AccountListRequestErrofulSteps.psu_sends_get_request(AccountListRequestErrofulSteps.java:91)\n\tat ✽.When PSU sends get request(AIS_01.feature:145)\n",
+              "duration": 34738018,
+              "error_message": "com.fasterxml.jackson.core.JsonParseException: Unrecognized token \u0027Internal\u0027: was expecting \u0027null\u0027, \u0027true\u0027, \u0027false\u0027 or NaN\n at [Source: Internal Server Error; line: 1, column: 9]\n\tat com.fasterxml.jackson.core.JsonParser._constructError(JsonParser.java:1702)\n\tat com.fasterxml.jackson.core.base.ParserMinimalBase._reportError(ParserMinimalBase.java:558)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._reportInvalidToken(ReaderBasedJsonParser.java:2839)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._reportInvalidToken(ReaderBasedJsonParser.java:2812)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._matchToken(ReaderBasedJsonParser.java:2619)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._handleOddValue(ReaderBasedJsonParser.java:1887)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser.nextToken(ReaderBasedJsonParser.java:749)\n\tat com.fasterxml.jackson.databind.ObjectMapper._initForReading(ObjectMapper.java:3850)\n\tat com.fasterxml.jackson.databind.ObjectMapper._readMapAndClose(ObjectMapper.java:3799)\n\tat com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:2858)\n\tat de.adorsys.aspsp.xs2a.integtest.util.Context.handleRequestError(Context.java:47)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais.AccountListRequestErrofulSteps.psu_sends_get_request(AccountListRequestErrofulSteps.java:91)\n\tat ✽.When PSU sends get request(AIS_01.feature:147)\n",
               "status": "failed"
             },
-            "line": 145,
+            "line": 147,
             "name": "PSU sends get request",
             "match": {
               "location": "AccountListRequestErrofulSteps.psu_sends_get_request()"
@@ -1326,7 +1436,7 @@
             "result": {
               "status": "skipped"
             },
-            "line": 146,
+            "line": 148,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -1339,7 +1449,7 @@
         "before": [
           {
             "result": {
-              "duration": 12911082,
+              "duration": 13875538,
               "status": "passed"
             },
             "match": {
@@ -1347,14 +1457,14 @@
             }
           }
         ],
-        "line": 159,
+        "line": 161,
         "name": "Request account details successfully",
         "description": "",
         "id": "account-information-service;request-account-details-successfully;;2",
         "after": [
           {
             "result": {
-              "duration": 124161,
+              "duration": 441355,
               "status": "passed"
             },
             "match": {
@@ -1367,10 +1477,10 @@
         "steps": [
           {
             "result": {
-              "duration": 442415881,
+              "duration": 415690686,
               "status": "passed"
             },
-            "line": 152,
+            "line": 154,
             "name": "PSU already has an existing valid consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -1393,10 +1503,10 @@
           },
           {
             "result": {
-              "duration": 3232627,
+              "duration": 3033349,
               "status": "passed"
             },
-            "line": 153,
+            "line": 155,
             "name": "account id 11111-999999999",
             "match": {
               "arguments": [
@@ -1414,10 +1524,10 @@
           },
           {
             "result": {
-              "duration": 1476192,
+              "duration": 1800413,
               "status": "passed"
             },
-            "line": 154,
+            "line": 156,
             "name": "wants to get account details using accountDetail-successful.json",
             "match": {
               "arguments": [
@@ -1435,10 +1545,10 @@
           },
           {
             "result": {
-              "duration": 1777454399,
+              "duration": 1356280282,
               "status": "passed"
             },
-            "line": 155,
+            "line": 157,
             "name": "PSU requests the account details",
             "match": {
               "location": "AccountDetailRequestSuccessfulSteps.psu_requests_the_account_details()"
@@ -1447,10 +1557,10 @@
           },
           {
             "result": {
-              "duration": 65303,
+              "duration": 69520,
               "status": "passed"
             },
-            "line": 156,
+            "line": 158,
             "name": "a successful response code and the appropriate details of accounts get returned",
             "match": {
               "location": "AccountDetailRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_details_of_accounts_get_returned()"
@@ -1463,7 +1573,7 @@
         "before": [
           {
             "result": {
-              "duration": 14452149,
+              "duration": 11189801,
               "status": "passed"
             },
             "match": {
@@ -1471,14 +1581,14 @@
             }
           }
         ],
-        "line": 170,
+        "line": 172,
         "name": "Request account details errorful",
         "description": "",
         "id": "account-information-service;request-account-details-errorful;;2",
         "after": [
           {
             "result": {
-              "duration": 493109,
+              "duration": 171866,
               "status": "passed"
             },
             "match": {
@@ -1491,10 +1601,10 @@
         "steps": [
           {
             "result": {
-              "duration": 433367972,
+              "duration": 411906794,
               "status": "passed"
             },
-            "line": 163,
+            "line": 165,
             "name": "PSU already has an existing valid consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -1517,10 +1627,10 @@
           },
           {
             "result": {
-              "duration": 251579,
+              "duration": 222075,
               "status": "passed"
             },
-            "line": 164,
+            "line": 166,
             "name": "account id 42fb4cc3-91cb-45ba-9159-b87acf6d8add",
             "match": {
               "arguments": [
@@ -1538,10 +1648,10 @@
           },
           {
             "result": {
-              "duration": 3607966,
+              "duration": 3235549,
               "status": "passed"
             },
-            "line": 165,
+            "line": 167,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-with-accountid-nomatch-consent.json",
             "match": {
               "arguments": [
@@ -1559,10 +1669,10 @@
           },
           {
             "result": {
-              "duration": 6812883,
+              "duration": 8914122,
               "status": "passed"
             },
-            "line": 166,
+            "line": 168,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -1571,10 +1681,10 @@
           },
           {
             "result": {
-              "duration": 56410,
+              "duration": 32022,
               "status": "passed"
             },
-            "line": 167,
+            "line": 169,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -1587,7 +1697,7 @@
         "before": [
           {
             "result": {
-              "duration": 9785695,
+              "duration": 10275567,
               "status": "passed"
             },
             "match": {
@@ -1595,14 +1705,14 @@
             }
           }
         ],
-        "line": 171,
+        "line": 173,
         "name": "Request account details errorful",
         "description": "",
         "id": "account-information-service;request-account-details-errorful;;3",
         "after": [
           {
             "result": {
-              "duration": 184571,
+              "duration": 209325,
               "status": "passed"
             },
             "match": {
@@ -1615,10 +1725,10 @@
         "steps": [
           {
             "result": {
-              "duration": 435008089,
+              "duration": 413221622,
               "status": "passed"
             },
-            "line": 163,
+            "line": 165,
             "name": "PSU already has an existing valid consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -1641,10 +1751,10 @@
           },
           {
             "result": {
-              "duration": 270161,
+              "duration": 225964,
               "status": "passed"
             },
-            "line": 164,
+            "line": 166,
             "name": "account id 11111-999999999",
             "match": {
               "arguments": [
@@ -1662,10 +1772,10 @@
           },
           {
             "result": {
-              "duration": 578403,
+              "duration": 662237,
               "status": "passed"
             },
-            "line": 165,
+            "line": 167,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-wrong-format-request-id.json",
             "match": {
               "arguments": [
@@ -1683,10 +1793,10 @@
           },
           {
             "result": {
-              "duration": 6893597,
+              "duration": 7520569,
               "status": "passed"
             },
-            "line": 166,
+            "line": 168,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -1695,10 +1805,10 @@
           },
           {
             "result": {
-              "duration": 48166,
+              "duration": 42652,
               "status": "passed"
             },
-            "line": 167,
+            "line": 169,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -1711,7 +1821,7 @@
         "before": [
           {
             "result": {
-              "duration": 11740176,
+              "duration": 10649587,
               "status": "passed"
             },
             "match": {
@@ -1719,14 +1829,14 @@
             }
           }
         ],
-        "line": 172,
+        "line": 174,
         "name": "Request account details errorful",
         "description": "",
         "id": "account-information-service;request-account-details-errorful;;4",
         "after": [
           {
             "result": {
-              "duration": 148873,
+              "duration": 185229,
               "status": "passed"
             },
             "match": {
@@ -1739,10 +1849,10 @@
         "steps": [
           {
             "result": {
-              "duration": 436044937,
+              "duration": 422473412,
               "status": "passed"
             },
-            "line": 163,
+            "line": 165,
             "name": "PSU already has an existing expired consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -1765,10 +1875,10 @@
           },
           {
             "result": {
-              "duration": 221939,
+              "duration": 268519,
               "status": "passed"
             },
-            "line": 164,
+            "line": 166,
             "name": "account id 11111-999999999",
             "match": {
               "arguments": [
@@ -1786,10 +1896,10 @@
           },
           {
             "result": {
-              "duration": 587986,
+              "duration": 969525,
               "status": "passed"
             },
-            "line": 165,
+            "line": 167,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-with-expired-consent.json",
             "match": {
               "arguments": [
@@ -1807,10 +1917,10 @@
           },
           {
             "result": {
-              "duration": 218255071,
+              "duration": 216475464,
               "status": "passed"
             },
-            "line": 166,
+            "line": 168,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -1819,10 +1929,10 @@
           },
           {
             "result": {
-              "duration": 52947,
+              "duration": 40986,
               "status": "passed"
             },
-            "line": 167,
+            "line": 169,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -1835,7 +1945,7 @@
         "before": [
           {
             "result": {
-              "duration": 10071312,
+              "duration": 12545526,
               "status": "passed"
             },
             "match": {
@@ -1843,14 +1953,14 @@
             }
           }
         ],
-        "line": 173,
+        "line": 175,
         "name": "Request account details errorful",
         "description": "",
         "id": "account-information-service;request-account-details-errorful;;5",
         "after": [
           {
             "result": {
-              "duration": 134207,
+              "duration": 229301,
               "status": "passed"
             },
             "match": {
@@ -1863,10 +1973,10 @@
         "steps": [
           {
             "result": {
-              "duration": 435268493,
+              "duration": 414094992,
               "status": "passed"
             },
-            "line": 163,
+            "line": 165,
             "name": "PSU already has an existing received consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -1889,10 +1999,10 @@
           },
           {
             "result": {
-              "duration": 238431,
+              "duration": 221480,
               "status": "passed"
             },
-            "line": 164,
+            "line": 166,
             "name": "account id 11111-999999999",
             "match": {
               "arguments": [
@@ -1910,10 +2020,10 @@
           },
           {
             "result": {
-              "duration": 559494,
+              "duration": 653396,
               "status": "passed"
             },
-            "line": 165,
+            "line": 167,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-with-received-consent.json",
             "match": {
               "arguments": [
@@ -1931,10 +2041,10 @@
           },
           {
             "result": {
-              "duration": 1782878484,
+              "duration": 1342535114,
               "status": "passed"
             },
-            "line": 166,
+            "line": 168,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -1943,11 +2053,11 @@
           },
           {
             "result": {
-              "duration": 224195,
-              "error_message": "java.lang.AssertionError: \nExpected: \u003c401\u003e\n     but: was null\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais.CommonSteps.checkErrorCodeAndResponse(CommonSteps.java:50)\n\tat ✽.Then an error response code is displayed and an appropriate error response is shown(AIS_01.feature:167)\n",
+              "duration": 179604,
+              "error_message": "java.lang.AssertionError: \nExpected: \u003c401\u003e\n     but: was null\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais.CommonSteps.checkErrorCodeAndResponse(CommonSteps.java:50)\n\tat ✽.Then an error response code is displayed and an appropriate error response is shown(AIS_01.feature:169)\n",
               "status": "failed"
             },
-            "line": 167,
+            "line": 169,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -1960,7 +2070,7 @@
         "before": [
           {
             "result": {
-              "duration": 12990207,
+              "duration": 12176781,
               "status": "passed"
             },
             "match": {
@@ -1968,14 +2078,14 @@
             }
           }
         ],
-        "line": 174,
+        "line": 176,
         "name": "Request account details errorful",
         "description": "",
         "id": "account-information-service;request-account-details-errorful;;6",
         "after": [
           {
             "result": {
-              "duration": 128760,
+              "duration": 189871,
               "status": "passed"
             },
             "match": {
@@ -1988,10 +2098,10 @@
         "steps": [
           {
             "result": {
-              "duration": 433852841,
+              "duration": 401789095,
               "status": "passed"
             },
-            "line": 163,
+            "line": 165,
             "name": "PSU already has an existing rejected consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -2014,10 +2124,10 @@
           },
           {
             "result": {
-              "duration": 340757,
+              "duration": 252857,
               "status": "passed"
             },
-            "line": 164,
+            "line": 166,
             "name": "account id 11111-999999999",
             "match": {
               "arguments": [
@@ -2035,10 +2145,10 @@
           },
           {
             "result": {
-              "duration": 701232,
+              "duration": 643602,
               "status": "passed"
             },
-            "line": 165,
+            "line": 167,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-with-rejected-consent.json",
             "match": {
               "arguments": [
@@ -2056,10 +2166,10 @@
           },
           {
             "result": {
-              "duration": 214019183,
+              "duration": 214980232,
               "status": "passed"
             },
-            "line": 166,
+            "line": 168,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -2068,10 +2178,10 @@
           },
           {
             "result": {
-              "duration": 37201,
+              "duration": 50949,
               "status": "passed"
             },
-            "line": 167,
+            "line": 169,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -2084,7 +2194,7 @@
         "before": [
           {
             "result": {
-              "duration": 10621813,
+              "duration": 9840689,
               "status": "passed"
             },
             "match": {
@@ -2092,14 +2202,14 @@
             }
           }
         ],
-        "line": 175,
+        "line": 177,
         "name": "Request account details errorful",
         "description": "",
         "id": "account-information-service;request-account-details-errorful;;7",
         "after": [
           {
             "result": {
-              "duration": 151111,
+              "duration": 192268,
               "status": "passed"
             },
             "match": {
@@ -2112,10 +2222,10 @@
         "steps": [
           {
             "result": {
-              "duration": 443412731,
+              "duration": 407620411,
               "status": "passed"
             },
-            "line": 163,
+            "line": 165,
             "name": "PSU already has an existing revokedByPsu consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -2138,10 +2248,10 @@
           },
           {
             "result": {
-              "duration": 207445,
+              "duration": 273547,
               "status": "passed"
             },
-            "line": 164,
+            "line": 166,
             "name": "account id 11111-999999999",
             "match": {
               "arguments": [
@@ -2159,10 +2269,10 @@
           },
           {
             "result": {
-              "duration": 459051,
+              "duration": 637518,
               "status": "passed"
             },
-            "line": 165,
+            "line": 167,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-with-revokedByPsu-consent.json",
             "match": {
               "arguments": [
@@ -2180,10 +2290,10 @@
           },
           {
             "result": {
-              "duration": 211721238,
+              "duration": 214330202,
               "status": "passed"
             },
-            "line": 166,
+            "line": 168,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -2192,10 +2302,10 @@
           },
           {
             "result": {
-              "duration": 282412,
+              "duration": 329759,
               "status": "passed"
             },
-            "line": 167,
+            "line": 169,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -2208,7 +2318,7 @@
         "before": [
           {
             "result": {
-              "duration": 9577675,
+              "duration": 11737871,
               "status": "passed"
             },
             "match": {
@@ -2216,14 +2326,14 @@
             }
           }
         ],
-        "line": 176,
+        "line": 178,
         "name": "Request account details errorful",
         "description": "",
         "id": "account-information-service;request-account-details-errorful;;8",
         "after": [
           {
             "result": {
-              "duration": 103337,
+              "duration": 276845,
               "status": "passed"
             },
             "match": {
@@ -2236,10 +2346,10 @@
         "steps": [
           {
             "result": {
-              "duration": 428372413,
+              "duration": 405814284,
               "status": "passed"
             },
-            "line": 163,
+            "line": 165,
             "name": "PSU already has an existing terminatedByTpp consent account/accounts-create-consent.json",
             "match": {
               "arguments": [
@@ -2262,10 +2372,10 @@
           },
           {
             "result": {
-              "duration": 280715,
+              "duration": 217925,
               "status": "passed"
             },
-            "line": 164,
+            "line": 166,
             "name": "account id 11111-999999999",
             "match": {
               "arguments": [
@@ -2283,10 +2393,10 @@
           },
           {
             "result": {
-              "duration": 482935,
+              "duration": 799612,
               "status": "passed"
             },
-            "line": 165,
+            "line": 167,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-with-terminatedByTpp-consent.json",
             "match": {
               "arguments": [
@@ -2304,10 +2414,10 @@
           },
           {
             "result": {
-              "duration": 214255894,
+              "duration": 212203671,
               "status": "passed"
             },
-            "line": 166,
+            "line": 168,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -2316,10 +2426,10 @@
           },
           {
             "result": {
-              "duration": 41611,
+              "duration": 48654,
               "status": "passed"
             },
-            "line": 167,
+            "line": 169,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -2332,7 +2442,7 @@
         "before": [
           {
             "result": {
-              "duration": 10352300,
+              "duration": 10946709,
               "status": "passed"
             },
             "match": {
@@ -2340,14 +2450,14 @@
             }
           }
         ],
-        "line": 177,
+        "line": 179,
         "name": "Request account details errorful",
         "description": "",
         "id": "account-information-service;request-account-details-errorful;;9",
         "after": [
           {
             "result": {
-              "duration": 114655,
+              "duration": 150846,
               "status": "passed"
             },
             "match": {
@@ -2360,10 +2470,10 @@
         "steps": [
           {
             "result": {
-              "duration": 437963517,
+              "duration": 405935609,
               "status": "passed"
             },
-            "line": 163,
+            "line": 165,
             "name": "PSU already has an existing valid consent account/accounts-create-consent-exceeded.json",
             "match": {
               "arguments": [
@@ -2386,10 +2496,10 @@
           },
           {
             "result": {
-              "duration": 297465,
+              "duration": 274021,
               "status": "passed"
             },
-            "line": 164,
+            "line": 166,
             "name": "account id 11111-999999999",
             "match": {
               "arguments": [
@@ -2407,10 +2517,10 @@
           },
           {
             "result": {
-              "duration": 658934,
+              "duration": 732256,
               "status": "passed"
             },
-            "line": 165,
+            "line": 167,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-with-exceeded-frequencePerDay-consent.json",
             "match": {
               "arguments": [
@@ -2428,10 +2538,10 @@
           },
           {
             "result": {
-              "duration": 212322459,
+              "duration": 217959155,
               "status": "passed"
             },
-            "line": 166,
+            "line": 168,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -2440,10 +2550,10 @@
           },
           {
             "result": {
-              "duration": 35683,
+              "duration": 37536,
               "status": "passed"
             },
-            "line": 167,
+            "line": 169,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
@@ -2456,7 +2566,7 @@
         "before": [
           {
             "result": {
-              "duration": 9797488,
+              "duration": 13495460,
               "status": "passed"
             },
             "match": {
@@ -2464,14 +2574,14 @@
             }
           }
         ],
-        "line": 186,
+        "line": 188,
         "name": "Request account details with no consent errorful",
         "description": "",
         "id": "account-information-service;request-account-details-with-no-consent-errorful;;2",
         "after": [
           {
             "result": {
-              "duration": 133783,
+              "duration": 174925,
               "status": "passed"
             },
             "match": {
@@ -2484,10 +2594,10 @@
         "steps": [
           {
             "result": {
-              "duration": 590731,
+              "duration": 783127,
               "status": "passed"
             },
-            "line": 181,
+            "line": 183,
             "name": "PSU wants to get a detail of accounts erroful using accountDetail-no-consent.json",
             "match": {
               "arguments": [
@@ -2505,11 +2615,11 @@
           },
           {
             "result": {
-              "duration": 10998144,
-              "error_message": "com.fasterxml.jackson.core.JsonParseException: Unrecognized token \u0027Internal\u0027: was expecting \u0027null\u0027, \u0027true\u0027, \u0027false\u0027 or NaN\n at [Source: Internal Server Error; line: 1, column: 9]\n\tat com.fasterxml.jackson.core.JsonParser._constructError(JsonParser.java:1702)\n\tat com.fasterxml.jackson.core.base.ParserMinimalBase._reportError(ParserMinimalBase.java:558)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._reportInvalidToken(ReaderBasedJsonParser.java:2839)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._reportInvalidToken(ReaderBasedJsonParser.java:2812)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._matchToken(ReaderBasedJsonParser.java:2619)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._handleOddValue(ReaderBasedJsonParser.java:1887)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser.nextToken(ReaderBasedJsonParser.java:749)\n\tat com.fasterxml.jackson.databind.ObjectMapper._initForReading(ObjectMapper.java:3850)\n\tat com.fasterxml.jackson.databind.ObjectMapper._readMapAndClose(ObjectMapper.java:3799)\n\tat com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:2858)\n\tat de.adorsys.aspsp.xs2a.integtest.util.Context.handleRequestError(Context.java:47)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais.AccountDetailRequestErrofulSteps.psu_requests_the_account_details(AccountDetailRequestErrofulSteps.java:94)\n\tat ✽.When PSU requests the account details erroful(AIS_01.feature:182)\n",
+              "duration": 16284456,
+              "error_message": "com.fasterxml.jackson.core.JsonParseException: Unrecognized token \u0027Internal\u0027: was expecting \u0027null\u0027, \u0027true\u0027, \u0027false\u0027 or NaN\n at [Source: Internal Server Error; line: 1, column: 9]\n\tat com.fasterxml.jackson.core.JsonParser._constructError(JsonParser.java:1702)\n\tat com.fasterxml.jackson.core.base.ParserMinimalBase._reportError(ParserMinimalBase.java:558)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._reportInvalidToken(ReaderBasedJsonParser.java:2839)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._reportInvalidToken(ReaderBasedJsonParser.java:2812)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._matchToken(ReaderBasedJsonParser.java:2619)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser._handleOddValue(ReaderBasedJsonParser.java:1887)\n\tat com.fasterxml.jackson.core.json.ReaderBasedJsonParser.nextToken(ReaderBasedJsonParser.java:749)\n\tat com.fasterxml.jackson.databind.ObjectMapper._initForReading(ObjectMapper.java:3850)\n\tat com.fasterxml.jackson.databind.ObjectMapper._readMapAndClose(ObjectMapper.java:3799)\n\tat com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:2858)\n\tat de.adorsys.aspsp.xs2a.integtest.util.Context.handleRequestError(Context.java:47)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais.AccountDetailRequestErrofulSteps.psu_requests_the_account_details(AccountDetailRequestErrofulSteps.java:94)\n\tat ✽.When PSU requests the account details erroful(AIS_01.feature:184)\n",
               "status": "failed"
             },
-            "line": 182,
+            "line": 184,
             "name": "PSU requests the account details erroful",
             "match": {
               "location": "AccountDetailRequestErrofulSteps.psu_requests_the_account_details()"
@@ -2520,10 +2630,120 @@
             "result": {
               "status": "skipped"
             },
-            "line": 183,
+            "line": 185,
             "name": "an error response code is displayed and an appropriate error response is shown",
             "match": {
               "location": "CommonSteps.checkErrorCodeAndResponse()"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "before": [
+          {
+            "result": {
+              "duration": 11738736,
+              "status": "passed"
+            },
+            "match": {
+              "location": "GlobalSuccessfulSteps.loadTestDataIntoDb()"
+            }
+          }
+        ],
+        "line": 354,
+        "name": "Successful Start Authorisation of Consent creation (embedded)",
+        "description": "",
+        "id": "account-information-service;successful-start-authorisation-of-consent-creation-(embedded);;2",
+        "after": [
+          {
+            "result": {
+              "duration": 177032,
+              "status": "passed"
+            },
+            "match": {
+              "location": "GlobalSuccessfulSteps.afterScenario()"
+            }
+          }
+        ],
+        "type": "scenario",
+        "keyword": "Scenario Outline",
+        "steps": [
+          {
+            "result": {
+              "duration": 843383,
+              "status": "passed"
+            },
+            "line": 347,
+            "name": "PSU wants to create a consent consent-all-accounts-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "consent-all-accounts-successful.json",
+                  "offset": 30
+                }
+              ],
+              "location": "ConsentRequestSuccessfulSteps.loadTestData(String)"
+            },
+            "matchedColumns": [
+              0
+            ],
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "duration": 1436397819,
+              "status": "passed"
+            },
+            "line": 348,
+            "name": "PSU sends the create consent request",
+            "match": {
+              "location": "ConsentRequestSuccessfulSteps.sendConsentRequest()"
+            },
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 10476842,
+              "status": "passed"
+            },
+            "line": 349,
+            "name": "PSU wants to start the authorisation for consent creation using the authorisation data startAuth-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "startAuth-successful.json",
+                  "offset": 87
+                }
+              ],
+              "location": "AuthorisationStartConsentCreationSuccessfulSteps.loadAuthorisationData(String)"
+            },
+            "matchedColumns": [
+              1
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 228991867,
+              "status": "passed"
+            },
+            "line": 350,
+            "name": "PSU sends the start authorisation request for consent creation",
+            "match": {
+              "location": "AuthorisationStartConsentCreationSuccessfulSteps.sendStartAuthorisationRequestForConsent()"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "duration": 2436672,
+              "status": "passed"
+            },
+            "line": 351,
+            "name": "PSU checks if a link is received and the SCA status is correct",
+            "match": {
+              "location": "StartAuthorisationSuccessfulSteps.checkLinkAndScaStatusEmbedded()"
             },
             "keyword": "Then "
           }
@@ -2549,7 +2769,7 @@
         "before": [
           {
             "result": {
-              "duration": 13316161,
+              "duration": 11827864,
               "status": "passed"
             },
             "match": {
@@ -2564,7 +2784,7 @@
         "after": [
           {
             "result": {
-              "duration": 174882,
+              "duration": 177605,
               "status": "passed"
             },
             "match": {
@@ -2577,7 +2797,7 @@
         "steps": [
           {
             "result": {
-              "duration": 7725586,
+              "duration": 7871384,
               "status": "passed"
             },
             "line": 10,
@@ -2608,7 +2828,7 @@
           },
           {
             "result": {
-              "duration": 10714713,
+              "duration": 14953575,
               "status": "passed"
             },
             "line": 11,
@@ -2620,7 +2840,7 @@
           },
           {
             "result": {
-              "duration": 4229821,
+              "duration": 3645834,
               "status": "passed"
             },
             "line": 12,
@@ -2636,7 +2856,7 @@
         "before": [
           {
             "result": {
-              "duration": 12514827,
+              "duration": 11772989,
               "status": "passed"
             },
             "match": {
@@ -2651,7 +2871,7 @@
         "after": [
           {
             "result": {
-              "duration": 175431,
+              "duration": 176371,
               "status": "passed"
             },
             "match": {
@@ -2664,7 +2884,7 @@
         "steps": [
           {
             "result": {
-              "duration": 1455927,
+              "duration": 1004720,
               "status": "passed"
             },
             "line": 10,
@@ -2695,7 +2915,7 @@
           },
           {
             "result": {
-              "duration": 12963682,
+              "duration": 19701928,
               "status": "passed"
             },
             "line": 11,
@@ -2707,7 +2927,7 @@
           },
           {
             "result": {
-              "duration": 309005,
+              "duration": 223054,
               "status": "passed"
             },
             "line": 12,
@@ -2723,7 +2943,7 @@
         "before": [
           {
             "result": {
-              "duration": 9979865,
+              "duration": 12255598,
               "status": "passed"
             },
             "match": {
@@ -2738,7 +2958,7 @@
         "after": [
           {
             "result": {
-              "duration": 248803,
+              "duration": 301077,
               "status": "passed"
             },
             "match": {
@@ -2751,7 +2971,7 @@
         "steps": [
           {
             "result": {
-              "duration": 937297,
+              "duration": 975576,
               "status": "passed"
             },
             "line": 10,
@@ -2782,7 +3002,7 @@
           },
           {
             "result": {
-              "duration": 9196399,
+              "duration": 17410403,
               "status": "passed"
             },
             "line": 11,
@@ -2794,7 +3014,7 @@
           },
           {
             "result": {
-              "duration": 261597,
+              "duration": 265740,
               "status": "passed"
             },
             "line": 12,
@@ -2816,7 +3036,7 @@
         "before": [
           {
             "result": {
-              "duration": 9870487,
+              "duration": 10315383,
               "status": "passed"
             },
             "match": {
@@ -2831,7 +3051,7 @@
         "after": [
           {
             "result": {
-              "duration": 116791,
+              "duration": 146301,
               "status": "passed"
             },
             "match": {
@@ -2844,7 +3064,7 @@
         "steps": [
           {
             "result": {
-              "duration": 923431,
+              "duration": 947488,
               "status": "passed"
             },
             "line": 10,
@@ -2875,7 +3095,7 @@
           },
           {
             "result": {
-              "duration": 11813471,
+              "duration": 33237891,
               "status": "passed"
             },
             "line": 11,
@@ -2887,7 +3107,7 @@
           },
           {
             "result": {
-              "duration": 197364,
+              "duration": 194972,
               "status": "passed"
             },
             "line": 12,
@@ -2909,7 +3129,7 @@
         "before": [
           {
             "result": {
-              "duration": 14791033,
+              "duration": 16707546,
               "status": "passed"
             },
             "match": {
@@ -2924,7 +3144,7 @@
         "after": [
           {
             "result": {
-              "duration": 120018,
+              "duration": 290349,
               "status": "passed"
             },
             "match": {
@@ -2937,7 +3157,7 @@
         "steps": [
           {
             "result": {
-              "duration": 14080344,
+              "duration": 21664770,
               "status": "passed"
             },
             "line": 52,
@@ -2968,7 +3188,7 @@
           },
           {
             "result": {
-              "duration": 12739711,
+              "duration": 13490009,
               "status": "passed"
             },
             "line": 53,
@@ -2980,7 +3200,7 @@
           },
           {
             "result": {
-              "duration": 242517,
+              "duration": 240032,
               "status": "passed"
             },
             "line": 54,
@@ -2996,7 +3216,7 @@
         "before": [
           {
             "result": {
-              "duration": 15572478,
+              "duration": 14105866,
               "status": "passed"
             },
             "match": {
@@ -3011,7 +3231,7 @@
         "after": [
           {
             "result": {
-              "duration": 126233,
+              "duration": 304614,
               "status": "passed"
             },
             "match": {
@@ -3024,7 +3244,7 @@
         "steps": [
           {
             "result": {
-              "duration": 1359825,
+              "duration": 1067804,
               "status": "passed"
             },
             "line": 52,
@@ -3055,7 +3275,7 @@
           },
           {
             "result": {
-              "duration": 15079393,
+              "duration": 67675282,
               "status": "passed"
             },
             "line": 53,
@@ -3067,7 +3287,7 @@
           },
           {
             "result": {
-              "duration": 205564,
+              "duration": 279363,
               "status": "passed"
             },
             "line": 54,
@@ -3083,7 +3303,7 @@
         "before": [
           {
             "result": {
-              "duration": 12791982,
+              "duration": 12626750,
               "status": "passed"
             },
             "match": {
@@ -3098,7 +3318,7 @@
         "after": [
           {
             "result": {
-              "duration": 169694,
+              "duration": 289801,
               "status": "passed"
             },
             "match": {
@@ -3111,7 +3331,7 @@
         "steps": [
           {
             "result": {
-              "duration": 1340503,
+              "duration": 991389,
               "status": "passed"
             },
             "line": 52,
@@ -3142,7 +3362,7 @@
           },
           {
             "result": {
-              "duration": 18182926,
+              "duration": 14975161,
               "status": "passed"
             },
             "line": 53,
@@ -3154,7 +3374,7 @@
           },
           {
             "result": {
-              "duration": 200767,
+              "duration": 500006,
               "status": "passed"
             },
             "line": 54,
@@ -3170,7 +3390,7 @@
         "before": [
           {
             "result": {
-              "duration": 11618743,
+              "duration": 13241394,
               "status": "passed"
             },
             "match": {
@@ -3185,7 +3405,7 @@
         "after": [
           {
             "result": {
-              "duration": 148927,
+              "duration": 160930,
               "status": "passed"
             },
             "match": {
@@ -3198,7 +3418,7 @@
         "steps": [
           {
             "result": {
-              "duration": 1090466,
+              "duration": 1035364,
               "status": "passed"
             },
             "line": 52,
@@ -3229,7 +3449,7 @@
           },
           {
             "result": {
-              "duration": 13624719,
+              "duration": 16665106,
               "status": "passed"
             },
             "line": 53,
@@ -3241,7 +3461,7 @@
           },
           {
             "result": {
-              "duration": 277407,
+              "duration": 184051,
               "status": "passed"
             },
             "line": 54,
@@ -3257,7 +3477,7 @@
         "before": [
           {
             "result": {
-              "duration": 11980204,
+              "duration": 19819225,
               "status": "passed"
             },
             "match": {
@@ -3272,7 +3492,7 @@
         "after": [
           {
             "result": {
-              "duration": 239133,
+              "duration": 500157,
               "status": "passed"
             },
             "match": {
@@ -3285,7 +3505,7 @@
         "steps": [
           {
             "result": {
-              "duration": 1081370,
+              "duration": 1001020,
               "status": "passed"
             },
             "line": 52,
@@ -3316,7 +3536,7 @@
           },
           {
             "result": {
-              "duration": 13737464,
+              "duration": 15930500,
               "status": "passed"
             },
             "line": 53,
@@ -3328,7 +3548,7 @@
           },
           {
             "result": {
-              "duration": 276866,
+              "duration": 169116,
               "status": "passed"
             },
             "line": 54,
@@ -3350,7 +3570,7 @@
         "before": [
           {
             "result": {
-              "duration": 12299799,
+              "duration": 12942541,
               "status": "passed"
             },
             "match": {
@@ -3365,7 +3585,7 @@
         "after": [
           {
             "result": {
-              "duration": 126221,
+              "duration": 173745,
               "status": "passed"
             },
             "match": {
@@ -3378,7 +3598,7 @@
         "steps": [
           {
             "result": {
-              "duration": 1472408,
+              "duration": 869404,
               "status": "passed"
             },
             "line": 52,
@@ -3409,7 +3629,7 @@
           },
           {
             "result": {
-              "duration": 18911703,
+              "duration": 17316113,
               "status": "passed"
             },
             "line": 53,
@@ -3421,7 +3641,7 @@
           },
           {
             "result": {
-              "duration": 234480,
+              "duration": 193525,
               "status": "passed"
             },
             "line": 54,
@@ -3437,7 +3657,7 @@
         "before": [
           {
             "result": {
-              "duration": 10907012,
+              "duration": 17587919,
               "status": "passed"
             },
             "match": {
@@ -3452,7 +3672,7 @@
         "after": [
           {
             "result": {
-              "duration": 110612,
+              "duration": 188092,
               "status": "passed"
             },
             "match": {
@@ -3465,7 +3685,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2311052874,
+              "duration": 1932538920,
               "status": "passed"
             },
             "line": 75,
@@ -3477,7 +3697,7 @@
           },
           {
             "result": {
-              "duration": 4868451,
+              "duration": 6604311,
               "status": "passed"
             },
             "line": 76,
@@ -3498,7 +3718,7 @@
           },
           {
             "result": {
-              "duration": 2188499748,
+              "duration": 1787581533,
               "status": "passed"
             },
             "line": 77,
@@ -3510,7 +3730,7 @@
           },
           {
             "result": {
-              "duration": 74886,
+              "duration": 85954,
               "status": "passed"
             },
             "line": 78,
@@ -3532,7 +3752,7 @@
         "before": [
           {
             "result": {
-              "duration": 9881989,
+              "duration": 13447746,
               "status": "passed"
             },
             "match": {
@@ -3547,7 +3767,7 @@
         "after": [
           {
             "result": {
-              "duration": 169183,
+              "duration": 436774,
               "status": "passed"
             },
             "match": {
@@ -3560,7 +3780,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2220541780,
+              "duration": 1807922673,
               "status": "passed"
             },
             "line": 85,
@@ -3572,7 +3792,7 @@
           },
           {
             "result": {
-              "duration": 3634987,
+              "duration": 3979384,
               "status": "passed"
             },
             "line": 86,
@@ -3598,7 +3818,7 @@
           },
           {
             "result": {
-              "duration": 10517170,
+              "duration": 12857175,
               "status": "passed"
             },
             "line": 87,
@@ -3610,7 +3830,7 @@
           },
           {
             "result": {
-              "duration": 218821,
+              "duration": 170405,
               "status": "passed"
             },
             "line": 88,
@@ -3626,7 +3846,7 @@
         "before": [
           {
             "result": {
-              "duration": 10965205,
+              "duration": 12688950,
               "status": "passed"
             },
             "match": {
@@ -3641,7 +3861,7 @@
         "after": [
           {
             "result": {
-              "duration": 158687,
+              "duration": 171029,
               "status": "passed"
             },
             "match": {
@@ -3654,7 +3874,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2216002155,
+              "duration": 1796614575,
               "status": "passed"
             },
             "line": 103,
@@ -3666,7 +3886,7 @@
           },
           {
             "result": {
-              "duration": 5917423,
+              "duration": 6436740,
               "status": "passed"
             },
             "line": 104,
@@ -3687,7 +3907,7 @@
           },
           {
             "result": {
-              "duration": 2176482993,
+              "duration": 1736177357,
               "status": "passed"
             },
             "line": 105,
@@ -3699,7 +3919,7 @@
           },
           {
             "result": {
-              "duration": 124855,
+              "duration": 105468,
               "status": "passed"
             },
             "line": 106,
@@ -3725,7 +3945,7 @@
         "before": [
           {
             "result": {
-              "duration": 11812699,
+              "duration": 11814409,
               "status": "passed"
             },
             "match": {
@@ -3740,7 +3960,7 @@
         "after": [
           {
             "result": {
-              "duration": 128499,
+              "duration": 165376,
               "status": "passed"
             },
             "match": {
@@ -3753,7 +3973,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2233316990,
+              "duration": 1754965183,
               "status": "passed"
             },
             "line": 113,
@@ -3765,7 +3985,7 @@
           },
           {
             "result": {
-              "duration": 3317506,
+              "duration": 3044979,
               "status": "passed"
             },
             "line": 114,
@@ -3791,7 +4011,7 @@
           },
           {
             "result": {
-              "duration": 7730405,
+              "duration": 9885504,
               "status": "passed"
             },
             "line": 115,
@@ -3803,7 +4023,7 @@
           },
           {
             "result": {
-              "duration": 236672,
+              "duration": 152311,
               "status": "passed"
             },
             "line": 116,
@@ -3829,7 +4049,7 @@
         "before": [
           {
             "result": {
-              "duration": 11472302,
+              "duration": 11769969,
               "status": "passed"
             },
             "match": {
@@ -3844,7 +4064,7 @@
         "after": [
           {
             "result": {
-              "duration": 195851,
+              "duration": 198983,
               "status": "passed"
             },
             "match": {
@@ -3857,7 +4077,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2250231453,
+              "duration": 1766362390,
               "status": "passed"
             },
             "line": 142,
@@ -3869,7 +4089,7 @@
           },
           {
             "result": {
-              "duration": 3379190,
+              "duration": 4174906,
               "status": "passed"
             },
             "line": 143,
@@ -3895,7 +4115,7 @@
           },
           {
             "result": {
-              "duration": 6861217,
+              "duration": 11279573,
               "status": "passed"
             },
             "line": 144,
@@ -3907,7 +4127,7 @@
           },
           {
             "result": {
-              "duration": 328535,
+              "duration": 195142,
               "status": "passed"
             },
             "line": 145,
@@ -3933,7 +4153,7 @@
         "before": [
           {
             "result": {
-              "duration": 10202109,
+              "duration": 10675390,
               "status": "passed"
             },
             "match": {
@@ -3948,7 +4168,7 @@
         "after": [
           {
             "result": {
-              "duration": 143614,
+              "duration": 384675,
               "status": "passed"
             },
             "match": {
@@ -3961,7 +4181,7 @@
         "steps": [
           {
             "result": {
-              "duration": 505568,
+              "duration": 487971,
               "status": "passed"
             },
             "line": 10,
@@ -3992,7 +4212,7 @@
           },
           {
             "result": {
-              "duration": 2202355053,
+              "duration": 1945793604,
               "status": "passed"
             },
             "line": 11,
@@ -4004,7 +4224,7 @@
           },
           {
             "result": {
-              "duration": 2758371,
+              "duration": 2178251,
               "status": "passed"
             },
             "line": 12,
@@ -4020,7 +4240,7 @@
         "before": [
           {
             "result": {
-              "duration": 9621570,
+              "duration": 11243527,
               "status": "passed"
             },
             "match": {
@@ -4035,7 +4255,7 @@
         "after": [
           {
             "result": {
-              "duration": 133372,
+              "duration": 262081,
               "status": "passed"
             },
             "match": {
@@ -4048,7 +4268,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2236595676,
+              "duration": 1791851860,
               "status": "passed"
             },
             "line": 24,
@@ -4060,7 +4280,7 @@
           },
           {
             "result": {
-              "duration": 5839325,
+              "duration": 1093301,
               "status": "passed"
             },
             "line": 25,
@@ -4081,7 +4301,7 @@
           },
           {
             "result": {
-              "duration": 228131766,
+              "duration": 224895267,
               "status": "passed"
             },
             "line": 26,
@@ -4093,7 +4313,7 @@
           },
           {
             "result": {
-              "duration": 177900,
+              "duration": 86347,
               "status": "passed"
             },
             "line": 27,
@@ -4115,7 +4335,7 @@
         "before": [
           {
             "result": {
-              "duration": 9552161,
+              "duration": 9933364,
               "status": "passed"
             },
             "match": {
@@ -4130,7 +4350,7 @@
         "after": [
           {
             "result": {
-              "duration": 155544,
+              "duration": 261155,
               "status": "passed"
             },
             "match": {
@@ -4143,7 +4363,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2219361797,
+              "duration": 1781274606,
               "status": "passed"
             },
             "line": 34,
@@ -4155,7 +4375,7 @@
           },
           {
             "result": {
-              "duration": 861846,
+              "duration": 1418028,
               "status": "passed"
             },
             "line": 35,
@@ -4181,7 +4401,7 @@
           },
           {
             "result": {
-              "duration": 10773797,
+              "duration": 19990146,
               "status": "passed"
             },
             "line": 36,
@@ -4193,7 +4413,7 @@
           },
           {
             "result": {
-              "duration": 44141,
+              "duration": 98473,
               "status": "passed"
             },
             "line": 37,
@@ -4209,7 +4429,7 @@
         "before": [
           {
             "result": {
-              "duration": 10519166,
+              "duration": 11021227,
               "status": "passed"
             },
             "match": {
@@ -4224,7 +4444,7 @@
         "after": [
           {
             "result": {
-              "duration": 111367,
+              "duration": 244104,
               "status": "passed"
             },
             "match": {
@@ -4237,7 +4457,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2185103904,
+              "duration": 1835622107,
               "status": "passed"
             },
             "line": 53,
@@ -4249,7 +4469,7 @@
           },
           {
             "result": {
-              "duration": 224811356,
+              "duration": 223494761,
               "status": "passed"
             },
             "line": 54,
@@ -4261,7 +4481,7 @@
           },
           {
             "result": {
-              "duration": 8093222,
+              "duration": 10160472,
               "status": "passed"
             },
             "line": 55,
@@ -4282,7 +4502,7 @@
           },
           {
             "result": {
-              "duration": 3498281500,
+              "duration": 3530202276,
               "status": "passed"
             },
             "line": 56,
@@ -4294,7 +4514,7 @@
           },
           {
             "result": {
-              "duration": 97508,
+              "duration": 131333,
               "status": "passed"
             },
             "line": 57,
@@ -4316,7 +4536,7 @@
         "before": [
           {
             "result": {
-              "duration": 10349078,
+              "duration": 18486962,
               "status": "passed"
             },
             "match": {
@@ -4331,7 +4551,7 @@
         "after": [
           {
             "result": {
-              "duration": 226452,
+              "duration": 169664,
               "status": "passed"
             },
             "match": {
@@ -4344,7 +4564,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2203967601,
+              "duration": 2209897920,
               "status": "passed"
             },
             "line": 53,
@@ -4356,7 +4576,7 @@
           },
           {
             "result": {
-              "duration": 222045449,
+              "duration": 269915967,
               "status": "passed"
             },
             "line": 54,
@@ -4368,7 +4588,7 @@
           },
           {
             "result": {
-              "duration": 837525,
+              "duration": 1205107,
               "status": "passed"
             },
             "line": 55,
@@ -4389,7 +4609,7 @@
           },
           {
             "result": {
-              "duration": 2671668994,
+              "duration": 1956047816,
               "status": "passed"
             },
             "line": 56,
@@ -4401,7 +4621,7 @@
           },
           {
             "result": {
-              "duration": 93418,
+              "duration": 77962,
               "status": "passed"
             },
             "line": 57,
@@ -4417,7 +4637,7 @@
         "before": [
           {
             "result": {
-              "duration": 10686584,
+              "duration": 10992175,
               "status": "passed"
             },
             "match": {
@@ -4432,7 +4652,7 @@
         "after": [
           {
             "result": {
-              "duration": 128105,
+              "duration": 490585,
               "status": "passed"
             },
             "match": {
@@ -4445,7 +4665,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2200412027,
+              "duration": 2151475610,
               "status": "passed"
             },
             "line": 66,
@@ -4457,7 +4677,7 @@
           },
           {
             "result": {
-              "duration": 220039396,
+              "duration": 302756918,
               "status": "passed"
             },
             "line": 67,
@@ -4469,7 +4689,7 @@
           },
           {
             "result": {
-              "duration": 1035958,
+              "duration": 768926,
               "status": "passed"
             },
             "line": 68,
@@ -4495,7 +4715,7 @@
           },
           {
             "result": {
-              "duration": 7006681,
+              "duration": 11150595,
               "status": "passed"
             },
             "line": 69,
@@ -4507,7 +4727,7 @@
           },
           {
             "result": {
-              "duration": 38323,
+              "duration": 43689,
               "status": "passed"
             },
             "line": 70,
@@ -4529,7 +4749,7 @@
         "before": [
           {
             "result": {
-              "duration": 11084886,
+              "duration": 21670000,
               "status": "passed"
             },
             "match": {
@@ -4544,7 +4764,7 @@
         "after": [
           {
             "result": {
-              "duration": 114013,
+              "duration": 224189,
               "status": "passed"
             },
             "match": {
@@ -4557,7 +4777,7 @@
         "steps": [
           {
             "result": {
-              "duration": 2186488087,
+              "duration": 2162751441,
               "status": "passed"
             },
             "line": 100,
@@ -4569,7 +4789,7 @@
           },
           {
             "result": {
-              "duration": 222234416,
+              "duration": 295209698,
               "status": "passed"
             },
             "line": 101,
@@ -4581,7 +4801,7 @@
           },
           {
             "result": {
-              "duration": 3459968811,
+              "duration": 3406122033,
               "status": "passed"
             },
             "line": 102,
@@ -4593,7 +4813,7 @@
           },
           {
             "result": {
-              "duration": 1038138,
+              "duration": 1041536,
               "status": "passed"
             },
             "line": 103,
@@ -4619,7 +4839,7 @@
           },
           {
             "result": {
-              "duration": 7000873,
+              "duration": 10721254,
               "status": "passed"
             },
             "line": 104,
@@ -4631,7 +4851,7 @@
           },
           {
             "result": {
-              "duration": 608501,
+              "duration": 305976,
               "status": "passed"
             },
             "line": 105,
@@ -4657,7 +4877,7 @@
         "before": [
           {
             "result": {
-              "duration": 12297390,
+              "duration": 16781684,
               "status": "passed"
             },
             "match": {
@@ -4672,7 +4892,7 @@
         "after": [
           {
             "result": {
-              "duration": 106508,
+              "duration": 169748,
               "status": "passed"
             },
             "match": {
@@ -4685,7 +4905,7 @@
         "steps": [
           {
             "result": {
-              "duration": 492451,
+              "duration": 567646,
               "status": "passed"
             },
             "line": 10,
@@ -4716,7 +4936,7 @@
           },
           {
             "result": {
-              "duration": 2184097883,
+              "duration": 1924627153,
               "status": "passed"
             },
             "line": 11,
@@ -4728,7 +4948,7 @@
           },
           {
             "result": {
-              "duration": 77394,
+              "duration": 62958,
               "status": "passed"
             },
             "line": 12,
@@ -4740,8 +4960,9 @@
           },
           {
             "result": {
-              "duration": 23392,
-              "status": "passed"
+              "duration": 275576,
+              "error_message": "java.lang.AssertionError: \nExpected: not null\n     but: was null\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.GlobalSuccessfulSteps.checkRedirectUrl(GlobalSuccessfulSteps.java:135)\n\tat ✽.And a redirect URL is delivered to the PSU(PIS_Redirect.feature:13)\n",
+              "status": "failed"
             },
             "line": 13,
             "name": "a redirect URL is delivered to the PSU",
@@ -4756,7 +4977,7 @@
         "before": [
           {
             "result": {
-              "duration": 10159192,
+              "duration": 8402936,
               "status": "passed"
             },
             "match": {
@@ -4771,7 +4992,7 @@
         "after": [
           {
             "result": {
-              "duration": 150175,
+              "duration": 166814,
               "status": "passed"
             },
             "match": {
@@ -4784,7 +5005,7 @@
         "steps": [
           {
             "result": {
-              "duration": 799984,
+              "duration": 786484,
               "status": "passed"
             },
             "line": 10,
@@ -4815,7 +5036,7 @@
           },
           {
             "result": {
-              "duration": 2185288530,
+              "duration": 1843457185,
               "status": "passed"
             },
             "line": 11,
@@ -4827,7 +5048,7 @@
           },
           {
             "result": {
-              "duration": 35233,
+              "duration": 34978,
               "status": "passed"
             },
             "line": 12,
@@ -4839,8 +5060,9 @@
           },
           {
             "result": {
-              "duration": 14574,
-              "status": "passed"
+              "duration": 144352,
+              "error_message": "java.lang.AssertionError: \nExpected: not null\n     but: was null\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.GlobalSuccessfulSteps.checkRedirectUrl(GlobalSuccessfulSteps.java:135)\n\tat ✽.And a redirect URL is delivered to the PSU(PIS_Redirect.feature:13)\n",
+              "status": "failed"
             },
             "line": 13,
             "name": "a redirect URL is delivered to the PSU",
@@ -4855,7 +5077,7 @@
         "before": [
           {
             "result": {
-              "duration": 9603439,
+              "duration": 10744079,
               "status": "passed"
             },
             "match": {
@@ -4870,7 +5092,7 @@
         "after": [
           {
             "result": {
-              "duration": 116062,
+              "duration": 200891,
               "status": "passed"
             },
             "match": {
@@ -4883,7 +5105,7 @@
         "steps": [
           {
             "result": {
-              "duration": 3925715,
+              "duration": 3598810,
               "status": "passed"
             },
             "line": 44,
@@ -4914,7 +5136,7 @@
           },
           {
             "result": {
-              "duration": 2226856858,
+              "duration": 1850386219,
               "status": "passed"
             },
             "line": 45,
@@ -4926,7 +5148,7 @@
           },
           {
             "result": {
-              "duration": 39110,
+              "duration": 40150,
               "status": "passed"
             },
             "line": 46,
@@ -4938,8 +5160,9 @@
           },
           {
             "result": {
-              "duration": 17008,
-              "status": "passed"
+              "duration": 164141,
+              "error_message": "java.lang.AssertionError: \nExpected: not null\n     but: was null\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.GlobalSuccessfulSteps.checkRedirectUrl(GlobalSuccessfulSteps.java:135)\n\tat ✽.And a redirect URL is delivered to the PSU(PIS_Redirect.feature:47)\n",
+              "status": "failed"
             },
             "line": 47,
             "name": "a redirect URL is delivered to the PSU",
@@ -4954,7 +5177,7 @@
         "before": [
           {
             "result": {
-              "duration": 10718896,
+              "duration": 9512222,
               "status": "passed"
             },
             "match": {
@@ -4969,7 +5192,7 @@
         "after": [
           {
             "result": {
-              "duration": 109169,
+              "duration": 175486,
               "status": "passed"
             },
             "match": {
@@ -4982,7 +5205,7 @@
         "steps": [
           {
             "result": {
-              "duration": 981671,
+              "duration": 1197234,
               "status": "passed"
             },
             "line": 44,
@@ -5013,7 +5236,7 @@
           },
           {
             "result": {
-              "duration": 2186656464,
+              "duration": 1837606858,
               "status": "passed"
             },
             "line": 45,
@@ -5025,7 +5248,7 @@
           },
           {
             "result": {
-              "duration": 37721,
+              "duration": 35449,
               "status": "passed"
             },
             "line": 46,
@@ -5037,8 +5260,9 @@
           },
           {
             "result": {
-              "duration": 14651,
-              "status": "passed"
+              "duration": 142721,
+              "error_message": "java.lang.AssertionError: \nExpected: not null\n     but: was null\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)\n\tat org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)\n\tat de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.GlobalSuccessfulSteps.checkRedirectUrl(GlobalSuccessfulSteps.java:135)\n\tat ✽.And a redirect URL is delivered to the PSU(PIS_Redirect.feature:47)\n",
+              "status": "failed"
             },
             "line": 47,
             "name": "a redirect URL is delivered to the PSU",
