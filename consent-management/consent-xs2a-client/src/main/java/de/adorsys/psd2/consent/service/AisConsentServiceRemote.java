@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
@@ -71,19 +70,6 @@ public class AisConsentServiceRemote implements AisConsentService {
     @Override
     public Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request) {
         CreateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
-            new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
-        return Optional.ofNullable(response.getConsentId());
-    }
-
-    @Override
-    public Optional<CmsAspspConsentDataBase64> getAspspConsentData(String consentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getAspspConsentData(), CmsAspspConsentDataBase64.class, consentId)
-                                       .getBody());
-    }
-
-    @Override
-    public Optional<String> saveAspspConsentDataInAisConsent(String consentId, CmsAspspConsentDataBase64 request) {
-        CreateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAspspConsentData(), HttpMethod.PUT,
             new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
         return Optional.ofNullable(response.getConsentId());
     }

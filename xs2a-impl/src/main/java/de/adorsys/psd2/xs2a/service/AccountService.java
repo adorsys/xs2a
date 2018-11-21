@@ -103,7 +103,7 @@ public class AccountService {
         List<Xs2aAccountDetails> accountDetails = accountDetailsMapper.mapToXs2aAccountDetailsList(spiResponse.getPayload());
         updateResourceId(accountConsent.getAccess(), accountDetails);
 
-        aisConsentDataService.updateAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(accountConsent.getAccess()));
+        aisConsentService.updateAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(accountConsent.getAccess()));
 
         ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = ResponseObject.<Map<String,
             List<Xs2aAccountDetails>>>builder()

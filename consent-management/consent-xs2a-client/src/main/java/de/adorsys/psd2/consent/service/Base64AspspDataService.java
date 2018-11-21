@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.consent;
+package de.adorsys.psd2.consent.service;
 
 import org.springframework.stereotype.Service;
 

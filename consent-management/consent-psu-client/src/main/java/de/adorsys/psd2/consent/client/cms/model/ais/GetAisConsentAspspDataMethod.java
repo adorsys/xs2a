@@ -22,7 +22,7 @@ import de.adorsys.psd2.consent.client.core.HttpMethod;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 
 public class GetAisConsentAspspDataMethod extends RestCmsRequestMethod<Void, CmsAspspConsentDataBase64> {
-    private static final String GET_AIS_CONSENT_ASPSP_DATA_URI = "api/v1/ais/consent/{consent-id}/aspsp-consent-data";
+    private static final String GET_AIS_CONSENT_ASPSP_DATA_URI = "api/v1/aspsp-consent-data/consents/{consent-id}";
 
     public GetAisConsentAspspDataMethod(HttpUriParams uriParams) {
         super(HttpMethod.GET, GET_AIS_CONSENT_ASPSP_DATA_URI, uriParams);

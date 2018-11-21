@@ -74,6 +74,7 @@ public class CmsExecutor {
 
         CmsServiceInvoker cmsServiceInvoker = configuration.getRestServiceInvoker();
 
+        //TODO all interactions with CMS should be successfully completed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/503
         createAisConsent(cmsServiceInvoker);
         getAisConsentById(cmsServiceInvoker);
         getConsentStatusById(cmsServiceInvoker);
@@ -154,7 +155,7 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to GET api/v1/ais/consent/{consent-id}/aspsp-consent-data endpoint
+     * Sends request to GET api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -167,7 +168,7 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to PUT api/v1/ais/consent/{consent-id}/aspspConsentData endpoint
+     * Sends request to PUT api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -268,7 +269,7 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to GET api/v1/pis/consent/{consent-id}/aspsp-consent-data endpoint
+     * Sends request to GET api/v1/aspsp-consent-data/payments/{payment-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -282,7 +283,7 @@ public class CmsExecutor {
 
 
     /**
-     * Sends request to PUT api/v1/pis/consent/{consent-id}/aspspConsentData endpoint
+     * Sends request to PUT  api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */

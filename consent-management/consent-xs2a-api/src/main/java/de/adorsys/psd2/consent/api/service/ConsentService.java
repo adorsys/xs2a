@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.domain;
+package de.adorsys.psd2.consent.api.service;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel(description = "Type of the consent", value = "ConsentType")
-public enum ConsentType {
-    AIS,
-    PIS,
-    PIIS
+public interface ConsentService {
+    /**
+     * Checks whether consent exists
+     *
+     * @param consentId id of consent
+     * @return boolean
+     */
+    boolean isConsentExist(String consentId);
 }

@@ -43,3 +43,21 @@ With the de.adorsys.psd2.consent.aspsp.api.CmsAspspTppService ASPSP can implemen
 time or forever or unlocking it. This may be required to provide temporary solutions to block requests from inappropriately
 behaving TPP before its certificate will be revoked.
 Functional implementation for this Java interface is planned to provided in the upcoming weeks. See [Roadmap](../roadmap.md)
+
+## Create one endpoint in CMS for working with AspspConsentData
+* Supported all types of services: AIS, PIS, PIIS
+* Added ability to delete AspspConsentData
+
+| Method | Path                                           | Description                                              |
+|--------|------------------------------------------------|----------------------------------------------------------|
+| GET    | api/v1/aspsp-consent-data/consents/{consent-id} | Get aspsp consent data identified by given consent id    |
+| GET    | api/v1/aspsp-consent-data/payments/{payment-id} | Get aspsp consent data identified by given payment id    |
+| PUT    | api/v1/aspsp-consent-data/consents/{consent-id} | Update aspsp consent data identified by given consent id |
+| DELETE | api/v1/aspsp-consent-data/consents/{consent-id} | Delete aspsp consent data identified by given consent id |
+
+Next old endpoints are not supported:
+* api/v1/ais/consent/{consent-id}/aspsp-consent-data
+* api/v1/pis/payment/{payment-id}/aspsp-consent-data
+* api/v1/pis/consent/{consent-id}/aspsp-consent-data
+
+Developer should change them according to the information in the table above.

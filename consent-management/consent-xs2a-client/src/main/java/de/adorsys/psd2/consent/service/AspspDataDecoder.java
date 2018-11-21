@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.consent;
+package de.adorsys.psd2.consent.service;
 
-public interface AspspDataEncoder<T, R> {
-    R encode(T payload);
+public interface AspspDataDecoder<T, R> {
+    R decode(T payload);
 }

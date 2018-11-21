@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
@@ -60,24 +59,6 @@ public interface PisConsentService {
     Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status);
 
     /**
-     * Gets Pis aspsp consent data by consent id
-     *
-     * @param consentId id of the consent
-     * @return Response containing aspsp consent data
-     */
-    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
-    Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId);
-
-    /**
-     * Gets Pis aspsp consent data by payment id
-     *
-     * @param paymentId id of the payment
-     * @return Response containing aspsp consent data
-     */
-    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
-    Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId);
-
-    /**
      * Gets original decrypted Id from encrypted string
      *
      * @param encryptedId id to be decrypted
@@ -86,27 +67,41 @@ public interface PisConsentService {
     Optional<String> getDecryptedId(String encryptedId);
 
     /**
-     * Update PIS consent aspsp consent data by id
-     *
-     * @param request   Aspsp provided pis consent data
-     * @param consentId id of the consent to be updated
-     * @return String consent id
-     */
-    //TODO move base64 handling to remote service/controller only. Service interface shouldn't perform always base64 encoding/decoding https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/412
-    Optional<String> updateAspspConsentDataInPisConsent(String consentId, CmsAspspConsentDataBase64 request);
-
-    /**
      * Creates consent authorization
+     *
+     * @param paymentId String representation of the payment identifier
+     * @param authorizationType Type of authorisation
+     * @param psuData Information about PSU
+     * @return Response containing authorization id
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
     /**
      * Creates consent authorization cancellation
+     *
+     * @param paymentId String representation of the payment identifier
+     * @param authorizationType Type of authorisation
+     * @param psuData Information about PSU
+     * @return Response containing authorization id
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
 
+    /**
+     * Updates consent authorization
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param request Incoming request for updating authorization
+     * @return Response containing SCA status, available and chosen Sca method
+     */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request);
 
+    /**
+     * Updates consent cancellation authorization
+     *
+     * @param authorizationId String representation of the authorisation identifier
+     * @param request Incoming request for updating authorization
+     * @return Response containing SCA status, available and chosen Sca method
+     */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorizationId, UpdatePisConsentPsuDataRequest request);
 
     /**
@@ -117,13 +112,44 @@ public interface PisConsentService {
      */
     void updatePaymentConsent(PisConsentRequest request, String consentId);
 
+    /**
+     * Get information about Authorisation by authorisation identifier
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @return Response containing information about Authorisation
+     */
     Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorisationById(String authorisationId);
 
+    /**
+     * Get information about Authorisation by cancellation identifier
+     *
+     * @param cancellationId String representation of the cancellation identifier
+     * @return Response containing information about Authorisation
+     */
     Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorisationById(String cancellationId);
 
+    /**
+     * Get information about Authorisation by payment identifier
+     *
+     * @param paymentId String representation of the payment identifier
+     * @param authorizationType Type of authorisation
+     * @return Response containing information about Authorisation
+     */
     Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType);
 
+    /**
+     * Get information about PSU by payment identifier
+     *
+     * @param paymentId String representation of the payment identifier
+     * @return Response containing information about PSU
+     */
     Optional<PsuIdData> getPsuDataByPaymentId(String paymentId);
 
+    /**
+     * Get information about PSU by consent identifier
+     *
+     * @param consentId String representation of pis consent identifier
+     * @return Response containing information about PSU
+     */
     Optional<PsuIdData> getPsuDataByConsentId(String consentId);
 }

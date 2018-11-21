@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -73,23 +72,6 @@ public interface AisConsentService {
      * @return String   consent id
      */
     Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request);
-
-    /**
-     * Gets Ais aspsp consent data by id
-     *
-     * @param consentId id of the consent
-     * @return Response containing aspsp consent data
-     */
-    Optional<CmsAspspConsentDataBase64> getAspspConsentData(String consentId);
-
-    /**
-     * Updates AIS consent aspsp consent data by id
-     *
-     * @param request   Aspsp provided ais consent data
-     * @param consentId id of the consent to be updated
-     * @return String   consent id
-     */
-    Optional<String> saveAspspConsentDataInAisConsent(String consentId, CmsAspspConsentDataBase64 request);
 
     /**
      * Creates consent authorization
