@@ -38,6 +38,8 @@ import java.util.List;
 
 @Slf4j
 public class CertificateExtractorUtil {
+    private CertificateExtractorUtil() {
+    }
 
     public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
 
