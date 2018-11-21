@@ -34,7 +34,7 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args(paymentType,paymentId)", returning = "result", argNames = "result,paymentType,paymentId")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args( paymentType, paymentId)", returning = "result", argNames = "result,paymentType,paymentId")
     public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PaymentType paymentType, String paymentId) {
         if (!result.hasError()) {
             CancelPaymentResponse response = result.getBody();

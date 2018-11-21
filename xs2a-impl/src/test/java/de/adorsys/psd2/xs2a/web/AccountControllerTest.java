@@ -54,6 +54,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountControllerTest {
+    private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
+    private static final String RESOURCE_ID = "5738a1d4-89f2-459a-95b0-82717274a097";
+    private static final String BOOKING_STATUS = "pending";
+
     private final String ACCOUNT_ID = "33333-999999999";
     private final String CONSENT_ID = "12345";
     private final String ACCOUNT_DETAILS_LIST_SOURCE = "/json/AccountDetailsList.json";
@@ -91,9 +95,9 @@ public class AccountControllerTest {
 
         //When
         AccountDetails result = (AccountDetails) accountController.readAccountDetails(ACCOUNT_ID, null,
-            CONSENT_ID, withBalance, null, null, null, null,
-            null, null, null, null, null,
-            null, null, null, null).getBody();
+                                                                                      CONSENT_ID, withBalance, null, null, null, null,
+                                                                                      null, null, null, null, null,
+                                                                                      null, null, null, null).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult.getBody());
@@ -109,9 +113,9 @@ public class AccountControllerTest {
 
         //When:
         AccountList result = (AccountList) accountController.getAccountList(null, CONSENT_ID, withBalance,
-            null, null, null, null, null, null,
-            null, null, null, null, null,
-            null, null).getBody();
+                                                                            null, null, null, null, null, null,
+                                                                            null, null, null, null, null,
+                                                                            null, null).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -123,13 +127,13 @@ public class AccountControllerTest {
             .when(responseMapper).ok(any(), any());
         //Given:
         ReadBalanceResponse200 expectedResult = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-            ReadBalanceResponse200.class).get();
+                                                                       ReadBalanceResponse200.class).get();
 
         //When:
         ReadBalanceResponse200 result = (ReadBalanceResponse200) accountController.getBalances(ACCOUNT_ID,
-            null, CONSENT_ID, null, null, null, null,
-            null, null, null, null, null,
-            null, null, null, null).getBody();
+                                                                                               null, CONSENT_ID, null, null, null, null,
+                                                                                               null, null, null, null, null,
+                                                                                               null, null, null, null).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -142,14 +146,14 @@ public class AccountControllerTest {
         //Given:
         boolean psuInvolved = true;
         AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-            AccountReport.class).get();
+                                                              AccountReport.class).get();
 
         //When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
-            null, null, null, null, "both", false,
-            false, null, null, null, null, null,
-            null, null, null, null, null,
-            null, null, null).getBody();
+                                                                                    null, null, null, null, "both", false,
+                                                                                    false, null, null, null, null, null,
+                                                                                    null, null, null, null, null,
+                                                                                    null, null, null).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -158,8 +162,8 @@ public class AccountControllerTest {
     private ResponseObject<Map<String, List<Xs2aAccountDetails>>> getXs2aAccountDetailsList() {
         List<Xs2aAccountDetails> accountDetails = Collections.singletonList(
             new Xs2aAccountDetails("33333-999999999", "DE371234599997", null, null, null,
-                null, Currency.getInstance("EUR"), "Schmidt", null,
-                CashAccountType.CACC, AccountStatus.ENABLED, "GENODEF1N02", "", Xs2aUsageType.PRIV, "", null));
+                                   null, Currency.getInstance("EUR"), "Schmidt", null,
+                                   CashAccountType.CACC, AccountStatus.ENABLED, "GENODEF1N02", "", Xs2aUsageType.PRIV, "", null));
         Map<String, List<Xs2aAccountDetails>> result = new HashMap<>();
         result.put("accountList", accountDetails);
         return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
@@ -187,7 +191,7 @@ public class AccountControllerTest {
 
     private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {
         AccountReport accountReport = jsonConverter.toObject(IOUtils.resourceToString(path, UTF_8),
-            AccountReport.class).get();
+                                                             AccountReport.class).get();
 
         return ResponseObject.<AccountReport>builder()
                    .body(accountReport).build();
@@ -219,7 +223,7 @@ public class AccountControllerTest {
 
     private ResponseObject<ReadBalanceResponse200> createReadBalances() throws IOException {
         ReadBalanceResponse200 read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-            ReadBalanceResponse200.class).get();
+                                                             ReadBalanceResponse200.class).get();
         return ResponseObject.<ReadBalanceResponse200>builder()
                    .body(read).build();
     }
@@ -232,7 +236,7 @@ public class AccountControllerTest {
         balance.setBalanceAmount(amount);
         balance.setBalanceType(BalanceType.INTERIM_AVAILABLE);
         balance.setLastChangeDateTime(LocalDateTime.of(2018, 3, 31, 15, 16,
-            16, 374));
+                                                       16, 374));
         balance.setReferenceDate(LocalDate.of(2018, 3, 29));
         balance.setLastCommittedTransaction("abc");
         List<Xs2aBalance> balances = Collections.singletonList(balance);

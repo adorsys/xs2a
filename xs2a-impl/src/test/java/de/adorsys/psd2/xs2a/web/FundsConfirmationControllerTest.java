@@ -36,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationControllerTest {
+    private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
     private final String FUNDS_REQ_DATA = "/json/ConfirmationOfFundsTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
 

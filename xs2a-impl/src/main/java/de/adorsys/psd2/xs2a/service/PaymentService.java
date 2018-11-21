@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -33,6 +34,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisConsentService;
+import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
@@ -81,14 +83,18 @@ public class PaymentService {
     private final AspspProfileServiceWrapper profileService;
     private final CancelPaymentService cancelPaymentService;
     private final SpiErrorMapper spiErrorMapper;
+    private final Xs2aEventService xs2aEventService;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
      *
-     * @param payment Payment information
+     * @param payment                     Payment information
+     * @param paymentInitiationParameters Parameters for payment initiation
      * @return Response containing information about created payment or corresponding error
      */
     public ResponseObject createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters) {
+        xs2aEventService.recordTppRequest(EventType.INITIATE_PAYMENT_REQUEST_RECEIVED, payment);
+
         TppInfo tppInfo = tppService.getTppInfo();
         tppInfo.setRedirectUri(paymentInitiationParameters.getTppRedirectUri());
         tppInfo.setNokRedirectUri(paymentInitiationParameters.getTppNokRedirectUri());
@@ -116,6 +122,7 @@ public class PaymentService {
      * @return Response containing information about payment or corresponding error
      */
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
         PisPayment payment = pisConsentService.getPisConsentById(aspspConsentData.getConsentId())
                                     .map(PisConsentResponse::getPayments)
@@ -150,6 +157,8 @@ public class PaymentService {
      * @return Information about the status of a payment
      */
     public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
+
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
 
@@ -196,6 +205,8 @@ public class PaymentService {
      * @return Response containing information about cancelled payment or corresponding error
      */
     public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentId) {
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.CANCEL_PAYMENT_REQUEST_RECEIVED);
+
         // we need to get decrypted payment ID
         String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
 
