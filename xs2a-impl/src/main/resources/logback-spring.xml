@@ -36,18 +36,19 @@
         </rollingPolicy>
     </appender>
 
-    <appender name="FILE-ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <encoder>
-            <pattern>[%-5level][%d{HH:mm:ss.SSS}][%thread] - %msg%n</pattern>
-        </encoder>
+    <!-- Uncomment the next line block to make access-logger write logs to file, mentioned in <fileNamePattern> tag -->
+    <!--<appender name="FILE-ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<encoder>-->
+            <!--<pattern>[%-5level][%d{HH:mm:ss.SSS}][%thread] - %msg%n</pattern>-->
+        <!--</encoder>-->
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOGS_HOME}/access/xs2a-access.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-    </appender>
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+            <!--<fileNamePattern>${LOGS_HOME}/access/xs2a-access.%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+            <!--<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">-->
+                <!--<maxFileSize>10MB</maxFileSize>-->
+            <!--</timeBasedFileNamingAndTriggeringPolicy>-->
+        <!--</rollingPolicy>-->
+    <!--</appender>-->
 
     <logger name="org.springframework" level="WARN"/>
     <logger name="springfox.documentation" level="OFF"/>
@@ -61,8 +62,10 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
+    <!-- Logger, that is responsible to log all XS2A requests and responses -->
     <logger name="access-log" level="info" additivity="false">
-        <appender-ref ref="FILE-ACCESS" />
+        <!-- Uncomment the next line to make access-logger write logs to file, mentioned in FILE-ACCESS inside <fileNamePattern> tag -->
+        <!--<appender-ref ref="FILE-ACCESS" />-->
         <appender-ref ref="STDOUT" />
     </logger>
 
