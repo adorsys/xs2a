@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.aspsp.api;
+package de.adorsys.psd2.consent.aspsp.api.tpp;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
@@ -47,8 +47,8 @@ public interface CmsAspspTppService {
      * Releases lock of requests from TPP by given TPP ID.
      * If TPP with given ID doesn't exist in DB, does nothing.
      *
-     * @param tppAuthorizationNumber ID of TPP to lock
+     * @param tppAuthorisationNumber ID of TPP to lock
      * @return <code>true</code> if TPP was found and unlock was done. <code>false</code> otherwise.
      */
-    boolean unblockTpp(@NotNull String tppAuthorizationNumber);
+    boolean unblockTpp(@NotNull String tppAuthorisationNumber);
 }
