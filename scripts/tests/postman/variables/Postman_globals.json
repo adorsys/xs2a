@@ -1,0 +1,138 @@
+{
+	"id": "bf2d8fac-0a8e-4bce-834d-6014f7583a29",
+	"values": [
+		{
+			"key": "x_request_id",
+			"value": "2f77a125-aa7a-45c0-b414-cea25a116035",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "psu_id_password",
+			"value": "zzz",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "ip_address",
+			"value": "1.1.1.1",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "transaction_id",
+			"value": "0001",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "cancellation_id",
+			"value": "004fa9f8-ca3d-4196-a83a-85a4e998240c",
+			"enabled": true
+		},
+		{
+			"key": "authorisation_id",
+			"value": "178fb5d2-753f-4a03-8352-ea64f619b7e6",
+			"enabled": true
+		},
+		{
+			"key": "startAuthorisation",
+			"value": "http://localhost:8080/v1/bulk-payments/0vVLsykLymp8CqoM_PfwLHx_5bNsrgOY2sEG_igdvS_tfZX1b_UNeRbRt811mgb98YFvLRixnAsQhnkqjzCOVw==_=_bS6p6XvTWI/authorisations",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "basket_id",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "payment_service",
+			"value": "payments",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "payment_product",
+			"value": "sepa-credit-transfers",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "with_balance",
+			"value": "true",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "booking_status",
+			"value": "both",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "consent_id",
+			"value": "HzedvCO_WXeGdv81WQ3lEuBVj3WIzbL4fT9fRSOPG-bCIqigv4iSnSBLAtuSxXW6H7r0mv2FL7Lj2dlYCBj3hg==_=_bS6p6XvTWI",
+			"enabled": true
+		},
+		{
+			"key": "account_id",
+			"value": "11111-999999999",
+			"enabled": true
+		},
+		{
+			"key": "resource_id",
+			"value": "0001",
+			"enabled": true
+		},
+		{
+			"key": "payment_service_bulk",
+			"value": "bulk-payments",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "payment_id",
+			"value": "0vVLsykLymp8CqoM_PfwLHx_5bNsrgOY2sEG_igdvS_tfZX1b_UNeRbRt811mgb98YFvLRixnAsQhnkqjzCOVw==_=_bS6p6XvTWI",
+			"enabled": true
+		}
+	],
+	"name": "My Workspace Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2018-11-21T15:33:18.887Z",
+	"_postman_exported_using": "Postman/6.5.2"
+}
