@@ -16,7 +16,5 @@
 
 package de.adorsys.psd2.consent.aspsp.api;
 
-
-public class CmsAspspAisService {
-
+public class TooManyResultsException extends RuntimeException {
 }
