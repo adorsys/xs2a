@@ -87,3 +87,12 @@ Added Java interface de.adorsys.psd2.consent.aspsp.api.CmsAspspEventService that
 of events by the requested. Appropriate endpoints were added to the CMS in consent-aspsp-web module.
  
 Developers should apply new liquibase migration scripts in order to update the database.
+
+## Set finalised statuses
+From now there is no possibility to update statuses of Authorisation, Payment Transaction, Consent if they are marked as "finalised".
+
+Finalised statuses are:
+
+* for Authorisation (SCA) status - *Finalised, Failed*;
+* for Payment Transaction status: *Cancelled, Rejected, AcceptedSettlementCompleted*;
+* for Consent status: *Rejected, RevokedByPSU, Expired, TerminatedByTpp, TerminatedByAspsp*.
