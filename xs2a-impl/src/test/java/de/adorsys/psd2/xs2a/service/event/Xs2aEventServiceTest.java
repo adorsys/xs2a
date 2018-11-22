@@ -46,7 +46,7 @@ public class Xs2aEventServiceTest {
     private static final String URI = "/v1/consents";
     private static final UUID REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
     private static final String TPP_IP = "1.2.3.4";
-    private static final EventType EVENT_TYPE = EventType.INITIATE_PAYMENT_REQUEST_RECEIVED;
+    private static final EventType EVENT_TYPE = EventType.PAYMENT_INITIATION_REQUEST_RECEIVED;
 
     @Mock
     private TppService tppService;

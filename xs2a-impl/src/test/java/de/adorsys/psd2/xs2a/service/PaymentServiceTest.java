@@ -208,7 +208,7 @@ public class PaymentServiceTest {
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.CANCEL_PAYMENT_REQUEST_RECEIVED);
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
     }
 
     @Test
@@ -222,7 +222,7 @@ public class PaymentServiceTest {
 
         // Then
         verify(xs2aEventService, times(1)).recordTppRequest(argumentCaptor.capture(), any());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.INITIATE_PAYMENT_REQUEST_RECEIVED);
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.PAYMENT_INITIATION_REQUEST_RECEIVED);
     }
 
     @Test
