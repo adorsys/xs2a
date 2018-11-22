@@ -46,7 +46,7 @@ public class AspspDataServiceRemote implements AspspDataService {
     @Override
     public @NotNull Optional<AspspConsentData> readAspspConsentData(@NotNull String externalId) {
         try {
-            ResponseEntity<CmsAspspConsentDataBase64> request = consentRestTemplate.getForEntity(aspspConsentDataRemoteUrls.getAspspConsentDataByConsentId(), CmsAspspConsentDataBase64.class, externalId);
+            ResponseEntity<CmsAspspConsentDataBase64> request = consentRestTemplate.getForEntity(aspspConsentDataRemoteUrls.getAspspConsentData(), CmsAspspConsentDataBase64.class, externalId);
             return Optional.of(request.getBody())
                        .map(this::mapToAspspConsentData);
         } catch (CmsRestException e) {

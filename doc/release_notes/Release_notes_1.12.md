@@ -48,12 +48,11 @@ Functional implementation for this Java interface is planned to provided in the 
 * Supported all types of services: AIS, PIS, PIIS
 * Added ability to delete AspspConsentData
 
-| Method | Path                                           | Description                                              |
-|--------|------------------------------------------------|----------------------------------------------------------|
-| GET    | api/v1/aspsp-consent-data/consents/{consent-id} | Get aspsp consent data identified by given consent id    |
-| GET    | api/v1/aspsp-consent-data/payments/{payment-id} | Get aspsp consent data identified by given payment id    |
-| PUT    | api/v1/aspsp-consent-data/consents/{consent-id} | Update aspsp consent data identified by given consent id |
-| DELETE | api/v1/aspsp-consent-data/consents/{consent-id} | Delete aspsp consent data identified by given consent id |
+| Method | Path                                            | Description                                                           |
+|--------|-------------------------------------------------|-----------------------------------------------------------------------|
+| GET    | api/v1/aspsp-consent-data/consents/{consent-id} | Get aspsp consent data identified by given consent id / payment id    |
+| PUT    | api/v1/aspsp-consent-data/consents/{consent-id} | Update aspsp consent data identified by given consent id / payment id |
+| DELETE | api/v1/aspsp-consent-data/consents/{consent-id} | Delete aspsp consent data identified by given consent id / payment id |
 
 Next old endpoints are not supported:
 * api/v1/ais/consent/{consent-id}/aspsp-consent-data

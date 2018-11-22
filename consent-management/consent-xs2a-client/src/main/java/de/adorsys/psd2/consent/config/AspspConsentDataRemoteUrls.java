@@ -25,25 +25,16 @@ public class AspspConsentDataRemoteUrls {
     private String consentServiceBaseUrl;
 
     /**
-     * Returns URL-string to CMS endpoint that gets aspsp consent data by consent ID
+     * Returns URL-string to CMS endpoint that gets aspsp consent data by consent ID / payment ID
      *
      * @return String
      */
-    public String getAspspConsentDataByConsentId() {
+    public String getAspspConsentData() {
         return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
     }
 
     /**
-     * Returns URL-string to CMS endpoint that gets aspsp consent data by payment ID
-     *
-     * @return String
-     */
-    public String getAspspConsentDataByPaymentId() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/payments/{payment-id}";
-    }
-
-    /**
-     * Returns URL-string to CMS endpoint that updates aspsp consent data by consent ID
+     * Returns URL-string to CMS endpoint that updates aspsp consent data by consent ID / payment ID
      *
      * @return String
      */
@@ -52,7 +43,7 @@ public class AspspConsentDataRemoteUrls {
     }
 
     /**
-     * Returns URL-string to CMS endpoint that delete aspsp consent data by consent ID
+     * Returns URL-string to CMS endpoint that delete aspsp consent data by consent ID / payment ID
      *
      * @return String
      */

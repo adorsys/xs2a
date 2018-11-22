@@ -52,7 +52,7 @@ public class PisScaMethodSelectedStage extends PisScaStage<Xs2aUpdatePisConsentP
         SpiPayment payment = mapToSpiPayment(response.getPayments(), paymentType);
         PsuIdData psuData = request.getPsuData();
 
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(request.getPaymentId());
 
         // we need to get decrypted payment ID
         String internalId = pisConsentDataService.getInternalPaymentIdByEncryptedString(request.getPaymentId());

@@ -123,7 +123,7 @@ public class PaymentService {
      */
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
         PisPayment payment = pisConsentService.getPisConsentById(aspspConsentData.getConsentId())
                                     .map(PisConsentResponse::getPayments)
                                     .map(payments -> payments.get(0))
@@ -159,7 +159,7 @@ public class PaymentService {
     public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
 
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
 
         // we need to get decrypted payment ID
@@ -234,7 +234,7 @@ public class PaymentService {
                            .build();
         }
 
-        AspspConsentData consentData = pisConsentDataService.getAspspConsentDataByPaymentId(paymentId);
+        AspspConsentData consentData = pisConsentDataService.getAspspConsentData(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
