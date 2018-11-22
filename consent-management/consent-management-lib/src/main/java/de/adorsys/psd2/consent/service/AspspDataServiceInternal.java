@@ -28,50 +28,86 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
+// TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AspspDataServiceInternal implements AspspDataService {
     private final SecurityDataService securityDataService;
     private final AspspConsentDataRepository aspspConsentDataRepository;
 
     @Override
-    public @NotNull Optional<AspspConsentData> readAspspConsentData(@NotNull String encryptedConsentId) {
-        return getAspspConsentDataEntity(encryptedConsentId)
+    public @NotNull Optional<AspspConsentData> readAspspConsentData(@NotNull String externalId) {
+        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
+        if (!securityDataService.isConsentIdEncrypted(externalId)) {
+            return aspspConsentDataRepository.findByConsentId(externalId)
+                       .map(aspspConsentDataEntity -> new AspspConsentData(aspspConsentDataEntity.getData(), externalId));
+        }
+
+        return getAspspConsentDataEntity(externalId)
                    .map(AspspConsentDataEntity::getData)
-                   .flatMap(data -> securityDataService.decryptConsentData(encryptedConsentId, data))
-                   .map(decryptedData -> new AspspConsentData(decryptedData.getData(), encryptedConsentId));
+                   .flatMap(data -> securityDataService.decryptConsentData(externalId, data))
+                   .map(dta -> new AspspConsentData(dta.getData(), externalId));
     }
 
     @Override
     @Transactional
     public boolean updateAspspConsentData(@NotNull AspspConsentData aspspConsentData) {
-        Optional<String> aspspConsentDataBase64 = Optional.ofNullable(aspspConsentData.getAspspConsentData())
-                                                      .map(Base64.getEncoder()::encodeToString);
+        byte[] data = aspspConsentData.getAspspConsentData();
+        if (Objects.isNull(data)) {
+            return deleteAspspConsentData(aspspConsentData.getConsentId());
+        }
 
-        Optional<String> consentId = securityDataService.decryptId(aspspConsentData.getConsentId());
+        String encryptedConsentId = aspspConsentData.getConsentId();
+        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
+        if (!securityDataService.isConsentIdEncrypted(encryptedConsentId)) {
+            return updateAndSaveAspspConsentData(encryptedConsentId, data);
+        }
 
-        if (!aspspConsentDataBase64.isPresent() || !consentId.isPresent()) {
+        Optional<String> decryptConsentId = securityDataService.decryptId(encryptedConsentId);
+        if (!decryptConsentId.isPresent()) {
             return false;
         }
 
-        Optional<EncryptedData> encryptedData = encryptConsentData(aspspConsentData.getConsentId(), aspspConsentDataBase64.get());
-
+        Optional<EncryptedData> encryptedData = encryptConsentData(encryptedConsentId, Base64.getEncoder().encodeToString(data));
         if (!encryptedData.isPresent()) {
             return false;
         }
 
-        return updateAndSaveAspspConsentData(consentId.get(), encryptedData.get().getData());
+        return updateAndSaveAspspConsentData(decryptConsentId.get(), encryptedData.get().getData());
     }
 
-    private Optional<AspspConsentDataEntity> getAspspConsentDataEntity(String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
+    @Override
+    @Transactional
+    public boolean deleteAspspConsentData(@NotNull String externalId) {
+        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
+        if (!securityDataService.isConsentIdEncrypted(externalId)) {
+            return deleteAspspConsentDataIfExist(externalId);
+        }
+
+        return securityDataService.decryptId(externalId)
+                   .map(this::deleteAspspConsentDataIfExist)
+                   .orElse(false);
+    }
+
+    private boolean deleteAspspConsentDataIfExist(@NotNull String consentId) {
+        if (aspspConsentDataRepository.exists(consentId)) {
+            aspspConsentDataRepository.delete(consentId);
+            return true;
+        }
+        return false;
+    }
+
+    private Optional<AspspConsentDataEntity> getAspspConsentDataEntity(String externalId) {
+        return securityDataService.decryptId(externalId)
                    .flatMap(aspspConsentDataRepository::findByConsentId);
     }
 
-    private Optional<EncryptedData> encryptConsentData(String encryptedConsentId, String aspspConsentDataBase64) {
-        return securityDataService.encryptConsentData(encryptedConsentId, aspspConsentDataBase64);
+    private Optional<EncryptedData> encryptConsentData(String externalId, String aspspConsentDataBase64) {
+        return securityDataService.encryptConsentData(externalId, aspspConsentDataBase64);
     }
 
     private boolean updateAndSaveAspspConsentData(String consentId, byte[] encryptConsentData) {

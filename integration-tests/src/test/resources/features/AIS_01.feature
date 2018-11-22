@@ -34,29 +34,34 @@ Feature: Account Information Service
             | consent-resource                      |
             | consent-dedicated-expired-consent.json|
 
-    @ignore
     Scenario Outline: Successful consent status request (redirect)
         Given PSU created a consent resource <consent-id>
-        And AISP wants to get the status of that consent and the data <consent-resource>
+        And AISP wants to get the status <consent-status> of that consent
         When AISP requests consent status
         Then a successful response code and the appropriate consent status gets returned
         Examples:
-            | consent-resource                      | consent-id                   |
-            | consent-status-expired.json           | consents-create-consent.json |
-            | consent-status-received.json          | consents-create-consent.json |
-            | consent-status-rejected.json          | consents-create-consent.json |
-            | consent-status-revoked-by-psu.json    | consents-create-consent.json |
-            | consent-status-terminated-by-tpp.json | consents-create-consent.json |
-            | consent-status-valid.json             | consents-create-consent.json |
+            | consent-status                      | consent-id                             |
+            | consent-status-expired.json           | consent-dedicated-successful.json    |
+            | consent-status-received.json          | consent-dedicated-successful.json    |
+            | consent-status-rejected.json          | consent-dedicated-successful.json    |
+            | consent-status-revoked-by-psu.json    | consent-dedicated-successful.json    |
+            | consent-status-terminated-by-tpp.json | consent-dedicated-successful.json    |
+            | consent-status-valid.json             | consent-dedicated-successful.json    |
+            | consent-status-expired.json           | consent-all-accounts-successful.json |
+            | consent-status-received.json          | consent-all-accounts-successful.json |
+            | consent-status-rejected.json          | consent-all-accounts-successful.json |
+            | consent-status-revoked-by-psu.json    | consent-all-accounts-successful.json |
+            | consent-status-terminated-by-tpp.json | consent-all-accounts-successful.json |
+            | consent-status-valid.json             | consent-all-accounts-successful.json |
 
-    @ignore
+
     Scenario Outline: Errorful consent status request (redirect)
-        Given AISP wants to get the status of that consent and the data <consent-resource> without a consent id
-        When AISP requests consent status
+        Given AISP wants to get the status of that consent and the data <consent-resource> with not existing consent id
+        When AISP requests errorFull consent status
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
-            | consent-resource                       |
-            | consent-status-missing-consent-id.json |
+            | consent-resource                                 |
+            | consent-status-with-not-existing-consent-id.json |
 
     @ignore
     Scenario Outline: Successful consent request (redirect)
@@ -67,14 +72,16 @@ Feature: Account Information Service
             | consent-resource        |
             | consent-successful.json |
 
-    @ignore
+
     Scenario Outline: Successful deletion of consent (redirect)
-        Given PSU wants to delete the consent <consent-resource>
+        Given PSU wants to create a consent <consent-id>
+        And PSU sends the create consent request
+        And PSU wants to delete the consent <consent-resource>
         When PSU deletes consent
         Then a successful response code and the appropriate messages get returned
         Examples:
-            | consent-resource                 |
-            | consent-deletion-successful.json |
+            | consent-resource                 |        consent-id                 |
+            | consent-deletion-successful.json | consent-dedicated-successful.json |
 
     @ignore
     Scenario Outline: Errorful deletion of consent (redirect)
@@ -113,91 +120,84 @@ Feature: Account Information Service
     #                                                                                                                  #
     ####################################################################################################################
     Scenario Outline: Request account list successfully
-        Given PSU already has an existing valid consent <consent-id>
+        Given PSU already has an existing <status> consent <consent-id>
         And wants to get a list of accounts using <account-resource>
         When PSU requests the list of accounts
         Then a successful response code and the appropriate list of accounts get returned
         Examples:
-            | account-resource                               | consent-id                   |
-            | accountList-successful.json                    | account/accounts-create-consent.json |
+            | account-resource                               | consent-id                           | status |
+            | accountList-successful.json                    | account/accounts-create-consent.json | valid  |
 
-    @ignore
+
     Scenario Outline: Request account list errorful
-        Given PSU already has an existing consent <consent-id>
-        And wants to get a list of accounts using <account-resource>
+        Given PSU already has an existing <status> consent <consent-id>
+        And PSU wants to get a list of accounts errorful using <account-resource>
         When PSU sends get request
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
-            | account-resource                         | consent-id                   |
-            | accountList-no-request-id.json           | accounts-create-consent.json |
-            | accountList-wrong-format-request-id.json | accounts-create-consent.json |
+            | account-resource                                       | consent-id                                    | status           |
+            | accountList-no-request-id.json                         | account/accounts-create-consent.json          |  valid           |
+            | accountList-wrong-format-request-id.json               | account/accounts-create-consent.json          |  valid           |
+            | accountList-with-expired-consent.json                  | account/accounts-create-consent.json          |  expired         |
+            | accountList-with-received-consent.json                 | account/accounts-create-consent.json          |  received        |
+            | accountList-with-rejected-consent.json                 | account/accounts-create-consent.json          |  rejected        |
+            | accountList-with-revokedByPsu-consent.json             | account/accounts-create-consent.json          |  revokedByPsu    |
+            | accountList-with-terminatedByTpp-consent.json          | account/accounts-create-consent.json          |  terminatedByTpp |
+            | accountList-with-exceeded-frequencePerDay-consent.json | account/accounts-create-consent-exceeded.json |  valid           |
 
-    @ignore
+
+
     Scenario Outline: Request account list with no consent errorful
-        Given PSU wants to get a list of accounts using <account-resource>
+        Given PSU wants to get a list of accounts errorful using <account-resource>
         When PSU sends get request
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
             | account-resource            |
             | accountList-no-consent.json |
 
-    @ignore
-    Scenario Outline: Request account list with expired consent errorful
-        Given PSU created consent <consent> which is expired
-        And wants to get a list of accounts using <account-resource>
-        When PSU sends get request
-        Then an error response code is displayed and an appropriate error response is shown
-        Examples:
-            | account-resource                      | consent                              |
-            | accountList-with-expired-consent.json | accounts-create-expired-consent.json |
-
     Scenario Outline: Request account details successfully
-        Given PSU already has an existing valid consent <consent-id>
+        Given PSU already has an existing <status> consent <consent-id>
         And account id <account-id>
         And wants to get account details using <account-resource>
         When PSU requests the account details
         Then a successful response code and the appropriate details of accounts get returned
         Examples:
-            | account-resource              | account-id      | consent-id                   |
-            | accountDetail-successful.json | 11111-999999999 | account/accounts-create-consent.json |
+            | account-resource              | account-id      | consent-id                           | status |
+            | accountDetail-successful.json | 11111-999999999 | account/accounts-create-consent.json | valid  |
 
-    @ignore
+
     Scenario Outline: Request account details errorful
-        Given PSU already has an existing consent <consent-id>
+        Given PSU already has an existing <status> consent <consent-id>
         And account id <account-id>
-        And wants to get a list of accounts using <account-resource>
-        When PSU requests the account details
+        And PSU wants to get a detail of accounts erroful using <account-resource>
+        When PSU requests the account details erroful
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
-            | account-resource                        | account-id                           | consent-id                   |
-            | accountDetail-wrong-format-request.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
-            | accountDetail-no-request-id.json        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
+            | account-resource                                         | consent-id                                    | status           | account-id                           |
+            | accountDetail-with-accountid-nomatch-consent.json        | account/accounts-create-consent.json          |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | accountDetail-wrong-format-request-id.json               | account/accounts-create-consent.json          |  valid           | 11111-999999999                      |
+            | accountDetail-with-expired-consent.json                  | account/accounts-create-consent.json          |  expired         | 11111-999999999                      |
+            | accountDetail-with-received-consent.json                 | account/accounts-create-consent.json          |  received        | 11111-999999999                      |
+            | accountDetail-with-rejected-consent.json                 | account/accounts-create-consent.json          |  rejected        | 11111-999999999                      |
+            | accountDetail-with-revokedByPsu-consent.json             | account/accounts-create-consent.json          |  revokedByPsu    | 11111-999999999                      |
+            | accountDetail-with-terminatedByTpp-consent.json          | account/accounts-create-consent.json          |  terminatedByTpp | 11111-999999999                      |
+            | accountDetail-with-exceeded-frequencePerDay-consent.json | account/accounts-create-consent-exceeded.json |  valid           | 11111-999999999                      |
 
-    @ignore
+
     Scenario Outline: Request account details with no consent errorful
-        Given PSU wants to get a list of accounts using <account-resource>
-        When PSU sends get request
+        Given PSU wants to get a detail of accounts erroful using <account-resource>
+        When PSU requests the account details erroful
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
             | account-resource              |
             | accountDetail-no-consent.json |
-
-    @ignore
-    Scenario Outline: Request account details with expired consent errorful
-        Given PSU created consent <consent> which is expired
-        And wants to get a list of accounts using <account-resource>
-        When PSU sends get request
-        Then an error response code is displayed and an appropriate error response is shown
-        Examples:
-            | account-resource                        | consent                              |
-            | accountDetail-with-expired-consent.json | accounts-create-expired-consent.json |
 
 #    ####################################################################################################################
 #    #                                                                                                                  #
 #    # Balance Request                                                                                                  #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-    @ignore
+  @ignore
     Scenario Outline: Read balances successfully
         Given PSU already has an existing consent <consent>
         And account id <account-id>

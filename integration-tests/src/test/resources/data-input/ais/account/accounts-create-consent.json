@@ -17,6 +17,7 @@
     ],
     "transactions": [
       {
+
         "resourceId": "11111-999999999",
         "currency": "EUR",
         "iban": "DE89370400440532013000"
@@ -27,7 +28,7 @@
     "psuId": null
   },
   "combinedServiceIndicator": false,
-  "frequencyPerDay": 4,
+  "allowedFrequencyPerDay": 4,
   "recurringIndicator": false,
   "tppId": "12345987",
   "tppRedirectPreferred": true,

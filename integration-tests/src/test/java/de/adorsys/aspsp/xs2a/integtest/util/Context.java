@@ -23,6 +23,9 @@ public class Context<T, U> {
     @Value("${aspspMock.baseUrl}")
     private String mockUrl;
 
+    @Value("${aspspProfile.baseUrl}")
+    private String profileUrl;
+
     @Autowired
     private ObjectMapper mapper;
 

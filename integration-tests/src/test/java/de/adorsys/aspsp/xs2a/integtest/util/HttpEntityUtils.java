@@ -63,4 +63,18 @@ public class HttpEntityUtils {
 
         return headers;
     }
+
+
+    /**
+     *
+     * @param body the body
+     * @return HttpHeaders
+     */
+    public static HttpEntity getHttpEntity(Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        headers.add("Accept", "application/json");
+
+        return new HttpEntity<>(body, headers);
+    }
 }

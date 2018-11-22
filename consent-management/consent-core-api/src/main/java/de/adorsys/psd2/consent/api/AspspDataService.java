@@ -34,8 +34,16 @@ public interface AspspDataService {
     /**
      * Writes/Updates an AspspConsentData by the consent ID given in it
      *
-     * @param aspspConsentData aspspConsentData to be put
+     * @param aspspConsentData aspspConsentData to be put. If aspspConsentData is null it will be removed
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
     boolean updateAspspConsentData(@NotNull AspspConsentData aspspConsentData);
+
+    /**
+     * Deletes an AspspConsentData object by the Consent ID / Payment ID
+     *
+     * @param id AIS/PIIS Consent ID / Payment ID that identifies the data
+     * @return <code>true</code> if consent was found and data was deleted. <code>false</code> otherwise.
+     */
+    boolean deleteAspspConsentData(@NotNull String id);
 }

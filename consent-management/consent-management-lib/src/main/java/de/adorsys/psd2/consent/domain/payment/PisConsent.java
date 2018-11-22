@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
-import de.adorsys.psd2.consent.domain.ConsentType;
+import de.adorsys.psd2.consent.api.ConsentType;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;

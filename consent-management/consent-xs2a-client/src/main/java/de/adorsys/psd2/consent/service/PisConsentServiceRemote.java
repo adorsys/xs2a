@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
@@ -39,6 +38,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
+// TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/498
 @Service
 @RequiredArgsConstructor
 public class PisConsentServiceRemote implements PisConsentService {
@@ -58,7 +58,8 @@ public class PisConsentServiceRemote implements PisConsentService {
 
     @Override
     public Optional<PisConsentResponse> getConsentById(String consentId) {
-        return Optional.empty();
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId)
+                                       .getBody());
     }
 
     @Override
@@ -70,28 +71,9 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
-    public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getAspspConsentDataByConsentId(), CmsAspspConsentDataBase64.class, consentId)
-                                       .getBody());
-    }
-
-    @Override
-    public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getAspspConsentData(), CmsAspspConsentDataBase64.class, paymentId)
-                                       .getBody());
-    }
-
-    @Override
     public Optional<String> getDecryptedId(String encryptedId) {
         return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPaymentIdByEncryptedString(), String.class, encryptedId)
                                        .getBody());
-    }
-
-    @Override
-    public Optional<String> updateAspspConsentDataInPisConsent(String consentId, CmsAspspConsentDataBase64 request) {
-        CreatePisConsentResponse response = consentRestTemplate.exchange(remotePisConsentUrls.updateAspspConsentData(), HttpMethod.PUT,
-            new HttpEntity<>(request), CreatePisConsentResponse.class, consentId).getBody();
-        return Optional.ofNullable(response.getConsentId());
     }
 
     @Override

@@ -22,7 +22,7 @@ import de.adorsys.psd2.consent.client.core.HttpMethod;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 
 public class UpdatePisConsentAspspDataMethod extends RestCmsRequestMethod<CmsAspspConsentDataBase64, CmsAspspConsentDataBase64> {
-    private static final String UPDATE_PIS_CONSENT_ASPSP_DATA_URI = "api/v1/pis/consent/{consent-id}/aspsp-consent-data";
+    private static final String UPDATE_PIS_CONSENT_ASPSP_DATA_URI = "api/v1/aspsp-consent-data/consents/{consent-id}";
 
     public UpdatePisConsentAspspDataMethod(final CmsAspspConsentDataBase64 request, HttpUriParams uriParams) {
         super(request, HttpMethod.PUT, UPDATE_PIS_CONSENT_ASPSP_DATA_URI, uriParams);

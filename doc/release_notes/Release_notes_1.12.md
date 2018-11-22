@@ -27,3 +27,72 @@ Please use SpiResponse.voidResponse() static method for that.
 
 ## Support Oracle DB
 Migrations scripts were modified in order to fix oracle supporting issues. You may be required to regenerate local schemes.
+
+## Log TPP requests and responses
+Now all the requests and responses from TPP to XS2A are logged.
+Logging flow is configured in logback-spring.xml file. By default, all such logs are written to console only. 
+It is possible to change this behaviour by uncommenting the lines inside logback-spring.xml (see the hints inside this logback file).
+
+If there is a need to rewrite logging configurations, the following should be done:
+* logback file (logback.xml or logback.groovy (if Groovy is on the classpath)) should be created inside the project. 
+
+Please, use only mentioned names for logback files to make rewriting configs work.
+
+## New Java Interface for locking TPP Access provided in CMS-ASPSP-API
+With the de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService ASPSP can implement a functionality of locking TPP by a certain
+time or forever or unlocking it. This may be required to provide temporary solutions to block requests from inappropriately
+behaving TPP before its certificate will be revoked.
+Functional implementation for this Java interface is planned to provided in the upcoming weeks. See [Roadmap](../roadmap.md)
+
+## Create one endpoint in CMS for working with AspspConsentData
+* Supported all types of services: AIS, PIS, PIIS
+* Added ability to delete AspspConsentData
+
+| Method | Path                                           | Description                                              |
+|--------|------------------------------------------------|----------------------------------------------------------|
+| GET    | api/v1/aspsp-consent-data/consents/{consent-id} | Get aspsp consent data identified by given consent id    |
+| GET    | api/v1/aspsp-consent-data/payments/{payment-id} | Get aspsp consent data identified by given payment id    |
+| PUT    | api/v1/aspsp-consent-data/consents/{consent-id} | Update aspsp consent data identified by given consent id |
+| DELETE | api/v1/aspsp-consent-data/consents/{consent-id} | Delete aspsp consent data identified by given consent id |
+
+Next old endpoints are not supported:
+* api/v1/ais/consent/{consent-id}/aspsp-consent-data
+* api/v1/pis/payment/{payment-id}/aspsp-consent-data
+* api/v1/pis/consent/{consent-id}/aspsp-consent-data
+
+Developer should change them according to the information in the table above.
+
+## New Java Interfaces for exporting consents and payments provided in CMS-ASPSP-API
+With the de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService and
+de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService ASPSP can implement a functionality of exporting AIS Consents
+and Payments by certain TPP or PSU and certain period of time.
+Functional implementation for this Java interface is planned to provided in the upcoming weeks. See [Roadmap](../roadmap.md)
+
+## New Java interface and CMS endpoints for creating, terminating and retrieving PIIS consents in CMS-ASPSP-API
+With the de.adorsys.psd2.consent.aspsp.api.service.CmsAspspPiisService ASPSP can now create new PIIS consents,
+terminate them by their Ids and retrieve them by PSU Id.
+Appropriate endpoints were added to the CMS in consent-aspsp-web module.
+
+## Record TPP requests
+From now on all TPP request are recorded to the CMS database. Requests are recorder and stored as events,
+with event type that corresponds to specific request.
+Recorded event contains:
+ * event timestamp, indicating when the event has occurred
+ * consent id or payment id if it they were contained in the request
+ * origin and type of the event
+ * payload with: information about the TPP, TPP's ip address, unique identifier of the request, request URI,
+ request headers and body
+ 
+Added Java interface de.adorsys.psd2.consent.aspsp.api.CmsAspspEventService that allows ASPSP to retrieve list
+of events by the requested. Appropriate endpoints were added to the CMS in consent-aspsp-web module.
+ 
+Developers should apply new liquibase migration scripts in order to update the database.
+
+## Set finalised statuses
+From now there is no possibility to update statuses of Authorisation, Payment Transaction, Consent if they are marked as "finalised".
+
+Finalised statuses are:
+
+* for Authorisation (SCA) status - *Finalised, Failed*;
+* for Payment Transaction status: *Cancelled, Rejected, AcceptedSettlementCompleted*;
+* for Consent status: *Rejected, RevokedByPSU, Expired, TerminatedByTpp, TerminatedByAspsp*.

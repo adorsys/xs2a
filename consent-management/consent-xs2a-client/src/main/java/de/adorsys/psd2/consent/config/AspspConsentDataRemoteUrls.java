@@ -16,7 +16,47 @@
 
 package de.adorsys.psd2.consent.config;
 
-public interface AspspConsentDataRemoteUrls {
-    String getAspspConsentData();
-    String updateAspspConsentData();
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class AspspConsentDataRemoteUrls {
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
+
+    /**
+     * Returns URL-string to CMS endpoint that gets aspsp consent data by consent ID
+     *
+     * @return String
+     */
+    public String getAspspConsentDataByConsentId() {
+        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
+    }
+
+    /**
+     * Returns URL-string to CMS endpoint that gets aspsp consent data by payment ID
+     *
+     * @return String
+     */
+    public String getAspspConsentDataByPaymentId() {
+        return consentServiceBaseUrl + "/aspsp-consent-data/payments/{payment-id}";
+    }
+
+    /**
+     * Returns URL-string to CMS endpoint that updates aspsp consent data by consent ID
+     *
+     * @return String
+     */
+    public String updateAspspConsentData() {
+        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
+    }
+
+    /**
+     * Returns URL-string to CMS endpoint that delete aspsp consent data by consent ID
+     *
+     * @return String
+     */
+    public String deleteAspspConsentData() {
+        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
+    }
 }
