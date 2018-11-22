@@ -139,7 +139,7 @@ public class PaymentServiceTest {
         when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters(), getTppInfoServiceModified(), getXs2aPisConsent()))
             .thenReturn(getValidResponse());
 
-        when(pisConsentDataService.getAspspConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
+        when(pisConsentDataService.getAspspConsentData(anyString())).thenReturn(ASPSP_CONSENT_DATA);
         when(tppService.getTppInfo()).thenReturn(getTppInfo());
 
         when(cancelPaymentService.initiatePaymentCancellation(any(), any(), any()))

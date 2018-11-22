@@ -28,14 +28,9 @@ public class PisConsentDataService {
     private final PisConsentService pisConsentService;
     private final AspspDataService aspspDataService;
 
-    public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
+    public AspspConsentData getAspspConsentData(String paymentId) {
         return aspspDataService.readAspspConsentData(paymentId)
                    .orElseGet(() -> new AspspConsentData(null, paymentId));
-    }
-
-    public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return aspspDataService.readAspspConsentData(consentId)
-                   .orElseGet(() -> new AspspConsentData(null, consentId));
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
