@@ -264,7 +264,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     public ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> createPisConsentAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_INITIATION_AUTHORISATION_REQUEST_RECEIVED);
 
         return pisAuthorizationService.createConsentAuthorisation(paymentId, paymentType, psuData)
                    .map(resp -> ResponseObject.<Xsa2CreatePisConsentAuthorisationResponse>builder()
@@ -290,7 +290,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     public ResponseObject<Xs2aCreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PIS_CONSENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
 
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         return pisAuthorizationService.createConsentCancellationAuthorisation(paymentId, paymentType, psuData)
