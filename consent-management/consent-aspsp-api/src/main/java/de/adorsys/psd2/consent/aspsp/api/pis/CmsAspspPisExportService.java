@@ -41,7 +41,7 @@ public interface CmsAspspPisExportService {
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<CmsPayment> exportConsentsByTpp(String tppAuthorisationNumber,
+    Collection<CmsPayment> exportPaymentsByTpp(String tppAuthorisationNumber,
                                                @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
                                                @Nullable PsuIdData psuIdData);
 
@@ -57,6 +57,6 @@ public interface CmsAspspPisExportService {
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<CmsPayment> exportConsentsByPsu(PsuIdData psuIdData,
+    Collection<CmsPayment> exportPaymentsByPsu(PsuIdData psuIdData,
                                                @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo);
 }
