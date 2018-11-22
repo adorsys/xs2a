@@ -21,7 +21,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.12</version>
+        <version>1.13-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -40,17 +40,17 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-web</artifactId>
-            <version>1.12</version>
+            <version>1.13-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-psu-web</artifactId>
-            <version>1.12</version>
+            <version>1.13-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-aspsp-web</artifactId>
-            <version>1.12</version>
+            <version>1.13-SNAPSHOT</version>
         </dependency>
 
 
