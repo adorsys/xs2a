@@ -41,8 +41,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.TERMINATED_BY_ASPSP;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Service
 @RequiredArgsConstructor
@@ -96,7 +96,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
                                                LocalDate validUntil,
                                                int allowedFrequencyPerDay) {
         PiisConsentEntity consent = new PiisConsentEntity();
-        consent.setConsentStatus(RECEIVED);
+        consent.setConsentStatus(VALID);
         consent.setRequestDateTime(OffsetDateTime.now());
         consent.setExpireDate(validUntil);
         consent.setPsuData(psuDataMapper.mapToPsuData(psuIdData));

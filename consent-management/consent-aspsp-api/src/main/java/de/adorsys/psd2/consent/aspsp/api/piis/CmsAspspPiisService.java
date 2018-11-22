@@ -28,7 +28,7 @@ import java.util.Optional;
 
 public interface CmsAspspPiisService {
     /**
-     * Creates new PIIS consent
+     * Creates new PIIS consent. Consent gets status "Valid".
      *
      * @param psuIdData              PSU credentials data
      * @param tppInfo             TPP for which the consent will be created. If the value is omitted, consent will be created for all TPPs.
