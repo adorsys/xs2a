@@ -66,7 +66,7 @@ public class FundsConfirmationService {
      * @return Response with the result 'true' if there are enough funds in the account, 'false' otherwise
      */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
-        xs2aEventService.recordTppRequest(EventType.CONFIRM_FUNDS_REQUEST_RECEIVED, request);
+        xs2aEventService.recordTppRequest(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED, request);
 
         String consentId = null;
 

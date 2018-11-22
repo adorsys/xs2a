@@ -90,16 +90,14 @@ public class FundsConfirmationServiceTest {
 
         // Then
         verify(xs2aEventService, times(1)).recordTppRequest(argumentCaptor.capture(), any());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.CONFIRM_FUNDS_REQUEST_RECEIVED);
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED);
     }
 
     private FundsConfirmationRequest buildFundsConfirmationRequest() {
-        FundsConfirmationRequest request = new FundsConfirmationRequest();
-        return request;
+        return new FundsConfirmationRequest();
     }
 
     private SpiFundsConfirmationRequest buildSpiFundsConfirmationRequest() {
-        SpiFundsConfirmationRequest request = new SpiFundsConfirmationRequest();
-        return request;
+        return new SpiFundsConfirmationRequest();
     }
 }
