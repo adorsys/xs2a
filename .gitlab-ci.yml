@@ -110,7 +110,6 @@ variables: &variables
 
 .build_java: &build_java
   stage: "build:src"
-  image: "adorsys/openjdk-build-base:8"
   script:
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
@@ -123,6 +122,13 @@ variables: &variables
     - cd online-banking-demo-ui
     - npm install
     - npm run build --prod
+
+.java_tests: &java_tests
+  stage: "build:qa"
+  script:
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - mvn --fail-at-end clean install
 
 # Build docker images and put them to GITLAB repo
 # TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
@@ -240,11 +246,19 @@ variables: &variables
 # jobs
 # ------------------------------------------------------------------
 
-build_package:
+build_package_java8:
+  image: "adorsys/openjdk-build-base:8"
   <<: *build_java
   artifacts:
     <<: *java_artifacts
     expire_in: "1 day"
+
+build_package_java11:
+  image: "maven:3.6-jdk-11"
+  variables:
+    JAVA_TOOL_OPTIONS: "-XX:MaxRAM=3G -XX:MaxRAMFraction=3"
+  <<: *build_java
+
 
 build_frontend:
   <<: *build_angular
@@ -288,18 +302,30 @@ check_javadoc:
     name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-javadoc"
     expire_in: "10 day"
 
-unit_tests:
+check_javadoc_java11:
   stage: "build:qa"
-  image: "adorsys/openjdk-build-base:8"
+  image: "maven:3.6-jdk-11"
+  variables:
+    JAVA_TOOL_OPTIONS: "-XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   script:
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn --fail-at-end clean install
+    - mvn -Dmaven.test.skip=true package javadoc:javadoc
+
+unit_tests_java8:
+  <<: *java_tests
+  image: "adorsys/openjdk-build-base:8"
   artifacts:
     paths:
     - "**/target/surefire-reports/*"
     name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-*"
     expire_in: "10 day"
+
+unit_tests_java11:
+  <<: *java_tests
+  image: "maven:3.6-jdk-11"
+  variables:
+    JAVA_TOOL_OPTIONS: "-XX:MaxRAM=3G -XX:MaxRAMFraction=3"
 
 
 # Develop
