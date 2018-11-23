@@ -5,6 +5,7 @@ Feature: Account Information Service
 #    # Consent Requests                                                                                                 #
 #    #                                                                                                                  #
 #    ####################################################################################################################
+
     Scenario Outline: Successful consent request creation (redirect)
         Given PSU wants to create a consent <consent-resource>
         When PSU sends the create consent request
@@ -119,6 +120,7 @@ Feature: Account Information Service
     # Account Request                                                                                                  #
     #                                                                                                                  #
     ####################################################################################################################
+
     Scenario Outline: Request account list successfully
         Given PSU already has an existing <status> consent <consent-id>
         And wants to get a list of accounts using <account-resource>
@@ -197,17 +199,17 @@ Feature: Account Information Service
 #    # Balance Request                                                                                                  #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-  @ignore
+
     Scenario Outline: Read balances successfully
-        Given PSU already has an existing consent <consent>
+        Given PSU already has an existing valid consent <consent>
         And account id <account-id>
         And wants to read all balances using <balance-resource>
         When PSU requests the balances
-        Then a successful response code and the appropriate list of accounts get returned
+        Then successful response code and the appropriate list of accounts get returned
         Examples:
-            | consent                     | account-id                           | balance-resource            |
-            | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
-            | balance-create-consent.json | 868beafc-ef87-4fdb-ac0a-dd6c52b77ee6 | readBalance-successful.json |
+            | consent                                                 | account-id                           | balance-resource            |
+            | balance/readBalance_access_right_implicit_accounts.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
+            | balance/readBalance_access_right_balances.json          | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
 
     @ignore
     Scenario Outline: Read balances errorful
