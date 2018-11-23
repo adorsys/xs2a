@@ -16,33 +16,29 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@ApiModel(description = "Transactions Report", value = "TransactionsReport")
 public class Xs2aTransactionsReport {
+    private static final String RESPONSE_TYPE_JSON = "application/json";
 
-    @ApiModelProperty(value = "Xs2aAccountReference")
     private Xs2aAccountReference xs2aAccountReference;
 
-    @ApiModelProperty(value = "AccountReport")
     private Xs2aAccountReport accountReport;
 
-    @ApiModelProperty(value = "BalanceList")
     private List<Xs2aBalance> balances;
 
-    @ApiModelProperty(value = "Links")
-    @JsonProperty("_links")
     private Links links;
 
-    @JsonIgnore
     private boolean transactionReportHuge;
+
+    private String responseContentType;
+
+    public boolean isResponseContentTypeJson() {
+        return RESPONSE_TYPE_JSON.equals(responseContentType);
+    }
 }

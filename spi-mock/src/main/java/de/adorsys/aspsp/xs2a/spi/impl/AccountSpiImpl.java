@@ -131,7 +131,7 @@ public class AccountSpiImpl implements AccountSpi {
                 balances = accountDetails.getBalances();
             }
 
-            SpiTransactionReport transactionReport = new SpiTransactionReport(transactions, balances, null);
+            SpiTransactionReport transactionReport = new SpiTransactionReport(transactions, balances, SpiTransactionReport.RESPONSE_TYPE_JSON, null);
 
             return SpiResponse.<SpiTransactionReport>builder()
                 .payload(transactionReport)

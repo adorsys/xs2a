@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -26,10 +27,15 @@ import java.util.List;
  */
 @Value
 public class SpiTransactionReport {
+    public static final String RESPONSE_TYPE_JSON = "application/json";
+    public static final String RESPONSE_TYPE_XML = "application/xml";
+    public static final String RESPONSE_TYPE_TEXT = "plain/text";
 
     private List<SpiTransaction> transactions;
     @Nullable
     private List<SpiAccountBalance> balances;
+    @NotNull
+    private String responseContentType;
 
-    private String transactionsRaw;
+    private byte[] transactionsRaw;
 }

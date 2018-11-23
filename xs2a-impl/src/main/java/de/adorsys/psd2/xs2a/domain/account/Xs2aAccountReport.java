@@ -36,7 +36,7 @@ public class Xs2aAccountReport {
 
     private final List<Transactions> pending;
 
-    private final String transactionsRaw;
+    private final byte[] transactionsRaw;
 
     @NotNull
     @JsonProperty("_links")

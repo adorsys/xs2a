@@ -319,6 +319,7 @@ public class AccountService {
             Collections.emptyList(), null)));
         transactionsReport.setXs2aAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference.get()).orElse(null));
         transactionsReport.setBalances(balanceMapper.mapToXs2aBalanceList(spiTransactionReport.getBalances()));
+        transactionsReport.setResponseContentType(spiTransactionReport.getResponseContentType());
 
         ResponseObject<Xs2aTransactionsReport> response =
             ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build();

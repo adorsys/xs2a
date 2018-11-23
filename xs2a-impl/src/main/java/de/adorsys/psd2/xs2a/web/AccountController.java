@@ -29,7 +29,6 @@ import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -115,9 +114,11 @@ public class AccountController implements AccountApi {
         ResponseObject<Xs2aTransactionsReport> transactionsReport =
             accountService.getTransactionsReportByPeriod(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
 
-        return Optional.ofNullable(transactionsReport.getBody().getAccountReport().getTransactionsRaw())
-            .map(s -> new ResponseEntity(transactionsReport.getBody().getAccountReport().getTransactionsRaw(), HttpStatus.OK))
-            .orElseGet(() -> responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponse200Json));
+        if (transactionsReport.getBody().isResponseContentTypeJson()) {
+            return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponse200Json);
+        } else {
+            return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponseRaw);
+        }
     }
 
     @Override

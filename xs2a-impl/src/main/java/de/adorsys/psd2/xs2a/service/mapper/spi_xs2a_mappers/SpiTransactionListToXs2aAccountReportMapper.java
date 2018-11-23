@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -38,8 +38,8 @@ public class SpiTransactionListToXs2aAccountReportMapper {
 
     private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
 
-    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(List<SpiTransaction> spiTransactions, String rawTransactionsResponse) {
-        if (StringUtils.isNotBlank(rawTransactionsResponse)) {
+    public Optional<Xs2aAccountReport> mapToXs2aAccountReport(List<SpiTransaction> spiTransactions, byte[] rawTransactionsResponse) {
+        if (ArrayUtils.isNotEmpty(rawTransactionsResponse)) {
             return Optional.of(new Xs2aAccountReport(null, null, rawTransactionsResponse));
         }
         if (CollectionUtils.isEmpty(spiTransactions)) {
@@ -49,7 +49,7 @@ public class SpiTransactionListToXs2aAccountReportMapper {
         List<Transactions> booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
         List<Transactions> pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
 
-        return Optional.of(new Xs2aAccountReport(booked, pending, rawTransactionsResponse));
+        return Optional.of(new Xs2aAccountReport(booked, pending, null));
     }
 
     @NotNull
