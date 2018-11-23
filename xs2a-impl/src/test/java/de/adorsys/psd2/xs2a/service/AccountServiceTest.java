@@ -784,7 +784,7 @@ public class AccountServiceTest {
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it
     private static SpiTransactionReport buildSpiTransactionReport() {
-        return new SpiTransactionReport(Collections.emptyList(), Collections.emptyList(), null);
+        return new SpiTransactionReport(Collections.emptyList(), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null);
     }
 
     // Needed because ResponseObject is final, so it's impossible to mock it
