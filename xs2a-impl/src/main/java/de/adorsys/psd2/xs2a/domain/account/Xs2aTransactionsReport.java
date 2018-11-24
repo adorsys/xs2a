@@ -16,14 +16,16 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
+import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import lombok.Data;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 
 @Data
-public class Xs2aTransactionsReport {
+public class Xs2aTransactionsReport implements CustomContentTypeProvider {
     private static final String RESPONSE_TYPE_JSON = "application/json";
 
     private Xs2aAccountReference xs2aAccountReference;
@@ -40,5 +42,10 @@ public class Xs2aTransactionsReport {
 
     public boolean isResponseContentTypeJson() {
         return RESPONSE_TYPE_JSON.equals(responseContentType);
+    }
+
+    @Override
+    public MediaType getCustomContentType() {
+        return new MediaType(responseContentType);
     }
 }
