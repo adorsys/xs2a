@@ -135,6 +135,11 @@ public class ProfileConfiguration implements InitializingBean {
      */
     private boolean piisConsentSupported;
 
+    /**
+     * If the option is set to "true", than Delta report is supported
+     */
+    private boolean deltaReportSupported;
+
     @Override
     public void afterPropertiesSet() {
         setDefaultPaymentType(PaymentType.SINGLE);

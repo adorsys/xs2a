@@ -236,4 +236,14 @@ public class AspspProfileUpdateController {
         aspspProfileService.updatePiisConsentSupported(piisConsentSupported);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(path = "/delta-report-supported")
+    @ApiOperation(value = "Update the value of Delta report supported. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok"),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateDeltaReportSupported(@RequestBody boolean deltaReportSupported) {
+        aspspProfileService.updateDeltaReportSupported(deltaReportSupported);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -39,6 +39,8 @@ public class Context<T, U> {
     private String authorisationId;
     private String consentId;
     private String ressourceId;
+    private String queryParams;
+    private String transactionId;
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
     private TppMessages tppMessages;
@@ -62,6 +64,8 @@ public class Context<T, U> {
         this.authorisationId = null;
         this.consentId = null;
         this.ressourceId = null;
+        this.queryParams = null;
+        this.transactionId = null;
         this.testData = null;
         this.actualResponse = null;
         this.tppMessages = null;
