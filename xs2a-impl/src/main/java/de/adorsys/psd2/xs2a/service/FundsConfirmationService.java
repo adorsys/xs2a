@@ -93,7 +93,7 @@ public class FundsConfirmationService {
         }
 
         SpiFundsConfirmationRequest spiRequest = xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(request);
-        AspspConsentData aspspConsentData = fundsConfirmationConsentDataService.getAspspConsentDataByConsentId(consentId); //TODO Rework it after service implementation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
+        AspspConsentData aspspConsentData = fundsConfirmationConsentDataService.getAspspConsentData(consentId);
         PsuIdData psuData = fundsConfirmationPsuDataService.getPsuDataByConsentId(consentId);  //TODO Rework it after service implementation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
