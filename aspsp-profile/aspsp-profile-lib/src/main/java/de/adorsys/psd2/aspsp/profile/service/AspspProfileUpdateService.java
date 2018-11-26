@@ -63,4 +63,6 @@ public interface AspspProfileUpdateService {
     void updatePaymentCancellationAuthorizationMandated(boolean paymentCancellationAuthorizationMandated);
 
     void updatePiisConsentSupported(boolean piisConsentSupported);
+
+    void updateDeltaReportSupported(boolean deltaReportSupported);
 }

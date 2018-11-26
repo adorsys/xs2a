@@ -6,7 +6,11 @@
         "before": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 67289317,
+=======
               "duration": 56786584,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -14,13 +18,16 @@
             }
           }
         ],
-        "line": 14,
-        "name": "Successful consent request creation (redirect)",
+        "line": 256,
+        "name": "Read transaction list successfully",
         "description": "",
-        "id": "account-information-service;successful-consent-request-creation-(redirect);;2",
+        "id": "account-information-service;read-transaction-list-successfully;;2",
         "after": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 279768,
+=======
               "duration": 15311983,
               "status": "passed"
             },
@@ -31,6 +38,7 @@
           {
             "result": {
               "duration": 506465,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -61,39 +69,64 @@
         "steps": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 752229932,
+=======
               "duration": 350904715,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 9,
-            "name": "PSU wants to create a consent consent-dedicated-successful.json",
+            "line": 248,
+            "name": "PSU already has an existing valid consent transaction/transactions-create-consent.json",
             "match": {
               "arguments": [
                 {
-                  "val": "consent-dedicated-successful.json",
-                  "offset": 30
+                  "val": "valid",
+                  "offset": 28
+                },
+                {
+                  "val": "transaction/transactions-create-consent.json",
+                  "offset": 42
                 }
               ],
-              "location": "ConsentRequestSuccessfulSteps.loadTestData(String)"
+              "location": "CommonSteps.psu_already_has_an_existing_consent(String,String)"
             },
             "matchedColumns": [
-              0
+              0,
+              9
             ],
             "keyword": "Given "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 6373911,
+=======
               "duration": 2037495702,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 10,
-            "name": "PSU sends the create consent request",
+            "line": 249,
+            "name": "account id 42fb4cc3-91cb-45ba-9159-b87acf6d8add",
             "match": {
-              "location": "ConsentRequestSuccessfulSteps.sendConsentRequest()"
+              "arguments": [
+                {
+                  "val": "42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+                  "offset": 11
+                }
+              ],
+              "location": "AccountDetailRequestSuccessfulSteps.account_id(String)"
             },
-            "keyword": "When "
+            "matchedColumns": [
+              1
+            ],
+            "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 9995191,
+=======
               "duration": 7575307,
               "status": "passed"
             },
@@ -117,9 +150,55 @@
           {
             "result": {
               "duration": 8568738,
+>>>>>>> develop
               "status": "passed"
             },
+            "line": 250,
+            "name": "balance false dateFrom 2008-09-15 dateTo  bookingStatus booked entryReferenceFrom  deltaList ",
             "match": {
+<<<<<<< HEAD
+              "arguments": [
+                {
+                  "val": "false",
+                  "offset": 8
+                },
+                {
+                  "val": "2008-09-15",
+                  "offset": 23
+                },
+                {
+                  "val": "",
+                  "offset": 41
+                },
+                {
+                  "val": "booked",
+                  "offset": 56
+                },
+                {
+                  "val": "",
+                  "offset": 82
+                },
+                {
+                  "val": "",
+                  "offset": 93
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.setParameter(Boolean,String,String,String,String,Boolean)"
+            },
+            "matchedColumns": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 49094399,
+=======
               "location": "GlobalSuccessfulSteps.loadTestDataIntoDb()"
             }
           }
@@ -172,69 +251,74 @@
           {
             "result": {
               "duration": 3486602,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 9,
-            "name": "PSU wants to create a consent consent-all-accounts-successful.json",
+            "line": 251,
+            "name": "wants to read all transactions using transactionList-successful.json",
             "match": {
               "arguments": [
                 {
-                  "val": "consent-all-accounts-successful.json",
-                  "offset": 30
+                  "val": "transactionList-successful.json",
+                  "offset": 37
                 }
               ],
-              "location": "ConsentRequestSuccessfulSteps.loadTestData(String)"
+              "location": "TransactionListRequestSuccessfulSteps.wants_to_read_all_transactions_using(String)"
             },
             "matchedColumns": [
-              0
+              2
             ],
-            "keyword": "Given "
+            "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 1426798852,
+=======
               "duration": 1879815718,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 10,
-            "name": "PSU sends the create consent request",
+            "line": 252,
+            "name": "PSU requests the transactions",
             "match": {
-              "location": "ConsentRequestSuccessfulSteps.sendConsentRequest()"
+              "location": "TransactionListRequestSuccessfulSteps.psu_requests_the_transactions()"
             },
             "keyword": "When "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 3336909,
+=======
               "duration": 38280,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 11,
-            "name": "a successful response code and the appropriate consent response data is delivered to the PSU",
+            "line": 253,
+            "name": "a successful response code and the appropriate list of transaction get returned",
             "match": {
-              "location": "ConsentRequestSuccessfulSteps.checkResponseCode()"
+              "location": "TransactionListRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_list_of_transaction_get_returned()"
             },
             "keyword": "Then "
+          }
+        ],
+        "tags": [
+          {
+            "line": 246,
+            "name": "@TestTag"
           }
         ]
       },
       {
-        "comments": [
-          {
-            "line": 24,
-            "value": "#| consent-all-psd2-no-psu-id.json       |"
-          },
-          {
-            "line": 25,
-            "value": "#| consent-all-psd2-wrong-psu-id.json    |"
-          },
-          {
-            "line": 26,
-            "value": "#| consent-all-psd2-wrong-value.json          |"
-          }
-        ],
         "before": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 13111519,
+=======
               "duration": 8519169,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -242,13 +326,16 @@
             }
           }
         ],
-        "line": 27,
-        "name": "Failed consent request creation (redirect)",
+        "line": 257,
+        "name": "Read transaction list successfully",
         "description": "",
-        "id": "account-information-service;failed-consent-request-creation-(redirect);;2",
+        "id": "account-information-service;read-transaction-list-successfully;;3",
         "after": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 234818,
+=======
               "duration": 2498735,
               "status": "passed"
             },
@@ -259,6 +346,7 @@
           {
             "result": {
               "duration": 259104,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -289,39 +377,64 @@
         "steps": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 437480912,
+=======
               "duration": 13029677,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 19,
-            "name": "PSU wants to create an erroful consent consent-dedicated-incorrect-iban.json",
+            "line": 248,
+            "name": "PSU already has an existing valid consent transaction/transactions-create-consent.json",
             "match": {
               "arguments": [
                 {
-                  "val": "consent-dedicated-incorrect-iban.json",
-                  "offset": 39
+                  "val": "valid",
+                  "offset": 28
+                },
+                {
+                  "val": "transaction/transactions-create-consent.json",
+                  "offset": 42
                 }
               ],
-              "location": "ConsentRequestErrorfulSteps.loadTestData(String)"
+              "location": "CommonSteps.psu_already_has_an_existing_consent(String,String)"
             },
             "matchedColumns": [
-              0
+              0,
+              9
             ],
             "keyword": "Given "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 272600,
+=======
               "duration": 13359370,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 20,
-            "name": "PSU sends the create consent request with error",
+            "line": 249,
+            "name": "account id 42fb4cc3-91cb-45ba-9159-b87acf6d8add",
             "match": {
-              "location": "ConsentRequestErrorfulSteps.sendErrorfulConsentRequest()"
+              "arguments": [
+                {
+                  "val": "42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+                  "offset": 11
+                }
+              ],
+              "location": "AccountDetailRequestSuccessfulSteps.account_id(String)"
             },
-            "keyword": "When "
+            "matchedColumns": [
+              1
+            ],
+            "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 196696,
+=======
               "duration": 6790777,
               "status": "passed"
             },
@@ -339,9 +452,55 @@
           {
             "result": {
               "duration": 9209192,
+>>>>>>> develop
               "status": "passed"
             },
+            "line": 250,
+            "name": "balance  dateFrom 2008-09-15 dateTo 2028-09-15 bookingStatus booked entryReferenceFrom  deltaList ",
             "match": {
+<<<<<<< HEAD
+              "arguments": [
+                {
+                  "val": "",
+                  "offset": 8
+                },
+                {
+                  "val": "2008-09-15",
+                  "offset": 18
+                },
+                {
+                  "val": "2028-09-15",
+                  "offset": 36
+                },
+                {
+                  "val": "booked",
+                  "offset": 61
+                },
+                {
+                  "val": "",
+                  "offset": 87
+                },
+                {
+                  "val": "",
+                  "offset": 98
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.setParameter(Boolean,String,String,String,String,Boolean)"
+            },
+            "matchedColumns": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 566100,
+=======
               "location": "GlobalSuccessfulSteps.loadTestDataIntoDb()"
             }
           }
@@ -394,47 +553,62 @@
           {
             "result": {
               "duration": 3905671,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 30,
-            "name": "PSU wants to create an expired consent consent-dedicated-expired-consent.json",
+            "line": 251,
+            "name": "wants to read all transactions using transactionList-successful.json",
             "match": {
               "arguments": [
                 {
-                  "val": "consent-dedicated-expired-consent.json",
-                  "offset": 39
+                  "val": "transactionList-successful.json",
+                  "offset": 37
                 }
               ],
-              "location": "ConsentRequestErrorfulSteps.loadTestDataExpired(String)"
+              "location": "TransactionListRequestSuccessfulSteps.wants_to_read_all_transactions_using(String)"
             },
             "matchedColumns": [
-              0
+              2
             ],
-            "keyword": "Given "
+            "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 1426156694,
+=======
               "duration": 11045221,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 31,
-            "name": "PSU sends the create consent request with error",
+            "line": 252,
+            "name": "PSU requests the transactions",
             "match": {
-              "location": "ConsentRequestErrorfulSteps.sendErrorfulConsentRequest()"
+              "location": "TransactionListRequestSuccessfulSteps.psu_requests_the_transactions()"
             },
             "keyword": "When "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 40695,
+=======
               "duration": 374953,
+>>>>>>> develop
               "status": "passed"
             },
-            "line": 32,
-            "name": "an error response code is displayed and an appropriate error response is shown",
+            "line": 253,
+            "name": "a successful response code and the appropriate list of transaction get returned",
             "match": {
-              "location": "CommonSteps.checkErrorCodeAndResponse()"
+              "location": "TransactionListRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_list_of_transaction_get_returned()"
             },
             "keyword": "Then "
+          }
+        ],
+        "tags": [
+          {
+            "line": 246,
+            "name": "@TestTag"
           }
         ]
       },
@@ -442,7 +616,11 @@
         "before": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 11168977,
+=======
               "duration": 9316030,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -450,6 +628,16 @@
             }
           }
         ],
+<<<<<<< HEAD
+        "line": 258,
+        "name": "Read transaction list successfully",
+        "description": "",
+        "id": "account-information-service;read-transaction-list-successfully;;4",
+        "after": [
+          {
+            "result": {
+              "duration": 232249,
+=======
         "line": 44,
         "name": "Successful consent status request (redirect)",
         "description": "",
@@ -467,6 +655,7 @@
           {
             "result": {
               "duration": 1117629,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -497,6 +686,22 @@
         "steps": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 438426039,
+              "status": "passed"
+            },
+            "line": 248,
+            "name": "PSU already has an existing valid consent transaction/transactions-create-consent.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "valid",
+                  "offset": 28
+                },
+                {
+                  "val": "transaction/transactions-create-consent.json",
+                  "offset": 42
+=======
               "duration": 1947109211,
               "status": "passed"
             },
@@ -507,17 +712,105 @@
                 {
                   "val": "consent-dedicated-successful.json",
                   "offset": 31
+>>>>>>> develop
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.loadTestData(String)"
             },
             "matchedColumns": [
+<<<<<<< HEAD
+              0,
+              9
+=======
               1
+>>>>>>> develop
             ],
             "keyword": "Given "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 222924,
+              "status": "passed"
+            },
+            "line": 249,
+            "name": "account id 42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+            "match": {
+              "arguments": [
+                {
+                  "val": "42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+                  "offset": 11
+                }
+              ],
+              "location": "AccountDetailRequestSuccessfulSteps.account_id(String)"
+            },
+            "matchedColumns": [
+              1
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 295500,
+              "status": "passed"
+            },
+            "line": 250,
+            "name": "balance true dateFrom 2008-09-15 dateTo  bookingStatus booked entryReferenceFrom  deltaList ",
+            "match": {
+              "arguments": [
+                {
+                  "val": "true",
+                  "offset": 8
+                },
+                {
+                  "val": "2008-09-15",
+                  "offset": 22
+                },
+                {
+                  "val": "",
+                  "offset": 40
+                },
+                {
+                  "val": "booked",
+                  "offset": 55
+                },
+                {
+                  "val": "",
+                  "offset": 81
+                },
+                {
+                  "val": "",
+                  "offset": 92
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.setParameter(Boolean,String,String,String,String,Boolean)"
+            },
+            "matchedColumns": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 467538,
+              "status": "passed"
+            },
+            "line": 251,
+            "name": "wants to read all transactions using transactionList-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "transactionList-successful.json",
+                  "offset": 37
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.wants_to_read_all_transactions_using(String)"
+=======
               "duration": 281141076,
               "status": "passed"
             },
@@ -531,14 +824,24 @@
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.updateConsentStatus(String)"
+>>>>>>> develop
             },
             "matchedColumns": [
-              0
+              2
             ],
             "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 1426899410,
+              "status": "passed"
+            },
+            "line": 252,
+            "name": "PSU requests the transactions",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.psu_requests_the_transactions()"
+=======
               "duration": 262671127,
               "status": "passed"
             },
@@ -546,11 +849,21 @@
             "name": "AISP requests consent status",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.getConsentStatus()"
+>>>>>>> develop
             },
             "keyword": "When "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 31686,
+              "status": "passed"
+            },
+            "line": 253,
+            "name": "a successful response code and the appropriate list of transaction get returned",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_list_of_transaction_get_returned()"
+=======
               "duration": 68372,
               "status": "passed"
             },
@@ -558,8 +871,15 @@
             "name": "a successful response code and the appropriate consent status gets returned",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.checkResponseStatus()"
+>>>>>>> develop
             },
             "keyword": "Then "
+          }
+        ],
+        "tags": [
+          {
+            "line": 246,
+            "name": "@TestTag"
           }
         ]
       },
@@ -567,7 +887,11 @@
         "before": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 10151020,
+=======
               "duration": 16488180,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -575,6 +899,16 @@
             }
           }
         ],
+<<<<<<< HEAD
+        "line": 259,
+        "name": "Read transaction list successfully",
+        "description": "",
+        "id": "account-information-service;read-transaction-list-successfully;;5",
+        "after": [
+          {
+            "result": {
+              "duration": 214107,
+=======
         "line": 45,
         "name": "Successful consent status request (redirect)",
         "description": "",
@@ -592,6 +926,7 @@
           {
             "result": {
               "duration": 365891,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -622,6 +957,22 @@
         "steps": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 441831409,
+              "status": "passed"
+            },
+            "line": 248,
+            "name": "PSU already has an existing valid consent transaction/transactions-create-consent.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "valid",
+                  "offset": 28
+                },
+                {
+                  "val": "transaction/transactions-create-consent.json",
+                  "offset": 42
+=======
               "duration": 1801794469,
               "status": "passed"
             },
@@ -632,17 +983,105 @@
                 {
                   "val": "consent-dedicated-successful.json",
                   "offset": 31
+>>>>>>> develop
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.loadTestData(String)"
             },
             "matchedColumns": [
+<<<<<<< HEAD
+              0,
+              9
+=======
               1
+>>>>>>> develop
             ],
             "keyword": "Given "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 246458,
+              "status": "passed"
+            },
+            "line": 249,
+            "name": "account id 42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+            "match": {
+              "arguments": [
+                {
+                  "val": "42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+                  "offset": 11
+                }
+              ],
+              "location": "AccountDetailRequestSuccessfulSteps.account_id(String)"
+            },
+            "matchedColumns": [
+              1
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 252766,
+              "status": "passed"
+            },
+            "line": 250,
+            "name": "balance  dateFrom 2008-09-15 dateTo  bookingStatus pending entryReferenceFrom  deltaList ",
+            "match": {
+              "arguments": [
+                {
+                  "val": "",
+                  "offset": 8
+                },
+                {
+                  "val": "2008-09-15",
+                  "offset": 18
+                },
+                {
+                  "val": "",
+                  "offset": 36
+                },
+                {
+                  "val": "pending",
+                  "offset": 51
+                },
+                {
+                  "val": "",
+                  "offset": 78
+                },
+                {
+                  "val": "",
+                  "offset": 89
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.setParameter(Boolean,String,String,String,String,Boolean)"
+            },
+            "matchedColumns": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "keyword": "And "
+          },
+          {
+            "result": {
+              "duration": 443607,
+              "status": "passed"
+            },
+            "line": 251,
+            "name": "wants to read all transactions using transactionList-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "transactionList-successful.json",
+                  "offset": 37
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.wants_to_read_all_transactions_using(String)"
+=======
               "duration": 266387420,
               "status": "passed"
             },
@@ -656,14 +1095,24 @@
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.updateConsentStatus(String)"
+>>>>>>> develop
             },
             "matchedColumns": [
-              0
+              2
             ],
             "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 1365635441,
+              "status": "passed"
+            },
+            "line": 252,
+            "name": "PSU requests the transactions",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.psu_requests_the_transactions()"
+=======
               "duration": 260793644,
               "status": "passed"
             },
@@ -671,11 +1120,21 @@
             "name": "AISP requests consent status",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.getConsentStatus()"
+>>>>>>> develop
             },
             "keyword": "When "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 49656,
+              "status": "passed"
+            },
+            "line": 253,
+            "name": "a successful response code and the appropriate list of transaction get returned",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_list_of_transaction_get_returned()"
+=======
               "duration": 75892,
               "status": "passed"
             },
@@ -683,8 +1142,15 @@
             "name": "a successful response code and the appropriate consent status gets returned",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.checkResponseStatus()"
+>>>>>>> develop
             },
             "keyword": "Then "
+          }
+        ],
+        "tags": [
+          {
+            "line": 246,
+            "name": "@TestTag"
           }
         ]
       },
@@ -692,7 +1158,11 @@
         "before": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 9726782,
+=======
               "duration": 16299988,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -700,6 +1170,16 @@
             }
           }
         ],
+<<<<<<< HEAD
+        "line": 260,
+        "name": "Read transaction list successfully",
+        "description": "",
+        "id": "account-information-service;read-transaction-list-successfully;;6",
+        "after": [
+          {
+            "result": {
+              "duration": 277408,
+=======
         "line": 46,
         "name": "Successful consent status request (redirect)",
         "description": "",
@@ -717,6 +1197,7 @@
           {
             "result": {
               "duration": 369470,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -747,6 +1228,22 @@
         "steps": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 432619448,
+              "status": "passed"
+            },
+            "line": 248,
+            "name": "PSU already has an existing valid consent transaction/transactions-create-consent.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "valid",
+                  "offset": 28
+                },
+                {
+                  "val": "transaction/transactions-create-consent.json",
+                  "offset": 42
+=======
               "duration": 1815135239,
               "status": "passed"
             },
@@ -757,17 +1254,38 @@
                 {
                   "val": "consent-dedicated-successful.json",
                   "offset": 31
+>>>>>>> develop
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.loadTestData(String)"
             },
             "matchedColumns": [
+<<<<<<< HEAD
+              0,
+              9
+=======
               1
+>>>>>>> develop
             ],
             "keyword": "Given "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 269089,
+              "status": "passed"
+            },
+            "line": 249,
+            "name": "account id 42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+            "match": {
+              "arguments": [
+                {
+                  "val": "42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+                  "offset": 11
+                }
+              ],
+              "location": "AccountDetailRequestSuccessfulSteps.account_id(String)"
+=======
               "duration": 262129888,
               "status": "passed"
             },
@@ -781,14 +1299,58 @@
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.updateConsentStatus(String)"
+>>>>>>> develop
             },
             "matchedColumns": [
-              0
+              1
             ],
             "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 210315,
+              "status": "passed"
+            },
+            "line": 250,
+            "name": "balance  dateFrom 2008-09-15 dateTo  bookingStatus both entryReferenceFrom  deltaList ",
+            "match": {
+              "arguments": [
+                {
+                  "val": "",
+                  "offset": 8
+                },
+                {
+                  "val": "2008-09-15",
+                  "offset": 18
+                },
+                {
+                  "val": "",
+                  "offset": 36
+                },
+                {
+                  "val": "both",
+                  "offset": 51
+                },
+                {
+                  "val": "",
+                  "offset": 75
+                },
+                {
+                  "val": "",
+                  "offset": 86
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.setParameter(Boolean,String,String,String,String,Boolean)"
+            },
+            "matchedColumns": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+=======
               "duration": 275696581,
               "status": "passed"
             },
@@ -888,11 +1450,27 @@
             },
             "matchedColumns": [
               1
+>>>>>>> develop
             ],
-            "keyword": "Given "
+            "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 496487,
+              "status": "passed"
+            },
+            "line": 251,
+            "name": "wants to read all transactions using transactionList-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "transactionList-successful.json",
+                  "offset": 37
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.wants_to_read_all_transactions_using(String)"
+=======
               "duration": 275600677,
               "status": "passed"
             },
@@ -906,14 +1484,24 @@
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.updateConsentStatus(String)"
+>>>>>>> develop
             },
             "matchedColumns": [
-              0
+              2
             ],
             "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 1378280059,
+              "status": "passed"
+            },
+            "line": 252,
+            "name": "PSU requests the transactions",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.psu_requests_the_transactions()"
+=======
               "duration": 263021442,
               "status": "passed"
             },
@@ -921,11 +1509,21 @@
             "name": "AISP requests consent status",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.getConsentStatus()"
+>>>>>>> develop
             },
             "keyword": "When "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 39829,
+              "status": "passed"
+            },
+            "line": 253,
+            "name": "a successful response code and the appropriate list of transaction get returned",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_list_of_transaction_get_returned()"
+=======
               "duration": 38291,
               "status": "passed"
             },
@@ -933,8 +1531,15 @@
             "name": "a successful response code and the appropriate consent status gets returned",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.checkResponseStatus()"
+>>>>>>> develop
             },
             "keyword": "Then "
+          }
+        ],
+        "tags": [
+          {
+            "line": 246,
+            "name": "@TestTag"
           }
         ]
       },
@@ -942,7 +1547,11 @@
         "before": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 16210640,
+=======
               "duration": 10089774,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -950,6 +1559,16 @@
             }
           }
         ],
+<<<<<<< HEAD
+        "line": 261,
+        "name": "Read transaction list successfully",
+        "description": "",
+        "id": "account-information-service;read-transaction-list-successfully;;7",
+        "after": [
+          {
+            "result": {
+              "duration": 235469,
+=======
         "line": 48,
         "name": "Successful consent status request (redirect)",
         "description": "",
@@ -967,6 +1586,7 @@
           {
             "result": {
               "duration": 385676,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -997,6 +1617,22 @@
         "steps": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 478842057,
+              "status": "passed"
+            },
+            "line": 248,
+            "name": "PSU already has an existing valid consent transaction/transactions-create-consent.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "valid",
+                  "offset": 28
+                },
+                {
+                  "val": "transaction/transactions-create-consent.json",
+                  "offset": 42
+=======
               "duration": 1995330881,
               "status": "passed"
             },
@@ -1007,17 +1643,38 @@
                 {
                   "val": "consent-dedicated-successful.json",
                   "offset": 31
+>>>>>>> develop
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.loadTestData(String)"
             },
             "matchedColumns": [
+<<<<<<< HEAD
+              0,
+              9
+=======
               1
+>>>>>>> develop
             ],
             "keyword": "Given "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 237688,
+              "status": "passed"
+            },
+            "line": 249,
+            "name": "account id 42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+            "match": {
+              "arguments": [
+                {
+                  "val": "42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+                  "offset": 11
+                }
+              ],
+              "location": "AccountDetailRequestSuccessfulSteps.account_id(String)"
+=======
               "duration": 237789487,
               "status": "passed"
             },
@@ -1031,14 +1688,58 @@
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.updateConsentStatus(String)"
+>>>>>>> develop
             },
             "matchedColumns": [
-              0
+              1
             ],
             "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 289899,
+              "status": "passed"
+            },
+            "line": 250,
+            "name": "balance  dateFrom 2008-09-15 dateTo  bookingStatus booked entryReferenceFrom  deltaList false",
+            "match": {
+              "arguments": [
+                {
+                  "val": "",
+                  "offset": 8
+                },
+                {
+                  "val": "2008-09-15",
+                  "offset": 18
+                },
+                {
+                  "val": "",
+                  "offset": 36
+                },
+                {
+                  "val": "booked",
+                  "offset": 51
+                },
+                {
+                  "val": "",
+                  "offset": 77
+                },
+                {
+                  "val": "false",
+                  "offset": 88
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.setParameter(Boolean,String,String,String,String,Boolean)"
+            },
+            "matchedColumns": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+=======
               "duration": 231915666,
               "status": "passed"
             },
@@ -1138,11 +1839,27 @@
             },
             "matchedColumns": [
               1
+>>>>>>> develop
             ],
-            "keyword": "Given "
+            "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 614187,
+              "status": "passed"
+            },
+            "line": 251,
+            "name": "wants to read all transactions using transactionList-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "transactionList-successful.json",
+                  "offset": 37
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.wants_to_read_all_transactions_using(String)"
+=======
               "duration": 235488220,
               "status": "passed"
             },
@@ -1156,14 +1873,24 @@
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.updateConsentStatus(String)"
+>>>>>>> develop
             },
             "matchedColumns": [
-              0
+              2
             ],
             "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 1434141277,
+              "status": "passed"
+            },
+            "line": 252,
+            "name": "PSU requests the transactions",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.psu_requests_the_transactions()"
+=======
               "duration": 237854118,
               "status": "passed"
             },
@@ -1171,11 +1898,21 @@
             "name": "AISP requests consent status",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.getConsentStatus()"
+>>>>>>> develop
             },
             "keyword": "When "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 38852,
+              "status": "passed"
+            },
+            "line": 253,
+            "name": "a successful response code and the appropriate list of transaction get returned",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_list_of_transaction_get_returned()"
+=======
               "duration": 36722,
               "status": "passed"
             },
@@ -1183,8 +1920,15 @@
             "name": "a successful response code and the appropriate consent status gets returned",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.checkResponseStatus()"
+>>>>>>> develop
             },
             "keyword": "Then "
+          }
+        ],
+        "tags": [
+          {
+            "line": 246,
+            "name": "@TestTag"
           }
         ]
       },
@@ -1192,7 +1936,11 @@
         "before": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 10635877,
+=======
               "duration": 7703273,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -1200,6 +1948,16 @@
             }
           }
         ],
+<<<<<<< HEAD
+        "line": 262,
+        "name": "Read transaction list successfully",
+        "description": "",
+        "id": "account-information-service;read-transaction-list-successfully;;8",
+        "after": [
+          {
+            "result": {
+              "duration": 209503,
+=======
         "line": 50,
         "name": "Successful consent status request (redirect)",
         "description": "",
@@ -1217,6 +1975,7 @@
           {
             "result": {
               "duration": 255449,
+>>>>>>> develop
               "status": "passed"
             },
             "match": {
@@ -1247,6 +2006,22 @@
         "steps": [
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 443603387,
+              "status": "passed"
+            },
+            "line": 248,
+            "name": "PSU already has an existing valid consent transaction/transactions-create-consent.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "valid",
+                  "offset": 28
+                },
+                {
+                  "val": "transaction/transactions-create-consent.json",
+                  "offset": 42
+=======
               "duration": 1929609189,
               "status": "passed"
             },
@@ -1257,17 +2032,38 @@
                 {
                   "val": "consent-all-accounts-successful.json",
                   "offset": 31
+>>>>>>> develop
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.loadTestData(String)"
             },
             "matchedColumns": [
+<<<<<<< HEAD
+              0,
+              9
+=======
               1
+>>>>>>> develop
             ],
             "keyword": "Given "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 277604,
+              "status": "passed"
+            },
+            "line": 249,
+            "name": "account id 42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+            "match": {
+              "arguments": [
+                {
+                  "val": "42fb4cc3-91cb-45ba-9159-b87acf6d8add",
+                  "offset": 11
+                }
+              ],
+              "location": "AccountDetailRequestSuccessfulSteps.account_id(String)"
+=======
               "duration": 253189302,
               "status": "passed"
             },
@@ -1281,14 +2077,58 @@
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.updateConsentStatus(String)"
+>>>>>>> develop
             },
             "matchedColumns": [
-              0
+              1
             ],
             "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 257102,
+              "status": "passed"
+            },
+            "line": 250,
+            "name": "balance  dateFrom 2008-09-15 dateTo  bookingStatus booked entryReferenceFrom  deltaList true",
+            "match": {
+              "arguments": [
+                {
+                  "val": "",
+                  "offset": 8
+                },
+                {
+                  "val": "2008-09-15",
+                  "offset": 18
+                },
+                {
+                  "val": "",
+                  "offset": 36
+                },
+                {
+                  "val": "booked",
+                  "offset": 51
+                },
+                {
+                  "val": "",
+                  "offset": 77
+                },
+                {
+                  "val": "true",
+                  "offset": 88
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.setParameter(Boolean,String,String,String,String,Boolean)"
+            },
+            "matchedColumns": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+=======
               "duration": 238186176,
               "status": "passed"
             },
@@ -1388,11 +2228,27 @@
             },
             "matchedColumns": [
               1
+>>>>>>> develop
             ],
-            "keyword": "Given "
+            "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 530998,
+              "status": "passed"
+            },
+            "line": 251,
+            "name": "wants to read all transactions using transactionList-successful.json",
+            "match": {
+              "arguments": [
+                {
+                  "val": "transactionList-successful.json",
+                  "offset": 37
+                }
+              ],
+              "location": "TransactionListRequestSuccessfulSteps.wants_to_read_all_transactions_using(String)"
+=======
               "duration": 232854749,
               "status": "passed"
             },
@@ -1406,14 +2262,24 @@
                 }
               ],
               "location": "ConsentStatusRequestSuccessfulSteps.updateConsentStatus(String)"
+>>>>>>> develop
             },
             "matchedColumns": [
-              0
+              2
             ],
             "keyword": "And "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 1377741513,
+              "status": "passed"
+            },
+            "line": 252,
+            "name": "PSU requests the transactions",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.psu_requests_the_transactions()"
+=======
               "duration": 235649440,
               "status": "passed"
             },
@@ -1421,11 +2287,29 @@
             "name": "AISP requests consent status",
             "match": {
               "location": "ConsentStatusRequestSuccessfulSteps.getConsentStatus()"
+>>>>>>> develop
             },
             "keyword": "When "
           },
           {
             "result": {
+<<<<<<< HEAD
+              "duration": 35274,
+              "status": "passed"
+            },
+            "line": 253,
+            "name": "a successful response code and the appropriate list of transaction get returned",
+            "match": {
+              "location": "TransactionListRequestSuccessfulSteps.a_successful_response_code_and_the_appropriate_list_of_transaction_get_returned()"
+            },
+            "keyword": "Then "
+          }
+        ],
+        "tags": [
+          {
+            "line": 246,
+            "name": "@TestTag"
+=======
               "duration": 42690,
               "status": "passed"
             },
@@ -10055,14 +10939,15 @@
               "location": "GlobalSuccessfulSteps.checkRedirectUrl()"
             },
             "keyword": "And "
+>>>>>>> develop
           }
         ]
       }
     ],
-    "name": "Payment Initiation Service - Redirect approach",
+    "name": "Account Information Service",
     "description": "",
-    "id": "payment-initiation-service---redirect-approach",
+    "id": "account-information-service",
     "keyword": "Feature",
-    "uri": "PIS_Redirect.feature"
+    "uri": "AIS_01.feature"
   }
 ]

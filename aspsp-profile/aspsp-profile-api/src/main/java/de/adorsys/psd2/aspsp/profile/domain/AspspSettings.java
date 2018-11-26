@@ -42,4 +42,5 @@ public class AspspSettings {
     private boolean signingBasketSupported;
     private boolean paymentCancellationAuthorizationMandated;
     private boolean piisConsentSupported;
+    private boolean deltaReportSupported;
 }
