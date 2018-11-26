@@ -24,6 +24,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import(SpringFoxAutoConfiguration.class)
+@Import(SwaggerConfig.class)
 public @interface EnableXs2aSwagger {
 }

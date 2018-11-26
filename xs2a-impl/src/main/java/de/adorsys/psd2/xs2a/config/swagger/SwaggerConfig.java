@@ -33,7 +33,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.Collections;
 
 @EnableSwagger2
-public class SpringFoxAutoConfiguration {
+public class SwaggerConfig {
     private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api-1.2-Update-2018-08-17.yaml";
 
     @Value("${xs2a.swagger.yaml.location}")
