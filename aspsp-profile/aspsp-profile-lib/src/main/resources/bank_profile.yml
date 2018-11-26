@@ -19,3 +19,4 @@ setting:
  signingBasketSupported: false
  paymentCancellationAuthorizationMandated: false
  piisConsentSupported: false
+ deltaReportSupported: false
