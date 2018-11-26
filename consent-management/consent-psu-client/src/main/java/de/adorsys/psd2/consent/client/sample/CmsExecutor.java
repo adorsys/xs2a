@@ -74,7 +74,6 @@ public class CmsExecutor {
 
         CmsServiceInvoker cmsServiceInvoker = configuration.getRestServiceInvoker();
 
-        //TODO all interactions with CMS should be successfully completed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/503
         createAisConsent(cmsServiceInvoker);
         getAisConsentById(cmsServiceInvoker);
         getConsentStatusById(cmsServiceInvoker);
