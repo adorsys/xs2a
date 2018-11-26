@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -55,6 +56,10 @@ public class Xs2aPisConsentService {
         request.setPsuData(parameters.getPsuData());
         return pisConsentService.createPaymentConsent(request)
                    .orElse(null);
+    }
+
+    public Optional<PisConsentResponse> getPisConsentById(String consentId) {
+        return pisConsentService.getConsentById(consentId);
     }
 
     public void updateSinglePaymentInPisConsent(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {

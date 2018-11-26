@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
@@ -26,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -55,14 +57,17 @@ public class FundsConfirmationService {
     private final Xs2aToSpiFundsConfirmationRequestMapper xs2aToSpiFundsConfirmationRequestMapper;
     private final PiisConsentValidationService piisConsentValidationService;
     private final PiisConsentService piisConsentService;
+    private final Xs2aEventService xs2aEventService;
 
     /**
      * Checks if the account balance is sufficient for requested operation
      *
-     * @param request Contains the requested balanceAmount in order to comparing with available balanceAmount on account
-     * @return Response with result 'true' if there are enough funds on the account, 'false' if not
+     * @param request       Contains the requested balanceAmount in order to compare with the available balanceAmount in the account
+     * @return Response with the result 'true' if there are enough funds in the account, 'false' otherwise
      */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
+        xs2aEventService.recordTppRequest(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED, request);
+
         String consentId = null;
 
         if (profileService.isPiisConsentSupported()) {
@@ -88,7 +93,7 @@ public class FundsConfirmationService {
         }
 
         SpiFundsConfirmationRequest spiRequest = xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(request);
-        AspspConsentData aspspConsentData = fundsConfirmationConsentDataService.getAspspConsentDataByConsentId(consentId); //TODO Rework it after service implementation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
+        AspspConsentData aspspConsentData = fundsConfirmationConsentDataService.getAspspConsentData(consentId);
         PsuIdData psuData = fundsConfirmationPsuDataService.getPsuDataByConsentId(consentId);  //TODO Rework it after service implementation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 

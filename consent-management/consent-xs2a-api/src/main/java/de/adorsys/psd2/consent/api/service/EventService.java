@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.aspsp.api;
+package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.xs2a.core.event.Event;
+import org.jetbrains.annotations.NotNull;
 
-public class CmsAspspAisService {
-
+public interface EventService {
+    /**
+     * Records new Event in the CMS
+     *
+     * @param event Event to be recorded
+     * @return <code>true</code> if the event was recorded. <code>false</code> otherwise.
+     */
+    boolean recordEvent(@NotNull Event event);
 }

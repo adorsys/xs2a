@@ -34,29 +34,34 @@ Feature: Account Information Service
             | consent-resource                      |
             | consent-dedicated-expired-consent.json|
 
-    @ignore
     Scenario Outline: Successful consent status request (redirect)
         Given PSU created a consent resource <consent-id>
-        And AISP wants to get the status of that consent and the data <consent-resource>
+        And AISP wants to get the status <consent-status> of that consent
         When AISP requests consent status
         Then a successful response code and the appropriate consent status gets returned
         Examples:
-            | consent-resource                      | consent-id                   |
-            | consent-status-expired.json           | consents-create-consent.json |
-            | consent-status-received.json          | consents-create-consent.json |
-            | consent-status-rejected.json          | consents-create-consent.json |
-            | consent-status-revoked-by-psu.json    | consents-create-consent.json |
-            | consent-status-terminated-by-tpp.json | consents-create-consent.json |
-            | consent-status-valid.json             | consents-create-consent.json |
+            | consent-status                      | consent-id                             |
+            | consent-status-expired.json           | consent-dedicated-successful.json    |
+            | consent-status-received.json          | consent-dedicated-successful.json    |
+            | consent-status-rejected.json          | consent-dedicated-successful.json    |
+            | consent-status-revoked-by-psu.json    | consent-dedicated-successful.json    |
+            | consent-status-terminated-by-tpp.json | consent-dedicated-successful.json    |
+            | consent-status-valid.json             | consent-dedicated-successful.json    |
+            | consent-status-expired.json           | consent-all-accounts-successful.json |
+            | consent-status-received.json          | consent-all-accounts-successful.json |
+            | consent-status-rejected.json          | consent-all-accounts-successful.json |
+            | consent-status-revoked-by-psu.json    | consent-all-accounts-successful.json |
+            | consent-status-terminated-by-tpp.json | consent-all-accounts-successful.json |
+            | consent-status-valid.json             | consent-all-accounts-successful.json |
 
-    @ignore
+
     Scenario Outline: Errorful consent status request (redirect)
-        Given AISP wants to get the status of that consent and the data <consent-resource> without a consent id
-        When AISP requests consent status
+        Given AISP wants to get the status of that consent and the data <consent-resource> with not existing consent id
+        When AISP requests errorFull consent status
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
-            | consent-resource                       |
-            | consent-status-missing-consent-id.json |
+            | consent-resource                                 |
+            | consent-status-with-not-existing-consent-id.json |
 
     @ignore
     Scenario Outline: Successful consent request (redirect)
@@ -243,16 +248,23 @@ Feature: Account Information Service
 #    #                                                                                                                  #
 #    ####################################################################################################################
 #
-    @ignore
     Scenario Outline: Read transaction list successfully
-        Given PSU already has an existing consent <consent-id>
+        Given PSU already has an existing <status> consent <consent-id>
         And account id <account-id>
+        And balance <balance> dateFrom <dateFrom> dateTo <dateTo> bookingStatus <bookingStatus> entryReferenceFrom <entryReferenceFrom> deltaList <deltaList>
         And wants to read all transactions using <transaction-resource>
         When PSU requests the transactions
-        Then a successful response code and the appropriate list of accounts get returned
+        Then a successful response code and the appropriate list of transaction get returned
         Examples:
-            | consent-id                       | account-id                           | transaction-resource            |
-            | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |
+            | consent-id                                   | account-id                           | transaction-resource            | balance | dateFrom   | dateTo     | bookingStatus | entryReferenceFrom | deltaList | status |
+            | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json | false   | 2008-09-15 |            | booked        |                    |           | valid  |
+            | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |         | 2008-09-15 | 2028-09-15 | booked        |                    |           | valid  |
+            | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json | true    | 2008-09-15 |            | booked        |                    |           | valid  |
+            | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |         | 2008-09-15 |            | pending       |                    |           | valid  |
+            | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |         | 2008-09-15 |            | both          |                    |           | valid  |
+            | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |         | 2008-09-15 |            | booked        |                    | false     | valid  |
+            | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |         | 2008-09-15 |            | booked        |                    | true      | valid  |
+
 
     @ignore
     Scenario Outline: Read transaction list erroful
@@ -287,17 +299,17 @@ Feature: Account Information Service
             | consent                                  | account-id                           | transaction-resource                      |
             | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-with-expired-consent.json |
 
-    @ignore
+
     Scenario Outline: Read transaction details successfully
-        Given PSU already has an existing consent <consent-id>
+        Given PSU already has an existing <status> consent <consent-id>
         And account id <account-id>
         And wants to read the transaction details using <transaction-resource>
         And resource id <resource-id>
         When PSU requests the transaction details
-        Then a successful response code and the appropriate list of accounts get returned
+        Then a successful response code and the appropriate detail of transaction get returned
         Examples:
-            | consent-id                       | account-id                           | transaction-resource              | resource-id                          |
-            | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-successful.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | consent-id                                   | account-id                           | transaction-resource              | resource-id                          | status |
+            | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-successful.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe | valid  |
 
     @ignore
     Scenario Outline: Read transaction details errorful

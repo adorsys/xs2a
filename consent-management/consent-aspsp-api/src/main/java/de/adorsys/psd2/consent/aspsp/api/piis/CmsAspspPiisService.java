@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.aspsp.api.service;
+package de.adorsys.psd2.consent.aspsp.api.piis;
 
-import de.adorsys.psd2.consent.aspsp.api.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -29,7 +28,7 @@ import java.util.Optional;
 
 public interface CmsAspspPiisService {
     /**
-     * Creates new PIIS consent
+     * Creates new PIIS consent. Consent gets status "Valid".
      *
      * @param psuIdData              PSU credentials data
      * @param tppInfo             TPP for which the consent will be created. If the value is omitted, consent will be created for all TPPs.
@@ -41,6 +40,15 @@ public interface CmsAspspPiisService {
     Optional<String> createConsent(@NotNull PsuIdData psuIdData, @Nullable TppInfo tppInfo, @NotNull List<AccountReference> accounts, @NotNull LocalDate validUntil, int allowedFrequencyPerDay);
 
     /**
+     * Terminates PIIS Consent object by its ID. Consent gets status "Terminated by ASPSP".
+     *
+     * @param consentId ID of Consent
+     * @return <code>true</code> if consent was found and terminated. <code>false</code> otherwise.
+     */
+    boolean terminateConsent(@NotNull String consentId);
+
+
+    /**
      * Returns a list of PIIS Consent objects by PSU ID
      *
      * @param psuIdData PSU credentials data
@@ -48,12 +56,4 @@ public interface CmsAspspPiisService {
      */
     @NotNull
     List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData);
-
-    /**
-     * Terminates PIIS Consent object by its ID. Consent gets status "Terminated by ASPSP".
-     *
-     * @param consentId ID of Consent
-     * @return <code>true</code> if consent was found and terminated. <code>false</code> otherwise.
-     */
-    boolean terminateConsent(@NotNull String consentId);
 }

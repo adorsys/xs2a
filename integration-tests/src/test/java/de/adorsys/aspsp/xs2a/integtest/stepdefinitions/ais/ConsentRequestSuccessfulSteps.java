@@ -23,6 +23,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
+import de.adorsys.aspsp.xs2a.integtest.util.AisConsentService;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.Consents;
@@ -79,7 +80,6 @@ public class ConsentRequestSuccessfulSteps {
                 HttpMethod.POST,
                 entity,
                 ConsentsResponse201.class);
-
         context.setActualResponse(response);
         context.setConsentId(response.getBody().getConsentId());
     }

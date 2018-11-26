@@ -51,7 +51,7 @@ public class PisCancellationScaMethodSelectedStage extends PisScaStage<Xs2aUpdat
         SpiPayment payment = mapToSpiPayment(response.getPayments(), paymentType);
         PsuIdData psuData = request.getPsuData();
 
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(request.getPaymentId());
 
         String internalId = pisConsentDataService.getInternalPaymentIdByEncryptedString(request.getPaymentId());
         SpiScaConfirmation spiScaConfirmation = xs2aPisConsentMapper.buildSpiScaConfirmation(request, response.getConsentId(), internalId);

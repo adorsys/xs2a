@@ -231,4 +231,14 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     public void updatePiisConsentSupported(boolean piisConsentSupported) {
         profileConfiguration.setPiisConsentSupported(piisConsentSupported);
     }
+
+    /**
+     * Update the value of Delta report supported
+     *
+     * @param deltaReportSupported the value of Delta report supported
+     */
+    @Override
+    public void updateDeltaReportSupported(boolean deltaReportSupported) {
+        profileConfiguration.setDeltaReportSupported(deltaReportSupported);
+    }
 }

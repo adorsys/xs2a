@@ -41,7 +41,6 @@ public class AspspDataServiceInternal implements AspspDataService {
 
     @Override
     public @NotNull Optional<AspspConsentData> readAspspConsentData(@NotNull String externalId) {
-        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
         if (!securityDataService.isConsentIdEncrypted(externalId)) {
             return aspspConsentDataRepository.findByConsentId(externalId)
                        .map(aspspConsentDataEntity -> new AspspConsentData(aspspConsentDataEntity.getData(), externalId));
@@ -62,7 +61,6 @@ public class AspspDataServiceInternal implements AspspDataService {
         }
 
         String encryptedConsentId = aspspConsentData.getConsentId();
-        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
         if (!securityDataService.isConsentIdEncrypted(encryptedConsentId)) {
             return updateAndSaveAspspConsentData(encryptedConsentId, data);
         }
@@ -83,7 +81,6 @@ public class AspspDataServiceInternal implements AspspDataService {
     @Override
     @Transactional
     public boolean deleteAspspConsentData(@NotNull String externalId) {
-        //TODO we need to delete this when PIIS will be encrypted https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/499
         if (!securityDataService.isConsentIdEncrypted(externalId)) {
             return deleteAspspConsentDataIfExist(externalId);
         }

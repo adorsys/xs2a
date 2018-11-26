@@ -58,7 +58,7 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisCons
         PaymentType paymentType = pisConsentAuthorisationResponse.getPaymentType();
         SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType);
 
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(request.getPaymentId());
 
         SpiPsuData psuData = xs2aToSpiPsuDataMapper.mapToSpiPsuData(request.getPsuData());
 

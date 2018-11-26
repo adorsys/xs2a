@@ -39,9 +39,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -80,6 +78,7 @@ public class PaymentServiceTest {
         when(paymentMapper.mapToAspspPayment(any(), any())).thenReturn(new AspspPayment());
         when(paymentMapper.mapToAspspSinglePayment(any(AspspPayment.class))).thenReturn(getAspspSinglePayment(AMOUNT_TO_TRANSFER));
         when(paymentRepository.findOne(PAYMENT_ID)).thenReturn(getAspspPayment(AMOUNT_TO_TRANSFER));
+        when(paymentRepository.findByPaymentIdOrBulkId(PAYMENT_ID,PAYMENT_ID)).thenReturn(Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER)));
     }
 
     @Test

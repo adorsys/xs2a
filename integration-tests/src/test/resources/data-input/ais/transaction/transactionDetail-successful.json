@@ -11,17 +11,35 @@
     "code": "200",
     "header": {},
     "body": {
-      "transactions": {
-        "booked": [
-          {
-            "transactionId": "ba8f7012-bdaf-4ada-bbf7-4c004d046ffe",
-            "transactionAmount": {
-              "currency": "EUR"
-            },
-            "creditorName": "Greenpeace",
-            "debtorName": "Alexander Mueller"
-          }
-        ]
+      "links": {
+        "viewBalances": "http://localhost:8080/v1/accounts/42fb4cc3-91cb-45ba-9159-b87acf6d8add/transactions/ba8f7012-bdaf-4ada-bbf7-4c004d046ffe"
+      },
+      "booked": [
+        {
+          "transactionId": "ba8f7012-bdaf-4ada-bbf7-4c004d046ffe",
+          "creditorId": "aspsp4",
+          "bookingDate": "2018-07-05",
+          "valueDate": "2018-07-05",
+          "transactionAmount": {
+            "currency": "EUR",
+            "amount": "50"
+          },
+          "creditorName": "Alexander Mueller",
+          "creditorAccount": {
+            "iban": "DE52500105173911841934",
+            "currency": "EUR"
+          },
+          "ultimateCreditor": "Alexander Mueller",
+          "debtorName": "Company AG",
+          "debtorAccount": {
+            "iban": "DE89370400440532013004",
+            "currency": "EUR"
+          },
+          "ultimateDebtor": "Company AG"
+        }
+      ],
+      "_links": {
+        "viewBalances": "http://localhost:8080/v1/accounts/42fb4cc3-91cb-45ba-9159-b87acf6d8add/transactions/ba8f7012-bdaf-4ada-bbf7-4c004d046ffe"
       }
     }
   }

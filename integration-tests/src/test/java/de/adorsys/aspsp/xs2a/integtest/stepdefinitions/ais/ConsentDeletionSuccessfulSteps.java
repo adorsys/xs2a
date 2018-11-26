@@ -59,7 +59,7 @@ public class ConsentDeletionSuccessfulSteps {
 
 
     //@Given("^PSU wants to create a consent (.*)$")
-    //    See ConsentRequestSuccessfulSteps
+    //    See ConsentRequestExpliciteStartAuthorizationSuccessfulSteps
 
     @Given ("^PSU wants to delete the consent (.*)$")
     public void loadTestData(String dataFileName) throws IOException {

@@ -40,7 +40,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountDetails(..)) && args(consentId, accountId, withBalance)", returning = "result", argNames = "result,consentId,accountId,withBalance")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountDetails(..)) && args( consentId, accountId, withBalance)", returning = "result", argNames = "result,consentId,accountId,withBalance")
     public ResponseObject<Xs2aAccountDetails> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetails> result, String consentId, String accountId, boolean withBalance) {
         if (!result.hasError()) {
             Xs2aAccountDetails accountDetails = result.getBody();
@@ -50,7 +50,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountList(..)) && args(consentId, withBalance)", returning = "result", argNames = "result,consentId,withBalance")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountList(..)) && args( consentId, withBalance)", returning = "result", argNames = "result,consentId,withBalance")
     public ResponseObject<Map<String, List<Xs2aAccountDetails>>> getAccountDetailsListAspect(ResponseObject<Map<String, List<Xs2aAccountDetails>>> result, String consentId, boolean withBalance) {
         if (!result.hasError()) {
             Map<String, List<Xs2aAccountDetails>> accountDetails = result.getBody();
@@ -60,13 +60,13 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args(accountId, withBalance, ..)", returning = "result", argNames = "result,accountId,withBalance")
-    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, String accountId, boolean withBalance) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args( consentId, accountId, withBalance, ..)", returning = "result", argNames = "result,consentId,accountId,withBalance")
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, String consentId, String accountId, boolean withBalance) {
         if (!result.hasError()) {
             Xs2aTransactionsReport transactionsReport = result.getBody();
 
             if (transactionsReport.isTransactionReportHuge()) {
-                // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/400
+                // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
                 // TODO further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
                 Links links = new Links();
                 links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
@@ -81,7 +81,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountReportByTransactionId(..)) && args(consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountReportByTransactionId(..)) && args( consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
     public ResponseObject<Xs2aAccountReport> getAccountReportByTransactionIdAspect(ResponseObject<Xs2aAccountReport> result, String consentID, String accountId, String resourceId) {
         if (!result.hasError()) {
             Xs2aAccountReport accountReport = result.getBody();
