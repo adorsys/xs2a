@@ -16,16 +16,24 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-//TODO Implement this class properly during implementation of FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
 @Service
+@RequiredArgsConstructor
 public class FundsConfirmationConsentDataService {
+    private final AspspDataService aspspDataService;
 
-    public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return new AspspConsentData(new byte[0], "some stub consent");
+    public AspspConsentData getAspspConsentData(String consentId) {
+        return aspspDataService.readAspspConsentData(consentId)
+                   .orElseGet(() -> new AspspConsentData(null, consentId));
     }
 
-    public void updateAspspConsentData(AspspConsentData aspspConsentData){}
+    public void updateAspspConsentData(@NotNull AspspConsentData aspspConsentData) {
+        aspspDataService.updateAspspConsentData(aspspConsentData);
+
+    }
 }
