@@ -22,10 +22,8 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPeriodicPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -37,15 +35,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInformationResponse<PeriodicPayment>> {
     private final PeriodicPaymentSpi periodicPaymentSpi;
-    private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
-    private final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     private final SpiToXs2aPeriodicPaymentMapper spiToXs2aPeriodicPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
+    private final SpiPaymentFactory spiPaymentFactory;
 
     @Override
     public PaymentInformationResponse<PeriodicPayment> getPayment(PisPayment pisPayment, PaymentProduct paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
-        PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
-        SpiPeriodicPayment spiPayment = xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, paymentProduct);
+        SpiPeriodicPayment spiPayment = spiPaymentFactory.getSpiPeriodicPayment(pisPayment, paymentProduct);
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(spiPsuData, spiPayment, aspspConsentData);

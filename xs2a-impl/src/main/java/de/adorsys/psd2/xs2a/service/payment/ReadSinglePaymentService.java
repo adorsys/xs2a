@@ -22,10 +22,8 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aSinglePaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -37,15 +35,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformationResponse<SinglePayment>> {
     private final SinglePaymentSpi singlePaymentSpi;
-    private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
-    private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final SpiToXs2aSinglePaymentMapper spiToXs2aSinglePaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
+    private final SpiPaymentFactory spiPaymentFactory;
 
     @Override
     public PaymentInformationResponse<SinglePayment> getPayment(PisPayment pisPayment, PaymentProduct paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
-        SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
-        SpiSinglePayment spiPayment = xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, paymentProduct);
+        SpiSinglePayment spiPayment = spiPaymentFactory.getSpiSinglePayment(pisPayment, paymentProduct);
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiPsuData, spiPayment, aspspConsentData);

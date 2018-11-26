@@ -67,6 +67,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 @AllArgsConstructor
 public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
+    private final SpiPaymentFactory spiPaymentFactory;
     private final Xs2aPisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
     private final PisPsuDataService pisPsuDataService;
@@ -124,10 +125,7 @@ public class PaymentService {
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
-        PisPayment payment = pisConsentService.getPisConsentById(aspspConsentData.getConsentId())
-                                    .map(PisConsentResponse::getPayments)
-                                    .map(payments -> payments.get(0))
-                                    .orElse(null);
+        PisPayment payment = getPisPayment(aspspConsentData.getConsentId());
 
         if (payment == null) {
             return ResponseObject.builder()
@@ -162,22 +160,24 @@ public class PaymentService {
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
 
-        // we need to get decrypted payment ID
-        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
-
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
+        PisPayment pisPayment = getPisPayment(aspspConsentData.getConsentId());
+
+        if (pisPayment == null) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Payment not found"))
+                       .build();
+        }
+
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
-            SpiSinglePayment payment = new SpiSinglePayment(null);
-            payment.setPaymentId(internalPaymentId);
+            SpiSinglePayment payment = spiPaymentFactory.getSpiSinglePayment(pisPayment, PaymentProduct.SEPA);
             spiResponse = singlePaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         } else if (paymentType == PERIODIC) {
-            SpiPeriodicPayment payment = new SpiPeriodicPayment(null);
-            payment.setPaymentId(internalPaymentId);
+            SpiPeriodicPayment payment = spiPaymentFactory.getSpiPeriodicPayment(pisPayment, PaymentProduct.SEPA);
             spiResponse = periodicPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         } else {
-            SpiBulkPayment payment = new SpiBulkPayment();
-            payment.setPaymentId(internalPaymentId);
+            SpiBulkPayment payment = spiPaymentFactory.getSpiBulkPayment(pisPayment, PaymentProduct.SEPA);
             spiResponse = bulkPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         }
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -207,43 +207,40 @@ public class PaymentService {
     public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
 
-        // we need to get decrypted payment ID
-        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
+        PisPayment pisPayment = getPisPayment(aspspConsentData.getConsentId());
 
-        SpiPayment payment;
-        switch (paymentType) {
-            case SINGLE:
-                SpiSinglePayment singlePayment = new SpiSinglePayment(null);
-                singlePayment.setPaymentId(internalPaymentId);
-                payment = singlePayment;
-                break;
-            case PERIODIC:
-                SpiPeriodicPayment periodicPayment = new SpiPeriodicPayment(null);
-                periodicPayment.setPaymentId(internalPaymentId);
-                payment = periodicPayment;
-                break;
-            case BULK:
-                SpiBulkPayment bulkPayment = new SpiBulkPayment();
-                bulkPayment.setPaymentId(internalPaymentId);
-                payment = bulkPayment;
-                break;
-            default:
-                log.error("Unknown payment type: {}", paymentType);
-                return ResponseObject.<CancelPaymentResponse>builder()
-                           .fail(new MessageError(FORMAT_ERROR))
-                           .build();
+        if (pisPayment == null) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Payment not found"))
+                       .build();
         }
 
-        AspspConsentData consentData = pisConsentDataService.getAspspConsentData(paymentId);
+        Optional<SpiPayment> spiPaymentOptional = spiPaymentFactory.getSpiPaymentByPaymentType(pisPayment, PaymentProduct.SEPA, paymentType);
+
+        if (!spiPaymentOptional.isPresent()) {
+            log.error("Unknown payment type: {}", paymentType);
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(FORMAT_ERROR))
+                       .build();
+        }
+
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
-            return cancelPaymentService.initiatePaymentCancellation(spiPsuData, payment, consentData);
+            return cancelPaymentService.initiatePaymentCancellation(spiPsuData, spiPaymentOptional.get(), aspspConsentData);
         } else {
-            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(spiPsuData, payment, consentData);
+            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(spiPsuData, spiPaymentOptional.get(), aspspConsentData);
             pisConsentService.revokeConsentById(paymentId);
             return cancellationResponse;
         }
+    }
+
+    private PisPayment getPisPayment(String consentId) {
+        return pisConsentService.getPisConsentById(consentId)
+                   .map(PisConsentResponse::getPayments)
+                   .map(payments -> payments.get(0))
+                   .orElse(null);
     }
 }
