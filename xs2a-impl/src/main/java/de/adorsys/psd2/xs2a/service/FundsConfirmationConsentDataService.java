@@ -22,26 +22,18 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
 public class FundsConfirmationConsentDataService {
     private final AspspDataService aspspDataService;
-    private static final String stubConsent = "some stub consent";
 
     public AspspConsentData getAspspConsentData(String consentId) {
-        if (Objects.isNull(consentId)) {
-            return new AspspConsentData(null, stubConsent);
-        }
         return aspspDataService.readAspspConsentData(consentId)
                    .orElseGet(() -> new AspspConsentData(null, consentId));
     }
 
     public void updateAspspConsentData(@NotNull AspspConsentData aspspConsentData) {
-        if (Objects.equals(aspspConsentData.getConsentId(), stubConsent)) {
-            return;
-        }
         aspspDataService.updateAspspConsentData(aspspConsentData);
+
     }
 }
