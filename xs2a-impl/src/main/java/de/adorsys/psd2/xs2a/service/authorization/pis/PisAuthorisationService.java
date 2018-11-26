@@ -123,4 +123,15 @@ public class PisAuthorisationService {
         return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
                    .orElse(null);
     }
+
+    /**
+     * Sends a GET request to CMS to get authorisation sub resources
+     *
+     * @param paymentId String representation of identifier of payment ID
+     * @return long representation of identifier of stored consent authorisation
+     */
+    public String getAuthorisationSubResources(String paymentId) {
+        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CREATED)
+                   .orElse(null);
+    }
 }

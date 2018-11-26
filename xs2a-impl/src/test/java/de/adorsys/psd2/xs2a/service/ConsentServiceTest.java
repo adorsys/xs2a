@@ -66,6 +66,7 @@ import java.time.Period;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -667,6 +668,28 @@ public class ConsentServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
+    }
+
+
+    @Test
+    public void getPaymentInitiationAuthorisation() {
+        when(pisScaAuthorisationService.getAuthorisationSubResources(anyString()))
+            .thenReturn(Optional.of(new Xs2aPaymentAuthorisationSubResource(Collections.singletonList(PAYMENT_ID))));
+
+        // Given:
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        ResponseObject<Xs2aPaymentAuthorisationSubResource> paymentInitiationAuthorisation = consentService.getPaymentInitiationAuthorisation(PAYMENT_ID);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
+
+        assertThat(paymentInitiationAuthorisation.getBody()).isNotNull();
+        List<String> authorisationIds = paymentInitiationAuthorisation.getBody().getAuthorisationIds();
+        assertFalse(authorisationIds.isEmpty());
+        assertThat(authorisationIds.get(0)).isEqualTo(PAYMENT_ID);
     }
 
     /**

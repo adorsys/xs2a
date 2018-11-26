@@ -138,4 +138,13 @@ public class PisConsentRemoteUrls {
     public String getPsuDataByPaymentId() {
         return consentServiceBaseUrl + "/pis/payment/{payment-id}/psu-data";
     }
+
+    /**
+     * @return String authorisation ID
+     * Method: GET
+     * PathVariables: String paymentId
+     */
+    public String getAuthorisationSubResources() {
+        return consentServiceBaseUrl + "/pis/consent/{payment-id}/authorisations";
+    }
 }

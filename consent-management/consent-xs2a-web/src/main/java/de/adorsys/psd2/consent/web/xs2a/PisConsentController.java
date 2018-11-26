@@ -187,6 +187,19 @@ public class PisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping(path = "/{payment-id}/authorisations")
+    @ApiOperation(value = "Getting payment authorization by paymentId")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<String> getConsentAuthorisation(
+        @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("payment-id") String paymentId) {
+        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CREATED)
+                   .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
     @PutMapping(path = "/{consent-id}/payment")
     @ApiResponses(value = {

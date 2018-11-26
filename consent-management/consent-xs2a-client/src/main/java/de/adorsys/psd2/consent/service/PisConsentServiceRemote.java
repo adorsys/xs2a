@@ -121,7 +121,7 @@ public class PisConsentServiceRemote implements PisConsentService {
 
     @Override
     public Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getCancellationAuthorisationSubResources(), String.class, paymentId)
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getAuthorisationSubResources(), String.class, paymentId)
                                        .getBody());
     }
 

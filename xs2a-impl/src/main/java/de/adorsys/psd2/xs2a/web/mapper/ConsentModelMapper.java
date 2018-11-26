@@ -116,6 +116,14 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
+    public Authorisations mapToAuthorisations(Xs2aPaymentAuthorisationSubResource xs2aPaymentAuthorisationSubResource) {
+        Authorisations authorisations = new Authorisations();
+        AuthorisationsList authorisationsList = new AuthorisationsList();
+        authorisationsList.addAll(xs2aPaymentAuthorisationSubResource.getAuthorisationIds());
+        authorisations.setAuthorisationIds(authorisationsList);
+        return authorisations;
+    }
+
     private ScaMethods mapToScaMethodsOuter(CreateConsentResponse createConsentResponse) {
         List<AuthenticationObject> authList = Optional.ofNullable(createConsentResponse.getScaMethods())
                                                   .map(arr -> Arrays.stream(arr)

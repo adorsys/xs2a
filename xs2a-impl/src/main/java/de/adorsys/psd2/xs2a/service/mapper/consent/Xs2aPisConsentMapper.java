@@ -65,6 +65,10 @@ public class Xs2aPisConsentMapper {
                    .orElse(null);
     }
 
+    public Optional<Xs2aPaymentAuthorisationSubResource> mapToXs2aPaymentAuthorisationSubResource(String authorisationId) {
+        return Optional.of(new Xs2aPaymentAuthorisationSubResource(Collections.singletonList(authorisationId)));
+    }
+
     private String getAuthenticationMethodId(Xs2aUpdatePisConsentPsuDataResponse data) {
         return Optional.ofNullable(data.getChosenScaMethod())
                    .map(Xs2aAuthenticationObject::getAuthenticationMethodId)

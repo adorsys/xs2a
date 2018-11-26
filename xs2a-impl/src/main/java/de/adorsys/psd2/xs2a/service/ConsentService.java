@@ -332,6 +332,16 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                   ::build);
     }
 
+    public ResponseObject<Xs2aPaymentAuthorisationSubResource> getPaymentInitiationAuthorisation(String paymentId) {
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
+
+        return pisAuthorizationService.getAuthorisationSubResources(paymentId)
+                   .map(resp -> ResponseObject.<Xs2aPaymentAuthorisationSubResource>builder().body(resp).build())
+                   .orElseGet(ResponseObject.<Xs2aPaymentAuthorisationSubResource>builder()
+                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                  ::build);
+    }
+
     boolean isValidAccountByAccess(String resourceId, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
