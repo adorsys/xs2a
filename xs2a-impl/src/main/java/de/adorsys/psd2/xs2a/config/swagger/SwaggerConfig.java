@@ -36,8 +36,8 @@ import java.util.Collections;
 public class SwaggerConfig {
     private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api-1.2-Update-2018-08-17.yaml";
 
-    @Value("${xs2a.swagger.yaml.location}")
-    private String yamlLocation;
+    @Value("${xs2a.swagger.psd2.api.location}")
+    private String customPsd2ApiLocation;
 
     @SuppressWarnings("Guava") // Intellij IDEA claims that Guava predicates could be replaced with Java API,
     // but actually it is not possible
@@ -64,9 +64,9 @@ public class SwaggerConfig {
     }
 
     private String resolveYamlLocation() {
-        if (StringUtils.isBlank(yamlLocation)) {
+        if (StringUtils.isBlank(customPsd2ApiLocation)) {
             return DEFAULT_PSD2_API_LOCATION;
         }
-        return yamlLocation;
+        return customPsd2ApiLocation;
     }
 }
