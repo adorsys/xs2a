@@ -68,7 +68,7 @@ public class FundsConfirmationServiceTest {
     public void setUp() {
         when(xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(buildFundsConfirmationRequest()))
             .thenReturn(buildSpiFundsConfirmationRequest());
-        when(fundsConfirmationConsentDataService.getAspspConsentDataByConsentId(anyString()))
+        when(fundsConfirmationConsentDataService.getAspspConsentData(anyString()))
             .thenReturn(ASPSP_CONSENT_DATA);
         when(fundsConfirmationPsuDataService.getPsuDataByConsentId(anyString())).thenReturn(PSU_ID_DATA);
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
