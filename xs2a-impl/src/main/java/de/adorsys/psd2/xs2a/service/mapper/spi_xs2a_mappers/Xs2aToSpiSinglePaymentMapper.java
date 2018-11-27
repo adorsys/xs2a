@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ public class Xs2aToSpiSinglePaymentMapper {
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
 
-    public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, PaymentProduct paymentProduct) {
+    public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, String paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
         single.setPaymentId(payment.getPaymentId());
         single.setEndToEndIdentification(payment.getEndToEndIdentification());

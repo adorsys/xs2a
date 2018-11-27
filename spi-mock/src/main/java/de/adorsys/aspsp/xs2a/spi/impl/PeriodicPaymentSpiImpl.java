@@ -87,7 +87,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
         try {
             ResponseEntity<List<AspspPeriodicPayment>> aspspResponse =
                 aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<AspspPeriodicPayment>>() {
-                }, payment.getPaymentType().getValue(), payment.getPaymentProduct().getValue(), payment.getPaymentId());
+                }, payment.getPaymentType().getValue(), payment.getPaymentProduct(), payment.getPaymentId());
             AspspPeriodicPayment periodic = aspspResponse.getBody().get(0);
             SpiPeriodicPayment spiPeriodicPayment = spiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodic, payment.getPaymentProduct());
 

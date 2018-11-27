@@ -19,7 +19,6 @@ package de.adorsys.aspsp.aspspmockserver.domain.pis.proto;
 import de.adorsys.aspsp.aspspmockserver.domain.ConsentStatus;
 import de.adorsys.aspsp.aspspmockserver.domain.TppInfo;
 import de.adorsys.aspsp.aspspmockserver.domain.pis.PisPayment;
-import de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentProduct;
 import de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -34,7 +33,7 @@ public class PisConsentResponse {
     private List<PisPayment> payments;
 
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
-    private PisPaymentProduct paymentProduct;
+    private String paymentProduct;
 
     @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PisPaymentType paymentType;

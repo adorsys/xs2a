@@ -20,7 +20,6 @@ import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileUpdateService;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import io.swagger.annotations.Api;
@@ -72,7 +71,7 @@ public class AspspProfileUpdateController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok"),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<Void> updateAvailablePaymentProducts(@RequestBody List<PaymentProduct> availablePaymentProducts) {
+    public ResponseEntity<Void> updateAvailablePaymentProducts(@RequestBody List<String> availablePaymentProducts) {
         aspspProfileService.updateAvailablePaymentProducts(availablePaymentProducts);
         return new ResponseEntity<>(HttpStatus.OK);
     }

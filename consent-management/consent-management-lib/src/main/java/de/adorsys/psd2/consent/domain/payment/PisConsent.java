@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.api.ConsentType;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -68,7 +67,7 @@ public class PisConsent {
     @Column(name = "payment_product", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
-    private PaymentProduct pisPaymentProduct;
+    private String pisPaymentProduct;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

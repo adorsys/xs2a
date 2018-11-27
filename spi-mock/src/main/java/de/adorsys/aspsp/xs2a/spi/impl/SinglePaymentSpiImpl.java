@@ -88,7 +88,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
         try {
             ResponseEntity<List<AspspSinglePayment>> aspspResponse =
                 aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<AspspSinglePayment>>() {
-                }, payment.getPaymentType().getValue(), payment.getPaymentProduct().getValue(), payment.getPaymentId());
+                }, payment.getPaymentType().getValue(), payment.getPaymentProduct(), payment.getPaymentId());
             AspspSinglePayment single = aspspResponse.getBody().get(0);
             SpiSinglePayment spiPeriodicPayment = spiSinglePaymentMapper.mapToSpiSinglePayment(single, payment.getPaymentProduct());
 
