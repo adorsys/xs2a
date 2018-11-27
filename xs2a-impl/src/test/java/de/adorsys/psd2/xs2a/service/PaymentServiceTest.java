@@ -16,12 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -47,6 +49,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -121,6 +124,15 @@ public class PaymentServiceTest {
     private Xs2aEventService xs2aEventService;
     @Mock
     private ReadPaymentService<PaymentInformationResponse> readPaymentService;
+    @Mock
+    private SpiPaymentFactory spiPaymentFactory;
+
+    @Mock
+    private PisConsentResponse pisConsentResponse;
+    @Mock
+    private PisPayment pisPayment;
+    @Mock
+    private SpiPayment spiPayment;
 
     @Before
     public void setUp() {
@@ -171,6 +183,10 @@ public class PaymentServiceTest {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.TRUE);
         when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
             .thenReturn(PSU_ID_DATA);
+        when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
+        when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisConsentResponse.getPaymentProduct()).thenReturn(PaymentProduct.SEPA);
+        when(spiPaymentFactory.getSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -185,6 +201,10 @@ public class PaymentServiceTest {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
         when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
             .thenReturn(PSU_ID_DATA);
+        when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
+        when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisConsentResponse.getPaymentProduct()).thenReturn(PaymentProduct.SEPA);
+        when(spiPaymentFactory.getSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -199,6 +219,10 @@ public class PaymentServiceTest {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
         when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
             .thenReturn(PSU_ID_DATA);
+        when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
+        when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisConsentResponse.getPaymentProduct()).thenReturn(PaymentProduct.SEPA);
+        when(spiPaymentFactory.getSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -247,6 +271,9 @@ public class PaymentServiceTest {
     public void getPaymentStatusById_Success_ShouldRecordEvent() {
         SpiResponse<SpiTransactionStatus> spiResponse = buildSpiResponseTransactionStatus();
         when(singlePaymentSpi.getPaymentStatusById(any(), any(), any())).thenReturn(spiResponse);
+        when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
+        when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisConsentResponse.getPaymentProduct()).thenReturn(PaymentProduct.SEPA);
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
