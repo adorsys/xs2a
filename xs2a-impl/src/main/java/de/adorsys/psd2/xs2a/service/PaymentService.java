@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -125,9 +124,18 @@ public class PaymentService {
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
-        PisPayment payment = getPisPayment(aspspConsentData.getConsentId());
+        Optional<PisConsentResponse> pisConsentOptional = pisConsentService.getPisConsentById(aspspConsentData.getConsentId());
 
-        if (payment == null) {
+        if (!pisConsentOptional.isPresent()) {
+            return ResponseObject.builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Consent not found"))
+                       .build();
+        }
+
+        PisConsentResponse pisConsent = pisConsentOptional.get();
+        PisPayment pisPayment = getPisPaymentFromConsent(pisConsent);
+
+        if (pisPayment == null) {
             return ResponseObject.builder()
                        .fail(new MessageError(FORMAT_ERROR, "Payment not found"))
                        .build();
@@ -135,8 +143,7 @@ public class PaymentService {
 
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
-        PaymentInformationResponse response = readPaymentService.getPayment(payment, PaymentProduct.SEPA, psuData, aspspConsentData); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-
+        PaymentInformationResponse response = readPaymentService.getPayment(pisPayment, pisConsent.getPaymentProduct(), psuData, aspspConsentData); //NOT USED IN 1.2
         if (response.hasError()) {
             return ResponseObject.builder()
                        .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
@@ -161,7 +168,16 @@ public class PaymentService {
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-        PisPayment pisPayment = getPisPayment(aspspConsentData.getConsentId());
+        Optional<PisConsentResponse> pisConsentOptional = pisConsentService.getPisConsentById(aspspConsentData.getConsentId());
+
+        if (!pisConsentOptional.isPresent()) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Consent not found"))
+                       .build();
+        }
+
+        PisConsentResponse pisConsent = pisConsentOptional.get();
+        PisPayment pisPayment = getPisPaymentFromConsent(pisConsent);
 
         if (pisPayment == null) {
             return ResponseObject.<TransactionStatus>builder()
@@ -171,13 +187,13 @@ public class PaymentService {
 
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
-            SpiSinglePayment payment = spiPaymentFactory.getSpiSinglePayment(pisPayment, PaymentProduct.SEPA);
+            SpiSinglePayment payment = spiPaymentFactory.getSpiSinglePayment(pisPayment, pisConsent.getPaymentProduct());
             spiResponse = singlePaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         } else if (paymentType == PERIODIC) {
-            SpiPeriodicPayment payment = spiPaymentFactory.getSpiPeriodicPayment(pisPayment, PaymentProduct.SEPA);
+            SpiPeriodicPayment payment = spiPaymentFactory.getSpiPeriodicPayment(pisPayment, pisConsent.getPaymentProduct());
             spiResponse = periodicPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         } else {
-            SpiBulkPayment payment = spiPaymentFactory.getSpiBulkPayment(pisPayment, PaymentProduct.SEPA);
+            SpiBulkPayment payment = spiPaymentFactory.getSpiBulkPayment(pisPayment, pisConsent.getPaymentProduct());
             spiResponse = bulkPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         }
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -208,7 +224,16 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
 
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
-        PisPayment pisPayment = getPisPayment(aspspConsentData.getConsentId());
+        Optional<PisConsentResponse> pisConsentOptional = pisConsentService.getPisConsentById(aspspConsentData.getConsentId());
+
+        if (!pisConsentOptional.isPresent()) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Consent not found"))
+                       .build();
+        }
+
+        PisConsentResponse pisConsent = pisConsentOptional.get();
+        PisPayment pisPayment = getPisPaymentFromConsent(pisConsent);
 
         if (pisPayment == null) {
             return ResponseObject.<CancelPaymentResponse>builder()
@@ -216,7 +241,7 @@ public class PaymentService {
                        .build();
         }
 
-        Optional<SpiPayment> spiPaymentOptional = spiPaymentFactory.getSpiPaymentByPaymentType(pisPayment, PaymentProduct.SEPA, paymentType);
+        Optional<SpiPayment> spiPaymentOptional = spiPaymentFactory.getSpiPaymentByPaymentType(pisPayment, pisConsent.getPaymentProduct(), paymentType);
 
         if (!spiPaymentOptional.isPresent()) {
             log.error("Unknown payment type: {}", paymentType);
@@ -237,8 +262,8 @@ public class PaymentService {
         }
     }
 
-    private PisPayment getPisPayment(String consentId) {
-        return pisConsentService.getPisConsentById(consentId)
+    private PisPayment getPisPaymentFromConsent(PisConsentResponse pisConsentResponse) {
+        return Optional.of(pisConsentResponse)
                    .map(PisConsentResponse::getPayments)
                    .map(payments -> payments.get(0))
                    .orElse(null);
