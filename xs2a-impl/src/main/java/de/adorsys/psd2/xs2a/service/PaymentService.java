@@ -165,9 +165,6 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
 
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
-        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
-
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         Optional<PisConsentResponse> pisConsentOptional = pisConsentService.getPisConsentById(aspspConsentData.getConsentId());
 
         if (!pisConsentOptional.isPresent()) {
@@ -184,6 +181,9 @@ public class PaymentService {
                        .fail(new MessageError(FORMAT_ERROR, "Payment not found"))
                        .build();
         }
+
+        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
+        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
