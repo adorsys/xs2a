@@ -25,20 +25,24 @@ import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisConsentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
 // TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/498
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PisConsentServiceRemote implements PisConsentService {
@@ -121,12 +125,22 @@ public class PisConsentServiceRemote implements PisConsentService {
 
     @Override
     public Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType) {
-        String url = authorizationType == CmsAuthorisationType.CREATED
-                         ? remotePisConsentUrls.getAuthorisationSubResources()
-                         : remotePisConsentUrls.getCancellationAuthorisationSubResources();
-
-        return Optional.ofNullable(consentRestTemplate.getForEntity(url, String.class, paymentId)
-                                       .getBody());
+        String url;
+        if (authorizationType == CmsAuthorisationType.CREATED) {
+            url = remotePisConsentUrls.getAuthorisationSubResources();
+        } else if (authorizationType == CmsAuthorisationType.CANCELLED) {
+            url = remotePisConsentUrls.getCancellationAuthorisationSubResources();
+        } else {
+            log.error("Unknown payment authorisation type {}", authorizationType);
+            throw new IllegalArgumentException("Unknown payment authorisation type " + authorizationType);
+        }
+        try {
+            ResponseEntity<String> request = consentRestTemplate.getForEntity(url, String.class, paymentId);
+            return Optional.of(request.getBody());
+        } catch (CmsRestException cmsRestException) {
+            log.warn("No authorisation found by paymentId {}", paymentId);
+        }
+        return Optional.empty();
     }
 
     @Override

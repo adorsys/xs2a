@@ -29,6 +29,8 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -65,8 +67,11 @@ public class Xs2aPisConsentMapper {
                    .orElse(null);
     }
 
-    public Optional<Xs2aPaymentAuthorisationSubResource> mapToXs2aPaymentAuthorisationSubResource(String authorisationId) {
-        return Optional.of(new Xs2aPaymentAuthorisationSubResource(Collections.singletonList(authorisationId)));
+    public Xs2aPaymentAuthorisationSubResource mapToXs2aPaymentAuthorisationSubResource(String authorisationId) {
+        List<String> subResources = Objects.isNull(authorisationId)
+                                        ? Collections.emptyList()
+                                        : Collections.singletonList(authorisationId);
+        return new Xs2aPaymentAuthorisationSubResource(subResources);
     }
 
     private String getAuthenticationMethodId(Xs2aUpdatePisConsentPsuDataResponse data) {

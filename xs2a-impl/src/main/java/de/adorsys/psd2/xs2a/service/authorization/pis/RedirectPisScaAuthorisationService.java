@@ -101,6 +101,8 @@ public class RedirectPisScaAuthorisationService implements PisScaAuthorisationSe
      */
     @Override
     public Optional<Xs2aPaymentAuthorisationSubResource> getAuthorisationSubResources(String paymentId) {
-        return pisConsentMapper.mapToXs2aPaymentAuthorisationSubResource(authorisationService.getAuthorisationSubResources(paymentId));
+        String authorisationSubResources = authorisationService.getAuthorisationSubResources(paymentId);
+        Xs2aPaymentAuthorisationSubResource xs2aPaymentAuthorisationSubResource = pisConsentMapper.mapToXs2aPaymentAuthorisationSubResource(authorisationSubResources);
+        return Optional.of(xs2aPaymentAuthorisationSubResource);
     }
 }
