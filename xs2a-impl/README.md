@@ -56,6 +56,6 @@ endpoints.cors.allowed-headers=Origin,Authorization,Content-Type
 endpoints.cors.allowed-methods=GET,POST,PUT,DELETE
 ```
 ## Provide XS2A Swagger as an option
-To enable swagger in xs2a you have to add @EnableXs2aSwagger annotation to your connector. To disable it just remove it.
+To enable swagger in xs2a you have to add @EnableXs2aSwagger annotation to your connector. To disable swagger just remove it.
 You should also put PSD2 API yaml file to the resource folder of your connector to override default PSD2 API. To do that you need to fill in 
 xs2a.swagger.psd2.api.location property in your application.properties file
