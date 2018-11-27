@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.config.swagger;
+package de.adorsys.psd2.xs2a.web.config;
 
 import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;

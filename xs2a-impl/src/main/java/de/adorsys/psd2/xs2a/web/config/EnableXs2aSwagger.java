@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.config.swagger;
+package de.adorsys.psd2.xs2a.web.config;
 
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
 
+/**
+ * This annotation is designed to turn on/off xs2a swagger
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

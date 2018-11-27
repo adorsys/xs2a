@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi;
 
-import de.adorsys.psd2.xs2a.config.swagger.EnableXs2aSwagger;
+import de.adorsys.psd2.xs2a.web.config.EnableXs2aSwagger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
