@@ -187,13 +187,13 @@ public class PaymentService {
 
         SpiResponse<SpiTransactionStatus> spiResponse;
         if (paymentType == SINGLE) {
-            SpiSinglePayment payment = spiPaymentFactory.getSpiSinglePayment(pisPayment, pisConsent.getPaymentProduct());
+            SpiSinglePayment payment = spiPaymentFactory.createSpiSinglePayment(pisPayment, pisConsent.getPaymentProduct());
             spiResponse = singlePaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         } else if (paymentType == PERIODIC) {
-            SpiPeriodicPayment payment = spiPaymentFactory.getSpiPeriodicPayment(pisPayment, pisConsent.getPaymentProduct());
+            SpiPeriodicPayment payment = spiPaymentFactory.createSpiPeriodicPayment(pisPayment, pisConsent.getPaymentProduct());
             spiResponse = periodicPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         } else {
-            SpiBulkPayment payment = spiPaymentFactory.getSpiBulkPayment(pisPayment, pisConsent.getPaymentProduct());
+            SpiBulkPayment payment = spiPaymentFactory.createSpiBulkPayment(pisPayment, pisConsent.getPaymentProduct());
             spiResponse = bulkPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
         }
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -241,7 +241,7 @@ public class PaymentService {
                        .build();
         }
 
-        Optional<SpiPayment> spiPaymentOptional = spiPaymentFactory.getSpiPaymentByPaymentType(pisPayment, pisConsent.getPaymentProduct(), paymentType);
+        Optional<SpiPayment> spiPaymentOptional = spiPaymentFactory.createSpiPaymentByPaymentType(pisPayment, pisConsent.getPaymentProduct(), paymentType);
 
         if (!spiPaymentOptional.isPresent()) {
             log.error("Unknown payment type: {}", paymentType);

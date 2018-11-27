@@ -186,7 +186,7 @@ public class PaymentServiceTest {
         when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
         when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
         when(pisConsentResponse.getPaymentProduct()).thenReturn(PaymentProduct.SEPA);
-        when(spiPaymentFactory.getSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
+        when(spiPaymentFactory.createSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -204,7 +204,7 @@ public class PaymentServiceTest {
         when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
         when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
         when(pisConsentResponse.getPaymentProduct()).thenReturn(PaymentProduct.SEPA);
-        when(spiPaymentFactory.getSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
+        when(spiPaymentFactory.createSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -222,7 +222,7 @@ public class PaymentServiceTest {
         when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
         when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
         when(pisConsentResponse.getPaymentProduct()).thenReturn(PaymentProduct.SEPA);
-        when(spiPaymentFactory.getSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
+        when(spiPaymentFactory.createSpiPaymentByPaymentType(eq(pisPayment), eq(PaymentProduct.SEPA), any(PaymentType.class))).thenReturn(Optional.of(spiPayment));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);

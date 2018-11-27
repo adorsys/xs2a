@@ -41,7 +41,7 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
 
     @Override
     public PaymentInformationResponse<SinglePayment> getPayment(PisPayment pisPayment, PaymentProduct paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
-        SpiSinglePayment spiPayment = spiPaymentFactory.getSpiSinglePayment(pisPayment, paymentProduct);
+        SpiSinglePayment spiPayment = spiPaymentFactory.createSpiSinglePayment(pisPayment, paymentProduct);
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiPsuData, spiPayment, aspspConsentData);

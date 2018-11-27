@@ -49,58 +49,58 @@ public class SpiPaymentFactory {
     private final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
 
     /**
-     * Gets Optional of SpiPayment from PisPayment, PaymentProduct and PaymentType. Should be used, when general SpiPayment type is needed.
+     * Creates Optional of SpiPayment from PisPayment, PaymentProduct and PaymentType. Should be used, when general SpiPayment type is needed.
      *
      * @param pisPayment     PisPayment
      * @param paymentProduct PaymentProduct
      * @param paymentType    PaymentType
      * @return Optional of SpiPayment of requested payment type or empty Optional for unknown payment type
      */
-    public Optional<SpiPayment> getSpiPaymentByPaymentType(PisPayment pisPayment, PaymentProduct paymentProduct, PaymentType paymentType) {
+    public Optional<SpiPayment> createSpiPaymentByPaymentType(PisPayment pisPayment, PaymentProduct paymentProduct, PaymentType paymentType) {
         switch (paymentType) {
             case SINGLE:
-                return Optional.of(getSpiSinglePayment(pisPayment, paymentProduct));
+                return Optional.of(createSpiSinglePayment(pisPayment, paymentProduct));
             case PERIODIC:
-                return Optional.of(getSpiPeriodicPayment(pisPayment, paymentProduct));
+                return Optional.of(createSpiPeriodicPayment(pisPayment, paymentProduct));
             case BULK:
-                return Optional.of(getSpiBulkPayment(pisPayment, paymentProduct));
+                return Optional.of(createSpiBulkPayment(pisPayment, paymentProduct));
             default:
                 return Optional.empty();
         }
     }
 
     /**
-     * Gets SpiSinglePayment from PisPayment and PaymentProduct. Should be used, when concrete SpiSinglePayment type is needed.
+     * Creates SpiSinglePayment from PisPayment and PaymentProduct. Should be used, when concrete SpiSinglePayment type is needed.
      *
      * @param pisPayment     PisPayment
      * @param paymentProduct PaymentProduct
      * @return SpiSinglePayment from PisPayment
      */
-    public SpiSinglePayment getSpiSinglePayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public SpiSinglePayment createSpiSinglePayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
         return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, paymentProduct);
     }
 
     /**
-     * Gets SpiPeriodicPayment from PisPayment and PaymentProduct. Should be used, when concrete SpiPeriodicPayment type is needed.
+     * Creates SpiPeriodicPayment from PisPayment and PaymentProduct. Should be used, when concrete SpiPeriodicPayment type is needed.
      *
      * @param pisPayment     PisPayment
      * @param paymentProduct PaymentProduct
      * @return SpiPeriodicPayment from PisPayment
      */
-    public SpiPeriodicPayment getSpiPeriodicPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public SpiPeriodicPayment createSpiPeriodicPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
         return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, paymentProduct);
     }
 
     /**
-     * Gets SpiBulkPayment from PisPayment and PaymentProduct. Should be used, when concrete SpiBulkPayment type is needed.
+     * Creates SpiBulkPayment from PisPayment and PaymentProduct. Should be used, when concrete SpiBulkPayment type is needed.
      *
      * @param pisPayment     PisPayment
      * @param paymentProduct PaymentProduct
      * @return SpiBulkPayment from PisPayment
      */
-    public SpiBulkPayment getSpiBulkPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public SpiBulkPayment createSpiBulkPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(Collections.singletonList(pisPayment));
         return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct);
     }

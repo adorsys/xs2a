@@ -41,7 +41,7 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
 
     @Override
     public PaymentInformationResponse<PeriodicPayment> getPayment(PisPayment pisPayment, PaymentProduct paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
-        SpiPeriodicPayment spiPayment = spiPaymentFactory.getSpiPeriodicPayment(pisPayment, paymentProduct);
+        SpiPeriodicPayment spiPayment = spiPaymentFactory.createSpiPeriodicPayment(pisPayment, paymentProduct);
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(spiPsuData, spiPayment, aspspConsentData);

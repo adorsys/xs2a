@@ -41,7 +41,7 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
 
     @Override
     public PaymentInformationResponse<BulkPayment> getPayment(PisPayment pisPayment, PaymentProduct paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
-        SpiBulkPayment spiPayment = spiPaymentFactory.getSpiBulkPayment(pisPayment, paymentProduct);
+        SpiBulkPayment spiPayment = spiPaymentFactory.createSpiBulkPayment(pisPayment, paymentProduct);
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiBulkPayment> spiResponse = bulkPaymentSpi.getPaymentById(spiPsuData, spiPayment, aspspConsentData);
