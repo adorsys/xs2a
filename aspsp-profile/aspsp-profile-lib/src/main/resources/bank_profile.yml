@@ -2,7 +2,7 @@
 setting:
  frequencyPerDay: 5
  combinedServiceIndicator: false
- availablePaymentProducts: SEPA, INSTANT_SEPA
+ availablePaymentProducts: sepa-credit-transfers, instant-sepa-credit-transfers
  availablePaymentTypes: bulk, periodic, single
  scaApproach: REDIRECT
  tppSignatureRequired: false
