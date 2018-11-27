@@ -94,7 +94,7 @@ public class RedirectPisScaAuthorisationService implements PisScaAuthorisationSe
     }
 
     /**
-     * Gets authorization sub resources
+     * Gets authorisation sub resources
      *
      * @param paymentId ASPSP identifier of a payment
      * @return authorisation sub resources

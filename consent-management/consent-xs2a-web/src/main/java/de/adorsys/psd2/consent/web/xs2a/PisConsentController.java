@@ -188,7 +188,7 @@ public class PisConsentController {
     }
 
     @GetMapping(path = "/{payment-id}/authorisations")
-    @ApiOperation(value = "Getting payment authorization by paymentId")
+    @ApiOperation(value = "Getting payment authorisation by paymentId")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
