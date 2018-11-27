@@ -53,10 +53,13 @@ import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
@@ -125,9 +128,9 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
         PisPayment payment = pisConsentService.getPisConsentById(aspspConsentData.getConsentId())
-                                    .map(PisConsentResponse::getPayments)
-                                    .map(payments -> payments.get(0))
-                                    .orElse(null);
+                                 .map(PisConsentResponse::getPayments)
+                                 .map(payments -> payments.get(0))
+                                 .orElse(null);
 
         if (payment == null) {
             return ResponseObject.builder()
@@ -235,6 +238,22 @@ public class PaymentService {
         }
 
         AspspConsentData consentData = pisConsentDataService.getAspspConsentData(paymentId);
+        Optional<PisConsentResponse> consent = pisConsentService.getPisConsentById(consentData.getConsentId());
+
+        if (consent.isPresent()) {
+
+            List<PisPayment> finalisedPayments = consent.get().getPayments()
+                                                     .stream()
+                                                     .filter(p -> p.getTransactionStatus().isFinalisedStatus())
+                                                     .collect(Collectors.toList());
+
+            if (CollectionUtils.isNotEmpty(finalisedPayments)) {
+                return ResponseObject.<CancelPaymentResponse>builder()
+                           .fail(new MessageError(FORMAT_ERROR, "Payment is finalised already and cannot be cancelled"))
+                           .build();
+            }
+        }
+
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 

@@ -85,7 +85,7 @@ public class PaymentController implements PaymentApi {
         return response.hasError()
                    ? responseMapper.ok(response)
                    : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(),
-                                                                                                                      PaymentProduct.SEPA)).build());
+            PaymentProduct.SEPA)).build());
     }
 
     @Override

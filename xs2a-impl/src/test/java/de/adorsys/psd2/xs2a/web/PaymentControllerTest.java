@@ -51,6 +51,7 @@ import java.nio.charset.Charset;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -260,6 +261,46 @@ public class PaymentControllerTest {
         assertThat(actualResult.getBody()).isEqualTo(expectedResult.getBody());
     }
 
+    @Test
+    public void cancelPayment_WithoutAuthorisation_Fail_FinalisedStatus() {
+        when(responseMapper.ok(any()))
+            .thenReturn(ResponseEntity.badRequest().build());
+        when(paymentService.cancelPayment(any(), any())).thenReturn(getErrorOnPaymentCancellation());
+
+        // Given
+        PaymentType paymentType = PaymentType.SINGLE;
+        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = ResponseEntity.badRequest().build();
+
+        ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(),
+            CORRECT_PAYMENT_ID, null, null, null,
+            null, null, null, null, null,
+            null, null,
+            null, null, null, null);
+
+        // Then:
+        assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
+    }
+
+    @Test
+    public void cancelPayment_WithAuthorisation_Fail_FinalisedStatus() {
+        when(responseMapper.ok(any()))
+            .thenReturn(ResponseEntity.badRequest().build());
+        when(paymentService.cancelPayment(any(), any())).thenReturn(getErrorOnPaymentCancellation());
+
+        // Given
+        PaymentType paymentType = PaymentType.SINGLE;
+        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = ResponseEntity.badRequest().build();
+        // When
+        ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(),
+            CORRECT_PAYMENT_ID, null, null, null,
+            null, null, null, null, null,
+            null, null,
+            null, null, null, null);
+
+        // Then:
+        assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
+    }
+
     private ResponseObject<CancelPaymentResponse> getCancelPaymentResponseObject(boolean startAuthorisationRequired) {
         CancelPaymentResponse response = new CancelPaymentResponse();
         response.setStartAuthorisationRequired(startAuthorisationRequired);
@@ -270,5 +311,11 @@ public class PaymentControllerTest {
         PaymentInitiationCancelResponse200202 response = new PaymentInitiationCancelResponse200202();
         response.setTransactionStatus(transactionStatus);
         return response;
+    }
+
+    private ResponseObject<CancelPaymentResponse> getErrorOnPaymentCancellation() {
+        return ResponseObject.<CancelPaymentResponse>builder()
+                   .fail(new MessageError(FORMAT_ERROR))
+                   .build();
     }
 }

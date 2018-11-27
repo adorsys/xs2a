@@ -148,6 +148,7 @@ public class PisConsentMapper {
                 pisPayment.setExecutionRule(pm.getExecutionRule());
                 pisPayment.setFrequency(pm.getFrequency());
                 pisPayment.setDayOfExecution(pm.getDayOfExecution());
+                pisPayment.setTransactionStatus(pm.getTransactionStatus());
 
                 return pisPayment;
             }).orElse(null);
