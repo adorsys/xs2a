@@ -200,10 +200,6 @@ Feature: Account Information Service
 #    #                                                                                                                  #
 #    ####################################################################################################################
 
-
-
-
-
     Scenario Outline: Read balances successfully
         Given PSU already has an existing valid consent <consent>
         And account id <account-id>
