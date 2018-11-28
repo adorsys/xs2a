@@ -44,6 +44,7 @@ import java.util.List;
 @RequestMapping(path = "aspsp-profile/for-debug")
 @Api(value = "Update aspsp profile ", tags = "Update aspsp profile.  Only for DEBUG!",
     description = "Provides access to update aspsp profile")
+//TODO refactor AspspProfileUpdateService and remove NOPMD comment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/518
 public class AspspProfileUpdateController { //NOPMD class has update method for every option in profile as it should be
     private final AspspProfileUpdateService aspspProfileService;
 
@@ -247,13 +248,13 @@ public class AspspProfileUpdateController { //NOPMD class has update method for 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(path = "/redirect-url-expiration-time")
-    @ApiOperation(value = "Update the value of Delta report supported. Only for DEBUG!")
+    @PutMapping(path = "/redirect-url-expiration-time-ms")
+    @ApiOperation(value = "Update the value of redirect url expiration time. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok"),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<Void> updateDeltaReportSupported(@RequestBody int redirectUrlExpirationTime) {
-        aspspProfileService.updateRedirectUrlExpirationTime(redirectUrlExpirationTime);
+    public ResponseEntity<Void> updateDeltaReportSupported(@RequestBody long redirectUrlExpirationTimeMs) {
+        aspspProfileService.updateRedirectUrlExpirationTimeMs(redirectUrlExpirationTimeMs);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -141,9 +141,9 @@ public class ProfileConfiguration implements InitializingBean {
     private boolean deltaReportSupported;
 
     /**
-     * The limit of an expiration time of redirect url set in days
+     * The limit of an expiration time of redirect url set in milliseconds
      */
-    private int redirectUrlExpirationTime;
+    private long redirectUrlExpirationTimeMs;
 
     @Override
     public void afterPropertiesSet() {

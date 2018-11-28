@@ -20,4 +20,4 @@ setting:
  paymentCancellationAuthorizationMandated: false
  piisConsentSupported: false
  deltaReportSupported: false
- redirectUrlExpirationTime: 0
+ redirectUrlExpirationTimeMs: 600000

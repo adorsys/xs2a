@@ -49,7 +49,7 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             profileConfiguration.isPaymentCancellationAuthorizationMandated(),
             profileConfiguration.isPiisConsentSupported(),
             profileConfiguration.isDeltaReportSupported(),
-            profileConfiguration.getRedirectUrlExpirationTime());
+            profileConfiguration.getRedirectUrlExpirationTimeMs());
     }
 
     @Override

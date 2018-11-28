@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 
 import java.util.List;
 
+//TODO refactor AspspProfileUpdateService and remove NOPMD comment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/518
 public interface AspspProfileUpdateService { //NOPMD class has update method for every option in profile as it should be
 
     void updateFrequencyPerDay(int frequencyPerDay);
@@ -67,6 +68,6 @@ public interface AspspProfileUpdateService { //NOPMD class has update method for
 
     void updateDeltaReportSupported(boolean deltaReportSupported);
 
-    void updateRedirectUrlExpirationTime(int redirectUrlExpirationTime);
+    void updateRedirectUrlExpirationTimeMs(long redirectUrlExpirationTimeMs);
 
 }

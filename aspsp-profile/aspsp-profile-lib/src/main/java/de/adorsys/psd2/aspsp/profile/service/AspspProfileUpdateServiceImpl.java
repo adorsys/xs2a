@@ -33,6 +33,7 @@ import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceFiel
 
 @Service
 @RequiredArgsConstructor
+//TODO refactor AspspProfileUpdateService and remove NOPMD comment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/518
 public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService { //NOPMD class has update method for every option in profile as it should be
 
     private final ProfileConfiguration profileConfiguration;
@@ -244,12 +245,12 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     }
 
     /**
-     * Update the value of an expiration time of redirect url set in days
+     * Update the value of an expiration time of redirect url set in milliseconds
      *
-     * @param redirectUrlExpirationTime the value of an expiration time of redirect url to substitute existing one
+     * @param redirectUrlExpirationTimeMs the value of an expiration time of redirect url to substitute existing one
      */
     @Override
-    public void updateRedirectUrlExpirationTime(int redirectUrlExpirationTime) {
-        profileConfiguration.setRedirectUrlExpirationTime(redirectUrlExpirationTime);
+    public void updateRedirectUrlExpirationTimeMs(long redirectUrlExpirationTimeMs) {
+        profileConfiguration.setRedirectUrlExpirationTimeMs(redirectUrlExpirationTimeMs);
     }
 }
