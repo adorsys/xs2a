@@ -238,6 +238,10 @@ public class AccountModelMapper {
 
     }
 
+    public byte[] mapToTransactionsResponseRaw(Xs2aTransactionsReport transactionsReport) {
+        return transactionsReport.getAccountReport().getTransactionsRaw();
+    }
+
     private Object createAccountObject(Xs2aAccountReference xs2aAccountReference) {
         return Optional.ofNullable(xs2aAccountReference)
                    .map(account -> {
