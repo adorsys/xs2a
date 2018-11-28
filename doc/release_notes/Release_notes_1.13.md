@@ -6,3 +6,7 @@ Now we can set parameter for delta-report support in ASPSP-Profile.
 | Option                                  | Meaning                                                                                             | Default value                                        | Possible values                                                                                      |
 |-----------------------------------------|-----------------------------------------------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------------------------------------------------------|
 |deltaReportSupported                     | This field indicates if an ASPSP supports Delta reports for transaction details                     | false                                                | true, false                                                                                          |
+
+## PaymentProduct entity was replaced by raw String value
+Now instead of using PaymentProduct enum class, string value is used. PaymentProduct enum class is removed.
+In database, instead of saving enum values(SEPA, INSTANT_SEPA, etc), raw string values are saved:  sepa-credit-transfers, instant-sepa-credit-transfers, etc.
