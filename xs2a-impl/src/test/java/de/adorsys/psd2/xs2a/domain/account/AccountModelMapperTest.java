@@ -201,7 +201,7 @@ public class AccountModelMapperTest {
     public void testMapToAccountReport() {
         List<Transactions> bookedTransactions = Arrays.asList(createTransactions(), createTransactions(), createTransactions());
         List<Transactions> pendingTransactions = Arrays.asList(createTransactions(), createTransactions());
-        Xs2aAccountReport accountReport = new Xs2aAccountReport(bookedTransactions, pendingTransactions);
+        Xs2aAccountReport accountReport = new Xs2aAccountReport(bookedTransactions, pendingTransactions, null);
         accountReport.setLinks(createLinks());
 
         AccountReport result = accountModelMapper.mapToAccountReport(accountReport);

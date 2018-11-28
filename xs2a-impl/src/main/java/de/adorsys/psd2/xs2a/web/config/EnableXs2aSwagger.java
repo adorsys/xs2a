@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi;
+package de.adorsys.psd2.xs2a.web.config;
 
-import de.adorsys.psd2.xs2a.web.config.EnableXs2aSwagger;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
-@EnableXs2aSwagger
-@SpringBootApplication
-@ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2"})
-public class ASPSPXs2aApplication {
+import java.lang.annotation.*;
 
-    public static void main(String[] args) {
-        SpringApplication.run(ASPSPXs2aApplication.class, args);
-    }
+/**
+ * This annotation is designed to turn on/off xs2a swagger
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Import(SwaggerConfig.class)
+public @interface EnableXs2aSwagger {
 }
