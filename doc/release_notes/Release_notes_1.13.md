@@ -16,6 +16,6 @@ You could also put PSD2 API yaml file to the resource folder of your connector t
 
 ## Payment cancellation endpoint gives an error when trying to cancel finalised payments
 When payment is finished (has transaction statuses *Cancelled, Rejected, AcceptedSettlementCompleted*) there is no possibility to cancel it or to proceed payment cancellation authorisation flow.
-The error "FORMAT_ERROR" with htpp status 400 and TPP message "Payment is finalised already and cannot be cancelled" will be displayed.
+The error "FORMAT_ERROR" with http status 400 and TPP message "Payment is finalised already and cannot be cancelled" will be displayed.
 
 
