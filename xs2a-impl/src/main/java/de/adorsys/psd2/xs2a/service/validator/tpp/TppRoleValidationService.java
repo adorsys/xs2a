@@ -29,26 +29,26 @@ import java.util.Set;
 
 @Service
 public class TppRoleValidationService {
-    private static Map<TppRole, Set<String>> TPP_ROLE_ACCESS;
+    private static Map<TppRole, Set<String>> tppRoleAccess;
 
     static {
-        TPP_ROLE_ACCESS = TppRoleAccess.builder()
-                              .linkTppRolePatterns(TppRole.AISP,
-                                  "/api/v1/accounts",
-                                  "/v1/accounts",
-                                  "/api/v1/consents",
-                                  "/v1/consents")
-                              .linkTppRolePatterns(TppRole.PISP,
-                                  "/api/v1/bulk-payments",
-                                  "/v1/bulk-payments",
-                                  "/api/v1/payments",
-                                  "/v1/payments",
-                                  "/api/v1/periodic-payments",
-                                  "/v1/periodic-payments")
-                              .linkTppRolePatterns(TppRole.PIISP,
-                                  "/api/v1/funds-confirmations",
-                                  "/v1/funds-confirmations")
-                              .build();
+        tppRoleAccess = TppRoleAccess.builder()
+                            .linkTppRolePatterns(TppRole.AISP,
+                                "/api/v1/accounts",
+                                "/v1/accounts",
+                                "/api/v1/consents",
+                                "/v1/consents")
+                            .linkTppRolePatterns(TppRole.PISP,
+                                "/api/v1/bulk-payments",
+                                "/v1/bulk-payments",
+                                "/api/v1/payments",
+                                "/v1/payments",
+                                "/api/v1/periodic-payments",
+                                "/v1/periodic-payments")
+                            .linkTppRolePatterns(TppRole.PIISP,
+                                "/api/v1/funds-confirmations",
+                                "/v1/funds-confirmations")
+                            .build();
     }
 
     public boolean hasAccess(TppInfo tppInfo, HttpServletRequest request) {
@@ -59,10 +59,8 @@ public class TppRoleValidationService {
 
         for (Xs2aTppRole role : xs2aTppRoles) {
             TppRole tppRole = TppRole.valueOf(role.name());
-            if (TPP_ROLE_ACCESS.containsKey(tppRole)) {
-                if (matches(request, TPP_ROLE_ACCESS.get(tppRole))) {
-                    return true;
-                }
+            if (tppRoleAccess.containsKey(tppRole) && matches(request, tppRoleAccess.get(tppRole))) {
+                return true;
             }
         }
 
