@@ -50,6 +50,7 @@ public interface AccountSpi {
     /**
      * Requests a list of transactions
      *
+     * @param acceptMediaType  requested by TPP response media type e.g. text/plain. Shall be propagated to response.
      * @param withBalance      boolean representing if the responded AccountDetails should contain balance
      * @param dateFrom         Date representing the beginning of the search period.<br>
      *                         If null, transactions will not be limited by start date
@@ -60,7 +61,7 @@ public interface AccountSpi {
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of transactions
      */
-    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests an transaction by transactionId
