@@ -20,6 +20,8 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -31,6 +33,9 @@ import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Optional;
+
 @Service("payments")
 @RequiredArgsConstructor
 public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformationResponse<SinglePayment>> {
@@ -41,10 +46,18 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
 
     @Override
     public PaymentInformationResponse<SinglePayment> getPayment(PisPayment pisPayment, PaymentProduct paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
-        SpiSinglePayment spiPayment = spiPaymentFactory.createSpiSinglePayment(pisPayment, paymentProduct);
+        Optional<SpiSinglePayment> spiPaymentOptional = spiPaymentFactory.createSpiSinglePayment(pisPayment, paymentProduct);
+
+        if (!spiPaymentOptional.isPresent()) {
+            return new PaymentInformationResponse<>(
+                ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                    .messages(Collections.singletonList("Payment not found"))
+                    .build()
+            );
+        }
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-        SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiPsuData, spiPayment, aspspConsentData);
+        SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiPsuData, spiPaymentOptional.get(), aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {

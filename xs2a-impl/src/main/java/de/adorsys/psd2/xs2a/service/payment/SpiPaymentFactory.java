@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -40,6 +41,7 @@ import java.util.Optional;
  * Factory class to be used to get SpiPayment from PisPayment, PaymentProduct and PaymentType
  * or concrete SpiPayment (SINGLE/PERIODIC/BULK) from PisPayment and PaymentProduct
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SpiPaymentFactory {
@@ -56,16 +58,17 @@ public class SpiPaymentFactory {
      * @param paymentType    PaymentType
      * @return Optional of SpiPayment of requested payment type or empty Optional for unknown payment type
      */
-    public Optional<SpiPayment> createSpiPaymentByPaymentType(PisPayment pisPayment, PaymentProduct paymentProduct, PaymentType paymentType) {
+    public Optional<? extends SpiPayment> createSpiPaymentByPaymentType(PisPayment pisPayment, PaymentProduct paymentProduct, PaymentType paymentType) {
         switch (paymentType) {
             case SINGLE:
-                return Optional.of(createSpiSinglePayment(pisPayment, paymentProduct));
+                return createSpiSinglePayment(pisPayment, paymentProduct);
             case PERIODIC:
-                return Optional.of(createSpiPeriodicPayment(pisPayment, paymentProduct));
+                return createSpiPeriodicPayment(pisPayment, paymentProduct);
             case BULK:
-                return Optional.of(createSpiBulkPayment(pisPayment, paymentProduct));
+                return createSpiBulkPayment(pisPayment, paymentProduct);
             default:
-                return Optional.empty();
+                log.error("Unknown payment type: {}", paymentType);
+                throw new IllegalArgumentException("Unknown payment type");
         }
     }
 
@@ -76,9 +79,14 @@ public class SpiPaymentFactory {
      * @param paymentProduct PaymentProduct
      * @return SpiSinglePayment from PisPayment
      */
-    public SpiSinglePayment createSpiSinglePayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public Optional<SpiSinglePayment> createSpiSinglePayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
-        return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, paymentProduct);
+
+        if (singlePayment == null) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, paymentProduct));
     }
 
     /**
@@ -88,9 +96,14 @@ public class SpiPaymentFactory {
      * @param paymentProduct PaymentProduct
      * @return SpiPeriodicPayment from PisPayment
      */
-    public SpiPeriodicPayment createSpiPeriodicPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public Optional<SpiPeriodicPayment> createSpiPeriodicPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
-        return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, paymentProduct);
+
+        if (periodicPayment == null) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, paymentProduct));
     }
 
     /**
@@ -100,8 +113,13 @@ public class SpiPaymentFactory {
      * @param paymentProduct PaymentProduct
      * @return SpiBulkPayment from PisPayment
      */
-    public SpiBulkPayment createSpiBulkPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public Optional<SpiBulkPayment> createSpiBulkPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(Collections.singletonList(pisPayment));
-        return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct);
+
+        if (bulkPayment == null) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct));
     }
 }

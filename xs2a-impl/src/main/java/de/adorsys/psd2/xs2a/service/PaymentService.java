@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
+import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -41,9 +42,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
@@ -66,6 +64,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 @AllArgsConstructor
 public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
+    private final ReadPaymentStatusFactory readPaymentStatusFactory;
     private final SpiPaymentFactory spiPaymentFactory;
     private final Xs2aPisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
@@ -124,6 +123,7 @@ public class PaymentService {
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
+        // aspspConsentData.getConsentId() is used as a temporary solution for getting PisConsent by payment id. Please, don't use this approach in any places
         Optional<PisConsentResponse> pisConsentOptional = pisConsentService.getPisConsentById(aspspConsentData.getConsentId());
 
         if (!pisConsentOptional.isPresent()) {
@@ -165,6 +165,7 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
 
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
+        // aspspConsentData.getConsentId() is used as a temporary solution for getting PisConsent by payment id. Please, don't use this approach in any places
         Optional<PisConsentResponse> pisConsentOptional = pisConsentService.getPisConsentById(aspspConsentData.getConsentId());
 
         if (!pisConsentOptional.isPresent()) {
@@ -185,17 +186,9 @@ public class PaymentService {
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
-        SpiResponse<SpiTransactionStatus> spiResponse;
-        if (paymentType == SINGLE) {
-            SpiSinglePayment payment = spiPaymentFactory.createSpiSinglePayment(pisPayment, pisConsent.getPaymentProduct());
-            spiResponse = singlePaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
-        } else if (paymentType == PERIODIC) {
-            SpiPeriodicPayment payment = spiPaymentFactory.createSpiPeriodicPayment(pisPayment, pisConsent.getPaymentProduct());
-            spiResponse = periodicPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
-        } else {
-            SpiBulkPayment payment = spiPaymentFactory.createSpiBulkPayment(pisPayment, pisConsent.getPaymentProduct());
-            spiResponse = bulkPaymentSpi.getPaymentStatusById(spiPsuData, payment, aspspConsentData);
-        }
+        ReadPaymentStatusService readPaymentStatusService = readPaymentStatusFactory.getService(ReadPaymentStatusFactory.SERVICE_PREFIX + paymentType.getValue());
+        SpiResponse<SpiTransactionStatus> spiResponse = readPaymentStatusService.readPaymentStatus(pisPayment, pisConsent.getPaymentProduct(), spiPsuData, aspspConsentData);
+
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -224,6 +217,7 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
 
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
+        // aspspConsentData.getConsentId() is used as a temporary solution for getting PisConsent by payment id. Please, don't use this approach in any places
         Optional<PisConsentResponse> pisConsentOptional = pisConsentService.getPisConsentById(aspspConsentData.getConsentId());
 
         if (!pisConsentOptional.isPresent()) {
@@ -241,7 +235,7 @@ public class PaymentService {
                        .build();
         }
 
-        Optional<SpiPayment> spiPaymentOptional = spiPaymentFactory.createSpiPaymentByPaymentType(pisPayment, pisConsent.getPaymentProduct(), paymentType);
+        Optional<? extends SpiPayment> spiPaymentOptional = spiPaymentFactory.createSpiPaymentByPaymentType(pisPayment, pisConsent.getPaymentProduct(), paymentType);
 
         if (!spiPaymentOptional.isPresent()) {
             log.error("Unknown payment type: {}", paymentType);
