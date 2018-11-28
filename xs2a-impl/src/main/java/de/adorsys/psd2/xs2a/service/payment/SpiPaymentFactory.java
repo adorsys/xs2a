@@ -56,7 +56,7 @@ public class SpiPaymentFactory {
      * @param pisPayment     PisPayment
      * @param paymentProduct PaymentProduct
      * @param paymentType    PaymentType
-     * @return Optional of SpiPayment of requested payment type or empty Optional for unknown payment type
+     * @return Optional of SpiPayment subclass of requested payment type or throws IllegalArgumentException for unknown payment type
      */
     public Optional<? extends SpiPayment> createSpiPaymentByPaymentType(PisPayment pisPayment, PaymentProduct paymentProduct, PaymentType paymentType) {
         switch (paymentType) {
@@ -77,7 +77,7 @@ public class SpiPaymentFactory {
      *
      * @param pisPayment     PisPayment
      * @param paymentProduct PaymentProduct
-     * @return SpiSinglePayment from PisPayment
+     * @return Optional of SpiSinglePayment from PisPayment
      */
     public Optional<SpiSinglePayment> createSpiSinglePayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
@@ -94,7 +94,7 @@ public class SpiPaymentFactory {
      *
      * @param pisPayment     PisPayment
      * @param paymentProduct PaymentProduct
-     * @return SpiPeriodicPayment from PisPayment
+     * @return Optional of SpiPeriodicPayment from PisPayment
      */
     public Optional<SpiPeriodicPayment> createSpiPeriodicPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
@@ -111,7 +111,7 @@ public class SpiPaymentFactory {
      *
      * @param pisPayment     PisPayment
      * @param paymentProduct PaymentProduct
-     * @return SpiBulkPayment from PisPayment
+     * @return Optional of SpiBulkPayment from PisPayment
      */
     public Optional<SpiBulkPayment> createSpiBulkPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
         BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(Collections.singletonList(pisPayment));
