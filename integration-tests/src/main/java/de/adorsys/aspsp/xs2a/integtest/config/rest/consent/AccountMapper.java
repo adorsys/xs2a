@@ -83,7 +83,7 @@ public class AccountMapper {
                                      .map(this::mapToTransaction)
                                      .collect(Collectors.toList());
 
-        return Optional.of(new Xs2aAccountReport(booked, pending));
+        return Optional.of(new Xs2aAccountReport(booked, pending, null));
     }
 
     public Xs2aAccountReference mapToAccountReference(SpiAccountReference spiAccountReference) {
