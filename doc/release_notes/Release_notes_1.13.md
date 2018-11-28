@@ -8,6 +8,8 @@ Now we can set parameter for delta-report support in ASPSP-Profile.
 |deltaReportSupported                     | This field indicates if an ASPSP supports Delta reports for transaction details                     | false                                                | true, false                                                                                          |
 
 ## Provide XS2A Swagger as an option
-To enable swagger in xs2a you have to add @EnableXs2aSwagger annotation to your connector. To disable swagger just remove it.
-You should also put PSD2 API yaml file to the resource folder of your connector to override default PSD2 API. To do that you need to fill in 
-xs2a.swagger.psd2.api.location property in your application.properties file
+Now Swagger is not enabled for XS2A Interface by default.
+To enable swagger in xs2a you have to add `@EnableXs2aSwagger` annotation on any of Spring configuration classes / Spring boot Application class in your application. To disable swagger just remove it.
+You could also put PSD2 API yaml file to the resource folder of your connector to override default PSD2 API. To do that you need to fill in 
+`xs2a.swagger.psd2.api.location` property in your application.properties file. I.e.
+`xs2a.swagger.psd.api.location=path/in/my/classpath/my_swagger_api.yml`
