@@ -18,29 +18,25 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
+import de.adorsys.psd2.validator.certificate.util.TppRole;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.core.tpp.Xs2aTppRole;
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -53,67 +49,53 @@ import java.util.stream.Collectors;
 @Profile("default")
 @Component
 @Slf4j
-public class QwacCertificateFilter extends GenericFilterBean {
+@RequiredArgsConstructor
+public class QwacCertificateFilter extends OncePerRequestFilter {
+    private final TppRoleValidationService tppRoleValidationService;
+    private final TppInfoHolder tppInfoHolder;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
-            throw new ServletException("OncePerRequestFilter just supports HTTP requests");
-        }
+        String encodedTppQwacCert = getEncodedTppQwacCert(request);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (StringUtils.isNotBlank(encodedTppQwacCert)) {
+            try {
+                TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
+                TppInfo tppInfo = new TppInfo();
+                tppInfo.setAuthorisationNumber(tppCertificateData.getPspAuthorisationNumber());
+                tppInfo.setTppName(tppCertificateData.getName());
+                tppInfo.setAuthorityId(tppCertificateData.getPspAuthorityId());
+                tppInfo.setAuthorityName(tppCertificateData.getPspAuthorityName());
+                tppInfo.setCountry(tppCertificateData.getCountry());
+                tppInfo.setOrganisation(tppCertificateData.getOrganisation());
+                tppInfo.setOrganisationUnit(tppCertificateData.getOrganisationUnit());
+                tppInfo.setCity(tppCertificateData.getCity());
+                tppInfo.setState(tppCertificateData.getState());
 
-        if (Objects.isNull(authentication)) {
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
-            String encodedTppQwacCert = getEncodedTppQwacCert(httpRequest);
+                List<TppRole> tppRoles = tppCertificateData.getPspRoles();
+                List<Xs2aTppRole> xs2aTppRoles = tppRoles.stream()
+                                                     .map(Enum::name)
+                                                     .map(Xs2aTppRole::valueOf)
+                                                     .collect(Collectors.toList());
+                tppInfo.setTppRoles(xs2aTppRoles);
 
-            if (StringUtils.isNotBlank(encodedTppQwacCert)) {
-                try {
-                    TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
-                    TppInfo tppInfo = new TppInfo();
-                    tppInfo.setAuthorisationNumber(tppCertificateData.getPspAuthorisationNumber());
-                    tppInfo.setTppName(tppCertificateData.getName());
-                    tppInfo.setAuthorityId(tppCertificateData.getPspAuthorityId());
-                    tppInfo.setAuthorityName(tppCertificateData.getPspAuthorityName());
-                    tppInfo.setCountry(tppCertificateData.getCountry());
-                    tppInfo.setOrganisation(tppCertificateData.getOrganisation());
-                    tppInfo.setOrganisationUnit(tppCertificateData.getOrganisationUnit());
-                    tppInfo.setCity(tppCertificateData.getCity());
-                    tppInfo.setState(tppCertificateData.getState());
-
-                    List<de.adorsys.psd2.validator.certificate.util.TppRole> tppRoles = tppCertificateData.getPspRoles();
-                    List<TppRole> xs2aTppRoles = tppRoles.stream()
-                                                         .map(role -> TppRole.valueOf(role.name()))
-                                                         .collect(Collectors.toList());
-                    tppInfo.setTppRoles(xs2aTppRoles);
-
-                    List<GrantedAuthority> authorities = tppRoles.stream()
-                                                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                                                             .collect(Collectors.toList());
-
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(tppCertificateData.getPspAuthorisationNumber(),
-                            tppInfo, authorities);
-
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-                } catch (CertificateValidationException e) {
-                    log.debug(e.getMessage());
-                    ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
+                    log.error("Access forbidden for TPP with authorisation number: {}", tppCertificateData.getPspAuthorisationNumber());
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "You don't have access to this resource");
                     return;
                 }
 
+                tppInfoHolder.setTppInfo(tppInfo);
+            } catch (CertificateValidationException e) {
+                log.debug(e.getMessage());
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                return;
             }
         }
 
         chain.doFilter(request, response);
 
-    }
-
-    @Override
-    public void destroy() {
     }
 
     public String getEncodedTppQwacCert(HttpServletRequest httpRequest) {

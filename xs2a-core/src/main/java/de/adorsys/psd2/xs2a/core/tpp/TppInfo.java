@@ -30,7 +30,7 @@ public class TppInfo {
     private String tppName;
 
     @ApiModelProperty(value = "Tpp role", required = true)
-    private List<TppRole> tppRoles;
+    private List<Xs2aTppRole> tppRoles;
 
     @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
     private String authorityId;

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.core.tpp;
+package de.adorsys.psd2.xs2a.service.validator.tpp;
 
-public enum TppRole {
-    PISP,
-    AISP,
-    PIISP,
-    ASPSP
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
+public class TppInfoHolder {
+    private TppInfo tppInfo;
 }

@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.spi.web.filter;
 
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import de.adorsys.psd2.xs2a.web.filter.QwacCertificateFilter;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -30,6 +32,10 @@ import javax.servlet.http.HttpServletRequest;
 @Profile("mockspi")
 @Component
 public class QwacCertificateFilterMock extends QwacCertificateFilter {
+
+    public QwacCertificateFilterMock(TppRoleValidationService tppRoleMatcher, TppInfoHolder tppInfoHolder) {
+        super(tppRoleMatcher, tppInfoHolder);
+    }
 
     @Override
     public String getEncodedTppQwacCert(HttpServletRequest httpRequest) {
