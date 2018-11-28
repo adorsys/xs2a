@@ -46,6 +46,6 @@ public class Xs2aTransactionsReport implements CustomContentTypeProvider {
 
     @Override
     public MediaType getCustomContentType() {
-        return new MediaType(responseContentType);
+        return MediaType.parseMediaType(responseContentType);
     }
 }
