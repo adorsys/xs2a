@@ -93,7 +93,7 @@ public class CancelPaymentServiceTest {
     public void cancelPaymentWithoutAuthorisation_Success() {
         //When
         ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(PAYMENT_ID), getAspspConsentData());
+            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(PAYMENT_ID));
 
         //Than
         assertThat(response.hasError()).isFalse();
@@ -104,7 +104,7 @@ public class CancelPaymentServiceTest {
     public void cancelPaymentWithoutAuthorisation_Failure_WrongId() {
         //When
         ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID), getAspspConsentData());
+            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID));
 
         //Than
         assertThat(response.hasError()).isTrue();
@@ -116,7 +116,7 @@ public class CancelPaymentServiceTest {
     public void cancelPaymentWithAuthorisation_Success() {
         //When
         ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(PAYMENT_ID), getAspspConsentData());
+            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(PAYMENT_ID));
 
         //Than
         assertThat(response.hasError()).isFalse();
@@ -127,7 +127,7 @@ public class CancelPaymentServiceTest {
     public void cancelPaymentWithAuthorisation_Failure_WrongId() {
         //When
         ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID), getAspspConsentData());
+            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID));
 
         //Than
         assertThat(response.hasError()).isTrue();
@@ -157,9 +157,5 @@ public class CancelPaymentServiceTest {
         SpiSinglePayment spiSinglePayment = new SpiSinglePayment(PaymentProduct.SEPA);
         spiSinglePayment.setPaymentId(paymentId);
         return spiSinglePayment;
-    }
-
-    private AspspConsentData getAspspConsentData() {
-        return new AspspConsentData("data".getBytes(), "consent id");
     }
 }

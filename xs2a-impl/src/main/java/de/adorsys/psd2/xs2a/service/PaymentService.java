@@ -248,9 +248,9 @@ public class PaymentService {
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
-            return cancelPaymentService.initiatePaymentCancellation(spiPsuData, spiPaymentOptional.get(), aspspConsentData);
+            return cancelPaymentService.initiatePaymentCancellation(spiPsuData, spiPaymentOptional.get());
         } else {
-            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(spiPsuData, spiPaymentOptional.get(), aspspConsentData);
+            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(spiPsuData, spiPaymentOptional.get());
             pisConsentService.revokeConsentById(paymentId);
             return cancellationResponse;
         }
