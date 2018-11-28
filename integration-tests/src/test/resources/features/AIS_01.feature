@@ -364,3 +364,4 @@ Feature: Account Information Service
         Examples:
         |consent-id                          |authorisation-data        |
         |consent-all-accounts-successful.json|startAuth-successful.json |
+        |consent-dedicated-successful.json   |startAuth-successful.json |
