@@ -44,7 +44,7 @@ import java.util.List;
 @RequestMapping(path = "aspsp-profile/for-debug")
 @Api(value = "Update aspsp profile ", tags = "Update aspsp profile.  Only for DEBUG!",
     description = "Provides access to update aspsp profile")
-//TODO refactor AspspProfileUpdateService and remove NOPMD comment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/518
+//TODO refactor AspspProfileUpdateController and remove NOPMD comment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/518
 public class AspspProfileUpdateController { //NOPMD class has update method for every option in profile as it should be
     private final AspspProfileUpdateService aspspProfileService;
 
