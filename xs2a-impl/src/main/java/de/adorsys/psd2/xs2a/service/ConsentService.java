@@ -58,7 +58,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
 
@@ -329,7 +328,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return pisAuthorizationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
-                                  .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
                                   ::build);
     }
 
@@ -339,7 +338,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return pisAuthorizationService.getAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResource>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResource>builder()
-                                  .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
                                   ::build);
     }
 
@@ -349,7 +348,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return aisAuthorizationService.getAuthorisationSubResources(consentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResource>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResource>builder()
-                                  .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
                                   ::build);
     }
 
