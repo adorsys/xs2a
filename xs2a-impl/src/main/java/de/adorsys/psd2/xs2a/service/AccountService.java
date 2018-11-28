@@ -246,6 +246,7 @@ public class AccountService {
      * @param accountId     String representing a PSU`s Account at ASPSP
      * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since
      *                      v1.1
+     * @param acceptHeader  String representing of requested accept header
      * @param consentId     String representing an AccountConsent identification
      * @param dateFrom      ISO Date representing the value of desired start date of AccountReport
      * @param dateTo        ISO Date representing the value of desired end date of AccountReport (if omitted is set
@@ -255,6 +256,7 @@ public class AccountService {
      * sections is added
      */
     public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(String consentId, String accountId,
+                                                                                String acceptHeader,
                                                                                 boolean withBalance, LocalDate dateFrom,
                                                                                 LocalDate dateTo,
                                                                                 Xs2aBookingStatus bookingStatus) {
@@ -285,6 +287,7 @@ public class AccountService {
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || withBalance;
 
         SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(
+            acceptHeader,
             isTransactionsShouldContainBalances, dateFrom, dateToChecked,
             requestedAccountReference.get(),
             consentMapper.mapToSpiAccountConsent(accountConsent),
@@ -308,14 +311,15 @@ public class AccountService {
         }
 
         Optional<Xs2aAccountReport> report =
-            transactionsToAccountReportMapper.mapToXs2aAccountReport(spiTransactionReport.getTransactions())
+            transactionsToAccountReportMapper.mapToXs2aAccountReport(spiTransactionReport.getTransactions(), spiTransactionReport.getTransactionsRaw())
                 .map(r -> filterByBookingStatus(r, bookingStatus));
 
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(report.orElseGet(() -> new Xs2aAccountReport(Collections.emptyList(),
-                                                                                         Collections.emptyList())));
+            Collections.emptyList(), null)));
         transactionsReport.setXs2aAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference.get()).orElse(null));
         transactionsReport.setBalances(balanceMapper.mapToXs2aBalanceList(spiTransactionReport.getBalances()));
+        transactionsReport.setResponseContentType(spiTransactionReport.getResponseContentType());
 
         ResponseObject<Xs2aTransactionsReport> response =
             ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build();
@@ -376,7 +380,7 @@ public class AccountService {
         }
 
         List<SpiTransaction> transactions = Collections.singletonList(payload);
-        Optional<Xs2aAccountReport> report = transactionsToAccountReportMapper.mapToXs2aAccountReport(transactions);
+        Optional<Xs2aAccountReport> report = transactionsToAccountReportMapper.mapToXs2aAccountReport(transactions, null);
 
         ResponseObject<Xs2aAccountReport> response =
             ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build();
@@ -398,7 +402,8 @@ public class AccountService {
             EnumSet.of(Xs2aBookingStatus.BOOKED, Xs2aBookingStatus.BOTH).contains(bookingStatus)
                 ? report.getBooked() : Collections.emptyList(),
             EnumSet.of(Xs2aBookingStatus.PENDING, Xs2aBookingStatus.BOTH).contains(bookingStatus)
-                ? report.getPending() : Collections.emptyList()
+                ? report.getPending() : Collections.emptyList(),
+            report.getTransactionsRaw()
         );
     }
 
