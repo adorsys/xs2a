@@ -51,7 +51,6 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         body.setLinks(buildPaymentLinks(paymentRequestParameters, body));
     }
 
-    //TODO encode payment id with base64 encoding and add decoders to every endpoint links lead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/382
     private Links buildPaymentLinks(PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
         if (RJCT == body.getTransactionStatus()) {
             return null;

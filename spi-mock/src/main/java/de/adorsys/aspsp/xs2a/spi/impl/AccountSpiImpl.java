@@ -104,7 +104,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
             SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
 
@@ -131,7 +131,7 @@ public class AccountSpiImpl implements AccountSpi {
                 balances = accountDetails.getBalances();
             }
 
-            SpiTransactionReport transactionReport = new SpiTransactionReport(transactions, balances);
+            SpiTransactionReport transactionReport = new SpiTransactionReport(transactions, balances, SpiTransactionReport.RESPONSE_TYPE_JSON, null);
 
             return SpiResponse.<SpiTransactionReport>builder()
                 .payload(transactionReport)

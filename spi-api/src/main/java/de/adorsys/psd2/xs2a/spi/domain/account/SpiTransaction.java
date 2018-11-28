@@ -45,4 +45,12 @@ public class SpiTransaction {
     private final String purposeCode;
     private final String bankTransactionCodeCode;
     private final String proprietaryBankTransactionCode;
+
+    public boolean isBookedTransaction() {
+        return bookingDate != null;
+    }
+
+    public boolean isPendingTransaction() {
+        return !isBookedTransaction();
+    }
 }

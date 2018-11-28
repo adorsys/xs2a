@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.aspsp.mock.api.psu;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
@@ -26,7 +28,8 @@ public class AspspAuthenticationObject {
     private String name;
     private String explanation;
 
-    public AspspAuthenticationObject(String authenticationType, String authenticationMethodId) {
+    @JsonCreator
+    public AspspAuthenticationObject(@JsonProperty("authenticationType") String authenticationType, @JsonProperty("authenticationMethodId") String authenticationMethodId) {
         this.authenticationType = authenticationType;
         this.authenticationMethodId = authenticationMethodId;
     }
