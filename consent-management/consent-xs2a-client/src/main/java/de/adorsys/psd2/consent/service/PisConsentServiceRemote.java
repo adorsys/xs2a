@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
 // TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/498
@@ -124,18 +126,21 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
-    public Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType) {
+    public Optional<List<String>> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
         String url;
-        if (authorizationType == CmsAuthorisationType.CREATED) {
+        if (authorisationType == CmsAuthorisationType.CREATED) {
             url = remotePisConsentUrls.getAuthorisationSubResources();
-        } else if (authorizationType == CmsAuthorisationType.CANCELLED) {
+        } else if (authorisationType == CmsAuthorisationType.CANCELLED) {
             url = remotePisConsentUrls.getCancellationAuthorisationSubResources();
         } else {
-            log.error("Unknown payment authorisation type {}", authorizationType);
-            throw new IllegalArgumentException("Unknown payment authorisation type " + authorizationType);
+            log.error("Unknown payment authorisation type {}", authorisationType);
+            throw new IllegalArgumentException("Unknown payment authorisation type " + authorisationType);
         }
         try {
-            ResponseEntity<String> request = consentRestTemplate.getForEntity(url, String.class, paymentId);
+            ResponseEntity<List<String>> request = consentRestTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<String>>() {
+                }, paymentId);
             return Optional.of(request.getBody());
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation found by paymentId {}", paymentId);

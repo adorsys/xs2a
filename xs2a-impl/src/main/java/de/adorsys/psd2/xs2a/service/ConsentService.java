@@ -332,13 +332,23 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                   ::build);
     }
 
-    public ResponseObject<Xs2aPaymentAuthorisationSubResource> getPaymentInitiationAuthorisation(String paymentId) {
+    public ResponseObject<Xs2aAuthorisationSubResource> getPaymentInitiationAuthorisation(String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
         return pisAuthorizationService.getAuthorisationSubResources(paymentId)
-                   .map(resp -> ResponseObject.<Xs2aPaymentAuthorisationSubResource>builder().body(resp).build())
-                   .orElseGet(ResponseObject.<Xs2aPaymentAuthorisationSubResource>builder()
+                   .map(resp -> ResponseObject.<Xs2aAuthorisationSubResource>builder().body(resp).build())
+                   .orElseGet(ResponseObject.<Xs2aAuthorisationSubResource>builder()
                                   .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                  ::build);
+    }
+
+    public ResponseObject<Xs2aAuthorisationSubResource> getConsentInitiationAuthorisation(String consentId) {
+        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
+
+        return aisAuthorizationService.getAuthorisationSubResources(consentId)
+                   .map(resp -> ResponseObject.<Xs2aAuthorisationSubResource>builder().body(resp).build())
+                   .orElseGet(ResponseObject.<Xs2aAuthorisationSubResource>builder()
+                                  .fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400))
                                   ::build);
     }
 

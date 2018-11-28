@@ -22,15 +22,15 @@ import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisConsent;
+import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -42,10 +42,6 @@ public class Xs2aPisConsentMapper {
 
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> mapToXs2aCreatePisConsentCancellationAuthorisationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
         return Optional.of(new Xs2aCreatePisConsentCancellationAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType));
-    }
-
-    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource(String authorisationId) {
-        return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(authorisationId)));
     }
 
     public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response, PsuIdData psuData) {
@@ -65,13 +61,6 @@ public class Xs2aPisConsentMapper {
                        return request;
                    })
                    .orElse(null);
-    }
-
-    public Xs2aPaymentAuthorisationSubResource mapToXs2aPaymentAuthorisationSubResource(String authorisationId) {
-        List<String> subResources = Objects.isNull(authorisationId)
-                                        ? Collections.emptyList()
-                                        : Collections.singletonList(authorisationId);
-        return new Xs2aPaymentAuthorisationSubResource(subResources);
     }
 
     private String getAuthenticationMethodId(Xs2aUpdatePisConsentPsuDataResponse data) {

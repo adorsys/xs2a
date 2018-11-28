@@ -674,13 +674,13 @@ public class ConsentServiceTest {
     @Test
     public void getPaymentInitiationAuthorisation() {
         when(pisScaAuthorisationService.getAuthorisationSubResources(anyString()))
-            .thenReturn(Optional.of(new Xs2aPaymentAuthorisationSubResource(Collections.singletonList(PAYMENT_ID))));
+            .thenReturn(Optional.of(new Xs2aAuthorisationSubResource(Collections.singletonList(PAYMENT_ID))));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        ResponseObject<Xs2aPaymentAuthorisationSubResource> paymentInitiationAuthorisation = consentService.getPaymentInitiationAuthorisation(PAYMENT_ID);
+        ResponseObject<Xs2aAuthorisationSubResource> paymentInitiationAuthorisation = consentService.getPaymentInitiationAuthorisation(PAYMENT_ID);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -690,6 +690,27 @@ public class ConsentServiceTest {
         List<String> authorisationIds = paymentInitiationAuthorisation.getBody().getAuthorisationIds();
         assertFalse(authorisationIds.isEmpty());
         assertThat(authorisationIds.get(0)).isEqualTo(PAYMENT_ID);
+    }
+
+    @Test
+    public void getConsentInitiationAuthorisation() {
+        when(aisAuthorizationService.getAuthorisationSubResources(anyString()))
+            .thenReturn(Optional.of(new Xs2aAuthorisationSubResource(Collections.singletonList(CONSENT_ID))));
+
+        // Given:
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        ResponseObject<Xs2aAuthorisationSubResource> paymentInitiationAuthorisation = consentService.getConsentInitiationAuthorisation(CONSENT_ID);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
+
+        assertThat(paymentInitiationAuthorisation.getBody()).isNotNull();
+        List<String> authorisationIds = paymentInitiationAuthorisation.getBody().getAuthorisationIds();
+        assertFalse(authorisationIds.isEmpty());
+        assertThat(authorisationIds.get(0)).isEqualTo(CONSENT_ID);
     }
 
     /**

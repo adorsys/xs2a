@@ -19,10 +19,12 @@ package de.adorsys.psd2.consent.repository;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AisConsentAuthorizationRepository extends CrudRepository<AisConsentAuthorization, Long> {
 
     Optional<AisConsentAuthorization> findByExternalId(String externalId);
 
+    List<AisConsentAuthorization> findByConsentId(Long consentId);
 }

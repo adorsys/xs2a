@@ -84,13 +84,15 @@ public class PisConsentServiceInternalTest {
     public void getAuthorisationByPaymentIdSuccess() {
         //When
         when(securityDataService.decryptId(paymentId)).thenReturn(Optional.of(paymentId));
-        when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
-        when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
+        when(pisPaymentDataRepository.findByPaymentId(paymentId)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(pisConsentAuthorizationList);
         //Then
-        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
+        Optional<List<String>> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
         //Assert
         //noinspection OptionalGetWithoutIsPresent
-        assertEquals(authorizationByPaymentId.get(), pisConsentAuthorizationList.get(0).getExternalId());
+        assertTrue(authorizationByPaymentId.isPresent());
+        assertEquals(authorizationByPaymentId.get().size(), pisConsentAuthorizationList.size());
+        assertEquals(authorizationByPaymentId.get().get(0), pisConsentAuthorizationList.get(0).getExternalId());
     }
 
     @Test
@@ -99,7 +101,7 @@ public class PisConsentServiceInternalTest {
         when(securityDataService.decryptId(paymentIdWrong)).thenReturn(Optional.empty());
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
         //Then
-        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentIdWrong, CmsAuthorisationType.CANCELLED);
+        Optional<List<String>> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentIdWrong, CmsAuthorisationType.CANCELLED);
         //Assert
         assertFalse(authorizationByPaymentId.isPresent());
     }

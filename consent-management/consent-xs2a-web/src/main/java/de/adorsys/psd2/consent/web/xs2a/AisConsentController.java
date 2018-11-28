@@ -26,6 +26,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/ais/consent")
@@ -148,6 +150,19 @@ public class AisConsentController {
 
         return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId)
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/{consent-id}/authorisations")
+    @ApiOperation(value = "Gets list of consent authorisation IDs by consent ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<String>> getConsentAuthorisation(
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId) {
+        return aisConsentService.getAuthorizationByConsentId(consentId)
+                   .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

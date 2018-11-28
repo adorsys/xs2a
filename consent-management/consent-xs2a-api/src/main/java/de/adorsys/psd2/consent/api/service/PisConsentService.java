@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PisConsentService {
@@ -129,13 +130,13 @@ public interface PisConsentService {
     Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorisationById(String cancellationId);
 
     /**
-     * Get information about Authorisation by payment identifier
+     * Gets list of payment authorisation IDs by payment ID and authorisation type
      *
      * @param paymentId String representation of the payment identifier
-     * @param authorizationType Type of authorisation
-     * @return Response containing information about Authorisation
+     * @param authorisationType Type of authorisation
+     * @return Response containing information about authorisation IDs
      */
-    Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType);
+    Optional<List<String>> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorisationType);
 
     /**
      * Get information about PSU by payment identifier

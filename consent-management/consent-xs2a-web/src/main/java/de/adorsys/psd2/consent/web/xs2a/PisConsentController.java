@@ -34,6 +34,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/pis/consent")
@@ -175,11 +177,11 @@ public class PisConsentController {
     }
 
     @GetMapping(path = "/{payment-id}/cancellation-authorisations")
-    @ApiOperation(value = "Getting payment authorization cancellation by paymentId")
+    @ApiOperation(value = "Gets list of payment cancellation authorization IDs by payment ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<String> getConsentAuthorisationCancellation(
+    public ResponseEntity<List<String>> getConsentAuthorisationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
         return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
@@ -188,11 +190,11 @@ public class PisConsentController {
     }
 
     @GetMapping(path = "/{payment-id}/authorisations")
-    @ApiOperation(value = "Getting payment authorisation by paymentId")
+    @ApiOperation(value = "Gets list of payment authorization IDs by payment ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<String> getConsentAuthorisation(
+    public ResponseEntity<List<String>> getConsentAuthorisation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
         return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CREATED)

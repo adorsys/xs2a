@@ -116,10 +116,10 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public Authorisations mapToAuthorisations(Xs2aPaymentAuthorisationSubResource xs2aPaymentAuthorisationSubResource) {
+    public Authorisations mapToAuthorisations(Xs2aAuthorisationSubResource xs2aAuthorisationSubResource) {
         Authorisations authorisations = new Authorisations();
         AuthorisationsList authorisationsList = new AuthorisationsList();
-        authorisationsList.addAll(xs2aPaymentAuthorisationSubResource.getAuthorisationIds());
+        authorisationsList.addAll(xs2aAuthorisationSubResource.getAuthorisationIds());
         authorisations.setAuthorisationIds(authorisationsList);
         return authorisations;
     }

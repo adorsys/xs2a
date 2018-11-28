@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AisConsentService {
@@ -101,4 +102,12 @@ public interface AisConsentService {
     boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
 
     Optional<PsuIdData> getPsuDataByConsentId(String consentId);
+
+    /**
+     * Gets list of consent authorisation IDs by consent ID
+     *
+     * @param encryptedConsentId id of consent
+     * @return list of consent authorisation IDs
+     */
+    Optional<List<String>> getAuthorizationByConsentId(String encryptedConsentId);
 }

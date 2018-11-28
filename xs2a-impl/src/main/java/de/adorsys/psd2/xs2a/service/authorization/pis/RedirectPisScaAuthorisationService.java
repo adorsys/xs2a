@@ -19,11 +19,12 @@ package de.adorsys.psd2.xs2a.service.authorization.pis;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthorisationSubresourcesMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +34,7 @@ import java.util.Optional;
 public class RedirectPisScaAuthorisationService implements PisScaAuthorisationService {
     private final PisAuthorisationService authorisationService;
     private final Xs2aPisConsentMapper pisConsentMapper;
+    private final Xs2aAuthorisationSubresourcesMapper subresourcesMapper;
 
     /**
      * Creates authorization for pis consent
@@ -79,7 +81,8 @@ public class RedirectPisScaAuthorisationService implements PisScaAuthorisationSe
      */
     @Override
     public Optional<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationAuthorisationSubResources(String paymentId) {
-        return pisConsentMapper.mapToXs2aPaymentCancellationAuthorisationSubResource(authorisationService.getCancellationAuthorisationSubResources(paymentId));
+        return authorisationService.getCancellationAuthorisationSubResources(paymentId)
+                   .map(subresourcesMapper::mapToXs2aPaymentCancellationAuthorisationSubResource);
     }
 
     /**
@@ -100,9 +103,10 @@ public class RedirectPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return authorisation sub resources
      */
     @Override
-    public Optional<Xs2aPaymentAuthorisationSubResource> getAuthorisationSubResources(String paymentId) {
-        String authorisationSubResources = authorisationService.getAuthorisationSubResources(paymentId);
-        Xs2aPaymentAuthorisationSubResource xs2aPaymentAuthorisationSubResource = pisConsentMapper.mapToXs2aPaymentAuthorisationSubResource(authorisationSubResources);
-        return Optional.of(xs2aPaymentAuthorisationSubResource);
+    public Optional<Xs2aAuthorisationSubResource> getAuthorisationSubResources(String paymentId) {
+        return authorisationService.getAuthorisationSubResources(paymentId)
+                   .map(subresourcesMapper::mapToXs2aAuthorisationSubResource);
+
+
     }
 }

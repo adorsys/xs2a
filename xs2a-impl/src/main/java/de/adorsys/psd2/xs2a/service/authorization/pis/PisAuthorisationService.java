@@ -30,6 +30,9 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory.CANCELLATION_SERVICE_PREFIX;
 import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory.SERVICE_PREFIX;
 
@@ -114,24 +117,22 @@ public class PisAuthorisationService {
     }
 
     /**
-     * Sends a GET request to CMS to get authorization sub resources
+     * Sends a GET request to CMS to get cancellation authorization sub resources
      *
      * @param paymentId String representation of identifier of payment ID
-     * @return long representation of identifier of stored consent authorization cancellation
+     * @return list of consent authorisation IDs
      */
-    public String getCancellationAuthorisationSubResources(String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
-                   .orElse(null);
+    public Optional<List<String>> getCancellationAuthorisationSubResources(String paymentId) {
+        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
     }
 
     /**
      * Sends a GET request to CMS to get authorisation sub resources
      *
      * @param paymentId String representation of identifier of payment ID
-     * @return long representation of identifier of stored consent authorisation
+     * @return list of consent authorisation IDs
      */
-    public String getAuthorisationSubResources(String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CREATED)
-                   .orElse(null);
+    public Optional<List<String>> getAuthorisationSubResources(String paymentId) {
+        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CREATED);
     }
 }
