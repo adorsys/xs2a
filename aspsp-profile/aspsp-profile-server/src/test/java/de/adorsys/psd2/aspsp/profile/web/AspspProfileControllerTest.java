@@ -65,6 +65,7 @@ public class AspspProfileControllerTest {
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_REPORT_SUPPORTED = false;
+    private static final int REDIRECT_URL_EXPIRATION_TIME = 0;
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -126,7 +127,8 @@ public class AspspProfileControllerTest {
             SIGNING_BASKET_SUPPORTED,
             PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
             PIIS_CONSENT_SUPPORTED,
-            DELTA_REPORT_SUPPORTED);
+            DELTA_REPORT_SUPPORTED,
+            REDIRECT_URL_EXPIRATION_TIME);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

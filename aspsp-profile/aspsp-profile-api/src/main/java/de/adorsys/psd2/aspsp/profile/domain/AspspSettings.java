@@ -43,4 +43,5 @@ public class AspspSettings {
     private boolean paymentCancellationAuthorizationMandated;
     private boolean piisConsentSupported;
     private boolean deltaReportSupported;
+    private int redirectUrlExpirationTime;
 }

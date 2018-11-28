@@ -25,7 +25,8 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 
 import java.util.List;
 
-public interface AspspProfileUpdateService {
+public interface AspspProfileUpdateService { //NOPMD class has update method for every option in profile as it should be
+
     void updateFrequencyPerDay(int frequencyPerDay);
 
     void updateCombinedServiceIndicator(boolean combinedServiceIndicator);
@@ -65,4 +66,7 @@ public interface AspspProfileUpdateService {
     void updatePiisConsentSupported(boolean piisConsentSupported);
 
     void updateDeltaReportSupported(boolean deltaReportSupported);
+
+    void updateRedirectUrlExpirationTime(int redirectUrlExpirationTime);
+
 }

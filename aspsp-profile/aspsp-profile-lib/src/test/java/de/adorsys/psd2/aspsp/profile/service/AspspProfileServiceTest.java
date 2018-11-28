@@ -62,6 +62,7 @@ public class AspspProfileServiceTest {
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_REPORT_SUPPORTED = false;
+    private static final int REDIRECT_URL_EXPIRATION_TIME = 0;
 
     private AspspProfileService aspspProfileService;
 
@@ -108,6 +109,8 @@ public class AspspProfileServiceTest {
             .thenReturn(PIIS_CONSENT_SUPPORTED);
         Mockito.when(profileConfiguration.isDeltaReportSupported())
             .thenReturn(DELTA_REPORT_SUPPORTED);
+        Mockito.when(profileConfiguration.getRedirectUrlExpirationTime())
+            .thenReturn(REDIRECT_URL_EXPIRATION_TIME);
 
         aspspProfileService = new AspspProfileServiceImpl(profileConfiguration);
         MockitoAnnotations.initMocks(aspspProfileService);
@@ -151,7 +154,8 @@ public class AspspProfileServiceTest {
             SIGNING_BASKET_SUPPORTED,
             PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
             PIIS_CONSENT_SUPPORTED,
-            DELTA_REPORT_SUPPORTED);
+            DELTA_REPORT_SUPPORTED,
+            REDIRECT_URL_EXPIRATION_TIME);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

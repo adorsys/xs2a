@@ -44,7 +44,7 @@ import java.util.List;
 @RequestMapping(path = "aspsp-profile/for-debug")
 @Api(value = "Update aspsp profile ", tags = "Update aspsp profile.  Only for DEBUG!",
     description = "Provides access to update aspsp profile")
-public class AspspProfileUpdateController {
+public class AspspProfileUpdateController { //NOPMD class has update method for every option in profile as it should be
     private final AspspProfileUpdateService aspspProfileService;
 
     @PutMapping(path = "/frequency-per-day")
@@ -244,6 +244,16 @@ public class AspspProfileUpdateController {
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updateDeltaReportSupported(@RequestBody boolean deltaReportSupported) {
         aspspProfileService.updateDeltaReportSupported(deltaReportSupported);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/redirect-url-expiration-time")
+    @ApiOperation(value = "Update the value of Delta report supported. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok"),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateDeltaReportSupported(@RequestBody int redirectUrlExpirationTime) {
+        aspspProfileService.updateRedirectUrlExpirationTime(redirectUrlExpirationTime);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

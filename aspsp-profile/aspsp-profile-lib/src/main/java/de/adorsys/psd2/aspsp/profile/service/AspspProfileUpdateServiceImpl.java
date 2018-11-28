@@ -33,7 +33,8 @@ import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceFiel
 
 @Service
 @RequiredArgsConstructor
-public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService {
+public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService { //NOPMD class has update method for every option in profile as it should be
+
     private final ProfileConfiguration profileConfiguration;
 
     /**
@@ -240,5 +241,15 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     @Override
     public void updateDeltaReportSupported(boolean deltaReportSupported) {
         profileConfiguration.setDeltaReportSupported(deltaReportSupported);
+    }
+
+    /**
+     * Update the value of an expiration time of redirect url set in days
+     *
+     * @param redirectUrlExpirationTime the value of an expiration time of redirect url to substitute existing one
+     */
+    @Override
+    public void updateRedirectUrlExpirationTime(int redirectUrlExpirationTime) {
+        profileConfiguration.setRedirectUrlExpirationTime(redirectUrlExpirationTime);
     }
 }
