@@ -17,21 +17,16 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.psd2.model.AccountDetails;
 import de.adorsys.psd2.model.StartScaprocessResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -45,6 +40,10 @@ public class AuthorisationStartConsentCreationSuccessfulSteps {
     @Autowired
     private TestService testService;
 
+    //Given PSU wants to create a consent <consent-id>
+    // And PSU sends the create consent request
+    // see successful steps
+
     @And("^PSU wants to start the authorisation for consent creation using the authorisation data (.*)$")
     public void loadAuthorisationData(String authorisationData) throws IOException {
         testService.parseJson("/data-input/ais/embedded/" + authorisationData, new TypeReference<TestData<HashMap, StartScaprocessResponse>>() {
@@ -57,4 +56,6 @@ public class AuthorisationStartConsentCreationSuccessfulSteps {
         +"/authorisations");
     }
 
+    //Then PSU checks if a link is received and the SCA status is correct
+    // see Startauthorisation successful steps
 }
