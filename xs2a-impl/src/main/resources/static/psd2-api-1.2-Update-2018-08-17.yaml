@@ -9073,8 +9073,8 @@ components:
               $ref: "#/components/examples/camt.053Example"
             "Example: camt.054":
               $ref: "#/components/examples/camt.054Example"
-        
-        application/text:
+
+        text/plain:
           schema:
             description:
               Body of the Text response for a successful read transaction list request.

@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.pis.authorisation;
+package de.adorsys.psd2.xs2a.web.config;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import lombok.Data;
+import org.springframework.context.annotation.Import;
 
-import java.util.List;
+import java.lang.annotation.*;
 
-@Data
-public class GetPisConsentAuthorisationResponse {
-    private String psuId;
-    private ScaStatus scaStatus;
-    private String consentId;
-    private String password;
-    private List<PisPayment> payments;
-    private PaymentType paymentType;
-    private String paymentProduct;
+/**
+ * This annotation is designed to turn on/off xs2a swagger
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Import(SwaggerConfig.class)
+public @interface EnableXs2aSwagger {
 }

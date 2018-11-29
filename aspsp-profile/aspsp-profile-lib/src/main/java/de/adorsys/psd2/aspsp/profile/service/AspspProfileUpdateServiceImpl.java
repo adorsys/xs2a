@@ -20,7 +20,6 @@ import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,9 @@ import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceFiel
 
 @Service
 @RequiredArgsConstructor
-public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService {
+//TODO refactor AspspProfileUpdateServiceImpl and remove NOPMD comment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/518
+public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService { //NOPMD class has update method for every option in profile as it should be
+
     private final ProfileConfiguration profileConfiguration;
 
     /**
@@ -72,7 +73,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * @param availablePaymentProducts List of payment product values
      */
     @Override
-    public void updateAvailablePaymentProducts(List<PaymentProduct> availablePaymentProducts) {
+    public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
         profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
     }
 
@@ -240,5 +241,15 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     @Override
     public void updateDeltaReportSupported(boolean deltaReportSupported) {
         profileConfiguration.setDeltaReportSupported(deltaReportSupported);
+    }
+
+    /**
+     * Update the value of an expiration time of redirect url set in milliseconds
+     *
+     * @param redirectUrlExpirationTimeMs the value of an expiration time of redirect url to substitute existing one
+     */
+    @Override
+    public void updateRedirectUrlExpirationTimeMs(long redirectUrlExpirationTimeMs) {
+        profileConfiguration.setRedirectUrlExpirationTimeMs(redirectUrlExpirationTimeMs);
     }
 }
