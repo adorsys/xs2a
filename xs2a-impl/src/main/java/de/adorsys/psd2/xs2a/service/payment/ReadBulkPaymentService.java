@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.api.service.PisPaymentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -38,6 +39,7 @@ import java.util.Collections;
 @Service("bulk-payments")
 @RequiredArgsConstructor
 public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformationResponse<BulkPayment>> {
+    private final PisPaymentService pisPaymentService;
     private final BulkPaymentSpi bulkPaymentSpi;
     private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     private final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
@@ -58,7 +60,9 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
         }
 
         SpiBulkPayment spiResponsePayment = spiResponse.getPayload();
+        BulkPayment xs2aBulkPayment = spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiResponsePayment);
 
-        return new PaymentInformationResponse<>(spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiResponsePayment));
+        pisPaymentService.updatePaymentStatus(xs2aBulkPayment.getPaymentId(), xs2aBulkPayment.getTransactionStatus());
+        return new PaymentInformationResponse<>(xs2aBulkPayment);
     }
 }

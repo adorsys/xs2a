@@ -56,8 +56,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
@@ -68,6 +66,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
     private final Xs2aPisConsentService pisConsentService;
+    private final Xs2aPisPaymentService pisPaymentService;
     private final PisConsentDataService pisConsentDataService;
     private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
@@ -125,9 +124,9 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
         PisPayment payment = pisConsentService.getPisConsentById(aspspConsentData.getConsentId())
-                                    .map(PisConsentResponse::getPayments)
-                                    .map(payments -> payments.get(0))
-                                    .orElse(null);
+                                 .map(PisConsentResponse::getPayments)
+                                 .map(payments -> payments.get(0))
+                                 .orElse(null);
 
         if (payment == null) {
             return ResponseObject.builder()
@@ -190,11 +189,15 @@ public class PaymentService {
         }
 
         TransactionStatus transactionStatus = spiToXs2aTransactionalStatus.mapToTransactionStatus(spiResponse.getPayload());
-        return Optional.ofNullable(transactionStatus)
-                   .map(tr -> ResponseObject.<TransactionStatus>builder().body(tr).build())
-                   .orElseGet(ResponseObject.<TransactionStatus>builder()
-                                  .fail(new MessageError(RESOURCE_UNKNOWN_403))
-                                  ::build);
+
+        if (transactionStatus == null) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(RESOURCE_UNKNOWN_403))
+                       .build();
+        }
+
+        pisPaymentService.updatePaymentStatus(paymentId, transactionStatus);
+        return ResponseObject.<TransactionStatus>builder().body(transactionStatus).build();
     }
 
     /**

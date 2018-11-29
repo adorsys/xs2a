@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 @Service("payments")
 @RequiredArgsConstructor
 public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformationResponse<SinglePayment>> {
+    private final Xs2aPisPaymentService pisPaymentService;
     private final SinglePaymentSpi singlePaymentSpi;
     private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
@@ -56,7 +57,9 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
         }
 
         SpiSinglePayment spiSinglePayment = spiResponse.getPayload();
+        SinglePayment xs2aSinglePayment = spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment);
 
-        return new PaymentInformationResponse<>(spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment));
+        pisPaymentService.updatePaymentStatus(xs2aSinglePayment.getPaymentId(), xs2aSinglePayment.getTransactionStatus());
+        return new PaymentInformationResponse<>(xs2aSinglePayment);
     }
 }

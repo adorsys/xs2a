@@ -17,14 +17,13 @@
 package de.adorsys.psd2.consent.web.xs2a;
 
 import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.PisPaymentService;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "api/v1/pis", tags = "PIS, Payments", description = "Provides access to consent management system for PIS")
 public class PisPaymentController {
     private final PisConsentService pisConsentService;
+    private final PisPaymentService pisPaymentService;
 
     @GetMapping(path = "/payment/{payment-id}")
     @ApiOperation(value = "Get inner payment id by encrypted string")
@@ -44,5 +44,17 @@ public class PisPaymentController {
         return pisConsentService.getDecryptedId(encryptedId)
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping(path = "/payment/{payment-id}/status/{status}")
+    @ApiOperation(value = "Updates payment status")
+    @ApiResponse(code = 200, message = "OK")
+    public ResponseEntity<Void> updatePaymentStatus(
+        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.")
+        @PathVariable("payment-id") String paymentId,
+        @ApiParam(value = "The following code values are permitted 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'PDNG', 'RCVD', 'RJCT', 'CANC'. These values might be extended by ASPSP by more values.", allowableValues = "ACCP,  ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC")
+        @PathVariable("status") String status) {
+        pisPaymentService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status));
+        return ResponseEntity.ok().build();
     }
 }
