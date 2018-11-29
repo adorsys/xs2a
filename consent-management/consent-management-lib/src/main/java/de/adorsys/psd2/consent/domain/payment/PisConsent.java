@@ -66,7 +66,7 @@ public class PisConsent {
 
     @Column(name = "payment_product", nullable = false)
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
-    private String pisPaymentProduct;
+    private String paymentProduct;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

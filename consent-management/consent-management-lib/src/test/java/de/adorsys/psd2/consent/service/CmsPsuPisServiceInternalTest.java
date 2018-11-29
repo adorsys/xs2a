@@ -285,7 +285,7 @@ public class CmsPsuPisServiceInternalTest {
         pisConsent.setPsuData(buildPsuData());
         pisConsent.setExternalId(CONSENT_ID);
         pisConsent.setPaymentType(PaymentType.SINGLE);
-        pisConsent.setPisPaymentProduct(PAYMENT_PRODUCT);
+        pisConsent.setPaymentProduct(PAYMENT_PRODUCT);
         pisConsent.setPayments(buildPisPaymentDataListForConsent());
 
         return pisConsent;

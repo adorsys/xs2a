@@ -35,7 +35,7 @@ public class CmsPsuPisMapper {
 
     public CmsPayment mapToCmsPayment(List<PisPaymentData> pisPaymentDataList) {
         PaymentType paymentType = pisPaymentDataList.get(0).getConsent().getPaymentType();
-        String paymentProduct = pisPaymentDataList.get(0).getConsent().getPisPaymentProduct();
+        String paymentProduct = pisPaymentDataList.get(0).getConsent().getPaymentProduct();
 
         switch (paymentType) {
             case BULK:
