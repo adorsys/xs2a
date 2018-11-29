@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.validator.certificate.util;
+package de.adorsys.psd2.consent.config;
 
-import lombok.Data;
+import org.springframework.context.annotation.Import;
 
-import java.util.List;
+import java.lang.annotation.*;
 
-@Data
-public class TppCertificateData {
-    private String pspAuthorisationNumber;
-    private List<String> pspRoles;
-    private String name;
-    private String pspAuthorityName;
-    private String pspAuthorityId;
-    private String country;
-    private String organisation;
-    private String organisationUnit;
-    private String city;
-    private String state;
+/**
+ * This annotation is designed to turn on/off cms swagger
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Import(SwaggerConfig.class)
+public @interface EnableCmsSwagger {
 }

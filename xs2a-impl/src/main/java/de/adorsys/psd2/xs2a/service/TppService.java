@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.exception.CertificateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,17 +29,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class TppService {
+    private final TppInfoHolder tppInfoHolder;
 
     public String getTppId() {
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                   .map(authentication -> (TppInfo) authentication.getCredentials())
+        return Optional.ofNullable(tppInfoHolder.getTppInfo())
                    .map(TppInfo::getAuthorisationNumber)
                    .orElseThrow(CertificateException::new);
     }
 
     public TppInfo getTppInfo() {
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                   .map(authentication -> (TppInfo) authentication.getCredentials())
+        return Optional.ofNullable(tppInfoHolder.getTppInfo())
                    .orElseThrow(CertificateException::new);
     }
 }
