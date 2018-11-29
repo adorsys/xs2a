@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import lombok.Data;
@@ -33,7 +32,7 @@ public class SpiPeriodicPayment extends SpiSinglePayment {
     private SpiFrequencyCode frequency;
     private int dayOfExecution;
 
-    public SpiPeriodicPayment(PaymentProduct paymentProduct) {
+    public SpiPeriodicPayment(String paymentProduct) {
         super(paymentProduct);
     }
 

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -90,7 +89,7 @@ public class RequestValidatorService {
 
         if (headerImpl instanceof ErrorMessageHeaderImpl) {
             return Collections.singletonMap("Wrong header arguments: ",
-                ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
+                                            ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
             );
         }
 
@@ -146,7 +145,7 @@ public class RequestValidatorService {
 
         if (headerImpl instanceof ErrorMessageHeaderImpl) {
             return Collections.singletonMap("Wrong header arguments: ",
-                ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
+                                            ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
             );
         }
 
@@ -190,15 +189,14 @@ public class RequestValidatorService {
 
     private Map<String, String> checkPaymentProductSupportAndGetViolationMap(String paymentProduct) {
         return Optional.ofNullable(paymentProduct)
-                   .flatMap(PaymentProduct::getByValue)
                    .map(this::getViolationMapForPaymentProduct)
                    .orElseGet(() -> Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
     }
 
-    private Map<String, String> getViolationMapForPaymentProduct(PaymentProduct paymentProduct) {
+    private Map<String, String> getViolationMapForPaymentProduct(String paymentProduct) {
         return isPaymentProductAvailable(paymentProduct)
                    ? Collections.emptyMap()
-                   : Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct.getValue());
+                   : Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct);
     }
 
     private Map<String, String> getViolationMapForPaymentType(PaymentType paymentType) {
@@ -208,8 +206,8 @@ public class RequestValidatorService {
                    : Collections.singletonMap(MessageErrorCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type: " + paymentType.getValue());
     }
 
-    private boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
-        List<PaymentProduct> paymentProducts = aspspProfileService.getAvailablePaymentProducts();
+    private boolean isPaymentProductAvailable(String paymentProduct) {
+        List<String> paymentProducts = aspspProfileService.getAvailablePaymentProducts();
         return paymentProducts.contains(paymentProduct);
     }
 

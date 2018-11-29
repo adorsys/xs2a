@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -74,7 +73,7 @@ public class CreateBulkPaymentServiceTest {
 
     @Before
     public void init() {
-        when(scaPaymentService.createBulkPayment(buildBulkPayment(), TPP_INFO, PaymentProduct.SEPA, buildXs2aPisConsent())).thenReturn(buildBulkPaymentInitiationResponse());
+        when(scaPaymentService.createBulkPayment(buildBulkPayment(), TPP_INFO, "sepa-credit-transfers", buildXs2aPisConsent())).thenReturn(buildBulkPaymentInitiationResponse());
         when(pisConsentDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
     }
 
@@ -130,7 +129,7 @@ public class CreateBulkPaymentServiceTest {
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
-        parameters.setPaymentProduct(PaymentProduct.SEPA);
+        parameters.setPaymentProduct("sepa-credit-transfers");
         parameters.setPaymentType(PaymentType.BULK);
         return parameters;
     }

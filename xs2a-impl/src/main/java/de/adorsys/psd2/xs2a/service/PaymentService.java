@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -140,7 +139,7 @@ public class PaymentService {
 
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
-        PaymentInformationResponse response = readPaymentService.getPayment(payment, PaymentProduct.SEPA, psuData, aspspConsentData); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        PaymentInformationResponse response = readPaymentService.getPayment(payment, "sepa-credit-transfers", psuData, aspspConsentData); //NOT USED IN 1.2 //TODO clarify why here Payment product is hardcoded and what should be done instead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 
         if (response.hasError()) {
             return ResponseObject.builder()

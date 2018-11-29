@@ -31,7 +31,6 @@ import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -61,7 +60,7 @@ public class CmsPsuPisServiceInternalTest {
     private static final String AUTHORISATION_ID = "authorisation id";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final String CONSENT_ID = "consent id";
-    private static final PaymentProduct PAYMENT_PRODUCT = PaymentProduct.SEPA;
+    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String FINALISED_PAYMENT_ID = "finalised payment id";
     private static final String FINALISED_AUTHORISATION_ID = "finalised authorisation id";
     private final PsuIdData WRONG_PSU_ID_DATA = buildWrongPsuIdData();
@@ -286,7 +285,7 @@ public class CmsPsuPisServiceInternalTest {
         pisConsent.setPsuData(buildPsuData());
         pisConsent.setExternalId(CONSENT_ID);
         pisConsent.setPaymentType(PaymentType.SINGLE);
-        pisConsent.setPisPaymentProduct(PAYMENT_PRODUCT);
+        pisConsent.setPaymentProduct(PAYMENT_PRODUCT);
         pisConsent.setPayments(buildPisPaymentDataListForConsent());
 
         return pisConsent;
