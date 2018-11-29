@@ -112,6 +112,7 @@ services:
       - ASPSP_PROFILE_BASEURL=${ASPSP_PROFILE_BASEURL:-http://aspsp-profile:8080/api/v1}
       - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
       - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_CMS_CLIENT_SECRET}"
+      - SERVER_KEY=my_secret_for_cms
     depends_on:
       - consent-management-postgres
 

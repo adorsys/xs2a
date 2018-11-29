@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
+import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import lombok.RequiredArgsConstructor;
@@ -33,42 +34,55 @@ public class ResponseMapper {
     private final MessageErrorMapper messageErrorMapper;
 
     public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
-        return getEntity(response, OK, mapper);
+        return generateResponse(response, OK, mapper);
     }
 
     public <T, R> ResponseEntity<?> created(ResponseObject<T> response, Function<T, R> mapper) {
-        return getEntity(response, CREATED, mapper);
+        return generateResponse(response, CREATED, mapper);
     }
 
     public <T, R> ResponseEntity<?> delete(ResponseObject<T> response, Function<T, R> mapper) {
-        return getEntity(response, NO_CONTENT, mapper);
+        return generateResponse(response, NO_CONTENT, mapper);
     }
 
-    public <T> ResponseEntity<T> ok(ResponseObject<T> response) { //NOPMD short method name ok corresponds to status code
-        return getEntity(response, OK);
+    public <T> ResponseEntity ok(ResponseObject<T> response) { //NOPMD short method name ok corresponds to status code
+        return generateResponse(response, OK);
     }
 
-    public <T> ResponseEntity<T> created(ResponseObject<T> response) {
-        return getEntity(response, CREATED);
+    public <T> ResponseEntity created(ResponseObject<T> response) {
+        return generateResponse(response, CREATED);
     }
 
-    public <T> ResponseEntity<T> delete(ResponseObject<T> response) {
-        return getEntity(response, NO_CONTENT);
+    public <T> ResponseEntity delete(ResponseObject<T> response) {
+        return generateResponse(response, NO_CONTENT);
     }
 
-    public <T> ResponseEntity<T> accepted(ResponseObject<T> response) {
-        return getEntity(response, ACCEPTED);
+    public <T> ResponseEntity accepted(ResponseObject<T> response) {
+        return generateResponse(response, ACCEPTED);
     }
 
-    private <T> ResponseEntity<T> getEntity(ResponseObject<T> response, HttpStatus status) {
-        return getEntity(response, status, null);
+    private <T> ResponseEntity generateResponse(ResponseObject<T> response, HttpStatus positiveStatus) {
+        return generateResponse(response, positiveStatus, null);
     }
 
-    private <T, R> ResponseEntity getEntity(ResponseObject<T> response, HttpStatus status, Function<T, R> mapper) {
+    private <T, R> ResponseEntity generateResponse(ResponseObject<T> response, HttpStatus positiveStatus, Function<T, R> mapper) {
+        if (response.hasError()) {
+            return createErrorResponse(response.getError());
+        }
+
         T body = response.getBody();
-        return response.hasError()
-                   ? createErrorResponse(response.getError())
-                   : new ResponseEntity<>(getBody(body, mapper), status);
+
+        ResponseEntity.BodyBuilder responseBuilder =
+            ResponseEntity
+                 .status(positiveStatus);
+
+        if (body instanceof CustomContentTypeProvider) {
+            responseBuilder = responseBuilder
+                                  .contentType( ((CustomContentTypeProvider) body).getCustomContentType() );
+        }
+
+        return responseBuilder
+                 .body(getBody(body, mapper));
     }
 
     private <T, R> Object getBody(T body, Function<T, R> mapper) {

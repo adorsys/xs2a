@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
@@ -33,7 +32,7 @@ public class Xs2aToSpiBulkPaymentMapper {
     private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
 
-    public SpiBulkPayment mapToSpiBulkPayment(BulkPayment payment, PaymentProduct paymentProduct) {
+    public SpiBulkPayment mapToSpiBulkPayment(BulkPayment payment, String paymentProduct) {
         SpiBulkPayment bulk = new SpiBulkPayment();
         bulk.setPaymentId(payment.getPaymentId());
         bulk.setBatchBookingPreferred(payment.getBatchBookingPreferred());
@@ -45,7 +44,7 @@ public class Xs2aToSpiBulkPaymentMapper {
         return bulk;
     }
 
-    private List<SpiSinglePayment> mapToListSpiSinglePayment(List<SinglePayment> payments, PaymentProduct paymentProduct) {
+    private List<SpiSinglePayment> mapToListSpiSinglePayment(List<SinglePayment> payments, String paymentProduct) {
         return payments.stream()
                    .map(p -> xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(p, paymentProduct))
                    .collect(Collectors.toList());

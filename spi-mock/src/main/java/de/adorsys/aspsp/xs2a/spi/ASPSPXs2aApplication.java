@@ -16,10 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.spi;
 
+import de.adorsys.psd2.xs2a.web.config.EnableXs2aSwagger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+@EnableXs2aSwagger
 @SpringBootApplication
 @ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2"})
 public class ASPSPXs2aApplication {
