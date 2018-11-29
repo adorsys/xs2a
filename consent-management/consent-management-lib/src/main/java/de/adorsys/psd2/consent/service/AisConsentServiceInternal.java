@@ -196,7 +196,7 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return Gets list of consent authorisation IDs
      */
     @Override
-    public Optional<List<String>> getAuthorizationByConsentId(String encryptedConsentId) {
+    public Optional<List<String>> getAuthorisationByConsentId(String encryptedConsentId) {
         Optional<String> consentId = securityDataService.decryptId(encryptedConsentId);
         if (!consentId.isPresent()) {
             return Optional.empty();

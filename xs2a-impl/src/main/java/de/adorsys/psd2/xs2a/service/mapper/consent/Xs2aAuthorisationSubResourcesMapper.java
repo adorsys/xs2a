@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class Xs2aAuthorisationSubresourcesMapper {
+public class Xs2aAuthorisationSubResourcesMapper {
 
     public Xs2aAuthorisationSubResource mapToXs2aAuthorisationSubResource(List<String> authorisationsId) {
         return new Xs2aAuthorisationSubResource(authorisationsId);

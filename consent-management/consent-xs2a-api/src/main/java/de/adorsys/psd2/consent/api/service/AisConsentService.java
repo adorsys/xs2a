@@ -109,5 +109,5 @@ public interface AisConsentService {
      * @param encryptedConsentId id of consent
      * @return list of consent authorisation IDs
      */
-    Optional<List<String>> getAuthorizationByConsentId(String encryptedConsentId);
+    Optional<List<String>> getAuthorisationByConsentId(String encryptedConsentId);
 }

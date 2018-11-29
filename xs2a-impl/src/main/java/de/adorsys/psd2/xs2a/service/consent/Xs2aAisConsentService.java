@@ -167,6 +167,6 @@ public class Xs2aAisConsentService {
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String consentId) {
-        return aisConsentService.getAuthorizationByConsentId(consentId);
+        return aisConsentService.getAuthorisationByConsentId(consentId);
     }
 }

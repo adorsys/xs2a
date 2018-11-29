@@ -108,7 +108,7 @@ public class AisConsentServiceRemote implements AisConsentService {
     }
 
     @Override
-    public Optional<List<String>> getAuthorizationByConsentId(String encryptedConsentId) {
+    public Optional<List<String>> getAuthorisationByConsentId(String encryptedConsentId) {
         try {
             ResponseEntity<List<String>> request = consentRestTemplate.exchange(
                 remoteAisConsentUrls.getAuthorisationSubResources(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {

@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.*;
 import de.adorsys.psd2.xs2a.service.authorization.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthorisationSubresourcesMapper;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthorisationSubResourcesMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -61,7 +61,7 @@ public class ScaAuthorizationConfig {
     public AisAuthorizationService aisAuthorizationService(Xs2aAisConsentService aisConsentService,
                                                            Xs2aAisConsentMapper aisConsentMapper,
                                                            AisScaStageAuthorisationFactory scaStageAuthorisationFactory,
-                                                           Xs2aAuthorisationSubresourcesMapper authorisationMapper) {
+                                                           Xs2aAuthorisationSubResourcesMapper authorisationMapper) {
         switch (getScaApproach()) {
             case OAUTH:
                 return new OauthAisAuthorizationService();
@@ -77,7 +77,7 @@ public class ScaAuthorizationConfig {
     @Bean
     public PisScaAuthorisationService pisAuthorizationService(PisAuthorisationService authorisationService,
                                                               Xs2aPisConsentMapper pisConsentMapper,
-                                                              Xs2aAuthorisationSubresourcesMapper authorisationMapper) {
+                                                              Xs2aAuthorisationSubResourcesMapper authorisationMapper) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthPisScaAuthorisationService();

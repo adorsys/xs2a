@@ -117,7 +117,7 @@ public class PisAuthorisationService {
     }
 
     /**
-     * Sends a GET request to CMS to get cancellation authorization sub resources
+     * Sends a GET request to CMS to get cancellation authorisation sub resources
      *
      * @param paymentId String representation of identifier of payment ID
      * @return list of consent authorisation IDs
