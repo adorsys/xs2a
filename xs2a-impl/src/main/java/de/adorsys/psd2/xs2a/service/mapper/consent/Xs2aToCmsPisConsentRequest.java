@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
@@ -43,7 +42,7 @@ import java.util.stream.Collectors;
 @Component
 public class Xs2aToCmsPisConsentRequest {
 
-    public PisConsentRequest mapToCmsSinglePisConsentRequest(SinglePayment singlePayment, PaymentProduct paymentProduct) {
+    public PisConsentRequest mapToCmsSinglePisConsentRequest(SinglePayment singlePayment, String paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
         request.setPaymentProduct(paymentProduct);
@@ -52,7 +51,7 @@ public class Xs2aToCmsPisConsentRequest {
         return request;
     }
 
-    public PisConsentRequest mapToCmsPeriodicPisConsentRequest(PeriodicPayment periodicPayment, PaymentProduct paymentProduct) {
+    public PisConsentRequest mapToCmsPeriodicPisConsentRequest(PeriodicPayment periodicPayment, String paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(periodicPayment)));
         request.setPaymentProduct(paymentProduct);
@@ -61,7 +60,7 @@ public class Xs2aToCmsPisConsentRequest {
         return request;
     }
 
-    public PisConsentRequest mapToCmsBulkPisConsentRequest(BulkPayment bulkPayment, PaymentProduct paymentProduct) {
+    public PisConsentRequest mapToCmsBulkPisConsentRequest(BulkPayment bulkPayment, String paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(mapToListPisPayment(bulkPayment.getPayments()));
         request.setPaymentProduct(paymentProduct);

@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.api.pis;
 
 import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 
@@ -34,7 +33,7 @@ public class CmsBulkPayment implements CmsPayment {
     private LocalDate requestedExecutionDate;
     private TransactionStatus paymentStatus;
     private List<CmsSinglePayment> payments;
-    private PaymentProduct paymentProduct;
+    private String paymentProduct;
 
     @Override
     public PaymentType getPaymentType() {
@@ -42,7 +41,7 @@ public class CmsBulkPayment implements CmsPayment {
     }
 
     @Override
-    public PaymentProduct getPaymentProduct() {
+    public String getPaymentProduct() {
         return paymentProduct;
     }
 }

@@ -13,3 +13,7 @@ To enable swagger in xs2a you have to add `@EnableXs2aSwagger` annotation on any
 You could also put PSD2 API yaml file to the resource folder of your connector to override default PSD2 API. To do that you need to fill in 
 `xs2a.swagger.psd2.api.location` property in your application.properties file. I.e.
 `xs2a.swagger.psd.api.location=path/in/my/classpath/my_swagger_api.yml`
+
+## PaymentProduct entity was replaced by raw String value
+Now instead of using PaymentProduct enum class, string value is used. PaymentProduct enum class is removed.
+In database, instead of saving enum values(SEPA, INSTANT_SEPA, etc), raw string values are saved:  sepa-credit-transfers, instant-sepa-credit-transfers, etc.

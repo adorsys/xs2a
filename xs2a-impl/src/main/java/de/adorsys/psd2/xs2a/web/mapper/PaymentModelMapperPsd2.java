@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
@@ -45,7 +44,7 @@ public class PaymentModelMapperPsd2 {
     private final MessageErrorMapper messageErrorMapper;
     private final AccountModelMapper accountModelMapper;
 
-    public Object mapToGetPaymentResponse12(Object payment, PaymentType type, PaymentProduct product) {
+    public Object mapToGetPaymentResponse12(Object payment, PaymentType type, String product) {
         if (type == SINGLE) {
             SinglePayment xs2aPayment = (SinglePayment) payment;
             PaymentInitiationTarget2WithStatusResponse paymentResponse = new PaymentInitiationTarget2WithStatusResponse();
@@ -138,7 +137,7 @@ public class PaymentModelMapperPsd2 {
     public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
-        parameters.setPaymentProduct(PaymentProduct.getByValue(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
+        parameters.setPaymentProduct(Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
         parameters.setQwacCertificate(new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8));
         parameters.setTppRedirectUri(tpPRedirectURI);
         parameters.setTppNokRedirectUri(tpPNokRedirectURI);

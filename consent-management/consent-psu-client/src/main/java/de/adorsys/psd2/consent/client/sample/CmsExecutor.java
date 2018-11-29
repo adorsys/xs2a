@@ -34,7 +34,6 @@ import de.adorsys.psd2.consent.client.cms.model.pis.*;
 import de.adorsys.psd2.consent.client.core.Configuration;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -124,7 +123,7 @@ public class CmsExecutor {
      */
     private static void saveConsentActionLog(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         cmsServiceInvoker.invoke(new SaveConsentActionLogMethod(new AisConsentActionRequest("tpp-id",
-            CONSENT_ID, ActionStatus.SUCCESS)));
+                                                                                            CONSENT_ID, ActionStatus.SUCCESS)));
     }
 
     /**
@@ -329,13 +328,13 @@ public class CmsExecutor {
     private static PisConsentRequest buildPisConsentRequest() {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(singletonList(buildPisPayment()));
-        request.setPaymentProduct(PaymentProduct.SEPA);
+        request.setPaymentProduct("sepa-credit-transfers");
         request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
-            Arrays.asList(TppRole.PISP, TppRole.AISP, TppRole.PIISP, TppRole.ASPSP),
-            "authority id", "authority name", "Germany", "Organisation",
-            "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
-            "Nok redirect URI"));
+                                           Arrays.asList(TppRole.PISP, TppRole.AISP, TppRole.PIISP, TppRole.ASPSP),
+                                           "authority id", "authority name", "Germany", "Organisation",
+                                           "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
+                                           "Nok redirect URI"));
         return request;
     }
 
@@ -349,12 +348,12 @@ public class CmsExecutor {
         payment.setPaymentId("32454656712432");
         payment.setEndToEndIdentification("RI-123456789");
         payment.setDebtorAccount(new CmsAccountReference(UUID.randomUUID().toString(), "DE89370400440532013000", "89370400440532010000",
-            "2356 5746 3217 1234", "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
+                                                         "2356 5746 3217 1234", "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setUltimateDebtor("Mueller");
         payment.setCurrency(Currency.getInstance("EUR"));
         payment.setAmount(BigDecimal.valueOf(1000));
         payment.setCreditorAccount(new CmsAccountReference(UUID.randomUUID().toString(), "DE89370400440532013000", "89370400440532010000", "2356 5746 3217 1234",
-            "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
+                                                           "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setCreditorAgent("Telekom");
         payment.setCreditorName("Telekom");
         payment.setCreditorAddress(buildCmsAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "Germany"));
@@ -362,7 +361,7 @@ public class CmsExecutor {
         payment.setRemittanceInformationStructured(buildCmsRemittance("Ref Number Merchant", "reference type", "reference issuer"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, 1, 1));
         payment.setRequestedExecutionTime(OffsetDateTime.parse("2020-01-01T15:30:35.035Z",
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
+                                                               DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
         payment.setUltimateCreditor("Telekom");
         payment.setPurposeCode("BCENECEQ");
         payment.setStartDate(LocalDate.of(2020, 1, 1));
