@@ -31,7 +31,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@ControllerAdvice
+@ControllerAdvice(basePackages = "de.adorsys.psd2.xs2a.web.controller")
 public class CommonHeaderModifierAdvice implements ResponseBodyAdvice<Object> {
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
