@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.domain;
 
-import de.adorsys.psd2.xs2a.core.tpp.Xs2aTppRole;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,7 +44,7 @@ public class TppInfoEntity {
     @CollectionTable(name = "tpp_info_role", joinColumns = @JoinColumn(name = "tpp_info_id"))
     @Column(name = "tpp_role")
     @Enumerated(value = EnumType.STRING)
-    private List<Xs2aTppRole> tppRoles;
+    private List<TppRole> tppRoles;
 
     @Column(name = "authority_id", nullable = false)
     private String authorityId;

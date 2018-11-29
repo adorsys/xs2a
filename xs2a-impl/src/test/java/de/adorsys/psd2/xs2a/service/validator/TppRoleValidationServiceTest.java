@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.Xs2aTppRole;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +42,7 @@ public class TppRoleValidationServiceTest {
         request.setMethod("GET");
         request.setRequestURI("/api/v1/accounts");
 
-        assertThat(tppRoleValidationService.hasAccess(buildTppInfo(Xs2aTppRole.AISP), request)).isTrue();
+        assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.AISP), request)).isTrue();
     }
 
     @Test
@@ -51,10 +51,10 @@ public class TppRoleValidationServiceTest {
         request.setMethod("POST");
         request.setRequestURI("/api/v1/payments/sepa");
 
-        assertThat(tppRoleValidationService.hasAccess(buildTppInfo(Xs2aTppRole.PIISP), request)).isFalse();
+        assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.PIISP), request)).isFalse();
     }
 
-    private TppInfo buildTppInfo(Xs2aTppRole tppRole) {
+    private TppInfo buildTppInfo(TppRole tppRole) {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setTppRoles(singletonList(tppRole));
         return tppInfo;

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.core.tpp;
+package de.adorsys.psd2.validator.common;
 
-public enum Xs2aTppRole {
-    PISP,
-    AISP,
-    PIISP,
-    ASPSP
+public class TppRoles {
+    public final static String ASPSP = "ASPSP";
+    public final static String PISP = "PISP";
+    public final static String AISP = "AISP";
+    public final static String PIISP = "PIISP";
+
+    private TppRoles() {
+    }
 }

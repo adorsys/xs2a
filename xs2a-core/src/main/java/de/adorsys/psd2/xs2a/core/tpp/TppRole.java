@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.validator.certificate.util;
+package de.adorsys.psd2.xs2a.core.tpp;
 
 public enum TppRole {
-
-	PISP, AISP, PIISP, ASPSP
+    PISP,
+    AISP,
+    PIISP,
+    ASPSP
 }

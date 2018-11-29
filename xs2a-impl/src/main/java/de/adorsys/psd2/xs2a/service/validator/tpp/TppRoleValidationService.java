@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
-import de.adorsys.psd2.validator.certificate.util.TppRole;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.Xs2aTppRole;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -52,12 +51,12 @@ public class TppRoleValidationService {
     }
 
     public boolean hasAccess(TppInfo tppInfo, HttpServletRequest request) {
-        List<Xs2aTppRole> xs2aTppRoles = tppInfo.getTppRoles();
+        List<TppRole> xs2aTppRoles = tppInfo.getTppRoles();
         if (CollectionUtils.isEmpty(xs2aTppRoles)) {
             return false;
         }
 
-        for (Xs2aTppRole role : xs2aTppRoles) {
+        for (TppRole role : xs2aTppRoles) {
             TppRole tppRole = TppRole.valueOf(role.name());
             if (tppRoleAccess.containsKey(tppRole) && matches(request, tppRoleAccess.get(tppRole))) {
                 return true;

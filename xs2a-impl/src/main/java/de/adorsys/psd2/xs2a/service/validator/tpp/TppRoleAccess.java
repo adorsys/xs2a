@@ -16,11 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
-import de.adorsys.psd2.validator.certificate.util.TppRole;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.Value;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Value

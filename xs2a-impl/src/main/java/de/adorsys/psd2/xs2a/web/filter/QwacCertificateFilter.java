@@ -18,9 +18,8 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
-import de.adorsys.psd2.validator.certificate.util.TppRole;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.Xs2aTppRole;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppRoleValidationService;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +54,7 @@ public class QwacCertificateFilter extends OncePerRequestFilter {
     private final TppInfoHolder tppInfoHolder;
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         String encodedTppQwacCert = getEncodedTppQwacCert(request);
 
@@ -73,10 +72,9 @@ public class QwacCertificateFilter extends OncePerRequestFilter {
                 tppInfo.setCity(tppCertificateData.getCity());
                 tppInfo.setState(tppCertificateData.getState());
 
-                List<TppRole> tppRoles = tppCertificateData.getPspRoles();
-                List<Xs2aTppRole> xs2aTppRoles = tppRoles.stream()
-                                                     .map(Enum::name)
-                                                     .map(Xs2aTppRole::valueOf)
+                List<String> tppRoles = tppCertificateData.getPspRoles();
+                List<TppRole> xs2aTppRoles = tppRoles.stream()
+                                                     .map(TppRole::valueOf)
                                                      .collect(Collectors.toList());
                 tppInfo.setTppRoles(xs2aTppRoles);
 

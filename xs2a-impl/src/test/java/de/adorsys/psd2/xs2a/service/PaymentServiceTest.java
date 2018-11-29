@@ -25,7 +25,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.Xs2aTppRole;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
@@ -300,7 +300,7 @@ public class PaymentServiceTest {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("registrationNumber");
         tppInfo.setTppName("tppName");
-        tppInfo.setTppRoles(Collections.singletonList(Xs2aTppRole.PISP));
+        tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfo.setAuthorityId("authorityId");
         tppInfo.setAuthorityName("authorityName");
         tppInfo.setCountry("country");
@@ -317,7 +317,7 @@ public class PaymentServiceTest {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("registrationNumber");
         tppInfo.setTppName("tppName");
-        tppInfo.setTppRoles(Collections.singletonList(Xs2aTppRole.PISP));
+        tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfo.setAuthorityId("authorityId");
         tppInfo.setAuthorityName("authorityName");
         tppInfo.setCountry("country");
