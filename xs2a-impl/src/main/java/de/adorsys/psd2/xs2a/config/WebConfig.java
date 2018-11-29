@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -144,6 +146,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         source.registerCorsConfiguration("/**", config);
 
         return new FilterRegistrationBean(new CorsFilter(source));
+    }
+
+    @Bean
+    @RequestScope
+    public TppInfoHolder getTppInfoHolder() {
+        return new TppInfoHolder();
     }
 
     @Bean
