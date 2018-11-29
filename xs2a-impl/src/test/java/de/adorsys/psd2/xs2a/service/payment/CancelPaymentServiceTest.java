@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
@@ -154,7 +153,7 @@ public class CancelPaymentServiceTest {
     }
 
     private SpiPayment getSpiPayment(String paymentId) {
-        SpiSinglePayment spiSinglePayment = new SpiSinglePayment(PaymentProduct.SEPA);
+        SpiSinglePayment spiSinglePayment = new SpiSinglePayment("sepa-credit-transfers");
         spiSinglePayment.setPaymentId(paymentId);
         return spiSinglePayment;
     }

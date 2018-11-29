@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.spi.mapper;
 
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -49,7 +48,7 @@ public class SpiBulkPaymentMapper {
         return bulk;
     }
 
-    public SpiBulkPaymentInitiationResponse mapToSpiBulkPaymentResponse(@NotNull AspspBulkPayment payment, PaymentProduct paymentProduct) {
+    public SpiBulkPaymentInitiationResponse mapToSpiBulkPaymentResponse(@NotNull AspspBulkPayment payment, String paymentProduct) {
         SpiBulkPaymentInitiationResponse spi = new SpiBulkPaymentInitiationResponse();
         spi.setPayments(mapToListSpiSinglePayments(payment.getPayments(), paymentProduct));
         spi.setPaymentId(payment.getPaymentId());
@@ -63,7 +62,7 @@ public class SpiBulkPaymentMapper {
         return spi;
     }
 
-    public SpiBulkPayment mapToSpiBulkPayment(@NotNull List<AspspSinglePayment> payments, PaymentProduct paymentProduct) {
+    public SpiBulkPayment mapToSpiBulkPayment(@NotNull List<AspspSinglePayment> payments, String paymentProduct) {
         SpiBulkPayment bulk = new SpiBulkPayment();
         bulk.setPayments(mapToListSpiSinglePayments(payments, paymentProduct));
         bulk.setPaymentStatus(spiPaymentMapper.mapToSpiTransactionStatus(payments.get(0).getPaymentStatus()));
@@ -76,7 +75,7 @@ public class SpiBulkPaymentMapper {
                    .collect(Collectors.toList());
     }
 
-    private List<SpiSinglePayment> mapToListSpiSinglePayments(@NotNull List<AspspSinglePayment> payments, PaymentProduct paymentProduct) {
+    private List<SpiSinglePayment> mapToListSpiSinglePayments(@NotNull List<AspspSinglePayment> payments, String paymentProduct) {
         return payments.stream()
                    .map(p -> spiSinglePaymentMapper.mapToSpiSinglePayment(p, paymentProduct))
                    .collect(Collectors.toList());

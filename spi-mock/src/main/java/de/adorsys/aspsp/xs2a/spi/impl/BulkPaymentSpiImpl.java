@@ -86,7 +86,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
         try {
             ResponseEntity<List<AspspSinglePayment>> aspspResponse =
                 aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<AspspSinglePayment>>() {
-                }, payment.getPaymentType().getValue(), payment.getPaymentProduct().getValue(), payment.getPaymentId());
+                }, payment.getPaymentType().getValue(), payment.getPaymentProduct(), payment.getPaymentId());
             List<AspspSinglePayment> payments = aspspResponse.getBody();
             SpiBulkPayment spiBulkPayment = spiBulkPaymentMapper.mapToSpiBulkPayment(payments, payment.getPaymentProduct());
 

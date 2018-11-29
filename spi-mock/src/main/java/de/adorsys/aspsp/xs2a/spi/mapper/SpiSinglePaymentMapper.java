@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
@@ -51,7 +50,7 @@ public class SpiSinglePaymentMapper {
         return single;
     }
 
-    public SpiSinglePayment mapToSpiSinglePayment(@NotNull AspspSinglePayment payment, PaymentProduct paymentProduct) {
+    public SpiSinglePayment mapToSpiSinglePayment(@NotNull AspspSinglePayment payment, String paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
         single.setPaymentId(payment.getPaymentId());
         single.setEndToEndIdentification(payment.getEndToEndIdentification());

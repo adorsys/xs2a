@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -124,17 +123,17 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToXs2aPayment_Periodic_success() {
         when(objectMapper.convertValue(getPeriodicPayment(true, true, true, true,
-            true, true, true, true, true, true,
-            true, true), PeriodicPaymentInitiationSctJson.class))
+                                                          true, true, true, true, true, true,
+                                                          true, true), PeriodicPaymentInitiationSctJson.class))
             .thenReturn(getPeriodicPayment(true, true, true, true, true,
-                true, true, true, true, true, true,
-                true));
+                                           true, true, true, true, true, true,
+                                           true));
         when(objectMapper.convertValue(getAccountReference12Map(true, true), Xs2aAccountReference.class))
             .thenReturn(getAccountReference(true, true));
         //Given
         Object payment = getPeriodicPayment(true, true, true, true, true,
-            true, true, true, true, true, true,
-            true);
+                                            true, true, true, true, true, true,
+                                            true);
         //When
         PeriodicPayment result = (PeriodicPayment) paymentModelMapperXs2a.mapToXs2aPayment(payment, getRequestParameters(PaymentType.PERIODIC));
         //Then
@@ -159,10 +158,10 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToXs2aPayment_Bulk_success() {
         when(objectMapper.convertValue(getBulkPayment(true, true, true,
-            true), BulkPaymentInitiationSctJson.class))
+                                                      true), BulkPaymentInitiationSctJson.class))
             .thenReturn(getBulkPayment(true, true, true, true));
         when(objectMapper.convertValue(getAccountReference12Map(true, true), Xs2aAccountReference.class))
-        .thenReturn(getAccountReference(true, true));
+            .thenReturn(getAccountReference(true, true));
         //Given
         Object payment = getBulkPayment(true, true, true, true);
         //When
@@ -203,7 +202,7 @@ public class PaymentModelMapperTest {
     }
 
     private BulkPaymentInitiationSctJson getBulkPayment(boolean batchBooking, boolean executionDate,
-                                                            boolean debtorAcc, boolean payments) {
+                                                        boolean debtorAcc, boolean payments) {
         BulkPaymentInitiationSctJson payment = new BulkPaymentInitiationSctJson();
         payment.setBatchBookingPreferred(batchBooking ? BATCH_BOOKING_PREFERRED : null);
         payment.setRequestedExecutionDate(executionDate ? LocalDate.of(2017, 1, 1) : null);
@@ -293,11 +292,11 @@ public class PaymentModelMapperTest {
         return ref;
     }
 
-    private PaymentInitiationParameters getRequestParameters(PaymentType paymentType){
+    private PaymentInitiationParameters getRequestParameters(PaymentType paymentType) {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(paymentType);
         requestParameters.setQwacCertificate("TEST CERTIFICATE");
-        requestParameters.setPaymentProduct(PaymentProduct.SEPA);
+        requestParameters.setPaymentProduct("sepa-credit-transfers");
 
         return requestParameters;
     }
