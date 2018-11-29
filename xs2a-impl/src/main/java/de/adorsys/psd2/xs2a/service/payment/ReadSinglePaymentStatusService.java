@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -37,7 +36,7 @@ public class ReadSinglePaymentStatusService implements ReadPaymentStatusService 
     private final SinglePaymentSpi singlePaymentSpi;
 
     @Override
-    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, PaymentProduct paymentProduct, SpiPsuData spiPsuData, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiPsuData spiPsuData, AspspConsentData aspspConsentData) {
         Optional<SpiSinglePayment> spiSinglePaymentOptional = spiPaymentFactory.createSpiSinglePayment(pisPayment, paymentProduct);
 
         return spiSinglePaymentOptional

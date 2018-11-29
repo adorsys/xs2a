@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -58,7 +57,7 @@ public class SpiPaymentFactory {
      * @param paymentType    PaymentType
      * @return Optional of SpiPayment subclass of requested payment type or throws IllegalArgumentException for unknown payment type
      */
-    public Optional<? extends SpiPayment> createSpiPaymentByPaymentType(PisPayment pisPayment, PaymentProduct paymentProduct, PaymentType paymentType) {
+    public Optional<? extends SpiPayment> createSpiPaymentByPaymentType(PisPayment pisPayment, String paymentProduct, PaymentType paymentType) {
         switch (paymentType) {
             case SINGLE:
                 return createSpiSinglePayment(pisPayment, paymentProduct);
@@ -79,7 +78,7 @@ public class SpiPaymentFactory {
      * @param paymentProduct PaymentProduct
      * @return Optional of SpiSinglePayment from PisPayment
      */
-    public Optional<SpiSinglePayment> createSpiSinglePayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public Optional<SpiSinglePayment> createSpiSinglePayment(PisPayment pisPayment, String paymentProduct) {
         SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
 
         if (singlePayment == null) {
@@ -96,7 +95,7 @@ public class SpiPaymentFactory {
      * @param paymentProduct PaymentProduct
      * @return Optional of SpiPeriodicPayment from PisPayment
      */
-    public Optional<SpiPeriodicPayment> createSpiPeriodicPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public Optional<SpiPeriodicPayment> createSpiPeriodicPayment(PisPayment pisPayment, String paymentProduct) {
         PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
 
         if (periodicPayment == null) {
@@ -113,7 +112,7 @@ public class SpiPaymentFactory {
      * @param paymentProduct PaymentProduct
      * @return Optional of SpiBulkPayment from PisPayment
      */
-    public Optional<SpiBulkPayment> createSpiBulkPayment(PisPayment pisPayment, PaymentProduct paymentProduct) {
+    public Optional<SpiBulkPayment> createSpiBulkPayment(PisPayment pisPayment, String paymentProduct) {
         BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(Collections.singletonList(pisPayment));
 
         if (bulkPayment == null) {
