@@ -127,15 +127,7 @@ public class PisConsentServiceRemote implements PisConsentService {
 
     @Override
     public Optional<List<String>> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
-        String url;
-        if (authorisationType == CmsAuthorisationType.CREATED) {
-            url = remotePisConsentUrls.getAuthorisationSubResources();
-        } else if (authorisationType == CmsAuthorisationType.CANCELLED) {
-            url = remotePisConsentUrls.getCancellationAuthorisationSubResources();
-        } else {
-            log.error("Unknown payment authorisation type {}", authorisationType);
-            throw new IllegalArgumentException("Unknown payment authorisation type " + authorisationType);
-        }
+        String url = getAuthorisationSubResourcesUrl(authorisationType);
         try {
             ResponseEntity<List<String>> request = consentRestTemplate.exchange(
                 url, HttpMethod.GET, null,
@@ -146,6 +138,18 @@ public class PisConsentServiceRemote implements PisConsentService {
             log.warn("No authorisation found by paymentId {}", paymentId);
         }
         return Optional.empty();
+    }
+
+    private String getAuthorisationSubResourcesUrl(CmsAuthorisationType authorisationType) {
+        switch (authorisationType) {
+            case CREATED:
+                return remotePisConsentUrls.getAuthorisationSubResources();
+            case CANCELLED:
+                return remotePisConsentUrls.getCancellationAuthorisationSubResources();
+            default:
+                log.error("Unknown payment authorisation type {}", authorisationType);
+                throw new IllegalArgumentException("Unknown payment authorisation type " + authorisationType);
+        }
     }
 
     @Override
