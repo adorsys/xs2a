@@ -48,7 +48,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             profileConfiguration.isSigningBasketSupported(),
             profileConfiguration.isPaymentCancellationAuthorizationMandated(),
             profileConfiguration.isPiisConsentSupported(),
-            profileConfiguration.isDeltaReportSupported());
+            profileConfiguration.isDeltaReportSupported(),
+            profileConfiguration.getRedirectUrlExpirationTimeMs());
     }
 
     @Override
