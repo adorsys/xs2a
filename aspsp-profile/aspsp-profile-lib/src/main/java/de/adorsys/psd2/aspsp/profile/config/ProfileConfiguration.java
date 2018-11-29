@@ -139,6 +139,11 @@ public class ProfileConfiguration implements InitializingBean {
      */
     private boolean deltaReportSupported;
 
+    /**
+     * The limit of an expiration time of redirect url set in milliseconds
+     */
+    private long redirectUrlExpirationTimeMs;
+
     @Override
     public void afterPropertiesSet() {
         setDefaultPaymentType(PaymentType.SINGLE);
