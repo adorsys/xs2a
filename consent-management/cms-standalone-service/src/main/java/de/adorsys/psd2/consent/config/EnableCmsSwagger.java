@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent;
+package de.adorsys.psd2.consent.config;
 
-import de.adorsys.psd2.consent.config.EnableCmsSwagger;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
-@EnableCmsSwagger
-@SpringBootApplication
-@ComponentScan("de.adorsys.psd2")
-public class ConsentManagementStandaloneApp {
+import java.lang.annotation.*;
 
-    public static void main(String[] args) {
-        SpringApplication.run(ConsentManagementStandaloneApp.class, args);
-    }
+/**
+ * This annotation is designed to turn on/off cms swagger
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Import(SwaggerConfig.class)
+public @interface EnableCmsSwagger {
 }
-
