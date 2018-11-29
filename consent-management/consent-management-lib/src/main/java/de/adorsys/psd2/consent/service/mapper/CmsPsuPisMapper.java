@@ -49,6 +49,14 @@ public class CmsPsuPisMapper {
         }
     }
 
+    public Optional<CmsPaymentResponse> mapToCmsPaymentResponse(CmsPayment payment, String authorisationId) {
+        return Optional.ofNullable(payment)
+                   .map(p -> new CmsPaymentResponse(
+                       payment,
+                       authorisationId
+                   ));
+    }
+
     private CmsPayment mapToCmsPeriodicPayment(PisPaymentData pisPaymentData, String paymentProduct) {
         CmsPeriodicPayment periodicPayment = new CmsPeriodicPayment(paymentProduct);
         periodicPayment.setPaymentId(pisPaymentData.getPaymentId());
@@ -110,12 +118,12 @@ public class CmsPsuPisMapper {
     private CmsAccountReference mapToCmsAccountReference(AccountReferenceEntity pisAccountReference) {
         return Optional.ofNullable(pisAccountReference)
                    .map(ref -> new CmsAccountReference(null,
-                                                       ref.getIban(),
-                                                       ref.getBban(),
-                                                       ref.getPan(),
-                                                       ref.getMaskedPan(),
-                                                       ref.getMsisdn(),
-                                                       ref.getCurrency())
+                       ref.getIban(),
+                       ref.getBban(),
+                       ref.getPan(),
+                       ref.getMaskedPan(),
+                       ref.getMsisdn(),
+                       ref.getCurrency())
                    ).orElse(null);
     }
 }

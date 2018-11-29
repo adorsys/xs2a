@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -43,6 +44,16 @@ public interface CmsPsuPisService {
      */
     @NotNull
     Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
+
+    /**
+     * Returns Payment object by its ID
+     *
+     * @param psuIdData PSU credentials data
+     * @param authorisationId ID of authorisation
+     * @return Payment object if it was found and it corresponds to the user data given in parameter
+     */
+    @NotNull
+    Optional<CmsPaymentResponse> getPaymentByAuthorisationId(@NotNull PsuIdData psuIdData, @NotNull String authorisationId);
 
     /**
      * Updates a Status of Payment's autorisation by its ID and PSU ID

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
@@ -70,6 +71,21 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             return getPaymentDataList(encryptedPaymentId)
                        .filter(CollectionUtils::isNotEmpty)
                        .map(cmsPsuPisMapper::mapToCmsPayment);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public @NotNull Optional<CmsPaymentResponse> getPaymentByAuthorisationId(@NotNull PsuIdData psuIdData, @NotNull String authorisationId) {
+        Optional<PisConsentAuthorization> validAuthorisation = pisConsentAuthorizationRepository.findByExternalId(authorisationId)
+                                                                   .filter(PisConsentAuthorization::isNotExpired);
+
+        if (validAuthorisation.isPresent()) {
+            List<PisPaymentData> pisPaymentDataList = validAuthorisation.get().getConsent().getPayments();
+            CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(pisPaymentDataList);
+
+            return cmsPsuPisMapper.mapToCmsPaymentResponse(payment, validAuthorisation.get().getExternalId());
         }
 
         return Optional.empty();
