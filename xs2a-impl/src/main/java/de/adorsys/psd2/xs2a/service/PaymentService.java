@@ -240,18 +240,10 @@ public class PaymentService {
         AspspConsentData consentData = pisConsentDataService.getAspspConsentData(paymentId);
         Optional<PisConsentResponse> consent = pisConsentService.getPisConsentById(consentData.getConsentId());
 
-        if (consent.isPresent()) {
-
-            List<PisPayment> finalisedPayments = consent.get().getPayments()
-                                                     .stream()
-                                                     .filter(p -> p.getTransactionStatus().isFinalisedStatus())
-                                                     .collect(Collectors.toList());
-
-            if (CollectionUtils.isNotEmpty(finalisedPayments)) {
-                return ResponseObject.<CancelPaymentResponse>builder()
-                           .fail(new MessageError(FORMAT_ERROR, "Payment is finalised already and cannot be cancelled"))
-                           .build();
-            }
+        if (consent.isPresent() && isFinalisedPayment(consent.get())) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Payment is finalised already and cannot be cancelled"))
+                       .build();
         }
 
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
@@ -264,5 +256,13 @@ public class PaymentService {
             pisConsentService.revokeConsentById(paymentId);
             return cancellationResponse;
         }
+    }
+
+    private boolean isFinalisedPayment(PisConsentResponse consent) {
+        List<PisPayment> finalisedPayments = consent.getPayments().stream()
+                                                 .filter(p -> p.getTransactionStatus().isFinalisedStatus())
+                                                 .collect(Collectors.toList());
+
+        return CollectionUtils.isNotEmpty(finalisedPayments);
     }
 }
