@@ -19,12 +19,13 @@ package de.adorsys.psd2.xs2a.web.filter;
 import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -39,61 +40,46 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class SignatureFilter implements Filter {
+@RequiredArgsConstructor
+public class SignatureFilter extends AbstractXs2aFilter {
+    private final AspspProfileServiceWrapper aspspProfileService;
 
-    @Autowired
-    private AspspProfileServiceWrapper aspspProfileService;
-
-    @Override
-    public void init(FilterConfig filterConfig) {
-    }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
-
-        if (aspspProfileService.getTppSignatureRequired()) {
-            if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
-                throw new ServletException("OncePerRequestFilter just supports HTTP requests");
-            }
-
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-            String signature = httpRequest.getHeader("signature");
-            if (StringUtils.isBlank(signature)) {
-                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                    CertificateErrorMsgCode.SIGNATURE_MISSING.toString());
-                return;
-            }
-
-            if (digestContainsErrors(httpRequest)) {
-                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    CertificateErrorMsgCode.FORMAT_ERROR.toString());
-                return;
-            }
-
-            Map<String, String> headers = obtainRequestHeaders(httpRequest);
-            String encodedTppCert = httpRequest.getHeader("tpp-signature-certificate");
-            TppSignatureValidator tppSignatureValidator = new TppSignatureValidator();
-            try {
-
-                if (tppSignatureValidator.verifySignature(signature, encodedTppCert, headers)) {
-                    chain.doFilter(request, response);
-                } else {
-
-                    ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                        CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
-                    return;
-                }
-
-            } catch (NoSuchAlgorithmException | SignatureException e) {
-                log.debug(e.getMessage());
-                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                    CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
-                return;
-            }
-        } else {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        if (!aspspProfileService.getTppSignatureRequired()) {
             chain.doFilter(request, response);
+            return;
+        }
+
+        String signature = request.getHeader("signature");
+        if (StringUtils.isBlank(signature)) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                               CertificateErrorMsgCode.SIGNATURE_MISSING.toString());
+            return;
+        }
+
+        if (digestContainsErrors(request)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                               CertificateErrorMsgCode.FORMAT_ERROR.toString());
+            return;
+        }
+
+        Map<String, String> headers = obtainRequestHeaders(request);
+        String encodedTppCert = request.getHeader("tpp-signature-certificate");
+        TppSignatureValidator tppSignatureValidator = new TppSignatureValidator();
+
+        try {
+            if (tppSignatureValidator.verifySignature(signature, encodedTppCert, headers)) {
+                chain.doFilter(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                   CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
+            }
+        } catch (NoSuchAlgorithmException | SignatureException e) {
+            log.debug(e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                               CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
         }
     }
 
@@ -102,12 +88,8 @@ public class SignatureFilter implements Filter {
         return StringUtils.isBlank(digest) || !Arrays.asList(64, 128).contains(digest.getBytes().length);
     }
 
-    @Override
-    public void destroy() {
-    }
-
     private Map<String, String> obtainRequestHeaders(HttpServletRequest request) {
         return Collections.list(request.getHeaderNames()).stream()
-            .collect(Collectors.toMap(Function.identity(), request::getHeader));
+                   .collect(Collectors.toMap(Function.identity(), request::getHeader));
     }
 }
