@@ -17,11 +17,12 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.service.PisConsentService;
-import de.adorsys.psd2.consent.api.service.PisPaymentService;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,30 +34,49 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PisPaymentServiceInternal implements PisPaymentService {
+public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePaymentStatusAfterSpiService {
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final PisConsentService pisConsentService;
 
     @Override
     @Transactional
-    public void updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
-        List<PisPaymentData> list = getPaymentDataList(encryptedPaymentId)
-                                        .orElse(Collections.emptyList());
+    public boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
+        List<PisPaymentData> payments = getPaymentDataList(encryptedPaymentId)
+                                            .orElse(Collections.emptyList());
 
-        updateStatusInPaymentDataList(list, status);
+        return updateStatusInPaymentDataList(payments, status);
     }
 
-    private void updateStatusInPaymentDataList(List<PisPaymentData> dataList, TransactionStatus givenStatus) {
-        for (PisPaymentData pisPaymentData : dataList) {
-            if (!pisPaymentData.getTransactionStatus().isFinalisedStatus()) {
-                pisPaymentData.setTransactionStatus(givenStatus);
-                pisPaymentDataRepository.save(pisPaymentData);
-            }
+    private boolean updateStatusInPaymentDataList(List<PisPaymentData> payments, TransactionStatus newStatus) {
+        if (CollectionUtils.isEmpty(payments)) {
+            return false;
         }
+
+        if (isTryToChangeFinaliseStatus(payments, newStatus)) {
+            return false;
+        }
+
+        for (PisPaymentData pisPaymentData : payments) {
+            if (pisPaymentData.getTransactionStatus().isFinalisedStatus()) {
+                continue;
+            }
+
+            pisPaymentData.setTransactionStatus(newStatus);
+            pisPaymentDataRepository.save(pisPaymentData);
+        }
+
+        return true;
     }
 
     private Optional<List<PisPaymentData>> getPaymentDataList(String encryptedPaymentId) {
         return pisConsentService.getDecryptedId(encryptedPaymentId)
                    .flatMap(pisPaymentDataRepository::findByPaymentId);
+    }
+
+    private boolean isTryToChangeFinaliseStatus(List<PisPaymentData> payments, TransactionStatus newStatus) {
+        return payments.stream()
+                   .map(PisPaymentData::getTransactionStatus)
+                   .filter(TransactionStatus::isFinalisedStatus)
+                   .anyMatch(t -> t != newStatus);
     }
 }

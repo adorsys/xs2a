@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.payment;
+package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.consent.api.service.PisPaymentService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
-public class Xs2aPisPaymentService {
-    private final PisPaymentService pisPaymentService;
+/**
+ * Service to be used to update payment status ONLY after getting SPI service result.
+ * Should not be used for any other business logic purposes.
+ */
+public interface UpdatePaymentStatusAfterSpiService {
 
-    public void updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
-        pisPaymentService.updatePaymentStatus(paymentId, status);
-    }
+    /**
+     * Updates a Status of Payment object by its ID and PSU ID
+     *
+     * @param encryptedPaymentId ID of Payment
+     * @param status             Status of Payment to be set
+     */
+    boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status);
 }

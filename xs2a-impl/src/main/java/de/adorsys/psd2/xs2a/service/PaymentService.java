@@ -66,7 +66,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
     private final Xs2aPisConsentService pisConsentService;
-    private final Xs2aPisPaymentService pisPaymentService;
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final PisConsentDataService pisConsentDataService;
     private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
@@ -196,7 +196,12 @@ public class PaymentService {
                        .build();
         }
 
-        pisPaymentService.updatePaymentStatus(paymentId, transactionStatus);
+        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, transactionStatus)) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Payment is finalised already, so its status cannot be changed"))
+                       .build();
+        }
+
         return ResponseObject.<TransactionStatus>builder().body(transactionStatus).build();
     }
 

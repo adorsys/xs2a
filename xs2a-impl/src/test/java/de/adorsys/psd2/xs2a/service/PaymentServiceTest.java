@@ -122,7 +122,7 @@ public class PaymentServiceTest {
     @Mock
     private ReadPaymentService<PaymentInformationResponse> readPaymentService;
     @Mock
-    private Xs2aPisPaymentService pisPaymentService;
+    private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
 
     @Before
     public void setUp() {
@@ -249,7 +249,8 @@ public class PaymentServiceTest {
     public void getPaymentStatusById_Success_ShouldRecordEvent() {
         SpiResponse<SpiTransactionStatus> spiResponse = buildSpiResponseTransactionStatus();
         when(singlePaymentSpi.getPaymentStatusById(any(), any(), any())).thenReturn(spiResponse);
-        doNothing().when(pisPaymentService).updatePaymentStatus(anyString(), any(TransactionStatus.class));
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
+            .thenReturn(true);
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
