@@ -59,7 +59,7 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
         SpiSinglePayment spiSinglePayment = spiResponse.getPayload();
         SinglePayment xs2aSinglePayment = spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment);
 
-        pisPaymentService.updatePaymentStatus(xs2aSinglePayment.getPaymentId(), xs2aSinglePayment.getTransactionStatus());
+        pisPaymentService.updatePaymentStatus(aspspConsentData.getConsentId(), xs2aSinglePayment.getTransactionStatus());
         return new PaymentInformationResponse<>(xs2aSinglePayment);
     }
 }

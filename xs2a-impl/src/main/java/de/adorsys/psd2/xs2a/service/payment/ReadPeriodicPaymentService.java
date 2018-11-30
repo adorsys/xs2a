@@ -59,7 +59,7 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
         SpiPeriodicPayment spiResponsePayment = spiResponse.getPayload();
         PeriodicPayment xs2aPeriodicPayment = spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiResponsePayment);
 
-        pisPaymentService.updatePaymentStatus(xs2aPeriodicPayment.getPaymentId(), xs2aPeriodicPayment.getTransactionStatus());
+        pisPaymentService.updatePaymentStatus(aspspConsentData.getConsentId(), xs2aPeriodicPayment.getTransactionStatus());
         return new PaymentInformationResponse<>(xs2aPeriodicPayment);
     }
 }

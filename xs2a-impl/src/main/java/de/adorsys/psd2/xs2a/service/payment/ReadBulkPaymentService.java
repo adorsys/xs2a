@@ -61,7 +61,7 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
         SpiBulkPayment spiResponsePayment = spiResponse.getPayload();
         BulkPayment xs2aBulkPayment = spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiResponsePayment);
 
-        pisPaymentService.updatePaymentStatus(xs2aBulkPayment.getPaymentId(), xs2aBulkPayment.getTransactionStatus());
+        pisPaymentService.updatePaymentStatus(aspspConsentData.getConsentId(), xs2aBulkPayment.getTransactionStatus());
         return new PaymentInformationResponse<>(xs2aBulkPayment);
     }
 }
