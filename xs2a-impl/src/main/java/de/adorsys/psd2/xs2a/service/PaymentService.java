@@ -237,7 +237,7 @@ public class PaymentService {
         }
 
         AspspConsentData consentData = pisConsentDataService.getAspspConsentData(paymentId);
-        Optional<PisConsentResponse> consent = pisConsentService.getPisConsentById(consentData.getConsentId());
+        Optional<PisConsentResponse> consent = pisConsentService.getPisConsentById(paymentId);
 
         if (consent.isPresent() && isFinalisedPayment(consent.get())) {
             return ResponseObject.<CancelPaymentResponse>builder()
