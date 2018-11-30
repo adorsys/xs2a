@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.xs2a;
+package de.adorsys.psd2.consent.web.xs2a.controller;
 
-import de.adorsys.psd2.consent.api.service.AisConsentService;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.consent.api.service.PisConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,22 +28,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/ais")
-@Api(value = "api/v1/ais", tags = "AIS, PSU Data", description = "Provides access to consent management system for PSU Data")
-public class AisPsuDataController {
-    private final AisConsentService aisConsentService;
+@RequestMapping(path = "api/v1/pis")
+@Api(value = "api/v1/pis", tags = "PIS, Payments", description = "Provides access to consent management system for PIS")
+public class PisPaymentController {
+    private final PisConsentService pisConsentService;
 
-    @GetMapping(path = "/consent/{consent-id}/psu-data")
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
+    @GetMapping(path = "/payment/{payment-id}")
+    @ApiOperation(value = "Get inner payment id by encrypted string")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PsuIdData> getPsuDataByConsentId(
-        @ApiParam(name = "consent-id", value = "The consent identification.", example = "32454656712432")
-        @PathVariable("consent-id") String consentId) {
-        return aisConsentService.getPsuDataByConsentId(consentId)
+    public ResponseEntity<String> getPaymentIdByEncryptedString(
+        @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
+        @PathVariable("payment-id") String encryptedId) {
+        return pisConsentService.getDecryptedId(encryptedId)
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
 }

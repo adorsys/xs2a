@@ -28,7 +28,6 @@ import no.difi.certvalidator.api.CertificateValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -49,7 +48,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class QwacCertificateFilter extends OncePerRequestFilter {
+public class QwacCertificateFilter extends AbstractXs2aFilter {
     private final TppRoleValidationService tppRoleValidationService;
     private final TppInfoHolder tppInfoHolder;
 
@@ -74,8 +73,8 @@ public class QwacCertificateFilter extends OncePerRequestFilter {
 
                 List<String> tppRoles = tppCertificateData.getPspRoles();
                 List<TppRole> xs2aTppRoles = tppRoles.stream()
-                                                     .map(TppRole::valueOf)
-                                                     .collect(Collectors.toList());
+                                                 .map(TppRole::valueOf)
+                                                 .collect(Collectors.toList());
                 tppInfo.setTppRoles(xs2aTppRoles);
 
                 if (!tppRoleValidationService.hasAccess(tppInfo, request)) {
@@ -93,7 +92,6 @@ public class QwacCertificateFilter extends OncePerRequestFilter {
         }
 
         chain.doFilter(request, response);
-
     }
 
     public String getEncodedTppQwacCert(HttpServletRequest httpRequest) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web;
+package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.SigningBasketApi;
 import io.swagger.annotations.Api;

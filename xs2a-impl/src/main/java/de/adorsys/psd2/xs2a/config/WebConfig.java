@@ -119,7 +119,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns("/v1/payments/**", "/v1/bulk-payments/**", "/v1/periodic-payments/**");
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns("/v1/signing-baskets/**");
 
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()));
+        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()))
+            .addPathPatterns("/v1/**");
     }
 
     @Bean
