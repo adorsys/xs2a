@@ -236,7 +236,6 @@ public class PaymentService {
                            .build();
         }
 
-        AspspConsentData consentData = pisConsentDataService.getAspspConsentData(paymentId);
         Optional<PisConsentResponse> consent = pisConsentService.getPisConsentById(paymentId);
 
         if (consent.isPresent() && isFinalisedPayment(consent.get())) {
@@ -245,6 +244,7 @@ public class PaymentService {
                        .build();
         }
 
+        AspspConsentData consentData = pisConsentDataService.getAspspConsentData(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
