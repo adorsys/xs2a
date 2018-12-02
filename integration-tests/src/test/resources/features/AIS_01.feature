@@ -266,38 +266,25 @@ Feature: Account Information Service
             | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |         | 2008-09-15 |            | booked        |                    | true      | valid  |
 
 
-    @ignore
+    @TestTag
     Scenario Outline: Read transaction list erroful
-        Given PSU already has an existing consent <consent-id>
+        Given PSU already has an existing <status> consent <consent-id>
         And account id <account-id>
-        And wants to read all transactions using <transaction-resource>
-        When PSU requests the transactions
+        And wants to read all transactions errorful using <transaction-resource>
+        When PSU requests the transactions erroful
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
-            | consent-id                      | account-id                           | transaction-resource                         |
-            | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-no-request-id.json           |
-            | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-wrong-format-request-id.json |
-
-    @ignore
-    Scenario Outline: Read transaction list with no consent errorful
-        Given PSU wants to read all transactions using <transaction-resource>
-        And account id <account-id>
-        When PSU requests the transactions
-        Then an error response code is displayed and an appropriate error response is shown
-        Examples:
-            | transaction-resource            | account-id                           |
-            | transactionList-no-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
-
-    @ignore
-    Scenario Outline: Read transaction list with expired consent errorful
-        Given PSU created consent <consent> which is expired
-        And account id <account-id>
-        And wants to read all transactions using <transaction-resource>
-        When PSU requests the transactions
-        Then an error response code is displayed and an appropriate error response is shown
-        Examples:
-            | consent                                  | account-id                           | transaction-resource                      |
-            | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-with-expired-consent.json |
+            | transaction-resource                                       | consent-id                                                        | status           | account-id                           |
+            | transactions-with-wrong-access.json                      | transaction/transactions-create-consent-with-account-access.json  |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-wrong-access.json                      | transaction/transactions-create-consent-with-balance-access.json  |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-accountid-nomatch-consent.json        | transaction/transactions-create-consent.json                      |  valid           | 11111-999999999 |
+            | transactions-wrong-format-request-id.json               | transaction/transactions-create-consent.json                      |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-expired-consent.json                  | transaction/transactions-create-consent.json                      |  expired         | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-received-consent.json                 | transaction/transactions-create-consent.json                      |  received        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-rejected-consent.json                 | transaction/transactions-create-consent.json                      |  rejected        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-revokedByPsu-consent.json             | transaction/transactions-create-consent.json                      |  revokedByPsu    | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-terminatedByTpp-consent.json          | transaction/transactions-create-consent.json                      |  terminatedByTpp | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-exceeded-frequencePerDay-consent.json | transaction/transactions-create-consent-exceeded.json             |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
 
 
     Scenario Outline: Read transaction details successfully
