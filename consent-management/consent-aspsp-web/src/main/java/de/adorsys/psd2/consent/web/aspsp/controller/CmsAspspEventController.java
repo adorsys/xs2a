@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.aspsp;
+package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.CmsAspspEventService;
 import de.adorsys.psd2.xs2a.core.event.Event;

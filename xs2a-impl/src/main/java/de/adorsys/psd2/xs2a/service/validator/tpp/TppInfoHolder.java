@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web;
+package de.adorsys.psd2.xs2a.service.validator.tpp;
 
-import de.adorsys.psd2.api.SigningBasketApi;
-import io.swagger.annotations.Api;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import lombok.Getter;
+import lombok.Setter;
 
-@RestController
-@AllArgsConstructor
-@Api(value = "v1", description = "Provides access to the signing baskets", tags = {"Signing Baskets"})
-public class SigningBasketController implements SigningBasketApi {
-
-
+@Setter
+@Getter
+public class TppInfoHolder {
+    private TppInfo tppInfo;
 }

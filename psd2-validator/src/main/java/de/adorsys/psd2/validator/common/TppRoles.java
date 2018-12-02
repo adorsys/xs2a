@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.validator.certificate.util;
+package de.adorsys.psd2.validator.common;
 
-import lombok.Data;
+public class TppRoles {
+    public final static String ASPSP = "ASPSP";
+    public final static String PISP = "PISP";
+    public final static String AISP = "AISP";
+    public final static String PIISP = "PIISP";
 
-import java.util.List;
-
-@Data
-public class TppCertificateData {
-    private String pspAuthorisationNumber;
-    private List<String> pspRoles;
-    private String name;
-    private String pspAuthorityName;
-    private String pspAuthorityId;
-    private String country;
-    private String organisation;
-    private String organisationUnit;
-    private String city;
-    private String state;
+    private TppRoles() {
+    }
 }
