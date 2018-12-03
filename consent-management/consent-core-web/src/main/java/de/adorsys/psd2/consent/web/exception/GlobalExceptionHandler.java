@@ -26,7 +26,8 @@ import org.springframework.web.method.HandlerMethod;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
-@ControllerAdvice
+@ControllerAdvice(basePackages = {"de.adorsys.psd2.consent.web.aspsp.controller",
+    "de.adorsys.psd2.consent.web.psu.controller", "de.adorsys.psd2.consent.web.xs2a.controller"})
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<String> exception(Exception ex, HandlerMethod handlerMethod) {

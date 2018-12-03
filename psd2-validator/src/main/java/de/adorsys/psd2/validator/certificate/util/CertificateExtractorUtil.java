@@ -50,7 +50,7 @@ public class CertificateExtractorUtil {
             throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
         }
 
-        List<TppRole> roles = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
 
         TppCertificateData tppCertData = new TppCertificateData();
 
@@ -58,7 +58,7 @@ public class CertificateExtractorUtil {
         RolesOfPSP rolesOfPSP = psd2qcType.getRolesOfPSP();
         RoleOfPSP[] roles2 = rolesOfPSP.getRoles();
         for (RoleOfPSP roleOfPSP : roles2) {
-            roles.add(TppRole.valueOf(roleOfPSP.getNormalizedRoleName()));
+            roles.add(roleOfPSP.getNormalizedRoleName());
         }
         tppCertData.setPspRoles(roles);
 
