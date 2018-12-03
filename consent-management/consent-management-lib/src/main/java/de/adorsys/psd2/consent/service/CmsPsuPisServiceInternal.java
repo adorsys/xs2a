@@ -78,19 +78,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     public @NotNull Optional<CmsPaymentResponse> getPaymentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
-        Optional<PisConsentAuthorization> validAuthorisation = pisConsentAuthorizationRepository.findByExternalId(redirectId)
-                                                                   .filter(PisConsentAuthorization::isNotExpired);
-
-        if (validAuthorisation.isPresent()) {
-            List<PisPaymentData> pisPaymentDataList = validAuthorisation.get().getConsent().getPayments();
-            CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(pisPaymentDataList);
-            String tppOkRedirectUri = validAuthorisation.get().getConsent().getTppInfo().getRedirectUri();
-            String tppNokRedirectUri = validAuthorisation.get().getConsent().getTppInfo().getNokRedirectUri();
-
-            return cmsPsuPisMapper.mapToCmsPaymentResponse(payment, validAuthorisation.get().getExternalId(), tppOkRedirectUri, tppNokRedirectUri);
-        }
-
-        return Optional.empty();
+        return pisConsentAuthorizationRepository.findByExternalId(redirectId)
+                   .flatMap(this::checkForExpiration);
     }
 
     @Override
@@ -162,5 +151,21 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private Optional<List<PisPaymentData>> getPaymentDataList(String encryptedPaymentId) {
         return pisConsentService.getDecryptedId(encryptedPaymentId)
                    .flatMap(pisPaymentDataRepository::findByPaymentId);
+    }
+
+    private Optional<CmsPaymentResponse> checkForExpiration(PisConsentAuthorization authorisation) {
+
+        if (authorisation.isNotExpired()) {
+            List<PisPaymentData> pisPaymentDataList = authorisation.getConsent().getPayments();
+            CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(pisPaymentDataList);
+            String tppOkRedirectUri = authorisation.getConsent().getTppInfo().getRedirectUri();
+            String tppNokRedirectUri = authorisation.getConsent().getTppInfo().getNokRedirectUri();
+
+            return cmsPsuPisMapper.mapToCmsPaymentResponse(payment, authorisation.getExternalId(), tppOkRedirectUri, tppNokRedirectUri);
+        }
+
+        authorisation.setScaStatus(ScaStatus.FAILED);
+        pisConsentAuthorizationRepository.save(authorisation);
+        return Optional.empty();
     }
 }
