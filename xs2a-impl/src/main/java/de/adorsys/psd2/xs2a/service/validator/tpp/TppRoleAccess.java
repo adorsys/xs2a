@@ -18,29 +18,65 @@ package de.adorsys.psd2.xs2a.service.validator.tpp;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.Value;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Value
 public class TppRoleAccess {
-    private Map<TppRole, Set<String>> tppRoleAccess;
+    private static AntPathMatcher matcher = new AntPathMatcher();
+    private static Map<TppRole, Set<String>> secureURIs;
 
-    private TppRoleAccess(TppAccessBuilder builder) {
-        this.tppRoleAccess = builder.tppRoleAccess;
+    static {
+        TppRoleAccess.builder()
+            .linkTppRolePatterns(TppRole.AISP,
+                "/api/v1/accounts/**",
+                "/v1/accounts/**",
+                "/api/v1/consents/**",
+                "/v1/consents/**")
+            .linkTppRolePatterns(TppRole.PISP,
+                "/api/v1/bulk-payments/**",
+                "/v1/bulk-payments/**",
+                "/api/v1/payments/**",
+                "/v1/payments/**",
+                "/api/v1/periodic-payments/**",
+                "/v1/periodic-payments/**")
+            .linkTppRolePatterns(TppRole.PIISP,
+                "/api/v1/funds-confirmations/**",
+                "/v1/funds-confirmations/**")
+            .build();
     }
 
-    public static TppAccessBuilder builder() {
+    private TppRoleAccess(TppAccessBuilder builder) {
+        secureURIs = builder.secureURIs;
+    }
+
+    private static TppAccessBuilder builder() {
         return new TppAccessBuilder();
     }
 
+    public static boolean hasAccessForPath(List<TppRole> tppRoles, String targetPath) {
+        if (CollectionUtils.isEmpty(tppRoles)) {
+            return false;
+        }
+        for (Map.Entry<TppRole, Set<String>> entry : secureURIs.entrySet()) {
+            Set<String> patterns = entry.getValue();
+            TppRole role = entry.getKey();
+            for (String pattern : patterns) {
+                if (matcher.match(pattern, targetPath) && !tppRoles.contains(role)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     @Value
-    public static class TppAccessBuilder {
-        private Map<TppRole, Set<String>> tppRoleAccess = new HashMap<>();
+    private static class TppAccessBuilder {
+        private Map<TppRole, Set<String>> secureURIs = new HashMap<>();
 
         private TppAccessBuilder() {
         }
@@ -51,17 +87,17 @@ public class TppRoleAccess {
             Set<String> requestMatchers = Arrays.stream(patterns)
                                               .collect(Collectors.toSet());
 
-            if (this.tppRoleAccess.containsKey(tppRole)) {
-                this.tppRoleAccess.get(tppRole)
+            if (this.secureURIs.containsKey(tppRole)) {
+                this.secureURIs.get(tppRole)
                     .addAll(requestMatchers);
             } else {
-                this.tppRoleAccess.put(tppRole, requestMatchers);
+                this.secureURIs.put(tppRole, requestMatchers);
             }
             return this;
         }
 
-        public Map<TppRole, Set<String>> build() {
-            return new TppRoleAccess(this).getTppRoleAccess();
+        private TppRoleAccess build() {
+            return new TppRoleAccess(this);
         }
     }
 }
