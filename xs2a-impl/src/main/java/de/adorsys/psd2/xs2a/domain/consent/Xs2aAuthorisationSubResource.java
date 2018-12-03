@@ -17,11 +17,11 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Value;
 
 import java.util.List;
 
-@Data
+@Value
 @AllArgsConstructor
 public class Xs2aAuthorisationSubResource {
     private List<String> authorisationIds;

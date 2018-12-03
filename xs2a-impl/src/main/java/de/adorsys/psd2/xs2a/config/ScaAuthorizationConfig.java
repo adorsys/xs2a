@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.*;
 import de.adorsys.psd2.xs2a.service.authorization.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthorisationSubResourcesMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -60,15 +59,14 @@ public class ScaAuthorizationConfig {
     @Bean
     public AisAuthorizationService aisAuthorizationService(Xs2aAisConsentService aisConsentService,
                                                            Xs2aAisConsentMapper aisConsentMapper,
-                                                           AisScaStageAuthorisationFactory scaStageAuthorisationFactory,
-                                                           Xs2aAuthorisationSubResourcesMapper authorisationMapper) {
+                                                           AisScaStageAuthorisationFactory scaStageAuthorisationFactory) {
         switch (getScaApproach()) {
             case OAUTH:
                 return new OauthAisAuthorizationService();
             case DECOUPLED:
                 return new DecoupledAisAuthorizationService();
             case EMBEDDED:
-                return new EmbeddedAisAuthorizationService(aisConsentService, aisConsentMapper, scaStageAuthorisationFactory, authorisationMapper);
+                return new EmbeddedAisAuthorizationService(aisConsentService, aisConsentMapper, scaStageAuthorisationFactory);
             default:
                 return new RedirectAisAuthorizationService();
         }
@@ -76,8 +74,7 @@ public class ScaAuthorizationConfig {
 
     @Bean
     public PisScaAuthorisationService pisAuthorizationService(PisAuthorisationService authorisationService,
-                                                              Xs2aPisConsentMapper pisConsentMapper,
-                                                              Xs2aAuthorisationSubResourcesMapper authorisationMapper) {
+                                                              Xs2aPisConsentMapper pisConsentMapper) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthPisScaAuthorisationService();
@@ -86,9 +83,9 @@ public class ScaAuthorizationConfig {
             return new DecoupledPisScaAuthorisationService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedPisScaAuthorisationService(authorisationService, pisConsentMapper, authorisationMapper);
+            return new EmbeddedPisScaAuthorisationService(authorisationService, pisConsentMapper);
         }
-        return new RedirectPisScaAuthorisationService(authorisationService, pisConsentMapper, authorisationMapper);
+        return new RedirectPisScaAuthorisationService(authorisationService, pisConsentMapper);
     }
 
     private ScaApproach getScaApproach() {

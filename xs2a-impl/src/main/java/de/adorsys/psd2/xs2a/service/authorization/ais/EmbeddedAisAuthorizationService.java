@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthorisationSubResourcesMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +40,6 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     private final Xs2aAisConsentService aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
-    private final Xs2aAuthorisationSubResourcesMapper authorisationMapper;
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
@@ -113,6 +111,6 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     @Override
     public Optional<Xs2aAuthorisationSubResource> getAuthorisationSubResources(String consentId) {
         return aisConsentService.getAuthorisationSubResources(consentId)
-                   .map(authorisationMapper::mapToXs2aAuthorisationSubResource);
+                   .map(Xs2aAuthorisationSubResource::new);
     }
 }

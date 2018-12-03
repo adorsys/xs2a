@@ -269,12 +269,12 @@ public class PisConsentServiceInternal implements PisConsentService {
         }
 
         PisConsent pisConsent = paymentDataList.get(0).getConsent();
-        List<String> authorisationsId = pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(pisConsent.getId(), authorisationType)
+        List<String> authorisationIds = pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(pisConsent.getId(), authorisationType)
                                             .stream()
                                             .map(PisConsentAuthorization::getExternalId)
                                             .collect(Collectors.toList());
 
-        return Optional.of(authorisationsId);
+        return Optional.of(authorisationIds);
     }
 
     /**

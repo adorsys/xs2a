@@ -133,7 +133,7 @@ public class PisConsentServiceRemote implements PisConsentService {
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<String>>() {
                 }, paymentId);
-            return Optional.of(request.getBody());
+            return Optional.ofNullable(request.getBody());
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation found by paymentId {}", paymentId);
         }

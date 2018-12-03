@@ -113,7 +113,7 @@ public class AisConsentServiceRemote implements AisConsentService {
             ResponseEntity<List<String>> request = consentRestTemplate.exchange(
                 remoteAisConsentUrls.getAuthorisationSubResources(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
                 }, encryptedConsentId);
-            return Optional.of(request.getBody());
+            return Optional.ofNullable(request.getBody());
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation found by consentId {}", encryptedConsentId);
         }

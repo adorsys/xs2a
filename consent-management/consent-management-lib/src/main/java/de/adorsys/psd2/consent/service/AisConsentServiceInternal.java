@@ -207,12 +207,12 @@ public class AisConsentServiceInternal implements AisConsentService {
             return Optional.empty();
         }
 
-        List<String> authorisationsId = aisConsentAuthorizationRepository.findByConsentId(aisConsent.get().getId())
+        List<String> authorisationIds = aisConsentAuthorizationRepository.findByConsentId(aisConsent.get().getId())
                                             .stream()
                                             .map(AisConsentAuthorization::getExternalId)
                                             .collect(Collectors.toList());
 
-        return Optional.of(authorisationsId);
+        return Optional.of(authorisationIds);
     }
 
     /**

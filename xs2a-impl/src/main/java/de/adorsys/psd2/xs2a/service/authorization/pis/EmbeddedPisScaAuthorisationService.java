@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationS
 import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthorisationSubResourcesMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -34,7 +33,6 @@ import java.util.Optional;
 public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationService {
     private final PisAuthorisationService authorisationService;
     private final Xs2aPisConsentMapper pisConsentMapper;
-    private final Xs2aAuthorisationSubResourcesMapper subResourcesMapper;
 
     /**
      * Creates authorization for pis consent
@@ -82,7 +80,7 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
     @Override
     public Optional<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationAuthorisationSubResources(String paymentId) {
         return authorisationService.getCancellationAuthorisationSubResources(paymentId)
-                   .map(subResourcesMapper::mapToXs2aPaymentCancellationAuthorisationSubResource);
+                   .map(Xs2aPaymentCancellationAuthorisationSubResource::new);
     }
 
     /**
@@ -105,6 +103,6 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
     @Override
     public Optional<Xs2aAuthorisationSubResource> getAuthorisationSubResources(String paymentId) {
         return authorisationService.getAuthorisationSubResources(paymentId)
-                   .map(subResourcesMapper::mapToXs2aAuthorisationSubResource);
+                   .map(Xs2aAuthorisationSubResource::new);
     }
 }
