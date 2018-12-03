@@ -127,6 +127,8 @@ public class CmsPsuPisServiceInternalTest {
             .thenReturn(psuData);
         when(psuDataMapper.mapToPsuData(psuIdData))
             .thenReturn(psuData);
+        when(psuDataMapper.mapToPsuIdData(any(PsuData.class)))
+            .thenReturn(psuIdData);
     }
 
     @Test

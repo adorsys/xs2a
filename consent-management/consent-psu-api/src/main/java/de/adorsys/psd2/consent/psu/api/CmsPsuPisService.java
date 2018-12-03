@@ -53,7 +53,7 @@ public interface CmsPsuPisService {
      * @return Payment object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<CmsPaymentResponse> getPaymentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String authorisationId);
+    Optional<CmsPaymentResponse> getPaymentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
 
     /**
      * Updates a Status of Payment's autorisation by its ID and PSU ID
