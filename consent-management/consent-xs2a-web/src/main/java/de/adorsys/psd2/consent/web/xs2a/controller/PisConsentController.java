@@ -177,7 +177,7 @@ public class PisConsentController {
     }
 
     @GetMapping(path = "/{payment-id}/cancellation-authorisations")
-    @ApiOperation(value = "Gets list of payment cancellation authorization IDs by payment ID")
+    @ApiOperation(value = "Gets list of payment cancellation authorisation IDs by payment ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
@@ -185,12 +185,12 @@ public class PisConsentController {
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
         return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
-                   .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
+                   .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(path = "/{payment-id}/authorisations")
-    @ApiOperation(value = "Gets list of payment authorization IDs by payment ID")
+    @ApiOperation(value = "Gets list of payment authorisation IDs by payment ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
