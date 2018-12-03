@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.xs2a;
+package de.adorsys.psd2.consent.web.xs2a.controller;
 
-import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -29,23 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/pis")
-@Api(value = "api/v1/pis", tags = "PIS, PSU Data", description = "Provides access to consent management system for PSU Data")
-public class PisPsuDataController {
-    private final PisConsentService pisConsentService;
-
-    @GetMapping(path = "/payment/{payment-id}/psu-data")
-    @ApiOperation(value = "Get PSU data identified by given payment id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PsuIdData> getPsuDataByPaymentId(
-        @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
-        @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.getPsuDataByPaymentId(paymentId)
-                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+@RequestMapping(path = "api/v1/ais")
+@Api(value = "api/v1/ais", tags = "AIS, PSU Data", description = "Provides access to consent management system for PSU Data")
+public class AisPsuDataController {
+    private final AisConsentService aisConsentService;
 
     @GetMapping(path = "/consent/{consent-id}/psu-data")
     @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
@@ -55,8 +42,9 @@ public class PisPsuDataController {
     public ResponseEntity<PsuIdData> getPsuDataByConsentId(
         @ApiParam(name = "consent-id", value = "The consent identification.", example = "32454656712432")
         @PathVariable("consent-id") String consentId) {
-        return pisConsentService.getPsuDataByConsentId(consentId)
+        return aisConsentService.getPsuDataByConsentId(consentId)
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
 }

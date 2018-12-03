@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web;
+package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.PaymentApi;
 import de.adorsys.psd2.model.PaymentInitiationCancelResponse200202;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -85,7 +84,7 @@ public class PaymentController implements PaymentApi {
         return response.hasError()
                    ? responseMapper.ok(response)
                    : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(),
-                                                                                                                      PaymentProduct.SEPA)).build());
+                                                                                                                      "sepa-credit-transfers")).build());
     }
 
     @Override

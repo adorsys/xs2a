@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -67,14 +66,14 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected SpiPayment mapToSpiPayment(List<PisPayment> payments, PaymentType paymentType) {
         if (PaymentType.SINGLE == paymentType) {
             SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(payments.get(0));
-            return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, PaymentProduct.SEPA);
+            return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, "sepa-credit-transfers");
         }
         if (PaymentType.PERIODIC == paymentType) {
             PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(payments.get(0));
-            return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, PaymentProduct.SEPA);
+            return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, "sepa-credit-transfers");
         } else {
             BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(payments);
-            return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, PaymentProduct.SEPA);
+            return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, "sepa-credit-transfers");
         }
     }
 }

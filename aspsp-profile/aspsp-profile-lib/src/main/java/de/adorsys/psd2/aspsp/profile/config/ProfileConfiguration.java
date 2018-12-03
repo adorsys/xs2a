@@ -19,7 +19,6 @@ package de.adorsys.psd2.aspsp.profile.config;
 import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.Data;
@@ -51,7 +50,7 @@ public class ProfileConfiguration implements InitializingBean {
     /**
      * List of payment products supported by ASPSP
      */
-    private List<PaymentProduct> availablePaymentProducts = new ArrayList<>();
+    private List<String> availablePaymentProducts = new ArrayList<>();
 
     /**
      * List of payment types supported by ASPSP
@@ -139,6 +138,11 @@ public class ProfileConfiguration implements InitializingBean {
      * If the option is set to "true", than Delta report is supported
      */
     private boolean deltaReportSupported;
+
+    /**
+     * The limit of an expiration time of redirect url set in milliseconds
+     */
+    private long redirectUrlExpirationTimeMs;
 
     @Override
     public void afterPropertiesSet() {

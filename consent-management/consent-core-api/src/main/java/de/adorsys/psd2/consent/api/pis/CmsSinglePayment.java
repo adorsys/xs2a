@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.api.pis;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 
@@ -38,11 +37,11 @@ public class CmsSinglePayment implements CmsPayment {
     private CmsAddress creditorAddress;
     private String remittanceInformationUnstructured;
     private TransactionStatus paymentStatus;
-    private PaymentProduct paymentProduct;
+    private String paymentProduct;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
 
-    public CmsSinglePayment(PaymentProduct paymentProduct) {
+    public CmsSinglePayment(String paymentProduct) {
         this.paymentProduct = paymentProduct;
     }
 
@@ -52,7 +51,7 @@ public class CmsSinglePayment implements CmsPayment {
     }
 
     @Override
-    public PaymentProduct getPaymentProduct() {
+    public String getPaymentProduct() {
         return paymentProduct;
     }
 }
