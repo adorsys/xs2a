@@ -99,7 +99,7 @@ public class CmsPsuPisController {
         @PathVariable("authorisation-id") String authorisationId) {
 
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsPsuPisService.getPaymentByAuthorisationId(psuIdData, authorisationId)
+        return cmsPsuPisService.getPaymentByRedirectId(psuIdData, authorisationId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }

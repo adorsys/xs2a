@@ -77,15 +77,17 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
-    public @NotNull Optional<CmsPaymentResponse> getPaymentByAuthorisationId(@NotNull PsuIdData psuIdData, @NotNull String authorisationId) {
-        Optional<PisConsentAuthorization> validAuthorisation = pisConsentAuthorizationRepository.findByExternalId(authorisationId)
+    public @NotNull Optional<CmsPaymentResponse> getPaymentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
+        Optional<PisConsentAuthorization> validAuthorisation = pisConsentAuthorizationRepository.findByExternalId(redirectId)
                                                                    .filter(PisConsentAuthorization::isNotExpired);
 
         if (validAuthorisation.isPresent()) {
             List<PisPaymentData> pisPaymentDataList = validAuthorisation.get().getConsent().getPayments();
             CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(pisPaymentDataList);
+            String tppOkRedirectUri = validAuthorisation.get().getConsent().getTppInfo().getRedirectUri();
+            String tppNokRedirectUri = validAuthorisation.get().getConsent().getTppInfo().getNokRedirectUri();
 
-            return cmsPsuPisMapper.mapToCmsPaymentResponse(payment, validAuthorisation.get().getExternalId());
+            return cmsPsuPisMapper.mapToCmsPaymentResponse(payment, validAuthorisation.get().getExternalId(), tppOkRedirectUri, tppNokRedirectUri);
         }
 
         return Optional.empty();

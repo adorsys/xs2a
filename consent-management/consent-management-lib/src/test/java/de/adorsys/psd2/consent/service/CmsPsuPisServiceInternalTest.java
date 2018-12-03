@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
@@ -42,6 +43,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
@@ -63,6 +65,9 @@ public class CmsPsuPisServiceInternalTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String FINALISED_PAYMENT_ID = "finalised payment id";
     private static final String FINALISED_AUTHORISATION_ID = "finalised authorisation id";
+    private static final String EXPIRED_AUTHORISATION_ID = "expired authorisation id";
+    private static final String TPP_OK_REDIRECT_URI = "tpp ok redirect uri";
+    private static final String TPP_NOK_REDIRECT_URI = "tpp nok redirect uri";
     private final PsuIdData WRONG_PSU_ID_DATA = buildWrongPsuIdData();
     private final PsuIdData PSU_ID_DATA = buildPsuIdData();
     private static final String PAYMENT_ID = "payment id";
@@ -251,6 +256,45 @@ public class CmsPsuPisServiceInternalTest {
         assertFalse(actualResult);
     }
 
+    @Test
+    public void getPaymentByAuthorisationId_Success() {
+        //Given
+        PisConsentAuthorization expectedAuthorisation = buildPisConsentAuthorisation();
+        CmsPaymentResponse expectedCmsPaymentResponse = buildCmsPaymentResponse(expectedAuthorisation.getExternalId());
+        when(pisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
+        when(cmsPsuPisMapper.mapToCmsPaymentResponse(any(CmsPayment.class), any(String.class), any(String.class), any(String.class))).thenReturn(Optional.of(expectedCmsPaymentResponse));
+
+        // When
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.getPaymentByRedirectId(PSU_ID_DATA, AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actualResult.isPresent());
+        assertThat(actualResult.get().getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
+    }
+
+    @Test
+    public void getPaymentByAuthorisationId_Fail_ExpiredRedirectUrl() {
+        //Given
+        PisConsentAuthorization expectedAuthorisation = buildExpiredAuthorisation();
+        when(pisConsentService.getDecryptedId(EXPIRED_AUTHORISATION_ID)).thenReturn(Optional.of(EXPIRED_AUTHORISATION_ID));
+        when(pisConsentAuthorizationRepository.findByExternalId(EXPIRED_AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
+
+        // When
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.getPaymentByRedirectId(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID);
+
+        // Then
+        assertThat(actualResult).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void getPaymentByAuthorisationId_Fail_WrongId() {
+        // When
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.getPaymentByRedirectId(PSU_ID_DATA, WRONG_AUTHORISATION_ID);
+
+        // Then
+        assertThat(actualResult).isEqualTo(Optional.empty());
+    }
+
     private PsuIdData buildPsuIdData() {
         return new PsuIdData(
             "psuId",
@@ -276,6 +320,7 @@ public class CmsPsuPisServiceInternalTest {
         pisConsentAuthorisation.setConsent(buildPisConsent());
         pisConsentAuthorisation.setExternalId(AUTHORISATION_ID);
         pisConsentAuthorisation.setPsuData(buildPsuData());
+        pisConsentAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2022-12-03T10:15:30+01:00"));
 
         return pisConsentAuthorisation;
     }
@@ -367,4 +412,28 @@ public class CmsPsuPisServiceInternalTest {
 
         return Collections.singletonList(pisPaymentData);
     }
+
+
+    private PisConsentAuthorization buildExpiredAuthorisation() {
+        PisConsentAuthorization pisConsentAuthorisation = new PisConsentAuthorization();
+        pisConsentAuthorisation.setScaStatus(ScaStatus.STARTED);
+        pisConsentAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
+        pisConsentAuthorisation.setConsent(buildPisConsent());
+        pisConsentAuthorisation.setExternalId(EXPIRED_AUTHORISATION_ID);
+        pisConsentAuthorisation.setPsuData(buildPsuData());
+        pisConsentAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2017-12-03T10:15:30+01:00"));
+
+        return pisConsentAuthorisation;
+    }
+
+
+    private CmsPaymentResponse buildCmsPaymentResponse(String authorisationId) {
+        return new CmsPaymentResponse(
+            buildCmsPayment(),
+            authorisationId,
+            TPP_OK_REDIRECT_URI,
+            TPP_NOK_REDIRECT_URI
+        );
+    }
+
 }

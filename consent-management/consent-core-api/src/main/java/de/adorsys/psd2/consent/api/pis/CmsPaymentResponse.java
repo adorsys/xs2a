@@ -23,4 +23,6 @@ public class CmsPaymentResponse {
 
     private CmsPayment payment;
     private String authorisationId;
+    private String tppOkRedirectUri;
+    private String tppNokRedirectUri;
 }

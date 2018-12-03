@@ -163,8 +163,22 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().isPaymentCancellationAuthorizationMandated();
     }
 
+    /**
+     * Reads if piis consent is supported
+     *
+     * @return true if piis consent is supported, false if doesn't
+     */
     public boolean isPiisConsentSupported() {
         return readAspspSettings().isPiisConsentSupported();
+    }
+
+    /**
+     * Reads redirect url expiration time in milliseconds
+     *
+     * @return long value of redirect url expiration time
+     */
+    public long getRedirectUrlExpirationTimeMs() {
+        return readAspspSettings().getRedirectUrlExpirationTimeMs();
     }
 
     private AspspSettings readAspspSettings() {

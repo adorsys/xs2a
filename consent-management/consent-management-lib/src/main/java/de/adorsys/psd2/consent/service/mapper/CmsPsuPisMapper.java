@@ -49,11 +49,13 @@ public class CmsPsuPisMapper {
         }
     }
 
-    public Optional<CmsPaymentResponse> mapToCmsPaymentResponse(CmsPayment payment, String authorisationId) {
+    public Optional<CmsPaymentResponse> mapToCmsPaymentResponse(CmsPayment payment, String authorisationId, String tppOkRedirectUri, String tppNokRedirectUri) {
         return Optional.ofNullable(payment)
                    .map(p -> new CmsPaymentResponse(
                        payment,
-                       authorisationId
+                       authorisationId,
+                       tppOkRedirectUri,
+                       tppNokRedirectUri
                    ));
     }
 
