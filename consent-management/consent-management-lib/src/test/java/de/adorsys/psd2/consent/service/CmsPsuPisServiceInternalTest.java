@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
@@ -332,8 +333,17 @@ public class CmsPsuPisServiceInternalTest {
         pisConsent.setPaymentType(PaymentType.SINGLE);
         pisConsent.setPaymentProduct(PAYMENT_PRODUCT);
         pisConsent.setPayments(buildPisPaymentDataListForConsent());
+        pisConsent.setTppInfo(buildTppInfo());
 
         return pisConsent;
+    }
+
+    private TppInfoEntity buildTppInfo() {
+        TppInfoEntity tppInfoEntity = new TppInfoEntity();
+        tppInfoEntity.setNokRedirectUri("tpp nok redirect uri");
+        tppInfoEntity.setRedirectUri("tpp ok redirect uri");
+
+        return tppInfoEntity;
     }
 
     private PsuData buildPsuData() {
