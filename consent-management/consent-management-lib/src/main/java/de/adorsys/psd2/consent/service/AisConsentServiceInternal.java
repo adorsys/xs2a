@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
@@ -36,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
@@ -55,6 +58,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentMapper consentMapper;
     private final PsuDataMapper psuDataMapper;
     private final SecurityDataService securityDataService;
+    private final AspspProfileService aspspProfileService;
 
     /**
      * Create AIS consent
@@ -343,6 +347,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consentAuthorization.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
+        consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
         return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
     }
 }

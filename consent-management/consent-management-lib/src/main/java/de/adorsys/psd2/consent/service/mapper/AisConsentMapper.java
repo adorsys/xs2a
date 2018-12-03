@@ -17,10 +17,7 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AccountAccess;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -69,6 +66,11 @@ public class AisConsentMapper {
                        return resp;
                    })
                    .orElse(null);
+    }
+
+    public Optional<CmsAisConsentResponse> mapToCmsAisConsentResponse(AisAccountConsent aisAccountConsent, String redirectId, String tppOkRedirectUri, String tppNokRedirectUri) {
+        return Optional.ofNullable(aisAccountConsent)
+            .map(c -> new CmsAisConsentResponse(aisAccountConsent, redirectId, tppOkRedirectUri, tppNokRedirectUri));
     }
 
     private AisAccountAccess mapToAisAccountAccess(List<AccountAccess> accountAccesses) {

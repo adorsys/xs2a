@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
@@ -106,6 +107,35 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Transactional
     public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
         return changeConsentStatus(consentId, REVOKED_BY_PSU);
+    }
+
+    @Override
+    public @NotNull Optional<CmsAisConsentResponse> getConsentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
+        Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorizationRepository.findByExternalId(redirectId);
+
+        if (!authorisationOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        AisConsentAuthorization authorisation = authorisationOptional.get();
+
+        if (authorisation.isExpired()) {
+            authorisation.setScaStatus(ScaStatus.FAILED);
+            aisConsentAuthorizationRepository.save(authorisation);
+            return Optional.empty();
+        }
+
+        AisConsent aisConsent = authorisation.getConsent();
+
+        if (aisConsent == null) {
+            return Optional.empty();
+        }
+
+        AisAccountConsent aisAccountConsent = consentMapper.mapToAisAccountConsent(aisConsent);
+        String tppOkRedirectUri = "Mock tppOkRedirectUri";
+        String tppNokRedirectUri = "Mock tppNokRedirectUri";
+
+        return consentMapper.mapToCmsAisConsentResponse(aisAccountConsent, redirectId, tppOkRedirectUri, tppNokRedirectUri);
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status) {

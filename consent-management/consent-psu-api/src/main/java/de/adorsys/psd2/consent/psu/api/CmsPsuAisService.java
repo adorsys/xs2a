@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
@@ -48,10 +49,10 @@ public interface CmsPsuAisService {
     /**
      * Updates a Status of AIS Consent Authorisation by its ID and PSU ID
      *
-     * @param psuIdData PSU credentials data
-     * @param consentId ID of Consent
+     * @param psuIdData       PSU credentials data
+     * @param consentId       ID of Consent
      * @param authorisationId ID of Authorisation process
-     * @param status    Status of Authorisation to be set
+     * @param status          Status of Authorisation to be set
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
     boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status);
@@ -92,4 +93,15 @@ public interface CmsPsuAisService {
      * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
      */
     boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+
+    /**
+     * Returns Payment object by its ID
+     *
+     * @param psuIdData  PSU credentials data
+     * @param redirectId ID of redirect
+     * @return Payment object if it was found and it corresponds to the user data given in parameter
+     */
+    @NotNull
+    Optional<CmsAisConsentResponse> getConsentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
+
 }

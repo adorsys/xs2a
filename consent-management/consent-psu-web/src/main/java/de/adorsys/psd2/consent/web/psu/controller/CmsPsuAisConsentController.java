@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -177,6 +178,28 @@ public class CmsPsuAisConsentController {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return new ResponseEntity<>(cmsPsuAisService.revokeConsent(psuIdData, consentId), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/redirect/{redirect-id}")
+    @ApiOperation(value = "Gets consent response by redirect id")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = CmsAisConsentResponse.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<CmsAisConsentResponse> getConsentByRedirectId(
+        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ")
+        @RequestHeader(value = "psu-id", required = false) String psuId,
+        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
+        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
+        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
+        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
+        @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created payment", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("redirect-id") String redirectId) {
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        return cmsPsuAisService.getConsentByRedirectId(psuIdData, redirectId)
+                   .map(consent -> new ResponseEntity<>(consent, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     private PsuIdData getPsuIdData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
