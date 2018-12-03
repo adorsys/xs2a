@@ -251,7 +251,7 @@ public class PisConsentServiceInternal implements PisConsentService {
      * @return response contains authorisation IDs
      */
     @Override
-    public Optional<List<String>> getAuthorisationByPaymentId(String encryptedPaymentId, CmsAuthorisationType authorisationType) {
+    public Optional<List<String>> getAuthorisationsByPaymentId(String encryptedPaymentId, CmsAuthorisationType authorisationType) {
         Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
         if (!paymentId.isPresent()) {
             log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
@@ -268,8 +268,8 @@ public class PisConsentServiceInternal implements PisConsentService {
             return Optional.of(Collections.emptyList());
         }
 
-        PisConsent pisConsent = paymentDataList.get(0).getConsent();
-        List<String> authorisationIds = pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(pisConsent.getId(), authorisationType)
+        List<String> authorisationIds = paymentDataList.get(0).getConsent()
+                                            .getAuthorizations()
                                             .stream()
                                             .map(PisConsentAuthorization::getExternalId)
                                             .collect(Collectors.toList());

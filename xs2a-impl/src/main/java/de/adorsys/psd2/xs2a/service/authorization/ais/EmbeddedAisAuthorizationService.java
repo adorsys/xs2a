@@ -106,11 +106,11 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      * See {@link Xs2aAisConsentService#getAuthorisationSubResources(String)} for details
      *
      * @param consentId String identification of consent
-     * @return Optional of Xs2aAuthorisationSubResource with list of authorisation IDs
+     * @return Optional of Xs2aAuthorisationSubResources with list of authorisation IDs
      */
     @Override
-    public Optional<Xs2aAuthorisationSubResource> getAuthorisationSubResources(String consentId) {
+    public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {
         return aisConsentService.getAuthorisationSubResources(consentId)
-                   .map(Xs2aAuthorisationSubResource::new);
+                   .map(Xs2aAuthorisationSubResources::new);
     }
 }

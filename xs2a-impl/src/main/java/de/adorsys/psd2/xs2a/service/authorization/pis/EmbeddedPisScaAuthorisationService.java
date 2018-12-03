@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.authorization.pis;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
@@ -101,8 +101,8 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return authorization sub resources
      */
     @Override
-    public Optional<Xs2aAuthorisationSubResource> getAuthorisationSubResources(String paymentId) {
+    public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String paymentId) {
         return authorisationService.getAuthorisationSubResources(paymentId)
-                   .map(Xs2aAuthorisationSubResource::new);
+                   .map(Xs2aAuthorisationSubResources::new);
     }
 }

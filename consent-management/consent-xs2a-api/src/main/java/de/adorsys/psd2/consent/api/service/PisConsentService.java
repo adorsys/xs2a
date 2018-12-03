@@ -136,7 +136,7 @@ public interface PisConsentService {
      * @param authorisationType Type of authorisation
      * @return Response containing information about authorisation IDs
      */
-    Optional<List<String>> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorisationType);
+    Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType);
 
     /**
      * Get information about PSU by payment identifier

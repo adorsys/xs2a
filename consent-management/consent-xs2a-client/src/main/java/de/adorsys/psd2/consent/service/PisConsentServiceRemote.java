@@ -126,7 +126,7 @@ public class PisConsentServiceRemote implements PisConsentService {
     }
 
     @Override
-    public Optional<List<String>> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
+    public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
         String url = getAuthorisationSubResourcesUrl(authorisationType);
         try {
             ResponseEntity<List<String>> request = consentRestTemplate.exchange(

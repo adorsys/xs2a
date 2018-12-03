@@ -28,5 +28,5 @@ public interface AisAuthorizationService {
 
     AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId);
 
-    Optional<Xs2aAuthorisationSubResource> getAuthorisationSubResources(String consentId);
+    Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId);
 }

@@ -184,7 +184,7 @@ public class PisConsentController {
     public ResponseEntity<List<String>> getConsentAuthorisationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
+        return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -197,7 +197,7 @@ public class PisConsentController {
     public ResponseEntity<List<String>> getConsentAuthorisation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CREATED)
+        return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CREATED)
                    .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

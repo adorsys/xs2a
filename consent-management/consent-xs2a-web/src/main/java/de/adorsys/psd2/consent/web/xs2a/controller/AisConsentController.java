@@ -161,7 +161,7 @@ public class AisConsentController {
     public ResponseEntity<List<String>> getConsentAuthorisation(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE")
         @PathVariable("consent-id") String consentId) {
-        return aisConsentService.getAuthorisationByConsentId(consentId)
+        return aisConsentService.getAuthorisationsByConsentId(consentId)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

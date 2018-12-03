@@ -196,23 +196,16 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return Gets list of consent authorisation IDs
      */
     @Override
-    public Optional<List<String>> getAuthorisationByConsentId(String encryptedConsentId) {
+    public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
         Optional<String> consentId = securityDataService.decryptId(encryptedConsentId);
         if (!consentId.isPresent()) {
             return Optional.empty();
         }
 
-        Optional<AisConsent> aisConsent = aisConsentRepository.findByExternalId(consentId.get());
-        if (!aisConsent.isPresent()) {
-            return Optional.empty();
-        }
-
-        List<String> authorisationIds = aisConsentAuthorizationRepository.findByConsentId(aisConsent.get().getId())
-                                            .stream()
-                                            .map(AisConsentAuthorization::getExternalId)
-                                            .collect(Collectors.toList());
-
-        return Optional.of(authorisationIds);
+        return aisConsentRepository.findByExternalId(consentId.get())
+                   .map(cst -> cst.getAuthorizations().stream()
+                                   .map(AisConsentAuthorization::getExternalId)
+                                   .collect(Collectors.toList()));
     }
 
     /**

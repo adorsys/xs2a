@@ -123,7 +123,7 @@ public class PisAuthorisationService {
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getCancellationAuthorisationSubResources(String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
+        return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
     }
 
     /**
@@ -133,6 +133,6 @@ public class PisAuthorisationService {
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CREATED);
+        return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CREATED);
     }
 }

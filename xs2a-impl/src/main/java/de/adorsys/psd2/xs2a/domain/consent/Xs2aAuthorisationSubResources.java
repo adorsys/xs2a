@@ -23,6 +23,6 @@ import java.util.List;
 
 @Value
 @AllArgsConstructor
-public class Xs2aAuthorisationSubResource {
+public class Xs2aAuthorisationSubResources {
     private List<String> authorisationIds;
 }

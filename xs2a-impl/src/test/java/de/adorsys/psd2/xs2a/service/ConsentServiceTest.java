@@ -674,13 +674,13 @@ public class ConsentServiceTest {
     @Test
     public void getPaymentInitiationAuthorisation() {
         when(pisScaAuthorisationService.getAuthorisationSubResources(anyString()))
-            .thenReturn(Optional.of(new Xs2aAuthorisationSubResource(Collections.singletonList(PAYMENT_ID))));
+            .thenReturn(Optional.of(new Xs2aAuthorisationSubResources(Collections.singletonList(PAYMENT_ID))));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        ResponseObject<Xs2aAuthorisationSubResource> paymentInitiationAuthorisation = consentService.getPaymentInitiationAuthorisation(PAYMENT_ID);
+        ResponseObject<Xs2aAuthorisationSubResources> paymentInitiationAuthorisation = consentService.getPaymentInitiationAuthorisations(PAYMENT_ID);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -695,13 +695,13 @@ public class ConsentServiceTest {
     @Test
     public void getConsentInitiationAuthorisation() {
         when(aisAuthorizationService.getAuthorisationSubResources(anyString()))
-            .thenReturn(Optional.of(new Xs2aAuthorisationSubResource(Collections.singletonList(CONSENT_ID))));
+            .thenReturn(Optional.of(new Xs2aAuthorisationSubResources(Collections.singletonList(CONSENT_ID))));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        ResponseObject<Xs2aAuthorisationSubResource> paymentInitiationAuthorisation = consentService.getConsentInitiationAuthorisation(CONSENT_ID);
+        ResponseObject<Xs2aAuthorisationSubResources> paymentInitiationAuthorisation = consentService.getConsentInitiationAuthorisations(CONSENT_ID);
 
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());

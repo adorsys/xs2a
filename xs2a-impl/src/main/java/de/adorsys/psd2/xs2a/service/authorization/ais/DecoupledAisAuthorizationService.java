@@ -40,7 +40,7 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
     }
 
     @Override
-    public Optional<Xs2aAuthorisationSubResource> getAuthorisationSubResources(String consentId) {
+    public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {
         return Optional.empty();
     }
 }

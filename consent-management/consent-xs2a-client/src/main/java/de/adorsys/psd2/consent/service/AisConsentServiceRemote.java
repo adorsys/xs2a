@@ -35,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Optional;
 
+// TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/498
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -108,7 +109,7 @@ public class AisConsentServiceRemote implements AisConsentService {
     }
 
     @Override
-    public Optional<List<String>> getAuthorisationByConsentId(String encryptedConsentId) {
+    public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
         try {
             ResponseEntity<List<String>> request = consentRestTemplate.exchange(
                 remoteAisConsentUrls.getAuthorisationSubResources(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
