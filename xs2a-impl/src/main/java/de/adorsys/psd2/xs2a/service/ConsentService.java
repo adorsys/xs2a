@@ -53,9 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
@@ -122,9 +120,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build();
 
-        if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED
+        if (isEmbeddedOrRedirectScaApproach()
                 && authorisationMethodService.isImplicitMethod(explicitPreferred)) {
-            proceedEmbeddedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, consentId);
+            proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, consentId);
         }
 
         return createConsentResponseObject;
@@ -370,8 +368,13 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .orElse(null);
     }
 
-    private void proceedEmbeddedImplicitCaseForCreateConsent(CreateConsentResponse response, PsuIdData psuData, String consentId) {
+    private void proceedImplicitCaseForCreateConsent(CreateConsentResponse response, PsuIdData psuData, String consentId) {
         aisAuthorizationService.createConsentAuthorization(psuData, consentId)
             .ifPresent(a -> response.setAuthorizationId(a.getAuthorizationId()));
+    }
+
+    private boolean isEmbeddedOrRedirectScaApproach() {
+        return EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.REDIRECT)
+                   .contains(aspspProfileService.getScaApproach());
     }
 }
