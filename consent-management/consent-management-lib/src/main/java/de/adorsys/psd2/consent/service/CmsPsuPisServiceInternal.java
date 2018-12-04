@@ -182,9 +182,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             tppNokRedirectUri);
     }
 
-    private CmsPaymentResponse changeAuthorisationStatusToFailed(PisConsentAuthorization authorisation) {
+    private void changeAuthorisationStatusToFailed(PisConsentAuthorization authorisation) {
         authorisation.setScaStatus(ScaStatus.FAILED);
         pisConsentAuthorizationRepository.save(authorisation);
-        return null;
     }
 }
