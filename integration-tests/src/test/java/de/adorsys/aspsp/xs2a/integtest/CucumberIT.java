@@ -12,7 +12,7 @@ import cucumber.api.junit.Cucumber;
     glue = "de.adorsys.aspsp.xs2a.integtest.stepdefinitions",
     format = {"json:cucumber-report/cucumber.json"},
     tags = {"~@ignore", "~@TestTag"})
-public class CucumberTest
+public class CucumberIT
 {
 
 
