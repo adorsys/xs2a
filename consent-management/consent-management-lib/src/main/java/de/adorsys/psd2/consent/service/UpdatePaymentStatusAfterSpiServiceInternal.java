@@ -52,7 +52,7 @@ public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePayment
             return false;
         }
 
-        if (isTryToChangeFinaliseStatus(payments, newStatus)) {
+        if (isChangingFinaliseStatus(payments, newStatus)) {
             return false;
         }
 
@@ -73,7 +73,7 @@ public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePayment
                    .flatMap(pisPaymentDataRepository::findByPaymentId);
     }
 
-    private boolean isTryToChangeFinaliseStatus(List<PisPaymentData> payments, TransactionStatus newStatus) {
+    private boolean isChangingFinaliseStatus(List<PisPaymentData> payments, TransactionStatus newStatus) {
         return payments.stream()
                    .map(PisPaymentData::getTransactionStatus)
                    .filter(TransactionStatus::isFinalisedStatus)
