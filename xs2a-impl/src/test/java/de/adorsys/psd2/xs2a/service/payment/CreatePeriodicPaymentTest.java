@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -74,7 +73,7 @@ public class CreatePeriodicPaymentTest {
     public void success_initiate_periodic_payment() {
         //When
         when(pisConsentDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
-        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, PaymentProduct.SEPA, buildXs2aPisConsent())).thenReturn(buildPeriodicPaymentInitiationResponse());
+        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, "sepa-credit-transfers", buildXs2aPisConsent())).thenReturn(buildPeriodicPaymentInitiationResponse());
 
         ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo(), buildXs2aPisConsent());
 
@@ -117,7 +116,7 @@ public class CreatePeriodicPaymentTest {
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
-        parameters.setPaymentProduct(PaymentProduct.SEPA);
+        parameters.setPaymentProduct("sepa-credit-transfers");
         parameters.setPaymentType(PaymentType.PERIODIC);
         return parameters;
     }

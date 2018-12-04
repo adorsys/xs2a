@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.xs2a;
+package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
 import de.adorsys.psd2.consent.api.ais.*;
@@ -25,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -148,6 +150,19 @@ public class AisConsentController {
 
         return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId)
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/{consent-id}/authorisations")
+    @ApiOperation(value = "Gets list of consent authorisation IDs by consent ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<String>> getConsentAuthorisation(
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE")
+        @PathVariable("consent-id") String consentId) {
+        return aisConsentService.getAuthorisationsByConsentId(consentId)
+                   .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

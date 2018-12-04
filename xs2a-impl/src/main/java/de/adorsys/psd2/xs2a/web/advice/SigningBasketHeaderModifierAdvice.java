@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.web.advice;
 import de.adorsys.psd2.model.LinksSigningBasket;
 import de.adorsys.psd2.model.SigningBasketResponse201;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.SigningBasketController;
+import de.adorsys.psd2.xs2a.web.controller.SigningBasketController;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.xs2a;
+package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
@@ -33,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -175,15 +177,28 @@ public class PisConsentController {
     }
 
     @GetMapping(path = "/{payment-id}/cancellation-authorisations")
-    @ApiOperation(value = "Getting payment authorization cancellation by paymentId")
+    @ApiOperation(value = "Gets list of payment cancellation authorisation IDs by payment ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<String> getConsentAuthorisationCancellation(
+    public ResponseEntity<List<String>> getConsentAuthorisationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
-                   .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
+        return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
+                   .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/{payment-id}/authorisations")
+    @ApiOperation(value = "Gets list of payment authorisation IDs by payment ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<String>> getConsentAuthorisation(
+        @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE")
+        @PathVariable("payment-id") String paymentId) {
+        return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CREATED)
+                   .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

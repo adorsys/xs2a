@@ -40,7 +40,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "de.adorsys.psd2.xs2a.web.controller")
 @RequiredArgsConstructor
 public class GlobalExceptionHandlerController {
     private final MessageErrorMapper messageErrorMapper;

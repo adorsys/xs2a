@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.api.ConsentType;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -66,9 +65,8 @@ public class PisConsent {
     private PaymentType paymentType;
 
     @Column(name = "payment_product", nullable = false)
-    @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
-    private PaymentProduct pisPaymentProduct;
+    private String paymentProduct;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -79,4 +77,8 @@ public class PisConsent {
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
+
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @ApiModelProperty(value = "List of authorizations related to the consent", required = true)
+    private List<PisConsentAuthorization> authorizations = new ArrayList<>();
 }

@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.web.interceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
-import de.adorsys.psd2.xs2a.web.ConsentController;
+import de.adorsys.psd2.xs2a.web.controller.ConsentController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

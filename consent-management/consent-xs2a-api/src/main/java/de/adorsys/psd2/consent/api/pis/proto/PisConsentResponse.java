@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.api.pis.proto;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -35,7 +34,7 @@ public class PisConsentResponse {
     private List<PisPayment> payments;
 
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
-    private PaymentProduct paymentProduct;
+    private String paymentProduct;
 
     @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PaymentType paymentType;

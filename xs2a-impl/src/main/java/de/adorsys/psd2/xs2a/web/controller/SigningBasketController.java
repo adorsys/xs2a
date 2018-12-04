@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.validator.certificate.util;
+package de.adorsys.psd2.xs2a.web.controller;
 
-public enum TppRole {
+import de.adorsys.psd2.api.SigningBasketApi;
+import io.swagger.annotations.Api;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.RestController;
 
-	PISP, AISP, PIISP, ASPSP
+@RestController
+@AllArgsConstructor
+@Api(value = "v1", description = "Provides access to the signing baskets", tags = {"Signing Baskets"})
+public class SigningBasketController implements SigningBasketApi {
+
+
 }

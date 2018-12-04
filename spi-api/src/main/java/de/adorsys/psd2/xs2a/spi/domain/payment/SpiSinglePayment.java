@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
@@ -39,11 +38,11 @@ public class SpiSinglePayment implements SpiPayment {
     private SpiAddress creditorAddress;
     private String remittanceInformationUnstructured;
     private SpiTransactionStatus paymentStatus;
-    protected PaymentProduct paymentProduct;
+    protected String paymentProduct;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
 
-    public SpiSinglePayment(PaymentProduct paymentProduct) {
+    public SpiSinglePayment(String paymentProduct) {
         this.paymentProduct = paymentProduct;
     }
 
@@ -53,7 +52,7 @@ public class SpiSinglePayment implements SpiPayment {
     }
 
     @Override
-    public PaymentProduct getPaymentProduct() {
+    public String getPaymentProduct() {
         return paymentProduct;
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web;
+package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.ConsentInformationResponse200Json;
