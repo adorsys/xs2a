@@ -23,7 +23,7 @@ import java.util.List;
 @Data
 public class TppCertificateData {
     private String pspAuthorisationNumber;
-    private List<TppRole> pspRoles;
+    private List<String> pspRoles;
     private String name;
     private String pspAuthorityName;
     private String pspAuthorityId;

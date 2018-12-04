@@ -38,6 +38,7 @@ import java.util.Optional;
 @Service("bulk-payments")
 @RequiredArgsConstructor
 public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformationResponse<BulkPayment>> {
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final BulkPaymentSpi bulkPaymentSpi;
     private final SpiToXs2aBulkPaymentMapper spiToXs2aBulkPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
@@ -64,7 +65,16 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
         }
 
         SpiBulkPayment spiResponsePayment = spiResponse.getPayload();
+        BulkPayment xs2aBulkPayment = spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiResponsePayment);
 
-        return new PaymentInformationResponse<>(spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(spiResponsePayment));
+        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(aspspConsentData.getConsentId(), xs2aBulkPayment.getTransactionStatus())) {
+            return new PaymentInformationResponse<>(
+                ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                    .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
+                    .build()
+            );
+        }
+
+        return new PaymentInformationResponse<>(xs2aBulkPayment);
     }
 }

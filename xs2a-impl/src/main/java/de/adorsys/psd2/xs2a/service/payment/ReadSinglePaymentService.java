@@ -38,6 +38,7 @@ import java.util.Optional;
 @Service("payments")
 @RequiredArgsConstructor
 public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformationResponse<SinglePayment>> {
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final SinglePaymentSpi singlePaymentSpi;
     private final SpiToXs2aSinglePaymentMapper spiToXs2aSinglePaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
@@ -64,7 +65,16 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
         }
 
         SpiSinglePayment spiSinglePayment = spiResponse.getPayload();
+        SinglePayment xs2aSinglePayment = spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment);
 
-        return new PaymentInformationResponse<>(spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment));
+        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(aspspConsentData.getConsentId(), xs2aSinglePayment.getTransactionStatus())) {
+            return new PaymentInformationResponse<>(
+                ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                    .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
+                    .build()
+            );
+        }
+
+        return new PaymentInformationResponse<>(xs2aSinglePayment);
     }
 }

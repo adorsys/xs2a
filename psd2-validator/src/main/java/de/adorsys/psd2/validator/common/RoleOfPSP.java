@@ -16,21 +16,15 @@
 
 package de.adorsys.psd2.validator.common;
 
+import org.bouncycastle.asn1.*;
+
 import java.util.Arrays;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERUTF8String;
-
-import de.adorsys.psd2.validator.certificate.util.TppRole;
-
 public enum RoleOfPSP {
-	PSP_AS(RoleOfPspOid.id_psd2_role_psp_as, RoleOfPspName.PSP_AS, TppRole.ASPSP.name()), PSP_PI(
-			RoleOfPspOid.id_psd2_role_psp_pi, RoleOfPspName.PSP_PI, TppRole.PISP.name()), PSP_AI(
-					RoleOfPspOid.id_psd2_role_psp_ai, RoleOfPspName.PSP_AI, TppRole.AISP.name()), PSP_IC(
-							RoleOfPspOid.id_psd2_role_psp_ic, RoleOfPspName.PSP_IC, TppRole.PIISP.name());
+	PSP_AS(RoleOfPspOid.id_psd2_role_psp_as, RoleOfPspName.PSP_AS, TppRoles.ASPSP), PSP_PI(
+			RoleOfPspOid.id_psd2_role_psp_pi, RoleOfPspName.PSP_PI, TppRoles.PISP), PSP_AI(
+					RoleOfPspOid.id_psd2_role_psp_ai, RoleOfPspName.PSP_AI, TppRoles.AISP), PSP_IC(
+							RoleOfPspOid.id_psd2_role_psp_ic, RoleOfPspName.PSP_IC, TppRoles.PIISP);
 
 	private ASN1ObjectIdentifier roleOfPspOid;
 	private DERUTF8String roleOfPspName;

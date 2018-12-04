@@ -16,10 +16,12 @@
 
 package de.adorsys.psd2.consent;
 
+import de.adorsys.psd2.consent.config.EnableCmsSwagger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+@EnableCmsSwagger
 @SpringBootApplication
 @ComponentScan("de.adorsys.psd2")
 public class ConsentManagementStandaloneApp {

@@ -140,6 +140,8 @@ public class PaymentServiceTest {
     private SpiPayment spiPayment;
     @Mock
     private SpiSinglePayment spiSinglePayment;
+    @Mock
+    private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
 
     @Before
     public void setUp() {
@@ -293,6 +295,8 @@ public class PaymentServiceTest {
                     .success()
             );
         doNothing().when(pisConsentDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
+            .thenReturn(true);
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);

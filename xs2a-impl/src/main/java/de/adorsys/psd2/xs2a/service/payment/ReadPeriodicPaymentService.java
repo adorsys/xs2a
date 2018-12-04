@@ -38,6 +38,7 @@ import java.util.Optional;
 @Service("periodic-payments")
 @RequiredArgsConstructor
 public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInformationResponse<PeriodicPayment>> {
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final PeriodicPaymentSpi periodicPaymentSpi;
     private final SpiToXs2aPeriodicPaymentMapper spiToXs2aPeriodicPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
@@ -64,7 +65,16 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
         }
 
         SpiPeriodicPayment spiResponsePayment = spiResponse.getPayload();
+        PeriodicPayment xs2aPeriodicPayment = spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiResponsePayment);
 
-        return new PaymentInformationResponse<>(spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiResponsePayment));
+        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(aspspConsentData.getConsentId(), xs2aPeriodicPayment.getTransactionStatus())) {
+            return new PaymentInformationResponse<>(
+                ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                    .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
+                    .build()
+            );
+        }
+
+        return new PaymentInformationResponse<>(xs2aPeriodicPayment);
     }
 }

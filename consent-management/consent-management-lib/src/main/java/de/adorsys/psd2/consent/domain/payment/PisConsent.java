@@ -77,4 +77,8 @@ public class PisConsent {
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
+
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @ApiModelProperty(value = "List of authorizations related to the consent", required = true)
+    private List<PisConsentAuthorization> authorizations = new ArrayList<>();
 }
