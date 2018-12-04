@@ -110,7 +110,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    public @NotNull Optional<CmsAisConsentResponse> getConsentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
+    public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
         Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorizationRepository.findByExternalId(redirectId);
 
         if (!authorisationOptional.isPresent()) {

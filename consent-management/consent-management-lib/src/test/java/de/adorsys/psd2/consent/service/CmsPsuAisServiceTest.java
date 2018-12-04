@@ -308,7 +308,7 @@ public class CmsPsuAisServiceTest {
     public void getConsentByRedirectId_Fail_AuthorisationNotFound() {
         when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.empty());
 
-        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.getConsentByRedirectId(psuIdData, AUTHORISATION_ID);
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID);
 
         assertFalse(consentResponseOptional.isPresent());
     }
@@ -319,7 +319,7 @@ public class CmsPsuAisServiceTest {
         when(mockAisConsentAuthorization.isExpired()).thenReturn(true);
         doReturn(mockAisConsentAuthorization).when(aisConsentAuthorizationRepository).save(mockAisConsentAuthorization);
 
-        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.getConsentByRedirectId(psuIdData, AUTHORISATION_ID);
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID);
 
         assertFalse(consentResponseOptional.isPresent());
         verify(aisConsentAuthorizationRepository).save(mockAisConsentAuthorization);
@@ -332,7 +332,7 @@ public class CmsPsuAisServiceTest {
         when(mockAisConsentAuthorization.isExpired()).thenReturn(false);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(null);
 
-        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.getConsentByRedirectId(psuIdData, AUTHORISATION_ID);
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID);
 
         assertFalse(consentResponseOptional.isPresent());
     }
@@ -345,7 +345,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
         when(aisConsentMapper.mapToCmsAisConsentResponse(aisAccountConsent, AUTHORISATION_ID, TPP_OK_REDIRECT_URI, TPP_NOK_REDIRECT_URI)).thenReturn(Optional.of(cmsAisConsentResponse));
 
-        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.getConsentByRedirectId(psuIdData, AUTHORISATION_ID);
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID);
 
         assertTrue(consentResponseOptional.isPresent());
         CmsAisConsentResponse cmsAisConsentResponse = consentResponseOptional.get();

@@ -95,13 +95,13 @@ public interface CmsPsuAisService {
     boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
 
     /**
-     * Returns Payment object by its ID
+     * Returns CMS AIS consent response object by redirect id if redirect id has not expired
      *
      * @param psuIdData  PSU credentials data
      * @param redirectId ID of redirect
-     * @return Payment object if it was found and it corresponds to the user data given in parameter
+     * @return CMS AIS consent response object if it has been found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<CmsAisConsentResponse> getConsentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
+    Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
 
 }
