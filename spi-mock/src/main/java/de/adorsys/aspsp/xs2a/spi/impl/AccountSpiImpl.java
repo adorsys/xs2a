@@ -42,6 +42,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @Component
 @RequiredArgsConstructor
 public class AccountSpiImpl implements AccountSpi {
@@ -131,11 +133,29 @@ public class AccountSpiImpl implements AccountSpi {
                 balances = accountDetails.getBalances();
             }
 
-            SpiTransactionReport transactionReport = new SpiTransactionReport(transactions, balances, SpiTransactionReport.RESPONSE_TYPE_JSON, null);
+            SpiResponse.SpiResponseBuilder<SpiTransactionReport> responseBuilder =
+                SpiResponse.<SpiTransactionReport>builder()
+                    .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()));
+            if (acceptMediaType.contains(SpiTransactionReport.RESPONSE_TYPE_JSON)) {
+                SpiTransactionReport transactionReport = new SpiTransactionReport(transactions,
+                                                                                  balances,
+                                                                                  SpiTransactionReport.RESPONSE_TYPE_JSON,
+                                                                                  null
+                );
+                responseBuilder = responseBuilder.payload(transactionReport);
+            } else {
+                String plainTextResponse = transactions.stream()
+                                     .map(SpiTransaction::toString)
+                                     .collect(Collectors.joining(",\n"));
+                SpiTransactionReport transactionReport = new SpiTransactionReport(Collections.emptyList(),
+                                                                                  Collections.emptyList(),
+                                                                                  "text/plain",
+                                                                                  plainTextResponse.getBytes(UTF_8)
+                );
+                responseBuilder = responseBuilder.payload(transactionReport);
+            }
 
-            return SpiResponse.<SpiTransactionReport>builder()
-                .payload(transactionReport)
-                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+            return responseBuilder
                 .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
