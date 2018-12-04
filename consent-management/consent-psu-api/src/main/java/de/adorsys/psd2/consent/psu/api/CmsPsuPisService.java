@@ -49,7 +49,7 @@ public interface CmsPsuPisService {
      * Returns Payment object by its ID
      *
      * @param psuIdData PSU credentials data
-     * @param authorisationId ID of redirect
+     * @param redirectId ID of redirect
      * @return Payment object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
