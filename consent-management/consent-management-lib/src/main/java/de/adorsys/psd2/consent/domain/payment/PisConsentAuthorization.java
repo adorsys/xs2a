@@ -61,7 +61,6 @@ public class PisConsentAuthorization {
     private OffsetDateTime redirectUrlExpirationTimestamp;
 
     public boolean isNotExpired() {
-        return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now())
-                   || redirectUrlExpirationTimestamp.isEqual(OffsetDateTime.now());
+        return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());
     }
 }
