@@ -50,7 +50,7 @@ public class PisPaymentController {
     @ApiOperation(value = "Updates payment status after SPI service. Should not be used for any other purposes!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(code = 400, message = "Bad Request")})
     public ResponseEntity<Void> updatePaymentStatusAfterSpiService(
         @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.")
         @PathVariable("payment-id") String paymentId,
