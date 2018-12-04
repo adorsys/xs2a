@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
@@ -43,6 +44,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,6 +66,9 @@ public class CmsPsuAisServiceTest {
     @Mock
     private SecurityDataService securityDataService;
 
+    @Mock
+    private AisConsentAuthorization mockAisConsentAuthorization;
+
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
     private AisAccountConsent aisAccountConsent;
@@ -70,6 +76,7 @@ public class CmsPsuAisServiceTest {
     private PsuIdData psuIdData;
     private PsuIdData psuIdDataWrong;
     private PsuData psuData;
+    private CmsAisConsentResponse cmsAisConsentResponse;
     private final long CONSENT_ID = 1;
     private final String PSU_ID = "987654321";
     private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
@@ -78,6 +85,8 @@ public class CmsPsuAisServiceTest {
     private final String AUTHORISATION_ID_NOT_EXIST = "248eae68-e4fa-4d43-8b3f-2ae2b584cdd9";
     private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String FINALISED_AUTHORISATION_ID = "6b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final String TPP_OK_REDIRECT_URI = "Mock tppOkRedirectUri";
+    private static final String TPP_NOK_REDIRECT_URI = "Mock tppNokRedirectUri";
 
     @Before
     public void setUp() {
@@ -88,6 +97,7 @@ public class CmsPsuAisServiceTest {
         aisAccountConsent = buildSpiAccountConsent();
         aisConsentAuthorization = buildAisConsentAuthorisation();
         aisConsents = buildAisConsents();
+        cmsAisConsentResponse = buildCmsAisConsentResponse(aisAccountConsent, AUTHORISATION_ID, TPP_OK_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
 
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
@@ -292,6 +302,61 @@ public class CmsPsuAisServiceTest {
 
         //Then
         assertFalse(result);
+    }
+
+    @Test
+    public void getConsentByRedirectId_Fail_AuthorisationNotFound() {
+        when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.empty());
+
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.getConsentByRedirectId(psuIdData, AUTHORISATION_ID);
+
+        assertFalse(consentResponseOptional.isPresent());
+    }
+
+    @Test
+    public void getConsentByRedirectId_Fail_AuthorisationExpire() {
+        when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(mockAisConsentAuthorization));
+        when(mockAisConsentAuthorization.isExpired()).thenReturn(true);
+        doReturn(mockAisConsentAuthorization).when(aisConsentAuthorizationRepository).save(mockAisConsentAuthorization);
+
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.getConsentByRedirectId(psuIdData, AUTHORISATION_ID);
+
+        assertFalse(consentResponseOptional.isPresent());
+        verify(aisConsentAuthorizationRepository).save(mockAisConsentAuthorization);
+        verify(mockAisConsentAuthorization).setScaStatus(ScaStatus.FAILED);
+    }
+
+    @Test
+    public void getConsentByRedirectId_Fail_NullAisConsent() {
+        when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(mockAisConsentAuthorization));
+        when(mockAisConsentAuthorization.isExpired()).thenReturn(false);
+        when(mockAisConsentAuthorization.getConsent()).thenReturn(null);
+
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.getConsentByRedirectId(psuIdData, AUTHORISATION_ID);
+
+        assertFalse(consentResponseOptional.isPresent());
+    }
+
+    @Test
+    public void getConsentByRedirectId_Success() {
+        when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(mockAisConsentAuthorization));
+        when(mockAisConsentAuthorization.isExpired()).thenReturn(false);
+        when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
+        when(aisConsentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
+        when(aisConsentMapper.mapToCmsAisConsentResponse(aisAccountConsent, AUTHORISATION_ID, TPP_OK_REDIRECT_URI, TPP_NOK_REDIRECT_URI)).thenReturn(Optional.of(cmsAisConsentResponse));
+
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.getConsentByRedirectId(psuIdData, AUTHORISATION_ID);
+
+        assertTrue(consentResponseOptional.isPresent());
+        CmsAisConsentResponse cmsAisConsentResponse = consentResponseOptional.get();
+        assertEquals(aisAccountConsent, cmsAisConsentResponse.getAccountConsent());
+        assertEquals(AUTHORISATION_ID, cmsAisConsentResponse.getAuthorisationId());
+        assertEquals(TPP_NOK_REDIRECT_URI, cmsAisConsentResponse.getTppNokRedirectUri());
+        assertEquals(TPP_OK_REDIRECT_URI, cmsAisConsentResponse.getTppOkRedirectUri());
+    }
+
+    private CmsAisConsentResponse buildCmsAisConsentResponse(AisAccountConsent aisAccountConsent, String redirectId, String tppOkRedirectUri, String tppNokRedirectUri) {
+        return new CmsAisConsentResponse(aisAccountConsent, redirectId, tppOkRedirectUri, tppNokRedirectUri);
     }
 
     private AisConsent buildFinalisedConsent() {
