@@ -28,25 +28,22 @@ import java.util.stream.Collectors;
 @Value
 public class TppRoleAccess {
     private static AntPathMatcher matcher = new AntPathMatcher();
-    private static Map<TppRole, Set<String>> secureURIs;
+    private static Map<String, Set<TppRole>> secureURIs;
 
     static {
         TppRoleAccess.builder()
-            .linkTppRolePatterns(TppRole.AISP,
-                "/api/v1/accounts/**",
-                "/v1/accounts/**",
-                "/api/v1/consents/**",
-                "/v1/consents/**")
-            .linkTppRolePatterns(TppRole.PISP,
-                "/api/v1/bulk-payments/**",
-                "/v1/bulk-payments/**",
-                "/api/v1/payments/**",
-                "/v1/payments/**",
-                "/api/v1/periodic-payments/**",
-                "/v1/periodic-payments/**")
-            .linkTppRolePatterns(TppRole.PIISP,
-                "/api/v1/funds-confirmations/**",
-                "/v1/funds-confirmations/**")
+            .linkTppRolePatterns("/api/v1/accounts/**", TppRole.AISP)
+            .linkTppRolePatterns("/v1/accounts/**", TppRole.AISP)
+            .linkTppRolePatterns("/api/v1/consents/**", TppRole.AISP)
+            .linkTppRolePatterns("/v1/consents/**", TppRole.AISP)
+            .linkTppRolePatterns("/api/v1/bulk-payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/v1/bulk-payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/api/v1/payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/v1/payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/api/v1/periodic-payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/v1/periodic-payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/api/v1/funds-confirmations/**", TppRole.PIISP)
+            .linkTppRolePatterns("/v1/funds-confirmations/**", TppRole.PIISP)
             .build();
     }
 
@@ -62,13 +59,16 @@ public class TppRoleAccess {
         if (CollectionUtils.isEmpty(tppRoles)) {
             return false;
         }
-        for (Map.Entry<TppRole, Set<String>> entry : secureURIs.entrySet()) {
-            Set<String> patterns = entry.getValue();
-            TppRole role = entry.getKey();
-            for (String pattern : patterns) {
-                if (matcher.match(pattern, targetPath) && !tppRoles.contains(role)) {
-                    return false;
+        for (Map.Entry<String, Set<TppRole>> entry : secureURIs.entrySet()) {
+            Set<TppRole> allowedRoles = entry.getValue();
+            String pattern = entry.getKey();
+            if (matcher.match(pattern, targetPath)) {
+                for (TppRole role : tppRoles) {
+                    if (allowedRoles.contains(role)) {
+                        return true;
+                    }
                 }
+                return false;
             }
         }
         return true;
@@ -76,22 +76,22 @@ public class TppRoleAccess {
 
     @Value
     private static class TppAccessBuilder {
-        private Map<TppRole, Set<String>> secureURIs = new HashMap<>();
+        private Map<String, Set<TppRole>> secureURIs = new HashMap<>();
 
         private TppAccessBuilder() {
         }
 
-        TppAccessBuilder linkTppRolePatterns(TppRole tppRole, String... patterns) {
-            Assert.notEmpty(patterns, "Patterns must be set!");
+        TppAccessBuilder linkTppRolePatterns(String pattern, TppRole... tppRoles) {
+            Assert.notEmpty(tppRoles, "Tpp roles must be set!");
 
-            Set<String> requestMatchers = Arrays.stream(patterns)
-                                              .collect(Collectors.toSet());
+            Set<TppRole> roles = Arrays.stream(tppRoles)
+                                     .collect(Collectors.toSet());
 
-            if (this.secureURIs.containsKey(tppRole)) {
-                this.secureURIs.get(tppRole)
-                    .addAll(requestMatchers);
+            if (this.secureURIs.containsKey(pattern)) {
+                this.secureURIs.get(pattern)
+                    .addAll(roles);
             } else {
-                this.secureURIs.put(tppRole, requestMatchers);
+                this.secureURIs.put(pattern, roles);
             }
             return this;
         }

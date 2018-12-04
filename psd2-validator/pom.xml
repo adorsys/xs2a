@@ -30,7 +30,6 @@
 	<version>1.13-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	
     <properties>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
