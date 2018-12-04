@@ -53,6 +53,11 @@
             <version>1.13-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-remote</artifactId>
+            <version>1.13-SNAPSHOT</version>
+        </dependency>
 
         <!-- other dependencies -->
         <dependency>
