@@ -103,7 +103,7 @@ public class ConsentController implements ConsentApi {
 
     @Override
     public ResponseEntity getConsentAuthorisations(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null;
+        return responseMapper.ok(consentService.getConsentInitiationAuthorisations(consentId), consentModelMapper::mapToAuthorisations);
     }
 
     @Override
