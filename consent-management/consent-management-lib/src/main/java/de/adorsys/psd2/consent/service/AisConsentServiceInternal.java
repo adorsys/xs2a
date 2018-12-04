@@ -36,10 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.consent.api.TypeAccess.*;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
@@ -189,6 +187,25 @@ public class AisConsentServiceInternal implements AisConsentService {
                    ? aisConsentAuthorizationRepository.findByExternalId(authorizationId)
                          .map(consentMapper::mapToAisConsentAuthorizationResponse)
                    : Optional.empty();
+    }
+
+    /**
+     * Gets list of consent authorisation IDs by consent ID
+     *
+     * @param encryptedConsentId id of consent
+     * @return Gets list of consent authorisation IDs
+     */
+    @Override
+    public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
+        Optional<String> consentId = securityDataService.decryptId(encryptedConsentId);
+        if (!consentId.isPresent()) {
+            return Optional.empty();
+        }
+
+        return aisConsentRepository.findByExternalId(consentId.get())
+                   .map(cst -> cst.getAuthorizations().stream()
+                                   .map(AisConsentAuthorization::getExternalId)
+                                   .collect(Collectors.toList()));
     }
 
     /**

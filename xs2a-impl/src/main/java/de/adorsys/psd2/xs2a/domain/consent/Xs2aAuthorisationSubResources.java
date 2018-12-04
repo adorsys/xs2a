@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.repository;
+package de.adorsys.psd2.xs2a.domain.consent;
 
-import de.adorsys.psd2.consent.api.CmsAuthorisationType;
-import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
-import org.springframework.data.repository.CrudRepository;
+import lombok.AllArgsConstructor;
+import lombok.Value;
 
-import java.util.Optional;
+import java.util.List;
 
-public interface PisConsentAuthorizationRepository extends CrudRepository<PisConsentAuthorization, Long> {
-    Optional<PisConsentAuthorization> findByExternalId(String externalId);
-    Optional<PisConsentAuthorization> findByExternalIdAndAuthorizationType(String externalId, CmsAuthorisationType authorizationType);
+@Value
+@AllArgsConstructor
+public class Xs2aAuthorisationSubResources {
+    private List<String> authorisationIds;
 }

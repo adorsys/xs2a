@@ -17,16 +17,18 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class RedirectAisAuthorizationService implements AisAuthorizationService {
+    private final Xs2aAisConsentService aisConsentService;
+
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
         return null;
@@ -40,5 +42,18 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
     @Override
     public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
         return null;
+    }
+
+    /**
+     * Gets list of consent authorisation IDs by invoking CMS through AisConsentService
+     * See {@link Xs2aAisConsentService#getAuthorisationSubResources(String)} for details
+     *
+     * @param consentId String identification of consent
+     * @return Optional of Xs2aAuthorisationSubResources with list of authorisation IDs
+     */
+    @Override
+    public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {
+        return aisConsentService.getAuthorisationSubResources(consentId)
+                   .map(Xs2aAuthorisationSubResources::new);
     }
 }

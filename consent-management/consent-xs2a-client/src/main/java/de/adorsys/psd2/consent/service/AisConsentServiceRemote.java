@@ -19,17 +19,24 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
+import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
+// TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/498
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AisConsentServiceRemote implements AisConsentService {
@@ -99,5 +106,18 @@ public class AisConsentServiceRemote implements AisConsentService {
     public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
         return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getPsuDataByConsentId(), PsuIdData.class, consentId)
                                        .getBody());
+    }
+
+    @Override
+    public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
+        try {
+            ResponseEntity<List<String>> request = consentRestTemplate.exchange(
+                remoteAisConsentUrls.getAuthorisationSubResources(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+                }, encryptedConsentId);
+            return Optional.ofNullable(request.getBody());
+        } catch (CmsRestException cmsRestException) {
+            log.warn("No authorisation found by consentId {}", encryptedConsentId);
+        }
+        return Optional.empty();
     }
 }
