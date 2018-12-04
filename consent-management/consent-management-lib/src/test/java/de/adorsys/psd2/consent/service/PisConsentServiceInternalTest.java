@@ -177,6 +177,7 @@ public class PisConsentServiceInternalTest {
     private PisConsentAuthorization buildPisConsentAuthorisation(String externalId) {
         PisConsentAuthorization pisConsentAuthorization = new PisConsentAuthorization();
         pisConsentAuthorization.setExternalId(externalId);
+        pisConsentAuthorization.setAuthorizationType(CmsAuthorisationType.CANCELLED);
         return pisConsentAuthorization;
     }
 
