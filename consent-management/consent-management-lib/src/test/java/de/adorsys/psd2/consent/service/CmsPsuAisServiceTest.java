@@ -343,7 +343,6 @@ public class CmsPsuAisServiceTest {
         when(mockAisConsentAuthorization.isExpired()).thenReturn(false);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
         when(aisConsentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
-        when(aisConsentMapper.mapToCmsAisConsentResponse(aisAccountConsent, AUTHORISATION_ID, TPP_OK_REDIRECT_URI, TPP_NOK_REDIRECT_URI)).thenReturn(Optional.of(cmsAisConsentResponse));
 
         Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID);
 

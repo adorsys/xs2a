@@ -135,7 +135,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         String tppOkRedirectUri = "Mock tppOkRedirectUri";
         String tppNokRedirectUri = "Mock tppNokRedirectUri";
 
-        return consentMapper.mapToCmsAisConsentResponse(aisAccountConsent, redirectId, tppOkRedirectUri, tppNokRedirectUri);
+        return Optional.ofNullable(aisAccountConsent)
+                   .map(c -> new CmsAisConsentResponse(aisAccountConsent, redirectId, tppOkRedirectUri, tppNokRedirectUri));
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status) {

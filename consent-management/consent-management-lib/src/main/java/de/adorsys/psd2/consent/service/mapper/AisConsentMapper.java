@@ -68,11 +68,6 @@ public class AisConsentMapper {
                    .orElse(null);
     }
 
-    public Optional<CmsAisConsentResponse> mapToCmsAisConsentResponse(AisAccountConsent aisAccountConsent, String redirectId, String tppOkRedirectUri, String tppNokRedirectUri) {
-        return Optional.ofNullable(aisAccountConsent)
-            .map(c -> new CmsAisConsentResponse(aisAccountConsent, redirectId, tppOkRedirectUri, tppNokRedirectUri));
-    }
-
     private AisAccountAccess mapToAisAccountAccess(List<AccountAccess> accountAccesses) {
         return new AisAccountAccess(mapToCmsAccountReference(accountAccesses, TypeAccess.ACCOUNT),
             mapToCmsAccountReference(accountAccesses, TypeAccess.BALANCE),
