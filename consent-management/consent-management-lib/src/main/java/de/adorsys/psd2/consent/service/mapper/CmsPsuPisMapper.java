@@ -49,16 +49,6 @@ public class CmsPsuPisMapper {
         }
     }
 
-    public Optional<CmsPaymentResponse> mapToCmsPaymentResponse(CmsPayment payment, String authorisationId, String tppOkRedirectUri, String tppNokRedirectUri) {
-        return Optional.ofNullable(payment)
-                   .map(p -> new CmsPaymentResponse(
-                       payment,
-                       authorisationId,
-                       tppOkRedirectUri,
-                       tppNokRedirectUri
-                   ));
-    }
-
     private CmsPayment mapToCmsPeriodicPayment(PisPaymentData pisPaymentData, String paymentProduct) {
         CmsPeriodicPayment periodicPayment = new CmsPeriodicPayment(paymentProduct);
         periodicPayment.setPaymentId(pisPaymentData.getPaymentId());
