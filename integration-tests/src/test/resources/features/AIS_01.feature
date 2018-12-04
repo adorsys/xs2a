@@ -347,3 +347,21 @@ Feature: Account Information Service
             | consent                                  | account-id                           | transaction-resource                        | resource-id                          |
             | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-with-expired-consent.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
 
+#
+#    ####################################################################################################################
+#    #                                                                                                                  #
+#    # Authorisation flows                                                                                              #
+#    #                                                                                                                  #
+#    ####################################################################################################################
+#
+
+    Scenario Outline: Successful Start Authorisation of Consent creation (embedded)
+        Given PSU wants to create a consent <consent-id>
+        And PSU sends the create consent request
+        And PSU wants to start the authorisation for consent creation using the authorisation data <authorisation-data>
+        When PSU sends the start authorisation request for consent creation
+        Then PSU checks if a link is received and the SCA status is correct
+        Examples:
+        |consent-id                          |authorisation-data        |
+        |consent-all-accounts-successful.json|startAuth-successful.json |
+        |consent-dedicated-successful.json   |startAuth-successful.json |

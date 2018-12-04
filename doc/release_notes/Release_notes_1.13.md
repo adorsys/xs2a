@@ -22,6 +22,12 @@ To enable swagger in cms you have to add `@EnableCmsSwagger` annotation on any o
 Now instead of using PaymentProduct enum class, string value is used. PaymentProduct enum class is removed.
 In database, instead of saving enum values(SEPA, INSTANT_SEPA, etc), raw string values are saved:  sepa-credit-transfers, instant-sepa-credit-transfers, etc.
 
+## Get authorisation sub-resources is implemented
+| Context                             | Method | Endpoint                                        | Description                                                                                     |
+|-------------------------------------|--------|-------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| Payment Initiation Request          | GET    | v1/{payment-service}/{paymentId}/authorisations | Will deliver an array of resource identifications of all generated authorisation sub-resources. |
+| Account Information Consent Request | GET    | v1/consents/{consentId}/authorisations          | Will deliver an array of resource identifications of all generated authorisation sub-resources. |
+
 ## No possibility to cancel finalised payment
 When payment is finished (has transaction statuses *Cancelled, Rejected, AcceptedSettlementCompleted*) there is no possibility to cancel it or to proceed payment cancellation authorisation flow.
 The error "FORMAT_ERROR" with http status 400 and TPP message "Payment is finalised already and cannot be cancelled" will be displayed.

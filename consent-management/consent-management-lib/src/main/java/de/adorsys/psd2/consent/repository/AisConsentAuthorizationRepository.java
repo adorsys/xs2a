@@ -24,5 +24,4 @@ import java.util.Optional;
 public interface AisConsentAuthorizationRepository extends CrudRepository<AisConsentAuthorization, Long> {
 
     Optional<AisConsentAuthorization> findByExternalId(String externalId);
-
 }
