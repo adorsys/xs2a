@@ -315,3 +315,21 @@ Feature: Account Information Service
             | transactions-with-revokedByPsu-consent.json             | transaction/transactions-create-consent.json                      |  revokedByPsu    | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
             | transactions-with-terminatedByTpp-consent.json          | transaction/transactions-create-consent.json                      |  terminatedByTpp | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
             | transactions-with-exceeded-frequencePerDay-consent.json | transaction/transactions-create-consent-exceeded.json             |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+#
+#    ####################################################################################################################
+#    #                                                                                                                  #
+#    # Authorisation flows                                                                                              #
+#    #                                                                                                                  #
+#    ####################################################################################################################
+#
+
+    Scenario Outline: Successful Start Authorisation of Consent creation (embedded)
+        Given PSU wants to create a consent <consent-id>
+        And PSU sends the create consent request
+        And PSU wants to start the authorisation for consent creation using the authorisation data <authorisation-data>
+        When PSU sends the start authorisation request for consent creation
+        Then PSU checks if a link is received and the SCA status is correct
+        Examples:
+        |consent-id                          |authorisation-data        |
+        |consent-all-accounts-successful.json|startAuth-successful.json |
+        |consent-dedicated-successful.json   |startAuth-successful.json |
