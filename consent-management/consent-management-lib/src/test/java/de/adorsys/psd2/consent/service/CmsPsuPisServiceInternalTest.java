@@ -265,7 +265,6 @@ public class CmsPsuPisServiceInternalTest {
         PisConsentAuthorization expectedAuthorisation = buildPisConsentAuthorisation();
         CmsPaymentResponse expectedCmsPaymentResponse = buildCmsPaymentResponse(expectedAuthorisation.getExternalId());
         when(pisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
-        when(cmsPsuPisMapper.mapToCmsPaymentResponse(any(CmsPayment.class), any(String.class), any(String.class), any(String.class))).thenReturn(Optional.of(expectedCmsPaymentResponse));
 
         // When
         Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, AUTHORISATION_ID);
