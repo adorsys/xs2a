@@ -49,7 +49,7 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
 
         if (!spiPaymentOptional.isPresent()) {
             return new PaymentInformationResponse<>(
-                ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
                     .messages(Collections.singletonList("Payment not found"))
                     .build()
             );
