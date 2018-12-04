@@ -271,6 +271,7 @@ public class PisConsentServiceInternal implements PisConsentService {
         List<String> authorisationIds = paymentDataList.get(0).getConsent()
                                             .getAuthorizations()
                                             .stream()
+                                            .filter(auth -> auth.getAuthorizationType() == authorisationType)
                                             .map(PisConsentAuthorization::getExternalId)
                                             .collect(Collectors.toList());
 
