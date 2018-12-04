@@ -26,16 +26,15 @@ import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.HttpEntityUtils;
 import de.adorsys.psd2.model.TppMessages;
-import de.adorsys.psd2.model.TransactionsResponse200Json;
+import de.adorsys.psd2.model.TransactionDetails;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
@@ -46,10 +45,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 @Slf4j
 @FeatureFileSteps
-public class TransactionListRequestErrofulSteps {
+public class TransactionDetailRequestErrorfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
@@ -62,16 +62,15 @@ public class TransactionListRequestErrofulSteps {
     private ObjectMapper mapper;
 
 
-
     //@Given("^PSU already has an existing (.*) consent (.*)$")
     //in commonStep
 
-    //@And("^account id (.*)$")
+   //@And("^account id (.*)$")
     //in AccountDetailRequestSuccessfulSteps
 
 
-    @Given("^wants to read all transactions errorful using (.*)$")
-    public void wants_to_read_all_transactions_erroful_using(String dataFileName) throws IOException {
+    @Given("^wants to read the transaction details errorful using (.*)$")
+    public void wants_to_read_the_transaction_details_errorful_using(String dataFileName) throws IOException {
         TestData<HashMap, TppMessages> data = mapper.readValue(
             resourceToString("/data-input/ais/transaction/" + dataFileName, UTF_8),
             new TypeReference<TestData<HashMap, TppMessages>>() {});
@@ -80,20 +79,21 @@ public class TransactionListRequestErrofulSteps {
         context.getTestData().getRequest().getHeader().put("Consent-ID", context.getConsentId());
     }
 
+    //@Given("^resource id (.*)$")
+    //public void resource_id(String resourceID)
 
-    @When("^PSU requests the transactions erroful$")
-    public void psu_requests_the_transactions() throws HttpClientErrorException, IOException{
+
+    @When("^PSU requests the transaction details errorful$")
+    public void psu_requests_the_transaction_details_errorful() throws HttpClientErrorException, IOException{
         HttpEntity entity = HttpEntityUtils.getHttpEntity(context.getTestData().getRequest(),
-                context.getAccessToken());
-        String url = context.getBaseUrl() + "/accounts/"+context.getRessourceId()+"/transactions";
-        log.info("////url////  "+url);
-        log.info("////entity request list transaction////  "+entity.toString());
+            context.getAccessToken());
+
         try {
-                ResponseEntity<TransactionsResponse200Json> response = restTemplate.exchange(
-                        context.getBaseUrl() + "/accounts/"+context.getRessourceId()+"/transactions/?dateFrom=2008-09-15&bookingStatus=both",
-                        HttpMethod.GET,
-                        entity,
-                        TransactionsResponse200Json.class);
+              restTemplate.exchange(
+                context.getBaseUrl() + "/accounts/"+context.getRessourceId()+"/transactions/"+context.getTransactionId(),
+                HttpMethod.GET,
+                entity,
+                TransactionDetails.class);
         } catch (RestClientResponseException rex) {
             context.handleRequestError(rex);
         }
@@ -101,5 +101,7 @@ public class TransactionListRequestErrofulSteps {
 
     //@Then("^an error response code is displayed and an appropriate error response is shown$")
     //See commonStep
+
+
 }
 
