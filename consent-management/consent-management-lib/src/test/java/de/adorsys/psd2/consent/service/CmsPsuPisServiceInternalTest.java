@@ -268,7 +268,7 @@ public class CmsPsuPisServiceInternalTest {
         when(cmsPsuPisMapper.mapToCmsPaymentResponse(any(CmsPayment.class), any(String.class), any(String.class), any(String.class))).thenReturn(Optional.of(expectedCmsPaymentResponse));
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.getPaymentByRedirectId(PSU_ID_DATA, AUTHORISATION_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, AUTHORISATION_ID);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -283,7 +283,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisConsentAuthorizationRepository.findByExternalId(EXPIRED_AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.getPaymentByRedirectId(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.empty());
@@ -292,7 +292,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void getPaymentByAuthorisationId_Fail_WrongId() {
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.getPaymentByRedirectId(PSU_ID_DATA, WRONG_AUTHORISATION_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, WRONG_AUTHORISATION_ID);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.empty());

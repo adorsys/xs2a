@@ -46,22 +46,23 @@ public interface CmsPsuPisService {
     Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
 
     /**
-     * Returns Payment object by its ID
+     * Checks redirect url and corresponding authorisation on expiration and returns Payment Response object if authorisation is valid
      *
-     * @param psuIdData PSU credentials data
+     * @param psuIdData  PSU credentials data
      * @param redirectId ID of redirect
-     * @return Payment object if it was found and it corresponds to the user data given in parameter
+     * @return Payment Response object that includes payment, authorisation id and ok/nok tpp redirect urls, if the payment was found and
+     * it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<CmsPaymentResponse> getPaymentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
+    Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
 
     /**
      * Updates a Status of Payment's autorisation by its ID and PSU ID
      *
-     * @param psuIdData PSU credentials data
-     * @param paymentId ID of Payment
+     * @param psuIdData       PSU credentials data
+     * @param paymentId       ID of Payment
      * @param authorisationId ID of Authorisation process
-     * @param status    Status of Authorisation to be set
+     * @param status          Status of Authorisation to be set
      * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
      */
     boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String authorisationId, @NotNull ScaStatus status);

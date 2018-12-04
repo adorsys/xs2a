@@ -99,7 +99,7 @@ public class CmsPsuPisController {
         @PathVariable("redirect-id") String redirectId) {
 
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsPsuPisService.getPaymentByRedirectId(psuIdData, redirectId)
+        return cmsPsuPisService.checkRedirectAndGetPayment(psuIdData, redirectId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }

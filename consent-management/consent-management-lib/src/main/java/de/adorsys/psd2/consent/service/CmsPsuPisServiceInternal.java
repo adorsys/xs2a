@@ -77,7 +77,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
-    public @NotNull Optional<CmsPaymentResponse> getPaymentByRedirectId(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
+    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
         return pisConsentAuthorizationRepository.findByExternalId(redirectId)
                    .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a))
                    .flatMap(this::checkForExpiration);

@@ -59,7 +59,6 @@
             <version>1.13-SNAPSHOT</version>
         </dependency>
 
-
         <!-- other dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
