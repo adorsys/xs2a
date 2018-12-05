@@ -30,6 +30,7 @@ import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +69,10 @@ public class CmsPsuAisServiceTest {
 
     @Mock
     private AisConsentAuthorization mockAisConsentAuthorization;
+    @Mock
+    private AisAccountConsent mockAisAccountConsent;
+    @Mock
+    private TppInfo tppInfo;
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
@@ -342,13 +347,16 @@ public class CmsPsuAisServiceTest {
         when(aisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(mockAisConsentAuthorization));
         when(mockAisConsentAuthorization.isExpired()).thenReturn(false);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
-        when(aisConsentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
+        when(aisConsentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(mockAisAccountConsent);
+        when(mockAisAccountConsent.getTppInfo()).thenReturn(tppInfo);
+        when(tppInfo.getRedirectUri()).thenReturn(TPP_OK_REDIRECT_URI);
+        when(tppInfo.getNokRedirectUri()).thenReturn(TPP_NOK_REDIRECT_URI);
 
         Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID);
 
         assertTrue(consentResponseOptional.isPresent());
         CmsAisConsentResponse cmsAisConsentResponse = consentResponseOptional.get();
-        assertEquals(aisAccountConsent, cmsAisConsentResponse.getAccountConsent());
+        assertEquals(mockAisAccountConsent, cmsAisConsentResponse.getAccountConsent());
         assertEquals(AUTHORISATION_ID, cmsAisConsentResponse.getAuthorisationId());
         assertEquals(TPP_NOK_REDIRECT_URI, cmsAisConsentResponse.getTppNokRedirectUri());
         assertEquals(TPP_OK_REDIRECT_URI, cmsAisConsentResponse.getTppOkRedirectUri());

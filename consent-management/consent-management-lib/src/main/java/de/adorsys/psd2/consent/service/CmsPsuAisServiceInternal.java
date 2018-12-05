@@ -30,6 +30,7 @@ import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -120,23 +121,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         AisConsentAuthorization authorisation = authorisationOptional.get();
 
         if (authorisation.isExpired()) {
-            authorisation.setScaStatus(ScaStatus.FAILED);
-            aisConsentAuthorizationRepository.save(authorisation);
+            updateAuthorisationOnExpiration(authorisation);
             return Optional.empty();
         }
 
-        AisConsent aisConsent = authorisation.getConsent();
-
-        if (aisConsent == null) {
-            return Optional.empty();
-        }
-
-        AisAccountConsent aisAccountConsent = consentMapper.mapToAisAccountConsent(aisConsent);
-        String tppOkRedirectUri = "Mock tppOkRedirectUri";
-        String tppNokRedirectUri = "Mock tppNokRedirectUri";
-
-        return Optional.ofNullable(aisAccountConsent)
-                   .map(c -> new CmsAisConsentResponse(aisAccountConsent, redirectId, tppOkRedirectUri, tppNokRedirectUri));
+        return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status) {
@@ -193,5 +182,31 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
         authorization.setScaStatus(status);
         return aisConsentAuthorizationRepository.save(authorization) != null;
+    }
+
+    private void updateAuthorisationOnExpiration(AisConsentAuthorization authorisation) {
+        authorisation.setScaStatus(ScaStatus.FAILED);
+        aisConsentAuthorizationRepository.save(authorisation);
+    }
+
+    private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String redirectId) {
+        if (aisConsent == null) {
+            return Optional.empty();
+        }
+
+        AisAccountConsent aisAccountConsent = consentMapper.mapToAisAccountConsent(aisConsent);
+
+        if (aisAccountConsent == null) {
+            return Optional.empty();
+        }
+
+        TppInfo tppInfo = aisAccountConsent.getTppInfo();
+
+        if (tppInfo == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(aisAccountConsent)
+                   .map(c -> new CmsAisConsentResponse(aisAccountConsent, redirectId, tppInfo.getRedirectUri(), tppInfo.getNokRedirectUri()));
     }
 }
