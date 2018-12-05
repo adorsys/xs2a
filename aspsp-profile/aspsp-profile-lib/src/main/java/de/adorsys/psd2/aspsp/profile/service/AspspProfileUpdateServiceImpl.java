@@ -43,8 +43,8 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * Update all aspsp settings (frequency per day, combined service indicator, available payment products, available payment types,
      * is tpp signature required, PIS redirect URL, AIS redirect URL, multicurrency account level, is bank offered consent supported,
      * available booking statuses, supported account reference fields, consent lifetime, transaction lifetime, allPsd2 support,
-     * transactions without balances support, signing basket supporte, is payment cancellation authorization mandated, piis consent support,
-     * delta report support, redirect url expiration time and type of authorization start) except SCA approach
+     * transactions without balances support, signing basket support, is payment cancellation authorisation mandated, piis consent support,
+     * delta report support, redirect url expiration time and type of authorisation start) except SCA approach
      *
      * @param aspspSettings new aspsp specific settings which to be stored in profile
      */
