@@ -16,10 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -75,7 +77,7 @@ public class PaymentServiceTest {
     private static final String WRONG_IBAN = "wrong_iban";
     private static final String AMOUNT = "100";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], PAYMENT_ID);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
 
@@ -153,6 +155,8 @@ public class PaymentServiceTest {
                             .body(getCancelPaymentResponse(false, CANC))
                             .build());
 
+        when(pisConsentService.getPisConsentById(PAYMENT_ID))
+            .thenReturn(getPisConsent());
         when(readPaymentFactory.getService(anyString())).thenReturn(readPaymentService);
     }
 
@@ -194,6 +198,36 @@ public class PaymentServiceTest {
         // Then
         assertThat(actual.getBody()).isNotNull();
         assertThat(actual.getBody().isStartAuthorisationRequired()).isEqualTo(false);
+    }
+
+    @Test
+    public void cancelPayment_Fail_WithAuthorisation_FinalisedConsentStatus() {
+        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.TRUE);
+        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(PSU_ID_DATA);
+        when(pisConsentService.getPisConsentById(PAYMENT_ID))
+            .thenReturn(getFinalisedPisConsent());
+
+        // When
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+
+        // Then
+        assertThat(actual.getError()).isNotNull();
+    }
+
+    @Test
+    public void cancelPayment_Fail_WithoutAuthorisation_FinalisedConsentStatus() {
+        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
+        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(PSU_ID_DATA);
+        when(pisConsentService.getPisConsentById(PAYMENT_ID))
+            .thenReturn(getFinalisedPisConsent());
+
+        // When
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+
+        // Then
+        assertThat(actual.getError()).isNotNull();
     }
 
     @Test
@@ -372,4 +406,31 @@ public class PaymentServiceTest {
         response.setTransactionStatus(transactionStatus);
         return response;
     }
+
+    private Optional<PisConsentResponse> getPisConsent() {
+        PisConsentResponse response = new PisConsentResponse();
+        response.setConsentStatus(ConsentStatus.VALID);
+        response.setPayments(Collections.singletonList(getPisPayment()));
+        return Optional.of(response);
+    }
+
+    private Optional<PisConsentResponse> getFinalisedPisConsent() {
+        PisConsentResponse response = new PisConsentResponse();
+        response.setConsentStatus(ConsentStatus.REJECTED);
+        response.setPayments(Collections.singletonList(getFinalisedPisPayment()));
+        return Optional.of(response);
+    }
+
+    private PisPayment getPisPayment() {
+        PisPayment pisPayment = new PisPayment();
+        pisPayment.setTransactionStatus(TransactionStatus.ACCP);
+        return pisPayment;
+    }
+
+    private PisPayment getFinalisedPisPayment() {
+        PisPayment pisPayment = new PisPayment();
+        pisPayment.setTransactionStatus(TransactionStatus.RJCT);
+        return pisPayment;
+    }
+
 }

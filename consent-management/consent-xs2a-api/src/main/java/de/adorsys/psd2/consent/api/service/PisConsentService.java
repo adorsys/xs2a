@@ -70,9 +70,9 @@ public interface PisConsentService {
     /**
      * Creates consent authorization
      *
-     * @param paymentId String representation of the payment identifier
+     * @param paymentId         String representation of the payment identifier
      * @param authorizationType Type of authorisation
-     * @param psuData Information about PSU
+     * @param psuData           Information about PSU
      * @return Response containing authorization id
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
@@ -80,9 +80,9 @@ public interface PisConsentService {
     /**
      * Creates consent authorization cancellation
      *
-     * @param paymentId String representation of the payment identifier
+     * @param paymentId         String representation of the payment identifier
      * @param authorizationType Type of authorisation
-     * @param psuData Information about PSU
+     * @param psuData           Information about PSU
      * @return Response containing authorization id
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
@@ -91,7 +91,7 @@ public interface PisConsentService {
      * Updates consent authorization
      *
      * @param authorisationId String representation of the authorisation identifier
-     * @param request Incoming request for updating authorization
+     * @param request         Incoming request for updating authorization
      * @return Response containing SCA status, available and chosen Sca method
      */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request);
@@ -100,7 +100,7 @@ public interface PisConsentService {
      * Updates consent cancellation authorization
      *
      * @param authorizationId String representation of the authorisation identifier
-     * @param request Incoming request for updating authorization
+     * @param request         Incoming request for updating authorization
      * @return Response containing SCA status, available and chosen Sca method
      */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorizationId, UpdatePisConsentPsuDataRequest request);
