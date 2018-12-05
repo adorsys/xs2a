@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
@@ -25,6 +26,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
+import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
@@ -56,7 +58,7 @@ public class FundsConfirmationSpiImpl implements FundsConfirmationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<Boolean> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable String consentId, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData) {
         try {
             //TODO Account data reads should be performed through specially created endpoint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/383
             SpiAccountReference psuAccount = spiFundsConfirmationRequest.getPsuAccount();
@@ -70,19 +72,21 @@ public class FundsConfirmationSpiImpl implements FundsConfirmationSpi {
                     .getBody())
                                                    .orElseGet(Collections::emptyList);
             List<SpiAccountBalance> balances = extractAccountBalancesByCurrency(accounts, psuAccount.getCurrency());
+            boolean balancesSufficient = isBalancesSufficient(balances, spiFundsConfirmationRequest.getInstructedAmount());
+            SpiFundsConfirmationResponse fundsConfirmationResponse = buildResponse(balancesSufficient);
 
-            return SpiResponse.<Boolean>builder()
+            return SpiResponse.<SpiFundsConfirmationResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                       .payload(isBalancesSufficient(balances, spiFundsConfirmationRequest.getInstructedAmount()))
+                       .payload(fundsConfirmationResponse)
                        .success();
 
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                return SpiResponse.<Boolean>builder()
+                return SpiResponse.<SpiFundsConfirmationResponse>builder()
                            .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
-            return SpiResponse.<Boolean>builder()
+            return SpiResponse.<SpiFundsConfirmationResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
@@ -108,5 +112,11 @@ public class FundsConfirmationSpiImpl implements FundsConfirmationSpi {
                    .findFirst()
                    .map(SpiAccountDetails::getBalances)
                    .orElseGet(Collections::emptyList);
+    }
+
+    private SpiFundsConfirmationResponse buildResponse(boolean fundsAvailable) {
+        SpiFundsConfirmationResponse response = new SpiFundsConfirmationResponse();
+        response.setFundsAvailable(fundsAvailable);
+        return response;
     }
 }

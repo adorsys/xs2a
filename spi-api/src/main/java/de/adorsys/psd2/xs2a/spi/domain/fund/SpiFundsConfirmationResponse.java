@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.piis;
+package de.adorsys.psd2.xs2a.spi.domain.fund;
 
-import io.swagger.annotations.ApiModel;
+import lombok.Data;
 
-@ApiModel(description = "Type of the tpp access, indicating which TPPs have access to the consent", value = "PiisConsentTppAccessType")
-public enum PiisConsentTppAccessType {
-    SINGLE_TPP,
-    ALL_TPP
+@Data
+public class SpiFundsConfirmationResponse {
+    private boolean fundsAvailable;
 }

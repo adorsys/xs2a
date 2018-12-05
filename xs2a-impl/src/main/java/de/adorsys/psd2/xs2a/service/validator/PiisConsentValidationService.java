@@ -16,11 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
-import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
-import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -30,53 +33,59 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.consent.api.piis.PiisConsentTppAccessType.ALL_TPP;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PiisConsentValidationService {
     private final TppService tppService;
 
-    public ResponseObject<String> validatePiisConsentData(List<CmsPiisValidationInfo> cmsPiisValidationInfoList) {
-        if (CollectionUtils.isEmpty(cmsPiisValidationInfoList)) {
-            return ResponseObject.<String>builder()
-                       .fail(new MessageError(NO_PIIS_ACTIVATION))
-                       .build();
+    public PiisConsentValidationResult validatePiisConsentData(List<PiisConsent> piisConsents) {
+        if (CollectionUtils.isEmpty(piisConsents)) {
+            return new PiisConsentValidationResult(ErrorHolder.builder(NO_PIIS_ACTIVATION).build());
         }
-
-        String tppId = tppService.getTppId();
-        List<CmsPiisValidationInfo> filteredResponse = cmsPiisValidationInfoList.stream()
-                                                           .filter(e -> EnumSet.of(VALID, RECEIVED).contains(e.getConsentStatus()))
-                                                           .filter(e -> Optional.ofNullable(e.getExpireDate())
-                                                                            .map(d -> d.compareTo(LocalDate.now()) >= 0)
-                                                                            .orElse(true)
-                                                           )
-                                                           .filter(e -> e.getPiisConsentTppAccessType() == ALL_TPP || tppId.equals(e.getTppInfoId()))
-                                                           .collect(Collectors.toList());
+        List<PiisConsent> filteredResponse = piisConsents.stream()
+                                                 .filter(e -> EnumSet.of(VALID, RECEIVED).contains(e.getConsentStatus()))
+                                                 .filter(e -> Optional.ofNullable(e.getExpireDate())
+                                                                  .map(d -> d.compareTo(LocalDate.now()) >= 0)
+                                                                  .orElse(true)
+                                                 )
+                                                 .filter(this::isTppValid)
+                                                 .collect(Collectors.toList());
 
         if (filteredResponse.isEmpty()) {
-            return ResponseObject.<String>builder()
-                       .fail(new MessageError(CONSENT_INVALID))
-                       .build();
+            return new PiisConsentValidationResult(ErrorHolder.builder(CONSENT_INVALID).build());
         }
 
-        List<CmsPiisValidationInfo> validResponse = filteredResponse.stream()
-                                                        .filter(e -> e.getFrequencyPerDay() > 0)
-                                                        .collect(Collectors.toList());
+        Optional<PiisConsent> validResponse = filteredResponse.stream()
+                                                  .filter(e -> e.getAllowedFrequencyPerDay() > 0)
+                                                  .findAny();
 
-        if (validResponse.isEmpty()) {
-            return ResponseObject.<String>builder()
-                       .fail(new MessageError(ACCESS_EXCEEDED))
-                       .build();
+        return validResponse.map(PiisConsentValidationResult::new)
+                   .orElseGet(() -> new PiisConsentValidationResult(ErrorHolder.builder(ACCESS_EXCEEDED)
+                                                                        .build()));
+    }
+
+    private boolean isTppValid(PiisConsent piisConsent) {
+        switch (piisConsent.getTppAccessType()) {
+            case ALL_TPP:
+                return true;
+            case SINGLE_TPP:
+                TppInfo tppInfo = piisConsent.getTppInfo();
+                if (tppInfo == null) {
+                    return false;
+                }
+
+                String tppIdFromConsent = tppInfo.getAuthorisationNumber();
+                String actualTppId = tppService.getTppId();
+                return tppIdFromConsent.equals(actualTppId);
+            default:
+                PiisConsentTppAccessType accessType = piisConsent.getTppAccessType();
+                log.error("Unknown TPP access type: {}", accessType);
+                throw new IllegalArgumentException("Unknown TPP access type: " + accessType);
         }
-
-        String consentId = validResponse.get(0).getConsentId();
-
-        return ResponseObject.<String>builder()
-                   .body(consentId)
-                   .build();
     }
 }
