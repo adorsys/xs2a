@@ -35,8 +35,10 @@ The error "FORMAT_ERROR" with http status 400 and TPP message "Payment is finali
 
 ## Added expiration time for redirect url
 Redirect url and related authorisation now have an expiration time. The value for expiration time is counted with formula 
-"current time of authorisation creation + redirect url expiration time (set in ASPSP-profile)". Online banking is forced to check redirect url for expiration.
-If redirect url is not expired, online banking gets payment, authorisation id, not ok tpp redirect url and ok tpp redirect url in response, otherwise http code 400 is sent.
+"current time of authorisation creation + redirect url expiration time (set in ASPSP-profile)". 
+We give redirect id (= authorisation id) in redirect link now (instead of payment id and authorisation id in previous versions), and to get payment/consent id and related payment information, online banking should call 
+ **GET /psu-api/v1/pis/consent/redirect/{redirect-id}** endpoint of consent management system.
+If redirect url is not expired, online banking gets payment, authorisation id, not ok tpp redirect url and ok tpp redirect url in response, otherwise http code 408 Request Timeout is sent.
 
 ## Changes to FundsConfirmationSpi
 Now the whole PIIS Consent object is being passed to FundsConfirmationSpi#performFundsSufficientCheck instead of just consent id.

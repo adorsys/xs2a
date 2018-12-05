@@ -85,7 +85,7 @@ public class CmsPsuPisController {
     @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 408, message = "Request Timeout")})
     public ResponseEntity<CmsPaymentResponse> getPaymentByRedirectId(
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
@@ -101,7 +101,7 @@ public class CmsPsuPisController {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return cmsPsuPisService.checkRedirectAndGetPayment(psuIdData, redirectId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT));
     }
 
     @PutMapping(path = "/{payment-id}/{authorisation-id}/status/{status}")
