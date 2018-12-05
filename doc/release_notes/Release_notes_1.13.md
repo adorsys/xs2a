@@ -37,3 +37,8 @@ The error "FORMAT_ERROR" with http status 400 and TPP message "Payment is finali
 Redirect url and related authorisation now have an expiration time. The value for expiration time is counted with formula 
 "current time of authorisation creation + redirect url expiration time (set in ASPSP-profile)". Online banking is forced to check redirect url for expiration.
 If redirect url is not expired, online banking gets payment, authorisation id, not ok tpp redirect url and ok tpp redirect url in response, otherwise http code 400 is sent.
+
+## Changes to FundsConfirmationSpi
+Now the whole PIIS Consent object is being passed to FundsConfirmationSpi#performFundsSufficientCheck instead of just consent id.
+Also FundsConfirmationSpi#performFundsSufficientCheck now responds with
+de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse instead of java.lang.Boolean.

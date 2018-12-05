@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.exception;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,6 +50,10 @@ public class MessageError {
 
     public MessageError(TransactionStatus status, TppMessageInformation tppMessage) {
         this(status, singletonList(tppMessage));
+    }
+
+    public MessageError(ErrorHolder errorHolder) {
+        this(errorHolder.getErrorCode(), errorHolder.getMessage());
     }
 
     public MessageError(TransactionStatus status, List<TppMessageInformation> tppMessages) {

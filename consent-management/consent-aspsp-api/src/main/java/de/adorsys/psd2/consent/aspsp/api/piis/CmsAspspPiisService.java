@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.aspsp.api.piis;
 
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -31,7 +32,7 @@ public interface CmsAspspPiisService {
      * Creates new PIIS consent. Consent gets status "Valid".
      *
      * @param psuIdData              PSU credentials data
-     * @param tppInfo             TPP for which the consent will be created. If the value is omitted, consent will be created for all TPPs.
+     * @param tppInfo                TPP for which the consent will be created. If the value is omitted, consent will be created for all TPPs.
      * @param accounts               List of accounts for which the consent is created
      * @param validUntil             Consent's expiration date
      * @param allowedFrequencyPerDay Maximum frequency for an access per day

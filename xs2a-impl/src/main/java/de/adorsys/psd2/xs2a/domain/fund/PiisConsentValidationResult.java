@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service;
+package de.adorsys.psd2.xs2a.domain.fund;
 
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.springframework.stereotype.Service;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import lombok.Data;
 
-//TODO Implement this class properly during implementation of FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
-@Service
-public class FundsConfirmationPsuDataService {
+@Data
+public class PiisConsentValidationResult {
+    private PiisConsent consent;
+    private ErrorHolder errorHolder;
 
-    public PsuIdData getPsuDataByConsentId(String consentId) {
-        return new PsuIdData(null, null, null, null);
+    public PiisConsentValidationResult(PiisConsent consent) {
+        this.consent = consent;
+    }
+
+    public PiisConsentValidationResult(ErrorHolder errorHolder) {
+        this.errorHolder = errorHolder;
+    }
+
+    public boolean hasError() {
+        return errorHolder != null;
     }
 }

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.piis;
+package de.adorsys.psd2.xs2a.core.piis;
 
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
-import lombok.Data;
+/**
+ * Type of the tpp access, indicating which TPPs have an access to the consent
+ */
+public enum PiisConsentTppAccessType {
+    /**
+     * Only one particular TPP has an access
+     */
+    SINGLE_TPP,
 
-import java.time.LocalDate;
-
-@Data
-public class CmsPiisValidationInfo {
-    private String consentId;
-    private int frequencyPerDay;
-    private String tppInfoId;
-    private LocalDate expireDate;
-    private ConsentStatus consentStatus;
-    private PiisConsentTppAccessType piisConsentTppAccessType;
+    /**
+     * All TPPs have an access
+     */
+    ALL_TPP
 }
