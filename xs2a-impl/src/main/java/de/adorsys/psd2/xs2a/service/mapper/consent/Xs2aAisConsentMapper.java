@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -48,12 +49,12 @@ public class Xs2aAisConsentMapper {
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final Xs2aToSpiAccountAccessMapper xs2aToSpiAccountAccessMapper;
 
-    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, PsuIdData psuData, String tppId, int allowedFrequencyPerDay) {
+    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, PsuIdData psuData, TppInfo tppInfo, int allowedFrequencyPerDay) {
         return Optional.ofNullable(req)
                    .map(r -> {
                        CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
                        aisRequest.setPsuData(psuData);
-                       aisRequest.setTppId(tppId);
+                       aisRequest.setTppInfo(tppInfo);
                        aisRequest.setRequestedFrequencyPerDay(r.getFrequencyPerDay());
                        aisRequest.setAllowedFrequencyPerDay(allowedFrequencyPerDay);
                        aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
@@ -69,18 +70,18 @@ public class Xs2aAisConsentMapper {
     public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
                    .map(ac -> new AccountConsent(
-                           ac.getId(),
-                           spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
-                           ac.isRecurringIndicator(),
-                           ac.getValidUntil(),
-                           ac.getFrequencyPerDay(),
-                           ac.getLastActionDate(),
-                           ac.getConsentStatus(),
-                           ac.isWithBalance(),
-                           ac.isTppRedirectPreferred(),
-                           spiToXs2aPsuDataMapper.mapToPsuIdData(ac.getPsuData()),
-                           ac.getTppId()
-                       )
+                            ac.getId(),
+                            spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
+                            ac.isRecurringIndicator(),
+                            ac.getValidUntil(),
+                            ac.getFrequencyPerDay(),
+                            ac.getLastActionDate(),
+                            ac.getConsentStatus(),
+                            ac.isWithBalance(),
+                            ac.isTppRedirectPreferred(),
+                            spiToXs2aPsuDataMapper.mapToPsuIdData(ac.getPsuData()),
+                            ac.getTppInfo()
+                        )
                    )
                    .orElse(null);
     }
@@ -88,18 +89,18 @@ public class Xs2aAisConsentMapper {
     public SpiAccountConsent mapToSpiAccountConsent(AccountConsent accountConsent) {
         return Optional.ofNullable(accountConsent)
                    .map(ac -> new SpiAccountConsent(
-                           ac.getId(),
-                           xs2aToSpiAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
-                           ac.isRecurringIndicator(),
-                           ac.getValidUntil(),
-                           ac.getFrequencyPerDay(),
-                           ac.getLastActionDate(),
-                           ac.getConsentStatus(),
-                           ac.isWithBalance(),
-                           ac.isTppRedirectPreferred(),
-                           xs2aToSpiPsuDataMapper.mapToSpiPsuData(ac.getPsuData()),
-                           ac.getTppId()
-                       )
+                            ac.getId(),
+                            xs2aToSpiAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
+                            ac.isRecurringIndicator(),
+                            ac.getValidUntil(),
+                            ac.getFrequencyPerDay(),
+                            ac.getLastActionDate(),
+                            ac.getConsentStatus(),
+                            ac.isWithBalance(),
+                            ac.isTppRedirectPreferred(),
+                            xs2aToSpiPsuDataMapper.mapToSpiPsuData(ac.getPsuData()),
+                            ac.getTppInfo()
+                        )
                    )
                    .orElse(null);
     }
@@ -203,7 +204,7 @@ public class Xs2aAisConsentMapper {
                        ac.getLastActionDate(),
                        ac.getConsentStatus(),
                        ac.isWithBalance(),
-                       ac.isTppRedirectPreferred(), ac.getPsuData(), ac.getTppId()))
+                       ac.isTppRedirectPreferred(), ac.getPsuData(), ac.getTppInfo()))
                    .orElse(null);
     }
 

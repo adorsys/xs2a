@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import lombok.AllArgsConstructor;
@@ -40,5 +41,5 @@ public class SpiAccountConsent {
     private boolean withBalance;
     private boolean tppRedirectPreferred;
     private SpiPsuData psuData;
-    private String tppId;
+    private TppInfo tppInfo;
 }

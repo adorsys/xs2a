@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AisConsentMapper {
     private final PsuDataMapper psuDataMapper;
+    private final TppInfoMapper tppInfoMapper;
 
     public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
         return new AisAccountConsent(
@@ -50,7 +51,7 @@ public class AisConsentMapper {
             consent.isTppRedirectPreferred(),
             consent.getAisConsentRequestType(),
             psuDataMapper.mapToPsuIdData(consent.getPsuData()),
-            consent.getTppId());
+            tppInfoMapper.mapToTppInfo(consent.getTppInfo()));
     }
 
     public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {
@@ -73,8 +74,8 @@ public class AisConsentMapper {
 
     private AisAccountAccess mapToAisAccountAccess(List<AccountAccess> accountAccesses) {
         return new AisAccountAccess(mapToCmsAccountReference(accountAccesses, TypeAccess.ACCOUNT),
-            mapToCmsAccountReference(accountAccesses, TypeAccess.BALANCE),
-            mapToCmsAccountReference(accountAccesses, TypeAccess.TRANSACTION));
+                                    mapToCmsAccountReference(accountAccesses, TypeAccess.BALANCE),
+                                    mapToCmsAccountReference(accountAccesses, TypeAccess.TRANSACTION));
     }
 
     private List<CmsAccountReference> mapToCmsAccountReference(List<AccountAccess> aisAccounts, TypeAccess typeAccess) {
