@@ -51,8 +51,8 @@ public class AspspProfileUpdateController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(path = "/tpp-signature-required")
-    @ApiOperation(value = "Updates signature of the request by the TPP. Only for DEBUG!")
+    @PutMapping(path = "/aspsp-settings")
+    @ApiOperation(value = "Updates aspsp profile settings. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok"),
         @ApiResponse(code = 400, message = "Bad request")})
