@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
@@ -40,7 +41,10 @@ public class ConsentMapper {
         return Optional.ofNullable(req)
                    .map(r -> {
                        CreateAisConsentRequest request = new CreateAisConsentRequest();
-                       request.setTppId(tppId);
+                       TppInfo tppInfo = new TppInfo();
+                       tppInfo.setAuthorisationNumber(tppId);
+                       request.setTppInfo(tppInfo);
+
                        request.setAllowedFrequencyPerDay(r.getFrequencyPerDay());
                        request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
                        request.setValidUntil(r.getValidUntil());

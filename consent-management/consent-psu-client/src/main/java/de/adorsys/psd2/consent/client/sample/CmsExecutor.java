@@ -204,7 +204,11 @@ public class CmsExecutor {
         request.setRequestedFrequencyPerDay(10);
         request.setPsuData(new PsuIdData("psu-id-1", null, null, null));
         request.setRecurringIndicator(true);
-        request.setTppId("tpp-id-1");
+        request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
+                                           Arrays.asList(TppRole.PISP, TppRole.AISP, TppRole.PIISP, TppRole.ASPSP),
+                                           "authority id", "authority name", "Germany", "Organisation",
+                                           "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
+                                           "Nok redirect URI"));
         request.setValidUntil(LocalDate.of(2020, 12, 31));
         request.setTppRedirectPreferred(true);
         return request;

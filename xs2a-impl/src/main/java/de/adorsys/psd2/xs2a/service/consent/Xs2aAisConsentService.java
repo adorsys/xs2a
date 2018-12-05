@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
@@ -48,12 +49,12 @@ public class Xs2aAisConsentService {
      *
      * @param request Request body storing main consent details
      * @param psuData PsuIdData container of authorisation data about PSU
-     * @param tppId   String representation of TPP`s identifier from TPP Certificate
+     * @param tppInfo Information about particular TPP from TPP Certificate
      * @return String representation of identifier of stored consent
      */
-    public String createConsent(CreateConsentReq request, PsuIdData psuData, String tppId) {
+    public String createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
-        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppId, allowedFrequencyPerDay);
+        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay);
         Optional<String> consent = aisConsentService.createConsent(createAisConsentRequest);
         return consent.orElse(null);
     }

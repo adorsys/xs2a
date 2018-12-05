@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -98,8 +99,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             request.setAccess(getAccessForGlobalOrAllAvailableAccountsConsent(request));
         }
 
-        String tppId = tppService.getTppId();
-        String consentId = aisConsentService.createConsent(request, psuData, tppId);
+        TppInfo tppInfo = tppService.getTppInfo();
+        String consentId = aisConsentService.createConsent(request, psuData, tppInfo);
 
         if (StringUtils.isBlank(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
@@ -384,7 +385,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private AccountConsent getValidatedAccountConsent(String consentId) {
         return Optional.ofNullable(aisConsentService.getAccountConsentById(consentId))
-                   .filter(consent -> tppService.getTppId().equals(consent.getTppId()))
+                   .filter(consent -> tppService.getTppId().equals(consent.getTppInfo()
+                                                                       .getAuthorisationNumber()))
                    .orElse(null);
     }
 

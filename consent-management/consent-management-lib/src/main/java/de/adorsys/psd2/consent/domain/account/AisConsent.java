@@ -16,9 +16,10 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
-import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
 import de.adorsys.psd2.consent.api.ConsentType;
+import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -75,9 +76,10 @@ public class AisConsent {
     @JoinColumn(name = "psu_id")
     private PsuData psuData;
 
-    @Column(name = "tpp_id", nullable = false)
-    @ApiModelProperty(value = "TPP id", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")
-    private String tppId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "tpp_info_id", nullable = false)
+    @ApiModelProperty(value = "Information about TPP", required = true)
+    private TppInfoEntity tppInfo;
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)

@@ -23,14 +23,17 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +66,8 @@ public class AisConsentServiceInternalTest {
     private PsuData psuData;
     @Mock
     SecurityDataService securityDataService;
+    @Mock
+    private TppInfoMapper tppInfoMapper;
 
     private AisConsent aisConsent;
     private static final long CONSENT_ID = 1;
@@ -83,6 +88,7 @@ public class AisConsentServiceInternalTest {
         when(securityDataService.encryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
         when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, cmsAspspConsentDataBase64.getAspspConsentDataBase64()))
             .thenReturn(Optional.of(new EncryptedData(ENCRYPTED_CONSENT_DATA)));
+        when(tppInfoMapper.mapToTppInfoEntity(buildTppInfo())).thenReturn(buildTppInfoEntity());
     }
 
     @Test
@@ -179,7 +185,7 @@ public class AisConsentServiceInternalTest {
         request.setRequestedFrequencyPerDay(5);
         request.setPsuData(PSU_ID_DATA);
         request.setRecurringIndicator(true);
-        request.setTppId("tpp-id-1");
+        request.setTppInfo(buildTppInfo());
         request.setValidUntil(LocalDate.now());
         request.setTppRedirectPreferred(true);
         return request;
@@ -221,5 +227,17 @@ public class AisConsentServiceInternalTest {
         aisConsent.setExpireDate(LocalDate.now());
         aisConsent.setConsentStatus(ConsentStatus.REJECTED);
         return aisConsent;
+    }
+
+    private TppInfo buildTppInfo() {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber("tpp-id-1");
+        return tppInfo;
+    }
+
+    private TppInfoEntity buildTppInfoEntity() {
+        TppInfoEntity tppInfoEntity = new TppInfoEntity();
+        tppInfoEntity.setAuthorisationNumber("tpp-id-1");
+        return tppInfoEntity;
     }
 }
