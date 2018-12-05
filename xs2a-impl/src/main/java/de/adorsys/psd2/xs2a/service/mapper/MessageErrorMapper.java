@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -62,8 +63,11 @@ public class MessageErrorMapper {
     }
 
     private TppMessageGeneric mapToGenericError(@NonNull TppMessageInformation info) {
-        return mapToGenericError(info.getMessageErrorCode(), info.getPath());
-
+        TppMessageGeneric tppMessageGeneric = mapToGenericError(info.getMessageErrorCode(), info.getPath());
+        if (StringUtils.isNotBlank(info.getText())) {
+            tppMessageGeneric.setText(info.getText());
+        }
+        return tppMessageGeneric;
     }
 
     private TppMessageGeneric mapToGenericError(@NonNull MessageErrorCode code, String path) {

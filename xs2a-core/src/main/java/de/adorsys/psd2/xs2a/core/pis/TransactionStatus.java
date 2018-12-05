@@ -16,8 +16,6 @@
 
 package de.adorsys.psd2.xs2a.core.pis;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +52,6 @@ public enum TransactionStatus {
         this.finalisedStatus = finalisedStatus;
     }
 
-    @JsonCreator
     public static TransactionStatus getByValue(String transactionStatus) {
         return container.get(transactionStatus);
     }
