@@ -20,6 +20,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = "de.adorsys.psd2.xs2a")
+@ComponentScan(basePackages = {"de.adorsys.psd2.xs2a", "de.adorsys.psd2.aspsp.profile", "de.adorsys.psd2.consent"})
 public class Xs2aInterfaceConfig {
 }
