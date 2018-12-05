@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
+import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
@@ -44,11 +45,13 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -124,6 +127,21 @@ public class PaymentServiceTest {
     @Mock
     private ReadPaymentService<PaymentInformationResponse> readPaymentService;
     @Mock
+    private SpiPaymentFactory spiPaymentFactory;
+    @Mock
+    private ReadPaymentStatusFactory readPaymentStatusFactory;
+    @Mock
+    private ReadPaymentStatusService readPaymentStatusService;
+
+    @Mock
+    private PisConsentResponse pisConsentResponse;
+    @Mock
+    private PisPayment pisPayment;
+    @Mock
+    private SpiPayment spiPayment;
+    @Mock
+    private SpiSinglePayment spiSinglePayment;
+    @Mock
     private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
 
     @Before
@@ -146,11 +164,11 @@ public class PaymentServiceTest {
         when(pisConsentDataService.getAspspConsentData(anyString())).thenReturn(ASPSP_CONSENT_DATA);
         when(tppService.getTppInfo()).thenReturn(getTppInfo());
 
-        when(cancelPaymentService.initiatePaymentCancellation(any(), any(), any()))
+        when(cancelPaymentService.initiatePaymentCancellation(any(), any()))
             .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
                             .body(getCancelPaymentResponse(true, ACTC))
                             .build());
-        when(cancelPaymentService.cancelPaymentWithoutAuthorisation(any(), any(), any()))
+        when(cancelPaymentService.cancelPaymentWithoutAuthorisation(any(), any()))
             .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
                             .body(getCancelPaymentResponse(false, CANC))
                             .build());
@@ -177,6 +195,12 @@ public class PaymentServiceTest {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.TRUE);
         when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
             .thenReturn(PSU_ID_DATA);
+        when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
+        when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
+        when(pisConsentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
+        doReturn(Optional.of(spiPayment))
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(pisPayment), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -191,6 +215,12 @@ public class PaymentServiceTest {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
         when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
             .thenReturn(PSU_ID_DATA);
+        when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
+        when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
+        when(pisConsentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
+        doReturn(Optional.of(spiPayment))
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(pisPayment), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -207,6 +237,8 @@ public class PaymentServiceTest {
             .thenReturn(PSU_ID_DATA);
         when(pisConsentService.getPisConsentById(PAYMENT_ID))
             .thenReturn(getFinalisedPisConsent());
+        doReturn(Optional.of(spiPayment))
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(getFinalisedPisPayment()), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -222,6 +254,8 @@ public class PaymentServiceTest {
             .thenReturn(PSU_ID_DATA);
         when(pisConsentService.getPisConsentById(PAYMENT_ID))
             .thenReturn(getFinalisedPisConsent());
+        doReturn(Optional.of(spiPayment))
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(getFinalisedPisPayment()), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -235,6 +269,12 @@ public class PaymentServiceTest {
         when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
         when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
             .thenReturn(PSU_ID_DATA);
+        when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
+        when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
+        when(pisConsentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
+        doReturn(Optional.of(spiPayment))
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(pisPayment), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -283,6 +323,18 @@ public class PaymentServiceTest {
     public void getPaymentStatusById_Success_ShouldRecordEvent() {
         SpiResponse<SpiTransactionStatus> spiResponse = buildSpiResponseTransactionStatus();
         when(singlePaymentSpi.getPaymentStatusById(any(), any(), any())).thenReturn(spiResponse);
+        when(pisConsentService.getPisConsentById(anyString())).thenReturn(Optional.of(pisConsentResponse));
+        when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisConsentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
+        when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
+        when(readPaymentStatusService.readPaymentStatus(eq(pisPayment), eq("sepa-credit-transfers"), any(SpiPsuData.class), eq(ASPSP_CONSENT_DATA)))
+            .thenReturn(
+                SpiResponse.<SpiTransactionStatus>builder()
+                    .payload(SpiTransactionStatus.RCVD)
+                    .aspspConsentData(ASPSP_CONSENT_DATA)
+                    .success()
+            );
+        doNothing().when(pisConsentDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
             .thenReturn(true);
 
@@ -416,6 +468,7 @@ public class PaymentServiceTest {
 
     private Optional<PisConsentResponse> getFinalisedPisConsent() {
         PisConsentResponse response = new PisConsentResponse();
+        response.setPaymentProduct("sepa-credit-transfers");
         response.setConsentStatus(ConsentStatus.REJECTED);
         response.setPayments(Collections.singletonList(getFinalisedPisPayment()));
         return Optional.of(response);

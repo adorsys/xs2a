@@ -45,13 +45,13 @@ public class CancelPaymentService {
     /**
      * Cancels payment without performing strong customer authentication
      *
-     * @param psuData     ASPSP identifier(s) of the psu
-     * @param payment     Payment to be cancelled
-     * @param consentData Encrypted data that may be stored in the consent management system in the consent linked to a request.
+     * @param psuData ASPSP identifier(s) of the psu
+     * @param payment Payment to be cancelled
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPaymentWithoutAuthorisation(SpiPsuData psuData, SpiPayment payment, AspspConsentData consentData) {
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.cancelPaymentWithoutSca(psuData, payment, consentData);
+    public ResponseObject<CancelPaymentResponse> cancelPaymentWithoutAuthorisation(SpiPsuData psuData, SpiPayment payment) {
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(payment.getPaymentId());
+        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.cancelPaymentWithoutSca(psuData, payment, aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -71,13 +71,13 @@ public class CancelPaymentService {
     /**
      * Cancels payment without performing strong customer authentication
      *
-     * @param psuData     ASPSP identifier(s) of the psu
-     * @param payment     Payment to be cancelled
-     * @param consentData Encrypted data that may be stored in the consent management system in the consent linked to a request.
+     * @param psuData ASPSP identifier(s) of the psu
+     * @param payment Payment to be cancelled
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> initiatePaymentCancellation(SpiPsuData psuData, SpiPayment payment, AspspConsentData consentData) {
-        SpiResponse<SpiPaymentCancellationResponse> spiResponse = paymentCancellationSpi.initiatePaymentCancellation(psuData, payment, consentData);
+    public ResponseObject<CancelPaymentResponse> initiatePaymentCancellation(SpiPsuData psuData, SpiPayment payment) {
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(payment.getPaymentId());
+        SpiResponse<SpiPaymentCancellationResponse> spiResponse = paymentCancellationSpi.initiatePaymentCancellation(psuData, payment, aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
