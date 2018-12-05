@@ -140,6 +140,7 @@
         <mockito.version>1.10.19</mockito.version>
         <aspectj.version>1.9.2</aspectj.version>
         <junit.version>4.12</junit.version>
+        <hamcrest.version>1.3</hamcrest.version>
         <google.guava.version>23.0</google.guava.version>
         <mockito-all.version>1.10.19</mockito-all.version>
         <postgresql.version>42.2.4</postgresql.version>
@@ -155,11 +156,14 @@
         <jackson-datatype-jsr310.version>${jackson.version}</jackson-datatype-jsr310.version>
         <jackson-databind.version>${jackson.version}</jackson-databind.version>
 
-        <spring-test.version>4.3.21.RELEASE</spring-test.version>
-        <spring-web.version>4.3.21.RELEASE</spring-web.version>
-        <spring-context.version>4.3.21.RELEASE</spring-context.version>
+        <spring.version>4.3.21.RELEASE</spring.version>
+        <spring-test.version>${spring.version}</spring-test.version>
+        <spring-web.version>${spring.version}</spring-web.version>
+        <spring-context.version>${spring.version}</spring-context.version>
+        <spring-jdbc.version>${spring.version}</spring-jdbc.version>
         <spring-hateoas.version>0.25.0.RELEASE</spring-hateoas.version>
         <spring-data-commons.version>1.13.17.RELEASE</spring-data-commons.version>
+        <spring-data-jpa.version>1.11.17.RELEASE</spring-data-jpa.version>
         <spring-boot.version>1.5.18.RELEASE</spring-boot.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
@@ -249,6 +253,18 @@
 
             <dependency>
                 <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring-jdbc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>${spring-data-jpa.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring-test.version}</version>
                 <scope>test</scope>
@@ -311,6 +327,12 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${hamcrest.version}</version>
             </dependency>
 
             <dependency>

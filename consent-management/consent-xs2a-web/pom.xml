@@ -39,8 +39,6 @@
             <version>1.13-SNAPSHOT</version>
         </dependency>
 
-        <!-- other dependencies -->
-
         <!-- test dependencies -->
         <dependency>
             <groupId>junit</groupId>
