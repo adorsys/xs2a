@@ -424,7 +424,6 @@ public class CmsPsuPisServiceInternalTest {
         return Collections.singletonList(pisPaymentData);
     }
 
-
     private PisConsentAuthorization buildExpiredAuthorisation() {
         PisConsentAuthorization pisConsentAuthorisation = new PisConsentAuthorization();
         pisConsentAuthorisation.setScaStatus(ScaStatus.STARTED);
@@ -437,7 +436,6 @@ public class CmsPsuPisServiceInternalTest {
         return pisConsentAuthorisation;
     }
 
-
     private CmsPaymentResponse buildCmsPaymentResponse(String authorisationId) {
         return new CmsPaymentResponse(
             buildCmsPayment(),
@@ -446,5 +444,4 @@ public class CmsPsuPisServiceInternalTest {
             TPP_NOK_REDIRECT_URI
         );
     }
-
 }
