@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi;
+package de.adorsys.psd2.xs2a.config;
 
-import de.adorsys.psd2.xs2a.config.EnableXs2aInterface;
-import de.adorsys.psd2.xs2a.web.config.EnableXs2aSwagger;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 
-@EnableXs2aSwagger
-@EnableXs2aInterface
-@SpringBootApplication
-public class ASPSPXs2aApplication {
+import java.lang.annotation.*;
 
-    public static void main(String[] args) {
-        SpringApplication.run(ASPSPXs2aApplication.class, args);
-    }
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Import(Xs2aInterfaceConfig.class)
+public @interface EnableXs2aInterface {
 }
