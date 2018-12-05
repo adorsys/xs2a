@@ -18,50 +18,79 @@ package de.adorsys.psd2.xs2a.service.validator.tpp;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.Value;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Value
 public class TppRoleAccess {
-    private Map<TppRole, Set<String>> tppRoleAccess;
+    private static AntPathMatcher matcher = new AntPathMatcher();
+    private static Map<String, Set<TppRole>> secureURIs;
 
-    private TppRoleAccess(TppAccessBuilder builder) {
-        this.tppRoleAccess = builder.tppRoleAccess;
+    static {
+        TppRoleAccess.builder()
+            .linkTppRolePatterns("/api/v1/accounts/**", TppRole.AISP)
+            .linkTppRolePatterns("/v1/accounts/**", TppRole.AISP)
+            .linkTppRolePatterns("/api/v1/consents/**", TppRole.AISP)
+            .linkTppRolePatterns("/v1/consents/**", TppRole.AISP)
+            .linkTppRolePatterns("/api/v1/bulk-payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/v1/bulk-payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/api/v1/payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/v1/payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/api/v1/periodic-payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/v1/periodic-payments/**", TppRole.PISP)
+            .linkTppRolePatterns("/api/v1/funds-confirmations/**", TppRole.PIISP)
+            .linkTppRolePatterns("/v1/funds-confirmations/**", TppRole.PIISP)
+            .build();
     }
 
-    public static TppAccessBuilder builder() {
+    private TppRoleAccess(TppAccessBuilder builder) {
+        secureURIs = builder.secureURIs;
+    }
+
+    private static TppAccessBuilder builder() {
         return new TppAccessBuilder();
     }
 
+    static boolean hasAccessForPath(List<TppRole> tppRoles, String targetPath) {
+        for (Map.Entry<String, Set<TppRole>> entry : secureURIs.entrySet()) {
+            Set<TppRole> allowedRoles = entry.getValue();
+            String pattern = entry.getKey();
+            if (matcher.match(pattern, targetPath)) {
+                return tppRoles.stream()
+                           .anyMatch(allowedRoles::contains);
+            }
+        }
+        /* We check the TPP roles for uris matching the patterns in secureURIs map, the rest of requests are considered valid e.g. swagger-ui.html */
+        return true;
+    }
+
     @Value
-    public static class TppAccessBuilder {
-        private Map<TppRole, Set<String>> tppRoleAccess = new HashMap<>();
+    private static class TppAccessBuilder {
+        private Map<String, Set<TppRole>> secureURIs = new HashMap<>();
 
         private TppAccessBuilder() {
         }
 
-        TppAccessBuilder linkTppRolePatterns(TppRole tppRole, String... patterns) {
-            Assert.notEmpty(patterns, "Patterns must be set!");
+        TppAccessBuilder linkTppRolePatterns(String pattern, TppRole... tppRoles) {
+            Assert.notEmpty(tppRoles, "Tpp roles must be set!");
 
-            Set<String> requestMatchers = Arrays.stream(patterns)
-                                              .collect(Collectors.toSet());
+            Set<TppRole> roles = Arrays.stream(tppRoles)
+                                     .collect(Collectors.toSet());
 
-            if (this.tppRoleAccess.containsKey(tppRole)) {
-                this.tppRoleAccess.get(tppRole)
-                    .addAll(requestMatchers);
+            if (this.secureURIs.containsKey(pattern)) {
+                this.secureURIs.get(pattern)
+                    .addAll(roles);
             } else {
-                this.tppRoleAccess.put(tppRole, requestMatchers);
+                this.secureURIs.put(pattern, roles);
             }
             return this;
         }
 
-        public Map<TppRole, Set<String>> build() {
-            return new TppRoleAccess(this).getTppRoleAccess();
+        private TppRoleAccess build() {
+            return new TppRoleAccess(this);
         }
     }
 }

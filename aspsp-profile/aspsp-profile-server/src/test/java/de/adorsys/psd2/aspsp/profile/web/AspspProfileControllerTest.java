@@ -26,12 +26,11 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,8 +41,7 @@ import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceFiel
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class AspspProfileControllerTest {
     private static final int FREQUENCY_PER_DAY = 5;
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
@@ -66,10 +64,10 @@ public class AspspProfileControllerTest {
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
 
-    @Autowired
+    @InjectMocks
     private AspspProfileController aspspProfileController;
 
-    @MockBean
+    @Mock
     private AspspProfileService aspspProfileService;
 
     @Before
