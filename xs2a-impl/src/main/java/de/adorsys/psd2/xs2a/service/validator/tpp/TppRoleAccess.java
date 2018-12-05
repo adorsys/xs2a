@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.validator.tpp;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.Value;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 
@@ -55,22 +54,16 @@ public class TppRoleAccess {
         return new TppAccessBuilder();
     }
 
-    public static boolean hasAccessForPath(List<TppRole> tppRoles, String targetPath) {
-        if (CollectionUtils.isEmpty(tppRoles)) {
-            return false;
-        }
+    static boolean hasAccessForPath(List<TppRole> tppRoles, String targetPath) {
         for (Map.Entry<String, Set<TppRole>> entry : secureURIs.entrySet()) {
             Set<TppRole> allowedRoles = entry.getValue();
             String pattern = entry.getKey();
             if (matcher.match(pattern, targetPath)) {
-                for (TppRole role : tppRoles) {
-                    if (allowedRoles.contains(role)) {
-                        return true;
-                    }
-                }
-                return false;
+                return tppRoles.stream()
+                           .anyMatch(allowedRoles::contains);
             }
         }
+        /* We check the TPP roles for uris matching the patterns in secureURIs map, the rest of requests are considered valid e.g. swagger-ui.html */
         return true;
     }
 
