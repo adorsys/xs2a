@@ -184,7 +184,7 @@ public class CmsPsuAisConsentController {
     @ApiOperation(value = "Gets consent response by redirect id")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = CmsAisConsentResponse.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 408, message = "Request Timeout")})
     public ResponseEntity<CmsAisConsentResponse> getConsentByRedirectId(
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
@@ -199,7 +199,7 @@ public class CmsPsuAisConsentController {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         return cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, redirectId)
                    .map(consent -> new ResponseEntity<>(consent, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT));
     }
 
     private PsuIdData getPsuIdData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
