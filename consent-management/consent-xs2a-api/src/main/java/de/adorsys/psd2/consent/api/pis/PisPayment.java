@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.api.pis;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -78,6 +79,9 @@ public class PisPayment {
 
     @ApiModelProperty(value = "Purpose code", example = "BCENECEQ")
     private String purposeCode;
+
+    @ApiModelProperty(name = "transactionStatus", example = "ACCP", required = true)
+    private TransactionStatus transactionStatus;
 
     /**
      * Next fields are used in order to create periodic payment
