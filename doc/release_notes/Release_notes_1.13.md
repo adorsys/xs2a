@@ -48,3 +48,4 @@ In order to provide a possibility to return list of transactions in other format
 `AccountSpi::requestTransactionsForAccount` now gets a string with acceptable content-types from TPP.
 If required content-type is not supported, NOT_SUPPORTED response should be returned. Otherwise SPI Developer
 can provide a raw transactions list, supplemented with a content-type. It will be proxied to TPP without further handling.
+See corresponding method's javadocs for more details.
