@@ -42,3 +42,9 @@ If redirect url is not expired, online banking gets payment, authorisation id, n
 Now the whole PIIS Consent object is being passed to FundsConfirmationSpi#performFundsSufficientCheck instead of just consent id.
 Also FundsConfirmationSpi#performFundsSufficientCheck now responds with
 de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse instead of java.lang.Boolean.
+
+## Return a raw transactions list with custom content-type from SPI level
+In order to provide a possibility to return list of transactions in other formats than JSON, i.e. MT9x,
+`AccountSpi::requestTransactionsForAccount` now gets a string with acceptable content-types from TPP.
+If required content-type is not supported, NOT_SUPPORTED response should be returned. Otherwise SPI Developer
+can provide a raw transactions list, supplemented with a content-type. It will be proxied to TPP without further handling.
