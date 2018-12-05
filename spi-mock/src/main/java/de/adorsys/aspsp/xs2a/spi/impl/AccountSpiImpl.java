@@ -149,7 +149,7 @@ public class AccountSpiImpl implements AccountSpi {
                                      .collect(Collectors.joining(",\n"));
                 SpiTransactionReport transactionReport = new SpiTransactionReport(Collections.emptyList(),
                                                                                   Collections.emptyList(),
-                                                                                  "text/plain",
+                                                                                  SpiTransactionReport.RESPONSE_TYPE_TEXT,
                                                                                   plainTextResponse.getBytes(UTF_8)
                 );
                 responseBuilder = responseBuilder.payload(transactionReport);

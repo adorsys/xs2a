@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -27,6 +28,8 @@ import java.util.List;
 @Data
 public class Xs2aTransactionsReport implements CustomContentTypeProvider {
     private static final String RESPONSE_TYPE_JSON = "application/json";
+    private static final String RESPONSE_TYPE_XML = "application/xml";
+    private static final String RESPONSE_TYPE_TEXT = "plain/text";
 
     private Xs2aAccountReference xs2aAccountReference;
 
@@ -46,6 +49,9 @@ public class Xs2aTransactionsReport implements CustomContentTypeProvider {
 
     @Override
     public MediaType getCustomContentType() {
+        if (StringUtils.isBlank(responseContentType)) {
+            return MediaType.parseMediaType(RESPONSE_TYPE_JSON);
+        }
         return MediaType.parseMediaType(responseContentType);
     }
 }
