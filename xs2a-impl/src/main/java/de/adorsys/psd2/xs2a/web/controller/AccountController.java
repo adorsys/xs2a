@@ -114,7 +114,7 @@ public class AccountController implements AccountApi {
         ResponseObject<Xs2aTransactionsReport> transactionsReport =
             accountService.getTransactionsReportByPeriod(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
 
-        if (transactionsReport.getBody().isResponseContentTypeJson()) {
+        if (transactionsReport.hasError() || transactionsReport.getBody().isResponseContentTypeJson()) {
             return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponse200Json);
         } else {
             return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponseRaw);
