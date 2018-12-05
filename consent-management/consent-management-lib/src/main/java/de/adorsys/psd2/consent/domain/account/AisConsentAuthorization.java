@@ -55,4 +55,12 @@ public class AisConsentAuthorization {
 
     @Column(name = "expiration_timestamp")
     private OffsetDateTime redirectUrlExpirationTimestamp;
+
+    public boolean isExpired() {
+        return redirectUrlExpirationTimestamp.isBefore(OffsetDateTime.now());
+    }
+
+    public boolean isNotExpired() {
+        return !isExpired();
+    }
 }

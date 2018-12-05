@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
@@ -29,6 +30,7 @@ import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -108,6 +110,24 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return changeConsentStatus(consentId, REVOKED_BY_PSU);
     }
 
+    @Override
+    public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
+        Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorizationRepository.findByExternalId(redirectId);
+
+        if (!authorisationOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        AisConsentAuthorization authorisation = authorisationOptional.get();
+
+        if (authorisation.isExpired()) {
+            updateAuthorisationOnExpiration(authorisation);
+            return Optional.empty();
+        }
+
+        return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
+    }
+
     private boolean changeConsentStatus(String consentId, ConsentStatus status) {
         return getAisConsentById(consentId)
                    .map(con -> updateConsentStatus(con, status))
@@ -162,5 +182,31 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
         authorization.setScaStatus(status);
         return aisConsentAuthorizationRepository.save(authorization) != null;
+    }
+
+    private void updateAuthorisationOnExpiration(AisConsentAuthorization authorisation) {
+        authorisation.setScaStatus(ScaStatus.FAILED);
+        aisConsentAuthorizationRepository.save(authorisation);
+    }
+
+    private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String redirectId) {
+        if (aisConsent == null) {
+            return Optional.empty();
+        }
+
+        AisAccountConsent aisAccountConsent = consentMapper.mapToAisAccountConsent(aisConsent);
+
+        if (aisAccountConsent == null) {
+            return Optional.empty();
+        }
+
+        TppInfo tppInfo = aisAccountConsent.getTppInfo();
+
+        if (tppInfo == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(aisAccountConsent)
+                   .map(c -> new CmsAisConsentResponse(aisAccountConsent, redirectId, tppInfo.getRedirectUri(), tppInfo.getNokRedirectUri()));
     }
 }
