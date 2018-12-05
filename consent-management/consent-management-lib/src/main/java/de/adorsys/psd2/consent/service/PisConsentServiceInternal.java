@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
@@ -45,6 +46,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -64,6 +67,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     private final PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final SecurityDataService securityDataService;
+    private final AspspProfileService aspspProfileService;
 
     /**
      * Creates new pis consent with full information about payment
@@ -144,7 +148,8 @@ public class PisConsentServiceInternal implements PisConsentService {
      */
     @Override
     @Transactional
-    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String encryptedPaymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String encryptedPaymentId, CmsAuthorisationType authorizationType,
+                                                                               PsuIdData psuData) {
         Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
         if (!paymentId.isPresent()) {
             log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
@@ -349,6 +354,7 @@ public class PisConsentServiceInternal implements PisConsentService {
         consentAuthorization.setScaStatus(STARTED);
         consentAuthorization.setAuthorizationType(authorizationType);
         consentAuthorization.setPsuData(psuDataMapper.mapToPsuData(psuData));
+        consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
         return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 

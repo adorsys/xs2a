@@ -16,11 +16,13 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import lombok.Value;
 
-public interface CmsPayment {
+@Value
+public class CmsPaymentResponse {
 
-    String getPaymentId();
-    PaymentType getPaymentType();
-    String getPaymentProduct();
+    private CmsPayment payment;
+    private String authorisationId;
+    private String tppOkRedirectUri;
+    private String tppNokRedirectUri;
 }
