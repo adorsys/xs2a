@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.ais;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,8 +31,8 @@ public class CreateAisConsentRequest {
     @ApiModelProperty(value = "Corresponding PSU", required = true)
     private PsuIdData psuData;
 
-    @ApiModelProperty(value = "ID of the corresponding TPP.", required = true, example = "testTPP")
-    private String tppId;
+    @ApiModelProperty(value = "Tpp information", required = true)
+    private TppInfo tppInfo;
 
     @ApiModelProperty(value = "Allowed maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private Integer allowedFrequencyPerDay;

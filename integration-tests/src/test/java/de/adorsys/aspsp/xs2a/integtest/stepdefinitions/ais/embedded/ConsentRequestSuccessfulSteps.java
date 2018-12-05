@@ -65,7 +65,7 @@ public class ConsentRequestSuccessfulSteps {
         assertThat(actualResponse.getBody().getLinks().get("startAuthorisation"), notNullValue());
     }
 
-    @After
+    //@After
     public void resetSigningBasketSupportedProfile(){
         updateSigningBasketSupported(Boolean.FALSE);
     }

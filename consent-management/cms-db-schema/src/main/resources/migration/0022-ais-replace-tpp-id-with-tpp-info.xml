@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-12-03-1">
+        <comment>Create tpp_info_id column in ais_consent</comment>
+
+        <addColumn tableName="ais_consent">
+            <column name="tpp_info_id" type="BIGINT"/>
+        </addColumn>
+
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-12-03-2">
+        <preConditions onFail="MARK_RAN">
+            <or>
+                <dbms type="postgresql"/>
+                <dbms type="mariadb"/>
+                <dbms type="oracle"/>
+            </or>
+        </preConditions>
+
+        <comment>Insert default Tpp Info for PostgreSQL, MariaDB or Oracle</comment>
+
+        <sql dbms="postgresql">
+            INSERT INTO tpp_info (tpp_info_id, authorisation_number, tpp_name)
+            SELECT nextval('tpp_info_id_seq'), c.* FROM (SELECT DISTINCT tpp_id, 'default TPP'
+            FROM ais_consent ) as c
+        </sql>
+
+        <sql dbms="mariadb">
+            INSERT INTO tpp_info (tpp_info_id, authorisation_number, tpp_name)
+            SELECT NEXTVAL(tpp_info_id_seq), c.* FROM (SELECT DISTINCT tpp_id, 'default TPP'
+            FROM ais_consent ) as c
+        </sql>
+
+        <sql dbms="oracle">
+            INSERT INTO tpp_info (tpp_info_id, authorisation_number, tpp_name)
+            SELECT tpp_info_id_seq.nextval, c.* FROM (SELECT DISTINCT to_char(tpp_id) AS tpp_id, 'default TPP'
+            FROM ais_consent ) c
+        </sql>
+
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-12-03-3">
+        <preConditions onFail="MARK_RAN">
+            <or>
+                <dbms type="postgresql"/>
+                <dbms type="mariadb"/>
+            </or>
+        </preConditions>
+
+        <comment>Set tpp_info_id in ais_consent for PostgreSQL or Mariadb</comment>
+
+        <sql>
+            UPDATE ais_consent
+            SET tpp_info_id =
+            (SELECT t.tpp_info_id FROM tpp_info AS t
+            INNER JOIN ais_consent AS a
+            ON t.authorisation_number = a.tpp_id AND tpp_name = 'default TPP'
+            LIMIT 1)
+        </sql>
+
+        <sql>
+            INSERT INTO tpp_info_role (tpp_info_id, tpp_role)
+            SELECT DISTINCT t.tpp_info_id, 'AISP'
+            FROM tpp_info AS t
+            INNER JOIN ais_consent AS a
+            ON t.authorisation_number = a.tpp_id
+        </sql>
+
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-12-03-4">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="oracle"/>
+        </preConditions>
+
+        <comment>Set tpp_info_id in ais_consent for Oracle</comment>
+
+        <sql>
+            UPDATE ais_consent
+            SET tpp_info_id =
+            (SELECT tpp_info.tpp_info_id FROM tpp_info
+            INNER JOIN ais_consent
+            ON tpp_info.authorisation_number = to_char(ais_consent.tpp_id) AND tpp_name = 'default TPP'
+            WHERE rownum = 1)
+        </sql>
+
+        <sql>
+            INSERT INTO tpp_info_role (tpp_info_id, tpp_role)
+            SELECT DISTINCT tpp_info.tpp_info_id, 'AISP'
+            FROM tpp_info
+            INNER JOIN ais_consent
+            ON tpp_info.authorisation_number = to_char(ais_consent.tpp_id)
+        </sql>
+
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-12-03-5">
+        <comment>Add constraints and drop tpp_id column</comment>
+
+        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="ais_consent"
+                                 constraintName="fk__ais_consent__tpp_info" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
+
+        <addNotNullConstraint tableName="ais_consent" columnName="tpp_info_id" columnDataType="BIGINT"/>
+
+        <dropColumn columnName="tpp_id" tableName="ais_consent"/>
+
+    </changeSet>
+
+</databaseChangeLog>

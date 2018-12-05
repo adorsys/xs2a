@@ -65,7 +65,7 @@ public class ConsentRequestExpliciteStartAuthorizationSuccessfulSteps {
         assertThat(actualResponse.getBody().getLinks().get("startAuthorisation"), notNullValue());
     }
 
-    @After
+    //@After
     public void resetSigningBasketSupportedProfile(){
             HttpEntity entity = HttpEntityUtils.getHttpEntity(Boolean.FALSE);
             this.restTemplate.put(context.getProfileUrl() + "/aspsp-profile/for-debug/signing-basket-supported", entity);

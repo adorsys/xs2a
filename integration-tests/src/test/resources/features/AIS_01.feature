@@ -5,6 +5,7 @@ Feature: Account Information Service
 #    # Consent Requests                                                                                                 #
 #    #                                                                                                                  #
 #    ####################################################################################################################
+
     Scenario Outline: Successful consent request creation (redirect)
         Given PSU wants to create a consent <consent-resource>
         When PSU sends the create consent request
@@ -119,6 +120,7 @@ Feature: Account Information Service
     # Account Request                                                                                                  #
     #                                                                                                                  #
     ####################################################################################################################
+
     Scenario Outline: Request account list successfully
         Given PSU already has an existing <status> consent <consent-id>
         And wants to get a list of accounts using <account-resource>
@@ -197,17 +199,17 @@ Feature: Account Information Service
 #    # Balance Request                                                                                                  #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-  @ignore
+
     Scenario Outline: Read balances successfully
-        Given PSU already has an existing consent <consent>
+        Given PSU already has an existing valid consent <consent>
         And account id <account-id>
         And wants to read all balances using <balance-resource>
         When PSU requests the balances
-        Then a successful response code and the appropriate list of accounts get returned
+        Then successful response code and the appropriate list of accounts get returned
         Examples:
-            | consent                     | account-id                           | balance-resource            |
-            | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
-            | balance-create-consent.json | 868beafc-ef87-4fdb-ac0a-dd6c52b77ee6 | readBalance-successful.json |
+            | consent                                                 | account-id                           | balance-resource            |
+            | balance/readBalance_access_right_implicit_accounts.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
+            | balance/readBalance_access_right_balances.json          | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
 
     @ignore
     Scenario Outline: Read balances errorful
@@ -265,39 +267,24 @@ Feature: Account Information Service
             | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |         | 2008-09-15 |            | booked        |                    | false     | valid  |
             | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json |         | 2008-09-15 |            | booked        |                    | true      | valid  |
 
-
-    @ignore
     Scenario Outline: Read transaction list erroful
-        Given PSU already has an existing consent <consent-id>
+        Given PSU already has an existing <status> consent <consent-id>
         And account id <account-id>
-        And wants to read all transactions using <transaction-resource>
-        When PSU requests the transactions
+        And wants to read all transactions errorful using <transaction-resource>
+        When PSU requests the transactions erroful
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
-            | consent-id                      | account-id                           | transaction-resource                         |
-            | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-no-request-id.json           |
-            | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-wrong-format-request-id.json |
-
-    @ignore
-    Scenario Outline: Read transaction list with no consent errorful
-        Given PSU wants to read all transactions using <transaction-resource>
-        And account id <account-id>
-        When PSU requests the transactions
-        Then an error response code is displayed and an appropriate error response is shown
-        Examples:
-            | transaction-resource            | account-id                           |
-            | transactionList-no-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
-
-    @ignore
-    Scenario Outline: Read transaction list with expired consent errorful
-        Given PSU created consent <consent> which is expired
-        And account id <account-id>
-        And wants to read all transactions using <transaction-resource>
-        When PSU requests the transactions
-        Then an error response code is displayed and an appropriate error response is shown
-        Examples:
-            | consent                                  | account-id                           | transaction-resource                      |
-            | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-with-expired-consent.json |
+            | transaction-resource                                    | consent-id                                                        | status           | account-id                           |
+            | transactions-with-wrong-access.json                     | transaction/transactions-create-consent-with-account-access.json  |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-wrong-access.json                     | transaction/transactions-create-consent-with-balance-access.json  |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-accountid-nomatch-consent.json        | transaction/transactions-create-consent.json                      |  valid           | 11111-999999999                      |
+            | transactions-wrong-format-request-id.json               | transaction/transactions-create-consent.json                      |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-expired-consent.json                  | transaction/transactions-create-consent.json                      |  expired         | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-received-consent.json                 | transaction/transactions-create-consent.json                      |  received        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-rejected-consent.json                 | transaction/transactions-create-consent.json                      |  rejected        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-revokedByPsu-consent.json             | transaction/transactions-create-consent.json                      |  revokedByPsu    | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-terminatedByTpp-consent.json          | transaction/transactions-create-consent.json                      |  terminatedByTpp | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+            | transactions-with-exceeded-frequencePerDay-consent.json | transaction/transactions-create-consent-exceeded.json             |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
 
 
     Scenario Outline: Read transaction details successfully
@@ -311,39 +298,40 @@ Feature: Account Information Service
             | consent-id                                   | account-id                           | transaction-resource              | resource-id                          | status |
             | transaction/transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-successful.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe | valid  |
 
-    @ignore
     Scenario Outline: Read transaction details errorful
-        Given PSU already has an existing consent <consent-id>
+        Given PSU already has an existing <status> consent <consent-id>
         And account id <account-id>
-        And wants to read the transaction details using <transaction-resource>
+        And wants to read the transaction details errorful using <transaction-resource>
         And resource id <resource-id>
-        When PSU requests the transaction details
+        When PSU requests the transaction details errorful
         Then an error response code is displayed and an appropriate error response is shown
         Examples:
-            | consent-id                       | account-id                           | transaction-resource                           | resource-id                          |
-            | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-no-request-id.json           | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
-            | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-wrong-format-request-id.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transaction-resource                                    | consent-id                                                        | status           | account-id                           | resource-id                          |
+            | transactions-with-wrong-access.json                     | transaction/transactions-create-consent-with-account-access.json  |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-with-wrong-access.json                     | transaction/transactions-create-consent-with-balance-access.json  |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-with-accountid-nomatch-consent.json        | transaction/transactions-create-consent.json                      |  valid           | 11111-999999999                      | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-wrong-format-request-id.json               | transaction/transactions-create-consent.json                      |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-with-expired-consent.json                  | transaction/transactions-create-consent.json                      |  expired         | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-with-received-consent.json                 | transaction/transactions-create-consent.json                      |  received        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-with-rejected-consent.json                 | transaction/transactions-create-consent.json                      |  rejected        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-with-revokedByPsu-consent.json             | transaction/transactions-create-consent.json                      |  revokedByPsu    | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-with-terminatedByTpp-consent.json          | transaction/transactions-create-consent.json                      |  terminatedByTpp | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-with-exceeded-frequencePerDay-consent.json | transaction/transactions-create-consent-exceeded.json             |  valid           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+#
+#    ####################################################################################################################
+#    #                                                                                                                  #
+#    # Authorisation flows                                                                                              #
+#    #                                                                                                                  #
+#    ####################################################################################################################
+#
 
-    @ignore
-    Scenario Outline: Read transaction detail with no consent errorful
-        Given PSU wants to read the transaction details using <transaction-resource>
-        And account id <account-id>
-        And resource id <resource-id>
-        When PSU requests the transaction details
-        Then an error response code is displayed and an appropriate error response is shown
+    Scenario Outline: Successful Start Authorisation of Consent creation (embedded)
+        Given PSU wants to create a consent <consent-id>
+        And PSU sends the create consent request
+        And PSU wants to start the authorisation for consent creation using the authorisation data <authorisation-data>
+        When PSU sends the start authorisation request for consent creation
+        Then PSU checks if a link is received and the SCA status is correct
         Examples:
-            | transaction-resource              | account-id                           | resource-id                          |
-            | transactionDetail-no-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
-
-    @ignore
-    Scenario Outline: Read transaction details with expired consent errorful
-        Given PSU created consent <consent> which is expired
-        And account id <account-id>
-        And wants to read the transaction details using <transaction-resource>
-        And resource id <resource-id>
-        When PSU requests the transaction details
-        Then an error response code is displayed and an appropriate error response is shown
-        Examples:
-            | consent                                  | account-id                           | transaction-resource                        | resource-id                          |
-            | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-with-expired-consent.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
-
+        |consent-id                          |authorisation-data        |
+        |consent-all-accounts-successful.json|startAuth-successful.json |
+        |consent-dedicated-successful.json   |startAuth-successful.json |

@@ -20,11 +20,14 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
+import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
+import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
@@ -52,11 +55,11 @@ public class FundsConfirmationServiceTest {
     @Mock
     private Xs2aToSpiFundsConfirmationRequestMapper xs2aToSpiFundsConfirmationRequestMapper;
     @Mock
+    private SpiToXs2aFundsConfirmationMapper spiToXs2aFundsConfirmationMapper;
+    @Mock
     private Xs2aEventService xs2aEventService;
     @Mock
     private FundsConfirmationConsentDataService fundsConfirmationConsentDataService;
-    @Mock
-    private FundsConfirmationPsuDataService fundsConfirmationPsuDataService;
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     @Mock
@@ -70,16 +73,17 @@ public class FundsConfirmationServiceTest {
             .thenReturn(buildSpiFundsConfirmationRequest());
         when(fundsConfirmationConsentDataService.getAspspConsentData(anyString()))
             .thenReturn(ASPSP_CONSENT_DATA);
-        when(fundsConfirmationPsuDataService.getPsuDataByConsentId(anyString())).thenReturn(PSU_ID_DATA);
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
             .thenReturn(SPI_PSU_DATA);
+        when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
+            .thenReturn(buildFundsConfirmationResponse());
     }
 
     @Test
     public void fundsConfirmation_Success_ShouldRecordEvent() {
         when(aspspProfileServiceWrapper.isPiisConsentSupported()).thenReturn(false);
-        when(fundsConfirmationSpi.performFundsSufficientCheck(any(), anyString(), any(), any()))
-            .thenReturn(new SpiResponse<>(Boolean.TRUE, ASPSP_CONSENT_DATA));
+        when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
+            .thenReturn(new SpiResponse<>(buildSpiFundsConfirmationResponse(), ASPSP_CONSENT_DATA));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -99,5 +103,17 @@ public class FundsConfirmationServiceTest {
 
     private SpiFundsConfirmationRequest buildSpiFundsConfirmationRequest() {
         return new SpiFundsConfirmationRequest();
+    }
+
+    private SpiFundsConfirmationResponse buildSpiFundsConfirmationResponse() {
+        SpiFundsConfirmationResponse response = new SpiFundsConfirmationResponse();
+        response.setFundsAvailable(true);
+        return response;
+    }
+
+    private FundsConfirmationResponse buildFundsConfirmationResponse() {
+        FundsConfirmationResponse response = new FundsConfirmationResponse();
+        response.setFundsAvailable(true);
+        return response;
     }
 }

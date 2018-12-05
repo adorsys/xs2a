@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service;
+package de.adorsys.psd2.xs2a.service.payment;
 
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-//TODO Implement this class properly during implementation of FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
 @Service
-public class FundsConfirmationPsuDataService {
+@RequiredArgsConstructor
+public class Xs2aUpdatePaymentStatusAfterSpiService {
+    private final UpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
 
-    public PsuIdData getPsuDataByConsentId(String consentId) {
-        return new PsuIdData(null, null, null, null);
+    public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
+        return updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, status);
     }
 }

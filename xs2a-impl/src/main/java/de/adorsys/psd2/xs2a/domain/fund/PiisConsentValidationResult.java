@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.piis;
+package de.adorsys.psd2.xs2a.domain.fund;
 
-import io.swagger.annotations.ApiModel;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import lombok.Data;
 
-@ApiModel(description = "Type of the tpp access, indicating which TPPs have access to the consent", value = "PiisConsentTppAccessType")
-public enum PiisConsentTppAccessType {
-    SINGLE_TPP,
-    ALL_TPP
+@Data
+public class PiisConsentValidationResult {
+    private PiisConsent consent;
+    private ErrorHolder errorHolder;
+
+    public PiisConsentValidationResult(PiisConsent consent) {
+        this.consent = consent;
+    }
+
+    public PiisConsentValidationResult(ErrorHolder errorHolder) {
+        this.errorHolder = errorHolder;
+    }
+
+    public boolean hasError() {
+        return errorHolder != null;
+    }
 }

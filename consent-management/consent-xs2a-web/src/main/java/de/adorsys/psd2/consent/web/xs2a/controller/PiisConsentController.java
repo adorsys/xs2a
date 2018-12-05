@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
-import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -39,21 +39,20 @@ public class PiisConsentController {
     private final PiisConsentService piisConsentService;
 
     @GetMapping(path = "/{currency}/{account-identifier-name}/{account-identifier}")
-    @ApiOperation(value = "Get consent by account reference data.")
+    @ApiOperation(value = "Gets list of consents by account reference data.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity getPiisConsentListByAccountReference(
+    public ResponseEntity<List<PiisConsent>> getPiisConsentListByAccountReference(
         @ApiParam(name = "currency", value = "3 capital letters of currency name.", example = "EUR")
         @PathVariable("currency") String currency,
         @ApiParam(name = "account-identifier-name", value = "Account identifier, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
         @PathVariable("account-identifier-name") AccountReferenceSelector accountIdentifierName,
         @ApiParam(name = "account-identifier", value = "The value of account identifier.", example = "DE2310010010123456789")
         @PathVariable("account-identifier") String accountIdentifier) {
-        List<CmsPiisValidationInfo> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(Currency.getInstance(currency), accountIdentifierName, accountIdentifier);
+        List<PiisConsent> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(Currency.getInstance(currency), accountIdentifierName, accountIdentifier);
         return CollectionUtils.isEmpty(responseList)
                    ? ResponseEntity.notFound().build()
                    : ResponseEntity.ok(responseList);
-
     }
 }

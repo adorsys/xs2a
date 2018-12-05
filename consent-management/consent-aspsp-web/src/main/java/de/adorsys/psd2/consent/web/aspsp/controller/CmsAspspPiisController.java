@@ -17,9 +17,9 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
-import de.adorsys.psd2.consent.aspsp.api.piis.PiisConsent;
 import de.adorsys.psd2.consent.web.aspsp.domain.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.web.aspsp.domain.CreatePiisConsentResponse;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;

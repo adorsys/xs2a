@@ -135,7 +135,7 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity getPaymentInitiationAuthorisation(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null; //TODO implement
+        return responseMapper.ok(consentService.getPaymentInitiationAuthorisations(paymentId), consentModelMapper::mapToAuthorisations);
     }
 
     @Override

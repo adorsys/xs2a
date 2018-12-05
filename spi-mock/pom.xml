@@ -71,19 +71,11 @@
             <version>1.13-SNAPSHOT</version>
         </dependency>
 
-        <!-- spring dependencies -->
-
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-
-        <!-- other dependencies -->
 
         <dependency>
             <groupId>org.keycloak</groupId>

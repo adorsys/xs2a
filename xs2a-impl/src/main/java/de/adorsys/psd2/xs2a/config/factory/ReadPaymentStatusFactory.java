@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.config;
+package de.adorsys.psd2.xs2a.config.factory;
 
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-@EnableWebMvc
-@TestConfiguration
-@ActiveProfiles(profiles = "test")
-@TestPropertySource("classpath:application-test.properties")
-public class WebConfigTest extends WebMvcConfigurerAdapter {
+/**
+ * This is specific factory intended to retrieve specific payment type dependent service, which retrieves payment status by ID
+ */
+public interface ReadPaymentStatusFactory extends ServiceFactory {
+    String SERVICE_PREFIX = "status-";
 }

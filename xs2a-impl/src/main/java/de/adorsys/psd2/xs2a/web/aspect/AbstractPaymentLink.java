@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
@@ -25,9 +24,6 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
 
@@ -93,18 +89,14 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String paymentService = paymentRequestParameters.getPaymentType().getValue();
         String paymentId = body.getPaymentId();
         String authorizationId = body.getAuthorizationId();
-        String psuId = Optional.ofNullable(paymentRequestParameters.getPsuData()).map(PsuIdData::getPsuId).orElse(null);
 
         if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
-            String link = aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + paymentId;
-            if (StringUtils.isNotBlank(psuId)) {
-                link = link + "/" + psuId;
-            }
+            String link = aspspProfileService.getPisRedirectUrlToAspsp() + authorizationId;
             links.setScaRedirect(link);
             links.setScaStatus(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
+                buildPath("/v1/{payment-service}/{payment-id}/redirect/{redirect-id}", paymentService, paymentId, authorizationId));
         }
         return links;
     }

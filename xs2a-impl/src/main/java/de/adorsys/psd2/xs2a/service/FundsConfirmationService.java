@@ -16,34 +16,41 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.consent.api.piis.CmsPiisValidationInfo;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
+import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.PiisConsentValidationService;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
+import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
 
 @Slf4j
 @Service
@@ -52,9 +59,9 @@ public class FundsConfirmationService {
     private final AspspProfileServiceWrapper profileService;
     private final FundsConfirmationSpi fundsConfirmationSpi;
     private final FundsConfirmationConsentDataService fundsConfirmationConsentDataService;
-    private final FundsConfirmationPsuDataService fundsConfirmationPsuDataService;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
     private final Xs2aToSpiFundsConfirmationRequestMapper xs2aToSpiFundsConfirmationRequestMapper;
+    private final SpiToXs2aFundsConfirmationMapper spiToXs2aFundsConfirmationMapper;
     private final PiisConsentValidationService piisConsentValidationService;
     private final PiisConsentService piisConsentService;
     private final Xs2aEventService xs2aEventService;
@@ -62,61 +69,101 @@ public class FundsConfirmationService {
     /**
      * Checks if the account balance is sufficient for requested operation
      *
-     * @param request       Contains the requested balanceAmount in order to compare with the available balanceAmount in the account
+     * @param request Contains the requested balanceAmount in order to compare with the available balanceAmount in the account
      * @return Response with the result 'true' if there are enough funds in the account, 'false' otherwise
      */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
         xs2aEventService.recordTppRequest(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED, request);
 
-        String consentId = null;
-
+        PiisConsent consent = null;
         if (profileService.isPiisConsentSupported()) {
-            AccountReferenceSelector selector = request.getPsuAccount().getUsedAccountReferenceSelector();
-
-            if (selector == null) {
-                log.warn("No account identifier in the request {}", request.getPsuAccount());
-                return ResponseObject.<FundsConfirmationResponse>builder()
-                           .fail(new MessageError(FORMAT_ERROR))
-                           .build();
-            }
-
-            List<CmsPiisValidationInfo> response = piisConsentService.getPiisConsentListByAccountIdentifier(request.getPsuAccount().getCurrency(), selector, selector.getAccountReferenceValue(request.getPsuAccount()));
-            ResponseObject<String> validationResult = piisConsentValidationService.validatePiisConsentData(response);
+            AccountReference accountReference = request.getPsuAccount();
+            PiisConsentValidationResult validationResult = validateAccountReference(accountReference);
 
             if (validationResult.hasError()) {
+                ErrorHolder errorHolder = validationResult.getErrorHolder();
                 return ResponseObject.<FundsConfirmationResponse>builder()
-                           .fail(validationResult.getError())
+                           .fail(new MessageError(errorHolder))
                            .build();
             }
 
-            consentId = validationResult.getBody();
+            consent = validationResult.getConsent();
         }
 
-        SpiFundsConfirmationRequest spiRequest = xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(request);
-        AspspConsentData aspspConsentData = fundsConfirmationConsentDataService.getAspspConsentData(consentId);
-        PsuIdData psuData = fundsConfirmationPsuDataService.getPsuDataByConsentId(consentId);  //TODO Rework it after service implementation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
+        PsuIdData psuIdData = getPsuIdData(consent);
+        AspspConsentData aspspConsentData = getAspspConsentData(consent);
+        FundsConfirmationResponse response = executeRequest(psuIdData, consent, request, aspspConsentData);
 
-        SpiResponse<Boolean> fundsSufficientCheck = fundsConfirmationSpi.performFundsSufficientCheck(
+        if (response.hasError()) {
+            ErrorHolder errorHolder = response.getErrorHolder();
+            return ResponseObject.<FundsConfirmationResponse>builder()
+                       .fail(new MessageError(errorHolder))
+                       .build();
+        }
+
+        return ResponseObject.<FundsConfirmationResponse>builder()
+                   .body(response)
+                   .build();
+    }
+
+    private PiisConsentValidationResult validateAccountReference(AccountReference accountReference) {
+        AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
+
+        if (selector == null) {
+            log.warn("No account identifier in the request {}", accountReference);
+            return new PiisConsentValidationResult(ErrorHolder.builder(FORMAT_ERROR).build());
+        }
+
+        List<PiisConsent> response = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
+                                                                                              selector,
+                                                                                              selector.getAccountReferenceValue(accountReference));
+
+        return piisConsentValidationService.validatePiisConsentData(response);
+    }
+
+    private FundsConfirmationResponse executeRequest(@NotNull PsuIdData psuIdData,
+                                                     @Nullable PiisConsent consent,
+                                                     @NotNull FundsConfirmationRequest request,
+                                                     @NotNull AspspConsentData aspspConsentData) {
+        SpiFundsConfirmationRequest spiRequest = xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(request);
+        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuIdData);
+
+        SpiResponse<SpiFundsConfirmationResponse> fundsSufficientCheck = fundsConfirmationSpi.performFundsSufficientCheck(
             spiPsuData,
-            consentId,
+            consent,
             spiRequest,
             aspspConsentData
         );
 
-        aspspConsentData = fundsSufficientCheck.getAspspConsentData();
-        fundsConfirmationConsentDataService.updateAspspConsentData(aspspConsentData);
-
-        if (fundsSufficientCheck.hasError()) {
-            return ResponseObject.<FundsConfirmationResponse>builder()
-                       .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
-                       .build();
+        if (consent != null) {
+            AspspConsentData newAspspConsentData = fundsSufficientCheck.getAspspConsentData();
+            fundsConfirmationConsentDataService.updateAspspConsentData(newAspspConsentData);
         }
 
-        FundsConfirmationResponse fundsConfirmationResponse = new FundsConfirmationResponse(BooleanUtils.isTrue(fundsSufficientCheck.getPayload()));
+        if (fundsSufficientCheck.hasError()) {
+            return new FundsConfirmationResponse(ErrorHolder.builder(RESOURCE_UNKNOWN_404).build());
+        }
 
-        return ResponseObject.<FundsConfirmationResponse>builder()
-                   .body(fundsConfirmationResponse)
-                   .build();
+        return spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(fundsSufficientCheck.getPayload());
+    }
+
+    private @NotNull PsuIdData getPsuIdData(@Nullable PiisConsent consent) {
+        // TODO Extract PSU Data from request if it's possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/525
+        PsuIdData emptyPsuIdData = new PsuIdData(null, null, null, null);
+        if (consent == null) {
+            return emptyPsuIdData;
+        }
+
+        return Optional.ofNullable(consent.getPsuData())
+                   .orElse(emptyPsuIdData);
+    }
+
+    private @NotNull AspspConsentData getAspspConsentData(@Nullable PiisConsent consent) {
+        if (consent == null) {
+            // TODO Do not pass AspspConsentData at all if there is no PIIS consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/526
+            return new AspspConsentData(null, null);
+        }
+
+        return fundsConfirmationConsentDataService.getAspspConsentData(consent.getId());
     }
 }

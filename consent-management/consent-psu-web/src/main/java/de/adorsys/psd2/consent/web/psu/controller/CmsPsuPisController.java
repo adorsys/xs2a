@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -78,6 +79,29 @@ public class CmsPsuPisController {
         return cmsPsuPisService.getPayment(psuIdData, paymentId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @GetMapping(path = "/redirect/{redirect-id}")
+    @ApiOperation(value = "")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
+        @ApiResponse(code = 408, message = "Request Timeout")})
+    public ResponseEntity<CmsPaymentResponse> getPaymentByRedirectId(
+        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ")
+        @RequestHeader(value = "psu-id", required = false) String psuId,
+        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
+        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
+        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
+        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
+        @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("redirect-id") String redirectId) {
+
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        return cmsPsuPisService.checkRedirectAndGetPayment(psuIdData, redirectId)
+                   .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT));
     }
 
     @PutMapping(path = "/{payment-id}/{authorisation-id}/status/{status}")

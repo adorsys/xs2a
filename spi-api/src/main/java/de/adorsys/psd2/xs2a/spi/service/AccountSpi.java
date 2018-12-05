@@ -50,7 +50,8 @@ public interface AccountSpi {
     /**
      * Requests a list of transactions
      *
-     * @param acceptMediaType  requested by TPP response media type e.g. text/plain. Shall be propagated to response.
+     * @param acceptMediaType  requested by TPP response media type e.g. text/plain. Shall be propagated to response. This string may contain several content-types according to HTTP "Accept"-Header format.
+     *                         If desired media type is not possible to provide, NOT_SUPPORTED error to be returned. To provide formats other than JSON, use {@link SpiTransactionReport#transactionsRaw}
      * @param withBalance      boolean representing if the responded AccountDetails should contain balance
      * @param dateFrom         Date representing the beginning of the search period.<br>
      *                         If null, transactions will not be limited by start date
