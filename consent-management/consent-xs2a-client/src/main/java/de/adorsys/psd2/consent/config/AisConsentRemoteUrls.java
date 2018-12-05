@@ -113,4 +113,13 @@ public class AisConsentRemoteUrls {
     public String getPsuDataByConsentId() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/psu-data";
     }
+
+    /**
+     * @return List of consent authorisation IDs
+     * Method: GET
+     * PathVariables: String consentId
+     */
+    public String getAuthorisationSubResources() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorisations";
+    }
 }

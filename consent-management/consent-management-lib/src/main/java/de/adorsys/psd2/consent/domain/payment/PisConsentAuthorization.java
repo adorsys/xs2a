@@ -59,4 +59,8 @@ public class PisConsentAuthorization {
 
     @Column(name = "expiration_timestamp")
     private OffsetDateTime redirectUrlExpirationTimestamp;
+
+    public boolean isNotExpired() {
+        return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());
+    }
 }

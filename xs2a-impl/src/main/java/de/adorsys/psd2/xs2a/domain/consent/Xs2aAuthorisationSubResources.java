@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.config;
+package de.adorsys.psd2.xs2a.domain.consent;
 
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import lombok.AllArgsConstructor;
+import lombok.Value;
 
-@EnableWebMvc
-@TestConfiguration
-@ActiveProfiles(profiles = "test")
-@TestPropertySource("classpath:application-test.properties")
-public class WebConfigTest extends WebMvcConfigurerAdapter {
+import java.util.List;
+
+@Value
+@AllArgsConstructor
+public class Xs2aAuthorisationSubResources {
+    private List<String> authorisationIds;
 }

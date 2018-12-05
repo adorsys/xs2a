@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -47,8 +48,10 @@ public abstract class AbstractLinkAspect<T> {
     <R> ResponseObject<R> enrichErrorTextMessage(ResponseObject<R> response) {
         MessageError error = response.getError();
         TppMessageInformation tppMessage = error.getTppMessage();
-        tppMessage.setText(messageService.getMessage(tppMessage.getMessageErrorCode().name()));
-        error.setTppMessages(Collections.singleton(tppMessage));
+        if (StringUtils.isBlank(tppMessage.getText())) {
+            tppMessage.setText(messageService.getMessage(tppMessage.getMessageErrorCode().name()));
+            error.setTppMessages(Collections.singleton(tppMessage));
+        }
         return ResponseObject.<R>builder()
                    .fail(error)
                    .build();

@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PisConsentService {
@@ -69,9 +70,9 @@ public interface PisConsentService {
     /**
      * Creates consent authorization
      *
-     * @param paymentId String representation of the payment identifier
+     * @param paymentId         String representation of the payment identifier
      * @param authorizationType Type of authorisation
-     * @param psuData Information about PSU
+     * @param psuData           Information about PSU
      * @return Response containing authorization id
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
@@ -79,9 +80,9 @@ public interface PisConsentService {
     /**
      * Creates consent authorization cancellation
      *
-     * @param paymentId String representation of the payment identifier
+     * @param paymentId         String representation of the payment identifier
      * @param authorizationType Type of authorisation
-     * @param psuData Information about PSU
+     * @param psuData           Information about PSU
      * @return Response containing authorization id
      */
     Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
@@ -90,7 +91,7 @@ public interface PisConsentService {
      * Updates consent authorization
      *
      * @param authorisationId String representation of the authorisation identifier
-     * @param request Incoming request for updating authorization
+     * @param request         Incoming request for updating authorization
      * @return Response containing SCA status, available and chosen Sca method
      */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request);
@@ -99,7 +100,7 @@ public interface PisConsentService {
      * Updates consent cancellation authorization
      *
      * @param authorizationId String representation of the authorisation identifier
-     * @param request Incoming request for updating authorization
+     * @param request         Incoming request for updating authorization
      * @return Response containing SCA status, available and chosen Sca method
      */
     Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorizationId, UpdatePisConsentPsuDataRequest request);
@@ -129,13 +130,13 @@ public interface PisConsentService {
     Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorisationById(String cancellationId);
 
     /**
-     * Get information about Authorisation by payment identifier
+     * Gets list of payment authorisation IDs by payment ID and authorisation type
      *
      * @param paymentId String representation of the payment identifier
-     * @param authorizationType Type of authorisation
-     * @return Response containing information about Authorisation
+     * @param authorisationType Type of authorisation
+     * @return Response containing information about authorisation IDs
      */
-    Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType);
+    Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType);
 
     /**
      * Get information about PSU by payment identifier

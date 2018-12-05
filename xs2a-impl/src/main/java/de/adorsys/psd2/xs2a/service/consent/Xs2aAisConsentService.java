@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -152,10 +153,20 @@ public class Xs2aAisConsentService {
     /**
      * Sends a PUT request to CMS to update AIS account access information by consent ID
      *
-     * @param consentId consentId String representation of identifier of stored consent
+     * @param consentId            consentId String representation of identifier of stored consent
      * @param aisAccountAccessInfo AIS account access information
      */
     public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
         aisConsentService.updateAccountAccess(consentId, aisAccountAccessInfo);
+    }
+
+    /**
+     * Requests CMS to retrieve AIS consent authorisation IDs by consent ID
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return list of consent authorisation IDs
+     */
+    public Optional<List<String>> getAuthorisationSubResources(String consentId) {
+        return aisConsentService.getAuthorisationsByConsentId(consentId);
     }
 }

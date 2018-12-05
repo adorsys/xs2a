@@ -19,10 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais;
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -88,7 +85,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      * If response has no errors, consent authorisation is updated by invoking CMS through AisConsentService
      * See {@link Xs2aAisConsentService#updateConsentAuthorization(UpdateConsentPsuDataReq)} for details.
      *
-     * @param request UpdateConsentPsuDataReq request to update PSU data
+     * @param request              UpdateConsentPsuDataReq request to update PSU data
      * @param consentAuthorization AccountConsentAuthorization instance with authorisation data
      * @return UpdateConsentPsuDataResponse update consent PSU data response
      */
@@ -102,5 +99,18 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         }
 
         return response;
+    }
+
+    /**
+     * Gets list of consent authorisation IDs by invoking CMS through AisConsentService
+     * See {@link Xs2aAisConsentService#getAuthorisationSubResources(String)} for details
+     *
+     * @param consentId String identification of consent
+     * @return Optional of Xs2aAuthorisationSubResources with list of authorisation IDs
+     */
+    @Override
+    public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {
+        return aisConsentService.getAuthorisationSubResources(consentId)
+                   .map(Xs2aAuthorisationSubResources::new);
     }
 }

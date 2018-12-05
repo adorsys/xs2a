@@ -52,10 +52,13 @@ import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
@@ -67,6 +70,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
     private final Xs2aPisConsentService pisConsentService;
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final PisConsentDataService pisConsentDataService;
     private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
@@ -189,11 +193,20 @@ public class PaymentService {
         }
 
         TransactionStatus transactionStatus = spiToXs2aTransactionalStatus.mapToTransactionStatus(spiResponse.getPayload());
-        return Optional.ofNullable(transactionStatus)
-                   .map(tr -> ResponseObject.<TransactionStatus>builder().body(tr).build())
-                   .orElseGet(ResponseObject.<TransactionStatus>builder()
-                                  .fail(new MessageError(RESOURCE_UNKNOWN_403))
-                                  ::build);
+
+        if (transactionStatus == null) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(RESOURCE_UNKNOWN_403))
+                       .build();
+        }
+
+        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, transactionStatus)) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Payment is finalised already, so its status cannot be changed"))
+                       .build();
+        }
+
+        return ResponseObject.<TransactionStatus>builder().body(transactionStatus).build();
     }
 
     /**
@@ -233,6 +246,14 @@ public class PaymentService {
                            .build();
         }
 
+        Optional<PisConsentResponse> consent = pisConsentService.getPisConsentById(paymentId);
+
+        if (consent.isPresent() && isFinalisedPayment(consent.get())) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(FORMAT_ERROR, "Payment is finalised already and cannot be cancelled"))
+                       .build();
+        }
+
         AspspConsentData consentData = pisConsentDataService.getAspspConsentData(paymentId);
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
@@ -244,5 +265,13 @@ public class PaymentService {
             pisConsentService.revokeConsentById(paymentId);
             return cancellationResponse;
         }
+    }
+
+    private boolean isFinalisedPayment(PisConsentResponse consent) {
+        List<PisPayment> finalisedPayments = consent.getPayments().stream()
+                                                 .filter(p -> p.getTransactionStatus().isFinalisedStatus())
+                                                 .collect(Collectors.toList());
+
+        return CollectionUtils.isNotEmpty(finalisedPayments);
     }
 }

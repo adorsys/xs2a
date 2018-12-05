@@ -68,7 +68,7 @@ public class ScaAuthorizationConfig {
             case EMBEDDED:
                 return new EmbeddedAisAuthorizationService(aisConsentService, aisConsentMapper, scaStageAuthorisationFactory);
             default:
-                return new RedirectAisAuthorizationService();
+                return new RedirectAisAuthorizationService(aisConsentService);
         }
     }
 

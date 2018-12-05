@@ -52,7 +52,7 @@ public class ConsentRequestImpliciteStartAuthorizationSuccessfulSteps {
         assertThat(actualResponse.getBody().getLinks().get("startAuthorisationWIthPsuAuthentication$"), notNullValue());
     }
 
-    @After
+    //@After
     public void resetSigningBasketSupportedProfile(){
         HttpEntity entity = HttpEntityUtils.getHttpEntity(Boolean.FALSE);
         this.restTemplate.put(context.getProfileUrl() + "/aspsp-profile/for-debug/signing-basket-supported", entity);
