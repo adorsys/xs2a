@@ -29,7 +29,7 @@ import java.util.List;
 public class SpiTransactionReport {
     public static final String RESPONSE_TYPE_JSON = "application/json";
     public static final String RESPONSE_TYPE_XML = "application/xml";
-    public static final String RESPONSE_TYPE_TEXT = "plain/text";
+    public static final String RESPONSE_TYPE_TEXT = "text/plain";
 
     private List<SpiTransaction> transactions;
     @Nullable

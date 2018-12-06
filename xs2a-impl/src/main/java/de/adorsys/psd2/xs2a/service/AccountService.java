@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.Xs2aBookingStatus;
@@ -35,6 +36,7 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -296,8 +298,14 @@ public class AccountService {
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
+            // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
+            if (spiResponse.getResponseStatus() == SpiResponseStatus.NOT_SUPPORTED) {
+                return ResponseObject.<Xs2aTransactionsReport>builder()
+                    .fail(new MessageError(MessageErrorCode.CONTENT_TYPE_NOT_SUPPORTED, messageErrorCodeMapper.mapToTppMessage(spiResponse.getMessages())))
+                    .build();
+            }
             return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())))
+                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()), messageErrorCodeMapper.mapToTppMessage(spiResponse.getMessages())))
                        .build();
         }
 

@@ -143,16 +143,32 @@ public class AccountSpiImpl implements AccountSpi {
                                                                                   null
                 );
                 responseBuilder = responseBuilder.payload(transactionReport);
-            } else {
-                String plainTextResponse = transactions.stream()
-                                     .map(SpiTransaction::toString)
-                                     .collect(Collectors.joining(",\n"));
+            } else if (acceptMediaType.contains(SpiTransactionReport.RESPONSE_TYPE_TEXT)) {
+
+                StringBuilder textResponseBuilder = new StringBuilder();
+                int transactionsCount = transactions.size();
+                textResponseBuilder
+                    .append("Transactions report in plain text format.\n")
+                    .append("=========================================\n")
+                    .append("Transactions count: ").append(transactionsCount).append("\n\n");
+                if (transactionsCount > 0) {
+                    textResponseBuilder.append("Transactions:\n");
+                    for (SpiTransaction transaction: transactions) {
+                        textResponseBuilder.append(transaction).append("\n");
+                    }
+                }
+                textResponseBuilder.append("\nEnd of report.");
+
                 SpiTransactionReport transactionReport = new SpiTransactionReport(Collections.emptyList(),
                                                                                   Collections.emptyList(),
                                                                                   SpiTransactionReport.RESPONSE_TYPE_TEXT,
-                                                                                  plainTextResponse.getBytes(UTF_8)
+                                                                                  textResponseBuilder.toString().getBytes(UTF_8)
                 );
+
                 responseBuilder = responseBuilder.payload(transactionReport);
+            } else {
+                return responseBuilder
+                           .fail(SpiResponseStatus.NOT_SUPPORTED);
             }
 
             return responseBuilder
