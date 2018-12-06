@@ -41,6 +41,11 @@
         <!-- project dependencies -->
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>spi-api</artifactId>
             <version>1.13-SNAPSHOT</version>

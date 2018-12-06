@@ -145,16 +145,15 @@
         <mockito-all.version>1.10.19</mockito-all.version>
         <postgresql.version>42.2.4</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
+        <snakeyaml.version>1.23</snakeyaml.version>
+        <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+        <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+        <javax.el.version>3.0.1-b09</javax.el.version>
+        <javax.el-api.version>3.0.0</javax.el-api.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 
         <jackson.version>2.9.7</jackson.version>
-        <jackson-dataformat-xml.version>${jackson.version}</jackson-dataformat-xml.version>
-        <jackson-datatype-jdk8.version>${jackson.version}</jackson-datatype-jdk8.version>
-        <jackson-annotations.version>${jackson.version}</jackson-annotations.version>
-        <jackson-module-parameter.version>${jackson.version}</jackson-module-parameter.version>
-        <jackson-datatype-jsr310.version>${jackson.version}</jackson-datatype-jsr310.version>
-        <jackson-databind.version>${jackson.version}</jackson-databind.version>
 
         <spring.version>4.3.21.RELEASE</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
@@ -344,31 +343,67 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jdk8</artifactId>
-                <version>${jackson-datatype-jdk8.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
-                <version>${jackson-dataformat-xml.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-parameter-names</artifactId>
-                <version>${jackson-module-parameter.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson-datatype-jsr310.version}</version>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax.servlet-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${javax.annotation-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.el</artifactId>
+                <version>${javax.el.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>${javax.el-api.version}</version>
             </dependency>
 
             <dependency>
@@ -424,12 +459,6 @@
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito-all.version}</version>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-annotations.version}</version>
             </dependency>
 
             <dependency>
