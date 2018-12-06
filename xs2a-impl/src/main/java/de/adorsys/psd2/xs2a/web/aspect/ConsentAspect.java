@@ -73,6 +73,12 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
 
         if (ScaApproach.EMBEDDED == aspspProfileService.getScaApproach()) {
             buildLinkForEmbeddedScaApproach(response, links, explicitPreferred);
+        } else if (ScaApproach.REDIRECT == aspspProfileService.getScaApproach()) {
+            if (authorisationMethodService.isExplicitMethod(explicitPreferred)) {
+                links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
+            } else {
+                links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getAuthorizationId());
+            }
         } else {
             links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getConsentId());
         }
