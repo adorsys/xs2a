@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.controller;
 import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
@@ -30,6 +31,7 @@ import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
+import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +54,7 @@ public class ConsentController implements ConsentApi {
     private final AccountReferenceValidationService referenceValidationService;
     private final ConsentModelMapper consentModelMapper;
     private final AuthorisationMapper authorisationMapper;
+    private final TppRedirectUriMapper tppRedirectUriMapper;
 
     @Override
     public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
@@ -70,7 +73,8 @@ public class ConsentController implements ConsentApi {
                                         .build();
         } else {
             PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
-            createConsentResponse = consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred));
+            TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI);
+            createConsentResponse = consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppRedirectUri);
         }
 
         return responseMapper.created(createConsentResponse, consentModelMapper::mapToConsentsResponse201);

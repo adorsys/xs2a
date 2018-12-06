@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.pis;
+package de.adorsys.psd2.xs2a.core.tpp;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import lombok.Data;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@Data
-public class PaymentInitiationParameters {
-    private PaymentType paymentType;
-    private String paymentProduct;
-    private String qwacCertificate;
-    private TppRedirectUri tppRedirectUri;
-    private boolean tppExplicitAuthorisationPreferred;
-    private PsuIdData psuData;
+/**
+ * TPP redirect URIs, used in Redirect SCA approach.
+ */
+@Value
+public class TppRedirectUri {
+    @NotNull
+    @ApiModelProperty(value = "Redirect URI", example = "Redirect URI", required = true)
+    private final String uri;
+
+    @Nullable
+    @ApiModelProperty(value = "Nok redirect URI", example = "Nok redirect URI")
+    private String nokUri;
 }

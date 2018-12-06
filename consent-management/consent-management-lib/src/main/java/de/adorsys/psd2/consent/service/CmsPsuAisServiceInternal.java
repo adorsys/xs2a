@@ -196,17 +196,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
         AisAccountConsent aisAccountConsent = consentMapper.mapToAisAccountConsent(aisConsent);
 
-        if (aisAccountConsent == null) {
-            return Optional.empty();
-        }
-
-        TppInfo tppInfo = aisAccountConsent.getTppInfo();
-
-        if (tppInfo == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(aisAccountConsent)
-                   .map(c -> new CmsAisConsentResponse(aisAccountConsent, redirectId, tppInfo.getRedirectUri(), tppInfo.getNokRedirectUri()));
+        return Optional.ofNullable(aisAccountConsent)
+                   .map(AisAccountConsent::getTppInfo)
+                   .map(TppInfo::getTppRedirectUri)
+                   .map(uri -> new CmsAisConsentResponse(aisAccountConsent, redirectId, uri.getUri(), uri.getNokUri()));
     }
 }
