@@ -65,3 +65,6 @@ XS2A Interceptors and Filters are applied only to the following endpoints: /v1/a
 
 CMS Advices are only applied to controllers, located in the following packages:
 de.adorsys.psd2.consent.web.aspsp.controller, de.adorsys.psd2.consent.web.psu.controller and de.adorsys.psd2.consent.web.xs2a.controller
+
+## Update payment status in consent management
+Each time TPP asks for payment or payment status by payment id, XS2A will implicitly update payment status in CMS DB after SPI call is proceeded.
