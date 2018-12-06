@@ -43,6 +43,7 @@ public class PaymentModelMapperPsd2 {
     private final CoreObjectsMapper coreObjectsMapper;
     private final MessageErrorMapper messageErrorMapper;
     private final AccountModelMapper accountModelMapper;
+    private final TppRedirectUriMapper tppRedirectUriMapper;
 
     public Object mapToGetPaymentResponse12(Object payment, PaymentType type, String product) {
         if (type == SINGLE) {
@@ -139,8 +140,7 @@ public class PaymentModelMapperPsd2 {
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
         parameters.setPaymentProduct(Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
         parameters.setQwacCertificate(new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8));
-        parameters.setTppRedirectUri(tpPRedirectURI);
-        parameters.setTppNokRedirectUri(tpPNokRedirectURI);
+        parameters.setTppRedirectUri(tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI));
         parameters.setTppExplicitAuthorisationPreferred(tppExplicitAuthorisationPreferred);
         parameters.setPsuData(psuData);
         return parameters;

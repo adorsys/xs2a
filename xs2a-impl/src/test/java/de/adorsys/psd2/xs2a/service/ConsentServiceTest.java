@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -54,6 +55,7 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
+import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -124,6 +126,8 @@ public class ConsentServiceTest {
     private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
     private PisPsuDataService pisPsuDataService;
+    @Mock
+    private TppRedirectUriMapper tppRedirectUriMapper;
 
 
     @Before
@@ -222,7 +226,7 @@ public class ConsentServiceTest {
                             .aspspConsentData(ASPSP_CONSENT_DATA)
                             .success());
 
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -245,7 +249,7 @@ public class ConsentServiceTest {
                             .success());
 
         // When
-        consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+        consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
 
         // Then
         verify(xs2aEventService, times(1)).recordTppRequest(argumentCaptor.capture(), any());
@@ -270,7 +274,7 @@ public class ConsentServiceTest {
                             .success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -291,7 +295,7 @@ public class ConsentServiceTest {
             .thenReturn(false);
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
 
         MessageError messageError = responseObj.getError();
 
@@ -323,7 +327,7 @@ public class ConsentServiceTest {
                             .success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -347,7 +351,7 @@ public class ConsentServiceTest {
                             .success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -371,7 +375,7 @@ public class ConsentServiceTest {
                             .success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -389,7 +393,7 @@ public class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
 
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         //Then:
         assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
@@ -511,7 +515,7 @@ public class ConsentServiceTest {
                             .success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         CreateConsentResponse response = responseObj.getBody();
 
         //Then:
@@ -533,7 +537,7 @@ public class ConsentServiceTest {
             .thenReturn(false);
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         MessageError messageError = responseObj.getError();
 
         //Then
@@ -747,25 +751,19 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getConsent(String id, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, getTppInfo());
+        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo());
     }
 
     private SpiAccountConsent getSpiConsent(String consentId, SpiAccountAccess access, boolean withBalance) {
-        return new SpiAccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, getTppInfo());
+        return new SpiAccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo());
     }
 
     private AccountConsent getAccountConsent(String consentId, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, getTppInfo());
+        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo());
     }
 
     private AccountConsent getAccountConsentDateValidYesterday(String consentId, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, getTppInfo());
-    }
-
-    private TppInfo getTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(TPP_ID);
-        return tppInfo;
+        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo());
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {
@@ -822,6 +820,11 @@ public class ConsentServiceTest {
     private TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(TPP_ID);
+        tppInfo.setTppRedirectUri(buildTppRedirectUri());
         return tppInfo;
+    }
+
+    private TppRedirectUri buildTppRedirectUri() {
+        return new TppRedirectUri("redirectUri", "nokRedirectUri");
     }
 }

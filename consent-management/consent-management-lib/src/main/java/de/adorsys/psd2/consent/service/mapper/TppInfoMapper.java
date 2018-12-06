@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,10 +41,14 @@ public class TppInfoMapper {
                        pisTppInfo.setOrganisationUnit(tin.getOrganisationUnit());
                        pisTppInfo.setCity(tin.getCity());
                        pisTppInfo.setState(tin.getState());
-                       pisTppInfo.setRedirectUri(tin.getRedirectUri());
-                       pisTppInfo.setNokRedirectUri(tin.getNokRedirectUri());
-                       pisTppInfo.setStatus(tin.getStatus());
 
+                       TppRedirectUri tppRedirectUri = tin.getTppRedirectUri();
+                       if (tppRedirectUri != null) {
+                           pisTppInfo.setRedirectUri(tppRedirectUri.getUri());
+                           pisTppInfo.setNokRedirectUri(tppRedirectUri.getNokUri());
+                       }
+
+                       pisTppInfo.setStatus(tin.getStatus());
                        return pisTppInfo;
                    }).orElse(null);
     }
@@ -63,10 +68,14 @@ public class TppInfoMapper {
                        tppInfo.setOrganisationUnit(tpp.getOrganisationUnit());
                        tppInfo.setCity(tpp.getCity());
                        tppInfo.setState(tpp.getState());
-                       tppInfo.setRedirectUri(tpp.getRedirectUri());
-                       tppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
-                       tppInfo.setStatus(tpp.getStatus());
 
+                       if (tpp.getRedirectUri() != null) {
+                           TppRedirectUri tppRedirectUri = new TppRedirectUri(tpp.getRedirectUri(),
+                                                                              tpp.getNokRedirectUri());
+                           tppInfo.setTppRedirectUri(tppRedirectUri);
+                       }
+
+                       tppInfo.setStatus(tpp.getStatus());
                        return tppInfo;
                    }).orElse(null);
     }

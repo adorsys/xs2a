@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -87,7 +88,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * @param psuData PsuIdData container of authorisation data about PSU
      * @return CreateConsentResponse representing the complete response to create consent request
      */
-    public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred) {
+    public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred, TppRedirectUri tppRedirectUri) {
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(request);
 
@@ -100,6 +101,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
+        tppInfo.setTppRedirectUri(tppRedirectUri);
+
         String consentId = aisConsentService.createConsent(request, psuData, tppInfo);
 
         if (StringUtils.isBlank(consentId)) {

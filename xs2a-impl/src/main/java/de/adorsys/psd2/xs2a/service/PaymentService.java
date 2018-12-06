@@ -99,8 +99,7 @@ public class PaymentService {
         xs2aEventService.recordTppRequest(EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, payment);
 
         TppInfo tppInfo = tppService.getTppInfo();
-        tppInfo.setRedirectUri(paymentInitiationParameters.getTppRedirectUri());
-        tppInfo.setNokRedirectUri(paymentInitiationParameters.getTppNokRedirectUri());
+        tppInfo.setTppRedirectUri(paymentInitiationParameters.getTppRedirectUri());
         Xs2aPisConsent pisConsent = xs2aPisConsentMapper.mapToXs2aPisConsent(pisConsentService.createPisConsent(paymentInitiationParameters, tppInfo), paymentInitiationParameters.getPsuData());
         if (StringUtils.isBlank(pisConsent.getConsentId())) {
             return ResponseObject.builder()

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.core.tpp;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -53,11 +54,9 @@ public class TppInfo {
     @ApiModelProperty(value = "State", required = true, example = "Bayern")
     private String state;
 
-    @ApiModelProperty(value = "Redirect URI", example = "Redirect URI")
-    private String redirectUri;
-
-    @ApiModelProperty(value = "Nok redirect URI", example = "Nok redirect URI")
-    private String nokRedirectUri;
+    @Nullable
+    @ApiModelProperty(value = "TPP redirect URIs")
+    private TppRedirectUri tppRedirectUri;
 
     @ApiModelProperty(value = "Status of the TPP in XS2A Service", example = "ENABLED", allowableValues = "ENABLED,BLOCKED")
     private TppStatus status = TppStatus.ENABLED;

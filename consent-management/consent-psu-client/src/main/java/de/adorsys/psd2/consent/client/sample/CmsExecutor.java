@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -445,8 +446,7 @@ public class CmsExecutor {
         tppInfo.setOrganisationUnit(organisationUnit);
         tppInfo.setCity(city);
         tppInfo.setState(state);
-        tppInfo.setRedirectUri(redirectUri);
-        tppInfo.setNokRedirectUri(nokRedirectUri);
+        tppInfo.setTppRedirectUri(new TppRedirectUri(redirectUri, nokRedirectUri));
         return tppInfo;
     }
 
