@@ -55,3 +55,13 @@ See corresponding method's javadocs for more details.
 ## Store TppInfo in AIS Consent
 Now AIS Consent contains TppInfo object instead of TPP Id.
 Developers should apply new liquibase migration scripts in order to update the database.
+
+## Limit the scope of Interceptors, Advices and Filters
+Now XS2A and CMS Interceptors, Advices and Filters are limited to specific packages and paths and won't interfere with other controllers.
+
+XS2A Advices are only applied to controllers, located in the de.adorsys.psd2.xs2a.web.controller package.
+XS2A Interceptors and Filters are applied only to the following endpoints: /v1/accounts, /v1/consents,
+/v1/funds-confirmations, /v1/payments, /v1/bulk-payments, /v1/periodic-payments and /v1/signing-baskets.
+
+CMS Advices are only applied to controllers, located in the following packages:
+de.adorsys.psd2.consent.web.aspsp.controller, de.adorsys.psd2.consent.web.psu.controller and de.adorsys.psd2.consent.web.xs2a.controller
