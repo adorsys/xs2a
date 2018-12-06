@@ -111,6 +111,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
+    @Transactional
     public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
         Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorizationRepository.findByExternalId(redirectId);
 
