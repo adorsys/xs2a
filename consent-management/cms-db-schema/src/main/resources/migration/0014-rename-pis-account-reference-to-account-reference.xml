@@ -20,7 +20,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet author="mpo@adorsys.com.ua" id="2018-11-08-5">
-        <preConditions onFail="MARK_RAN" onSqlOutput="IGNORE">
+        <preConditions onFail="MARK_RAN" onSqlOutput="TEST">
             <or>
                 <dbms type="postgresql"/>
                 <dbms type="mariadb"/>
@@ -34,7 +34,7 @@
     </changeSet>
 
     <changeSet author="ssh@adorsys.com.ua" id="2018-11-05-2">
-        <preConditions onFail="MARK_RAN" onSqlOutput="IGNORE">
+        <preConditions onFail="MARK_RAN" onSqlOutput="TEST">
             <not>
                 <dbms type="postgresql"/>
                 <dbms type="mariadb"/>
