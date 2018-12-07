@@ -29,7 +29,7 @@
     </changeSet>
 
     <changeSet author="ssh@adorsys.com.ua" id="2018-12-03-2">
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="MARK_RAN" onSqlOutput="TEST">
             <or>
                 <dbms type="postgresql"/>
                 <dbms type="mariadb"/>
@@ -60,7 +60,7 @@
     </changeSet>
 
     <changeSet author="ssh@adorsys.com.ua" id="2018-12-03-3">
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="MARK_RAN" onSqlOutput="TEST">
             <or>
                 <dbms type="postgresql"/>
                 <dbms type="mariadb"/>
@@ -89,7 +89,7 @@
     </changeSet>
 
     <changeSet author="ssh@adorsys.com.ua" id="2018-12-03-4">
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="MARK_RAN" onSqlOutput="TEST">
             <dbms type="oracle"/>
         </preConditions>
 
