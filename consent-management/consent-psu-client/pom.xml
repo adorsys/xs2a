@@ -21,7 +21,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.13-SNAPSHOT</version>
+        <version>1.13</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -39,12 +39,12 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-psu-api</artifactId>
-            <version>1.13-SNAPSHOT</version>
+            <version>1.13</version>
         </dependency>
         <dependency> <!-- TODO remove this dependency in order to split APIs https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/452 -->
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-api</artifactId>
-            <version>1.13-SNAPSHOT</version>
+            <version>1.13</version>
         </dependency>
 
         <dependency>
