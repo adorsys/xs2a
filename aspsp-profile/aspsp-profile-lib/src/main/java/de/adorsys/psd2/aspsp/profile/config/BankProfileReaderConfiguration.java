@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.yaml.snakeyaml.DumperOptions;
@@ -25,7 +27,9 @@ import java.io.InputStream;
 
 @Configuration
 public class BankProfileReaderConfiguration {
-    private static final String BANK_PROFILE = "bank_profile.yml";
+    @Value("${bank_profile.path}")
+    private String customBankProfile;
+    private static final String DEFAULT_BANK_PROFILE = "bank_profile.yml";
 
     @Bean
     public ProfileConfiguration profileConfiguration() {
@@ -41,6 +45,12 @@ public class BankProfileReaderConfiguration {
     private InputStream loadProfile() {
         return ProfileConfiguration.class
                    .getClassLoader()
-                   .getResourceAsStream(BANK_PROFILE);
+                   .getResourceAsStream(resolveBankProfile());
+    }
+
+    private String resolveBankProfile() {
+        return StringUtils.isBlank(customBankProfile)
+                   ? DEFAULT_BANK_PROFILE
+                   : customBankProfile;
     }
 }
