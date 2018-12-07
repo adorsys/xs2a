@@ -36,6 +36,7 @@ before_deploy:
 deploy:
   - skip_cleanup: true
     provider: script
+    jdk: oraclejdk8
     script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -B -U deploy
     on:
       repo: adorsys/xs2a
