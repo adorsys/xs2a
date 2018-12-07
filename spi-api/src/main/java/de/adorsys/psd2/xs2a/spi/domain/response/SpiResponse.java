@@ -34,7 +34,6 @@ public class SpiResponse<T> {
     /**
      * Business object that is returned in scope of request
      */
-    @NotNull
     private T payload;
 
     /**
@@ -67,16 +66,15 @@ public class SpiResponse<T> {
      * @param messages
      *         - Optional messages to be provided to the TPP.
      */
-    public SpiResponse(@NotNull T payload, @NotNull AspspConsentData aspspConsentData,
+    public SpiResponse(T payload, @NotNull AspspConsentData aspspConsentData,
                        SpiResponseStatus responseStatus, List<String> messages
                       ) {
         //noinspection ConstantConditions - we cannot be sure that @NotNull annotation will be processed be external developer
-        if (payload == null) {
-            throw new IllegalArgumentException("payload cannot be null");
-        }
-        //noinspection ConstantConditions - we cannot be sure that @NotNull annotation will be processed be external developer
         if (aspspConsentData == null) {
             throw new IllegalArgumentException("aspspConsentData cannot be null");
+        }
+        if (responseStatus == SUCCESS && payload == null) {
+            throw new IllegalArgumentException("Payload must be filled by successful result");
         }
         this.payload = payload;
         this.aspspConsentData = aspspConsentData;
@@ -106,11 +104,11 @@ public class SpiResponse<T> {
     }
 
     public boolean hasError() {
-        return responseStatus != SUCCESS;
+        return responseStatus != SUCCESS || payload == null;
     }
 
     public boolean isSuccessful() {
-        return responseStatus == SUCCESS;
+        return responseStatus == SUCCESS && payload != null;
     }
 
     public static class SpiResponseBuilder<T> {

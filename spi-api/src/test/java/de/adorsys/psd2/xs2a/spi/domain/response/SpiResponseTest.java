@@ -29,6 +29,15 @@ public class SpiResponseTest {
     private static final String SOME_PAYLOAD = "some payload";
     private static final SpiResponseStatus SOME_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
 
+    @Test
+    public void builder_should_pass_on_failure_without_payload() {
+        SpiResponse.SpiResponseBuilder<Object> builder = SpiResponse.builder();
+
+        builder
+            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+            .fail(SOME_STATUS);
+    }
+
     @Test(expected = IllegalStateException.class)
     public void builder_should_fail_on_success_without_payload() {
         SpiResponse.SpiResponseBuilder<Object> builder = SpiResponse.builder();
@@ -44,6 +53,16 @@ public class SpiResponseTest {
 
         builder
             .payload(SOME_PAYLOAD)
+            .success();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void builder_should_fail_on_null_payload() {
+        SpiResponse.SpiResponseBuilder<Object> builder = SpiResponse.builder();
+
+        //noinspection ConstantConditions
+        builder
+            .payload(null)
             .success();
     }
 
@@ -74,17 +93,33 @@ public class SpiResponseTest {
         new SpiResponse<>(SOME_PAYLOAD, null, SOME_STATUS, null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void second_constructor_should_fail_without_payload() {
-        //noinspection ConstantConditions
-        new SpiResponse<>(null, SOME_ASPSP_CONSENT_DATA, SOME_STATUS, null);
+    @Test
+    public void second_constructor_should_fail_by_success_without_payload() {
+        boolean exceptionCatched = false;
+        try {
+            new SpiResponse<>(null, SOME_ASPSP_CONSENT_DATA, SpiResponseStatus.SUCCESS, null);
+        } catch (IllegalArgumentException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+    }
+
+    @Test
+    public void second_constructor_should_pass_by_failure_without_payload() {
+        boolean exceptionCatched = false;
+        try {
+            new SpiResponse<>(null, SOME_ASPSP_CONSENT_DATA, SOME_STATUS, null);
+        } catch (IllegalArgumentException e) {
+            exceptionCatched = true;
+        }
+        assertFalse(exceptionCatched);
     }
 
     @Test
     public void second_constructor_without_status_defaults_to_error() {
-        //noinspection ConstantConditions
         SpiResponse<Object> spiResponse = new SpiResponse<>(SOME_PAYLOAD, SOME_ASPSP_CONSENT_DATA, null, null);
         assertTrue(spiResponse.hasError());
         assertFalse(spiResponse.isSuccessful());
     }
+
 }
