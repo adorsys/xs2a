@@ -29,7 +29,7 @@ import java.util.List;
 public class Xs2aTransactionsReport implements CustomContentTypeProvider {
     private static final String RESPONSE_TYPE_JSON = "application/json";
     private static final String RESPONSE_TYPE_XML = "application/xml";
-    private static final String RESPONSE_TYPE_TEXT = "plain/text";
+    private static final String RESPONSE_TYPE_TEXT = "text/plain";
 
     private Xs2aAccountReference xs2aAccountReference;
 

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.aspect;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
@@ -47,8 +48,8 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
         this.authorisationMethodService = authorisationMethodService;
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args( request, psuData, explicitPreferred)", returning = "result", argNames = "result,request,psuData,explicitPreferred")
-    public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args( request, psuData, explicitPreferred, tppRedirectUri)", returning = "result", argNames = "result,request,psuData,explicitPreferred,tppRedirectUri")
+    public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred, TppRedirectUri tppRedirectUri) {
         if (!result.hasError()) {
 
             CreateConsentResponse body = result.getBody();
@@ -73,6 +74,14 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
 
         if (ScaApproach.EMBEDDED == aspspProfileService.getScaApproach()) {
             buildLinkForEmbeddedScaApproach(response, links, explicitPreferred);
+        } else if (ScaApproach.REDIRECT == aspspProfileService.getScaApproach()) {
+            if (authorisationMethodService.isExplicitMethod(explicitPreferred)) {
+                links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
+            } else {
+                links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getAuthorizationId());
+                links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", response.getConsentId(), response.getAuthorizationId()));
+            }
+            links.setStatus(buildPath("/v1/consents/{consentId}/status", response.getConsentId()));
         } else {
             links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getConsentId());
         }

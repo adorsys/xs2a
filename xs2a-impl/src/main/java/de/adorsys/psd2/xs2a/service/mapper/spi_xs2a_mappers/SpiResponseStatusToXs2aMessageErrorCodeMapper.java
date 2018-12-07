@@ -18,9 +18,11 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
@@ -40,5 +42,12 @@ public class SpiResponseStatusToXs2aMessageErrorCodeMapper {
 
     public MessageErrorCode mapToMessageErrorCode(SpiResponseStatus responseStatus) {
         return spiResponseStatusToMessageErrorCode.getOrDefault(responseStatus, INTERNAL_SERVER_ERROR);
+    }
+
+    public String mapToTppMessage(List<String> messages) {
+        if (CollectionUtils.isNotEmpty(messages)) {
+            return String.join(", ", messages);
+        }
+        return null;
     }
 }
