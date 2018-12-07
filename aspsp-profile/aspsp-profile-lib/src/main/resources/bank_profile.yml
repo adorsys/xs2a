@@ -1,30 +1,31 @@
 ---
-frequencyPerDay: 5
-combinedServiceIndicator: false
-availablePaymentProducts:
- - sepa-credit-transfers
- - instant-sepa-credit-transfers
-availablePaymentTypes:
- - BULK
- - PERIODIC
- - SINGLE
-scaApproach: REDIRECT
-tppSignatureRequired: false
-bankOfferedConsentSupport: false
-pisRedirectUrlToAspsp: http://localhost:4200/pis/
-aisRedirectUrlToAspsp: http://localhost:4200/ais/
-multicurrencyAccountLevel: SUBACCOUNT
-availableBookingStatuses:
- - BOOKED
- - PENDING
-supportedAccountReferenceFields:
- - MSISDN
-consentLifetime: 0
-transactionLifetime: 0
-allPsd2Support: false
-transactionsWithoutBalancesSupported: true
-signingBasketSupported: false
-paymentCancellationAuthorizationMandated: false
-piisConsentSupported: false
-deltaReportSupported: false
-redirectUrlExpirationTimeMs: 600000
+setting:
+ frequencyPerDay: 5
+ combinedServiceIndicator: false
+ availablePaymentProducts:
+  - sepa-credit-transfers
+  - instant-sepa-credit-transfers
+ availablePaymentTypes:
+  - BULK
+  - PERIODIC
+  - SINGLE
+ scaApproach: REDIRECT
+ tppSignatureRequired: false
+ bankOfferedConsentSupport: false
+ pisRedirectUrlToAspsp: http://localhost:4200/pis/
+ aisRedirectUrlToAspsp: http://localhost:4200/ais/
+ multicurrencyAccountLevel: SUBACCOUNT
+ availableBookingStatuses:
+  - BOOKED
+  - PENDING
+ supportedAccountReferenceFields:
+  - MSISDN
+ consentLifetime: 0
+ transactionLifetime: 0
+ allPsd2Support: false
+ transactionsWithoutBalancesSupported: true
+ signingBasketSupported: false
+ paymentCancellationAuthorizationMandated: false
+ piisConsentSupported: false
+ deltaReportSupported: false
+ redirectUrlExpirationTimeMs: 600000

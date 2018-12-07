@@ -16,15 +16,30 @@
 
 package de.adorsys.psd2.xs2a.config;
 
-import lombok.Data;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Data
-public class CorsConfigProperties {
+@Getter
+@Service
+@Qualifier("xs2aCorsConfigProperties")
+public class CorsConfigurationProperties {
+
+    @Value("${xs2a.endpoints.cors.max-age}")
+    private long maxAge;
+
+    @Value("${xs2a.endpoints.cors.allow-credentials}")
     private Boolean allowCredentials;
-    private List<String> allowedOrigins;
+
+    @Value("#{'${xs2a.endpoints.cors.allowed-methods}'.split(',')}")
     private List<String> allowedMethods;
+
+    @Value("#{'${xs2a.endpoints.cors.allowed-origins}'.split(',')}")
+    private List<String> allowedOrigins;
+
+    @Value("#{'${xs2a.endpoints.cors.allowed-headers}'.split(',')}")
     private List<String> allowedHeaders;
-    private Long maxAge;
 }
