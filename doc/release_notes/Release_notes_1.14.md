@@ -4,7 +4,7 @@
 By default, allow credentials, all origins and all headers are disabled.
 You can override CORS settings by changing values in `application.properties`
 ```
-# Whether credentials are supported. When not set, credentials are not supported.
+# Whether credentials are supported. When not set, credentials are not supported
 xs2a.endpoints.cors.allow-credentials=true
 # Comma-separated list of origins to allow. '*' allows all origins. When not set, CORS support is disabled
 xs2a.endpoints.cors.allowed-origins=*
