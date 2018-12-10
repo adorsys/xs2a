@@ -130,7 +130,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+        registry.addMapping("/v1/**")
             .allowCredentials(corsConfigurationProperties.getAllowCredentials())
             .allowedOrigins(getTargetParameters(corsConfigurationProperties.getAllowedOrigins()))
             .allowedHeaders(getTargetParameters(corsConfigurationProperties.getAllowedHeaders()))
