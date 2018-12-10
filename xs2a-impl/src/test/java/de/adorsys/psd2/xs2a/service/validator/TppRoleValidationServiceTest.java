@@ -40,7 +40,7 @@ public class TppRoleValidationServiceTest {
     public void shouldSuccess_when_correctRole() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("GET");
-        request.setRequestURI("/api/v1/accounts");
+        request.setRequestURI("/v1/accounts");
 
         assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.AISP), request)).isTrue();
     }
@@ -49,7 +49,7 @@ public class TppRoleValidationServiceTest {
     public void shouldFail_when_wrongRole() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("POST");
-        request.setRequestURI("/api/v1/payments/sepa");
+        request.setRequestURI("/v1/payments/sepa");
 
         assertThat(tppRoleValidationService.hasAccess(buildTppInfo(TppRole.PIISP), request)).isFalse();
     }
