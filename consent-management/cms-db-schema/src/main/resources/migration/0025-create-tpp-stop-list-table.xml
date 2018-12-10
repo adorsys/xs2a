@@ -33,7 +33,7 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="tpp_authorisation_number" type="VARCHAR(50)">
+            <column name="tpp_authorisation_number" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="authority_id" type="VARCHAR(255)">
