@@ -35,8 +35,8 @@ import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,16 +45,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.context.annotation.RequestScope;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -62,17 +60,10 @@ import java.time.LocalDateTime;
 public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
-    private final CorsConfigProperties corsConfigProperties;
+
+    @Qualifier("xs2aCorsConfigProperties")
+    private final CorsConfigurationProperties corsConfigurationProperties;
     private final TppService tppService;
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui.html")
-            .addResourceLocations("classpath:/META-INF/resources/");
-
-        registry.addResourceHandler("/webjars/**")
-            .addResourceLocations("classpath:/META-INF/resources/webjars/");
-    }
 
     @Bean
     public MessageSource messageSource() {
@@ -135,20 +126,18 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
-    @Bean
-    public FilterRegistrationBean corsFilterRegistrationBean() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.applyPermitDefaultValues();
-        config.setAllowCredentials(corsConfigProperties.getAllowCredentials());
-        config.setAllowedOrigins(corsConfigProperties.getAllowedOrigins());
-        config.setAllowedHeaders(corsConfigProperties.getAllowedHeaders());
-        config.setAllowedMethods(corsConfigProperties.getAllowedMethods());
-        config.setMaxAge(corsConfigProperties.getMaxAge());
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+            .allowCredentials(corsConfigurationProperties.getAllowCredentials())
+            .allowedOrigins(getTargetParameters(corsConfigurationProperties.getAllowedOrigins()))
+            .allowedHeaders(getTargetParameters(corsConfigurationProperties.getAllowedHeaders()))
+            .allowedMethods(getTargetParameters(corsConfigurationProperties.getAllowedMethods()))
+            .maxAge(corsConfigurationProperties.getMaxAge());
+    }
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return new FilterRegistrationBean(new CorsFilter(source));
+    private String[] getTargetParameters(List<String> targetParameters) {
+        return targetParameters.toArray(new String[0]);
     }
 
     @Bean

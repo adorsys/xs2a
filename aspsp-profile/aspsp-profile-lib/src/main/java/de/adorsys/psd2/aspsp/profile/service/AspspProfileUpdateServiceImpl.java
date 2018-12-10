@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.aspsp.profile.service;
 
+import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -36,7 +37,8 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      */
     @Override
     public void updateScaApproach(ScaApproach scaApproach) {
-        profileConfiguration.setScaApproach(scaApproach);
+        profileConfiguration.getSetting()
+            .setScaApproach(scaApproach);
     }
 
     /**
@@ -50,25 +52,26 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      */
     @Override
     public void updateAspspSettings(@NotNull AspspSettings aspspSettings) {
-        profileConfiguration.setFrequencyPerDay(aspspSettings.getFrequencyPerDay());
-        profileConfiguration.setCombinedServiceIndicator(aspspSettings.isCombinedServiceIndicator());
-        profileConfiguration.setAvailablePaymentProducts(aspspSettings.getAvailablePaymentProducts());
-        profileConfiguration.setAvailablePaymentTypes(aspspSettings.getAvailablePaymentTypes());
-        profileConfiguration.setTppSignatureRequired(aspspSettings.isTppSignatureRequired());
-        profileConfiguration.setPisRedirectUrlToAspsp(aspspSettings.getPisRedirectUrlToAspsp());
-        profileConfiguration.setAisRedirectUrlToAspsp(aspspSettings.getAisRedirectUrlToAspsp());
-        profileConfiguration.setMulticurrencyAccountLevel(aspspSettings.getMulticurrencyAccountLevel());
-        profileConfiguration.setBankOfferedConsentSupport(aspspSettings.isBankOfferedConsentSupport());
-        profileConfiguration.setAvailableBookingStatuses(aspspSettings.getAvailableBookingStatuses());
-        profileConfiguration.setSupportedAccountReferenceFields(aspspSettings.getSupportedAccountReferenceFields());
-        profileConfiguration.setConsentLifetime(aspspSettings.getConsentLifetime());
-        profileConfiguration.setTransactionLifetime(aspspSettings.getTransactionLifetime());
-        profileConfiguration.setAllPsd2Support(aspspSettings.isAllPsd2Support());
-        profileConfiguration.setTransactionsWithoutBalancesSupported(aspspSettings.isTransactionsWithoutBalancesSupported());
-        profileConfiguration.setSigningBasketSupported(aspspSettings.isSigningBasketSupported());
-        profileConfiguration.setPaymentCancellationAuthorizationMandated(aspspSettings.isPaymentCancellationAuthorizationMandated());
-        profileConfiguration.setPiisConsentSupported(aspspSettings.isPiisConsentSupported());
-        profileConfiguration.setDeltaReportSupported(aspspSettings.isDeltaReportSupported());
-        profileConfiguration.setRedirectUrlExpirationTimeMs(aspspSettings.getRedirectUrlExpirationTimeMs());
+        BankProfileSetting setting = profileConfiguration.getSetting();
+        setting.setFrequencyPerDay(aspspSettings.getFrequencyPerDay());
+        setting.setCombinedServiceIndicator(aspspSettings.isCombinedServiceIndicator());
+        setting.setAvailablePaymentProducts(aspspSettings.getAvailablePaymentProducts());
+        setting.setAvailablePaymentTypes(aspspSettings.getAvailablePaymentTypes());
+        setting.setTppSignatureRequired(aspspSettings.isTppSignatureRequired());
+        setting.setPisRedirectUrlToAspsp(aspspSettings.getPisRedirectUrlToAspsp());
+        setting.setAisRedirectUrlToAspsp(aspspSettings.getAisRedirectUrlToAspsp());
+        setting.setMulticurrencyAccountLevel(aspspSettings.getMulticurrencyAccountLevel());
+        setting.setBankOfferedConsentSupport(aspspSettings.isBankOfferedConsentSupport());
+        setting.setAvailableBookingStatuses(aspspSettings.getAvailableBookingStatuses());
+        setting.setSupportedAccountReferenceFields(aspspSettings.getSupportedAccountReferenceFields());
+        setting.setConsentLifetime(aspspSettings.getConsentLifetime());
+        setting.setTransactionLifetime(aspspSettings.getTransactionLifetime());
+        setting.setAllPsd2Support(aspspSettings.isAllPsd2Support());
+        setting.setTransactionsWithoutBalancesSupported(aspspSettings.isTransactionsWithoutBalancesSupported());
+        setting.setSigningBasketSupported(aspspSettings.isSigningBasketSupported());
+        setting.setPaymentCancellationAuthorizationMandated(aspspSettings.isPaymentCancellationAuthorizationMandated());
+        setting.setPiisConsentSupported(aspspSettings.isPiisConsentSupported());
+        setting.setDeltaReportSupported(aspspSettings.isDeltaReportSupported());
+        setting.setRedirectUrlExpirationTimeMs(aspspSettings.getRedirectUrlExpirationTimeMs());
     }
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.aspsp.profile.service;
 
+import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -29,31 +30,33 @@ public class AspspProfileServiceImpl implements AspspProfileService {
 
     @Override
     public AspspSettings getAspspSettings() {
+        BankProfileSetting setting = profileConfiguration.getSetting();
         return new AspspSettings(
-            profileConfiguration.getFrequencyPerDay(),
-            profileConfiguration.isCombinedServiceIndicator(),
-            profileConfiguration.getAvailablePaymentProducts(),
-            profileConfiguration.getAvailablePaymentTypes(),
-            profileConfiguration.isTppSignatureRequired(),
-            profileConfiguration.getPisRedirectUrlToAspsp(),
-            profileConfiguration.getAisRedirectUrlToAspsp(),
-            profileConfiguration.getMulticurrencyAccountLevel(),
-            profileConfiguration.isBankOfferedConsentSupport(),
-            profileConfiguration.getAvailableBookingStatuses(),
-            profileConfiguration.getSupportedAccountReferenceFields(),
-            profileConfiguration.getConsentLifetime(),
-            profileConfiguration.getTransactionLifetime(),
-            profileConfiguration.isAllPsd2Support(),
-            profileConfiguration.isTransactionsWithoutBalancesSupported(),
-            profileConfiguration.isSigningBasketSupported(),
-            profileConfiguration.isPaymentCancellationAuthorizationMandated(),
-            profileConfiguration.isPiisConsentSupported(),
-            profileConfiguration.isDeltaReportSupported(),
-            profileConfiguration.getRedirectUrlExpirationTimeMs());
+            setting.getFrequencyPerDay(),
+            setting.isCombinedServiceIndicator(),
+            setting.getAvailablePaymentProducts(),
+            setting.getAvailablePaymentTypes(),
+            setting.isTppSignatureRequired(),
+            setting.getPisRedirectUrlToAspsp(),
+            setting.getAisRedirectUrlToAspsp(),
+            setting.getMulticurrencyAccountLevel(),
+            setting.isBankOfferedConsentSupport(),
+            setting.getAvailableBookingStatuses(),
+            setting.getSupportedAccountReferenceFields(),
+            setting.getConsentLifetime(),
+            setting.getTransactionLifetime(),
+            setting.isAllPsd2Support(),
+            setting.isTransactionsWithoutBalancesSupported(),
+            setting.isSigningBasketSupported(),
+            setting.isPaymentCancellationAuthorizationMandated(),
+            setting.isPiisConsentSupported(),
+            setting.isDeltaReportSupported(),
+            setting.getRedirectUrlExpirationTimeMs());
     }
 
     @Override
     public ScaApproach getScaApproach() {
-        return profileConfiguration.getScaApproach();
+        return profileConfiguration.getSetting()
+                   .getScaApproach();
     }
 }
