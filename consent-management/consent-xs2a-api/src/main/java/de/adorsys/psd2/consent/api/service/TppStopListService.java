@@ -16,16 +16,15 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import org.jetbrains.annotations.NotNull;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 
-public interface TppBlacklistService {
+public interface TppStopListService {
 
     /**
      * Checks if TPP is blocked.
      *
-     * @param tppAuthorisationNumber tpp ID
-     * @param authorityId            national competent authority id
+     * @param tppInfo information about particular TPP from TPP Certificate
      * @return <code>true</code> if TPP is found and has status BLOCKED, <code>false</code> if TPP is not found or its status is not BLOCKED
      */
-    boolean checkIfTppBlocked(@NotNull String tppAuthorisationNumber, @NotNull String authorityId);
+    boolean checkIfTppBlocked(TppInfo tppInfo);
 }
