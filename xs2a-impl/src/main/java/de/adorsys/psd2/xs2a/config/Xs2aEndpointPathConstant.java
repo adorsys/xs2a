@@ -16,19 +16,14 @@
 
 package de.adorsys.psd2.xs2a.config;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+public class Xs2aEndpointPathConstant {
+    public static final String ACCOUNTS_PATH = "/v1/accounts/**";
+    public static final String CONSENTS_PATH = "/v1/consents/**";
+    public static final String FUNDS_CONFIRMATION_PATH = "/v1/funds-confirmations/**";
+    public static final String SINGLE_PAYMENTS_PATH = "/v1/payments/**";
+    public static final String BULK_PAYMENTS_PATH = "/v1/bulk-payments/**";
+    public static final String PERIODIC_PAYMENTS_PATH = "/v1/periodic-payments/**";
+    public static final String SIGNING_BASKETS_PATH = "/v1/signing-baskets/**";
 
-import java.util.List;
-
-@Data
-@Component
-@ConfigurationProperties(prefix = "endpoints.cors")
-public class CorsConfigProperties {
-    private Boolean allowCredentials;
-    private List<String> allowedOrigins;
-    private List<String> allowedMethods;
-    private List<String> allowedHeaders;
-    private Long maxAge;
+    private Xs2aEndpointPathConstant(){}
 }
