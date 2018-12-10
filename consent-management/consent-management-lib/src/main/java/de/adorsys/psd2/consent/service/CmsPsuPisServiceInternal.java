@@ -38,6 +38,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
@@ -78,18 +79,26 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
-    @Transactional
     public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
         Optional<PisConsentAuthorization> optionalAuthorization = pisConsentAuthorizationRepository.findByExternalId(redirectId)
                                                                       .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
-        if (optionalAuthorization.isPresent()) {
-            PisConsentAuthorization authorization = optionalAuthorization.get();
 
-            if (authorization.isNotExpired()) {
-                return Optional.of(buildCmsPaymentResponse(authorization));
+        if (optionalAuthorization.isPresent()) {
+            PisConsentAuthorization authorisation = optionalAuthorization.get();
+
+            if (authorisation.isNotExpired()) {
+                return Optional.of(buildCmsPaymentResponse(authorisation));
             }
 
-            changeAuthorisationStatusToFailed(authorization);
+            String tppNokRedirectUri = authorisation.getConsent().getTppInfo().getNokRedirectUri();
+            changeAuthorisationStatusToFailed(authorisation);
+
+            return Optional.of(new CmsPaymentResponse(
+                null,
+                null,
+                null,
+                tppNokRedirectUri
+            ));
         }
 
         return Optional.empty();
@@ -186,7 +195,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             tppNokRedirectUri);
     }
 
-    private void changeAuthorisationStatusToFailed(PisConsentAuthorization authorisation) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void changeAuthorisationStatusToFailed(PisConsentAuthorization authorisation) {
         authorisation.setScaStatus(ScaStatus.FAILED);
         pisConsentAuthorizationRepository.save(authorisation);
     }
