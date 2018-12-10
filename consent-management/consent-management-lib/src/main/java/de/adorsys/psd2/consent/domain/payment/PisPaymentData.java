@@ -18,10 +18,12 @@ package de.adorsys.psd2.consent.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
+import de.adorsys.psd2.consent.domain.BaseEntity;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -31,10 +33,11 @@ import java.time.OffsetDateTime;
 import java.util.Currency;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString(exclude = "consent")
 @Entity(name = "pis_payment_data")
 @ApiModel(description = "pis payment entity", value = "PisPaymentData")
-public class PisPaymentData {
+public class PisPaymentData extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_payment_data_generator")
     @SequenceGenerator(name = "pis_payment_data_generator", sequenceName = "pis_payment_data_id_seq")

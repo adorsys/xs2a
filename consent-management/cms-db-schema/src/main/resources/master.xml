@@ -41,5 +41,6 @@
     <include relativeToChangelogFile="true" file="migration/0019-create_event_table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0021-add-expiration-timestamp-authorisation.xml"/>
     <include relativeToChangelogFile="true" file="migration/0022-ais-replace-tpp-id-with-tpp-info.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0023-add-column-instance-id.xml"/>
 
 </databaseChangeLog>

@@ -16,31 +16,17 @@
 
 package de.adorsys.psd2.consent.domain;
 
-import io.swagger.annotations.ApiModel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.MappedSuperclass;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@Entity(name = "aspsp_consent_data")
-@ApiModel(description = "Aspsp consent data", value = "AspspConsentData")
-@NoArgsConstructor
-public class AspspConsentDataEntity extends BaseEntity {
-    @Id
-    @Column(name = "consent_id")
-    private String consentId;
+@Getter
+@Setter
+@MappedSuperclass
+public abstract class BaseEntity {
 
-    @Lob
-    @Column(name = "data")
-    private byte[] data;
-
-    public AspspConsentDataEntity(String consentId) {
-        this.consentId = consentId;
-    }
+    @Column(name = "instance_id", nullable = false)
+    private String instanceId;
 }

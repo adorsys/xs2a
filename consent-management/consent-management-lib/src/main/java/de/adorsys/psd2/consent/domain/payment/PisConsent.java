@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.domain.payment;
 
 import de.adorsys.psd2.consent.api.ConsentType;
+import de.adorsys.psd2.consent.domain.BaseEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -24,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -31,10 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "pis_consent")
 @ApiModel(description = "Pis consent entity", value = "PisConsent")
 @NoArgsConstructor
-public class PisConsent {
+public class PisConsent extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_consent_generator")
     @SequenceGenerator(name = "pis_consent_generator", sequenceName = "pis_consent_id_seq")
