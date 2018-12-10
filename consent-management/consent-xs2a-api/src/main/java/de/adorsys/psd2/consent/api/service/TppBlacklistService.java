@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface TppBlacklistService {
 
     /**
@@ -25,5 +27,5 @@ public interface TppBlacklistService {
      * @param authorityId            national competent authority id
      * @return <code>true</code> if TPP is found and has status BLOCKED, <code>false</code> if TPP is not found or its status is not BLOCKED
      */
-    boolean isTppBlocked(String tppAuthorisationNumber, String authorityId);
+    boolean checkIfTppBlocked(@NotNull String tppAuthorisationNumber, @NotNull String authorityId);
 }
