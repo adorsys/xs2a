@@ -201,11 +201,11 @@ public interface AccountApi {
         @ApiResponse(code = 500, message = "Internal Server Error"),
         @ApiResponse(code = 503, message = "Service Unavailable")})
     @RequestMapping(value = "/v1/accounts/{account-id}/transactions/",
-        produces = {"application/json", "application/xml", "application/text"},
+        produces = {"application/json", "application/xml", "text/plain"},
         method = RequestMethod.GET)
     default ResponseEntity<TransactionsResponse200Json> _getTransactionList(
         @ApiParam(value = "This identification is denoting the addressed account. The account-id is retrieved by using a \"Read Account List\" call. The account-id is the \"id\" attribute of the account structure. Its value is constant at least throughout the lifecycle of a given consent. ", required = true) @PathVariable("account-id") String accountId, @NotNull
-    @ApiParam(value = "Permitted codes are   * \"booked\",   * \"pending\" and   * \"both\" \"booked\" shall be supported by the ASPSP. To support the \"pending\" and \"both\" feature is optional for the ASPSP, Error code if not supported in the online banking frontend ", required = true, allowableValues = "booked, pending, both") @Valid @RequestParam(value = "bookingStatus", required = true) String bookingStatus,
+        @ApiParam(value = "Permitted codes are   * \"booked\",   * \"pending\" and   * \"both\" \"booked\" shall be supported by the ASPSP. To support the \"pending\" and \"both\" feature is optional for the ASPSP, Error code if not supported in the online banking frontend ", required = true, allowableValues = "booked, pending, both") @Valid @RequestParam(value = "bookingStatus", required = true) String bookingStatus,
         @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
         @ApiParam(value = "This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. ", required = true) @RequestHeader(value = "Consent-ID", required = true) String consentID,
         @ApiParam(value = "Conditional: Starting date (inclusive the date dateFrom) of the transaction list, mandated if no delta access is required. ") @Valid @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom,

@@ -17,8 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import de.adorsys.psd2.xs2a.domain.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
@@ -51,8 +50,8 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
     private final SpiErrorMapper spiErrorMapper;
 
     @Override
-    public SinglePaymentInitiationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent) {
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByConsentId(pisConsent.getConsentId());
+    public SinglePaymentInitiationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, String paymentProduct, Xs2aPisConsent pisConsent) {
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(pisConsent.getConsentId());
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(pisConsent.getPsuData());
 
         SpiResponse<SpiSinglePaymentInitiationResponse> spiResponse = singlePaymentSpi.initiatePayment(spiPsuData, xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(payment, paymentProduct), aspspConsentData);
@@ -66,8 +65,8 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
     }
 
     @Override
-    public PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment payment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent) {
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByConsentId(pisConsent.getConsentId());
+    public PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment payment, TppInfo tppInfo, String paymentProduct, Xs2aPisConsent pisConsent) {
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(pisConsent.getConsentId());
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(pisConsent.getPsuData());
 
         SpiResponse<SpiPeriodicPaymentInitiationResponse> spiResponse = periodicPaymentSpi.initiatePayment(spiPsuData, xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(payment, paymentProduct), aspspConsentData);
@@ -81,8 +80,8 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
     }
 
     @Override
-    public BulkPaymentInitiationResponse createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent) {
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByConsentId(pisConsent.getConsentId());
+    public BulkPaymentInitiationResponse createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct, Xs2aPisConsent pisConsent) {
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(pisConsent.getConsentId());
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(pisConsent.getPsuData());
 
         SpiResponse<SpiBulkPaymentInitiationResponse> spiResponse = bulkPaymentSpi.initiatePayment(spiPsuData, xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct), aspspConsentData);

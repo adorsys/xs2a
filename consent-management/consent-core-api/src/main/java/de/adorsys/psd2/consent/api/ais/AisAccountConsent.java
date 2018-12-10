@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.api.ais;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,5 +40,5 @@ public class AisAccountConsent {
     private boolean tppRedirectPreferred;
     private AisConsentRequestType aisConsentRequestType;
     private PsuIdData psuData;
-    private String tppId;
+    private TppInfo tppInfo;
 }

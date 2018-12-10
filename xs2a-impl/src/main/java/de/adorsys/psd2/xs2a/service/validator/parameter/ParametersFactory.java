@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.service.validator.parameter.impl.AccountRequestParameter;
 import de.adorsys.psd2.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
 import de.adorsys.psd2.xs2a.service.validator.parameter.impl.NotMatchedParameterImpl;
-import de.adorsys.psd2.xs2a.web.AccountController;
+import de.adorsys.psd2.xs2a.web.controller.AccountController;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

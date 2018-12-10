@@ -31,6 +31,19 @@ public class ServiceLocatorFactoryConfiguration {
     }
 
     /**
+     * Configuration of ServiceLocatorFactoryBean bean to be used as a factory for read payment status services for different payment types through Service locator interface.
+     * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
+     *
+     * @return ServiceLocatorFactoryBean
+     */
+    @Bean
+    public ServiceLocatorFactoryBean readPaymentStatusFactory() {
+        ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
+        serviceLocatorFactoryBean.setServiceLocatorInterface(ReadPaymentStatusFactory.class);
+        return serviceLocatorFactoryBean;
+    }
+
+    /**
      * Configuration of ServiceLocatorFactoryBean bean to be used as a factory for PIS SCA authorisation stages through Service locator interface.
      * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
      *

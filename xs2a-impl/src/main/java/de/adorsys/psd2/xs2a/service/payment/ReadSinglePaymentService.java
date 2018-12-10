@@ -16,8 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -29,23 +32,32 @@ import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Optional;
+
 @Service("payments")
 @RequiredArgsConstructor
 public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformationResponse<SinglePayment>> {
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final SinglePaymentSpi singlePaymentSpi;
-    private final SpiToXs2aSinglePaymentMapper xs2aPeriodicPaymentMapper;
+    private final SpiToXs2aSinglePaymentMapper spiToXs2aSinglePaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
+    private final SpiPaymentFactory spiPaymentFactory;
 
     @Override
-    public PaymentInformationResponse<SinglePayment> getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
-        SpiSinglePayment payment = new SpiSinglePayment(paymentProduct);
+    public PaymentInformationResponse<SinglePayment> getPayment(PisPayment pisPayment, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
+        Optional<SpiSinglePayment> spiPaymentOptional = spiPaymentFactory.createSpiSinglePayment(pisPayment, paymentProduct);
 
-        // we need to get decrypted payment ID
-        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
-        payment.setPaymentId(internalPaymentId);
+        if (!spiPaymentOptional.isPresent()) {
+            return new PaymentInformationResponse<>(
+                ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
+                    .messages(Collections.singletonList("Payment not found"))
+                    .build()
+            );
+        }
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-        SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
+        SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiPsuData, spiPaymentOptional.get(), aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -53,7 +65,16 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
         }
 
         SpiSinglePayment spiSinglePayment = spiResponse.getPayload();
+        SinglePayment xs2aSinglePayment = spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(spiSinglePayment);
 
-        return new PaymentInformationResponse<>(xs2aPeriodicPaymentMapper.mapToXs2aSinglePayment(spiSinglePayment));
+        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(aspspConsentData.getConsentId(), xs2aSinglePayment.getTransactionStatus())) {
+            return new PaymentInformationResponse<>(
+                ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                    .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
+                    .build()
+            );
+        }
+
+        return new PaymentInformationResponse<>(xs2aSinglePayment);
     }
 }

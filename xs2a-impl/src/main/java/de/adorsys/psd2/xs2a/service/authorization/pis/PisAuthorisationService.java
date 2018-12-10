@@ -23,12 +23,17 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequ
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory.CANCELLATION_SERVICE_PREFIX;
 import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory.SERVICE_PREFIX;
 
 @Service
@@ -43,56 +48,91 @@ public class PisAuthorisationService {
      * Sends a POST request to CMS to store created consent authorization
      *
      * @param paymentId String representation of identifier of stored consent
+     * @param psuData   PsuIdData container of authorisation data about PSU
      * @return long representation of identifier of stored consent authorization
      */
     public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId, PsuIdData psuData) {
         return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED, psuData)
-                                                                       .orElse(null);
+                   .orElse(null);
     }
 
     /**
      * Updates PIS consent authorization according to psu's sca methods
      *
      * @param request Provides transporting data when updating consent authorization
-     * @return sca status
+     * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
      */
-    public Xs2aUpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
-        GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentAuthorizationById(request.getAuthorizationId(), CmsAuthorisationType.CREATED)
+    public Xs2aUpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
+        GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentAuthorisationById(request.getAuthorizationId())
                                                           .orElse(null);
 
-        PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(SERVICE_PREFIX + response.getScaStatus().name());
+        PisScaStage<Xs2aUpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(SERVICE_PREFIX + response.getScaStatus().name());
         Xs2aUpdatePisConsentPsuDataResponse stageResponse = service.apply(request, response);
 
         if (!stageResponse.hasError()) {
-            doUpdatePisConsentAuthorisation(pisConsentMapper.mapToSpiUpdateConsentPsuDataReq(request, stageResponse));
+            doUpdatePisConsentAuthorisation(pisConsentMapper.mapToCmsUpdateConsentPsuDataReq(request, stageResponse));
+        }
+
+        return stageResponse;
+    }
+
+    /**
+     * Updates PIS consent cancellation authorisation according to psu's sca methods
+     *
+     * @param request Provides transporting data when updating consent cancellation authorisation
+     * @return update consent authorisation response, which contains payment id, authorisation id, sca status, psu message and links
+     */
+    public Xs2aUpdatePisConsentPsuDataResponse updatePisConsentCancellationAuthorisation(Xs2aUpdatePisConsentPsuDataRequest request) {
+        GetPisConsentAuthorisationResponse response = pisConsentService.getPisConsentCancellationAuthorisationById(request.getAuthorizationId())
+                                                          .orElse(null);
+
+        PisScaStage<Xs2aUpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, Xs2aUpdatePisConsentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(CANCELLATION_SERVICE_PREFIX + response.getScaStatus().name());
+        Xs2aUpdatePisConsentPsuDataResponse stageResponse = service.apply(request, response);
+
+        if (!stageResponse.hasError()) {
+            doUpdatePisConsentCancellationAuthorisation(pisConsentMapper.mapToCmsUpdateConsentPsuDataReq(request, stageResponse));
         }
 
         return stageResponse;
     }
 
     public void doUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
-        pisConsentService.updateConsentAuthorization(request.getAuthorizationId(), request, CmsAuthorisationType.CREATED);
+        pisConsentService.updateConsentAuthorisation(request.getAuthorizationId(), request);
+    }
+
+    public void doUpdatePisConsentCancellationAuthorisation(UpdatePisConsentPsuDataRequest request) {
+        pisConsentService.updateConsentCancellationAuthorisation(request.getAuthorizationId(), request);
     }
 
     /**
      * Sends a POST request to CMS to store created consent authorization cancellation
      *
      * @param paymentId String representation of identifier of payment ID
+     * @param psuData   PsuIdData container of authorisation data about PSU
      * @return long representation of identifier of stored consent authorization cancellation
      */
     public CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId, PsuIdData psuData) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED, psuData)
-            .orElse(null);
+        return pisConsentService.createAuthorizationCancellation(paymentId, CmsAuthorisationType.CANCELLED, psuData)
+                   .orElse(null);
     }
 
     /**
-     * Sends a GET request to CMS to get authorization sub resources
+     * Sends a GET request to CMS to get cancellation authorisation sub resources
      *
      * @param paymentId String representation of identifier of payment ID
-     * @return long representation of identifier of stored consent authorization cancellation
+     * @return list of consent authorisation IDs
      */
-    public String getCancellationAuthorisationSubResources(String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
-                   .orElse(null);
+    public Optional<List<String>> getCancellationAuthorisationSubResources(String paymentId) {
+        return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CANCELLED);
+    }
+
+    /**
+     * Sends a GET request to CMS to get authorisation sub resources
+     *
+     * @param paymentId String representation of identifier of payment ID
+     * @return list of consent authorisation IDs
+     */
+    public Optional<List<String>> getAuthorisationSubResources(String paymentId) {
+        return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CREATED);
     }
 }

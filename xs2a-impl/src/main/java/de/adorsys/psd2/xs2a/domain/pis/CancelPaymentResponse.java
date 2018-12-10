@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import lombok.Data;
@@ -32,7 +32,7 @@ public class CancelPaymentResponse {
     private TransactionStatus transactionStatus;
     private Xs2aAuthenticationObject[] scaMethods;
     private Xs2aChosenScaMethod chosenScaMethod;
-    private Xs2aChallengeData challengeData;
+    private ChallengeData challengeData;
     @NotNull
     @JsonProperty("_links")
     private Links links;

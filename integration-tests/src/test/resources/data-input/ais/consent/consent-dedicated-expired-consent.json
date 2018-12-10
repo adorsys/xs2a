@@ -1,0 +1,45 @@
+{
+  "request": {
+    "header": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
+    },
+    "body": {
+      "access": {
+        "accounts": [
+          {
+            "currency": "EUR",
+            "iban": "DE52500105173911841934"
+          }
+        ],
+        "balances": [
+          {
+            "currency": "EUR",
+            "iban": "DE52500105173911841934"
+          }
+        ],
+        "transactions": [
+          {
+            "currency": "EUR",
+            "iban": "DE52500105173911841934"
+          }
+        ]
+      },
+      "combinedServiceIndicator": false,
+      "frequencyPerDay": 10,
+      "recurringIndicator": false,
+      "validUntil": "2017-10-30"
+    }
+  },
+  "response": {
+    "code": "400",
+    "header": {},
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "PERIOD_INVALID",
+        "text": "Requested time period out of bound."
+      }
+    ]
+  }
+}

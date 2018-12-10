@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.PaymentController;
+import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -49,6 +49,8 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
 
     private Links buildLink(String paymentService, String paymentId, String authorizationId) {
         Links links = new Links();
+        links.setSelf(buildPath("/v1/{payment-service}/{payment-id}", paymentService, paymentId));
+        links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status", paymentService, paymentId));
         links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorizationId}", paymentService, paymentId, authorizationId));
         return links;
     }

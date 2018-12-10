@@ -18,6 +18,12 @@ Provide access to next values:
  - transaction lifetime
  - all psd2 support
  - bank offered consent support
+ - transactions without balances supported;
+ - signing basket supported;
+ - payment cancellation authorization mandated;
+ - piis consent supported;
+ - delta report supported;
+ - redirect url expiration time;
  
  To test getting data of ASPSP Profile need to make next steps:
  

@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "a6c37a4b-919a-442a-9bf8-179a82ce5a36",
+		"name": "AIS Redirect URL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Creates AIS consent",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "6f709a09-78fc-40ce-8274-dc29bbcd560e",
+						"exec": [
+							"pm.globals.unset(\"consent_id\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "27c858ba-9ceb-426a-8e5d-438f019c0598",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Consent status is received\", () => {",
+							"    pm.expect(jsonData.consentStatus).to.eql('received');",
+							"});",
+							"",
+							"pm.globals.set(\"consent_id\", jsonData.consentId);",
+							"",
+							"const scaRedirectLink = jsonData._links.scaRedirect;",
+							"",
+							"if (scaRedirectLink !== undefined) {",
+							"    const authorisationId = scaRedirectLink.split('/').pop();",
+							"    pm.globals.set(\"authorisation_id\", authorisationId);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "date",
+						"value": "Sun, 11 Aug 2019 15:02:37 GMT"
+					},
+					{
+						"key": "tpp-qwac-certificate",
+						"value": "qwac certificate"
+					},
+					{
+						"key": "x-request-id",
+						"value": "{{x_request_id}}"
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_none}}"
+					},
+					{
+						"key": "TPP-Explicit-Authorisation-Preferred",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "TPP-Redirect-URI",
+						"type": "text",
+						"value": "TPP-Redirect-URI"
+					},
+					{
+						"key": "TPP-Nok-Redirect-URI",
+						"type": "text",
+						"value": "TPP-Nok-Redirect-URI"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"access\": {\n        \"accounts\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE52500105173911841934\"\n          }\n        ],\n        \"balances\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE52500105173911841934\"\n          }\n        ],\n        \"transactions\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE52500105173911841934\"\n          }\n        ]\n      },\n      \"combinedServiceIndicator\": false,\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": false,\n      \"validUntil\": \"2019-11-30\"\n    }"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"consents"
+					]
+				},
+				"description": "This method create a consent resource, defining access rights to dedicated accounts of a given PSU-ID. These accounts are addressed explicitly in the method as parameters as a core function. Side Effects When this Consent Request is a request where the “recurringIndicator” equals \"true\", and if it exists already a former consent for recurring access on account information for the addressed PSU, then the former consent automatically expires as soon as the new consent request is authorised by the PSU. Optional Extension: As an option, an ASPSP might optionally accept a specific access right on the access on all psd2 related services for all available accounts. As another option an ASPSP might optionally also accept a command, where only access rights are inserted without mentioning the addressed account. The relation to accounts is then handled afterwards between PSU and ASPSP. This option is supported only within the Decoupled, OAuth2 or Re-direct SCA Approach. As a last option, an ASPSP might in addition accept a command with access rights * to see the list of available payment accounts or * to see the list of available payment accounts with balances."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Start the authorisation process for a consent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "898a97c1-12fd-4166-82b5-9a8f4fc1106c",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Sca status is started\", () => {",
+							"    pm.expect(jsonData.scaStatus).to.eql('started');",
+							"});",
+							"",
+							"// splits string link by '/' to array and gets the last element - authorisationId",
+							"// e.g. \"http://localhost:8080/v1/consents/d917f39f-6308-4f81-9b51-bfbd8bc934c6/authorisations/554fda7d-bc70-44da-8670-15e299f817a6\"",
+							"      // needs to get 554fda7d-bc70-44da-8670-15e299f817a6 value",
+							"const authorisationId = jsonData.links.startAuthorisationWithPsuAuthentication.split('/').pop();",
+							"",
+							"pm.globals.set(\"authorisation_id\", authorisationId);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "befc2b29-5dab-4f51-b077-032638f06ac0",
+						"exec": [
+							"pm.globals.unset(\"authorisation_id\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_none}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"consents",
+						"{{consent_id}}",
+						"authorisations"
+					]
+				},
+				"description": "Create an authorisation sub-resource and start the authorisation process of a consent. The message might in addition transmit authentication and authorisation related data. his method is iterated n times for a n times SCA authorisation in a corporate context, each creating an own authorisation sub-endpoint for the corresponding PSU authorising the consent. The ASPSP might make the usage of this access method unnecessary, since the related authorisation resource will be automatically created by the ASPSP after the submission of the consent data with the first POST consents call. The start authorisation process is a process which is needed for creating a new authorisation or cancellation sub-resource. This applies in the following scenarios: * The ASPSP has indicated with an ‘startAuthorisation’ hyperlink in the preceeding Payment Initiation Response that an explicit start of the authorisation process is needed by the TPP. The ‘startAuthorisation’ hyperlink can transport more information about data which needs to be uploaded by using the extended forms. * 'startAuthorisationWithPsuIdentfication’, * ‘startAuthorisationWithPsuAuthentication’ * ‘startAuthorisationWithAuthentciationMethodSelection’ * The related payment initiation cannot yet be executed since a multilevel SCA is mandated. * The ASPSP has indicated with an ‘startAuthorisation’ hyperlink in the preceeding Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP. The ‘startAuthorisation’ hyperlink can transport more information about data which needs to be uploaded by using the extended forms as indicated above. * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for executing the cancellation. * The signing basket needs to be authorised yet."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Get consent response object by redirect id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Authorisation id is correct\", () => {",
+							"    pm.expect(jsonData.authorisationId).to.eql(pm.globals.get(\"authorisation_id\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:38080/psu-api/v1/ais/consent/redirect/{{authorisation_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "38080",
+					"path": [
+						"psu-api",
+						"v1",
+						"ais",
+						"consent",
+						"redirect",
+						"{{authorisation_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

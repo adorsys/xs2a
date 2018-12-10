@@ -11,10 +11,16 @@
     "code": "200",
     "header": {},
     "body": {
+      "account": {
+        "iban": "DE52500105173911841934",
+        "currency": "EUR"
+      },
       "balances": [{
         "balanceAmount": {
-          "currency": "EUR"
-        }
+          "currency": "EUR",
+          "amount": "2000"
+        },
+        "balanceType": "interimAvailable"
       }]
     }
   }

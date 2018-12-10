@@ -88,7 +88,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
         try {
             ResponseEntity<List<AspspSinglePayment>> aspspResponse =
                 aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<AspspSinglePayment>>() {
-                }, payment.getPaymentType().getValue(), payment.getPaymentProduct().getValue(), payment.getPaymentId());
+                }, payment.getPaymentType().getValue(), payment.getPaymentProduct(), payment.getPaymentId());
             AspspSinglePayment single = aspspResponse.getBody().get(0);
             SpiSinglePayment spiPeriodicPayment = spiSinglePaymentMapper.mapToSpiSinglePayment(single, payment.getPaymentProduct());
 
@@ -146,6 +146,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
                        .success();
 
         } catch (RestException e) {
@@ -170,6 +171,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
                        .success();
 
         } catch (RestException e) {

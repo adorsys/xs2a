@@ -16,8 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -29,23 +32,32 @@ import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Optional;
+
 @Service("periodic-payments")
 @RequiredArgsConstructor
 public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInformationResponse<PeriodicPayment>> {
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final PeriodicPaymentSpi periodicPaymentSpi;
-    private final SpiToXs2aPeriodicPaymentMapper xs2aPeriodicPaymentMapper;
+    private final SpiToXs2aPeriodicPaymentMapper spiToXs2aPeriodicPaymentMapper;
     private final SpiErrorMapper spiErrorMapper;
+    private final SpiPaymentFactory spiPaymentFactory;
 
     @Override
-    public PaymentInformationResponse<PeriodicPayment> getPayment(String paymentId, PaymentProduct paymentProduct, PsuIdData psuData) {
-        SpiPeriodicPayment payment = new SpiPeriodicPayment(paymentProduct);
+    public PaymentInformationResponse<PeriodicPayment> getPayment(PisPayment pisPayment, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
+        Optional<SpiPeriodicPayment> spiPaymentOptional = spiPaymentFactory.createSpiPeriodicPayment(pisPayment, paymentProduct);
 
-        // we need to get decrypted payment ID
-        String internalPaymentId = pisConsentDataService.getInternalPaymentIdByEncryptedString(paymentId);
-        payment.setPaymentId(internalPaymentId);
+        if (!spiPaymentOptional.isPresent()) {
+            return new PaymentInformationResponse<>(
+                ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
+                    .messages(Collections.singletonList("Payment not found"))
+                    .build()
+            );
+        }
 
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-        SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(spiPsuData, payment, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
+        SpiResponse<SpiPeriodicPayment> spiResponse = periodicPaymentSpi.getPaymentById(spiPsuData, spiPaymentOptional.get(), aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -53,7 +65,16 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
         }
 
         SpiPeriodicPayment spiResponsePayment = spiResponse.getPayload();
+        PeriodicPayment xs2aPeriodicPayment = spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiResponsePayment);
 
-        return new PaymentInformationResponse<>(xs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(spiResponsePayment));
+        if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(aspspConsentData.getConsentId(), xs2aPeriodicPayment.getTransactionStatus())) {
+            return new PaymentInformationResponse<>(
+                ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                    .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
+                    .build()
+            );
+        }
+
+        return new PaymentInformationResponse<>(xs2aPeriodicPayment);
     }
 }

@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.PaymentController;
+import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args(paymentType,paymentId)", returning = "result", argNames = "result,paymentType,paymentId")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args( paymentType, paymentId)", returning = "result", argNames = "result,paymentType,paymentId")
     public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PaymentType paymentType, String paymentId) {
         if (!result.hasError()) {
             CancelPaymentResponse response = result.getBody();
@@ -46,8 +46,11 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
 
     private Links buildCancellationLinks(boolean startAuthorisationRequired, PaymentType paymentType, String paymentId) {
         Links links = new Links();
+
         if (startAuthorisationRequired) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/cancellation-authorisations", paymentType.getValue(), paymentId));
+            links.setSelf(buildPath("/v1/{payment-service}/{payment-id}",  paymentType.getValue(), paymentId));
+            links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status",  paymentType.getValue(), paymentId));
         }
         return links;
     }

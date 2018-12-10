@@ -16,7 +16,10 @@
 
 package de.adorsys.psd2.consent.client.sample;
 
-import de.adorsys.psd2.consent.api.*;
+import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsAddress;
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
@@ -31,9 +34,11 @@ import de.adorsys.psd2.consent.client.cms.model.pis.*;
 import de.adorsys.psd2.consent.client.core.Configuration;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -119,7 +124,7 @@ public class CmsExecutor {
      */
     private static void saveConsentActionLog(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         cmsServiceInvoker.invoke(new SaveConsentActionLogMethod(new AisConsentActionRequest("tpp-id",
-            CONSENT_ID, ActionStatus.SUCCESS)));
+                                                                                            CONSENT_ID, ActionStatus.SUCCESS)));
     }
 
     /**
@@ -149,7 +154,7 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to GET api/v1/ais/consent/{consent-id}/aspsp-consent-data endpoint
+     * Sends request to GET api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -162,7 +167,7 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to PUT api/v1/ais/consent/{consent-id}/aspspConsentData endpoint
+     * Sends request to PUT api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -200,7 +205,11 @@ public class CmsExecutor {
         request.setRequestedFrequencyPerDay(10);
         request.setPsuData(new PsuIdData("psu-id-1", null, null, null));
         request.setRecurringIndicator(true);
-        request.setTppId("tpp-id-1");
+        request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
+                                           Arrays.asList(TppRole.PISP, TppRole.AISP, TppRole.PIISP, TppRole.ASPSP),
+                                           "authority id", "authority name", "Germany", "Organisation",
+                                           "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
+                                           "Nok redirect URI"));
         request.setValidUntil(LocalDate.of(2020, 12, 31));
         request.setTppRedirectPreferred(true);
         return request;
@@ -263,13 +272,13 @@ public class CmsExecutor {
     }
 
     /**
-     * Sends request to GET api/v1/pis/consent/{consent-id}/aspsp-consent-data endpoint
+     * Sends request to GET api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
     private static void getPisConsentAspspData(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
-                                      .addPathVariable("payment-id", PAYMENT_ID)
+                                      .addPathVariable("consent-id", PAYMENT_ID)
                                       .build();
         Optional<CmsAspspConsentDataBase64> getAspspDataResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPisConsentAspspDataMethod(uriParams)));
         getAspspDataResponse.ifPresent(resp -> logger.info("Pis consent aspsp data: " + resp.getAspspConsentDataBase64()));
@@ -277,7 +286,7 @@ public class CmsExecutor {
 
 
     /**
-     * Sends request to PUT api/v1/pis/consent/{consent-id}/aspspConsentData endpoint
+     * Sends request to PUT  api/v1/aspsp-consent-data/consents/{consent-id} endpoint
      *
      * @param cmsServiceInvoker Service, performing rest call
      */
@@ -324,13 +333,13 @@ public class CmsExecutor {
     private static PisConsentRequest buildPisConsentRequest() {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(singletonList(buildPisPayment()));
-        request.setPaymentProduct(PaymentProduct.SEPA);
+        request.setPaymentProduct("sepa-credit-transfers");
         request.setPaymentType(PaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
-            Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
-            "authority id", "authority name", "Germany", "Organisation",
-            "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
-            "Nok redirect URI"));
+                                           Arrays.asList(TppRole.PISP, TppRole.AISP, TppRole.PIISP, TppRole.ASPSP),
+                                           "authority id", "authority name", "Germany", "Organisation",
+                                           "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
+                                           "Nok redirect URI"));
         return request;
     }
 
@@ -344,12 +353,12 @@ public class CmsExecutor {
         payment.setPaymentId("32454656712432");
         payment.setEndToEndIdentification("RI-123456789");
         payment.setDebtorAccount(new CmsAccountReference(UUID.randomUUID().toString(), "DE89370400440532013000", "89370400440532010000",
-            "2356 5746 3217 1234", "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
+                                                         "2356 5746 3217 1234", "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setUltimateDebtor("Mueller");
         payment.setCurrency(Currency.getInstance("EUR"));
         payment.setAmount(BigDecimal.valueOf(1000));
         payment.setCreditorAccount(new CmsAccountReference(UUID.randomUUID().toString(), "DE89370400440532013000", "89370400440532010000", "2356 5746 3217 1234",
-            "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
+                                                           "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setCreditorAgent("Telekom");
         payment.setCreditorName("Telekom");
         payment.setCreditorAddress(buildCmsAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "Germany"));
@@ -357,7 +366,7 @@ public class CmsExecutor {
         payment.setRemittanceInformationStructured(buildCmsRemittance("Ref Number Merchant", "reference type", "reference issuer"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, 1, 1));
         payment.setRequestedExecutionTime(OffsetDateTime.parse("2020-01-01T15:30:35.035Z",
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
+                                                               DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
         payment.setUltimateCreditor("Telekom");
         payment.setPurposeCode("BCENECEQ");
         payment.setStartDate(LocalDate.of(2020, 1, 1));
@@ -422,11 +431,11 @@ public class CmsExecutor {
      * @param nokRedirectUri      Nok redirect URI
      * @return CmsTppInfo
      */
-    private static CmsTppInfo buildCmsTppInfo(String authorisationNumber, String tppName, List<CmsTppRole> tppRoles,
-                                              String authorityId, String authorityName, String country,
-                                              String organisation, String organisationUnit, String city, String state,
-                                              String redirectUri, String nokRedirectUri) {
-        CmsTppInfo tppInfo = new CmsTppInfo();
+    private static TppInfo buildCmsTppInfo(String authorisationNumber, String tppName, List<TppRole> tppRoles,
+                                           String authorityId, String authorityName, String country,
+                                           String organisation, String organisationUnit, String city, String state,
+                                           String redirectUri, String nokRedirectUri) {
+        TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(authorisationNumber);
         tppInfo.setTppName(tppName);
         tppInfo.setTppRoles(tppRoles);
@@ -437,8 +446,7 @@ public class CmsExecutor {
         tppInfo.setOrganisationUnit(organisationUnit);
         tppInfo.setCity(city);
         tppInfo.setState(state);
-        tppInfo.setRedirectUri(redirectUri);
-        tppInfo.setNokRedirectUri(nokRedirectUri);
+        tppInfo.setTppRedirectUri(new TppRedirectUri(redirectUri, nokRedirectUri));
         return tppInfo;
     }
 

@@ -24,12 +24,12 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.12-SNAPSHOT</version>
+        <version>1.14-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>aspsp-mock-server</artifactId>
-    <version>1.12-SNAPSHOT</version>
+    <version>1.14-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <description>Mock server that simulates ASPSP system for XS2A Library</description>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-mock-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>1.14-SNAPSHOT</version>
         </dependency>
 
         <!-- spring dependencies -->
@@ -153,21 +153,13 @@
         <!-- other dependencies -->
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${apache.commons.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>${apache.commons.collections}</version>
         </dependency>
 
         <dependency>
@@ -182,6 +174,11 @@
             <version>${freemarker.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- test dependencies -->
 
         <dependency>

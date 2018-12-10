@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
@@ -70,6 +71,7 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     public SpiResponse<VoidResponse> initiateAisConsent(@NotNull SpiPsuData spiPsuData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
         log.info("AisConsentSpi initiateAisConsent() mock implementation");
         return SpiResponse.<VoidResponse>builder()
+                   .payload(SpiResponse.voidResponse())
                    .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))     // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                    .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                    .success();
@@ -79,6 +81,7 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     public SpiResponse<VoidResponse> revokeAisConsent(@NotNull SpiPsuData spiPsuData, SpiAccountConsent accountConsent, AspspConsentData aspspConsentData) {
         log.info("AisConsentSpi revokeAisConsent() mock implementation");
         return SpiResponse.<VoidResponse>builder()
+                   .payload(SpiResponse.voidResponse())
                    .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                    .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                    .success();
@@ -141,6 +144,8 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         try {
             aspspRestTemplate.exchange(remoteSpiUrls.getGenerateTanConfirmationForAis(), HttpMethod.POST, null, Void.class, psuData.getPsuId());
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                       // TODO We need to return real payload data from ASPSP https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/489
+                       .payload(getDefaultSpiAuthorizationCodeResult())
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .success();
@@ -162,6 +167,7 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         try {
             aspspRestTemplate.exchange(remoteSpiUrls.applyStrongUserAuthorisationForAis(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), Void.class);
             return SpiResponse.<VoidResponse>builder()
+                       .payload(SpiResponse.voidResponse())
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .success();
@@ -176,5 +182,19 @@ public class AisConsentSpiImpl implements AisConsentSpi {
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
+    }
+
+    private SpiAuthorizationCodeResult getDefaultSpiAuthorizationCodeResult() {
+        SpiAuthenticationObject method = new SpiAuthenticationObject();
+        method.setAuthenticationMethodId("sms");
+        method.setAuthenticationType("SMS_OTP");
+
+        ChallengeData challengeData = new ChallengeData(null, "some data", "some link", 100, null, "info");
+
+        SpiAuthorizationCodeResult resultTmp = new SpiAuthorizationCodeResult();
+        resultTmp.setChallengeData(challengeData);
+        resultTmp.setSelectedScaMethod(method);
+
+        return resultTmp;
     }
 }

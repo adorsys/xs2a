@@ -17,13 +17,12 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.domain.Xs2aTppRole;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
@@ -72,7 +71,7 @@ public class CreateSinglePaymentServiceTest {
 
     @Before
     public void init() {
-        when(scaPaymentService.createSinglePayment(buildSinglePayment(), TPP_INFO, PaymentProduct.SEPA, buildXs2aPisConsent())).thenReturn(buildSinglePaymentInitiationResponse());
+        when(scaPaymentService.createSinglePayment(buildSinglePayment(), TPP_INFO, "sepa-credit-transfers", buildXs2aPisConsent())).thenReturn(buildSinglePaymentInitiationResponse());
         when(pisConsentDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
     }
 
@@ -118,7 +117,7 @@ public class CreateSinglePaymentServiceTest {
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
-        parameters.setPaymentProduct(PaymentProduct.SEPA);
+        parameters.setPaymentProduct("sepa-credit-transfers");
         parameters.setPaymentType(PaymentType.SINGLE);
         return parameters;
     }
@@ -135,7 +134,7 @@ public class CreateSinglePaymentServiceTest {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("registrationNumber");
         tppInfo.setTppName("tppName");
-        tppInfo.setTppRoles(Collections.singletonList(Xs2aTppRole.PISP));
+        tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfo.setAuthorityId("authorityId");
         return tppInfo;
     }

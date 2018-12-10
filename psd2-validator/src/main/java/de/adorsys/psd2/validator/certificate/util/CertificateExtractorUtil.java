@@ -24,6 +24,7 @@ import de.adorsys.psd2.validator.common.RoleOfPSP;
 import de.adorsys.psd2.validator.common.RolesOfPSP;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -37,6 +38,8 @@ import java.util.List;
 
 @Slf4j
 public class CertificateExtractorUtil {
+    private CertificateExtractorUtil() {
+    }
 
     public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
 
@@ -47,7 +50,7 @@ public class CertificateExtractorUtil {
             throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
         }
 
-        List<TppRole> roles = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
 
         TppCertificateData tppCertData = new TppCertificateData();
 
@@ -55,7 +58,7 @@ public class CertificateExtractorUtil {
         RolesOfPSP rolesOfPSP = psd2qcType.getRolesOfPSP();
         RoleOfPSP[] roles2 = rolesOfPSP.getRoles();
         for (RoleOfPSP roleOfPSP : roles2) {
-            roles.add(TppRole.valueOf(roleOfPSP.getNormalizedRoleName()));
+            roles.add(roleOfPSP.getNormalizedRoleName());
         }
         tppCertData.setPspRoles(roles);
 
@@ -82,7 +85,8 @@ public class CertificateExtractorUtil {
     }
 
     private static String getValueFromX500Name(X500Name x500Name, ASN1ObjectIdentifier asn1ObjectIdentifier) {
-        return IETFUtils.valueToString(x500Name.getRDNs(asn1ObjectIdentifier)[0].getFirst().getValue());
+        boolean exist = ArrayUtils.contains( x500Name.getAttributeTypes(), asn1ObjectIdentifier );
+        return  exist ? IETFUtils.valueToString(x500Name.getRDNs(asn1ObjectIdentifier)[0].getFirst().getValue()) : null;
     }
 
 }

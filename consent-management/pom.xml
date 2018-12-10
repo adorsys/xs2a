@@ -21,7 +21,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.12-SNAPSHOT</version>
+        <version>1.14-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -30,15 +30,30 @@
     <packaging>pom</packaging>
 
     <modules>
+        <!-- Database schema -->
         <module>cms-db-schema</module>
+
+        <!-- API -->
+        <module>consent-core-api</module>
         <module>consent-xs2a-api</module>
         <module>consent-psu-api</module>
-        <module>consent-psu-client</module>
         <module>consent-aspsp-api</module>
+
+        <!-- Remote clients -->
+        <module>consent-psu-client</module>
+        <module>consent-xs2a-client</module>
+
+        <!-- Main implementation -->
         <module>consent-management-lib</module>
-        <module>consent-management-system</module>
-        <module>consent-core-api</module>
-        <module>consent-management-remote</module>
+
+        <!-- Web endpoints -->
+        <module>consent-core-web</module>
+        <module>consent-xs2a-web</module>
+        <module>consent-psu-web</module>
+        <module>consent-aspsp-web</module>
+
+        <!-- Standalone service -->
+        <module>cms-standalone-service</module>
     </modules>
 
 </project>

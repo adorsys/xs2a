@@ -86,7 +86,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
         try {
             ResponseEntity<List<AspspSinglePayment>> aspspResponse =
                 aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<AspspSinglePayment>>() {
-                }, payment.getPaymentType().getValue(), payment.getPaymentProduct().getValue(), payment.getPaymentId());
+                }, payment.getPaymentType().getValue(), payment.getPaymentProduct(), payment.getPaymentId());
             List<AspspSinglePayment> payments = aspspResponse.getBody();
             SpiBulkPayment spiBulkPayment = spiBulkPaymentMapper.mapToSpiBulkPayment(payments, payment.getPaymentProduct());
 
@@ -142,6 +142,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
                        .success();
 
         } catch (RestException e) {
@@ -164,6 +165,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
             aspspRestTemplate.postForEntity(aspspRemoteUrls.createBulkPayment(), request, AspspBulkPayment.class);
 
             return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .payload(SpiResponse.voidResponse())
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .success();
 

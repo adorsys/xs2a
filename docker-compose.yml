@@ -12,6 +12,7 @@ volumes:
 services:
 # ASPSP-IDP
   xs2a-idp:
+    image: adorsys/xs2a-idp
     build:
       context: aspsp-idp
       dockerfile: Dockerfile
@@ -47,6 +48,7 @@ services:
 
 # ASPSP-MOCK-SERVER
   aspsp-mock-server:
+    image: adorsys/xs2a-mock-server
     build:
       context: aspsp-mock-server
       dockerfile: Dockerfile
@@ -78,6 +80,7 @@ services:
 
 # ASPSP-PROFILE
   aspsp-profile:
+    image: adorsys/xs2a-aspsp-profile
     build:
       context: aspsp-profile/aspsp-profile-server
       dockerfile: Dockerfile
@@ -92,8 +95,9 @@ services:
 
 # CONSENT-MANAGEMENT-SYSTEM
   consent-management:
+    image: adorsys/xs2a-consent-management
     build:
-      context: consent-management/consent-management-system
+      context: consent-management/cms-standalone-service
       dockerfile: Dockerfile
     restart: on-failure
     ports:
@@ -108,6 +112,7 @@ services:
       - ASPSP_PROFILE_BASEURL=${ASPSP_PROFILE_BASEURL:-http://aspsp-profile:8080/api/v1}
       - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
       - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_CMS_CLIENT_SECRET}"
+      - SERVER_KEY=my_secret_for_cms
     depends_on:
       - consent-management-postgres
 
@@ -130,6 +135,7 @@ services:
       - 5432
 
   online-banking-demo-ui:
+    image: adorsys/xs2a-mock-online-banking-ui
     build:
       context: online-banking-demo-ui
       dockerfile: Dockerfile

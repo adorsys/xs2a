@@ -16,51 +16,12 @@
 
 package de.adorsys.psd2.aspsp.profile.service;
 
-import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
-import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
-import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 
-import java.util.List;
-
 public interface AspspProfileUpdateService {
-    void updateFrequencyPerDay(int frequencyPerDay);
-
-    void updateCombinedServiceIndicator(boolean combinedServiceIndicator);
-
-    void updateBankOfferedConsentSupport(boolean bankOfferedConsentSupport);
-
-    void updateAvailablePaymentProducts(List<PaymentProduct> availablePaymentProducts);
-
-    void updateAvailablePaymentTypes(List<PaymentType> availablePaymentTypes);
 
     void updateScaApproach(ScaApproach scaApproach);
 
-    void updateTppSignatureRequired(boolean tppSignatureRequired);
-
-    void updatePisRedirectUrlToAspsp(String redirectUrlToAspsp);
-
-    void updateAisRedirectUrlToAspsp(String redirectUrlToAspsp);
-
-    void updateMulticurrencyAccountLevel(MulticurrencyAccountLevel multicurrencyAccountLevel);
-
-    void updateAvailableBookingStatuses(List<BookingStatus> availableBookingStatuses);
-
-    void updateSupportedAccountReferenceFields(List<SupportedAccountReferenceField> fields);
-
-    void updateConsentLifetime(int consentLifetime);
-
-    void updateTransactionLifetime(int transactionLifetime);
-
-    void updateAllPsd2Support(boolean allPsd2Support);
-
-    void updateTransactionsWithoutBalancesSupported(boolean transactionsWithoutBalancesSupported);
-
-    void updateSigningBasketSupported(boolean signingBasketSupported);
-
-    void updatePaymentCancellationAuthorizationMandated(boolean paymentCancellationAuthorizationMandated);
-
-    void updatePiisConsentSupported(boolean piisConsentSupported);
+    void updateAspspSettings(AspspSettings aspspSettings);
 }

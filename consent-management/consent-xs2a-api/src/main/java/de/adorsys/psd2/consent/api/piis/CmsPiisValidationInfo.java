@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -29,5 +30,4 @@ public class CmsPiisValidationInfo {
     private LocalDate expireDate;
     private ConsentStatus consentStatus;
     private PiisConsentTppAccessType piisConsentTppAccessType;
-
 }

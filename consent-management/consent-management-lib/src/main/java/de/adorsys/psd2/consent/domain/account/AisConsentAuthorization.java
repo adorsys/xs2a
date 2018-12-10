@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 
 @Data
 @Entity(name = "ais_consent_authorization")
@@ -51,4 +52,15 @@ public class AisConsentAuthorization {
 
     @Column(name = "sca_authentication_data")
     private String scaAuthenticationData;
+
+    @Column(name = "expiration_timestamp")
+    private OffsetDateTime redirectUrlExpirationTimestamp;
+
+    public boolean isExpired() {
+        return redirectUrlExpirationTimestamp.isBefore(OffsetDateTime.now());
+    }
+
+    public boolean isNotExpired() {
+        return !isExpired();
+    }
 }

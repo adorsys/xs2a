@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.authorization.pis.stage;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
+import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -37,7 +37,9 @@ import java.util.function.BiFunction;
 @RequiredArgsConstructor
 public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected final PaymentAuthorisationSpi paymentAuthorisationSpi;
+    protected final PaymentCancellationSpi paymentCancellationSpi;
     protected final PisConsentDataService pisConsentDataService;
+    protected final PisConsentService pisConsentService;
     protected final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     protected final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     protected final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
@@ -46,7 +48,6 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected final Xs2aPisConsentMapper xs2aPisConsentMapper;
     protected final SpiErrorMapper spiErrorMapper;
     protected final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
-    protected final SpiToXs2aOtpFormatMapper spiToXs2aOtpFormatMapper;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -65,14 +66,14 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected SpiPayment mapToSpiPayment(List<PisPayment> payments, PaymentType paymentType) {
         if (PaymentType.SINGLE == paymentType) {
             SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(payments.get(0));
-            return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, PaymentProduct.SEPA);
+            return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, "sepa-credit-transfers");
         }
         if (PaymentType.PERIODIC == paymentType) {
             PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(payments.get(0));
-            return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, PaymentProduct.SEPA);
+            return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, "sepa-credit-transfers");
         } else {
             BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(payments);
-            return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, PaymentProduct.SEPA);
+            return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, "sepa-credit-transfers");
         }
     }
 }

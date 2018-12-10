@@ -17,74 +17,17 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
-import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
-import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
-import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
-import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
 
 @Service
 @RequiredArgsConstructor
 public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService {
+
     private final ProfileConfiguration profileConfiguration;
-
-    /**
-     * Update frequency per day
-     *
-     * @param frequencyPerDay the new value of frequencyPerDay
-     */
-    @Override
-    public void updateFrequencyPerDay(int frequencyPerDay) {
-        profileConfiguration.setFrequencyPerDay(frequencyPerDay);
-    }
-
-    /**
-     * Update combined service indicator
-     *
-     * @param combinedServiceIndicator the new value of combinedServiceIndicator
-     */
-    @Override
-    public void updateCombinedServiceIndicator(boolean combinedServiceIndicator) {
-        profileConfiguration.setCombinedServiceIndicator(combinedServiceIndicator);
-    }
-
-    /**
-     * Update BankOfferedConsentSupport status
-     *
-     * @param bankOfferedConsentSupport BankOfferedConsentSupport status to substitute existing one
-     */
-    @Override
-    public void updateBankOfferedConsentSupport(boolean bankOfferedConsentSupport) {
-        profileConfiguration.setBankOfferedConsentSupport(bankOfferedConsentSupport);
-    }
-
-    /**
-     * Update available payment types
-     *
-     * @param availablePaymentProducts List of payment product values
-     */
-    @Override
-    public void updateAvailablePaymentProducts(List<PaymentProduct> availablePaymentProducts) {
-        profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
-    }
-
-    /**
-     * Update available payment availablePaymentTypes
-     *
-     * @param availablePaymentTypes List of payment type values
-     */
-    @Override
-    public void updateAvailablePaymentTypes(List<PaymentType> availablePaymentTypes) {
-        profileConfiguration.setAvailablePaymentTypes(availablePaymentTypes);
-    }
 
     /**
      * Update sca approach
@@ -97,138 +40,35 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     }
 
     /**
-     * Update if tpp signature is required or not
+     * Update all aspsp settings (frequency per day, combined service indicator, available payment products, available payment types,
+     * is tpp signature required, PIS redirect URL, AIS redirect URL, multicurrency account level, is bank offered consent supported,
+     * available booking statuses, supported account reference fields, consent lifetime, transaction lifetime, allPsd2 support,
+     * transactions without balances support, signing basket support, is payment cancellation authorisation mandated, piis consent support,
+     * delta report support, redirect url expiration time and type of authorisation start) except SCA approach
      *
-     * @param tppSignatureRequired the new value of tppSignatureRequired
+     * @param aspspSettings new aspsp specific settings which to be stored in profile
      */
     @Override
-    public void updateTppSignatureRequired(boolean tppSignatureRequired) {
-        profileConfiguration.setTppSignatureRequired(tppSignatureRequired);
-    }
-
-    /**
-     * Update Pis redirect url to aspsp
-     *
-     * @param redirectUrlToAspsp the new value of Pis redirectUrlToAspsp
-     */
-    @Override
-    public void updatePisRedirectUrlToAspsp(String redirectUrlToAspsp) {
-        profileConfiguration.setPisRedirectUrlToAspsp(redirectUrlToAspsp);
-    }
-
-    /**
-     * Update Ais redirect url to aspsp
-     *
-     * @param redirectUrlToAspsp the new value of Ais redirectUrlToAspsp
-     */
-    @Override
-    public void updateAisRedirectUrlToAspsp(String redirectUrlToAspsp) {
-        profileConfiguration.setAisRedirectUrlToAspsp(redirectUrlToAspsp);
-    }
-
-    /**
-     * Update value of supported multicurrency account levels
-     *
-     * @param multicurrencyAccountLevel new value of supported multicurrency account levels
-     */
-    @Override
-    public void updateMulticurrencyAccountLevel(MulticurrencyAccountLevel multicurrencyAccountLevel) {
-        profileConfiguration.setMulticurrencyAccountLevel(multicurrencyAccountLevel);
-    }
-
-    /**
-     * Update list of available booking statuses
-     *
-     * @param availableBookingStatuses new value of available booking statuses
-     */
-    @Override
-    public void updateAvailableBookingStatuses(List<BookingStatus> availableBookingStatuses) {
-        if (!availableBookingStatuses.contains(BOOKED)) {
-            availableBookingStatuses.add(BOOKED);
-        }
-        profileConfiguration.setAvailableBookingStatuses(availableBookingStatuses);
-    }
-
-    /**
-     * Update list of ASPSP supported Account Reference fields
-     *
-     * @param fields list of supported fields to substitute existing one
-     */
-    @Override
-    public void updateSupportedAccountReferenceFields(List<SupportedAccountReferenceField> fields) {
-        if (!fields.contains(IBAN)) {
-            fields.add(IBAN);
-        }
-        profileConfiguration.setSupportedAccountReferenceFields(fields);
-    }
-
-    /**
-     * Update the value of a maximum lifetime of consent
-     *
-     * @param consentLifetime the value of a maximum lifetime of consent to substitute existing one
-     */
-    @Override
-    public void updateConsentLifetime(int consentLifetime) {
-        profileConfiguration.setConsentLifetime(consentLifetime);
-    }
-
-    /**
-     * Update the value of a maximum lifetime of transaction set in days
-     *
-     * @param transactionLifetime the value of a maximum lifetime of transaction to substitute existing one
-     */
-    @Override
-    public void updateTransactionLifetime(int transactionLifetime) {
-        profileConfiguration.setTransactionLifetime(transactionLifetime);
-    }
-
-    /**
-     * Update AllPsd2Support status
-     *
-     * @param allPsd2Support AllPsd2Support status to substitute existing one
-     */
-    @Override
-    public void updateAllPsd2Support(boolean allPsd2Support) {
-        profileConfiguration.setAllPsd2Support(allPsd2Support);
-    }
-
-    /**
-     * Update the value of transactions without balances supported
-     *
-     * @param transactionsWithoutBalancesSupported the value of transactions without balances supported
-     */
-    @Override
-    public void updateTransactionsWithoutBalancesSupported(boolean transactionsWithoutBalancesSupported) {
-        profileConfiguration.setTransactionsWithoutBalancesSupported(transactionsWithoutBalancesSupported);
-    }
-
-    /**
-     * Update the value of signing basket support
-     *
-     * @param signingBasketSupported the value of signing basket support
-     */
-    @Override
-    public void updateSigningBasketSupported(boolean signingBasketSupported) {
-        profileConfiguration.setSigningBasketSupported(signingBasketSupported);
-    }
-
-    /**
-     * Update the value of payment cancellation authorization mandated
-     *
-     * @param paymentCancellationAuthorizationMandated the value of payment cancellation authorization mandated
-     */
-    @Override
-    public void updatePaymentCancellationAuthorizationMandated(boolean paymentCancellationAuthorizationMandated) {
-        profileConfiguration.setPaymentCancellationAuthorizationMandated(paymentCancellationAuthorizationMandated);
-    }
-
-    /**
-     * Update the value of PIIS consent supported
-     *
-     * @param piisConsentSupported the value of PIIS consent supported
-     */
-    @Override
-    public void updatePiisConsentSupported(boolean piisConsentSupported) {
-        profileConfiguration.setPiisConsentSupported(piisConsentSupported);
+    public void updateAspspSettings(@NotNull AspspSettings aspspSettings) {
+        profileConfiguration.setFrequencyPerDay(aspspSettings.getFrequencyPerDay());
+        profileConfiguration.setCombinedServiceIndicator(aspspSettings.isCombinedServiceIndicator());
+        profileConfiguration.setAvailablePaymentProducts(aspspSettings.getAvailablePaymentProducts());
+        profileConfiguration.setAvailablePaymentTypes(aspspSettings.getAvailablePaymentTypes());
+        profileConfiguration.setTppSignatureRequired(aspspSettings.isTppSignatureRequired());
+        profileConfiguration.setPisRedirectUrlToAspsp(aspspSettings.getPisRedirectUrlToAspsp());
+        profileConfiguration.setAisRedirectUrlToAspsp(aspspSettings.getAisRedirectUrlToAspsp());
+        profileConfiguration.setMulticurrencyAccountLevel(aspspSettings.getMulticurrencyAccountLevel());
+        profileConfiguration.setBankOfferedConsentSupport(aspspSettings.isBankOfferedConsentSupport());
+        profileConfiguration.setAvailableBookingStatuses(aspspSettings.getAvailableBookingStatuses());
+        profileConfiguration.setSupportedAccountReferenceFields(aspspSettings.getSupportedAccountReferenceFields());
+        profileConfiguration.setConsentLifetime(aspspSettings.getConsentLifetime());
+        profileConfiguration.setTransactionLifetime(aspspSettings.getTransactionLifetime());
+        profileConfiguration.setAllPsd2Support(aspspSettings.isAllPsd2Support());
+        profileConfiguration.setTransactionsWithoutBalancesSupported(aspspSettings.isTransactionsWithoutBalancesSupported());
+        profileConfiguration.setSigningBasketSupported(aspspSettings.isSigningBasketSupported());
+        profileConfiguration.setPaymentCancellationAuthorizationMandated(aspspSettings.isPaymentCancellationAuthorizationMandated());
+        profileConfiguration.setPiisConsentSupported(aspspSettings.isPiisConsentSupported());
+        profileConfiguration.setDeltaReportSupported(aspspSettings.isDeltaReportSupported());
+        profileConfiguration.setRedirectUrlExpirationTimeMs(aspspSettings.getRedirectUrlExpirationTimeMs());
     }
 }

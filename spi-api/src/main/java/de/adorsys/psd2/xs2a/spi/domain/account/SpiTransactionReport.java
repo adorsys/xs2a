@@ -27,8 +27,15 @@ import java.util.List;
  */
 @Value
 public class SpiTransactionReport {
-    @NotNull
+    public static final String RESPONSE_TYPE_JSON = "application/json";
+    public static final String RESPONSE_TYPE_XML = "application/xml";
+    public static final String RESPONSE_TYPE_TEXT = "text/plain";
+
     private List<SpiTransaction> transactions;
     @Nullable
     private List<SpiAccountBalance> balances;
+    @NotNull
+    private String responseContentType;
+
+    private byte[] transactionsRaw;
 }

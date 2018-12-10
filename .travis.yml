@@ -3,6 +3,7 @@ language: java
 
 jdk:
   - oraclejdk8
+  - openjdk11
 
 git:
   submodules: false
@@ -41,5 +42,6 @@ deploy:
       all_branches: true
       # matches: tags with format X.Y.Z, X.Y.Z-A, X.Y.Z-RCA, X.Y.Z-A-B.C.D, X.Y.Z-A-B.C.D-E, X.Y.Z-RCA-B.C.D-E or develop
       condition: >-
-                  ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
-                  || $TRAVIS_BRANCH = develop )
+                  ( ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
+                    || $TRAVIS_BRANCH = develop ) )
+                  && ( $TRAVIS_JDK_VERISON = oraclejdk8 )

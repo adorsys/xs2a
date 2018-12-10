@@ -19,15 +19,14 @@ package de.adorsys.psd2.aspsp.profile.config;
 import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.Data;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,7 @@ import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
 @Configuration
 @PropertySource(value = {"classpath:bank_profile.yml", "file:${bank_profile.path}"}, ignoreResourceNotFound = true)
 @ConfigurationProperties
-public class ProfileConfiguration {
+public class ProfileConfiguration implements InitializingBean {
     /**
      * This field indicates the requested maximum frequency for an access per day
      */
@@ -51,7 +50,7 @@ public class ProfileConfiguration {
     /**
      * List of payment products supported by ASPSP
      */
-    private List<PaymentProduct> availablePaymentProducts = new ArrayList<>();
+    private List<String> availablePaymentProducts = new ArrayList<>();
 
     /**
      * List of payment types supported by ASPSP
@@ -135,8 +134,18 @@ public class ProfileConfiguration {
      */
     private boolean piisConsentSupported;
 
-    @PostConstruct
-    private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
+    /**
+     * If the option is set to "true", than Delta report is supported
+     */
+    private boolean deltaReportSupported;
+
+    /**
+     * The limit of an expiration time of redirect url set in milliseconds
+     */
+    private long redirectUrlExpirationTimeMs;
+
+    @Override
+    public void afterPropertiesSet() {
         setDefaultPaymentType(PaymentType.SINGLE);
         setDefaultBookingStatus(BOOKED);
         setAvailableAccountReferenceField(SupportedAccountReferenceField.IBAN); //Sets default Account Reference Field

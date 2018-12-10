@@ -19,6 +19,8 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -31,6 +33,7 @@ import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -44,9 +47,11 @@ import org.apache.commons.collections4.MapUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -54,8 +59,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountServiceTest {
@@ -129,6 +133,8 @@ public class AccountServiceTest {
     private Xs2aAccountReport xs2aAccountReport;
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    @Mock
+    private Xs2aEventService xs2aEventService;
 
 
     @Before
@@ -217,6 +223,32 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getAccountList_Success_ShouldRecordEvent() {
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+            .thenReturn(ASPSP_CONSENT_DATA);
+        List<SpiAccountDetails> spiAccountDetailsList = Collections.singletonList(spiAccountDetails);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(accountSpi.requestAccountList(WITH_BALANCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+        List<Xs2aAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
+        when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(xs2aAccountDetailsList);
+
+        // Given
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_ACCOUNT_LIST_REQUEST_RECEIVED);
+    }
+
+    @Test
     public void getAccountDetails_Failure_AllowedAccountDataHasError() {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE);
@@ -263,37 +295,6 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountDetails_Failure_SpiResponseBodyIsNull() {
-        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
-            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
-
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
-
-        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
-            .thenReturn(SPI_ACCOUNT_REFERENCE);
-
-        when(consentService.isValidAccountByAccess(anyString(), any()))
-            .thenReturn(true);
-
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(null));
-
-        ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
-
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.hasError()).isTrue();
-
-        TppMessageInformation tppMessage = actualResponse.getError().getTppMessage();
-
-        assertThat(tppMessage).isNotNull();
-        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
-    }
-
-    @Test
     public void getAccountDetails_Success() {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
@@ -328,6 +329,36 @@ public class AccountServiceTest {
 
         assertThat(body).isNotNull();
         assertThat(body).isEqualTo(xs2aAccountDetails);
+    }
+
+    @Test
+    public void getAccountDetails_Success_ShouldRecordEvent() {
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+            .thenReturn(ASPSP_CONSENT_DATA);
+        when(accountSpi.requestAccountDetailForAccount(WITH_BALANCE, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetails));
+        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
+            .thenReturn(SPI_ACCOUNT_REFERENCE);
+        when(consentService.isValidAccountByAccess(anyString(), any()))
+            .thenReturn(true);
+        when(accountDetailsMapper.mapToXs2aAccountDetails(spiAccountDetails))
+            .thenReturn(xs2aAccountDetails);
+        when(consentService.isValidAccountByAccess(anyString(), any()))
+            .thenReturn(true);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        // Given
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_ACCOUNT_DETAILS_REQUEST_RECEIVED);
     }
 
     @Test
@@ -374,40 +405,6 @@ public class AccountServiceTest {
 
         assertThat(tppMessage).isNotNull();
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(FORMAT_ERROR_CODE);
-    }
-
-    @Test
-    public void getBalancesReport_Failure_SpiResponseBodyIsNull() {
-        when(consentService.getValidatedConsent(CONSENT_ID))
-            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
-
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
-
-        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
-            .thenReturn(SPI_ACCOUNT_REFERENCE);
-
-        when(consentService.isValidAccountByAccess(anyString(), any()))
-            .thenReturn(true);
-
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(null));
-
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
-
-        ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
-
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.hasError()).isTrue();
-
-        TppMessageInformation tppMessage = actualResponse.getError().getTppMessage();
-
-        assertThat(tppMessage).isNotNull();
-        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
     }
 
     @Test
@@ -473,11 +470,41 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getBalancesReport_Success_ShouldRecordEvent() {
+        when(consentService.getValidatedConsent(CONSENT_ID))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+            .thenReturn(ASPSP_CONSENT_DATA);
+        when(accountSpi.requestBalancesForAccount(SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
+        when(balanceReportMapper.mapToXs2aBalancesReport(Collections.emptyList(), SPI_ACCOUNT_REFERENCE))
+            .thenReturn(xs2aBalancesReport);
+        when(xs2aBalancesReport.getXs2aAccountReference())
+            .thenReturn(XS2A_ACCOUNT_REFERENCE);
+        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
+            .thenReturn(SPI_ACCOUNT_REFERENCE);
+        when(consentService.isValidAccountByAccess(anyString(), any()))
+            .thenReturn(true);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        // Given
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_BALANCE_REQUEST_RECEIVED);
+    }
+
+    @Test
     public void getTransactionsReportByPeriod_Failure_AllowedAccountDataHasError() {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -507,13 +534,13 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(SPI_TRANSACTION_REPORT));
 
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(FORMAT_ERROR_CODE);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -524,45 +551,6 @@ public class AccountServiceTest {
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(FORMAT_ERROR_CODE);
     }
 
-    @Test
-    public void getTransactionsReportByPeriod_Failure_SpiResponseBodyIsNull() {
-        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
-            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
-
-        doNothing()
-            .when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
-
-        when(aspspProfileService.isTransactionsWithoutBalancesSupported())
-            .thenReturn(true);
-
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
-
-        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
-            .thenReturn(SPI_ACCOUNT_REFERENCE);
-
-        when(consentService.isValidAccountByAccess(anyString(), any()))
-            .thenReturn(true);
-
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(null));
-
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
-
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
-
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.hasError()).isTrue();
-
-        TppMessageInformation tppMessage = actualResponse.getError().getTppMessage();
-
-        assertThat(tppMessage).isNotNull();
-        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
-    }
 
     @Test
     public void getTransactionsReportByPeriod_Success() {
@@ -578,15 +566,15 @@ public class AccountServiceTest {
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-       when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(accountSpi.requestTransactionsForAccount(WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
-        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList());
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
 
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList()))
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
 
         when(referenceMapper.mapToXs2aAccountReference(SPI_ACCOUNT_REFERENCE))
@@ -604,7 +592,7 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
@@ -615,6 +603,48 @@ public class AccountServiceTest {
         assertThat(body.getAccountReport()).isEqualTo(xs2aAccountReport);
         assertThat(body.getXs2aAccountReference()).isEqualTo(XS2A_ACCOUNT_REFERENCE);
         assertThat(CollectionUtils.isEqualCollection(body.getBalances(), Collections.emptyList())).isTrue();
+    }
+
+    @Test
+    public void getTransactionsReportByPeriod_Success_ShouldRecordEvent() {
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
+        doNothing()
+            .when(validatorService).validateAccountIdPeriod(ACCOUNT_ID, DATE_FROM, DATE_TO);
+
+        when(aspspProfileService.isTransactionsWithoutBalancesSupported())
+            .thenReturn(true);
+        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+            .thenReturn(ASPSP_CONSENT_DATA);
+        when(accountSpi.requestTransactionsForAccount(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
+            .thenReturn(Optional.of(xs2aAccountReport));
+        when(referenceMapper.mapToXs2aAccountReference(SPI_ACCOUNT_REFERENCE))
+            .thenReturn(Optional.of(XS2A_ACCOUNT_REFERENCE));
+        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
+            .thenReturn(SPI_ACCOUNT_REFERENCE);
+        when(consentService.isValidAccountByAccess(anyString(), any()))
+            .thenReturn(true);
+        when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
+            .thenReturn(Collections.emptyList());
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        // Given
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_TRANSACTION_LIST_REQUEST_RECEIVED);
     }
 
     @Test
@@ -666,36 +696,6 @@ public class AccountServiceTest {
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(FORMAT_ERROR_CODE);
     }
 
-    @Test
-    public void getAccountReportByTransactionId_Failure_SpiResponseBodyIsNull() {
-        when(consentService.getValidatedConsent(CONSENT_ID))
-            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
-
-        doNothing()
-            .when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
-
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
-
-        when(consentMapper.mapToSpiAccountConsent(any()))
-            .thenReturn(SPI_ACCOUNT_CONSENT);
-
-        when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(null));
-
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
-
-        ResponseObject<Xs2aAccountReport> actualResponse = accountService.getAccountReportByTransactionId(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
-
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.hasError()).isTrue();
-
-        TppMessageInformation tppMessage = actualResponse.getError().getTppMessage();
-
-        assertThat(tppMessage).isNotNull();
-        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
-    }
 
     @Test
     public void getAccountReportByTransactionId_Success() {
@@ -717,7 +717,7 @@ public class AccountServiceTest {
         when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
 
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction)))
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
             .thenReturn(Optional.of(xs2aAccountReport));
 
         ResponseObject<Xs2aAccountReport> actualResponse = accountService.getAccountReportByTransactionId(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
@@ -728,6 +728,34 @@ public class AccountServiceTest {
         Xs2aAccountReport body = actualResponse.getBody();
 
         assertThat(body).isEqualTo(xs2aAccountReport);
+    }
+
+    @Test
+    public void getAccountReportByTransactionId_Success_ShouldRecordEvent() {
+        when(consentService.getValidatedConsent(CONSENT_ID))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+        doNothing()
+            .when(validatorService).validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
+        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+            .thenReturn(ASPSP_CONSENT_DATA);
+        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
+            .thenReturn(SPI_ACCOUNT_REFERENCE);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(accountSpi.requestTransactionForAccountByTransactionId(TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(spiTransaction));
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
+            .thenReturn(Optional.of(xs2aAccountReport));
+
+        // Given
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        accountService.getAccountReportByTransactionId(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_TRANSACTION_DETAILS_REQUEST_RECEIVED);
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
@@ -757,32 +785,38 @@ public class AccountServiceTest {
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it
     private static SpiTransactionReport buildSpiTransactionReport() {
-        return new SpiTransactionReport(Collections.emptyList(), Collections.emptyList());
+        return new SpiTransactionReport(Collections.emptyList(), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null);
     }
 
     // Needed because ResponseObject is final, so it's impossible to mock it
     private static ResponseObject<AccountConsent> buildSuccessAllowedAccountDataResponse() {
         return ResponseObject.<AccountConsent>builder()
-            .body(createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE)))
-            .build();
+                   .body(createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE)))
+                   .build();
     }
 
     // Needed because ResponseObject is final, so it's impossible to mock it
     private static ResponseObject<AccountConsent> buildErrorAllowedAccountDataResponse() {
         return ResponseObject.<AccountConsent>builder()
-            .fail(CONSENT_INVALID_MESSAGE_ERROR)
-            .build();
+                   .fail(CONSENT_INVALID_MESSAGE_ERROR)
+                   .build();
     }
 
     // Needed because ResponseObject is final, so it's impossible to mock it
     private static ResponseObject<AccountConsent> buildEmptyAllowedAccountDataResponse() {
         return ResponseObject.<AccountConsent>builder()
-            .body(createConsent(CONSENT_ID, createEmptyAccountAccess()))
-            .build();
+                   .body(createConsent(CONSENT_ID, createEmptyAccountAccess()))
+                   .build();
     }
 
     private static AccountConsent createConsent(String id, Xs2aAccountAccess access) {
-        return new AccountConsent(id, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, UUID.randomUUID().toString());
+        return new AccountConsent(id, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo());
+    }
+
+    private static TppInfo createTppInfo() {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber(UUID.randomUUID().toString());
+        return tppInfo;
     }
 
     private static Xs2aAccountAccess createAccountAccess(Xs2aAccountReference accountReference) {

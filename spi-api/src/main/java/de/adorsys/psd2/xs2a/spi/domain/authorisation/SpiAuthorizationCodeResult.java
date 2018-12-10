@@ -16,25 +16,16 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiOtpFormat;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 @Data
 public class SpiAuthorizationCodeResult {
-    private byte [] image;
-    private String data;
-    private String imageLink;
-    private Integer otpMaxLength;
-    private SpiOtpFormat otpFormat;
-    private String additionalInformation;
+    private ChallengeData challengeData;
+    private SpiAuthenticationObject selectedScaMethod;
 
     public boolean isEmpty() {
-        return image == null
-            && StringUtils.isEmpty(data)
-            && StringUtils.isEmpty(imageLink)
-            && otpMaxLength == null
-            && otpFormat == null
-            && StringUtils.isEmpty(additionalInformation);
+        return challengeData.isEmpty()
+            && selectedScaMethod == null;
     }
 }

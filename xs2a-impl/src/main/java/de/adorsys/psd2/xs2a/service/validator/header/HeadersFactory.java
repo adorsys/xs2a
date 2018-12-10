@@ -18,9 +18,9 @@ package de.adorsys.psd2.xs2a.service.validator.header;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.service.validator.header.impl.*;
-import de.adorsys.psd2.xs2a.web.AccountController;
-import de.adorsys.psd2.xs2a.web.ConsentController;
-import de.adorsys.psd2.xs2a.web.FundsConfirmationController;
+import de.adorsys.psd2.xs2a.web.controller.AccountController;
+import de.adorsys.psd2.xs2a.web.controller.ConsentController;
+import de.adorsys.psd2.xs2a.web.controller.FundsConfirmationController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

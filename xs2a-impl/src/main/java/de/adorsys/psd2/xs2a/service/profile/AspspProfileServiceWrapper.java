@@ -18,13 +18,10 @@ package de.adorsys.psd2.xs2a.service.profile;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.xs2a.config.cache.CacheConfig;
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -42,11 +39,11 @@ public class AspspProfileServiceWrapper {
      *
      * @return List of payment products supported by current ASPSP
      */
-    public List<PaymentProduct> getAvailablePaymentProducts() {
-        List<PaymentProduct> availablePaymentProducts = readAspspSettings().getAvailablePaymentProducts();
+    public List<String> getAvailablePaymentProducts() {
+        List<String> availablePaymentProducts = readAspspSettings().getAvailablePaymentProducts();
         return Optional.ofNullable(availablePaymentProducts)
-            .map(Collections::unmodifiableList)
-            .orElse(Collections.emptyList());
+                   .map(Collections::unmodifiableList)
+                   .orElse(Collections.emptyList());
     }
 
     /**
@@ -63,12 +60,11 @@ public class AspspProfileServiceWrapper {
      *
      * @return Available SCA approach for tpp
      */
-    @Cacheable(CacheConfig.ASPSP_PROFILE_CACHE)
     public ScaApproach getScaApproach() {
         ScaApproach scaApproach = aspspProfileService.getScaApproach();
         return Optional.ofNullable(scaApproach)
-            .map(approach -> ScaApproach.valueOf(approach.name()))
-            .orElse(ScaApproach.REDIRECT); //default
+                   .map(approach -> ScaApproach.valueOf(approach.name()))
+                   .orElse(ScaApproach.REDIRECT); //default
     }
 
     /**
@@ -106,8 +102,8 @@ public class AspspProfileServiceWrapper {
     public List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
         List<de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField> supportedAccountReferenceFields = readAspspSettings().getSupportedAccountReferenceFields();
         return supportedAccountReferenceFields.stream()
-            .map(reference -> SupportedAccountReferenceField.valueOf(reference.name()))
-            .collect(Collectors.toList());
+                   .map(reference -> SupportedAccountReferenceField.valueOf(reference.name()))
+                   .collect(Collectors.toList());
     }
 
     /**
@@ -164,8 +160,22 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().isPaymentCancellationAuthorizationMandated();
     }
 
+    /**
+     * Reads if piis consent is supported
+     *
+     * @return true if piis consent is supported, false if doesn't
+     */
     public boolean isPiisConsentSupported() {
         return readAspspSettings().isPiisConsentSupported();
+    }
+
+    /**
+     * Reads redirect url expiration time in milliseconds
+     *
+     * @return long value of redirect url expiration time
+     */
+    public long getRedirectUrlExpirationTimeMs() {
+        return readAspspSettings().getRedirectUrlExpirationTimeMs();
     }
 
     private AspspSettings readAspspSettings() {

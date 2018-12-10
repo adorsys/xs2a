@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.domain.consent.pis;
 
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import lombok.Data;
 
@@ -36,7 +36,7 @@ public class Xs2aUpdatePisConsentPsuDataResponse {
     private ScaStatus scaStatus;
     private List<Xs2aAuthenticationObject> availableScaMethods;
     private Xs2aAuthenticationObject chosenScaMethod;
-    private Xs2aChallengeData challengeData;
+    private ChallengeData challengeData;
     private Links links = new Links();
 
     public Xs2aUpdatePisConsentPsuDataResponse(ScaStatus scaStatus, List<Xs2aAuthenticationObject> availableScaMethods) {

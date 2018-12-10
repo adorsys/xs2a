@@ -17,11 +17,16 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
+import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
+import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -31,13 +36,20 @@ import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
+import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
 
 @Service
 @AllArgsConstructor
@@ -47,6 +59,8 @@ public class PaymentCancellationSpiImpl implements PaymentCancellationSpi {
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
     private final AspspRemoteUrls aspspRemoteUrls;
+    private final KeycloakInvokerService keycloakInvokerService;
+    private final JsonConverter jsonConverter;
 
     @NotNull
     @Override
@@ -71,11 +85,6 @@ public class PaymentCancellationSpiImpl implements PaymentCancellationSpi {
     }
 
     @Override
-    public @NotNull SpiResponse<SpiResponse.VoidResponse> executePaymentCancellationWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiResponse.VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
-    }
-
-    @Override
     public @NotNull SpiResponse<SpiResponse.VoidResponse> cancelPaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
             aspspRestTemplate.exchange(aspspRemoteUrls.cancelPayment(), HttpMethod.DELETE, null, SpiPaymentCancellationResponse.class, payment.getPaymentId());
@@ -97,17 +106,106 @@ public class PaymentCancellationSpiImpl implements PaymentCancellationSpi {
     }
 
     @Override
+    public @NotNull SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndCancelPayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData) {
+        try {
+            aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
+            aspspRestTemplate.exchange(aspspRemoteUrls.cancelPayment(), HttpMethod.DELETE, null, SpiPaymentCancellationResponse.class, payment.getPaymentId());
+
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(SpiResponse.voidResponse())
+                       .success();
+
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+
+                return SpiResponse.<SpiResponse.VoidResponse>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiResponse.VoidResponse>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    @Override
     public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password, SpiPayment businessObject, AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiAuthorisationStatus>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+        Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuData.getPsuId(), password);
+        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
+                                                            .orElse(FAILURE);
+        byte[] payload = accessToken.flatMap(jsonConverter::toJson)
+                             .map(String::getBytes)
+                             .orElse(null);
+
+        return SpiResponse.<SpiAuthorisationStatus>builder()
+                   .aspspConsentData(aspspConsentData.respondWith(payload))
+                   .payload(spiAuthorisationStatus)
+                   .success();
     }
 
     @Override
     public SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, SpiPayment businessObject, AspspConsentData aspspConsentData) {
-        return SpiResponse.<List<SpiAuthenticationObject>>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+        try {
+            ResponseEntity<List<SpiAuthenticationObject>> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAuthenticationObject>>() {
+            }, psuData.getPsuId());
+
+            List<SpiAuthenticationObject> spiScaMethods = Optional.ofNullable(aspspResponse.getBody())
+                                                              .orElseGet(Collections::emptyList);
+
+            return SpiResponse.<List<SpiAuthenticationObject>>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(spiScaMethods)
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<List<SpiAuthenticationObject>>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<List<SpiAuthenticationObject>>builder()
+                       .aspspConsentData(aspspConsentData)
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 
     @Override
     public @NotNull SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiPsuData psuData, @NotNull String authenticationMethodId, @NotNull SpiPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiAuthorizationCodeResult>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+        try {
+            aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuData.getPsuId(), authenticationMethodId);
+
+            return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       // TODO We need to return real payload data from ASPSP https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/489
+                       .payload(getDefaultSpiAuthorizationCodeResult())
+                       .success();
+
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    private SpiAuthorizationCodeResult getDefaultSpiAuthorizationCodeResult() {
+        SpiAuthenticationObject method = new SpiAuthenticationObject();
+        method.setAuthenticationMethodId("sms");
+        method.setAuthenticationType("SMS_OTP");
+
+        ChallengeData challengeData = new ChallengeData(null, "some data", "some link", 100, null, "info");
+
+        SpiAuthorizationCodeResult resultTmp = new SpiAuthorizationCodeResult();
+        resultTmp.setChallengeData(challengeData);
+        resultTmp.setSelectedScaMethod(method);
+
+        return resultTmp;
     }
 }

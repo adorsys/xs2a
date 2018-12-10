@@ -16,12 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,7 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
      */
     @Override
-    public Xs2aUpdatePisConsentPsuDataResponse updateConsentPsuData(UpdatePisConsentPsuDataRequest request) {
+    public Xs2aUpdatePisConsentPsuDataResponse updateConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
         return authorisationService.updatePisConsentAuthorisation(request);
     }
 
@@ -62,6 +63,7 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      *
      * @param paymentId   ASPSP identifier of a payment
      * @param paymentType Type of payment
+     * @param psuData     PsuIdData container of authorisation data about PSU
      * @return
      */
     @Override
@@ -77,6 +79,30 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      */
     @Override
     public Optional<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationAuthorisationSubResources(String paymentId) {
-        return pisConsentMapper.mapToXs2aPaymentCancellationAuthorisationSubResource(authorisationService.getCancellationAuthorisationSubResources(paymentId));
+        return authorisationService.getCancellationAuthorisationSubResources(paymentId)
+                   .map(Xs2aPaymentCancellationAuthorisationSubResource::new);
+    }
+
+    /**
+     * Updates cancellation authorisation for pis consent
+     *
+     * @param request Provides transporting data when updating consent psu data
+     * @return update consent authorisation response, which contains payment id, authorisation id, sca status, psu message and links
+     */
+    @Override
+    public Xs2aUpdatePisConsentPsuDataResponse updateConsentCancellationPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+        return authorisationService.updatePisConsentCancellationAuthorisation(request);
+    }
+
+    /**
+     * Gets authorisation sub resources
+     *
+     * @param paymentId ASPSP identifier of a payment
+     * @return authorization sub resources
+     */
+    @Override
+    public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String paymentId) {
+        return authorisationService.getAuthorisationSubResources(paymentId)
+                   .map(Xs2aAuthorisationSubResources::new);
     }
 }

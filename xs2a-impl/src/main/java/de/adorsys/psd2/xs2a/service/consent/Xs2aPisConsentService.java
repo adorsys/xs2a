@@ -18,8 +18,10 @@ package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
-import de.adorsys.psd2.xs2a.domain.TppInfo;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -28,6 +30,8 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisConsentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,12 +50,16 @@ public class Xs2aPisConsentService {
     // TODO refactoring for orElse(null)
     public CreatePisConsentResponse createPisConsent(PaymentInitiationParameters parameters, TppInfo tppInfo) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));
+        request.setTppInfo(tppInfo);
         request.setPaymentProduct(parameters.getPaymentProduct());
         request.setPaymentType(parameters.getPaymentType());
         request.setPsuData(parameters.getPsuData());
         return pisConsentService.createPaymentConsent(request)
                    .orElse(null);
+    }
+
+    public Optional<PisConsentResponse> getPisConsentById(String consentId) {
+        return pisConsentService.getConsentById(consentId);
     }
 
     public void updateSinglePaymentInPisConsent(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {
@@ -67,5 +75,9 @@ public class Xs2aPisConsentService {
     public void updateBulkPaymentInPisConsent(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {
         PisConsentRequest pisConsentRequest = xs2aToCmsPisConsentRequest.mapToCmsBulkPisConsentRequest(bulkPayment, paymentInitiationParameters.getPaymentProduct());
         pisConsentService.updatePaymentConsent(pisConsentRequest, consentId);
+    }
+
+    public Optional<Boolean> revokeConsentById(String consentId) {
+        return pisConsentService.updateConsentStatusById(consentId, ConsentStatus.REVOKED_BY_PSU);
     }
 }

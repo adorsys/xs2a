@@ -21,7 +21,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.12-SNAPSHOT</version>
+        <version>1.14-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -43,52 +43,38 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>spi-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>1.14-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-remote</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>1.14-SNAPSHOT</version>
         </dependency>
 
         <!-- CMS remote mode -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>consent-management-remote</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <artifactId>consent-xs2a-client</artifactId>
+            <version>1.14-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>1.14-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-mock-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
-        </dependency>
-
-        <!-- spring dependencies -->
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <version>1.14-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-
-        <!-- other dependencies -->
-
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

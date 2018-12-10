@@ -88,6 +88,7 @@ public class SecurityDataService {
      * @param aspspConsentDataBase64 original data encoded in Base64 to be encrypted
      * @return response contains encrypted data
      */
+    //TODO this method should work with incoming byte[] https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/502
     public Optional<EncryptedData> encryptConsentData(String encryptedId, String aspspConsentDataBase64) {
         byte[] aspspConsentData = decode64(aspspConsentDataBase64, false);
 
@@ -109,6 +110,16 @@ public class SecurityDataService {
     public Optional<DecryptedData> decryptConsentData(String encryptedId, byte[] aspspConsentData) {
         return getConsentKeyByEncryptedId(encryptedId)
                    .flatMap(consentKey -> consentDataCP().decryptData(aspspConsentData, consentKey));
+    }
+
+    /**
+     * Checks whether consentId is encrypted or not
+     *
+     * @param consentId id of consent
+     * @return <code>true</code> if consentId is encrypted. <code>false</code> otherwise.
+     */
+    public boolean isConsentIdEncrypted(String consentId) {
+        return consentId.contains(SEPARATOR);
     }
 
     private Optional<String> decryptCompositeId(String encryptedId) {

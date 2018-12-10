@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.CmsTppInfo;
-import de.adorsys.psd2.consent.domain.TppInfo;
+
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,10 +27,10 @@ import java.util.Optional;
 
 @Service
 public class TppInfoMapper {
-    public TppInfo mapToTppInfo(CmsTppInfo tppInfo) {
+    public TppInfoEntity mapToTppInfoEntity(TppInfo tppInfo) {
         return Optional.ofNullable(tppInfo)
                    .map(tin -> {
-                       TppInfo pisTppInfo = new TppInfo();
+                       TppInfoEntity pisTppInfo = new TppInfoEntity();
                        pisTppInfo.setAuthorisationNumber(tin.getAuthorisationNumber());
                        pisTppInfo.setTppName(tin.getTppName());
                        pisTppInfo.setTppRoles(new ArrayList<>(tin.getTppRoles()));
@@ -39,17 +41,22 @@ public class TppInfoMapper {
                        pisTppInfo.setOrganisationUnit(tin.getOrganisationUnit());
                        pisTppInfo.setCity(tin.getCity());
                        pisTppInfo.setState(tin.getState());
-                       pisTppInfo.setRedirectUri(tin.getRedirectUri());
-                       pisTppInfo.setNokRedirectUri(tin.getNokRedirectUri());
 
+                       TppRedirectUri tppRedirectUri = tin.getTppRedirectUri();
+                       if (tppRedirectUri != null) {
+                           pisTppInfo.setRedirectUri(tppRedirectUri.getUri());
+                           pisTppInfo.setNokRedirectUri(tppRedirectUri.getNokUri());
+                       }
+
+                       pisTppInfo.setStatus(tin.getStatus());
                        return pisTppInfo;
                    }).orElse(null);
     }
 
-    public CmsTppInfo mapToCmsTppInfo(TppInfo pisTppInfo) {
-        return Optional.ofNullable(pisTppInfo)
+    TppInfo mapToTppInfo(TppInfoEntity tppInfoEntity) {
+        return Optional.ofNullable(tppInfoEntity)
                    .map(tpp -> {
-                       CmsTppInfo tppInfo = new CmsTppInfo();
+                       TppInfo tppInfo = new TppInfo();
 
                        tppInfo.setAuthorisationNumber(tpp.getAuthorisationNumber());
                        tppInfo.setTppName(tpp.getTppName());
@@ -61,9 +68,14 @@ public class TppInfoMapper {
                        tppInfo.setOrganisationUnit(tpp.getOrganisationUnit());
                        tppInfo.setCity(tpp.getCity());
                        tppInfo.setState(tpp.getState());
-                       tppInfo.setRedirectUri(tpp.getRedirectUri());
-                       tppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
 
+                       if (tpp.getRedirectUri() != null) {
+                           TppRedirectUri tppRedirectUri = new TppRedirectUri(tpp.getRedirectUri(),
+                                                                              tpp.getNokRedirectUri());
+                           tppInfo.setTppRedirectUri(tppRedirectUri);
+                       }
+
+                       tppInfo.setStatus(tpp.getStatus());
                        return tppInfo;
                    }).orElse(null);
     }

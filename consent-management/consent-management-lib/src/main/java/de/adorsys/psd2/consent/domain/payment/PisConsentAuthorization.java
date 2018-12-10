@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 
 @Data
 @ToString(exclude = "consent")
@@ -55,4 +56,11 @@ public class PisConsentAuthorization {
     @Column(name = "authorization_type")
     @Enumerated(value = EnumType.STRING)
     private CmsAuthorisationType authorizationType;
+
+    @Column(name = "expiration_timestamp")
+    private OffsetDateTime redirectUrlExpirationTimestamp;
+
+    public boolean isNotExpired() {
+        return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());
+    }
 }

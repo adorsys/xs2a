@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentProduct;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 
 public interface CmsPayment {
+
     String getPaymentId();
     PaymentType getPaymentType();
-    PaymentProduct getPaymentProduct();
+    String getPaymentProduct();
 }
