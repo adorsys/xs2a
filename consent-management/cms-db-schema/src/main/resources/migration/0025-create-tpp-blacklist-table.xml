@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-12-10-3">
+        <comment>Create sequence for tpp_blacklist id.</comment>
+
+        <createSequence sequenceName="tpp_blacklist_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE tpp_blacklist_id_seq</sql>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-12-10-4">
+        <comment>Create tpp_blacklist table</comment>
+
+        <createTable tableName="tpp_blacklist">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="tpp_authorisation_number" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authority_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="BLOCKED" name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blocking_expiration_timestamp" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-12-10-5">
+        <comment>Add composite unique constraint for tpp_authorisation_number and authority_id columns for tpp_blacklist table</comment>
+
+        <addUniqueConstraint columnNames="tpp_authorisation_number, authority_id"
+                             constraintName="unique_tpp_blacklist_tpp_auth_num_and_auth_id"
+                             deferrable="false" initiallyDeferred="false"
+                             tableName="tpp_blacklist"/>
+    </changeSet>
+
+</databaseChangeLog>
