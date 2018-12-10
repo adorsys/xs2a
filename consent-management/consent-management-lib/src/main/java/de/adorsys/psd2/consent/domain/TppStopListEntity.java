@@ -25,13 +25,13 @@ import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
-@Entity(name = "tpp_blacklist")
-public class TppBlacklistEntity {
+@Entity(name = "tpp_stop_list")
+public class TppStopListEntity {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpp_blacklist_generator")
-    @SequenceGenerator(name = "tpp_blacklist_generator", sequenceName = "tpp_blacklist_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpp_stop_list_generator")
+    @SequenceGenerator(name = "tpp_stop_list_generator", sequenceName = "tpp_stop_list_id_seq")
     private Long id;
 
     @Column(name = "tpp_authorisation_number", nullable = false)
@@ -44,6 +44,6 @@ public class TppBlacklistEntity {
     @Enumerated(value = EnumType.STRING)
     private TppStatus status;
 
-    @Column(name = "blocking_expiration_timestamp")
+    @Column(name = "expiration_timestamp")
     private OffsetDateTime blockingExpirationTimestamp;
 }
