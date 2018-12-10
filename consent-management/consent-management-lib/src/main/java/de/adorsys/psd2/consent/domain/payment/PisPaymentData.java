@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -33,7 +32,6 @@ import java.time.OffsetDateTime;
 import java.util.Currency;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @ToString(exclude = "consent")
 @Entity(name = "pis_payment_data")
 @ApiModel(description = "pis payment entity", value = "PisPaymentData")

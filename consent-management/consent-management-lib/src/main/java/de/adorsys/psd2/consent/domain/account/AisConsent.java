@@ -25,7 +25,6 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -37,7 +36,6 @@ import java.util.Set;
 
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @ToString(exclude = {"accesses", "authorizations"})
 @Entity(name = "ais_consent")
 @ApiModel(description = "Ais consent entity", value = "AisConsent")

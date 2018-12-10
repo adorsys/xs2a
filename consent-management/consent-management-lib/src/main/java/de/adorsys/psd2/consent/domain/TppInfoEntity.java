@@ -19,14 +19,12 @@ package de.adorsys.psd2.consent.domain;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @Entity(name = "tpp_info")
 @NoArgsConstructor
 public class TppInfoEntity extends BaseEntity {
