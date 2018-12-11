@@ -50,4 +50,7 @@ public class PisConsentResponse {
 
     @ApiModelProperty(value = "Corresponding PSU", required = true)
     private PsuIdData psuData;
+
+    @ApiModelProperty(value = "Payment info")
+    private PisPaymentInfo paymentInfo;
 }

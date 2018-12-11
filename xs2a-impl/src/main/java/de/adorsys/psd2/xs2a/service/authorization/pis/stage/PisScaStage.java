@@ -17,6 +17,8 @@
 package de.adorsys.psd2.xs2a.service.authorization.pis.stage;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -26,6 +28,7 @@ import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +55,12 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     @Autowired
     private ApplicationContext applicationContext;
 
-    protected PaymentSpi getPaymentService(PaymentType paymentType) {
+    protected PaymentSpi getPaymentService(GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse, PaymentType paymentType) {
+        // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
+        if (pisConsentAuthorisationResponse.getPaymentInfo() != null) {
+           return applicationContext.getBean(CommonPaymentSpi.class);
+        }
+
         if (PaymentType.SINGLE == paymentType) {
             return applicationContext.getBean(SinglePaymentSpi.class);
         } else if (PaymentType.PERIODIC == paymentType) {
@@ -62,8 +70,16 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
         }
     }
 
+    protected SpiPayment mapToSpiPayment(GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse, PaymentType paymentType) {
+        if (pisConsentAuthorisationResponse.getPaymentInfo() != null) {
+            return mapToSpiPayment(pisConsentAuthorisationResponse.getPaymentInfo());
+        } else {
+            return mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType);
+        }
+    }
+
     // TODO pass actual PaymentProduct https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/442
-    protected SpiPayment mapToSpiPayment(List<PisPayment> payments, PaymentType paymentType) {
+    private SpiPayment mapToSpiPayment(List<PisPayment> payments, PaymentType paymentType) {
         if (PaymentType.SINGLE == paymentType) {
             SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(payments.get(0));
             return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, "sepa-credit-transfers");
@@ -75,5 +91,15 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
             BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(payments);
             return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, "sepa-credit-transfers");
         }
+    }
+
+    private SpiPayment mapToSpiPayment(PisPaymentInfo paymentInfo) {
+        SpiPaymentInfo spiPaymentInfo = new SpiPaymentInfo(paymentInfo.getPaymentProduct());
+        spiPaymentInfo.setPaymentId(paymentInfo.getPaymentId());
+        spiPaymentInfo.setPaymentType(paymentInfo.getPaymentType());
+        spiPaymentInfo.setStatus(paymentInfo.getTransactionStatus());
+        spiPaymentInfo.setPaymentData(paymentInfo.getPaymentData());
+
+        return spiPaymentInfo;
     }
 }

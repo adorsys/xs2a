@@ -57,7 +57,4 @@ public class TppInfo {
     @Nullable
     @ApiModelProperty(value = "TPP redirect URIs")
     private TppRedirectUri tppRedirectUri;
-
-    @ApiModelProperty(value = "Status of the TPP in XS2A Service", example = "ENABLED", allowableValues = "ENABLED,BLOCKED")
-    private TppStatus status = TppStatus.ENABLED;
 }
