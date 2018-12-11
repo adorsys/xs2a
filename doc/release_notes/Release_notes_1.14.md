@@ -1,6 +1,6 @@
 # Release notes v. 1.14
 
-## CORS
+## CORS for Xs2a library
 By default, allow credentials, all origins and all headers are disabled.
 You can override CORS settings by changing values in `application.properties`
 ```
@@ -13,3 +13,9 @@ xs2a.endpoints.cors.allowed-headers=Origin,Authorization,Content-Type
 # Comma-separated list of methods to allow. '*' allows all methods. When not set, defaults to GET
 xs2a.endpoints.cors.allowed-methods=GET,POST,PUT,DELETE
 ```
+## Removed Spring Boot dependencies from Xs2a library
+Spring Boot dependencies were removed from Xs2a library. Now we use the following Spring dependencies (v. 4.3.21.RELEASE): 
+* spring-test
+* spring-hateoas
+* spring-web
+* spring-context

@@ -36,12 +36,12 @@ before_deploy:
 deploy:
   - skip_cleanup: true
     provider: script
-    jdk: oraclejdk8
     script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -B -U deploy
     on:
       repo: adorsys/xs2a
       all_branches: true
       # matches: tags with format X.Y.Z, X.Y.Z-A, X.Y.Z-RCA, X.Y.Z-A-B.C.D, X.Y.Z-A-B.C.D-E, X.Y.Z-RCA-B.C.D-E or develop
       condition: >-
-                  ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
-                  || $TRAVIS_BRANCH = develop )
+                  ( ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
+                    || $TRAVIS_BRANCH = develop ) )
+                  && ( $TRAVIS_JDK_VERISON = oraclejdk8 )

@@ -54,6 +54,8 @@ import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -104,16 +106,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         // Please, keep this interceptor's order, because it is important, that logging interceptors will be called before the validation ones to log all the requests (even wrong ones).
         // The interceptors are executed in the order in which they are declared for preHandle(...) and vice versa for postHandle(...).
         // Logging interceptors:
-        registry.addInterceptor(new AccountLoggingInterceptor(tppService)).addPathPatterns("/v1/accounts/**");
-        registry.addInterceptor(new ConsentLoggingInterceptor(tppService)).addPathPatterns("/v1/consents/**");
-        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns("/v1/funds-confirmations/**");
-        registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns("/v1/payments/**", "/v1/bulk-payments/**", "/v1/periodic-payments/**");
-        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns("/v1/signing-baskets/**");
+        registry.addInterceptor(new AccountLoggingInterceptor(tppService)).addPathPatterns(ACCOUNTS_PATH);
+        registry.addInterceptor(new ConsentLoggingInterceptor(tppService)).addPathPatterns(CONSENTS_PATH);
+        registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
+        registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
+        registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
         registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()))
-            .addPathPatterns("/v1/accounts/**", "/v1/consents/**", "/v1/funds-confirmations/**",
-                             "/v1/payments/**", "/v1/bulk-payments/**", "/v1/periodic-payments/**",
-                             "/v1/signing-baskets/**");
+            .addPathPatterns(ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH,
+                SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH,
+                PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH);
     }
 
     @Bean
@@ -128,7 +130,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+        registry.addMapping("/v1/**")
             .allowCredentials(corsConfigurationProperties.getAllowCredentials())
             .allowedOrigins(getTargetParameters(corsConfigurationProperties.getAllowedOrigins()))
             .allowedHeaders(getTargetParameters(corsConfigurationProperties.getAllowedHeaders()))
