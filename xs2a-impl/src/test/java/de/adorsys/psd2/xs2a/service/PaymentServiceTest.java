@@ -157,7 +157,7 @@ public class PaymentServiceTest {
         when(pisConsentDataService.getInternalPaymentIdByEncryptedString("TEST")).thenReturn("TEST");
 
         //Status by ID
-        when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters(), getTppInfoServiceModified(), getXs2aPisConsent()))
+        when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK), getTppInfoServiceModified(), getXs2aPisConsent()))
             .thenReturn(getValidResponse());
 
         when(pisConsentDataService.getAspspConsentData(anyString())).thenReturn(ASPSP_CONSENT_DATA);
@@ -182,7 +182,7 @@ public class PaymentServiceTest {
     @Test
     public void createBulkPayments() {
         //When
-        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters());
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK));
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -289,7 +289,7 @@ public class PaymentServiceTest {
     @Test
     public void createPayment_Success_ShouldRecordEvent() {
         // Given:
-        PaymentInitiationParameters parameters = buildPaymentInitiationParameters();
+        PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -431,17 +431,10 @@ public class PaymentServiceTest {
         return new Xs2aPisConsent("TEST", PSU_ID_DATA);
     }
 
-
-    private PaymentInitiationParameters getBulkPaymentInitiationParameters() {
+    private PaymentInitiationParameters buildPaymentInitiationParameters(PaymentType type) {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
-        requestParameters.setPaymentType(PaymentType.BULK);
-
-        return requestParameters;
-    }
-
-    private PaymentInitiationParameters buildPaymentInitiationParameters() {
-        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
-        requestParameters.setPaymentType(PaymentType.SINGLE);
+        requestParameters.setPaymentType(type);
+        requestParameters.setPaymentProduct("sepa-credit-transfers");
 
         return requestParameters;
     }

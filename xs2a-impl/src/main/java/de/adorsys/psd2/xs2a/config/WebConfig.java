@@ -47,6 +47,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.validation.Validation;
@@ -66,6 +67,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Qualifier("xs2aCorsConfigProperties")
     private final CorsConfigurationProperties corsConfigurationProperties;
     private final TppService tppService;
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.setUseSuffixPatternMatch(false);
+    }
 
     @Bean
     public MessageSource messageSource() {

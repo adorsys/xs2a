@@ -19,9 +19,11 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.*;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
+import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +34,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CmsPsuPisMapper {
     private final PisConsentMapper pisConsentMapper;
+
+    public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
+        CmsCommonPayment cmsCommonPayment = new CmsCommonPayment(paymentData.getPaymentProduct());
+        cmsCommonPayment.setPaymentId(paymentData.getPaymentId());
+        cmsCommonPayment.setPaymentProduct(paymentData.getPaymentProduct());
+        cmsCommonPayment.setPaymentType(paymentData.getPaymentType());
+        cmsCommonPayment.setTransactionStatus(paymentData.getTransactionStatus());
+        cmsCommonPayment.setPaymentData(paymentData.getPayment());
+
+        return cmsCommonPayment;
+    }
 
     public CmsPayment mapToCmsPayment(List<PisPaymentData> pisPaymentDataList) {
         PaymentType paymentType = pisPaymentDataList.get(0).getConsent().getPaymentType();
@@ -110,12 +123,12 @@ public class CmsPsuPisMapper {
     private CmsAccountReference mapToCmsAccountReference(AccountReferenceEntity pisAccountReference) {
         return Optional.ofNullable(pisAccountReference)
                    .map(ref -> new CmsAccountReference(null,
-                       ref.getIban(),
-                       ref.getBban(),
-                       ref.getPan(),
-                       ref.getMaskedPan(),
-                       ref.getMsisdn(),
-                       ref.getCurrency())
+                                                       ref.getIban(),
+                                                       ref.getBban(),
+                                                       ref.getPan(),
+                                                       ref.getMaskedPan(),
+                                                       ref.getMsisdn(),
+                                                       ref.getCurrency())
                    ).orElse(null);
     }
 }

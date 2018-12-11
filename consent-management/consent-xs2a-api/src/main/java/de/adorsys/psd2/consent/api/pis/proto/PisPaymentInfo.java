@@ -16,22 +16,16 @@
 
 package de.adorsys.psd2.consent.api.pis.proto;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-@ApiModel(description = "Pis payment initialisation consent request", value = "PisConsentRequest")
-public class PisConsentRequest {
-    @ApiModelProperty(value = "Payment data", required = true)
-    private List<PisPayment> payments;
+public class PisPaymentInfo {
+    @ApiModelProperty(value = "External Payment Id", example = "32454656712432")
+    private String paymentId;
 
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
     private String paymentProduct;
@@ -39,18 +33,12 @@ public class PisConsentRequest {
     @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PaymentType paymentType;
 
-    @ApiModelProperty(value = "Tpp information", required = true)
-    private TppInfo tppInfo;
-
-    @ApiModelProperty(value = "Corresponding PSU", required = true)
-    private PsuIdData psuData;
-
-    @ApiModelProperty(value = "External Payment Id", example = "32454656712432")
-    private String paymentId;
-
-    @ApiModelProperty(value = "Transaction status", example = "ACCP")
+    @ApiModelProperty(name = "transactionStatus", example = "ACCP")
     private TransactionStatus transactionStatus;
 
-    @ApiModelProperty(value = "Payment info")
-    private PisPaymentInfo paymentInfo;
+    @ApiModelProperty(value = "Payment data")
+    private byte[] paymentData;
+
+    @ApiModelProperty(value = "Tpp information", required = true)
+    private TppInfo tppInfo;
 }

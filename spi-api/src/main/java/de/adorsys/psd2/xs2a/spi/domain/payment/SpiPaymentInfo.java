@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.pis.authorisation;
+package de.adorsys.psd2.xs2a.spi.domain.payment;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
 
-import java.util.List;
-
+/**
+ * This class represents a common entity for all types of payments, preserving all payment-specific data as an array of bytes
+ */
 @Data
-public class GetPisConsentAuthorisationResponse {
-    private String psuId;
-    private ScaStatus scaStatus;
-    private String consentId;
-    private String password;
-    private List<PisPayment> payments;
-    private PaymentType paymentType;
+public class SpiPaymentInfo implements SpiPayment {
+    private String paymentId;
     private String paymentProduct;
-    private PisPaymentInfo paymentInfo;
+    private PaymentType paymentType;
+    private TransactionStatus status;
+    private byte[] paymentData;
+
+    public SpiPaymentInfo(String paymentProduct) {
+        this.paymentProduct = paymentProduct;
+    }
 }
