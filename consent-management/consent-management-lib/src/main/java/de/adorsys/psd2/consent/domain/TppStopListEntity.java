@@ -18,8 +18,10 @@ package de.adorsys.psd2.consent.domain;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 
 @Data
@@ -44,4 +46,14 @@ public class TppStopListEntity {
 
     @Column(name = "expiration_timestamp")
     private OffsetDateTime blockingExpirationTimestamp;
+
+    public void block(@Nullable Duration lockPeriod) {
+        this.status = TppStatus.BLOCKED;
+        this.blockingExpirationTimestamp = lockPeriod != null ? OffsetDateTime.now().plus(lockPeriod) : null;
+    }
+
+    public void unblock() {
+        this.status = TppStatus.ENABLED;
+        this.blockingExpirationTimestamp = null;
+    }
 }
