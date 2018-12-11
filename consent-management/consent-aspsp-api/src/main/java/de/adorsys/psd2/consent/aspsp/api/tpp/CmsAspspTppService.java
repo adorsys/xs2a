@@ -26,19 +26,20 @@ import java.util.Optional;
 public interface CmsAspspTppService {
 
     /**
-     * Loads TPP Information by its ID
+     * Loads TPP black list record by TPP ID and National competent authority ID
      *
      * @param tppAuthorisationNumber ID of TPP to load
      * @param nationalAuthorityId    National competent authority id
      * @return TPP Stop list object object if found in DB
      */
     @NotNull
-    Optional<TppStopListRecord> getTppInfoById(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
+    Optional<TppStopListRecord> getTppBlackListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
 
     /**
-     * Blocks requests from TPP by given TPP ID. If lockPeriod parameter is passed, locks TPP for certain time.
+     * Blocks requests from TPP by given TPP ID and National competent authority ID.
+     * If lockPeriod parameter is passed, locks TPP for certain time.
      * If lockPeriod is not passed, lock TPP without time limitation.
-     * If TPP with given ID doesn't exist in DB, creates an empty one with given ID
+     * If Record with given ID doesn't exist in DB, creates an empty one with given ID
      *
      * @param tppAuthorisationNumber ID of TPP to lock
      * @param nationalAuthorityId    National competent authority id
@@ -48,8 +49,8 @@ public interface CmsAspspTppService {
     boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @Nullable Duration lockPeriod);
 
     /**
-     * Releases lock of requests from TPP by given TPP ID.
-     * If TPP with given ID doesn't exist in DB, does nothing.
+     * Releases lock of requests from TPP by given TPP ID and National competent authority ID.
+     * If Record with given ID doesn't exist in DB, does nothing.
      *
      * @param tppAuthorisationNumber ID of TPP to lock
      * @param nationalAuthorityId    National competent authority id

@@ -38,7 +38,7 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
 
     @NotNull
     @Override
-    public Optional<TppStopListRecord> getTppInfoById(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId) {
+    public Optional<TppStopListRecord> getTppBlackListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId) {
         Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityId(tppAuthorisationNumber, nationalAuthorityId);
         return stopListEntityOptional.map(tppStopListMapper::mapToTppStopListRecord);
     }
