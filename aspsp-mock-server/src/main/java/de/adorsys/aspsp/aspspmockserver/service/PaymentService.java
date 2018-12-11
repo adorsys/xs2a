@@ -26,10 +26,7 @@ import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
 import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspPaymentCancellationResponse;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
+import de.adorsys.psd2.aspsp.mock.api.payment.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,7 +35,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -59,12 +55,23 @@ public class PaymentService {
     private final AccountService accountService;
 
     /**
+     * Creates new payment
+     *
+     * @param aspspPaymentInfo payment
+     * @return Optional of saved single payment
+     */
+    public Optional<AspspPaymentInfo> addPaymentInfo(AspspPaymentInfo aspspPaymentInfo) {
+        AspspPayment saved = paymentRepository.save(paymentMapper.mapToAspspPayment(aspspPaymentInfo));
+        return Optional.ofNullable(paymentMapper.mapToAspspPaymentInfo(saved));
+    }
+
+    /**
      * Checks if there is enough funds for payment and if so saves the payment
      *
      * @param payment Single payment
      * @return Optional of saved single payment
      */
-    public Optional<AspspSinglePayment> addPayment(@NotNull AspspSinglePayment payment) {
+    public Optional<AspspSinglePayment> addPayment(AspspSinglePayment payment) {
         if (payment.getInstructedAmount() != null && areFundsSufficient(payment.getDebtorAccount(), payment.getInstructedAmount().getAmount())) {
             AspspPayment saved = paymentRepository.save(paymentMapper.mapToAspspPayment(payment, SINGLE));
             return Optional.ofNullable(paymentMapper.mapToAspspSinglePayment(saved));
@@ -80,7 +87,7 @@ public class PaymentService {
      * @param payment Periodic payment
      * @return Optional of saved periodic payment
      */
-    public Optional<AspspPeriodicPayment> addPeriodicPayment(@NotNull AspspPeriodicPayment payment) {
+    public Optional<AspspPeriodicPayment> addPeriodicPayment(AspspPeriodicPayment payment) {
         AspspPayment saved = paymentRepository.save(paymentMapper.mapToAspspPayment(payment, PERIODIC));
         return Optional.ofNullable(paymentMapper.mapToAspspPeriodicPayment(saved));
     }
@@ -176,12 +183,29 @@ public class PaymentService {
      * @param consentId     Consent primary identifier
      * @param consentStatus New status of the PIS consent
      */
-    public void updatePaymentConsentStatus(@NotNull String consentId, AspspConsentStatus consentStatus) {
+    public void updatePaymentConsentStatus(String consentId, AspspConsentStatus consentStatus) {
         consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, consentStatus.name());
     }
 
+    /**
+     * Gets payments by paymentId
+     *
+     * @param paymentId Payment identifier
+     * @return AspspPayment information about payment
+     */
     public List<AspspPayment> getPaymentById(String paymentId) {
         return paymentRepository.findByPaymentIdOrBulkId(paymentId, paymentId);
+    }
+
+    /**
+     * Gets a common payment by paymentId
+     *
+     * @param paymentId Payment identifier
+     * @return AspspPaymentInfo common information about payment
+     */
+    public Optional<AspspPaymentInfo> getCommonPaymentById(String paymentId) {
+        return paymentRepository.findByPaymentId(paymentId)
+                   .map(paymentMapper::mapToAspspPaymentInfo);
     }
 
     /**
@@ -192,7 +216,7 @@ public class PaymentService {
      */
     public Optional<AspspPaymentCancellationResponse> cancelPayment(String paymentId) {
         List<AspspPayment> payments = paymentRepository.findByPaymentIdOrBulkId(paymentId, paymentId);
-        if(CollectionUtils.isEmpty(payments)){
+        if (CollectionUtils.isEmpty(payments)) {
             return Optional.empty();
         }
 
@@ -211,7 +235,7 @@ public class PaymentService {
      */
     public Optional<AspspPaymentCancellationResponse> initiatePaymentCancellation(String paymentId) {
         List<AspspPayment> payments = paymentRepository.findByPaymentIdOrBulkId(paymentId, paymentId);
-        if(CollectionUtils.isEmpty(payments)){
+        if (CollectionUtils.isEmpty(payments)) {
             return Optional.empty();
         }
 
@@ -222,6 +246,11 @@ public class PaymentService {
         return Optional.of(getPaymentCancellationResponse(true, AspspTransactionStatus.ACTC));
     }
 
+    /**
+     * Gets all payments
+     *
+     * @return List of payments
+     */
     public List<AspspPayment> getAllPayments() {
         return paymentRepository.findAll();
     }

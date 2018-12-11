@@ -51,7 +51,7 @@ public class PisCancellationScaAuthenticatedStage extends PisScaStage<Xs2aUpdate
     @Override
     public Xs2aUpdatePisConsentPsuDataResponse apply(Xs2aUpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
         PaymentType paymentType = pisConsentAuthorisationResponse.getPaymentType();
-        SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType);
+        SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse, paymentType);
         String authenticationMethodId = request.getAuthenticationMethodId();
 
         PsuIdData psuData = request.getPsuData();

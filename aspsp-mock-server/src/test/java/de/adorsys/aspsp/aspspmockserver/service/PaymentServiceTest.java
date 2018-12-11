@@ -27,6 +27,7 @@ import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPaymentCancellationResponse;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspPaymentInfo;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +79,13 @@ public class PaymentServiceTest {
         when(paymentMapper.mapToAspspPayment(any(), any())).thenReturn(new AspspPayment());
         when(paymentMapper.mapToAspspSinglePayment(any(AspspPayment.class))).thenReturn(getAspspSinglePayment(AMOUNT_TO_TRANSFER));
         when(paymentRepository.findOne(PAYMENT_ID)).thenReturn(getAspspPayment(AMOUNT_TO_TRANSFER));
-        when(paymentRepository.findByPaymentIdOrBulkId(PAYMENT_ID,PAYMENT_ID)).thenReturn(Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER)));
+        when(paymentRepository.findByPaymentIdOrBulkId(PAYMENT_ID, PAYMENT_ID)).thenReturn(Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER)));
+
+        when(paymentRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(new AspspPayment()));
+        when(paymentRepository.findByPaymentId(WRONG_PAYMENT_ID)).thenReturn(Optional.empty());
+        when(paymentMapper.mapToAspspPaymentInfo(any(AspspPayment.class))).thenReturn(getAspspPaymentInfo(AspspTransactionStatus.RCVD));
+        when(paymentMapper.mapToAspspPayment(any(AspspPaymentInfo.class))).thenReturn(new AspspPayment());
+
     }
 
     @Test
@@ -90,6 +97,21 @@ public class PaymentServiceTest {
         //When
         Optional<AspspSinglePayment> aspspSinglePayment = paymentService.addPayment(expectedPayment);
         AspspSinglePayment actualPayment = aspspSinglePayment.orElse(null);
+
+        //Then
+        assertThat(actualPayment).isNotNull();
+    }
+
+    @Test
+    public void addPaymentInfo_Success() {
+        when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
+        //Given
+        AspspPaymentInfo expectedPayment = getAspspPaymentInfo(AspspTransactionStatus.RCVD);
+
+        //When
+        Optional<AspspPaymentInfo> aspspPaymentInfo = paymentService.addPaymentInfo(expectedPayment);
+
+        AspspPaymentInfo actualPayment = aspspPaymentInfo.orElse(null);
 
         //Then
         assertThat(actualPayment).isNotNull();
@@ -131,6 +153,8 @@ public class PaymentServiceTest {
         List<AspspPayment> payments = Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER));
         when(paymentMapper.mapToAspspPaymentList(any(), anyString())).thenReturn(payments);
         when(paymentRepository.save(anyListOf(AspspPayment.class))).thenReturn(payments);
+
+
         when(paymentMapper.mapToAspspSinglePaymentList(anyListOf(AspspPayment.class)))
             .thenReturn(Collections.singletonList(getAspspSinglePayment(AMOUNT_TO_TRANSFER)));
 
@@ -214,6 +238,25 @@ public class PaymentServiceTest {
         assertThat(actual.isPresent()).isFalse();
     }
 
+    @Test
+    public void getCommonPaymentById_Success() {
+        //When
+        Optional<AspspPaymentInfo> actual = paymentService.getCommonPaymentById(PAYMENT_ID);
+
+        //Then
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get()).isEqualTo(getAspspPaymentInfo(AspspTransactionStatus.RCVD));
+    }
+
+    @Test
+    public void getCommonPaymentById_Failure_WrongId() {
+        //When
+        Optional<AspspPaymentInfo> actual = paymentService.getCommonPaymentById(WRONG_PAYMENT_ID);
+
+        //Then
+        assertThat(actual.isPresent()).isFalse();
+    }
+
     private Optional<AspspPaymentCancellationResponse> buildAspspPaymentCancellationResponse(AspspTransactionStatus transactionStatus, boolean startAuthorisationRequired) {
         AspspPaymentCancellationResponse response = new AspspPaymentCancellationResponse();
         response.setTransactionStatus(transactionStatus);
@@ -237,6 +280,16 @@ public class PaymentServiceTest {
         payment.setRemittanceInformationUnstructured("Ref Number Merchant");
 
         return payment;
+    }
+
+    private AspspPaymentInfo getAspspPaymentInfo(AspspTransactionStatus transactionStatus) {
+        return new AspspPaymentInfo(
+            PAYMENT_ID,
+            transactionStatus,
+            "sepa-credit-transfers",
+            "SINGLE",
+            new byte[16]
+        );
     }
 
     private AspspPayment getAspspPayment(AspspTransactionStatus transactionStatus, long amountToTransfer) {

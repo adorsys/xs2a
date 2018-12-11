@@ -21,16 +21,14 @@ import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
-import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
-import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.psd2.xs2a.domain.pis.Remittance;
-import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.domain.pis.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -40,7 +38,35 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class Xs2aToCmsPisConsentRequest {
+public class Xs2aToCmsPisConsentRequestMapper {
+
+    public PisConsentRequest mapToCmsPisConsentRequest(CommonPayment paymentInitRequest) {
+        PisConsentRequest request = new PisConsentRequest();
+        request.setPayments(Collections.emptyList());
+        request.setPaymentInfo(mapToPisPaymentInfo(paymentInitRequest));
+        request.setPaymentId(paymentInitRequest.getPaymentId());
+        request.setPaymentType(paymentInitRequest.getPaymentType());
+        request.setPaymentProduct(paymentInitRequest.getPaymentProduct());
+        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
+        request.setTppInfo(new TppInfo());
+        return request;
+    }
+
+    private PisPaymentInfo mapToPisPaymentInfo(CommonPayment paymentInitRequest) {
+        return Optional.ofNullable(paymentInitRequest)
+                   .map(dta -> {
+                            PisPaymentInfo paymentInfo = new PisPaymentInfo();
+                            paymentInfo.setPaymentId(dta.getPaymentId());
+                            paymentInfo.setPaymentProduct(dta.getPaymentProduct());
+                            paymentInfo.setPaymentType(dta.getPaymentType());
+                            paymentInfo.setTransactionStatus(dta.getTransactionStatus());
+                            paymentInfo.setPaymentData(dta.getPaymentData());
+                            paymentInfo.setTppInfo(dta.getTppInfo());
+                            return paymentInfo;
+                        }
+                   )
+                   .orElse(null);
+    }
 
     public PisConsentRequest mapToCmsSinglePisConsentRequest(SinglePayment singlePayment, String paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -26,8 +27,13 @@ import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +42,7 @@ import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper.mapToAmount;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PaymentModelMapperPsd2 {
@@ -46,6 +53,18 @@ public class PaymentModelMapperPsd2 {
     private final TppRedirectUriMapper tppRedirectUriMapper;
 
     public Object mapToGetPaymentResponse12(Object payment, PaymentType type, String product) {
+        if (isRawPayment(payment)) {
+            PisPaymentInfo paymentInfo = (PisPaymentInfo) payment;
+            String paymentResponse = convertResponseToRawData(paymentInfo.getPaymentData());
+
+            //TODO rework this check during refactoring of payment saving https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/517
+            if (paymentInfo.getPaymentProduct().contains("pain")) {
+                return paymentResponse;
+            }
+
+            // it will be useful when we implement raw json payment
+            return enrichPaymentWithStatus(paymentInfo.getTransactionStatus(), paymentResponse);
+        }
         if (type == SINGLE) {
             SinglePayment xs2aPayment = (SinglePayment) payment;
             PaymentInitiationTarget2WithStatusResponse paymentResponse = new PaymentInitiationTarget2WithStatusResponse();
@@ -92,6 +111,18 @@ public class PaymentModelMapperPsd2 {
         }
     }
 
+    @Nullable
+    private Object enrichPaymentWithStatus(de.adorsys.psd2.xs2a.core.pis.TransactionStatus transactionStatus, Object resp) {
+        try {
+            Map paymentData = mapper.readValue(resp.toString(), Map.class);
+            paymentData.put("transactionStatus", transactionStatus);
+            return paymentData;
+        } catch (IOException e) {
+            log.warn("Can not convert payment to json ", e);
+        }
+        return null;
+    }
+
     public static PaymentInitiationStatusResponse200Json mapToStatusResponse12(de.adorsys.psd2.xs2a.core.pis.TransactionStatus status) {
         return new PaymentInitiationStatusResponse200Json().transactionStatus(mapToTransactionStatus12(status));
     }
@@ -117,24 +148,6 @@ public class PaymentModelMapperPsd2 {
         return response201;
     }
 
-    private List<PaymentInitiationTarget2Json> mapToBulkPartList12(List<SinglePayment> payments) {
-        return payments.stream()
-                   .map(this::mapToBulkPart12)
-                   .collect(Collectors.toList());
-    }
-
-    private PaymentInitiationTarget2Json mapToBulkPart12(SinglePayment payment) {
-        PaymentInitiationTarget2Json bulkPart = new PaymentInitiationTarget2Json().endToEndIdentification(payment.getEndToEndIdentification());
-        bulkPart.setDebtorAccount(accountModelMapper.mapToAccountReference12(payment.getDebtorAccount()));
-        bulkPart.setInstructedAmount(mapToAmount(payment.getInstructedAmount()));
-        bulkPart.setCreditorAccount(accountModelMapper.mapToAccountReference12(payment.getCreditorAccount()));
-        bulkPart.setCreditorAgent(payment.getCreditorAgent());
-        bulkPart.setCreditorName(payment.getCreditorName());
-        bulkPart.setCreditorAddress(accountModelMapper.mapToAddress12(payment.getCreditorAddress()));
-        bulkPart.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        return bulkPart;
-    }
-
     public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
@@ -154,6 +167,28 @@ public class PaymentModelMapperPsd2 {
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(mapper.convertValue(cancelPaymentResponse.getLinks(), Map.class));
         return response;
+    }
+
+    private boolean isRawPayment(Object payment) {
+        return payment instanceof PisPaymentInfo;
+    }
+
+    private List<PaymentInitiationTarget2Json> mapToBulkPartList12(List<SinglePayment> payments) {
+        return payments.stream()
+                   .map(this::mapToBulkPart12)
+                   .collect(Collectors.toList());
+    }
+
+    private PaymentInitiationTarget2Json mapToBulkPart12(SinglePayment payment) {
+        PaymentInitiationTarget2Json bulkPart = new PaymentInitiationTarget2Json().endToEndIdentification(payment.getEndToEndIdentification());
+        bulkPart.setDebtorAccount(accountModelMapper.mapToAccountReference12(payment.getDebtorAccount()));
+        bulkPart.setInstructedAmount(mapToAmount(payment.getInstructedAmount()));
+        bulkPart.setCreditorAccount(accountModelMapper.mapToAccountReference12(payment.getCreditorAccount()));
+        bulkPart.setCreditorAgent(payment.getCreditorAgent());
+        bulkPart.setCreditorName(payment.getCreditorName());
+        bulkPart.setCreditorAddress(accountModelMapper.mapToAddress12(payment.getCreditorAddress()));
+        bulkPart.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        return bulkPart;
     }
 
     private ScaMethods mapToScaMethods(Xs2aAuthenticationObject... authenticationObjects) {
@@ -193,5 +228,12 @@ public class PaymentModelMapperPsd2 {
                    }).orElse(null);
     }
 
-
+    private String convertResponseToRawData(byte[] paymentData) {
+        try {
+            return IOUtils.toString(paymentData, Charset.defaultCharset().name());
+        } catch (IOException e) {
+            log.warn("Can not convert payment from byte[] ", e);
+            return null;
+        }
+    }
 }

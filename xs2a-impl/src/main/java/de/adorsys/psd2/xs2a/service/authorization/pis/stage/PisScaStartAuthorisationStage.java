@@ -56,7 +56,7 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisCons
     @SuppressWarnings("unchecked")
     public Xs2aUpdatePisConsentPsuDataResponse apply(Xs2aUpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
         PaymentType paymentType = pisConsentAuthorisationResponse.getPaymentType();
-        SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType);
+        SpiPayment payment = mapToSpiPayment(pisConsentAuthorisationResponse, paymentType);
 
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(request.getPaymentId());
 
@@ -80,7 +80,7 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisCons
         List<SpiAuthenticationObject> spiScaMethods = availableScaMethodsResponse.getPayload();
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
-            PaymentSpi paymentSpi = getPaymentService(paymentType);
+            PaymentSpi paymentSpi = getPaymentService(pisConsentAuthorisationResponse, paymentType);
             SpiResponse<SpiResponse.VoidResponse> executePaymentResponse = paymentSpi.executePaymentWithoutSca(psuData, payment, availableScaMethodsResponse.getAspspConsentData());
             pisConsentDataService.updateAspspConsentData(executePaymentResponse.getAspspConsentData());
 

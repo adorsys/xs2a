@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <include relativeToChangelogFile="true" file="_typedef.xml"/>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2018-11-28-1">
+        <comment>Create sequence for pis common payment data id.</comment>
+        <createSequence sequenceName="pis_common_payment_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE pis_common_payment_id_seq</sql>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2018-11-28-2">
+        <comment>Create table pis_common_payment.</comment>
+
+        <createTable tableName="pis_common_payment">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="payment_id" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_type" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_product" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_status" type="VARCHAR(4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment" type="${blob.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="psu_id" type="BIGINT"/>
+            <column name="tpp_info_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consent_id" type="BIGINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="pis_common_payment"
+                                 constraintName="fk_com_payment_pis_consent" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="pis_consent"/>
+
+        <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="pis_common_payment"
+                                 constraintName="fk_com_payment_psu_data" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="psu_data"/>
+
+        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="pis_common_payment"
+                                 constraintName="fk_com_payment_tpp_info" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="tpp_info_id" referencedTableName="tpp_info"/>
+
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2018-11-28-3">
+        <comment>Add many to one relationship with pis_common_payment</comment>
+
+        <addColumn tableName="pis_consent_authorization">
+            <column name="payment_id" type="BIGINT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="payment_id" baseTableName="pis_consent_authorization"
+                                 constraintName="fk_pis_auth_com_payment" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="pis_common_payment"/>
+    </changeSet>
+
+</databaseChangeLog>

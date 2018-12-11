@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.aspsp.profile.service;
 
+import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
@@ -27,9 +28,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
@@ -38,6 +38,7 @@ import java.util.List;
 
 import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AspspProfileServiceTest {
@@ -46,7 +47,7 @@ public class AspspProfileServiceTest {
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<PaymentType> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
-    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
+    private static final ScaApproach REDIRECT_APPROACH = ScaApproach.REDIRECT;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
@@ -63,99 +64,106 @@ public class AspspProfileServiceTest {
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
 
-    private AspspProfileService aspspProfileService;
+    @InjectMocks
+    private AspspProfileServiceImpl aspspProfileService;
 
     @Mock
     private ProfileConfiguration profileConfiguration;
 
     @Before
     public void setUpAccountServiceMock() {
-        Mockito.when(profileConfiguration.getFrequencyPerDay())
-            .thenReturn(FREQUENCY_PER_DAY);
-        Mockito.when(profileConfiguration.isCombinedServiceIndicator())
-            .thenReturn(COMBINED_SERVICE_INDICATOR);
-        Mockito.when(profileConfiguration.getAvailablePaymentProducts())
-            .thenReturn(AVAILABLE_PAYMENT_PRODUCTS);
-        Mockito.when(profileConfiguration.getAvailablePaymentTypes())
-            .thenReturn(AVAILABLE_PAYMENT_TYPES);
-        Mockito.when(profileConfiguration.isTppSignatureRequired())
-            .thenReturn(TPP_SIGNATURE_REQUIRED);
-        Mockito.when(profileConfiguration.getScaApproach())
-            .thenReturn(SCA_APPROACH);
-        Mockito.when(profileConfiguration.getPisRedirectUrlToAspsp())
-            .thenReturn(PIS_REDIRECT_LINK);
-        Mockito.when(profileConfiguration.getAisRedirectUrlToAspsp())
-            .thenReturn(AIS_REDIRECT_LINK);
-        Mockito.when(profileConfiguration.getMulticurrencyAccountLevel())
-            .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
-        Mockito.when(profileConfiguration.getAvailableBookingStatuses())
-            .thenReturn(AVAILABLE_BOOKING_STATUSES);
-        Mockito.when(profileConfiguration.getSupportedAccountReferenceFields())
-            .thenReturn(SUPPORTED_ACCOUNT_REFERENCE_FIELDS);
-        Mockito.when(profileConfiguration.getConsentLifetime())
-            .thenReturn(CONSENT_LIFETIME);
-        Mockito.when(profileConfiguration.getTransactionLifetime())
-            .thenReturn(TRANSACTION_LIFETIME);
-        Mockito.when(profileConfiguration.isAllPsd2Support())
-            .thenReturn(ALL_PSD_2_SUPPORT);
-        Mockito.when(profileConfiguration.isBankOfferedConsentSupport())
-            .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
-        Mockito.when(profileConfiguration.isSigningBasketSupported())
-            .thenReturn(SIGNING_BASKET_SUPPORTED);
-        Mockito.when(profileConfiguration.isPaymentCancellationAuthorizationMandated())
-            .thenReturn(PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
-        Mockito.when(profileConfiguration.isPiisConsentSupported())
-            .thenReturn(PIIS_CONSENT_SUPPORTED);
-        Mockito.when(profileConfiguration.isDeltaReportSupported())
-            .thenReturn(DELTA_REPORT_SUPPORTED);
-        Mockito.when(profileConfiguration.getRedirectUrlExpirationTimeMs())
-            .thenReturn(REDIRECT_URL_EXPIRATION_TIME_MS);
-
-        aspspProfileService = new AspspProfileServiceImpl(profileConfiguration);
-        MockitoAnnotations.initMocks(aspspProfileService);
+        when(profileConfiguration.getSetting()).thenReturn(buildBankProfileSetting());
     }
 
     @Test
-    public void getAspspSettings() {
+    public void getPisRedirectUrlToAspsp_success() {
         //When:
         AspspSettings actualResponse = aspspProfileService.getAspspSettings();
 
         //Then:
-        Assertions.assertThat(actualResponse).isEqualTo(buildAspspSettings());
+        Assertions.assertThat(actualResponse.getPisRedirectUrlToAspsp()).isEqualTo(PIS_REDIRECT_LINK);
     }
 
     @Test
-    public void getScaApproach() {
+    public void getAisRedirectUrlToAspsp_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getAisRedirectUrlToAspsp()).isEqualTo(AIS_REDIRECT_LINK);
+    }
+
+    @Test
+    public void getAvailablePaymentTypes_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getAvailablePaymentTypes()).isEqualTo(AVAILABLE_PAYMENT_TYPES);
+    }
+
+    @Test
+    public void getAvailablePaymentProducts_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getAvailablePaymentProducts()).isEqualTo(AVAILABLE_PAYMENT_PRODUCTS);
+    }
+
+    @Test
+    public void getScaApproach_success() {
         //When:
         ScaApproach actualResponse = aspspProfileService.getScaApproach();
 
         //Then:
-        Assertions.assertThat(actualResponse).isEqualTo(SCA_APPROACH);
+        Assertions.assertThat(actualResponse).isEqualTo(REDIRECT_APPROACH);
     }
 
-    private static AspspSettings buildAspspSettings() {
-        return new AspspSettings(
-            FREQUENCY_PER_DAY,
-            COMBINED_SERVICE_INDICATOR,
-            AVAILABLE_PAYMENT_PRODUCTS,
-            AVAILABLE_PAYMENT_TYPES,
-            TPP_SIGNATURE_REQUIRED,
-            PIS_REDIRECT_LINK,
-            AIS_REDIRECT_LINK,
-            MULTICURRENCY_ACCOUNT_LEVEL,
-            BANK_OFFERED_CONSENT_SUPPORT,
-            AVAILABLE_BOOKING_STATUSES,
-            SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
-            CONSENT_LIFETIME,
-            TRANSACTION_LIFETIME,
-            ALL_PSD_2_SUPPORT,
-            TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
-            SIGNING_BASKET_SUPPORTED,
-            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
-            PIIS_CONSENT_SUPPORTED,
-            DELTA_REPORT_SUPPORTED,
-            REDIRECT_URL_EXPIRATION_TIME_MS);
+    @Test
+    public void getRedirectUrlExpirationTimeMs_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getRedirectUrlExpirationTimeMs()).isEqualTo(REDIRECT_URL_EXPIRATION_TIME_MS);
     }
+
+    @Test
+    public void getFrequencyPerDay_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getFrequencyPerDay()).isEqualTo(FREQUENCY_PER_DAY);
+    }
+
+    private BankProfileSetting buildBankProfileSetting() {
+        BankProfileSetting setting = new BankProfileSetting();
+        setting.setFrequencyPerDay(FREQUENCY_PER_DAY);
+        setting.setCombinedServiceIndicator(COMBINED_SERVICE_INDICATOR);
+        setting.setAvailablePaymentProducts(AVAILABLE_PAYMENT_PRODUCTS);
+        setting.setAvailablePaymentTypes(AVAILABLE_PAYMENT_TYPES);
+        setting.setTppSignatureRequired(TPP_SIGNATURE_REQUIRED);
+        setting.setPisRedirectUrlToAspsp(PIS_REDIRECT_LINK);
+        setting.setAisRedirectUrlToAspsp(AIS_REDIRECT_LINK);
+        setting.setMulticurrencyAccountLevel(MULTICURRENCY_ACCOUNT_LEVEL);
+        setting.setBankOfferedConsentSupport(BANK_OFFERED_CONSENT_SUPPORT);
+        setting.setAvailableBookingStatuses(AVAILABLE_BOOKING_STATUSES);
+        setting.setSupportedAccountReferenceFields(SUPPORTED_ACCOUNT_REFERENCE_FIELDS);
+        setting.setConsentLifetime(CONSENT_LIFETIME);
+        setting.setTransactionLifetime(TRANSACTION_LIFETIME);
+        setting.setAllPsd2Support(ALL_PSD_2_SUPPORT);
+        setting.setTransactionsWithoutBalancesSupported(TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED);
+        setting.setSigningBasketSupported(SIGNING_BASKET_SUPPORTED);
+        setting.setPaymentCancellationAuthorizationMandated(PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
+        setting.setPiisConsentSupported(PIIS_CONSENT_SUPPORTED);
+        setting.setDeltaReportSupported(DELTA_REPORT_SUPPORTED);
+        setting.setRedirectUrlExpirationTimeMs(REDIRECT_URL_EXPIRATION_TIME_MS);
+        setting.setScaApproach(REDIRECT_APPROACH);
+        return setting;
+    }
+
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
         return Collections.singletonList(IBAN);
