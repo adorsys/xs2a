@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.domain;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
-import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -72,8 +71,4 @@ public class TppInfoEntity {
 
     @Column(name = "nok_redirect_uri")
     private String nokRedirectUri;
-
-    @Column(name = "status", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private TppStatus status;
 }
