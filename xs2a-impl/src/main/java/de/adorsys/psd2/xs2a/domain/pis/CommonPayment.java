@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.pis.authorisation;
+package de.adorsys.psd2.xs2a.domain.pis;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class GetPisConsentAuthorisationResponse {
-    private String psuId;
-    private ScaStatus scaStatus;
-    private String consentId;
-    private String password;
-    private List<PisPayment> payments;
-    private PaymentType paymentType;
+public class CommonPayment {
+    private String paymentId;
     private String paymentProduct;
-    private PisPaymentInfo paymentInfo;
+    private TransactionStatus transactionStatus;
+    private PaymentType paymentType;
+    private byte[] paymentData;
+    private TppInfo tppInfo;
 }

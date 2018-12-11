@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.pis.authorisation;
+package de.adorsys.psd2.xs2a.domain.pis;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import lombok.Data;
-
-import java.util.List;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
-public class GetPisConsentAuthorisationResponse {
-    private String psuId;
-    private ScaStatus scaStatus;
-    private String consentId;
-    private String password;
-    private List<PisPayment> payments;
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class CommonPaymentInitiationResponse extends PaymentInitiationResponse {
     private PaymentType paymentType;
-    private String paymentProduct;
-    private PisPaymentInfo paymentInfo;
+
+    public CommonPaymentInitiationResponse(ErrorHolder errorHolder) {
+        super(errorHolder);
+    }
+
+    @Override
+    PaymentType getPaymentType() {
+        return paymentType;
+    }
 }

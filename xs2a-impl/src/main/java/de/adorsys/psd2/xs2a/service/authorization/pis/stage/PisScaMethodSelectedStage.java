@@ -48,8 +48,8 @@ public class PisScaMethodSelectedStage extends PisScaStage<Xs2aUpdatePisConsentP
     @Override
     public Xs2aUpdatePisConsentPsuDataResponse apply(Xs2aUpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse response) {
         PaymentType paymentType = response.getPaymentType();
-        PaymentSpi paymentSpi = getPaymentService(paymentType);
-        SpiPayment payment = mapToSpiPayment(response.getPayments(), paymentType);
+        PaymentSpi paymentSpi = getPaymentService(response, paymentType);
+        SpiPayment payment = mapToSpiPayment(response, paymentType);
         PsuIdData psuData = request.getPsuData();
 
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(request.getPaymentId());
