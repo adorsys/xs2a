@@ -62,17 +62,11 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     @Transactional
-    public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String encryptedPaymentId) {
-        Optional<String> paymentId = pisConsentService.getDecryptedId(encryptedPaymentId);
-
-        if (!paymentId.isPresent()) {
-            log.warn("Payment Id is not encrypted: {}", encryptedPaymentId);
-            return false;
-        }
-
-        Optional<PisConsent> pisConsent = getPisConsentByPaymentId(paymentId.get());
-
-        return pisConsent.isPresent() && updatePsuData(pisConsent.get(), psuIdData);
+    public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
+        return pisConsentAuthorizationRepository.findByExternalId(redirectId)
+                   .map(PisConsentAuthorization::getConsent)
+                   .map(con -> updatePsuData(con, psuIdData))
+                   .orElse(false);
     }
 
     @Override
@@ -212,19 +206,5 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private void changeAuthorisationStatusToFailed(PisConsentAuthorization authorisation) {
         authorisation.setScaStatus(ScaStatus.FAILED);
         pisConsentAuthorizationRepository.save(authorisation);
-    }
-
-    private Optional<PisConsent> getPisConsentByPaymentId(String paymentId) {
-        // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
-        Optional<PisConsent> consentOpt = pisPaymentDataRepository.findByPaymentId(paymentId)
-                                              .filter(CollectionUtils::isNotEmpty)
-                                              .map(list -> list.get(0).getConsent());
-
-        if (!consentOpt.isPresent()) {
-            consentOpt = pisCommonPaymentDataRepository.findByPaymentId(paymentId)
-                             .map(PisCommonPaymentData::getConsent);
-        }
-
-        return consentOpt;
     }
 }

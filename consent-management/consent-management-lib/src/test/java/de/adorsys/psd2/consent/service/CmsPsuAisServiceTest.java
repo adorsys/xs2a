@@ -80,7 +80,6 @@ public class CmsPsuAisServiceTest {
     private PsuIdData psuIdData;
     private PsuIdData psuIdDataWrong;
     private PsuData psuData;
-    private CmsAisConsentResponse cmsAisConsentResponse;
     private final long CONSENT_ID = 1;
     private final String PSU_ID = "987654321";
     private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
@@ -101,7 +100,6 @@ public class CmsPsuAisServiceTest {
         aisAccountConsent = buildSpiAccountConsent();
         aisConsentAuthorization = buildAisConsentAuthorisation();
         aisConsents = buildAisConsents();
-        cmsAisConsentResponse = buildCmsAisConsentResponse(aisAccountConsent, AUTHORISATION_ID, TPP_OK_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
 
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
@@ -121,7 +119,7 @@ public class CmsPsuAisServiceTest {
     public void updatePsuDataInConsentSuccess() {
         // When
         // Then
-        boolean updatePsuDataInConsent = cmsPsuAisService.updatePsuDataInConsent(psuIdData, EXTERNAL_CONSENT_ID);
+        boolean updatePsuDataInConsent = cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID);
         // Assert
         assertTrue(updatePsuDataInConsent);
     }
@@ -130,7 +128,7 @@ public class CmsPsuAisServiceTest {
     public void updatePsuDataInConsentFail() {
         // When
         // Then
-        boolean updatePsuDataInConsent = cmsPsuAisService.updatePsuDataInConsent(psuIdData, EXTERNAL_CONSENT_ID_NOT_EXIST);
+        boolean updatePsuDataInConsent = cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID_NOT_EXIST);
         // Assert
         assertFalse(updatePsuDataInConsent);
     }
@@ -381,6 +379,7 @@ public class CmsPsuAisServiceTest {
         AisConsentAuthorization aisConsentAuthorization = new AisConsentAuthorization();
         aisConsentAuthorization.setExternalId(AUTHORISATION_ID);
         aisConsentAuthorization.setScaStatus(ScaStatus.RECEIVED);
+        aisConsentAuthorization.setConsent(buildConsent());
         return aisConsentAuthorization;
     }
 

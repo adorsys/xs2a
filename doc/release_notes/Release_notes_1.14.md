@@ -27,3 +27,14 @@ Spring Boot dependencies were removed from Xs2a library. Now we use the followin
 * spring-hateoas
 * spring-web
 * spring-context
+
+## Changes to CmsPsuAisService and CmsPsuPisService
+Now methods updatePsuDataInConsent and updatePsuInPayment take redirectId as an argument instead of consentId and paymentId accordingly.
+Also ulr paths in CmsPsuAisConsentController and CmsPsuPisController were changed. Look at the table below.
+
+| Method | Context                     | Old path                                                   | New path                                                    |
+|--------|-----------------------------|------------------------------------------------------------|-------------------------------------------------------------|
+| PUT    | Updates PSU Data in consent | psu-api/v1/ais/consent/{consent-id}/update-psu-data        | psu-api/v1/ais/consent/redirects/{redirect-id}/psu-data     |
+| GET    | Gets consent by redirect id | psu-api/v1/ais/consent/redirect/{redirect-id}              | psu-api/v1/ais/consent/redirects/{redirect-id}              |
+| PUT    | Updates PSU Data in payment | psu-api/v1/pis/consent/{payment-id}                        | psu-api/v1/pis/consent/redirects/{redirect-id}/psu-data     |
+| GET    | Gets payment by redirect id | psu-api/v1/pis/consent/{payment-id}/redirect/{redirect-id} | psu-api/v1/pis/consent/{payment-id}/redirects/{redirect-id} |
