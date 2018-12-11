@@ -18,13 +18,11 @@ package de.adorsys.psd2.consent.domain;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Data
-@NoArgsConstructor
 @Entity(name = "tpp_stop_list")
 public class TppStopListEntity {
 
@@ -38,7 +36,7 @@ public class TppStopListEntity {
     private String tppAuthorisationNumber;
 
     @Column(name = "authority_id", nullable = false)
-    private String authorityId;
+    private String nationalAuthorityId;
 
     @Column(name = "status", nullable = false)
     @Enumerated(value = EnumType.STRING)
