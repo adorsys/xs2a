@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.SwaggerResource;
@@ -46,7 +45,6 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                    .apiInfo(new ApiInfoBuilder().build())
                    .select()
-                   .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.xs2a.web"))
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))
                    .paths(Predicates.not(PathSelectors.regex("/connect.*")))
                    .paths(Predicates.not(PathSelectors.regex("/management.*")))
