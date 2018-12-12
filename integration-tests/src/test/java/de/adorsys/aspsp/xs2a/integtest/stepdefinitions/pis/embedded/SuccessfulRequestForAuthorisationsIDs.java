@@ -41,7 +41,6 @@ public class SuccessfulRequestForAuthorisationsIDs {
     @Autowired
     private TestService testService;
 
-
     //    @Given("^PSU sends the single payment initiation request and receives the paymentId$")
     //    See Global Successful Steps
 
