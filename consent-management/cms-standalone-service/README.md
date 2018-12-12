@@ -28,19 +28,12 @@ So, before starting project you need to create environment variables and set val
 
 To run consent-management-system app from command line:
 
-1. Without test data
 ```
 mvn clean install 
 mvn -Drun.arguments=--server_key=12345678 spring-boot:run
  
 ```
 
-2. With test data
-```
-mvn clean install 
-mvn spring-boot:run -Drun.profiles=data_test
- 
-```
 
 # Using CMS
 Our implementation of CMS offers a set of endpoints to create/update/get the AIS consent information.

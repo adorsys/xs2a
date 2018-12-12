@@ -48,7 +48,6 @@ public class TppInfoMapper {
                            pisTppInfo.setNokRedirectUri(tppRedirectUri.getNokUri());
                        }
 
-                       pisTppInfo.setStatus(tin.getStatus());
                        return pisTppInfo;
                    }).orElse(null);
     }
@@ -75,7 +74,6 @@ public class TppInfoMapper {
                            tppInfo.setTppRedirectUri(tppRedirectUri);
                        }
 
-                       tppInfo.setStatus(tpp.getStatus());
                        return tppInfo;
                    }).orElse(null);
     }

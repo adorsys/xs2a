@@ -19,12 +19,14 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
+import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import org.apache.commons.lang3.StringUtils;
@@ -87,6 +89,22 @@ public class CmsToXs2aPaymentMapper {
                                               .collect(Collectors.toList());
         bulk.setPayments(paymentList);
         return bulk;
+    }
+
+    public CommonPayment mapToXs2aCommonPayment(PisPaymentInfo paymentInfo) {
+        return Optional.ofNullable(paymentInfo)
+                   .map(dta -> {
+                            CommonPayment commonPayment = new CommonPayment();
+                            commonPayment.setPaymentId(dta.getPaymentId());
+                            commonPayment.setPaymentProduct(dta.getPaymentProduct());
+                            commonPayment.setPaymentType(dta.getPaymentType());
+                            commonPayment.setTransactionStatus(dta.getTransactionStatus());
+                            commonPayment.setPaymentData(dta.getPaymentData());
+                            commonPayment.setTppInfo(dta.getTppInfo());
+                            return commonPayment;
+                        }
+                   )
+                   .orElse(null);
     }
 
     private Xs2aAddress mapToXs2aAddress(CmsAddress address) {

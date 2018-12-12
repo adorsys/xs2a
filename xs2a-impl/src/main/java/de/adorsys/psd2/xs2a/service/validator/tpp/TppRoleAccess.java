@@ -24,6 +24,8 @@ import org.springframework.util.Assert;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
+
 @Value
 public class TppRoleAccess {
     private static AntPathMatcher matcher = new AntPathMatcher();
@@ -31,18 +33,12 @@ public class TppRoleAccess {
 
     static {
         TppRoleAccess.builder()
-            .linkTppRolePatterns("/api/v1/accounts/**", TppRole.AISP)
-            .linkTppRolePatterns("/v1/accounts/**", TppRole.AISP)
-            .linkTppRolePatterns("/api/v1/consents/**", TppRole.AISP)
-            .linkTppRolePatterns("/v1/consents/**", TppRole.AISP)
-            .linkTppRolePatterns("/api/v1/bulk-payments/**", TppRole.PISP)
-            .linkTppRolePatterns("/v1/bulk-payments/**", TppRole.PISP)
-            .linkTppRolePatterns("/api/v1/payments/**", TppRole.PISP)
-            .linkTppRolePatterns("/v1/payments/**", TppRole.PISP)
-            .linkTppRolePatterns("/api/v1/periodic-payments/**", TppRole.PISP)
-            .linkTppRolePatterns("/v1/periodic-payments/**", TppRole.PISP)
-            .linkTppRolePatterns("/api/v1/funds-confirmations/**", TppRole.PIISP)
-            .linkTppRolePatterns("/v1/funds-confirmations/**", TppRole.PIISP)
+            .linkTppRolePatterns(ACCOUNTS_PATH, TppRole.AISP)
+            .linkTppRolePatterns(CONSENTS_PATH, TppRole.AISP)
+            .linkTppRolePatterns(BULK_PAYMENTS_PATH, TppRole.PISP)
+            .linkTppRolePatterns(SINGLE_PAYMENTS_PATH, TppRole.PISP)
+            .linkTppRolePatterns(PERIODIC_PAYMENTS_PATH, TppRole.PISP)
+            .linkTppRolePatterns(FUNDS_CONFIRMATION_PATH, TppRole.PIISP)
             .build();
     }
 
