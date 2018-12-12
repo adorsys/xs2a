@@ -31,6 +31,11 @@ import java.time.LocalDateTime;
 public class AspspPayment {
     @Id
     private String paymentId;
+    private AspspTransactionStatus paymentStatus;
+    private String paymentProduct;
+    private byte[] paymentData;
+    private PisPaymentType pisPaymentType;
+
     private String endToEndIdentification;
     private AspspAccountReference debtorAccount;
     @Deprecated // Since 1.2
@@ -56,8 +61,6 @@ public class AspspPayment {
     private String executionRule;
     private String frequency; // TODO consider using an enum similar to FrequencyCode based on the the "EventFrequency7Code" of ISO 20022
     private int dayOfExecution; //Day here max 31
-    private PisPaymentType pisPaymentType;
-    private AspspTransactionStatus paymentStatus;
     private String bulkId;
 
     public AspspPayment() {}

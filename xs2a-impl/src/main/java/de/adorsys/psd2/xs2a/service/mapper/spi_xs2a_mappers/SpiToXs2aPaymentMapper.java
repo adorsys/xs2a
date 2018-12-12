@@ -17,6 +17,8 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +35,14 @@ public class SpiToXs2aPaymentMapper {
         response.setPaymentId(spi.getPaymentId());
         response.setTransactionStatus(TransactionStatus.getByValue(spi.getTransactionStatus().getName()));
         return response;
+    }
+
+    public CommonPaymentInitiationResponse mapToCommonPaymentInitiateResponse(SpiPaymentInitiationResponse spiResponse, PaymentType type) {
+        CommonPaymentInitiationResponse commonPaymentInitiationResponse = new CommonPaymentInitiationResponse();
+        commonPaymentInitiationResponse.setPaymentType(type);
+        commonPaymentInitiationResponse.setPaymentId(spiResponse.getPaymentId());
+        commonPaymentInitiationResponse.setTransactionStatus(TransactionStatus.getByValue(spiResponse.getTransactionStatus().getName()));
+
+        return commonPaymentInitiationResponse;
     }
 }
