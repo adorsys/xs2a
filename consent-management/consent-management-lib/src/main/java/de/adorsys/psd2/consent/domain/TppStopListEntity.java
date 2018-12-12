@@ -56,4 +56,8 @@ public class TppStopListEntity {
         this.status = TppStatus.ENABLED;
         this.blockingExpirationTimestamp = null;
     }
+
+    public boolean isBlocked() {
+        return status == TppStatus.BLOCKED;
+    }
 }

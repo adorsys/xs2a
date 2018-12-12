@@ -29,7 +29,7 @@ import java.time.Duration;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/tpp/stop-list")
-@Api(value = "aspsp-api/v1/tpp/stop-list", tags = "TPP Stop List", description = "Provides access to the consent management system TPP Stop List")
+@Api(value = "aspsp-api/v1/tpp/stop-list", tags = "ASPSP TPP Stop List", description = "Provides access to the consent management system TPP Stop List")
 public class CmsAspspStopListController {
     private final CmsAspspTppService cmsAspspTppService;
 

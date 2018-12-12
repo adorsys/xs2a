@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.service;
+package de.adorsys.psd2.xs2a.core.tpp;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
+import lombok.Value;
 
-public interface TppStopListService {
-
-    /**
-     * Checks if TPP is blocked.
-     *
-     * @param tppUniqueParams information about particular TPP from TPP Certificate
-     * @return <code>true</code> if TPP is found and has status BLOCKED, <code>false</code> if TPP is not found or its status is not BLOCKED
-     */
-    boolean checkIfTppBlocked(TppUniqueParamsHolder tppUniqueParams);
+@Value
+public class TppUniqueParamsHolder {
+    private String authorisationNumber;
+    private String authorityId;
 }
