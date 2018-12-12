@@ -20,7 +20,7 @@ Spring Boot dependencies were removed from Xs2a library. Now we use the followin
 * spring-web
 * spring-context
 
-## New Java Interface for getting and revoking PIIS consents for online-banking
+## New Java Interface CmsPsuPiisService in consent-psu-api module for getting and revoking PIIS consents for online-banking
 | Context                    | Method | Endpoint                                             | Description                                                                |
 |----------------------------|--------|------------------------------------------------------|----------------------------------------------------------------------------|
 | Gets list of PIIS consents | GET    | psu-api/v1/piis/consents                             | Returns a list of PIIS Consent objects by PSU ID                           |

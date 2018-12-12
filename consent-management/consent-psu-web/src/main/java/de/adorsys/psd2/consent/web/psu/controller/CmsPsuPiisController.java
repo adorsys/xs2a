@@ -59,8 +59,7 @@ public class CmsPsuPiisController {
     @GetMapping
     @ApiOperation(value = "Returns a list of PIIS Consent objects by PSU ID")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(code = 200, message = "OK")})
     public ResponseEntity<List<PiisConsent>> getConsentsForPsu(
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding PIIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,

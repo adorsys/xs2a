@@ -80,6 +80,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     private boolean revokeConsent(PiisConsentEntity consent) {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
-        return piisConsentRepository.save(consent) != null;
+        piisConsentRepository.save(consent);
+        return true;
     }
 }
