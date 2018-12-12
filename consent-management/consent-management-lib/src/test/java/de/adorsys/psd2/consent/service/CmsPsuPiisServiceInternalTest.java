@@ -80,49 +80,49 @@ public class CmsPsuPiisServiceInternalTest {
 
     @Test
     public void getConsent_success() {
+        // Given
         // When
-        // Then
         Optional<PiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID);
-        // Assert
+        // Then
         assertTrue(consent.isPresent());
         assertEquals(consent.get(), piisConsent);
     }
 
     @Test
     public void getConsent_fail() {
+        // Given
         // When
-        // Then
         Optional<PiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID_NOT_EXIST);
-        // Assert
+        // Then
         assertFalse(consent.isPresent());
     }
 
     @Test
     public void getConsentsForPsu_success() {
+        // Given
         // When
-        // Then
         List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData);
-        // Assert
+        // Then
         assertFalse(consents.isEmpty());
         assertEquals(consents.size(), 1);
     }
 
     @Test
     public void getConsentsForPsu_fail() {
+        // Given
         // When
-        // Then
         List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdDataNotExist);
-        // Assert
+        // Then
         assertTrue(consents.isEmpty());
     }
 
     @Test
     public void revokeConsent_success() {
-        // When
+        // Given
         ArgumentCaptor<PiisConsentEntity> argumentCaptor = ArgumentCaptor.forClass(PiisConsentEntity.class);
-        // Then
+        // When
         boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID);
-        // Assert
+        // Then
         assertThat(revokeConsent).isTrue();
         verify(piisConsentRepository).save(argumentCaptor.capture());
         assertThat(argumentCaptor.getValue().getConsentStatus()).isEqualTo(ConsentStatus.REVOKED_BY_PSU);
@@ -130,19 +130,19 @@ public class CmsPsuPiisServiceInternalTest {
 
     @Test
     public void revokeConsent_fail_wrongPsu() {
+        // Given
         // When
-        // Then
         boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdDataNotExist, EXTERNAL_CONSENT_ID);
-        // Assert
+        // Then
         assertThat(revokeConsent).isFalse();
     }
 
     @Test
     public void revokeConsent_fail_statusFinalised() {
+        // Given
         // When
-        // Then
         boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID_FINALISED);
-        // Assert
+        // Then
         assertThat(revokeConsent).isFalse();
     }
 
