@@ -23,11 +23,11 @@ import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPaymentInfo;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.exception.RestException;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
@@ -54,7 +54,7 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiPaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData initialAspspConsentData) {
+    public SpiResponse<SpiPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData spiContextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
             AspspPaymentInfo request = spiPaymentInfoMapper.mapToAspspPayment(payment, SpiTransactionStatus.RCVD);
 
@@ -81,7 +81,7 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiPaymentInfo> getPaymentById(@NotNull SpiPsuData psuData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiPaymentInfo> getPaymentById(@NotNull SpiContextData spiContextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
         try {
 
             ResponseEntity<AspspPaymentInfo> aspspResponse = aspspRestTemplate.getForEntity(aspspRemoteUrls.getCommonPaymentById(), AspspPaymentInfo.class, payment.getPaymentId());
@@ -111,7 +111,7 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiContextData spiContextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
         try {
             ResponseEntity<AspspTransactionStatus> aspspResponse = aspspRestTemplate.getForEntity(aspspRemoteUrls.getCommonPaymentStatus(), AspspTransactionStatus.class, payment.getPaymentId());
             SpiTransactionStatus status = spiPaymentMapper.mapToSpiTransactionStatus(aspspResponse.getBody());
@@ -135,7 +135,7 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiContextData spiContextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
         AspspPaymentInfo request = spiPaymentInfoMapper.mapToAspspPayment(payment, SpiTransactionStatus.ACCP);
 
         try {
@@ -160,7 +160,7 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiContextData spiContextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
         try {
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
 

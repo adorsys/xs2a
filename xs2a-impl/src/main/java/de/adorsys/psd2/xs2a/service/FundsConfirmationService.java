@@ -29,15 +29,15 @@ import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.PiisConsentValidationService;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.AllArgsConstructor;
@@ -59,7 +59,7 @@ public class FundsConfirmationService {
     private final AspspProfileServiceWrapper profileService;
     private final FundsConfirmationSpi fundsConfirmationSpi;
     private final FundsConfirmationConsentDataService fundsConfirmationConsentDataService;
-    private final Xs2aToSpiPsuDataMapper psuDataMapper;
+    private final SpiContextDataProvider spiContextDataProvider;
     private final Xs2aToSpiFundsConfirmationRequestMapper xs2aToSpiFundsConfirmationRequestMapper;
     private final SpiToXs2aFundsConfirmationMapper spiToXs2aFundsConfirmationMapper;
     private final PiisConsentValidationService piisConsentValidationService;
@@ -126,10 +126,10 @@ public class FundsConfirmationService {
                                                      @NotNull FundsConfirmationRequest request,
                                                      @NotNull AspspConsentData aspspConsentData) {
         SpiFundsConfirmationRequest spiRequest = xs2aToSpiFundsConfirmationRequestMapper.mapToSpiFundsConfirmationRequest(request);
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuIdData);
+        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuIdData);
 
         SpiResponse<SpiFundsConfirmationResponse> fundsSufficientCheck = fundsConfirmationSpi.performFundsSufficientCheck(
-            spiPsuData,
+            spiContextData,
             consent,
             spiRequest,
             aspspConsentData

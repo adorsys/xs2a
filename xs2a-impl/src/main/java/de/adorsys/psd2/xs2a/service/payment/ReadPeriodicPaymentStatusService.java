@@ -18,9 +18,9 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
@@ -36,11 +36,11 @@ public class ReadPeriodicPaymentStatusService implements ReadPaymentStatusServic
     private final PeriodicPaymentSpi periodicPaymentSpi;
 
     @Override
-    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiPsuData spiPsuData, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
         Optional<SpiPeriodicPayment> spiPeriodicPaymentOptional = spiPaymentFactory.createSpiPeriodicPayment(pisPayment, paymentProduct);
 
         return spiPeriodicPaymentOptional
-                   .map(spiPeriodicPayment -> periodicPaymentSpi.getPaymentStatusById(spiPsuData, spiPeriodicPayment, aspspConsentData))
+                   .map(spiPeriodicPayment -> periodicPaymentSpi.getPaymentStatusById(spiContextData, spiPeriodicPayment, aspspConsentData))
                    .orElseGet(() -> SpiResponse.<SpiTransactionStatus>builder()
                                         .message("Payment not found")
                                         .fail(SpiResponseStatus.LOGICAL_FAILURE));

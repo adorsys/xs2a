@@ -18,16 +18,17 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
@@ -60,6 +61,8 @@ public class CancelPaymentServiceTest {
     private SpiToXs2aCancelPaymentMapper spiToXs2aCancelPaymentMapper;
     @Mock
     private PisConsentDataService pisConsentDataService;
+    @Mock
+    private SpiContextDataProvider spiContextDataProvider;
 
     @Before
     public void setUp() {
@@ -148,8 +151,8 @@ public class CancelPaymentServiceTest {
         return response;
     }
 
-    private SpiPsuData getSpiPsuData() {
-        return new SpiPsuData("", "", "", "");
+    private PsuIdData getSpiPsuData() {
+        return new PsuIdData("", "", "", "");
     }
 
     private SpiPayment getSpiPayment(String paymentId) {

@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.exception.RestException;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
@@ -62,7 +63,7 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password, SpiPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData spiContextData, @NotNull SpiPsuData psuData, String password, SpiPayment payment, @NotNull AspspConsentData aspspConsentData) {
         Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuData.getPsuId(), password);
         SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
                                                             .orElse(FAILURE);
@@ -78,10 +79,10 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, SpiPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiContextData spiContextData, SpiPayment payment, @NotNull AspspConsentData aspspConsentData) {
         try {
             ResponseEntity<List<SpiAuthenticationObject>> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAuthenticationObject>>() {
-            }, psuData.getPsuId());
+            }, spiContextData.getPsuData().getPsuId());
 
             List<SpiAuthenticationObject> spiScaMethods = Optional.ofNullable(aspspResponse.getBody())
                                                               .orElseGet(Collections::emptyList);
@@ -105,9 +106,9 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiPsuData psuData, @NotNull String authenticationMethodId, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData spiContextData, @NotNull String authenticationMethodId, @NotNull SpiPayment payment, @NotNull AspspConsentData aspspConsentData) {
         try {
-            aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuData.getPsuId(), authenticationMethodId);
+            aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, spiContextData.getPsuData().getPsuId(), authenticationMethodId);
 
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
