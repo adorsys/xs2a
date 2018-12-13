@@ -32,3 +32,6 @@ Spring Boot dependencies were removed from Xs2a library. Now we use the followin
 Now for SPI developer instead of `SpiPsuData` an `SpiContextData` is provided. This object contains not only `SpiPsuData` but also `TppInfo` as well - an information about TPP extracted from its certificate.
 
 In order to update to new interfaces version SPI developer shall change places where `spiPsuData` were used with `spiContextData.getPsuData()` call.
+
+## Removed obsolete consent-psu-client
+consent-psu-client module is not actuall and not supported anymore, therefore removed
