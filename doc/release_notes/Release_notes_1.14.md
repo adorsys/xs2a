@@ -32,3 +32,9 @@ Spring Boot dependencies were removed from Xs2a library. Now we use the followin
 Now for SPI developer instead of `SpiPsuData` an `SpiContextData` is provided. This object contains not only `SpiPsuData` but also `TppInfo` as well - an information about TPP extracted from its certificate.
 
 In order to update to new interfaces version SPI developer shall change places where `spiPsuData` were used with `spiContextData.getPsuData()` call.
+
+## Added possibility to config SCA Redirect links in ASPSP-profile using redirectId parameter 
+Now ASPSP Developer is able to config aisRedirectUrlToAspsp and pisRedirectUrlToAspsp with custom url pattern and redirectId parameter. For example:
+* http://localhost:4200/pis/{redirectId}
+* http://localhost:4200/pis?redirectId={redirectId}
+

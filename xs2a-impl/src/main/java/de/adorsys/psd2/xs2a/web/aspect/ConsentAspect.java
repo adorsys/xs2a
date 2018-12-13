@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
@@ -78,15 +79,23 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
             if (authorisationMethodService.isExplicitMethod(explicitPreferred)) {
                 links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
             } else {
-                links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getAuthorizationId());
+                links.setScaRedirect(getScaRedirectLink(response.getAuthorizationId()));
                 links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", response.getConsentId(), response.getAuthorizationId()));
             }
             links.setStatus(buildPath("/v1/consents/{consentId}/status", response.getConsentId()));
         } else {
-            links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getConsentId());
+            links.setScaRedirect(getScaRedirectLink(response.getAuthorizationId()));
         }
 
         return links;
+    }
+
+    private String getScaRedirectLink(String authorizationId) {
+        return UriComponentsBuilder
+                   .newInstance()
+                   .path(aspspProfileService.getAisRedirectUrlToAspsp())
+                   .buildAndExpand(authorizationId)
+                   .toString();
     }
 
     private void buildLinkForEmbeddedScaApproach(CreateConsentResponse response, Links links, boolean explicitPreferred) {
