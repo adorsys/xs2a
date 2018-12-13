@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.DateTimeDeserializer;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.service.TppService;
@@ -34,7 +35,9 @@ import de.adorsys.psd2.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
+import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -67,6 +70,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Qualifier("xs2aCorsConfigProperties")
     private final CorsConfigurationProperties corsConfigurationProperties;
     private final TppService tppService;
+
+    // Field injection to prevent circular dependencies: WebConfig -> TppStopListService (remote approach) -> RestTemplate
+    @Autowired
+    private TppStopListService tppStopListService;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -117,6 +124,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new FundsConfirmationLoggingInterceptor(tppService)).addPathPatterns(FUNDS_CONFIRMATION_PATH);
         registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns(SIGNING_BASKETS_PATH);
+
+        registry.addInterceptor(new TppStopListInterceptor(tppService, tppStopListService, objectMapper()))
+            .addPathPatterns(ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH,
+                SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH,
+                PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH);
 
         registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()))
             .addPathPatterns(ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH,

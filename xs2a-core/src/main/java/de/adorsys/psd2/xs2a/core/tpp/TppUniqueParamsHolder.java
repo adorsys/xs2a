@@ -16,10 +16,17 @@
 
 package de.adorsys.psd2.xs2a.core.tpp;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
+@AllArgsConstructor
 @Value
 public class TppUniqueParamsHolder {
     private String authorisationNumber;
     private String authorityId;
+
+    public TppUniqueParamsHolder(TppInfo tppInfo) {
+        this.authorisationNumber = tppInfo.getAuthorisationNumber();
+        this.authorityId = tppInfo.getAuthorityId();
+    }
 }
