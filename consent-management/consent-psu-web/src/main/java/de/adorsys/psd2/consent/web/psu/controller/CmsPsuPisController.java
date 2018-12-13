@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "psu-api/v1/pis/consent")
-@Api(value = "psu-api/v1/pis/consent", tags = "PSU PIS, Consents", description = "Test controller for cms-psu-api providing access for PIS consents")
+@Api(value = "psu-api/v1/pis/consent", tags = "PSU PIS, Consents", description = "Controller for cms-psu-api providing access for PIS consents")
 public class CmsPsuPisController {
     private final CmsPsuPisService cmsPsuPisService;
 
