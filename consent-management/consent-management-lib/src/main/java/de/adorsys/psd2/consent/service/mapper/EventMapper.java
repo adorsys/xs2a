@@ -60,6 +60,7 @@ public class EventMapper {
         event.setPayload(payload);
         event.setEventOrigin(eventEntity.getEventOrigin());
         event.setEventType(eventEntity.getEventType());
+        event.setInstanceId(eventEntity.getInstanceId());
         return event;
     }
 }

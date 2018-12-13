@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.event.EventOrigin;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -28,41 +29,45 @@ public interface CmsAspspEventService {
     /**
      * Returns a list of Event objects, recorded in given time period
      *
-     * @param start First date of the period
-     * @param end   Last date of the period
+     * @param start      First date of the period
+     * @param end        Last date of the period
+     * @param instanceId The id of particular bank instance
      * @return List of Event objects, recorded in given time period
      */
-    List<Event> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end);
+    List<Event> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects, recorded in given time period and with the given consentId
      *
-     * @param start     First date of the period
-     * @param end       Last date of the period
-     * @param consentId Id of the consent
+     * @param start      First date of the period
+     * @param end        Last date of the period
+     * @param consentId  Id of the consent
+     * @param instanceId The id of particular bank instance
      * @return List of Event objects, recorded in given time period and with a given consentId
      */
-    List<Event> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId);
+    List<Event> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects, recorded in given time period and with the given paymentId
      *
-     * @param start     First date of the period
-     * @param end       Last date of the period
-     * @param paymentId Id of the payment
+     * @param start      First date of the period
+     * @param end        Last date of the period
+     * @param paymentId  Id of the payment
+     * @param instanceId The id of particular bank instance
      * @return List of Event objects, recorded in given time period and with a given paymentId
      */
-    List<Event> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId);
+    List<Event> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects of the specific type, recorded in given time period
      *
-     * @param start     First date of the period
-     * @param end       Last date of the period
-     * @param eventType The searched type of the events
+     * @param start      First date of the period
+     * @param end        Last date of the period
+     * @param eventType  The searched type of the events
+     * @param instanceId The id of particular bank instance
      * @return List of Event objects, recorded in given time period and of a specific type
      */
-    List<Event> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType);
+    List<Event> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId);
 
     /**
      * Returns a list of Event objects from a specific origin, recorded in given time period
@@ -70,7 +75,8 @@ public interface CmsAspspEventService {
      * @param start       First date of the period
      * @param end         Last date of the period
      * @param eventOrigin The searched origin of the events
+     * @param instanceId  The id of particular bank instance
      * @return List of Event objects, recorded in given time period and from a specific origin
      */
-    List<Event> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin);
+    List<Event> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId);
 }

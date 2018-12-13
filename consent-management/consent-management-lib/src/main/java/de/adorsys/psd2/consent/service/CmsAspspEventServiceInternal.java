@@ -25,11 +25,16 @@ import de.adorsys.psd2.xs2a.core.event.EventOrigin;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+
+import static de.adorsys.psd2.consent.repository.specification.EventSpecification.getEventsForPeriodAndConsentIdAndInstanceId;
+import static de.adorsys.psd2.consent.repository.specification.EventSpecification.getEventsForPeriodAndInstanceId;
+import static de.adorsys.psd2.consent.repository.specification.EventSpecification.getEventsForPeriodAndPaymentIdAndInstanceId;
 
 @Service
 @RequiredArgsConstructor
@@ -39,31 +44,33 @@ public class CmsAspspEventServiceInternal implements CmsAspspEventService {
     private final EventMapper eventMapper;
 
     @Override
-    public List<Event> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end) {
-        List<EventEntity> eventEntity = eventRepository.findByTimestampBetweenOrderByTimestampAsc(start, end);
+    public List<Event> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId) {
+        List<EventEntity> eventEntity = eventRepository.findAll(getEventsForPeriodAndInstanceId(start, end, instanceId));
         return eventMapper.mapToEventList(eventEntity);
     }
 
     @Override
-    public List<Event> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId) {
-        List<EventEntity> eventEntity = eventRepository.findByTimestampBetweenAndConsentIdOrderByTimestampAsc(start, end, consentId);
+    public List<Event> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId) {
+        List<EventEntity> eventEntity = eventRepository.findAll(getEventsForPeriodAndConsentIdAndInstanceId(start, end, consentId, instanceId));
         return eventMapper.mapToEventList(eventEntity);
     }
 
     @Override
-    public List<Event> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId) {
-        List<EventEntity> eventEntity = eventRepository.findByTimestampBetweenAndPaymentIdOrderByTimestampAsc(start, end, paymentId);
+    public List<Event> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId) {
+        List<EventEntity> eventEntity = eventRepository.findAll(getEventsForPeriodAndPaymentIdAndInstanceId(start, end, paymentId, instanceId));
         return eventMapper.mapToEventList(eventEntity);
     }
 
+    // TODO: create specification for this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/571
     @Override
-    public List<Event> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType) {
+    public List<Event> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId) {
         List<EventEntity> eventEntity = eventRepository.findByTimestampBetweenAndEventTypeOrderByTimestampAsc(start, end, eventType);
         return eventMapper.mapToEventList(eventEntity);
     }
 
+    // TODO: create specification for this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/571
     @Override
-    public List<Event> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin) {
+    public List<Event> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId) {
         List<EventEntity> eventEntity = eventRepository.findByTimestampBetweenAndEventOriginOrderByTimestampAsc(start, end, eventOrigin);
         return eventMapper.mapToEventList(eventEntity);
     }

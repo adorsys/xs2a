@@ -36,6 +36,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsAspspEventServiceInternalTest {
+    private static final String DEFAULT_BANK_INSTANCE_ID = "UNDEFINED";
+
     @InjectMocks
     private CmsAspspEventServiceInternal cmsAspspEventServiceInternal;
 
@@ -59,7 +61,7 @@ public class CmsAspspEventServiceInternalTest {
         Event expected = buildCmsEvent(between);
 
         // When
-        List<Event> events = cmsAspspEventServiceInternal.getEventsForPeriod(start, end);
+        List<Event> events = cmsAspspEventServiceInternal.getEventsForPeriod(start, end, DEFAULT_BANK_INSTANCE_ID);
 
         // Then
         assertThat(events.isEmpty()).isFalse();
@@ -77,7 +79,7 @@ public class CmsAspspEventServiceInternalTest {
             .thenReturn(Collections.emptyList());
 
         // When
-        List<Event> events = cmsAspspEventServiceInternal.getEventsForPeriod(start, end);
+        List<Event> events = cmsAspspEventServiceInternal.getEventsForPeriod(start, end, DEFAULT_BANK_INSTANCE_ID);
 
         // Then
         assertThat(events.isEmpty()).isTrue();

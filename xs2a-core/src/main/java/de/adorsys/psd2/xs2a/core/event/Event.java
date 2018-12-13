@@ -57,4 +57,9 @@ public class Event {
      * Indicates what happened in this event.
      */
     private EventType eventType;
+
+    /**
+     * The id of particular bank instance.
+     */
+    private String instanceId;
 }
