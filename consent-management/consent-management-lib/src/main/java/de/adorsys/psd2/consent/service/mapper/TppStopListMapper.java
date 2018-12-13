@@ -25,20 +25,6 @@ import java.util.Optional;
 @Component
 public class TppStopListMapper {
 
-    public TppStopListEntity mapToTppStopListEntity(TppStopListRecord tppStopListRecord) {
-        return Optional.ofNullable(tppStopListRecord)
-                   .map(record -> {
-                           TppStopListEntity entity = new TppStopListEntity();
-                           entity.setTppAuthorisationNumber(record.getTppAuthorisationNumber());
-                           entity.setNationalAuthorityId(record.getNationalAuthorityId());
-                           entity.setStatus(record.getStatus());
-                           entity.setBlockingExpirationTimestamp(record.getBlockingExpirationTimestamp());
-                           return entity;
-                       }
-                   )
-                   .orElse(null);
-    }
-
     public TppStopListRecord mapToTppStopListRecord(TppStopListEntity tppStopListEntity) {
         return Optional.ofNullable(tppStopListEntity)
                    .map(entity -> {
