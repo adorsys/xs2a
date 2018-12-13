@@ -16,10 +16,11 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -37,36 +38,37 @@ interface AuthorisationSpi<T> {
     /**
      * Authorises psu and returns current authorisation status. Used only with embedded SCA Approach.
      *
+     * @param contextData      holder of call's context data (e.g. about PSU and TPP)
      * @param psuData          ASPSP identifier(s) of the psu
      * @param password         Psu's password
-     * @param businessObject   generic payment object
+     * @param businessObject   generic consent/payment object
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return success or failure authorization status
      */
-    SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password, T businessObject, AspspConsentData aspspConsentData);
+    SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuData, String password, T businessObject, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Returns a list of SCA methods for PSU by its login. Used only with embedded SCA Approach.
      *
-     * @param psuData          ASPSP identifier(s) of the psu
-     * @param businessObject   generic payment object
+     * @param contextData      holder of call's context data (e.g. about PSU and TPP)
+     * @param businessObject   generic consent/payment object
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of SCA methods applicable for specified PSU
      */
-    SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, T businessObject, AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiAuthenticationObject>> requestAvailableScaMethods(@NotNull SpiContextData contextData, T businessObject, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Performs strong customer authorisation depending on selected SCA method. Used only with embedded SCA Approach.
      *
-     * @param psuData                ASPSP identifier(s) of the psu
+     * @param contextData            holder of call's context data (e.g. about PSU and TPP)
      * @param authenticationMethodId Id of a chosen sca method
-     * @param businessObject         generic payment object
+     * @param businessObject         generic consent/payment object
      * @param aspspConsentData       Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                               May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Return a positive or negative response as part of SpiResponse
      */
     @NotNull
-    SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiPsuData psuData, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData);
 }

@@ -22,12 +22,12 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import lombok.RequiredArgsConstructor;
@@ -39,16 +39,16 @@ public class RedirectAndEmbeddedCommonPaymentService implements ScaCommonPayment
 
     private final CommonPaymentSpi commonPaymentSpi;
     private final SpiToXs2aPaymentMapper spiToXs2aPaymentMapper;
-    private final Xs2aToSpiPsuDataMapper psuDataMapper;
+    private final SpiContextDataProvider spiContextDataProvider;
     private final PisConsentDataService pisConsentDataService;
     private final SpiErrorMapper spiErrorMapper;
 
     @Override
     public CommonPaymentInitiationResponse createPayment(CommonPayment payment, TppInfo tppInfo, String paymentProduct, Xs2aPisConsent pisConsent) {
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(pisConsent.getConsentId());
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(pisConsent.getPsuData());
+        SpiContextData spiContextData = spiContextDataProvider.provide(pisConsent.getPsuData(), tppInfo);
 
-        SpiResponse<SpiPaymentInitiationResponse> spiResponse = commonPaymentSpi.initiatePayment(spiPsuData, mapToSpiPaymentRequest(payment, paymentProduct), aspspConsentData);
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(pisConsent.getConsentId());
+        SpiResponse<SpiPaymentInitiationResponse> spiResponse = commonPaymentSpi.initiatePayment(spiContextData, mapToSpiPaymentRequest(payment, paymentProduct), aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
