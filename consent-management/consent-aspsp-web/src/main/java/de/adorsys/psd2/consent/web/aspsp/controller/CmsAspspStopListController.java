@@ -43,7 +43,7 @@ public class CmsAspspStopListController {
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId) {
-        return cmsAspspTppService.getTppBlackListRecord(tppAuthorisationNumber, nationalAuthorityId)
+        return cmsAspspTppService.getTppStopListRecord(tppAuthorisationNumber, nationalAuthorityId)
                    .map(record -> new ResponseEntity<>(record, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

@@ -26,14 +26,14 @@ import java.util.Optional;
 public interface CmsAspspTppService {
 
     /**
-     * Loads TPP black list record by TPP ID and National competent authority ID
+     * Loads TPP stop list record by TPP ID and National competent authority ID
      *
      * @param tppAuthorisationNumber ID of TPP to load
      * @param nationalAuthorityId    National competent authority id
      * @return TPP Stop list object object if found in DB
      */
     @NotNull
-    Optional<TppStopListRecord> getTppBlackListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
+    Optional<TppStopListRecord> getTppStopListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
 
     /**
      * Blocks requests from TPP by given TPP ID and National competent authority ID.
