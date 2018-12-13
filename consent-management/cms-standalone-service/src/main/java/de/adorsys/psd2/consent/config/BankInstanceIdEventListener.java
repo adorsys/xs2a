@@ -37,7 +37,7 @@ public class BankInstanceIdEventListener implements PreInsertEventListener {
     private String bankInstanceId;
 
     @PostConstruct
-    public void initInitInstanceId() {
+    public void initInstanceId() {
         bankInstanceId = StringUtils.isBlank(bankInstanceId)
                              ? DEFAULT_BANK_INSTANCE_ID
                              : bankInstanceId;
