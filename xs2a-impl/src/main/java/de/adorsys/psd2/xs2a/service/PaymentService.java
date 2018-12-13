@@ -34,18 +34,18 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisConsentService;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -79,7 +79,6 @@ public class PaymentService {
     private final CreatePeriodicPaymentService createPeriodicPaymentService;
     private final CreateBulkPaymentService createBulkPaymentService;
     private final Xs2aPisConsentMapper xs2aPisConsentMapper;
-    private final Xs2aToSpiPsuDataMapper psuDataMapper;
     private final CommonPaymentSpi commonPaymentSpi;
     private final SpiToXs2aTransactionalStatusMapper spiToXs2aTransactionalStatus;
     private final AspspProfileServiceWrapper profileService;
@@ -90,6 +89,7 @@ public class PaymentService {
     private final ReadCommonPaymentService readCommonPaymentService;
     private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
+    private final SpiContextDataProvider spiContextDataProvider;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -207,14 +207,14 @@ public class PaymentService {
 
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         PisConsentResponse pisConsent = pisConsentOptional.get();
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
+        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
         SpiResponse<SpiTransactionStatus> spiResponse;
 
         // TODO should be refactored https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
         if (pisConsent.getPaymentInfo() != null) {
             CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisConsent.getPaymentInfo());
             SpiPaymentInfo request = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
-            spiResponse = commonPaymentSpi.getPaymentStatusById(spiPsuData, request, aspspConsentData);
+            spiResponse = commonPaymentSpi.getPaymentStatusById(spiContextData, request, aspspConsentData);
         } else {
             PisPayment pisPayment = getPisPaymentFromConsent(pisConsent);
 
@@ -225,7 +225,7 @@ public class PaymentService {
             }
 
             ReadPaymentStatusService readPaymentStatusService = readPaymentStatusFactory.getService(ReadPaymentStatusFactory.SERVICE_PREFIX + paymentType.getValue());
-            spiResponse = readPaymentStatusService.readPaymentStatus(pisPayment, pisConsent.getPaymentProduct(), spiPsuData, aspspConsentData);
+            spiResponse = readPaymentStatusService.readPaymentStatus(pisPayment, pisConsent.getPaymentProduct(), spiContextData, aspspConsentData);
         }
 
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -275,7 +275,7 @@ public class PaymentService {
         }
 
         PisConsentResponse pisConsent = pisConsentOptional.get();
-        SpiPayment spiPayment = null;
+        SpiPayment spiPayment;
 
         if (pisConsent.getPaymentInfo() != null) {
             CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisConsent.getPaymentInfo());
@@ -309,12 +309,11 @@ public class PaymentService {
         }
 
         PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
 
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
-            return cancelPaymentService.initiatePaymentCancellation(spiPsuData, spiPayment);
+            return cancelPaymentService.initiatePaymentCancellation(psuData, spiPayment);
         } else {
-            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(spiPsuData, spiPayment);
+            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(psuData, spiPayment);
             pisConsentService.revokeConsentById(paymentId);
             return cancellationResponse;
         }
