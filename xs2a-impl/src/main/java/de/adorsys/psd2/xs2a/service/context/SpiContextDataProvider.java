@@ -32,9 +32,8 @@ public class SpiContextDataProvider {
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
 
     public SpiContextData provideWithPsuIdData(PsuIdData psuIdData) {
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuIdData);
         TppInfo tppInfo = tppService.getTppInfo();
-        return new SpiContextData(spiPsuData, tppInfo);
+        return provide(psuIdData, tppInfo);
     }
 
     public SpiContextData provide(PsuIdData psuIdData, TppInfo tppInfo) {

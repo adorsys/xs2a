@@ -21,6 +21,9 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This object represents known Context of call, provided by this or previous requests in scope of one process (e.g. one payment or one AIS consent)
+ */
 @Value
 @NotNull
 public class SpiContextData {

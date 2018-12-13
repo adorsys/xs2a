@@ -89,9 +89,10 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData spiContextData, @NotNull SpiPsuData psuData, String password, SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData spiContextData, @NotNull SpiPsuData psuLoginData, String password, SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
-            Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuData.getPsuId(), password);
+            Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(
+                psuLoginData.getPsuId(), password);
             SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
                                                                 .orElse(FAILURE);
             byte[] payload = accessToken.flatMap(jsonConverter::toJson)
