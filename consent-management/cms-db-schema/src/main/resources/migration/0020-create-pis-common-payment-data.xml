@@ -49,7 +49,6 @@
             <column name="payment" type="${blob.type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="psu_id" type="BIGINT"/>
             <column name="tpp_info_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -60,11 +59,6 @@
                                  constraintName="fk_com_payment_pis_consent" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="pis_consent"/>
-
-        <addForeignKeyConstraint baseColumnNames="psu_id" baseTableName="pis_common_payment"
-                                 constraintName="fk_com_payment_psu_data" deferrable="false"
-                                 initiallyDeferred="false"
-                                 referencedColumnNames="id" referencedTableName="psu_data"/>
 
         <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="pis_common_payment"
                                  constraintName="fk_com_payment_tpp_info" deferrable="false"
@@ -86,4 +80,27 @@
                                  referencedColumnNames="id" referencedTableName="pis_common_payment"/>
     </changeSet>
 
+    <changeSet author="ryeu@adorsys.com.ua" id="2018-12-12-1">
+        <comment>Add many to one relationship with pis_common_payment and psu_data</comment>
+
+        <createTable tableName="pis_common_payment_psu_data">
+            <column name="psu_data_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="pis_common_payment_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="pis_common_payment_id" baseTableName="pis_common_payment_psu_data"
+                                 constraintName="fk_lnk_psu_data_com_paym" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="pis_common_payment"/>
+
+
+        <addForeignKeyConstraint baseColumnNames="psu_data_id" baseTableName="pis_common_payment_psu_data"
+                                 constraintName="fk_lnk_com_paym_psu_data" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="psu_data"/>
+    </changeSet>
 </databaseChangeLog>
