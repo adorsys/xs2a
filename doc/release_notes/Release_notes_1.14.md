@@ -28,6 +28,11 @@ Spring Boot dependencies were removed from Xs2a library. Now we use the followin
 * spring-web
 * spring-context
 
+## Provided TppInfo as part of SpiContextData on SPI-API level
+Now for SPI developer instead of `SpiPsuData` an `SpiContextData` is provided. This object contains not only `SpiPsuData` but also `TppInfo` as well - an information about TPP extracted from its certificate.
+
+In order to update to new interfaces version SPI developer shall change places where `spiPsuData` were used with `spiContextData.getPsuData()` call.
+
 ## Changes to CmsPsuAisService and CmsPsuPisService
 Now methods updatePsuDataInConsent and updatePsuInPayment take redirectId as an argument instead of consentId and paymentId accordingly.
 Also ulr paths in CmsPsuAisConsentController and CmsPsuPisController were changed. Look at the table below.

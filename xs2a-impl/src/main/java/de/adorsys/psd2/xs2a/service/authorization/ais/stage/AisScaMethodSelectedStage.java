@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
@@ -38,6 +39,7 @@ import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLi
 
 @Service("AIS_PSUAUTHENTICATED")
 public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
+    private final SpiContextDataProvider spiContextDataProvider;
 
     public AisScaMethodSelectedStage(Xs2aAisConsentService aisConsentService,
                                      AisConsentDataService aisConsentDataService,
@@ -45,8 +47,10 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
                                      Xs2aAisConsentMapper aisConsentMapper,
                                      SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper,
                                      Xs2aToSpiPsuDataMapper psuDataMapper,
-                                     SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper) {
+                                     SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
+                                     SpiContextDataProvider spiContextDataProvider) {
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper);
+        this.spiContextDataProvider = spiContextDataProvider;
     }
 
     /**
@@ -63,7 +67,7 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
         String authenticationMethodId = request.getAuthenticationMethodId();
 
-        SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(psuDataMapper.mapToSpiPsuData(request.getPsuData()), authenticationMethodId, spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(spiContextDataProvider.provideWithPsuIdData(request.getPsuData()), authenticationMethodId, spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {

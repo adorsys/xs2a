@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.payment;
+package de.adorsys.psd2.xs2a.spi.domain;
 
-import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class ReadPaymentService<T> {
-    public abstract T getPayment(PisPayment pisPayment, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData);
+/**
+ * This object represents known Context of call, provided by this or previous requests in scope of one process (e.g. one payment or one AIS consent)
+ */
+@Value
+@NotNull
+public class SpiContextData {
+    private SpiPsuData psuData;
+    private TppInfo tppInfo;
 }

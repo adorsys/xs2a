@@ -17,10 +17,10 @@
 package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import org.jetbrains.annotations.NotNull;
@@ -31,19 +31,19 @@ import org.jetbrains.annotations.NotNull;
 public interface CommonPaymentSpi extends PaymentSpi<SpiPaymentInfo, SpiPaymentInitiationResponse> {
     @Override
     @NotNull
-    default SpiResponse<SpiPaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData initialAspspConsentData) {
+    default SpiResponse<SpiPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData contextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData initialAspspConsentData) {
         return SpiResponse.<SpiPaymentInitiationResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     @NotNull
-    default SpiResponse<SpiPaymentInfo> getPaymentById(@NotNull SpiPsuData psuData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiPaymentInfo> getPaymentById(@NotNull SpiContextData contextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
         return SpiResponse.<SpiPaymentInfo>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     @NotNull
-    default SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiContextData contextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
         return SpiResponse.<SpiTransactionStatus>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }

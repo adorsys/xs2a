@@ -62,7 +62,7 @@ public class PisCommonPaymentData {
     @ApiModelProperty(value = "All data about the payment", required = true)
     private byte[] payment;
 
-    @OneToMany(mappedBy = "psuId", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "List of PSU", required = true)
     private List<PsuData> psuData = new ArrayList<>();
 
