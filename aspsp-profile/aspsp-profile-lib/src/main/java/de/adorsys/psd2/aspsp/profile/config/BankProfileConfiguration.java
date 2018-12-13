@@ -25,17 +25,23 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 
 @Slf4j
 @Configuration
 public class BankProfileConfiguration {
 
-    @Value("${bank_profile.path:classpath:/bank_profile.yml}")
+    private static final String DEFAULT_BANK_PROFILE = "classpath:bank_profile.yml";
+
+    @Value("${bank_profile.path:" + DEFAULT_BANK_PROFILE + "}")
     private URL bankProfileUrl;
 
     @Bean
     public ProfileConfiguration profileConfiguration() throws IOException {
-        return new Yaml(getDumperOptions()).loadAs(bankProfileUrl.openStream(), ProfileConfiguration.class);
+        URL url = Optional.ofNullable(bankProfileUrl)
+            .orElse(new URL(DEFAULT_BANK_PROFILE));
+
+        return new Yaml(getDumperOptions()).loadAs(url.openStream(), ProfileConfiguration.class);
     }
 
     private DumperOptions getDumperOptions() {
@@ -43,6 +49,5 @@ public class BankProfileConfiguration {
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         return options;
     }
-
 
 }
