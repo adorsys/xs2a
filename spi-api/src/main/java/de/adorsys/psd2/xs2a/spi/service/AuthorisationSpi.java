@@ -39,14 +39,14 @@ interface AuthorisationSpi<T> {
      * Authorises psu and returns current authorisation status. Used only with embedded SCA Approach.
      *
      * @param contextData      holder of call's context data (e.g. about PSU and TPP)
-     * @param psuData          ASPSP identifier(s) of the psu
+     * @param psuLoginData     ASPSP identifier(s) of the psu, provided by TPP within this request.
      * @param password         Psu's password
      * @param businessObject   generic consent/payment object
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return success or failure authorization status
      */
-    SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuData, String password, T businessObject, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, T businessObject, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Returns a list of SCA methods for PSU by its login. Used only with embedded SCA Approach.
