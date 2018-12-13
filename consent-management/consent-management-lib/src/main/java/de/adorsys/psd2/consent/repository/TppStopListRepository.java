@@ -17,12 +17,16 @@
 package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
+import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TppStopListRepository extends CrudRepository<TppStopListEntity, Long> {
 
     Optional<TppStopListEntity> findByTppAuthorisationNumberAndNationalAuthorityId(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
+
+    List<TppStopListEntity> findAllByStatusAndBlockingExpirationTimestampIsNotNull(@NotNull TppStatus tppStatus);
 }

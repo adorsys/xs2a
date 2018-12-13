@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Data
 @Entity(name = "tpp_stop_list")
@@ -59,5 +60,11 @@ public class TppStopListEntity {
 
     public boolean isBlocked() {
         return status == TppStatus.BLOCKED;
+    }
+
+    public boolean isBlockingExpired() {
+        return Optional.ofNullable(blockingExpirationTimestamp)
+                   .map(timestamp -> timestamp.isBefore(OffsetDateTime.now()))
+                   .orElse(false);
     }
 }
