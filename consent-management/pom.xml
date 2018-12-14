@@ -40,7 +40,6 @@
         <module>consent-aspsp-api</module>
 
         <!-- Remote clients -->
-        <module>consent-psu-client</module>
         <module>consent-xs2a-client</module>
 
         <!-- Main implementation -->

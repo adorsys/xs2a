@@ -33,8 +33,10 @@ Now for SPI developer instead of `SpiPsuData` an `SpiContextData` is provided. T
 
 In order to update to new interfaces version SPI developer shall change places where `spiPsuData` were used with `spiContextData.getPsuData()` call.
 
+## Removed obsolete consent-psu-client
+consent-psu-client module is not actuall and not supported anymore, therefore removed
+
 ## Added possibility to config SCA Redirect links in ASPSP-profile using redirectId parameter 
 Now ASPSP Developer is able to config aisRedirectUrlToAspsp and pisRedirectUrlToAspsp with custom url pattern and redirectId parameter. For example:
 * http://localhost:4200/pis/{redirectId}
 * http://localhost:4200/pis?redirectId={redirectId}
-
