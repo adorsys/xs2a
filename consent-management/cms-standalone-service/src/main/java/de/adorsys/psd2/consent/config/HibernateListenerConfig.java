@@ -21,19 +21,19 @@ import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
-@Component
+@Configuration
 @RequiredArgsConstructor
-public class HibernateListenerRegistrar {
+public class HibernateListenerConfig {
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
-    private final BankInstanceIdEventListener bankInstanceIdEventListener;
+    private final ServiceInstanceIdEventListener serviceInstanceIdEventListener;
 
     @PostConstruct
     public void registerListeners() {
@@ -45,7 +45,7 @@ public class HibernateListenerRegistrar {
                                                        .getService(EventListenerRegistry.class);
 
             registry.getEventListenerGroup(EventType.PRE_INSERT)
-                .appendListener(bankInstanceIdEventListener);
+                .appendListener(serviceInstanceIdEventListener);
         }
     }
 }

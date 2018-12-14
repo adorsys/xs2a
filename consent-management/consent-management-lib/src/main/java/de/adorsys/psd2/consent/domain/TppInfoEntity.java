@@ -26,7 +26,7 @@ import java.util.List;
 @Data
 @Entity(name = "tpp_info")
 @NoArgsConstructor
-public class TppInfoEntity extends BaseEntity {
+public class TppInfoEntity extends InstanceDependableEntity {
     @Id
     @Column(name = "tpp_info_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpp_info_generator")

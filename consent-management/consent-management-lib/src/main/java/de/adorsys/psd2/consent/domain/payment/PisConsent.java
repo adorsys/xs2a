@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.domain.payment;
 
 import de.adorsys.psd2.consent.api.ConsentType;
-import de.adorsys.psd2.consent.domain.BaseEntity;
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -35,7 +35,7 @@ import java.util.List;
 @Entity(name = "pis_consent")
 @ApiModel(description = "Pis consent entity", value = "PisConsent")
 @NoArgsConstructor
-public class PisConsent extends BaseEntity {
+public class PisConsent extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_consent_generator")
     @SequenceGenerator(name = "pis_consent_generator", sequenceName = "pis_consent_id_seq")

@@ -31,7 +31,7 @@ import javax.persistence.Lob;
 @Entity(name = "aspsp_consent_data")
 @ApiModel(description = "Aspsp consent data", value = "AspspConsentData")
 @NoArgsConstructor
-public class AspspConsentDataEntity extends BaseEntity {
+public class AspspConsentDataEntity extends InstanceDependableEntity {
     @Id
     @Column(name = "consent_id")
     private String consentId;

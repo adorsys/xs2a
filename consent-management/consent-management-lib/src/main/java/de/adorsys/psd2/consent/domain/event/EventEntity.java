@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.event;
 
-import de.adorsys.psd2.consent.domain.BaseEntity;
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.xs2a.core.event.EventOrigin;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import lombok.Data;
@@ -26,7 +26,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @Entity(name = "event")
-public class EventEntity extends BaseEntity {
+public class EventEntity extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_generator")
     @SequenceGenerator(name = "event_generator", sequenceName = "event_id_seq")

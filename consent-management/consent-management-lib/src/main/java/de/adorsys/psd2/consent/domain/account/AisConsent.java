@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ConsentType;
 import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
-import de.adorsys.psd2.consent.domain.BaseEntity;
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -39,7 +39,7 @@ import java.util.Set;
 @ToString(exclude = {"accesses", "authorizations"})
 @Entity(name = "ais_consent")
 @ApiModel(description = "Ais consent entity", value = "AisConsent")
-public class AisConsent extends BaseEntity {
+public class AisConsent extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_generator")
     @SequenceGenerator(name = "ais_consent_generator", sequenceName = "ais_consent_id_seq")

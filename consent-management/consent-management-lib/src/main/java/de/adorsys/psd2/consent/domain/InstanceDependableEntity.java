@@ -25,7 +25,7 @@ import javax.persistence.MappedSuperclass;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class InstanceDependableEntity {
 
     @Column(name = "instance_id", nullable = false)
     private String instanceId;

@@ -19,10 +19,13 @@ package de.adorsys.psd2.consent.repository.specification;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
-public class AttributeSpecification {
-    private AttributeSpecification(){}
+/**
+ * This is a class for providing Spring Data Jpa Specification for different entities attributes
+ */
+public class EntityAttributeSpecificationProvider {
+    private EntityAttributeSpecificationProvider(){}
 
-    public static <T> Specification<T> getSpecificationForAttribute(String attribute, String value) {
+    public static <T> Specification<T> provideSpecificationForEntityAttribute(String attribute, String value) {
         return  (root, query, cb) -> {
             if (StringUtils.isBlank(value)) {
                 return null;

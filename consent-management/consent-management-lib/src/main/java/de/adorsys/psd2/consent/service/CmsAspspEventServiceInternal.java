@@ -32,9 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static de.adorsys.psd2.consent.repository.specification.EventSpecification.getEventsForPeriodAndConsentIdAndInstanceId;
-import static de.adorsys.psd2.consent.repository.specification.EventSpecification.getEventsForPeriodAndInstanceId;
-import static de.adorsys.psd2.consent.repository.specification.EventSpecification.getEventsForPeriodAndPaymentIdAndInstanceId;
+import static de.adorsys.psd2.consent.repository.specification.EventEntitySpecification.getEventsForPeriodAndConsentIdAndInstanceId;
+import static de.adorsys.psd2.consent.repository.specification.EventEntitySpecification.getEventsForPeriodAndInstanceId;
+import static de.adorsys.psd2.consent.repository.specification.EventEntitySpecification.getEventsForPeriodAndPaymentIdAndInstanceId;
 
 @Service
 @RequiredArgsConstructor

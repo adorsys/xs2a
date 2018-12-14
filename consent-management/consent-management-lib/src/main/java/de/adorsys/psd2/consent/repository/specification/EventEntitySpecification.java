@@ -22,9 +22,9 @@ import org.springframework.data.jpa.domain.Specifications;
 
 import java.time.OffsetDateTime;
 
-import static de.adorsys.psd2.consent.repository.specification.AttributeSpecification.getSpecificationForAttribute;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
-public class EventSpecification {
+public class EventEntitySpecification {
     private static final String INSTANCE_ID_ATTRIBUTE = "instanceId";
     private static final String CONSENT_ID_ATTRIBUTE = "consentId";
     private static final String PAYMENT_ID_ATTRIBUTE = "paymentId";
@@ -32,19 +32,19 @@ public class EventSpecification {
 
     public static Specification<EventEntity> getEventsForPeriodAndInstanceId(OffsetDateTime start, OffsetDateTime end, String instanceId) {
         return Specifications.where(eventPeriodSpecification(start, end))
-                   .and(getSpecificationForAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
+                   .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
     }
 
     public static Specification<EventEntity> getEventsForPeriodAndConsentIdAndInstanceId(OffsetDateTime start, OffsetDateTime end, String consentId, String instanceId) {
         return Specifications.where(eventPeriodSpecification(start, end))
-                   .and(getSpecificationForAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
-                   .and(getSpecificationForAttribute(CONSENT_ID_ATTRIBUTE, consentId));
+                   .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
+                   .and(provideSpecificationForEntityAttribute(CONSENT_ID_ATTRIBUTE, consentId));
     }
 
     public static Specification<EventEntity> getEventsForPeriodAndPaymentIdAndInstanceId(OffsetDateTime start, OffsetDateTime end, String paymentId, String instanceId) {
         return Specifications.where(eventPeriodSpecification(start, end))
-                   .and(getSpecificationForAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
-                   .and(getSpecificationForAttribute(PAYMENT_ID_ATTRIBUTE, paymentId));
+                   .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
+                   .and(provideSpecificationForEntityAttribute(PAYMENT_ID_ATTRIBUTE, paymentId));
     }
 
     private static Specification<EventEntity> eventPeriodSpecification(OffsetDateTime start, OffsetDateTime end) {

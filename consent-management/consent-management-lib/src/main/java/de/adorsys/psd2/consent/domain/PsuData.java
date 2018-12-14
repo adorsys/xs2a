@@ -24,7 +24,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity(name = "psu_data")
-public class PsuData extends BaseEntity {
+public class PsuData extends InstanceDependableEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "psu_data_generator")
