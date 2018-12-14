@@ -66,8 +66,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
                                                             .filter(con -> !con.getConsentStatus().isFinalisedStatus());
 
         return piisConsentEntity.isPresent()
-                   ? revokeConsent(piisConsentEntity.get())
-                   : false;
+                   && revokeConsent(piisConsentEntity.get());
     }
 
     private boolean isPsuIdDataContentEquals(PiisConsentEntity piisConsentEntity, PsuIdData psuIdData) {
