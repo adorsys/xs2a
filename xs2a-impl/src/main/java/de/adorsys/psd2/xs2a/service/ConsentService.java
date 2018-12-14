@@ -61,6 +61,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
 
@@ -227,9 +228,13 @@ public class ConsentService {
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
         }
 
-        if (!accountConsent.isValidStatus()) {
+        ConsentStatus consentStatus = accountConsent.getConsentStatus();
+        if (consentStatus != VALID) {
+            MessageErrorCode messageErrorCode = consentStatus == RECEIVED
+                                                    ? MessageErrorCode.CONSENT_INVALID
+                                                    : MessageErrorCode.CONSENT_EXPIRED;
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCode))).build();
         }
         if (!accountConsent.isValidFrequency()) {
             return ResponseObject.<AccountConsent>builder()

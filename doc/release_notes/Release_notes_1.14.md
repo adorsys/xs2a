@@ -33,6 +33,9 @@ Now for SPI developer instead of `SpiPsuData` an `SpiContextData` is provided. T
 
 In order to update to new interfaces version SPI developer shall change places where `spiPsuData` were used with `spiContextData.getPsuData()` call.
 
+## Removed obsolete consent-psu-client
+consent-psu-client module is not actuall and not supported anymore, therefore removed
+
 ## Changes to CmsPsuAisService and CmsPsuPisService
 Now methods updatePsuDataInConsent and updatePsuInPayment take redirectId as an argument instead of consentId and paymentId accordingly.
 Also ulr paths in CmsPsuAisConsentController and CmsPsuPisController were changed. Look at the table below.
