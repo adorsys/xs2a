@@ -61,15 +61,13 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     @Override
     @Transactional
     public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        return piisConsentRepository.findByExternalId(consentId)
-                   .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
-                   .filter(this::isStatusNotFinalised)
-                   .map(this::revokeConsent)
-                   .orElse(false);
-    }
+        Optional<PiisConsentEntity> piisConsentEntity = piisConsentRepository.findByExternalId(consentId)
+                                                            .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
+                                                            .filter(con -> !con.getConsentStatus().isFinalisedStatus());
 
-    private boolean isStatusNotFinalised(PiisConsentEntity piisConsentEntity) {
-        return !piisConsentEntity.getConsentStatus().isFinalisedStatus();
+        return piisConsentEntity.isPresent()
+                   ? revokeConsent(piisConsentEntity.get())
+                   : false;
     }
 
     private boolean isPsuIdDataContentEquals(PiisConsentEntity piisConsentEntity, PsuIdData psuIdData) {
