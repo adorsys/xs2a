@@ -26,7 +26,6 @@ import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -63,8 +62,6 @@ public class CmsPsuAisServiceTest {
     private PsuDataRepository psuDataRepository;
     @Spy
     private PsuDataMapper psuDataMapper;
-    @Mock
-    private SecurityDataService securityDataService;
 
     @Mock
     private AisConsentAuthorization mockAisConsentAuthorization;
@@ -113,8 +110,6 @@ public class CmsPsuAisServiceTest {
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
         when(aisConsentRepository.findByPsuDataPsuId(PSU_ID)).thenReturn(aisConsents);
         when(psuDataRepository.save(psuData)).thenReturn(psuData);
-        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
-        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
     }
 
     @Test
@@ -254,7 +249,6 @@ public class CmsPsuAisServiceTest {
     public void confirmConsent_FinalisedStatus_Fail() {
         //Given
         AisConsent finalisedConsent = buildFinalisedConsent();
-        when(securityDataService.decryptId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(FINALISED_CONSENT_ID));
         when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
 
         //When
@@ -268,7 +262,6 @@ public class CmsPsuAisServiceTest {
     public void rejectConsent_FinalisedStatus_Fail() {
         //Given
         AisConsent finalisedConsent = buildFinalisedConsent();
-        when(securityDataService.decryptId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(FINALISED_CONSENT_ID));
         when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
 
         //When
@@ -282,7 +275,6 @@ public class CmsPsuAisServiceTest {
     public void revokeConsent_FinalisedStatus_Fail() {
         //Given
         AisConsent finalisedConsent = buildFinalisedConsent();
-        when(securityDataService.decryptId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(FINALISED_CONSENT_ID));
         when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
 
         //When
@@ -297,7 +289,6 @@ public class CmsPsuAisServiceTest {
         //Given
         AisConsent consent = buildConsent();
         AisConsentAuthorization finalisedAuthorisation = buildFinalisedAuthorisation();
-        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(consent));
         when(aisConsentAuthorizationRepository.findByExternalId(FINALISED_AUTHORISATION_ID)).thenReturn(Optional.of(finalisedAuthorisation));
 
@@ -421,10 +412,10 @@ public class CmsPsuAisServiceTest {
 
     private AisAccountConsent buildSpiAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
-            null, false,
-            null, 0,
-            null, null,
-            false, false, null, null, null);
+                                     null, false,
+                                     null, 0,
+                                     null, null,
+                                     false, false, null, null, null);
     }
 
     private TppRedirectUri buildTppRedirectUri() {

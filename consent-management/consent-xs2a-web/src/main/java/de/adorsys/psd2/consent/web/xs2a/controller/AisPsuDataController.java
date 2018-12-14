@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
-import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "api/v1/ais")
 @Api(value = "api/v1/ais", tags = "AIS, PSU Data", description = "Provides access to consent management system for PSU Data")
 public class AisPsuDataController {
-    private final AisConsentService aisConsentService;
+    private final AisConsentServiceEncrypted aisConsentService;
 
     @GetMapping(path = "/consent/{consent-id}/psu-data")
     @ApiOperation(value = "Get aspsp consent data identified by given consent id.")

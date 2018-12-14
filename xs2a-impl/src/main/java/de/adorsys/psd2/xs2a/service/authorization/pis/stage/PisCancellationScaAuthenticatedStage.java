@@ -94,7 +94,7 @@ public class PisCancellationScaAuthenticatedStage extends PisScaStage<Xs2aUpdate
     }
 
     private ChallengeData mapToChallengeData(SpiAuthorizationCodeResult authorizationCodeResult) {
-        if(authorizationCodeResult != null && !authorizationCodeResult.isEmpty()) {
+        if (authorizationCodeResult != null && !authorizationCodeResult.isEmpty()) {
             return authorizationCodeResult.getChallengeData();
         }
         return null;

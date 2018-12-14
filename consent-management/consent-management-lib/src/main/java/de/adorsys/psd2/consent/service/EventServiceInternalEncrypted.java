@@ -17,27 +17,37 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.service.EventService;
-import de.adorsys.psd2.consent.domain.event.EventEntity;
-import de.adorsys.psd2.consent.repository.EventRepository;
-import de.adorsys.psd2.consent.service.mapper.EventMapper;
+import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
+import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
-public class EventServiceInternal implements EventService {
-    private final EventMapper eventMapper;
-    private final EventRepository eventRepository;
+public class EventServiceInternalEncrypted implements EventServiceEncrypted {
+    private final SecurityDataService securityDataService;
+    private final EventService eventService;
 
     @Override
     @Transactional
     public boolean recordEvent(@NotNull Event event) {
-        EventEntity eventEntity = eventMapper.mapToEventEntity(event);
-        EventEntity savedEventEntity = eventRepository.save(eventEntity);
+        String decryptedConsentId = decryptId(event.getConsentId());
+        String decryptedPaymentId = decryptId(event.getPaymentId());
 
-        return savedEventEntity.getId() != null;
+        Event decryptedEvent = new Event(event.getTimestamp(), decryptedConsentId, decryptedPaymentId,
+                                         event.getPayload(), event.getEventOrigin(), event.getEventType());
+
+        return eventService.recordEvent(decryptedEvent);
+    }
+
+    private String decryptId(String id) {
+        return Optional.ofNullable(id)
+                   .flatMap(securityDataService::decryptId)
+                   .orElse(null);
     }
 }
