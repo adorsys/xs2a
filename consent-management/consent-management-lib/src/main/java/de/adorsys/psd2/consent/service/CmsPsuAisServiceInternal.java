@@ -56,7 +56,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
-    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
+    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
         return aisConsentAuthorizationRepository.findByExternalId(redirectId)
                    .map(AisConsentAuthorization::getConsent)
                    .map(con -> updatePsuData(con, psuIdData))
