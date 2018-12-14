@@ -79,18 +79,18 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
             if (authorisationMethodService.isExplicitMethod(explicitPreferred)) {
                 links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
             } else {
-                links.setScaRedirect(getScaRedirectLink(response.getAuthorizationId()));
+                links.setScaRedirect(buildScaRedirectLink(response.getAuthorizationId()));
                 links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", response.getConsentId(), response.getAuthorizationId()));
             }
             links.setStatus(buildPath("/v1/consents/{consentId}/status", response.getConsentId()));
         } else {
-            links.setScaRedirect(getScaRedirectLink(response.getAuthorizationId()));
+            links.setScaRedirect(buildScaRedirectLink(response.getAuthorizationId()));
         }
 
         return links;
     }
 
-    private String getScaRedirectLink(String authorizationId) {
+    private String buildScaRedirectLink(String authorizationId) {
         return UriComponentsBuilder
                    .newInstance()
                    .path(aspspProfileService.getAisRedirectUrlToAspsp())

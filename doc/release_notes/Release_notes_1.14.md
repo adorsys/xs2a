@@ -38,5 +38,5 @@ consent-psu-client module is not actuall and not supported anymore, therefore re
 
 ## Added possibility to config SCA Redirect links in ASPSP-profile using redirectId parameter 
 Now ASPSP Developer is able to config aisRedirectUrlToAspsp and pisRedirectUrlToAspsp with custom url pattern and redirectId parameter. For example:
-* http://localhost:4200/pis/{redirectId}
-* http://localhost:4200/pis?redirectId={redirectId}
+* http://localhost:4200/pis/{redirect-id}
+* http://localhost:4200/pis?redirectId={redirect-id}
