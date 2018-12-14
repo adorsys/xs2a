@@ -33,6 +33,9 @@ Now for SPI developer instead of `SpiPsuData` an `SpiContextData` is provided. T
 
 In order to update to new interfaces version SPI developer shall change places where `spiPsuData` were used with `spiContextData.getPsuData()` call.
 
+## Removed obsolete consent-psu-client
+consent-psu-client module is not actuall and not supported anymore, therefore removed
+
 ## New Java Interface CmsPsuPiisService in consent-psu-api module for getting and revoking PIIS consents for online-banking
 | Context                    | Method | Endpoint                                             | Description                                                                |
 |----------------------------|--------|------------------------------------------------------|----------------------------------------------------------------------------|

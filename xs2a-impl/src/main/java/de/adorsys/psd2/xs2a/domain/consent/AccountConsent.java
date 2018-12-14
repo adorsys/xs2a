@@ -25,10 +25,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.EnumSet;
-
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Data
 @ApiModel(description = "Response for the get account information consent request by consent Id")
@@ -70,11 +66,6 @@ public class AccountConsent {
     @ApiModelProperty(value = "TPP information", required = true)
     @JsonIgnore
     private final TppInfo tppInfo;
-
-    @JsonIgnore
-    public boolean isValidStatus() {
-        return EnumSet.of(VALID, RECEIVED).contains(consentStatus);
-    }
 
     @JsonIgnore
     public boolean isValidFrequency() {
