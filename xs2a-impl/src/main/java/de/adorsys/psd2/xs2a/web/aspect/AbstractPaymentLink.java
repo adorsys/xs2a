@@ -96,7 +96,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
             String link = aspspProfileService.getPisRedirectUrlToAspsp() + authorizationId;
             links.setScaRedirect(link);
             links.setScaStatus(
-                buildPath("/v1/{payment-service}/{payment-id}/redirect/{redirect-id}", paymentService, paymentId, authorizationId));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
         }
         return links;
     }
