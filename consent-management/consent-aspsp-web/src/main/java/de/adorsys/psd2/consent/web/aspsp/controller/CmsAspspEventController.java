@@ -50,7 +50,7 @@ public class CmsAspspEventController {
         @RequestHeader(value = "end-date")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end,
         @ApiParam(value = "Bank instance ID")
-        @RequestHeader(value = "instance-id") String instanceId) {
+        @RequestHeader(value = "instance-id", required = false) String instanceId) {
         List<Event> events = cmsAspspEventService.getEventsForPeriod(start, end, instanceId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
