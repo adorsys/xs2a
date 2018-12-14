@@ -36,6 +36,11 @@ In order to update to new interfaces version SPI developer shall change places w
 ## Removed obsolete consent-psu-client
 consent-psu-client module is not actuall and not supported anymore, therefore removed
 
+## Added possibility to config SCA Redirect links in ASPSP-profile using redirectId parameter 
+Now ASPSP Developer is able to config aisRedirectUrlToAspsp and pisRedirectUrlToAspsp with custom url pattern and redirectId parameter. For example:
+* http://localhost:4200/pis/{redirect-id}
+* http://localhost:4200/pis?redirectId={redirect-id}
+
 ## Changes to CmsPsuAisService and CmsPsuPisService
 Now methods updatePsuDataInConsent and updatePsuInPayment take redirectId as an argument instead of consentId and paymentId accordingly.
 Also ulr paths in CmsPsuAisConsentController and CmsPsuPisController were changed. Look at the table below.

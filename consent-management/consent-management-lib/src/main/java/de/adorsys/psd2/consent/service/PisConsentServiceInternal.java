@@ -35,7 +35,6 @@ import de.adorsys.psd2.consent.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -46,9 +45,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -68,7 +67,6 @@ public class PisConsentServiceInternal implements PisConsentService {
     private final PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
-    private final SecurityDataService securityDataService;
     private final AspspProfileService aspspProfileService;
 
     /**
@@ -85,80 +83,64 @@ public class PisConsentServiceInternal implements PisConsentService {
         consent.setExternalId(externalId);
 
         PisConsent saved = pisConsentRepository.save(consent);
+        if (saved.getId() == null) {
+            return Optional.empty();
+        }
 
-        return Optional.ofNullable(saved.getId())
-                   .flatMap(id -> securityDataService.encryptId(saved.getExternalId()))
-                   .map(CreatePisConsentResponse::new);
+        return Optional.of(new CreatePisConsentResponse(saved.getExternalId()));
     }
 
     /**
      * Retrieves consent status from pis consent by consent identifier
      *
-     * @param encryptedConsentId String representation of pis consent identifier
+     * @param consentId String representation of pis consent identifier
      * @return Information about the status of a consent
      */
     @Override
-    public Optional<ConsentStatus> getConsentStatusById(String encryptedConsentId) {
-        return getPisConsentById(encryptedConsentId)
+    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
+        return pisConsentRepository.findByExternalId(consentId)
                    .map(PisConsent::getConsentStatus);
     }
 
     /**
      * Reads full information of pis consent by consent identifier
      *
-     * @param encryptedConsentId String representation of pis encrypted consent identifier
+     * @param consentId String representation of pis consent identifier
      * @return Response containing full information about pis consent
      */
     @Override
-    public Optional<PisConsentResponse> getConsentById(String encryptedConsentId) {
-        return getPisConsentById(encryptedConsentId)
+    public Optional<PisConsentResponse> getConsentById(String consentId) {
+        return pisConsentRepository.findByExternalId(consentId)
                    .flatMap(pisConsentMapper::mapToPisConsentResponse);
     }
 
     /**
      * Updates pis consent status by consent identifier
      *
-     * @param encryptedConsentId String representation of pis encrypted consent identifier
-     * @param status             new consent status
+     * @param consentId String representation of pis consent identifier
+     * @param status    new consent status
      * @return Response containing result of status changing
      */
     @Override
     @Transactional
-    public Optional<Boolean> updateConsentStatusById(String encryptedConsentId, ConsentStatus status) {
-        return getActualPisConsent(encryptedConsentId)
+    public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
+        return getActualPisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
     }
 
     /**
-     * Get original decrypted Id from encrypted string
-     *
-     * @param encryptedId id to be decrypted
-     * @return Response containing original decrypted Id
-     */
-    @Override
-    public Optional<String> getDecryptedId(String encryptedId) {
-        return securityDataService.decryptId(encryptedId);
-    }
-
-    /**
      * Create consent authorization
      *
-     * @param encryptedPaymentId encrypted id of the payment
-     * @param authorizationType  type of authorization required to create. Can be  CREATED or CANCELLED
+     * @param paymentId         id of the payment
+     * @param authorizationType type of authorization required to create. Can be  CREATED or CANCELLED
      * @return response contains authorization id
      */
     @Override
     @Transactional
-    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String encryptedPaymentId, CmsAuthorisationType authorizationType,
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType,
                                                                                PsuIdData psuData) {
-        Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
-        if (!paymentId.isPresent()) {
-            log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
-            return Optional.empty();
-        }
-
-        return readReceivedConsentByPaymentId(paymentId.get())
+        return readReceivedConsentByPaymentId(paymentId)
                    .map(pisConsent -> saveNewAuthorisation(pisConsent, authorizationType, psuData))
                    .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
@@ -214,14 +196,14 @@ public class PisConsentServiceInternal implements PisConsentService {
     /**
      * Update PIS consent payment data and stores it into database
      *
-     * @param request            PIS consent request for update payment data
-     * @param encryptedConsentId encrypted Consent ID
+     * @param request   PIS consent request for update payment data
+     * @param consentId Consent ID
      */
     // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
     @Override
     @Transactional
-    public void updatePaymentConsent(PisConsentRequest request, String encryptedConsentId) {
-        Optional<PisConsent> pisConsentById = getPisConsentById(encryptedConsentId);
+    public void updatePaymentConsent(PisConsentRequest request, String consentId) {
+        Optional<PisConsent> pisConsentById = pisConsentRepository.findByExternalId(consentId);
         pisConsentById
             .ifPresent(pisConsent -> savePaymentData(pisConsent, request));
     }
@@ -251,73 +233,45 @@ public class PisConsentServiceInternal implements PisConsentService {
     }
 
     /**
-     * Reads authorisation IDs data by encrypted payment Id and type of authorization
+     * Reads authorisation IDs data by payment Id and type of authorization
      *
-     * @param encryptedPaymentId encrypted id of the payment
-     * @param authorisationType  type of authorization required to create. Can be  CREATED or CANCELLED
+     * @param paymentId         id of the payment
+     * @param authorisationType type of authorization required to create. Can be  CREATED or CANCELLED
      * @return response contains authorisation IDs
      */
     @Override
-    public Optional<List<String>> getAuthorisationsByPaymentId(String encryptedPaymentId, CmsAuthorisationType authorisationType) {
-        Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
-        if (!paymentId.isPresent()) {
-            log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
-            return Optional.empty();
-        }
-
-        return readReceivedConsentByPaymentId(paymentId.get())
+    public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
+        return readReceivedConsentByPaymentId(paymentId)
                    .map(cnst -> readAuthorisationsFromConsent(cnst, authorisationType));
     }
 
     /**
-     * Reads Psu data by encrypted payment Id
+     * Reads Psu data by payment Id
      *
-     * @param encryptedPaymentId encrypted id of the payment
+     * @param paymentId Payment ID
      * @return response contains data of Psu
      */
     @Override
-    public Optional<PsuIdData> getPsuDataByPaymentId(String encryptedPaymentId) {
-        Optional<String> paymentId = securityDataService.decryptId(encryptedPaymentId);
-        if (!paymentId.isPresent()) {
-            log.warn("Payment Id has not encrypted: {}", encryptedPaymentId);
-            return Optional.empty();
-        }
-
-        return readPisConsentByPaymentId(paymentId.get())
+    public Optional<PsuIdData> getPsuDataByPaymentId(String paymentId) {
+        return readPisConsentByPaymentId(paymentId)
                    .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
     }
 
     /**
-     * Reads Psu data by encrypted consent Id
+     * Reads Psu data by consent Id
      *
-     * @param encryptedConsentId encrypted Consent ID
+     * @param consentId Consent ID
      * @return response contains data of Psu
      */
     @Override
-    public Optional<PsuIdData> getPsuDataByConsentId(String encryptedConsentId) {
-        return getPisConsentById(encryptedConsentId)
+    public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
+        return pisConsentRepository.findByExternalId(consentId)
                    .map(pc -> psuDataMapper.mapToPsuIdData(pc.getPsuData()));
     }
 
-    private Optional<PisConsent> getActualPisConsent(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
-        if (!consentIdDecrypted.isPresent()) {
-            log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
-        }
-
-        return consentIdDecrypted
-                   .flatMap(pisConsentRepository::findByExternalId)
+    private Optional<PisConsent> getActualPisConsent(String consentId) {
+        return pisConsentRepository.findByExternalId(consentId)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
-    }
-
-    private Optional<PisConsent> getPisConsentById(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
-        if (!consentIdDecrypted.isPresent()) {
-            log.warn("Consent Id has not encrypted: {}", encryptedConsentId);
-        }
-
-        return consentIdDecrypted
-                   .flatMap(pisConsentRepository::findByExternalId);
     }
 
     private PisConsent setStatusAndSaveConsent(PisConsent consent, ConsentStatus status) {

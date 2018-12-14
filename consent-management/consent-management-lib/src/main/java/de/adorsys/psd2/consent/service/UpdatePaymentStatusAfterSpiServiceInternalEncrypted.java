@@ -16,35 +16,27 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
-import de.adorsys.psd2.consent.config.CmsRestException;
-import de.adorsys.psd2.consent.config.PisPaymentRemoteUrls;
+import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
-// TODO discuss error handling (e.g. 400 HttpCode response) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/498
-@Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UpdatePaymentStatusAfterSpiServiceRemote implements UpdatePaymentStatusAfterSpiServiceEncrypted {
-    @Qualifier("consentRestTemplate")
-    private final RestTemplate consentRestTemplate;
-    private final PisPaymentRemoteUrls pisPaymentRemoteUrls;
+public class UpdatePaymentStatusAfterSpiServiceInternalEncrypted implements UpdatePaymentStatusAfterSpiServiceEncrypted {
+    private final SecurityDataService securityDataService;
+    private final UpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
 
     @Override
+    @Transactional
     public boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
-        try {
-            consentRestTemplate.exchange(pisPaymentRemoteUrls.updatePaymentStatus(), HttpMethod.PUT, null, Void.class, encryptedPaymentId, status.name());
-            return true;
-        } catch (CmsRestException e) {
-            log.error("Payment not found, id: {}", encryptedPaymentId);
-            return false;
-        }
+        return securityDataService.decryptId(encryptedPaymentId)
+                   .map(id -> updatePaymentStatusAfterSpiService.updatePaymentStatus(id, status))
+                   .orElse(false);
     }
 }

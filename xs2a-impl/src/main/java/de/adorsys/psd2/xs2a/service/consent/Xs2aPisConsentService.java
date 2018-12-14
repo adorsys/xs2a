@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.consent;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.*;
@@ -32,7 +32,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class Xs2aPisConsentService {
-    private final PisConsentService pisConsentService;
+    private final PisConsentServiceEncrypted pisConsentService;
     private final Xs2aToCmsPisConsentRequestMapper xs2aToCmsPisConsentRequestMapper;
 
     /**
