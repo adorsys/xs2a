@@ -31,10 +31,10 @@ public interface CmsPsuAisService {
      * Updates PSU Data in consent, based on the trusted information about PSU known to ASPSP (i.e. after authorisation)
      *
      * @param psuIdData PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
-     * @param consentId External ID of Consent known to TPP and ASPSP
+     * @param redirectId ID of redirect
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
-    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
 
     /**
      * Returns AIS Consent object by its ID

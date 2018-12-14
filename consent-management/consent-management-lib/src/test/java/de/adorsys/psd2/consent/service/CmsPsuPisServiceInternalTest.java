@@ -139,7 +139,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePsuInPayment_Success() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, PAYMENT_ID);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, AUTHORISATION_ID);
 
         // Then
         assertTrue(actualResult);
@@ -148,7 +148,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePsuInPayment_Fail_WrongPaymentId() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, WRONG_PAYMENT_ID);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, WRONG_AUTHORISATION_ID);
 
         // Then
         assertFalse(actualResult);
@@ -326,6 +326,7 @@ public class CmsPsuPisServiceInternalTest {
         pisConsentAuthorisation.setExternalId(AUTHORISATION_ID);
         pisConsentAuthorisation.setPsuData(buildPsuData());
         pisConsentAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2022-12-03T10:15:30+01:00"));
+        pisConsentAuthorisation.setConsent(buildPisConsent());
 
         return pisConsentAuthorisation;
     }
