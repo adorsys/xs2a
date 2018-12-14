@@ -20,7 +20,7 @@ import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
@@ -40,7 +40,7 @@ import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactor
 @RequiredArgsConstructor
 // TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 public class PisAuthorisationService {
-    private final PisConsentService pisConsentService;
+    private final PisConsentServiceEncrypted pisConsentService;
     private final PisScaStageAuthorisationFactory pisScaStageAuthorisationFactory;
     private final Xs2aPisConsentMapper pisConsentMapper;
 

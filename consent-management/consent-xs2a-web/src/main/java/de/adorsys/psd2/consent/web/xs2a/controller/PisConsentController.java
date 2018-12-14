@@ -25,7 +25,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResp
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
@@ -41,7 +41,7 @@ import java.util.List;
 @RequestMapping(path = "api/v1/pis/consent")
 @Api(value = "api/v1/pis/consent", tags = "PIS, Consents", description = "Provides access to consent management system for PIS")
 public class PisConsentController {
-    private final PisConsentService pisConsentService;
+    private final PisConsentServiceEncrypted pisConsentService;
 
     @PostMapping(path = "/")
     @ApiResponses(value = {

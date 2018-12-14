@@ -16,11 +16,20 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import java.util.Optional;
+
 /**
- * PisConsentService without any encryption/decryption. Should not be used in XS2A directly.
+ * PisConsentService with enabled encryption and decryption
  *
  * @see de.adorsys.psd2.consent.api.service.PisConsentServiceBase
- * @see de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted
+ * @see de.adorsys.psd2.consent.api.service.PisConsentService
  */
-public interface PisConsentService extends PisConsentServiceBase {
+public interface PisConsentServiceEncrypted extends PisConsentServiceBase {
+    /**
+     * Gets original decrypted Id from encrypted string
+     *
+     * @param encryptedId id to be decrypted
+     * @return Response containing original decrypted Id
+     */
+    Optional<String> getDecryptedId(String encryptedId);
 }

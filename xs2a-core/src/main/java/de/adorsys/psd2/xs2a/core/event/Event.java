@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.core.event;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
 
@@ -24,6 +26,8 @@ import java.time.OffsetDateTime;
  * Contains information about the event.
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event {
     /**
      * Date and time indicating when the event has occurred.

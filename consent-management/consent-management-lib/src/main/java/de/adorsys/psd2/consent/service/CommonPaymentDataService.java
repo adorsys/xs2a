@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -30,12 +29,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommonPaymentDataService {
-    private final PisConsentService pisConsentService;
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
 
-    protected Optional<PisCommonPaymentData> getPisCommonPaymentData(String encryptedPaymentId) {
-        return pisConsentService.getDecryptedId(encryptedPaymentId)
-                   .flatMap(pisCommonPaymentDataRepository::findByPaymentId);
+    protected Optional<PisCommonPaymentData> getPisCommonPaymentData(String paymentId) {
+        return pisCommonPaymentDataRepository.findByPaymentId(paymentId);
     }
 
     @Transactional

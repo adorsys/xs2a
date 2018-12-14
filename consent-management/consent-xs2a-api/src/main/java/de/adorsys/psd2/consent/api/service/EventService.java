@@ -16,15 +16,11 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.xs2a.core.event.Event;
-import org.jetbrains.annotations.NotNull;
-
-public interface EventService {
-    /**
-     * Records new Event in the CMS
-     *
-     * @param event Event to be recorded
-     * @return <code>true</code> if the event was recorded. <code>false</code> otherwise.
-     */
-    boolean recordEvent(@NotNull Event event);
+/**
+ * EventService without any encryption/decryption. Should not be used in XS2A directly.
+ *
+ * @see de.adorsys.psd2.consent.api.service.EventServiceBase
+ * @see de.adorsys.psd2.consent.api.service.EventServiceEncrypted
+ */
+public interface EventService extends EventServiceBase {
 }
