@@ -36,12 +36,12 @@ In order to update to new interfaces version SPI developer shall change places w
 ## Removed obsolete consent-psu-client
 consent-psu-client module is not actuall and not supported anymore, therefore removed
 
-## Added possibility to config SCA Redirect links in ASPSP-profile using redirectId parameter 
+## Bugfix: added possibility to config SCA Redirect links in ASPSP-profile using redirectId parameter 
 Now ASPSP Developer is able to config aisRedirectUrlToAspsp and pisRedirectUrlToAspsp with custom url pattern and redirectId parameter. For example:
 * http://localhost:4200/pis/{redirect-id}
 * http://localhost:4200/pis?redirectId={redirect-id}
 
-## Changes to CmsPsuAisService and CmsPsuPisService
+## Bugfix: changes to CmsPsuAisService and CmsPsuPisService
 Now methods updatePsuDataInConsent and updatePsuInPayment take redirectId as an argument instead of consentId and paymentId accordingly.
 Also ulr paths in CmsPsuAisConsentController and CmsPsuPisController were changed. Look at the table below.
 
@@ -57,3 +57,6 @@ From now on all methods in CmsPsuAisService and CmsPsuPisService(and correspondi
 
 This unencrypted id can be acquired from the consent or payment object itself after receiving it by redirect id(via 
 GET /psu-api/v1/ais/consent/redirects/{redirect-id} or GET /psu-api/v1/pis/consent/redirects/{redirect-id})
+
+## Bugfix: make AIS Consent usable only if its status is VALID
+Now TPP is unable to use AIS Consent with RECEIVED status. It's usable only if it has VALID status.
