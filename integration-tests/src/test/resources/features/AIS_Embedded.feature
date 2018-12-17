@@ -36,3 +36,16 @@ Feature: Account Information Service - Embedded approach
             | consent-all-accounts-successful.json |         false          |     false      |
             | consent-all-accounts-successful.json |         true           |     null       |
             | consent-all-accounts-successful.json |         false          |     null       |
+
+
+    Scenario Outline: Successful update of PSU data for Consent creation (embedded)
+        Given PSU wants to create a consent <consent-resource>
+        And PSU sends the create consent request
+        And PSU sends the start consent authorisation request and receives the authorisationId
+        And PSU wants to update the resource with his consent identification data <identification-data>
+        When PSU sends the update consent identification data request
+        Then a successful response code and the appropriate link is delivered to the PSU
+        Examples:
+            |consent-resource                   | identification-data                            |
+            |consent-dedicated-successful.json  | updateIdentificationMultipleSca-successful.json|
+            |consent-dedicated-successful.json  | updateIdentificationOneSca-successful.json     |

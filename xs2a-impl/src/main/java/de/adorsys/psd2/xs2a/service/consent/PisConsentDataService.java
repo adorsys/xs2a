@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.AspspDataService;
-import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PisConsentDataService {
-    private final PisConsentService pisConsentService;
+    private final PisConsentServiceEncrypted pisConsentService;
     private final AspspDataService aspspDataService;
 
     public AspspConsentData getAspspConsentData(String paymentId) {

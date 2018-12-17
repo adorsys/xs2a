@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.event;
 
-import de.adorsys.psd2.consent.api.service.EventService;
+import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.event.EventOrigin;
 import de.adorsys.psd2.xs2a.core.event.EventType;
@@ -37,7 +37,7 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public class Xs2aEventService {
     private final TppService tppService;
-    private final EventService eventService;
+    private final EventServiceEncrypted eventService;
     private final RequestProviderService requestProviderService;
 
     /**

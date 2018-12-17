@@ -12,8 +12,8 @@ setting:
  scaApproach: REDIRECT
  tppSignatureRequired: false
  bankOfferedConsentSupport: false
- pisRedirectUrlToAspsp: http://localhost:4200/pis/
- aisRedirectUrlToAspsp: http://localhost:4200/ais/
+ pisRedirectUrlToAspsp: http://localhost:4200/pis/{redirect-id}
+ aisRedirectUrlToAspsp: http://localhost:4200/ais/{redirect-id}
  multicurrencyAccountLevel: SUBACCOUNT
  availableBookingStatuses:
   - BOOKED

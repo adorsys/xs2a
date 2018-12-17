@@ -30,10 +30,10 @@ public interface CmsPsuPisService {
      * Updates PSU Data in Payment, based on the trusted information about PSU known to ASPSP (i.e. after authorisation)
      *
      * @param psuIdData PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
-     * @param paymentId External ID of Payment known to TPP and ASPSP
+     * @param redirectId ID of redirect
      * @return <code>true</code> if payment was found and data was updated. <code>false</code> otherwise.
      */
-    boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
+    boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
 
     /**
      * Returns Payment object by its ID

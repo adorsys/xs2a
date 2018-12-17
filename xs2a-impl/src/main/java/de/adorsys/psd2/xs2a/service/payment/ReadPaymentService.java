@@ -19,15 +19,7 @@ package de.adorsys.psd2.xs2a.service.payment;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ReadPaymentService<T> {
-    @Autowired
-    protected PisConsentDataService pisConsentDataService;
-    @Autowired
-    protected Xs2aToSpiPsuDataMapper psuDataMapper;
-
     public abstract T getPayment(PisPayment pisPayment, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData);
 }

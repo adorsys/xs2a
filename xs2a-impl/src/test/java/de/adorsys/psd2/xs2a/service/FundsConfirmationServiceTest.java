@@ -19,13 +19,15 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -48,7 +50,7 @@ import static org.mockito.Mockito.*;
 public class FundsConfirmationServiceTest {
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
-    private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo());
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
@@ -61,11 +63,13 @@ public class FundsConfirmationServiceTest {
     @Mock
     private FundsConfirmationConsentDataService fundsConfirmationConsentDataService;
     @Mock
-    private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
-    @Mock
     private FundsConfirmationSpi fundsConfirmationSpi;
+    @Mock
+    private SpiContextDataProvider spiContextDataProvider;
+
     @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
+
 
     @Before
     public void setUp() {
@@ -73,8 +77,8 @@ public class FundsConfirmationServiceTest {
             .thenReturn(buildSpiFundsConfirmationRequest());
         when(fundsConfirmationConsentDataService.getAspspConsentData(anyString()))
             .thenReturn(ASPSP_CONSENT_DATA);
-        when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
-            .thenReturn(SPI_PSU_DATA);
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
         when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
             .thenReturn(buildFundsConfirmationResponse());
     }

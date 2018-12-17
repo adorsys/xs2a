@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -39,7 +39,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class Xs2aAisConsentService {
-    private final AisConsentService aisConsentService;
+    private final AisConsentServiceEncrypted aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
