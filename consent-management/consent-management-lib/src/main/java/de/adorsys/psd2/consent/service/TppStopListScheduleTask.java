@@ -25,6 +25,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,16 +40,16 @@ public class TppStopListScheduleTask {
     public void unblockTppIfBlockingExpired() {
         log.info("Tpp Stop List schedule task is run!");
 
-        List<TppStopListEntity> blockedWithExpirationTpps = tppStopListRepository.findAllByStatusAndBlockingExpirationTimestampIsNotNull(TppStatus.BLOCKED);
+        List<TppStopListEntity> blockedWithExpirationTpps = tppStopListRepository.findAllByStatusAndBlockingExpirationTimestampLessThanEqual(TppStatus.BLOCKED, OffsetDateTime.now());
+        List<TppStopListEntity> unblockedTpps = unblockTpps(blockedWithExpirationTpps);
 
-        List<TppStopListEntity> blockingExpiredTpps = findAndUnblockTppsWithBlockingExpired(blockedWithExpirationTpps);
-
-        tppStopListRepository.save(blockingExpiredTpps);
+        if (!unblockedTpps.isEmpty()) {
+            tppStopListRepository.save(unblockedTpps);
+        }
     }
 
-    private List<TppStopListEntity> findAndUnblockTppsWithBlockingExpired(List<TppStopListEntity> blockedWithExpirationTpps) {
+    private List<TppStopListEntity> unblockTpps(List<TppStopListEntity> blockedWithExpirationTpps) {
         return blockedWithExpirationTpps.stream()
-                   .filter(TppStopListEntity::isBlockingExpired)
                    .map(this::unblockTpp)
                    .collect(Collectors.toList());
     }
