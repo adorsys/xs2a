@@ -25,5 +25,9 @@ public class Xs2aEndpointPathConstant {
     public static final String PERIODIC_PAYMENTS_PATH = "/v1/periodic-payments/**";
     public static final String SIGNING_BASKETS_PATH = "/v1/signing-baskets/**";
 
-    private Xs2aEndpointPathConstant(){}
+    private Xs2aEndpointPathConstant() {}
+
+    public static String[] getAllXs2aEndpointPaths() {
+        return new String[]{ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH, SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH};
+    }
 }

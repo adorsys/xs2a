@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
-import de.adorsys.psd2.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
@@ -77,11 +76,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ParametersFactory parametersFactory(ObjectMapper objectMapper) {
-        return new ParametersFactory(objectMapper);
-    }
-
-    @Bean
     public RequestValidatorService requestValidatorService() {
         return new RequestValidatorService();
     }
@@ -98,14 +92,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
         registry.addInterceptor(new TppStopListInterceptor(tppService, tppStopListService, objectMapper))
-            .addPathPatterns(ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH,
-                SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH,
-                PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH);
+            .addPathPatterns(Xs2aEndpointPathConstant.getAllXs2aEndpointPaths());
 
         registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper, messageErrorMapper()))
-            .addPathPatterns(ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH,
-                SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH,
-                PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH);
+            .addPathPatterns(Xs2aEndpointPathConstant.getAllXs2aEndpointPaths());
     }
 
     @Bean
