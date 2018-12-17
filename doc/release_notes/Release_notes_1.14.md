@@ -52,5 +52,11 @@ Also ulr paths in CmsPsuAisConsentController and CmsPsuPisController were change
 | PUT    | Updates PSU Data in payment | psu-api/v1/pis/consent/{payment-id}                        | psu-api/v1/pis/consent/redirects/{redirect-id}/psu-data     |
 | GET    | Gets payment by redirect id | psu-api/v1/pis/consent/{payment-id}/redirect/{redirect-id} | psu-api/v1/pis/consent/{payment-id}/redirects/{redirect-id} |
 
+## Bugfix: removed encryption from CmsPsuAisService and CmsPsuPisService
+From now on all methods in CmsPsuAisService and CmsPsuPisService(and corresponding endpoints of consent management system) take unencrypted consent or payment id instead of the encrypted one.
+
+This unencrypted id can be acquired from the consent or payment object itself after receiving it by redirect id(via 
+GET /psu-api/v1/ais/consent/redirects/{redirect-id} or GET /psu-api/v1/pis/consent/redirects/{redirect-id})
+
 ## Bugfix: make AIS Consent usable only if its status is VALID
 Now TPP is unable to use AIS Consent with RECEIVED status. It's usable only if it has VALID status.
