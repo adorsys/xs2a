@@ -27,3 +27,20 @@ Spring Boot dependencies were removed from Xs2a library. Now we use the followin
 * spring-hateoas
 * spring-web
 * spring-context
+
+## TPP Stop List
+Possibility to block TPP has been added to CMS.
+If TPP is blocked, the 401 CERTIFICATE_BLOCKED error is returned on any request to Xs2a endpoints.
+
+Now CMS contains several endpoints for TPP Stop List proceeding:
+
+**For ASPSP:**
+* GET `/aspsp-api/v1/tpp/stop-list` - returns TPP stop list record by TPP authorisation number and national authority ID
+* PUT `/aspsp-api/v1/tpp/stop-list/block` - blocks TPP by TPP authorisation number, national authority ID and lock period
+* DELETE `/aspsp-api/v1/tpp/stop-list/unblock` - unblocks TPP by TPP authorisation number and national authority ID
+
+**For Xs2a:**
+* GET `/api/v1/tpp/stop-list` - checks if TPP is blocked
+
+Scheduler service has been created: it will unblock the TPPs with blocking period expired (if TPP was blocked for the provided period of time).
+The scheduler service invocation frequency could be modified by changing `stoplist.cron.expression` value in `application.properties`.
