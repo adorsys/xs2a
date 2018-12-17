@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.exception.RestException;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
@@ -27,7 +28,6 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
@@ -58,7 +58,7 @@ public class FundsConfirmationSpiImpl implements FundsConfirmationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiContextData spiContextData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData) {
         try {
             //TODO Account data reads should be performed through specially created endpoint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/383
             SpiAccountReference psuAccount = spiFundsConfirmationRequest.getPsuAccount();

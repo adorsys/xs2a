@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.event;
 
-import de.adorsys.psd2.consent.api.service.EventService;
+import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.event.EventOrigin;
 import de.adorsys.psd2.xs2a.core.event.EventType;
@@ -51,7 +51,7 @@ public class Xs2aEventServiceTest {
     @Mock
     private TppService tppService;
     @Mock
-    private EventService eventService;
+    private EventServiceEncrypted eventService;
     @Mock
     private RequestProviderService requestProviderService;
 

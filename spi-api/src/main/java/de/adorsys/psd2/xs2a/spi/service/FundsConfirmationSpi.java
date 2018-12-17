@@ -18,9 +18,9 @@ package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public interface FundsConfirmationSpi {
     /**
      * Queries ASPSP to check the sufficiency of requested account funds
      *
-     * @param psuData                     ASPSP identifier(s) of the psu
+     * @param contextData                 holder of call's context data (e.g. about PSU and TPP)
      * @param piisConsent                 PIIS Consent object. May be null if the request is done from a workflow without a consent.
      * @param spiFundsConfirmationRequest Object, that contains all request data from TPP
      * @param aspspConsentData            Encrypted data that may be stored in the consent management system in the consent linked to a request.<br>
@@ -37,5 +37,5 @@ public interface FundsConfirmationSpi {
      * @return Funds confirmation response with information whether the requested amount can be booked on the account or not
      */
     @NotNull
-    SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiPsuData psuData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiContextData contextData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @NotNull AspspConsentData aspspConsentData);
 }

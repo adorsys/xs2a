@@ -24,7 +24,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResp
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisConsentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -47,7 +47,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PisConsentServiceRemote implements PisConsentService {
+public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final PisConsentRemoteUrls remotePisConsentUrls;

@@ -59,11 +59,17 @@ public class SecurityDataService {
 
         String compositeConsentId = concatWithSeparator(originalId, consentKey);
         byte[] bytesCompositeConsentId = compositeConsentId.getBytes();
-        return identifierCP()
-                   .encryptData(bytesCompositeConsentId, serverKey)
-                   .map(EncryptedData::getData)
-                   .map(raw -> Base64.getUrlEncoder().encodeToString(raw))
-                   .map(this::addVersionToEncryptedId);
+        Optional<String> encryptedId = identifierCP()
+                                           .encryptData(bytesCompositeConsentId, serverKey)
+                                           .map(EncryptedData::getData)
+                                           .map(raw -> Base64.getUrlEncoder().encodeToString(raw))
+                                           .map(this::addVersionToEncryptedId);
+
+        if (!encryptedId.isPresent()) {
+            log.warn("Couldn't encrypt ID: {}", originalId);
+        }
+
+        return encryptedId;
     }
 
     /**
@@ -74,11 +80,18 @@ public class SecurityDataService {
      */
     public Optional<String> decryptId(String encryptedId) {
         if (!encryptedId.contains(SEPARATOR)) {
+            log.warn("Couldn't decrypt ID: {}", encryptedId);
             return Optional.empty();
         }
 
-        return decryptCompositeId(encryptedId)
-                   .map(cmst -> cmst.split(SEPARATOR)[0]);
+        Optional<String> decryptedId = decryptCompositeId(encryptedId)
+                                           .map(cmst -> cmst.split(SEPARATOR)[0]);
+
+        if (!decryptedId.isPresent()) {
+            log.warn("Couldn't decrypt ID: {}", encryptedId);
+        }
+
+        return decryptedId;
     }
 
     /**
@@ -147,8 +160,8 @@ public class SecurityDataService {
     private byte[] decode64(String raw, boolean urlsafe) {
         try {
             return urlsafe
-                ? Base64.getUrlDecoder().decode(raw)
-                : Base64.getDecoder().decode(raw);
+                       ? Base64.getUrlDecoder().decode(raw)
+                       : Base64.getDecoder().decode(raw);
         } catch (IllegalArgumentException ex) {
             log.error("Input id has wrong format: {}", raw);
             return null;

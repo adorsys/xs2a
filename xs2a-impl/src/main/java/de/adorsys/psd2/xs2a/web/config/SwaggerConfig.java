@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.SwaggerResource;
@@ -36,7 +35,7 @@ import java.util.Collections;
 public class SwaggerConfig {
     private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api-1.2-Update-2018-08-17.yaml";
 
-    @Value("${xs2a.swagger.psd2.api.location}")
+    @Value("${xs2a.swagger.psd2.api.location:}")
     private String customPsd2ApiLocation;
 
     @SuppressWarnings("Guava") // Intellij IDEA claims that Guava predicates could be replaced with Java API,
@@ -46,7 +45,6 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                    .apiInfo(new ApiInfoBuilder().build())
                    .select()
-                   .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.xs2a.web"))
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))
                    .paths(Predicates.not(PathSelectors.regex("/connect.*")))
                    .paths(Predicates.not(PathSelectors.regex("/management.*")))

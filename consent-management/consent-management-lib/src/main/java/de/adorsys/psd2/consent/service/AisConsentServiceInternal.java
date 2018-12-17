@@ -27,7 +27,6 @@ import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
-import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -56,7 +55,6 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
     private final AisConsentMapper consentMapper;
     private final PsuDataMapper psuDataMapper;
-    private final SecurityDataService securityDataService;
     private final AspspProfileService aspspProfileService;
     private final TppInfoMapper tppInfoMapper;
 
@@ -76,7 +74,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setExternalId(UUID.randomUUID().toString());
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
-                   ? securityDataService.encryptId(saved.getExternalId())
+                   ? Optional.of(saved.getExternalId())
                    : Optional.empty();
     }
 
@@ -88,7 +86,7 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     public Optional<ConsentStatus> getConsentStatusById(String consentId) {
-        return getAisConsentById(consentId)
+        return aisConsentRepository.findByExternalId(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(AisConsent::getConsentStatus);
     }
@@ -116,7 +114,7 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
-        return getAisConsentById(consentId)
+        return aisConsentRepository.findByExternalId(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
     }
@@ -159,15 +157,14 @@ public class AisConsentServiceInternal implements AisConsentService {
     /**
      * Create consent authorization
      *
-     * @param encryptedConsentId id of consent
-     * @param request            needed parameters for creating consent authorization
+     * @param consentId id of consent
+     * @param request   needed parameters for creating consent authorization
      * @return String authorization id
      */
     @Override
     @Transactional
-    public Optional<String> createAuthorization(String encryptedConsentId, AisConsentAuthorizationRequest request) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(aisConsentRepository::findByExternalId)
+    public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
+        return aisConsentRepository.findByExternalId(consentId)
                    .filter(con -> !con.getConsentStatus().isFinalisedStatus())
                    .map(aisConsent -> saveNewAuthorization(aisConsent, request));
     }
@@ -175,17 +172,13 @@ public class AisConsentServiceInternal implements AisConsentService {
     /**
      * Get consent authorization
      *
-     * @param encryptedConsentId id of consent
-     * @param authorizationId    id of authorisation session
+     * @param consentId       id of consent
+     * @param authorizationId id of authorisation session
      * @return AisConsentAuthorizationResponse
      */
     @Override
-    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String encryptedConsentId) {
-        Optional<String> consentId = securityDataService.decryptId(encryptedConsentId);
-        if (!consentId.isPresent()) {
-            return Optional.empty();
-        }
-        boolean consentPresent = aisConsentRepository.findByExternalId(consentId.get())
+    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+        boolean consentPresent = aisConsentRepository.findByExternalId(consentId)
                                      .filter(c -> !c.getConsentStatus().isFinalisedStatus())
                                      .isPresent();
 
@@ -198,17 +191,12 @@ public class AisConsentServiceInternal implements AisConsentService {
     /**
      * Gets list of consent authorisation IDs by consent ID
      *
-     * @param encryptedConsentId id of consent
+     * @param consentId id of consent
      * @return Gets list of consent authorisation IDs
      */
     @Override
-    public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
-        Optional<String> consentId = securityDataService.decryptId(encryptedConsentId);
-        if (!consentId.isPresent()) {
-            return Optional.empty();
-        }
-
-        return aisConsentRepository.findByExternalId(consentId.get())
+    public Optional<List<String>> getAuthorisationsByConsentId(String consentId) {
+        return aisConsentRepository.findByExternalId(consentId)
                    .map(cst -> cst.getAuthorizations().stream()
                                    .map(AisConsentAuthorization::getExternalId)
                                    .collect(Collectors.toList()));
@@ -327,17 +315,9 @@ public class AisConsentServiceInternal implements AisConsentService {
         aisConsentActionRepository.save(action);
     }
 
-    private Optional<AisConsent> getActualAisConsent(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
-        return consentIdDecrypted
-                   .flatMap(aisConsentRepository::findByExternalId)
+    private Optional<AisConsent> getActualAisConsent(String consentId) {
+        return aisConsentRepository.findByExternalId(consentId)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
-    }
-
-    private Optional<AisConsent> getAisConsentById(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
-        return consentIdDecrypted
-                   .flatMap(aisConsentRepository::findByExternalId);
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {

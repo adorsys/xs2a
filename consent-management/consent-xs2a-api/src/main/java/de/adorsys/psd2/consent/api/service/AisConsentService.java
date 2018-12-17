@@ -16,98 +16,11 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-
-import java.util.List;
-import java.util.Optional;
-
-public interface AisConsentService {
-
-    /**
-     * Create AIS consent
-     *
-     * @param request needed parameters for creating AIS consent
-     * @return String consent id
-     */
-    Optional<String> createConsent(CreateAisConsentRequest request);
-
-    /**
-     * Reads status of consent by id
-     *
-     * @param consentId id of consent
-     * @return ConsentStatus
-     */
-    Optional<ConsentStatus> getConsentStatusById(String consentId);
-
-    /**
-     * Updates consent status by id
-     *
-     * @param consentId id of consent
-     * @param status    new consent status
-     * @return Boolean
-     */
-    boolean updateConsentStatusById(String consentId, ConsentStatus status);
-
-    /**
-     * Reads full information of consent by id
-     *
-     * @param consentId id of consent
-     * @return AisAccountConsent
-     */
-    Optional<AisAccountConsent> getAisAccountConsentById(String consentId);
-
-    /**
-     * Saves information about uses of consent
-     *
-     * @param request needed parameters for logging usage AIS consent
-     */
-    void checkConsentAndSaveActionLog(AisConsentActionRequest request);
-
-    /**
-     * Updates AIS consent account access by id
-     *
-     * @param request   needed parameters for updating AIS consent
-     * @param consentId id of the consent to be updated
-     * @return String   consent id
-     */
-    Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request);
-
-    /**
-     * Creates consent authorization
-     *
-     * @param consentId id of consent
-     * @param request   needed parameters for creating consent authorization
-     * @return String authorization id
-     */
-    Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request);
-
-    /**
-     * Gets consent authorization
-     *
-     * @param consentId       id of consent
-     * @param authorizationId id of authorisation session
-     * @return AisConsentAuthorizationResponse
-     */
-    Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId);
-
-    /**
-     * Updates consent authorization
-     *
-     * @param authorizationId id of authorisation session
-     * @param request         needed parameters for updating consent authorization
-     * @return boolean
-     */
-    boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
-
-    Optional<PsuIdData> getPsuDataByConsentId(String consentId);
-
-    /**
-     * Gets list of consent authorisation IDs by consent ID
-     *
-     * @param encryptedConsentId id of consent
-     * @return list of consent authorisation IDs
-     */
-    Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId);
+/**
+ * AisConsentService without any encryption/decryption. Should not be used in XS2A directly.
+ *
+ * @see de.adorsys.psd2.consent.api.service.AisConsentServiceBase
+ * @see de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted
+ */
+public interface AisConsentService extends AisConsentServiceBase {
 }

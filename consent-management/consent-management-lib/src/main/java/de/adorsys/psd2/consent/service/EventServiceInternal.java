@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.api.service.EventService;
 import de.adorsys.psd2.consent.domain.event.EventEntity;
 import de.adorsys.psd2.consent.repository.EventRepository;
 import de.adorsys.psd2.consent.service.mapper.EventMapper;
-import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -32,29 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventServiceInternal implements EventService {
     private final EventMapper eventMapper;
     private final EventRepository eventRepository;
-    private final SecurityDataService securityDataService;
 
     @Override
     @Transactional
     public boolean recordEvent(@NotNull Event event) {
-        String consentId = decryptId(event.getConsentId());
-        event.setConsentId(consentId);
-
-        String paymentId = decryptId(event.getPaymentId());
-        event.setPaymentId(paymentId);
-
         EventEntity eventEntity = eventMapper.mapToEventEntity(event);
         EventEntity savedEventEntity = eventRepository.save(eventEntity);
 
         return savedEventEntity.getId() != null;
-    }
-
-    private String decryptId(String encryptedId) {
-        if (encryptedId == null) {
-            return null;
-        }
-
-        return securityDataService.decryptId(encryptedId)
-                   .orElse(null);
     }
 }

@@ -18,13 +18,15 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -41,6 +43,7 @@ public class CancelPaymentService {
     private final PaymentCancellationSpi paymentCancellationSpi;
     private final SpiToXs2aCancelPaymentMapper spiToXs2aCancelPaymentMapper;
     private final PisConsentDataService pisConsentDataService;
+    private final SpiContextDataProvider spiContextDataProvider;
 
     /**
      * Cancels payment without performing strong customer authentication
@@ -49,9 +52,11 @@ public class CancelPaymentService {
      * @param payment Payment to be cancelled
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPaymentWithoutAuthorisation(SpiPsuData psuData, SpiPayment payment) {
+    public ResponseObject<CancelPaymentResponse> cancelPaymentWithoutAuthorisation(PsuIdData psuData, SpiPayment payment) {
+        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
+
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(payment.getPaymentId());
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.cancelPaymentWithoutSca(psuData, payment, aspspConsentData);
+        SpiResponse<SpiResponse.VoidResponse> spiResponse = paymentCancellationSpi.cancelPaymentWithoutSca(spiContextData, payment, aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -75,9 +80,11 @@ public class CancelPaymentService {
      * @param payment Payment to be cancelled
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> initiatePaymentCancellation(SpiPsuData psuData, SpiPayment payment) {
+    public ResponseObject<CancelPaymentResponse> initiatePaymentCancellation(PsuIdData psuData, SpiPayment payment) {
+        SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
+
         AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(payment.getPaymentId());
-        SpiResponse<SpiPaymentCancellationResponse> spiResponse = paymentCancellationSpi.initiatePaymentCancellation(psuData, payment, aspspConsentData);
+        SpiResponse<SpiPaymentCancellationResponse> spiResponse = paymentCancellationSpi.initiatePaymentCancellation(spiContextData, payment, aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {

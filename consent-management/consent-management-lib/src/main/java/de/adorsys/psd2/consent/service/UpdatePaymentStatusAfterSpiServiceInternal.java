@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.service.PisConsentService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
@@ -38,19 +37,18 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePaymentStatusAfterSpiService {
     private final PisPaymentDataRepository pisPaymentDataRepository;
-    private final PisConsentService pisConsentService;
     private final CommonPaymentDataService commonPaymentDataService;
 
     @Override
     @Transactional
-    public boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
-        Optional<List<PisPaymentData>> list = getPaymentDataList(encryptedPaymentId);
+    public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
+        Optional<List<PisPaymentData>> list = pisPaymentDataRepository.findByPaymentId(paymentId);
 
         // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
         if (list.isPresent()) {
             return updateStatusInPaymentDataList(list.get(), status);
         } else {
-            Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(encryptedPaymentId);
+            Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId);
 
             return paymentDataOptional.isPresent()
                        && commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);
@@ -76,11 +74,6 @@ public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePayment
         }
 
         return true;
-    }
-
-    private Optional<List<PisPaymentData>> getPaymentDataList(String encryptedPaymentId) {
-        return pisConsentService.getDecryptedId(encryptedPaymentId)
-                   .flatMap(pisPaymentDataRepository::findByPaymentId);
     }
 
     private boolean isChangingFinaliseStatus(List<PisPaymentData> payments, TransactionStatus newStatus) {

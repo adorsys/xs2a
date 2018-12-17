@@ -21,7 +21,7 @@ import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.web.xs2a.controller.AisConsentController;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -61,7 +61,7 @@ public class AisConsentControllerTest {
     private AisConsentController aisConsentController;
 
     @Mock
-    private AisConsentService aisConsentService;
+    private AisConsentServiceEncrypted aisConsentService;
 
     @Before
     public void setUp() {
