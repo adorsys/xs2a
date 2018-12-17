@@ -62,6 +62,20 @@ public class AspspRemoteUrls {
         return spiMockBaseUrl + "/account/iban/{iban}";
     }
 
+
+    //Common Payments urls
+    public String createCommonPayment() {
+        return spiMockBaseUrl + "/payments/common/";
+    }
+
+    public String getCommonPaymentById() {
+        return spiMockBaseUrl + "/payments/common/{payment-id}";
+    }
+
+    public String getCommonPaymentStatus() {
+        return spiMockBaseUrl + "/payments/common/{payment-id}/status";
+    }
+
     //Payments urls
     public String createPayment() {
         return spiMockBaseUrl + "/payments/";

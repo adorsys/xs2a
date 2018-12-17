@@ -18,9 +18,9 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
@@ -36,11 +36,11 @@ public class ReadSinglePaymentStatusService implements ReadPaymentStatusService 
     private final SinglePaymentSpi singlePaymentSpi;
 
     @Override
-    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiPsuData spiPsuData, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
         Optional<SpiSinglePayment> spiSinglePaymentOptional = spiPaymentFactory.createSpiSinglePayment(pisPayment, paymentProduct);
 
         return spiSinglePaymentOptional
-                   .map(spiSinglePayment -> singlePaymentSpi.getPaymentStatusById(spiPsuData, spiSinglePayment, aspspConsentData))
+                   .map(spiSinglePayment -> singlePaymentSpi.getPaymentStatusById(spiContextData, spiSinglePayment, aspspConsentData))
                    .orElseGet(() -> SpiResponse.<SpiTransactionStatus>builder()
                                         .message("Payment not found")
                                         .fail(SpiResponseStatus.LOGICAL_FAILURE));

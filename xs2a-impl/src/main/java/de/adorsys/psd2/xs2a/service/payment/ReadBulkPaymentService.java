@@ -23,10 +23,11 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
+import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,8 @@ import java.util.Optional;
 @Service("bulk-payments")
 @RequiredArgsConstructor
 public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformationResponse<BulkPayment>> {
+    private final PisConsentDataService pisConsentDataService;
+    private final SpiContextDataProvider spiContextDataProvider;
     private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final BulkPaymentSpi bulkPaymentSpi;
     private final SpiToXs2aBulkPaymentMapper spiToXs2aBulkPaymentMapper;
@@ -56,8 +59,7 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
             );
         }
 
-        SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
-        SpiResponse<SpiBulkPayment> spiResponse = bulkPaymentSpi.getPaymentById(spiPsuData, spiPaymentOptional.get(), aspspConsentData);
+        SpiResponse<SpiBulkPayment> spiResponse = bulkPaymentSpi.getPaymentById(spiContextDataProvider.provideWithPsuIdData(psuData), spiPaymentOptional.get(), aspspConsentData);
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {

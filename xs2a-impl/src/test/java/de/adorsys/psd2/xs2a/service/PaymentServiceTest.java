@@ -39,12 +39,14 @@ import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisConsentService;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -76,7 +78,6 @@ import static org.mockito.Mockito.*;
 public class PaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
     private static final String IBAN = "DE123456789";
-    private static final String WRONG_IBAN = "wrong_iban";
     private static final String AMOUNT = "100";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], PAYMENT_ID);
@@ -131,7 +132,8 @@ public class PaymentServiceTest {
     private ReadPaymentStatusFactory readPaymentStatusFactory;
     @Mock
     private ReadPaymentStatusService readPaymentStatusService;
-
+    @Mock
+    private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private PisConsentResponse pisConsentResponse;
     @Mock
@@ -157,7 +159,7 @@ public class PaymentServiceTest {
         when(pisConsentDataService.getInternalPaymentIdByEncryptedString("TEST")).thenReturn("TEST");
 
         //Status by ID
-        when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters(), getTppInfoServiceModified(), getXs2aPisConsent()))
+        when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK), getTppInfoServiceModified(), getXs2aPisConsent()))
             .thenReturn(getValidResponse());
 
         when(pisConsentDataService.getAspspConsentData(anyString())).thenReturn(ASPSP_CONSENT_DATA);
@@ -182,7 +184,7 @@ public class PaymentServiceTest {
     @Test
     public void createBulkPayments() {
         //When
-        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, getBulkPaymentInitiationParameters());
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK));
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -289,7 +291,7 @@ public class PaymentServiceTest {
     @Test
     public void createPayment_Success_ShouldRecordEvent() {
         // Given:
-        PaymentInitiationParameters parameters = buildPaymentInitiationParameters();
+        PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -326,7 +328,7 @@ public class PaymentServiceTest {
         when(pisConsentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
         when(pisConsentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
         when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
-        when(readPaymentStatusService.readPaymentStatus(eq(pisPayment), eq("sepa-credit-transfers"), any(SpiPsuData.class), eq(ASPSP_CONSENT_DATA)))
+        when(readPaymentStatusService.readPaymentStatus(eq(pisPayment), eq("sepa-credit-transfers"), any(SpiContextData.class), eq(ASPSP_CONSENT_DATA)))
             .thenReturn(
                 SpiResponse.<SpiTransactionStatus>builder()
                     .payload(SpiTransactionStatus.RCVD)
@@ -431,17 +433,10 @@ public class PaymentServiceTest {
         return new Xs2aPisConsent("TEST", PSU_ID_DATA);
     }
 
-
-    private PaymentInitiationParameters getBulkPaymentInitiationParameters() {
+    private PaymentInitiationParameters buildPaymentInitiationParameters(PaymentType type) {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
-        requestParameters.setPaymentType(PaymentType.BULK);
-
-        return requestParameters;
-    }
-
-    private PaymentInitiationParameters buildPaymentInitiationParameters() {
-        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
-        requestParameters.setPaymentType(PaymentType.SINGLE);
+        requestParameters.setPaymentType(type);
+        requestParameters.setPaymentProduct("sepa-credit-transfers");
 
         return requestParameters;
     }

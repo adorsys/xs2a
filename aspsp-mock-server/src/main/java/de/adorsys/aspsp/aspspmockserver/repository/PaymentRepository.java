@@ -22,9 +22,12 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Profile({"mongo", "fongo"})
 public interface PaymentRepository extends MongoRepository<AspspPayment, String> {
     List<AspspPayment> findByPaymentIdOrBulkId(String paymentId, String bulkId);
+
+    Optional<AspspPayment> findByPaymentId(String paymentId);
 }

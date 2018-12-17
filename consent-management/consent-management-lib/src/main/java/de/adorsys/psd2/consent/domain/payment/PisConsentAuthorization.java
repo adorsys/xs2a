@@ -60,6 +60,11 @@ public class PisConsentAuthorization {
     @Column(name = "expiration_timestamp")
     private OffsetDateTime redirectUrlExpirationTimestamp;
 
+    //TODO make this field madatory after pisConsent is removed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/517
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private PisCommonPaymentData paymentData;
+
     public boolean isNotExpired() {
         return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());
     }

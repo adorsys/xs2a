@@ -18,9 +18,9 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
@@ -36,11 +36,11 @@ public class ReadBulkPaymentStatusService implements ReadPaymentStatusService {
     private final BulkPaymentSpi bulkPaymentSpi;
 
     @Override
-    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiPsuData spiPsuData, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
         Optional<SpiBulkPayment> spiBulkPaymentOptional = spiPaymentFactory.createSpiBulkPayment(pisPayment, paymentProduct);
 
         return spiBulkPaymentOptional
-                   .map(spiBulkPayment -> bulkPaymentSpi.getPaymentStatusById(spiPsuData, spiBulkPayment, aspspConsentData))
+                   .map(spiBulkPayment -> bulkPaymentSpi.getPaymentStatusById(spiContextData, spiBulkPayment, aspspConsentData))
                    .orElseGet(() -> SpiResponse.<SpiTransactionStatus>builder()
                                         .message("Payment not found")
                                         .fail(SpiResponseStatus.LOGICAL_FAILURE));

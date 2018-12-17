@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.service.EventService;
+import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.config.EventRemoteUrls;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class Xs2aEventServiceRemote implements EventService {
+public class Xs2aEventServiceRemote implements EventServiceEncrypted {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final EventRemoteUrls eventRemoteUrls;

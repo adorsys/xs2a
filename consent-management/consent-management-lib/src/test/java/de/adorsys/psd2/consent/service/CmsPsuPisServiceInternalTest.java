@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
@@ -58,7 +59,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsPsuPisServiceInternalTest {
-
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
     private static final String AUTHORISATION_ID = "authorisation id";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
@@ -79,6 +79,8 @@ public class CmsPsuPisServiceInternalTest {
     @Mock
     PisPaymentDataRepository pisPaymentDataRepository;
     @Mock
+    PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+    @Mock
     PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
     @Mock
     CmsPsuPisMapper cmsPsuPisMapper;
@@ -88,6 +90,8 @@ public class CmsPsuPisServiceInternalTest {
     PsuDataRepository psuDataRepository;
     @Mock
     PsuDataMapper psuDataMapper;
+    @Mock
+    CommonPaymentDataService commonPaymentDataService;
 
     @Before
     public void setUp() {
@@ -100,6 +104,8 @@ public class CmsPsuPisServiceInternalTest {
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID))
             .thenReturn(Optional.of(pisPaymentDataList));
         when(pisPaymentDataRepository.findByPaymentId(WRONG_PAYMENT_ID))
+            .thenReturn(Optional.empty());
+        when(pisCommonPaymentDataRepository.findByPaymentId(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
         when(pisPaymentDataRepository.save(any(PisPaymentData.class)))
             .thenReturn(pisPaymentDataList.get(0));
@@ -118,9 +124,8 @@ public class CmsPsuPisServiceInternalTest {
             .thenReturn(Optional.of(psuIdData));
         when(pisConsentService.getPsuDataByPaymentId(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
-        when(pisConsentService.getDecryptedId(PAYMENT_ID))
-            .thenReturn(Optional.of(PAYMENT_ID));
-        when(pisConsentService.getDecryptedId(WRONG_PAYMENT_ID))
+
+        when(commonPaymentDataService.getPisCommonPaymentData(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
 
         when(psuDataRepository.save(any(PsuData.class)))
@@ -134,7 +139,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePsuInPayment_Success() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, PAYMENT_ID);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, AUTHORISATION_ID);
 
         // Then
         assertTrue(actualResult);
@@ -143,7 +148,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePsuInPayment_Fail_WrongPaymentId() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, WRONG_PAYMENT_ID);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, WRONG_AUTHORISATION_ID);
 
         // Then
         assertFalse(actualResult);
@@ -249,7 +254,6 @@ public class CmsPsuPisServiceInternalTest {
     public void updatePaymentStatus_Fail_FinalisedStatus() {
         //Given
         List<PisPaymentData> finalisedPisPaymentDataList = buildFinalisedPisPaymentDataList();
-        when(pisConsentService.getDecryptedId(FINALISED_PAYMENT_ID)).thenReturn(Optional.of(FINALISED_PAYMENT_ID));
         when(pisPaymentDataRepository.findByPaymentId(FINALISED_PAYMENT_ID)).thenReturn(Optional.of(finalisedPisPaymentDataList));
 
         // When
@@ -278,7 +282,6 @@ public class CmsPsuPisServiceInternalTest {
     public void getPaymentByAuthorisationId_Fail_ExpiredRedirectUrl() {
         //Given
         PisConsentAuthorization expectedAuthorisation = buildExpiredAuthorisation();
-        when(pisConsentService.getDecryptedId(EXPIRED_AUTHORISATION_ID)).thenReturn(Optional.of(EXPIRED_AUTHORISATION_ID));
         when(pisConsentAuthorizationRepository.findByExternalId(EXPIRED_AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
 
         // When
@@ -323,6 +326,7 @@ public class CmsPsuPisServiceInternalTest {
         pisConsentAuthorisation.setExternalId(AUTHORISATION_ID);
         pisConsentAuthorisation.setPsuData(buildPsuData());
         pisConsentAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2022-12-03T10:15:30+01:00"));
+        pisConsentAuthorisation.setConsent(buildPisConsent());
 
         return pisConsentAuthorisation;
     }

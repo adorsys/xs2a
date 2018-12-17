@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.pis.proto;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -43,4 +44,13 @@ public class PisConsentRequest {
 
     @ApiModelProperty(value = "Corresponding PSU", required = true)
     private PsuIdData psuData;
+
+    @ApiModelProperty(value = "External Payment Id", example = "32454656712432")
+    private String paymentId;
+
+    @ApiModelProperty(value = "Transaction status", example = "ACCP")
+    private TransactionStatus transactionStatus;
+
+    @ApiModelProperty(value = "Payment info")
+    private PisPaymentInfo paymentInfo;
 }

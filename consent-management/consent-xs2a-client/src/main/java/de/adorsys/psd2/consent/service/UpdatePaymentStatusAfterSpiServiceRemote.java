@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisPaymentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -32,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UpdatePaymentStatusAfterSpiServiceRemote implements UpdatePaymentStatusAfterSpiService {
+public class UpdatePaymentStatusAfterSpiServiceRemote implements UpdatePaymentStatusAfterSpiServiceEncrypted {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final PisPaymentRemoteUrls pisPaymentRemoteUrls;

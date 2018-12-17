@@ -16,20 +16,15 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Service to be used to update payment status ONLY after getting SPI service result.
  * Should not be used for any other business logic purposes.
+ *
+ * This is UpdatePaymentStatusAfterSpiService without any encryption/decryption.
+ * Should not be used in XS2A directly.
+ *
+ * @see de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceBase
+ * @see de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted
  */
-public interface UpdatePaymentStatusAfterSpiService {
-
-    /**
-     * Updates a Status of Payment object by its ID and PSU ID
-     *
-     * @param encryptedPaymentId ID of Payment
-     * @param status             Status of Payment to be set
-     */
-    boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status);
+public interface UpdatePaymentStatusAfterSpiService extends UpdatePaymentStatusAfterSpiServiceBase {
 }

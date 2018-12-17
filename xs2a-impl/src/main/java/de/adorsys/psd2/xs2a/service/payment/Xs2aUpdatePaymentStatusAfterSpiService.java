@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
-import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
+import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class Xs2aUpdatePaymentStatusAfterSpiService {
-    private final UpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    private final UpdatePaymentStatusAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
 
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
         return updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, status);
