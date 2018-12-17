@@ -66,4 +66,13 @@ public class Event {
      * The id of particular bank instance.
      */
     private String instanceId;
+
+    public Event(OffsetDateTime timestamp, String consentId, String paymentId, Object payload, EventOrigin eventOrigin, EventType eventType) {
+        this.timestamp = timestamp;
+        this.consentId = consentId;
+        this.paymentId = paymentId;
+        this.payload = payload;
+        this.eventOrigin = eventOrigin;
+        this.eventType = eventType;
+    }
 }
