@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.domain;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -27,7 +26,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @Entity(name = "aspsp_consent_data")
 @ApiModel(description = "Aspsp consent data", value = "AspspConsentData")
 @NoArgsConstructor
