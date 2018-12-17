@@ -92,10 +92,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
         registry.addInterceptor(new TppStopListInterceptor(tppService, tppStopListService, objectMapper))
-            .addPathPatterns(Xs2aEndpointPathConstant.getAllXs2aEndpointPaths());
+            .addPathPatterns(getAllXs2aEndpointPaths());
 
         registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper, messageErrorMapper()))
-            .addPathPatterns(Xs2aEndpointPathConstant.getAllXs2aEndpointPaths());
+            .addPathPatterns(getAllXs2aEndpointPaths());
     }
 
     @Bean
