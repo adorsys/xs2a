@@ -17,10 +17,10 @@
 package de.adorsys.psd2.consent.api.service;
 
 /**
- * PisConsentService without any encryption/decryption. Should not be used in XS2A directly.
+ * AisConsentService with enabled encryption and decryption
  *
- * @see de.adorsys.psd2.consent.api.service.PisConsentServiceBase
- * @see de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted
+ * @see de.adorsys.psd2.consent.api.service.AisConsentServiceBase
+ * @see de.adorsys.psd2.consent.api.service.AisConsentService
  */
-public interface PisConsentService extends PisConsentServiceBase {
+public interface AisConsentServiceEncrypted extends AisConsentServiceBase {
 }

@@ -26,7 +26,6 @@ import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
-import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -54,12 +53,12 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentMapper consentMapper;
     private final PsuDataRepository psuDataRepository;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
-    private final SecurityDataService securityDataService;
 
     @Override
     @Transactional
-    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        return getAisConsentById(consentId)
+    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
+        return aisConsentAuthorizationRepository.findByExternalId(redirectId)
+                   .map(AisConsentAuthorization::getConsent)
                    .map(con -> updatePsuData(con, psuIdData))
                    .orElse(false);
     }
@@ -67,7 +66,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        return getAisConsentById(consentId)
+        return aisConsentRepository.findByExternalId(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
     }
@@ -131,7 +130,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status) {
-        return getAisConsentById(consentId)
+        return aisConsentRepository.findByExternalId(consentId)
                    .map(con -> updateConsentStatus(con, status))
                    .orElse(false);
     }
@@ -146,17 +145,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return consent;
     }
 
-    private Optional<AisConsent> getActualAisConsent(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
-        return consentIdDecrypted
-                   .flatMap(aisConsentRepository::findByExternalId)
+    private Optional<AisConsent> getActualAisConsent(String consentId) {
+        return aisConsentRepository.findByExternalId(consentId)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
-    }
-
-    private Optional<AisConsent> getAisConsentById(String encryptedConsentId) {
-        Optional<String> consentIdDecrypted = securityDataService.decryptId(encryptedConsentId);
-        return consentIdDecrypted
-                   .flatMap(aisConsentRepository::findByExternalId);
     }
 
     private boolean updateConsentStatus(AisConsent consent, ConsentStatus status) {

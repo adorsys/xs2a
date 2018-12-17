@@ -17,10 +17,13 @@
 package de.adorsys.psd2.consent.api.service;
 
 /**
- * PisConsentService without any encryption/decryption. Should not be used in XS2A directly.
+ * Service to be used to update payment status ONLY after getting SPI service result.
+ * Should not be used for any other business logic purposes.
  *
- * @see de.adorsys.psd2.consent.api.service.PisConsentServiceBase
- * @see de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted
+ * This is UpdatePaymentStatusAfterSpiService with enabled encryption and decryption.
+ *
+ * @see de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceBase
+ * @see de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService
  */
-public interface PisConsentService extends PisConsentServiceBase {
+public interface UpdatePaymentStatusAfterSpiServiceEncrypted extends UpdatePaymentStatusAfterSpiServiceBase {
 }

@@ -25,7 +25,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResp
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.web.xs2a.controller.PisConsentController;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -68,7 +68,7 @@ public class PisConsentControllerTest {
     private PisConsentController pisConsentController;
 
     @Mock
-    private PisConsentService pisConsentService;
+    private PisConsentServiceEncrypted pisConsentService;
 
     @Before
     public void setUp() {

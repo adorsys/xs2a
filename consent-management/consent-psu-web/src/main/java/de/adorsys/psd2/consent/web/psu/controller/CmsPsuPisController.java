@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.*;
 public class CmsPsuPisController {
     private final CmsPsuPisService cmsPsuPisService;
 
-    @PutMapping(path = "/{payment-id}")
+    @PutMapping(path = "/redirects/{redirect-id}/psu-data")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = CreatePisConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -49,11 +49,10 @@ public class CmsPsuPisController {
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("payment-id") String paymentId) {
-
+        @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("redirect-id") String redirectId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsPsuPisService.updatePsuInPayment(psuIdData, paymentId)
+        return cmsPsuPisService.updatePsuInPayment(psuIdData, redirectId)
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }
@@ -81,7 +80,7 @@ public class CmsPsuPisController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    @GetMapping(path = "/redirect/{redirect-id}")
+    @GetMapping(path = "/redirects/{redirect-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),

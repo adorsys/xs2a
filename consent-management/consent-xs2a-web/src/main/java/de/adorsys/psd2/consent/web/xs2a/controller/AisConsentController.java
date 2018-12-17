@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
 import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ import java.util.List;
 @RequestMapping(path = "api/v1/ais/consent")
 @Api(value = "api/v1/ais/consent", tags = "AIS, Consents", description = "Provides access to consent management system for AIS")
 public class AisConsentController {
-    private final AisConsentService aisConsentService;
+    private final AisConsentServiceEncrypted aisConsentService;
 
     @PostMapping(path = "/")
     @ApiOperation(value = "Create consent for given psu id and accesses.")
