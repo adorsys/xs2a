@@ -119,8 +119,14 @@ public class PaymentModelMapperXs2a {
         payment.setExecutionRule(Optional.ofNullable(paymentRequest.getExecutionRule()).map(ExecutionRule::toString).orElse(null));
         payment.setEndDate(paymentRequest.getEndDate());
         payment.setFrequency(mapToXs2aFrequencyCode(paymentRequest.getFrequency()));
-        payment.setDayOfExecution(Integer.parseInt(paymentRequest.getDayOfExecution().toString()));
+        payment.setDayOfExecution(mapToDayOfExecution(paymentRequest.getDayOfExecution()));
         return payment;
+    }
+
+    private int mapToDayOfExecution(DayOfExecution dayOfExecution) {
+        return Optional.ofNullable(dayOfExecution)
+            .map(d -> Integer.parseInt(d.toString()))
+            .orElse(0);
     }
 
     private Xs2aFrequencyCode mapToXs2aFrequencyCode(FrequencyCode frequency) {
