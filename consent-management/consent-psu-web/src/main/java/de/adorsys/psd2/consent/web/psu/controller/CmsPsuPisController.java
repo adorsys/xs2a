@@ -104,17 +104,17 @@ public class CmsPsuPisController {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         Optional<CmsPaymentResponse> response = cmsPsuPisService.checkRedirectAndGetPayment(psuIdData, redirectId);
 
-        return response.isPresent()
-                   ? getResponseWithCorrectCode(response.get())
-                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    private ResponseEntity<CmsPaymentResponse> getResponseWithCorrectCode(CmsPaymentResponse response) {
-        if (StringUtils.isNotBlank(response.getAuthorisationId())) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
+        if (!response.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(response, HttpStatus.REQUEST_TIMEOUT);
+        CmsPaymentResponse paymentResponse = response.get();
+        if (StringUtils.isBlank(paymentResponse.getAuthorisationId())) {
+            return new ResponseEntity<>(paymentResponse, HttpStatus.REQUEST_TIMEOUT);
+        }
+
+        return new ResponseEntity<>(paymentResponse, HttpStatus.OK);
+
     }
 
     @PutMapping(path = "/{payment-id}/{authorisation-id}/status/{status}")
