@@ -44,6 +44,7 @@ public class SpiToXs2aAccountReferenceMapper {
         return Optional.ofNullable(spiAccountRef)
                    .map(a -> {
                        Xs2aAccountReference accRef = new Xs2aAccountReference();
+                       accRef.setResourceId(a.getResourceId());
                        accRef.setIban(a.getIban());
                        accRef.setBban(a.getBban());
                        accRef.setPan(a.getPan());

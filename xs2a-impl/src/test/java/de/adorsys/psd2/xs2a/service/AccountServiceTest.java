@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -142,6 +143,8 @@ public class AccountServiceTest {
     private Xs2aEventService xs2aEventService;
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
+    @Mock
+    private AccountReferenceInConsentUpdater accountReferenceUpdater;
 
 
     @Before
