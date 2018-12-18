@@ -86,9 +86,9 @@ public class CmsAspspEventServiceInternalTest {
     }
 
     private Event buildCmsEvent(OffsetDateTime timestamp) {
-        Event event = new Event();
-        event.setTimestamp(timestamp);
-        return event;
+        return Event.builder()
+                   .timestamp(timestamp)
+                   .build();
     }
 
     private EventEntity buildEventEntity(OffsetDateTime timestamp) {

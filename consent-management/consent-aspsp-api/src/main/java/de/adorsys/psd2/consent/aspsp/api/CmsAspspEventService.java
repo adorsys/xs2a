@@ -31,7 +31,7 @@ public interface CmsAspspEventService {
      *
      * @param start      First date of the period
      * @param end        Last date of the period
-     * @param instanceId The id of particular bank instance
+     * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period
      */
     List<Event> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId);
@@ -42,7 +42,7 @@ public interface CmsAspspEventService {
      * @param start      First date of the period
      * @param end        Last date of the period
      * @param consentId  Id of the consent
-     * @param instanceId The id of particular bank instance
+     * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and with a given consentId
      */
     List<Event> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId);
@@ -53,7 +53,7 @@ public interface CmsAspspEventService {
      * @param start      First date of the period
      * @param end        Last date of the period
      * @param paymentId  Id of the payment
-     * @param instanceId The id of particular bank instance
+     * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and with a given paymentId
      */
     List<Event> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId);
@@ -64,7 +64,7 @@ public interface CmsAspspEventService {
      * @param start      First date of the period
      * @param end        Last date of the period
      * @param eventType  The searched type of the events
-     * @param instanceId The id of particular bank instance
+     * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and of a specific type
      */
     List<Event> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId);
@@ -75,7 +75,7 @@ public interface CmsAspspEventService {
      * @param start       First date of the period
      * @param end         Last date of the period
      * @param eventOrigin The searched origin of the events
-     * @param instanceId  The id of particular bank instance
+     * @param instanceId  The id of particular service instance
      * @return List of Event objects, recorded in given time period and from a specific origin
      */
     List<Event> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId);

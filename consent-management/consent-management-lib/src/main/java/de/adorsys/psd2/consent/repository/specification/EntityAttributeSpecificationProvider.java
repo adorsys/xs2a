@@ -26,11 +26,11 @@ public class EntityAttributeSpecificationProvider {
     private EntityAttributeSpecificationProvider(){}
 
     public static <T> Specification<T> provideSpecificationForEntityAttribute(String attribute, String value) {
-        return  (root, query, cb) -> {
+        return  (root, criteriaQuery, criteriaBuilder) -> {
             if (StringUtils.isBlank(value)) {
                 return null;
             }
-            return cb.and(cb.equal(root.get(attribute), value));
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get(attribute), value));
         };
     }
 }
