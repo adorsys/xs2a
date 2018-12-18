@@ -288,7 +288,7 @@ public class CmsPsuPisServiceInternalTest {
         Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID);
 
         // Then
-        assertThat(actualResult).isEqualTo(Optional.of(new CmsPaymentResponse(null, null, null, TPP_NOK_REDIRECT_URI)));
+        assertThat(actualResult).isEqualTo(Optional.of(new CmsPaymentResponse( TPP_NOK_REDIRECT_URI)));
     }
 
     @Test
