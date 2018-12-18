@@ -60,3 +60,10 @@ GET /psu-api/v1/ais/consent/redirects/{redirect-id} or GET /psu-api/v1/pis/conse
 
 ## Bugfix: make AIS Consent usable only if its status is VALID
 Now TPP is unable to use AIS Consent with RECEIVED status. It's usable only if it has VALID status.
+
+## New Java Interface CmsPsuPiisService in consent-psu-api module for getting and revoking PIIS consents for online-banking
+| Context                    | Method | Endpoint                                             | Description                                                                |
+|----------------------------|--------|------------------------------------------------------|----------------------------------------------------------------------------|
+| Gets list of PIIS consents | GET    | psu-api/v1/piis/consents                             | Returns a list of PIIS Consent objects by PSU ID                           |
+| Gets PIIS consent          | GET    | psu-api/v1/piis/consents/{consent-id}                | Returns PIIS Consent object by its ID                                      |
+| Revokes PIIS consent       | PUT    | psu-api/v1/piis/consents/{consent-id}/revoke-consent | Revokes PIIS Consent object by its ID. Consent gets status Revoked by PSU. |
