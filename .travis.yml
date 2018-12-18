@@ -27,6 +27,7 @@ script:
   - mvn -B -V clean install
   - mvn -B -V javadoc:javadoc
   - mvn -B -V pmd:check
+  - echo "TRAVIS_JDK_VERSION is $TRAVIS_JDK_VERSION"
 
 # Schritte um Release zu veröffentlichen
 before_deploy:
@@ -43,5 +44,5 @@ deploy:
       # matches: tags with format X.Y.Z, X.Y.Z-A, X.Y.Z-RCA, X.Y.Z-A-B.C.D, X.Y.Z-A-B.C.D-E, X.Y.Z-RCA-B.C.D-E or develop
       condition: >-
                   ( ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
-                    || $TRAVIS_BRANCH = develop ) )
-                  && ( $TRAVIS_JDK_VERISON = oraclejdk8 )
+                    || "$TRAVIS_BRANCH" = "develop" )
+                  && "$TRAVIS_JDK_VERSION" = "oraclejdk8" )
