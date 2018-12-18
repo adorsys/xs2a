@@ -38,7 +38,7 @@ public class UpdatePisConsentCancellationPsuDataAspect extends AbstractLinkAspec
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updatePisConsentCancellationPsuData(..)) && args( request)", returning = "result", argNames = "result,request")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService.updatePisConsentCancellationPsuData(..)) && args( request)", returning = "result", argNames = "result,request")
     public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentCancellationAuthorizationAspect(ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> result, Xs2aUpdatePisConsentPsuDataRequest request) {
         if (!result.hasError()) {
             Xs2aUpdatePisConsentPsuDataResponse body = result.getBody();
