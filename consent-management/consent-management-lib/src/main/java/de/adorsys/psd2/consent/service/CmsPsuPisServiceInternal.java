@@ -93,14 +93,18 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
         Optional<PisConsentAuthorization> optionalAuthorization = pisConsentAuthorizationRepository.findByExternalId(redirectId)
                                                                       .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
-        if (optionalAuthorization.isPresent()) {
-            PisConsentAuthorization authorization = optionalAuthorization.get();
 
-            if (authorization.isNotExpired()) {
-                return Optional.of(buildCmsPaymentResponse(authorization));
+        if (optionalAuthorization.isPresent()) {
+            PisConsentAuthorization authorisation = optionalAuthorization.get();
+
+            if (authorisation.isNotExpired()) {
+                return Optional.of(buildCmsPaymentResponse(authorisation));
             }
 
-            changeAuthorisationStatusToFailed(authorization);
+            changeAuthorisationStatusToFailed(authorisation);
+            String tppNokRedirectUri = authorisation.getConsent().getTppInfo().getNokRedirectUri();
+
+            return Optional.of(new CmsPaymentResponse(tppNokRedirectUri));
         }
 
         return Optional.empty();
