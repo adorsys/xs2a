@@ -39,7 +39,7 @@ public class CmsAspspStopListController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<TppStopListRecord> getTppStopListRecord(
-        @ApiParam(value = "ID of TPP to load", example = "12345987")
+        @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId) {
@@ -52,7 +52,7 @@ public class CmsAspspStopListController {
     @ApiOperation(value = "Blocks TPP by TPP authorisation number, national authority ID and lock period")
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> blockTpp(
-        @ApiParam(value = "ID of TPP to load", example = "12345987")
+        @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId,
@@ -67,7 +67,7 @@ public class CmsAspspStopListController {
     @ApiOperation(value = "Unblocks TPP by TPP authorisation number and national authority ID")
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> unblockTpp(
-        @ApiParam(value = "ID of TPP to load", example = "12345987")
+        @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId) {

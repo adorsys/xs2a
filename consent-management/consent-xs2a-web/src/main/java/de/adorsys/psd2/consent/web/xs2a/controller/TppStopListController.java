@@ -41,7 +41,7 @@ public class TppStopListController {
     @ApiOperation(value = "Checks if TPP is blocked")
     @ApiResponse(code = 200, message = "OK")
     public ResponseEntity<Boolean> checkIfTppBlocked(
-        @ApiParam(value = "ID of TPP to load", example = "12345987")
+        @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId) {
