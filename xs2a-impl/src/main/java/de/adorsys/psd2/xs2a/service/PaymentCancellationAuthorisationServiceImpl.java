@@ -39,6 +39,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final PisPsuDataService pisPsuDataService;
     private final Xs2aEventService xs2aEventService;
 
+    @Override
     public ResponseObject<Xs2aCreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
 
@@ -52,6 +53,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                                   ::build);
     }
 
+    @Override
     public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentCancellationPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED, request);
 
@@ -67,6 +69,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                    .build();
     }
 
+    @Override
     public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
 

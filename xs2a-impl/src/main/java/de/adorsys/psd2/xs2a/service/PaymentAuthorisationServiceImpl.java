@@ -36,6 +36,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     private final Xs2aEventService xs2aEventService;
     private final PisScaAuthorisationService pisAuthorizationService;
 
+    @Override
     public ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> createPisConsentAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
@@ -48,6 +49,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                                   ::build);
     }
 
+    @Override
     public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
         Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentPsuData(request);
