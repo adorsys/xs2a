@@ -41,7 +41,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -90,6 +89,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
+    @Transactional
     public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
         Optional<PisConsentAuthorization> optionalAuthorization = pisConsentAuthorizationRepository.findByExternalId(redirectId)
                                                                       .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
@@ -207,8 +207,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             tppNokRedirectUri);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void changeAuthorisationStatusToFailed(PisConsentAuthorization authorisation) {
+    private void changeAuthorisationStatusToFailed(PisConsentAuthorization authorisation) {
         authorisation.setScaStatus(ScaStatus.FAILED);
         pisConsentAuthorizationRepository.save(authorisation);
     }
