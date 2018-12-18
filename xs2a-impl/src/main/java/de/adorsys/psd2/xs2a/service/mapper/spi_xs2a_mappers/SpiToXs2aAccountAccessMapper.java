@@ -29,7 +29,7 @@ public class SpiToXs2aAccountAccessMapper {
     private final SpiToXs2aAccountReferenceMapper spiToXs2aAccountReferenceMapper;
     private final SpiToXs2aAccountAccessTypeMapper spiToXs2aAccountAccessTypeMapper;
 
-    public Xs2aAccountAccess mapToAccountAccess(SpiAccountAccess access) {
+    public Optional<Xs2aAccountAccess> mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa ->
                             new Xs2aAccountAccess(
@@ -37,7 +37,6 @@ public class SpiToXs2aAccountAccessMapper {
                                 spiToXs2aAccountReferenceMapper.mapToXs2aAccountReferences(aa.getBalances()),
                                 spiToXs2aAccountReferenceMapper.mapToXs2aAccountReferences(aa.getTransactions()),
                                 spiToXs2aAccountAccessTypeMapper.mapToAccountAccessType(aa.getAvailableAccounts()),
-                                spiToXs2aAccountAccessTypeMapper.mapToAccountAccessType(aa.getAllPsd2())))
-                   .orElse(null);
+                                spiToXs2aAccountAccessTypeMapper.mapToAccountAccessType(aa.getAllPsd2())));
     }
 }
