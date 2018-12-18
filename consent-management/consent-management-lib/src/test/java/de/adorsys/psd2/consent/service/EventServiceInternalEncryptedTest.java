@@ -106,9 +106,9 @@ public class EventServiceInternalEncryptedTest {
     }
 
     private Event buildEvent(String consentId, String paymentId) {
-        Event event = new Event();
-        event.setConsentId(consentId);
-        event.setPaymentId(paymentId);
-        return event;
+        return Event.builder()
+            .consentId(consentId)
+            .paymentId(paymentId)
+            .build();
     }
 }

@@ -60,7 +60,8 @@ public class EventServiceInternalTest {
     @Test
     public void recordEvent() {
         // Given
-        Event event = new Event();
+        Event event = Event.builder()
+                          .build();
 
         // When
         boolean actual = eventServiceInternal.recordEvent(event);

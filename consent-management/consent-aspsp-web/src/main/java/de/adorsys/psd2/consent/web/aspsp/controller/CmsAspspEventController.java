@@ -48,8 +48,10 @@ public class CmsAspspEventController {
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime start,
         @ApiParam(value = "End date", example = "2030-01-01T00:00:00Z", required = true)
         @RequestHeader(value = "end-date")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end) {
-        List<Event> events = cmsAspspEventService.getEventsForPeriod(start, end);
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end,
+        @ApiParam(value = "Bank instance ID")
+        @RequestHeader(value = "instance-id", required = false) String instanceId) {
+        List<Event> events = cmsAspspEventService.getEventsForPeriod(start, end, instanceId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 }

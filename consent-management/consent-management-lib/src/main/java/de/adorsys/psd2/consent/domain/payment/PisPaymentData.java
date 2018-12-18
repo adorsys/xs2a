@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -34,7 +35,7 @@ import java.util.Currency;
 @ToString(exclude = "consent")
 @Entity(name = "pis_payment_data")
 @ApiModel(description = "pis payment entity", value = "PisPaymentData")
-public class PisPaymentData {
+public class PisPaymentData extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_payment_data_generator")
     @SequenceGenerator(name = "pis_payment_data_generator", sequenceName = "pis_payment_data_id_seq")

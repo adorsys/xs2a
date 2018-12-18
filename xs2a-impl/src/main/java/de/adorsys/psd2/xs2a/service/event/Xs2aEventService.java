@@ -117,11 +117,11 @@ public class Xs2aEventService {
     }
 
     private Event buildTppEvent(EventType eventType, Object body) {
-        Event event = new Event();
-        event.setTimestamp(OffsetDateTime.now());
-        event.setEventOrigin(EventOrigin.TPP);
-        event.setEventType(eventType);
-
+        Event event = Event.builder()
+                          .timestamp(OffsetDateTime.now())
+                          .eventOrigin(EventOrigin.TPP)
+                          .eventType(eventType)
+                          .build();
         RequestEventPayload payload = buildRequestEventPayload(body);
         event.setPayload(payload);
 
