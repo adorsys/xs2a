@@ -109,12 +109,12 @@ public class CmsPsuPisController {
                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    private ResponseEntity<CmsPaymentResponse> getResponseWithCorrectCode(CmsPaymentResponse payment) {
-        if (StringUtils.isNotBlank(payment.getAuthorisationId())) {
-            return new ResponseEntity<>(payment, HttpStatus.OK);
+    private ResponseEntity<CmsPaymentResponse> getResponseWithCorrectCode(CmsPaymentResponse response) {
+        if (StringUtils.isNotBlank(response.getAuthorisationId())) {
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(payment, HttpStatus.REQUEST_TIMEOUT);
+        return new ResponseEntity<>(response, HttpStatus.REQUEST_TIMEOUT);
     }
 
     @PutMapping(path = "/{payment-id}/{authorisation-id}/status/{status}")

@@ -104,12 +104,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             String tppNokRedirectUri = authorisation.getConsent().getTppInfo().getNokRedirectUri();
             changeAuthorisationStatusToFailed(authorisation);
 
-            return Optional.of(new CmsPaymentResponse(
-                null,
-                null,
-                null,
-                tppNokRedirectUri
-            ));
+            return Optional.of(new CmsPaymentResponse(tppNokRedirectUri));
         }
 
         return Optional.empty();
