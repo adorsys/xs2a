@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.service;
+package de.adorsys.psd2.consent.domain;
 
-public interface ConsentService {
-    /**
-     * Checks whether consent exists
-     *
-     * @param consentId id of consent
-     * @return boolean
-     */
-    boolean isConsentExist(String consentId);
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+
+@Getter
+@Setter
+@MappedSuperclass
+public abstract class InstanceDependableEntity {
+
+    @Column(name = "instance_id", nullable = false)
+    private String instanceId;
 }

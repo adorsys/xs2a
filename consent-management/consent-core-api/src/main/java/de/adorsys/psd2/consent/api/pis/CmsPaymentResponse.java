@@ -16,13 +16,19 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
+@Data
+@AllArgsConstructor
 public class CmsPaymentResponse {
 
     private CmsPayment payment;
     private String authorisationId;
     private String tppOkRedirectUri;
     private String tppNokRedirectUri;
+
+    public CmsPaymentResponse(String tppNokRedirectUri) {
+        this.tppNokRedirectUri = tppNokRedirectUri;
+    }
 }

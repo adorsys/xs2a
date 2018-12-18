@@ -51,15 +51,16 @@ public class EventMapper {
     }
 
     private Event mapToEvent(@NotNull EventEntity eventEntity) {
-        Event event = new Event();
-        event.setTimestamp(eventEntity.getTimestamp());
-        event.setConsentId(eventEntity.getConsentId());
-        event.setPaymentId(eventEntity.getPaymentId());
         Object payload = jsonConverterService.toObject(eventEntity.getPayload(), Object.class)
                              .orElse(null);
-        event.setPayload(payload);
-        event.setEventOrigin(eventEntity.getEventOrigin());
-        event.setEventType(eventEntity.getEventType());
-        return event;
+        return Event.builder()
+                   .timestamp(eventEntity.getTimestamp())
+                   .consentId(eventEntity.getConsentId())
+                   .paymentId(eventEntity.getPaymentId())
+                   .payload(payload)
+                   .eventOrigin(eventEntity.getEventOrigin())
+                   .eventType(eventEntity.getEventType())
+                   .instanceId(eventEntity.getInstanceId())
+                   .build();
     }
 }

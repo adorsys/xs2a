@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.aspsp.api.tpp;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,31 +24,37 @@ import java.time.Duration;
 import java.util.Optional;
 
 public interface CmsAspspTppService {
+
     /**
-     * Loads TPP Information by its ID
-     * @param tppAuthorizationNumber ID of TPP to load
-     * @return TPP Info object if found in DB
+     * Loads TPP stop list record by TPP ID and National competent authority ID
+     *
+     * @param tppAuthorisationNumber ID of TPP to load
+     * @param nationalAuthorityId    National competent authority id
+     * @return TPP Stop list object object if found in DB
      */
     @NotNull
-    Optional<TppInfo> getTppInfoById(@NotNull String tppAuthorizationNumber);
+    Optional<TppStopListRecord> getTppStopListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
 
     /**
-     * Blocks requests from TPP by given TPP ID. If lockPeriod parameter is passed, locks TPP for certain time.
+     * Blocks requests from TPP by given TPP ID and National competent authority ID.
+     * If lockPeriod parameter is passed, locks TPP for certain time.
      * If lockPeriod is not passed, lock TPP without time limitation.
-     * If TPP with given ID doesn't exist in DB, creates an empty one with given ID
-     *
-     * @param tppAuthorizationNumber ID of TPP to lock
-     * @param lockPeriod Time period of locking. May be omitted.
-     * @return <code>true</code> if lock was done. <code>false</code> otherwise.
-     */
-    boolean blockTpp(@NotNull String tppAuthorizationNumber, @Nullable Duration lockPeriod);
-
-    /**
-     * Releases lock of requests from TPP by given TPP ID.
-     * If TPP with given ID doesn't exist in DB, does nothing.
+     * If Record with given ID doesn't exist in DB, creates an empty one with given ID
      *
      * @param tppAuthorisationNumber ID of TPP to lock
+     * @param nationalAuthorityId    National competent authority id
+     * @param lockPeriod             Time period of locking. May be omitted.
+     * @return <code>true</code> if lock was done. <code>false</code> otherwise.
+     */
+    boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @Nullable Duration lockPeriod);
+
+    /**
+     * Releases lock of requests from TPP by given TPP ID and National competent authority ID.
+     * If Record with given ID doesn't exist in DB, does nothing.
+     *
+     * @param tppAuthorisationNumber ID of TPP to lock
+     * @param nationalAuthorityId    National competent authority id
      * @return <code>true</code> if TPP was found and unlock was done. <code>false</code> otherwise.
      */
-    boolean unblockTpp(@NotNull String tppAuthorisationNumber);
+    boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
 }

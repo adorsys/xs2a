@@ -71,7 +71,7 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(spiAccountConsent)
                    .map(ac -> new AccountConsent(
                             ac.getId(),
-                            spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
+                            spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()).orElse(null),
                             ac.isRecurringIndicator(),
                             ac.getValidUntil(),
                             ac.getFrequencyPerDay(),

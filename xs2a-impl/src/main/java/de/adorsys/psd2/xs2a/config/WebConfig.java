@@ -16,24 +16,17 @@
 
 package de.adorsys.psd2.xs2a.config;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import de.adorsys.psd2.xs2a.component.DateTimeDeserializer;
+import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
-import de.adorsys.psd2.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
+import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +34,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.context.annotation.RequestScope;
@@ -52,7 +44,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
@@ -67,6 +58,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Qualifier("xs2aCorsConfigProperties")
     private final CorsConfigurationProperties corsConfigurationProperties;
     private final TppService tppService;
+    private final TppStopListService tppStopListService;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -80,26 +73,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         messageSource.setCacheSeconds(3600); //reload messages every hour
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
-    }
-
-    @Bean
-    @Primary
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        objectMapper.registerModule(getDateTimeDeserializerModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        objectMapper.registerModule(new Jdk8Module()); // add support for Optionals
-        objectMapper.registerModule(new JavaTimeModule()); // add support for java.time types
-        objectMapper.registerModule(new ParameterNamesModule()); // support for multiargs constructors
-        return objectMapper;
-    }
-
-    @Bean
-    public ParametersFactory parametersFactory(ObjectMapper objectMapper) {
-        return new ParametersFactory(objectMapper);
     }
 
     @Bean
@@ -118,10 +91,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()))
-            .addPathPatterns(ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH,
-                SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH,
-                PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH);
+        registry.addInterceptor(new TppStopListInterceptor(tppService, tppStopListService, objectMapper))
+            .addPathPatterns(getAllXs2aEndpointPaths());
+
+        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper, messageErrorMapper()))
+            .addPathPatterns(getAllXs2aEndpointPaths());
     }
 
     @Bean
@@ -162,12 +136,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new PaymentTypeEnumConverter());
-    }
-
-    private SimpleModule getDateTimeDeserializerModule() {
-        SimpleModule dateTimeModule = new SimpleModule();
-        dateTimeModule.addDeserializer(LocalDateTime.class, new DateTimeDeserializer());
-        return dateTimeModule;
     }
 }
 

@@ -39,9 +39,14 @@ public class EventServiceInternalEncrypted implements EventServiceEncrypted {
         String decryptedConsentId = decryptId(event.getConsentId());
         String decryptedPaymentId = decryptId(event.getPaymentId());
 
-        Event decryptedEvent = new Event(event.getTimestamp(), decryptedConsentId, decryptedPaymentId,
-                                         event.getPayload(), event.getEventOrigin(), event.getEventType());
-
+        Event decryptedEvent = Event.builder()
+                                   .timestamp(event.getTimestamp())
+                                   .consentId(decryptedConsentId)
+                                   .paymentId(decryptedPaymentId)
+                                   .payload(event.getPayload())
+                                   .eventOrigin(event.getEventOrigin())
+                                   .eventType(event.getEventType())
+                                   .build();
         return eventService.recordEvent(decryptedEvent);
     }
 
