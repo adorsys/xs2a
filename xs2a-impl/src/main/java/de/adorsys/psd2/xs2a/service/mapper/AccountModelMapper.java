@@ -242,6 +242,14 @@ public class AccountModelMapper {
         return transactionsReport.getAccountReport().getTransactionsRaw();
     }
 
+
+    public Map<String, TransactionDetails> mapToTransactionDetails(Transactions transactions) {
+        //TODO Change to an appropriate object when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/574
+        Map<String, TransactionDetails> transactionDetails = new HashMap<>();
+        transactionDetails.put("transactionsDetails", mapToTransaction(transactions));
+        return transactionDetails;
+    }
+
     private Object createAccountObject(Xs2aAccountReference xs2aAccountReference) {
         return Optional.ofNullable(xs2aAccountReference)
                    .map(account -> {
