@@ -258,13 +258,13 @@ public class PaymentService {
      * Cancels payment by its ASPSP identifier and payment type
      *
      * @param paymentType type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentId   ASPSP identifier of the payment
+     * @param encryptedPaymentId   ASPSP identifier of the payment
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentId) {
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
+    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String encryptedPaymentId) {
+        xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
 
-        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(paymentId);
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentData(encryptedPaymentId);
         // aspspConsentData.getConsentId() is used as a temporary solution for getting PisConsent by payment id. Please, don't use this approach in any places
         Optional<PisConsentResponse> pisConsentOptional = pisConsentService.getPisConsentById(aspspConsentData.getConsentId());
 
@@ -300,7 +300,7 @@ public class PaymentService {
             spiPayment = spiPaymentOptional.get();
         }
 
-        Optional<PisConsentResponse> consent = pisConsentService.getPisConsentById(paymentId);
+        Optional<PisConsentResponse> consent = pisConsentService.getPisConsentById(encryptedPaymentId);
 
         if (consent.isPresent() && isFinalisedPayment(consent.get())) {
             return ResponseObject.<CancelPaymentResponse>builder()
@@ -308,13 +308,13 @@ public class PaymentService {
                        .build();
         }
 
-        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
+        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(encryptedPaymentId);
 
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
-            return cancelPaymentService.initiatePaymentCancellation(psuData, spiPayment);
+            return cancelPaymentService.initiatePaymentCancellation(psuData, spiPayment, encryptedPaymentId);
         } else {
-            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(psuData, spiPayment);
-            pisConsentService.revokeConsentById(paymentId);
+            ResponseObject<CancelPaymentResponse> cancellationResponse = cancelPaymentService.cancelPaymentWithoutAuthorisation(psuData, spiPayment, encryptedPaymentId);
+            pisConsentService.revokeConsentById(encryptedPaymentId);
             return cancellationResponse;
         }
     }

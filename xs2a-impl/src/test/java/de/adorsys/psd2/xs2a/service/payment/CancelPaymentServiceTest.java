@@ -50,6 +50,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CancelPaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
+    private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String WRONG_PAYMENT_ID = "";
     private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "some consent id");
 
@@ -95,7 +96,7 @@ public class CancelPaymentServiceTest {
     public void cancelPaymentWithoutAuthorisation_Success() {
         //When
         ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(PAYMENT_ID));
+            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(PAYMENT_ID), ENCRYPTED_PAYMENT_ID);
 
         //Than
         assertThat(response.hasError()).isFalse();
@@ -106,7 +107,7 @@ public class CancelPaymentServiceTest {
     public void cancelPaymentWithoutAuthorisation_Failure_WrongId() {
         //When
         ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID));
+            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID), WRONG_PAYMENT_ID);
 
         //Than
         assertThat(response.hasError()).isTrue();
@@ -118,7 +119,7 @@ public class CancelPaymentServiceTest {
     public void cancelPaymentWithAuthorisation_Success() {
         //When
         ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(PAYMENT_ID));
+            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(PAYMENT_ID), ENCRYPTED_PAYMENT_ID);
 
         //Than
         assertThat(response.hasError()).isFalse();
@@ -129,7 +130,7 @@ public class CancelPaymentServiceTest {
     public void cancelPaymentWithAuthorisation_Failure_WrongId() {
         //When
         ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID));
+            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID), WRONG_PAYMENT_ID);
 
         //Than
         assertThat(response.hasError()).isTrue();
