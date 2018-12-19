@@ -29,12 +29,12 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
@@ -42,11 +42,13 @@ import java.util.Optional;
 @Aspect
 @Component
 public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
-    private AuthorisationMethodService authorisationMethodService;
+    private final AuthorisationMethodService authorisationMethodService;
+    private final RedirectLinkBuilder redirectLinkBuilder;
 
-    public ConsentAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
+    public ConsentAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodService authorisationMethodService, RedirectLinkBuilder redirectLinkBuilder) {
         super(aspspProfileService, messageService);
         this.authorisationMethodService = authorisationMethodService;
+        this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args( request, psuData, explicitPreferred, tppRedirectUri)", returning = "result", argNames = "result,request,psuData,explicitPreferred,tppRedirectUri")
@@ -79,24 +81,17 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
             if (authorisationMethodService.isExplicitMethod(explicitPreferred)) {
                 links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
             } else {
-                links.setScaRedirect(buildScaRedirectLink(response.getAuthorizationId()));
+                links.setScaRedirect(redirectLinkBuilder.buildConsentScaRedirectLink(response.getConsentId(), response.getAuthorizationId()));
                 links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", response.getConsentId(), response.getAuthorizationId()));
             }
             links.setStatus(buildPath("/v1/consents/{consentId}/status", response.getConsentId()));
         } else {
-            links.setScaRedirect(buildScaRedirectLink(response.getAuthorizationId()));
+            links.setScaRedirect(redirectLinkBuilder.buildConsentScaRedirectLink(response.getConsentId(), response.getAuthorizationId()));
         }
 
         return links;
     }
 
-    private String buildScaRedirectLink(String authorizationId) {
-        return UriComponentsBuilder
-                   .newInstance()
-                   .path(aspspProfileService.getAisRedirectUrlToAspsp())
-                   .buildAndExpand(authorizationId)
-                   .toString();
-    }
 
     private void buildLinkForEmbeddedScaApproach(CreateConsentResponse response, Links links, boolean explicitPreferred) {
         if (authorisationMethodService.isExplicitMethod(explicitPreferred)) {
