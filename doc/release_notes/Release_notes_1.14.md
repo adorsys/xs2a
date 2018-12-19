@@ -84,3 +84,6 @@ Now CMS contains several endpoints for TPP Stop List proceeding:
 
 Scheduler service has been created: it will unblock the TPPs with blocking period expired (if TPP was blocked for the provided period of time).
 The scheduler service invocation frequency could be modified by changing `stoplist.cron.expression` value in `application.properties`.
+
+## Integration tests subproject is frozen
+Due to some internal reasons further development of integration tests in xs2a-Repository is frozen. `integration-tests` folder will be removed from repo soon.
