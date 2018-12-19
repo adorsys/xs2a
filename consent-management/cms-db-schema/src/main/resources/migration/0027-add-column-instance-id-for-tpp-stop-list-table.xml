@@ -18,4 +18,27 @@
 <databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-12-19-1">
+        <comment>Add column instance_id for tpp_stop_list table.</comment>
+
+        <addColumn tableName="tpp_stop_list">
+            <column name="instance_id" type="VARCHAR(100)" defaultValue="UNDEFINED">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-12-19-2">
+        <comment>Modify composite unique constraint for tpp_stop_list table to add instance_id into it</comment>
+
+        <dropUniqueConstraint constraintName="uniq_auth_num_and_auth_id"
+                              tableName="tpp_stop_list"
+                              uniqueColumns="tpp_authorisation_number authority_id"/>
+
+        <addUniqueConstraint columnNames="tpp_authorisation_number, authority_id, instance_id"
+                             constraintName="uniq_auth_num_and_auth_id"
+                             deferrable="false" initiallyDeferred="false"
+                             tableName="tpp_stop_list"/>
+    </changeSet>
 </databaseChangeLog>
