@@ -37,7 +37,7 @@ public class TppStopListServiceInternalTest {
     private final String AUTHORITY_ID = "Authority id";
     private final String AUTHORISATION_NUMBER_NOT_EXISTING = "Not existing Authorisation number";
     private final String AUTHORITY_ID_NOT_EXISTING = "Not existing Authority id";
-    private final String INSTANCE_ID = "Instance id";
+    private final String INSTANCE_ID = null;
 
     @InjectMocks
     private TppStopListServiceInternal tppStopListService;
@@ -85,11 +85,11 @@ public class TppStopListServiceInternalTest {
     }
 
     private TppUniqueParamsHolder buildNotExistingTppUniqueParamsHolder() {
-        return new TppUniqueParamsHolder(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING, INSTANCE_ID);
+        return new TppUniqueParamsHolder(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID_NOT_EXISTING);
     }
 
     private TppUniqueParamsHolder buildExistingTppUniqueParamsHolder() {
-        return new TppUniqueParamsHolder(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID);
+        return new TppUniqueParamsHolder(AUTHORISATION_NUMBER, AUTHORITY_ID);
     }
 
 }

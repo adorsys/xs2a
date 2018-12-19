@@ -24,5 +24,4 @@ import lombok.Value;
 public class TppUniqueParamsHolder {
     private String authorisationNumber;
     private String authorityId;
-    private String instanceId;
 }

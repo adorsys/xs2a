@@ -49,7 +49,7 @@ public class TppStopListController {
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId) {
-        TppUniqueParamsHolder tppUniqueParams = new TppUniqueParamsHolder(tppAuthorisationNumber, nationalAuthorityId, serviceInstanceId);
+        TppUniqueParamsHolder tppUniqueParams = new TppUniqueParamsHolder(tppAuthorisationNumber, nationalAuthorityId);
 
         boolean isTppBlocked = tppStopListService.checkIfTppBlocked(tppUniqueParams);
         return new ResponseEntity<>(isTppBlocked, HttpStatus.OK);

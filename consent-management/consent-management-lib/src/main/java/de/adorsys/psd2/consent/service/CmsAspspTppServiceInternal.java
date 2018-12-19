@@ -34,12 +34,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class CmsAspspTppServiceInternal implements CmsAspspTppService {
+    private final TppStopListRepository stopListRepository;
+    private final TppStopListMapper tppStopListMapper;
 
     @Value("${cms.service.instance-id:UNDEFINED}")
     private String serviceInstanceId;
-
-    private final TppStopListRepository stopListRepository;
-    private final TppStopListMapper tppStopListMapper;
 
     @NotNull
     @Override
