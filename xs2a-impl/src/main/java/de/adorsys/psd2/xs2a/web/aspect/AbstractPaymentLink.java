@@ -24,16 +24,19 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.springframework.web.util.UriComponentsBuilder;
+import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
-    private AuthorisationMethodService authorisationMethodService;
+    private final AuthorisationMethodService authorisationMethodService;
+    private final RedirectLinkBuilder redirectLinkBuilder;
 
-    public AbstractPaymentLink(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
+
+    public AbstractPaymentLink(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodService authorisationMethodService, RedirectLinkBuilder redirectLinkBuilder) {
         super(aspspProfileService, messageService);
         this.authorisationMethodService = authorisationMethodService;
+        this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
     @SuppressWarnings("unchecked")
@@ -89,19 +92,15 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     private Links addRedirectRelatedLinks(Links links, PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
         String paymentService = paymentRequestParameters.getPaymentType().getValue();
         String paymentId = body.getPaymentId();
-        String authorizationId = body.getAuthorizationId();
+        String authorisationId = body.getAuthorizationId();
 
         if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
-            String scaRedirectLink = UriComponentsBuilder
-                                         .newInstance()
-                                         .path(aspspProfileService.getPisRedirectUrlToAspsp())
-                                         .buildAndExpand(authorizationId)
-                                         .toString();
+            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(body.getPaymentId(), authorisationId);
             links.setScaRedirect(scaRedirectLink);
             links.setScaStatus(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorisationId));
         }
         return links;
     }
