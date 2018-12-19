@@ -37,7 +37,7 @@ public class PeriodicPayment extends SinglePayment {
     @NotNull
     private Xs2aFrequencyCode frequency;
 
-    @Min(1)
+    @Min(0)
     @Max(31)
     private int dayOfExecution; //Day here max 31
 }

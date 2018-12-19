@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.service;
+package de.adorsys.psd2.xs2a.spi.domain.consent;
 
-public interface ConsentService {
-    /**
-     * Checks whether consent exists
-     *
-     * @param consentId id of consent
-     * @return boolean
-     */
-    boolean isConsentExist(String consentId);
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class SpiInitiateAisConsentResponse {
+    @Nullable
+    private SpiAccountAccess accountAccess;
 }

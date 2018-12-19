@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import org.jetbrains.annotations.NotNull;
@@ -35,9 +36,9 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
      * @param contextData             holder of call's context data (e.g. about PSU and TPP)
      * @param accountConsent          Account consent
      * @param initialAspspConsentData Encrypted data that is stored in the consent management system
-     * @return Return a positive or negative response as part of SpiResponse
+     * @return Returns account access with Account's reference IDs. If Accounts/ReferenceIDs not know, returns empty Response object
      */
-    SpiResponse<VoidResponse> initiateAisConsent(@NotNull SpiContextData contextData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData);
+    SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsent(@NotNull SpiContextData contextData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData);
 
     /**
      * Revokes AIS consent
