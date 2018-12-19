@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.service;
+package de.adorsys.psd2.consent.domain;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
+import lombok.Getter;
+import lombok.Setter;
 
-public interface TppStopListService {
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
-    /**
-     * Checks if TPP is blocked.
-     *
-     * @param tppUniqueParams information about particular TPP from TPP Certificate
-     * @return <code>true</code> if TPP is found and has status BLOCKED, <code>false</code> if TPP is not found or its status is not BLOCKED
-     */
-    boolean checkIfTppBlocked(TppUniqueParamsHolder tppUniqueParams);
+@Getter
+@Setter
+@MappedSuperclass
+public abstract class InstanceDependableEntity {
+
+    @Column(name = "instance_id", nullable = false)
+    private String instanceId;
 }

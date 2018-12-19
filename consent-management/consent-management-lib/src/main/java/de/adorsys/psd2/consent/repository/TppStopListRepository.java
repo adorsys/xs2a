@@ -16,19 +16,18 @@
 
 package de.adorsys.psd2.consent.repository;
 
-import de.adorsys.psd2.consent.domain.event.EventEntity;
-import de.adorsys.psd2.xs2a.core.event.EventOrigin;
-import de.adorsys.psd2.xs2a.core.event.EventType;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import de.adorsys.psd2.consent.domain.TppStopListEntity;
+import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
-public interface EventRepository extends CrudRepository<EventEntity, Long>, JpaSpecificationExecutor<EventEntity> {
-    List<EventEntity> findByTimestampBetweenOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to);
+public interface TppStopListRepository extends CrudRepository<TppStopListEntity, Long> {
 
-    List<EventEntity> findByTimestampBetweenAndEventTypeOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to, EventType eventType);
+    Optional<TppStopListEntity> findByTppAuthorisationNumberAndNationalAuthorityId(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
 
-    List<EventEntity> findByTimestampBetweenAndEventOriginOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to, EventOrigin eventOrigin);
+    List<TppStopListEntity> findAllByStatusAndBlockingExpirationTimestampLessThanEqual(@NotNull TppStatus tppStatus, @NotNull OffsetDateTime dateTimeToCompare);
 }

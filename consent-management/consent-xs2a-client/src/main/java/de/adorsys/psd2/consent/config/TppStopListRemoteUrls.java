@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.service;
+package de.adorsys.psd2.consent.config;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-public interface TppStopListService {
+@Component
+public class TppStopListRemoteUrls {
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
 
     /**
-     * Checks if TPP is blocked.
+     * Returns URL-string to CMS endpoint that checks if TPP is blocked
      *
-     * @param tppUniqueParams information about particular TPP from TPP Certificate
-     * @return <code>true</code> if TPP is found and has status BLOCKED, <code>false</code> if TPP is not found or its status is not BLOCKED
+     * @return String
      */
-    boolean checkIfTppBlocked(TppUniqueParamsHolder tppUniqueParams);
+    public String checkIfTppBlocked() {
+        return consentServiceBaseUrl + "/tpp/stop-list";
+    }
 }
