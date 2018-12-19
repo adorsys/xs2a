@@ -352,7 +352,7 @@ public class AccountService {
      * @return Transactions based on transaction id.
      */
     public ResponseObject<Transactions> getTransactionDetails(String consentId, String accountId,
-                                                                    String transactionId) {
+                                                              String transactionId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRANSACTION_DETAILS_REQUEST_RECEIVED);
         ResponseObject<AccountConsent> accountConsentResponse = consentService.getValidatedConsent(consentId);
         if (accountConsentResponse.hasError()) {
@@ -387,11 +387,15 @@ public class AccountService {
         SpiTransaction payload = spiResponse.getPayload();
 
         if (payload == null) {
-            return ResponseObject.<Transactions>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
+            return ResponseObject.<Transactions>builder()
+                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .build();
         }
 
         Transactions transactions = spiToXs2aTransactionMapper.mapToXs2aTransaction(payload);
-        return ResponseObject.<Transactions>builder().body(transactions).build();
+        return ResponseObject.<Transactions>builder()
+                   .body(transactions)
+                   .build();
     }
 
     private ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {
