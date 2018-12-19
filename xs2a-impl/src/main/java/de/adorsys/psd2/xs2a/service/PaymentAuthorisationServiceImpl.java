@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
@@ -62,5 +63,16 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
                    .body(response)
                    .build();
+    }
+
+    @Override
+    public ResponseObject<Xs2aAuthorisationSubResources> getPaymentInitiationAuthorisations(String paymentId) {
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
+
+        return pisAuthorizationService.getAuthorisationSubResources(paymentId)
+                   .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
+                   .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
+                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                  ::build);
     }
 }

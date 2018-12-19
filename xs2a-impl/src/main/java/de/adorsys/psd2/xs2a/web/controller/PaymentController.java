@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRespon
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentService;
@@ -54,7 +53,6 @@ public class PaymentController implements PaymentApi {
     private final ResponseMapper responseMapper;
     private final PaymentModelMapperPsd2 paymentModelMapperPsd2;
     private final PaymentModelMapperXs2a paymentModelMapperXs2a;
-    private final ConsentService consentService;
     private final ConsentModelMapper consentModelMapper;
     private final PaymentAuthorisationService paymentAuthorisationService;
     private final PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
@@ -139,7 +137,7 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity getPaymentInitiationAuthorisation(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.ok(consentService.getPaymentInitiationAuthorisations(paymentId), consentModelMapper::mapToAuthorisations);
+        return responseMapper.ok(paymentAuthorisationService.getPaymentInitiationAuthorisations(paymentId), consentModelMapper::mapToAuthorisations);
     }
 
     @Override

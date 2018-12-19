@@ -600,27 +600,6 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getPaymentInitiationAuthorisation() {
-        when(pisScaAuthorisationService.getAuthorisationSubResources(anyString()))
-            .thenReturn(Optional.of(new Xs2aAuthorisationSubResources(Collections.singletonList(PAYMENT_ID))));
-
-        // Given:
-        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
-
-        // When
-        ResponseObject<Xs2aAuthorisationSubResources> paymentInitiationAuthorisation = consentService.getPaymentInitiationAuthorisations(PAYMENT_ID);
-
-        // Then
-        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
-
-        assertThat(paymentInitiationAuthorisation.getBody()).isNotNull();
-        List<String> authorisationIds = paymentInitiationAuthorisation.getBody().getAuthorisationIds();
-        assertFalse(authorisationIds.isEmpty());
-        assertThat(authorisationIds.get(0)).isEqualTo(PAYMENT_ID);
-    }
-
-    @Test
     public void getConsentInitiationAuthorisation() {
         when(aisAuthorizationService.getAuthorisationSubResources(anyString()))
             .thenReturn(Optional.of(new Xs2aAuthorisationSubResources(Collections.singletonList(CONSENT_ID))));

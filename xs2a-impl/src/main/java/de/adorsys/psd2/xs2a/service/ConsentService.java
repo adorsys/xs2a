@@ -285,16 +285,6 @@ public class ConsentService {
                                   ::build);
     }
 
-    public ResponseObject<Xs2aAuthorisationSubResources> getPaymentInitiationAuthorisations(String paymentId) {
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
-
-        return pisAuthorizationService.getAuthorisationSubResources(paymentId)
-                   .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
-                   .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
-                                  ::build);
-    }
-
     public ResponseObject<Xs2aAuthorisationSubResources> getConsentInitiationAuthorisations(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
