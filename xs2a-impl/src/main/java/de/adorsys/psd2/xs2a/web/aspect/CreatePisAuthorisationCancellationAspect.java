@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -33,8 +34,11 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect<PaymentController> {
-    public CreatePisAuthorisationCancellationAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService) {
+    private final RedirectLinkBuilder redirectLinkBuilder;
+
+    public CreatePisAuthorisationCancellationAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, RedirectLinkBuilder redirectLinkBuilder) {
         super(aspspProfileService, messageService);
+        this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createPisConsentCancellationAuthorization(..)) && args( paymentId, paymentType)", returning = "result", argNames = "result,paymentId,paymentType")
@@ -68,7 +72,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     }
 
     private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentId, String authorizationId) {
-        String link = aspspProfileService.getPisRedirectUrlToAspsp() + paymentId + "/" + paymentId;
+        String link = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorizationId);
         links.setScaRedirect(link);
         links.setScaStatus(buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
 
