@@ -23,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "api/v1/tpp/stop-list")
 @Api(value = "api/v1/tpp/stop-list", tags = "TPP Stop List", description = "Provides access to the TPP stop list")
 public class TppStopListController {
+    @Value("${cms.service.instance-id:UNDEFINED}")
+    private String serviceInstanceId;
+
     private final TppStopListService tppStopListService;
 
     @GetMapping
@@ -45,7 +49,7 @@ public class TppStopListController {
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId) {
-        TppUniqueParamsHolder tppUniqueParams = new TppUniqueParamsHolder(tppAuthorisationNumber, nationalAuthorityId);
+        TppUniqueParamsHolder tppUniqueParams = new TppUniqueParamsHolder(tppAuthorisationNumber, nationalAuthorityId, serviceInstanceId);
 
         boolean isTppBlocked = tppStopListService.checkIfTppBlocked(tppUniqueParams);
         return new ResponseEntity<>(isTppBlocked, HttpStatus.OK);

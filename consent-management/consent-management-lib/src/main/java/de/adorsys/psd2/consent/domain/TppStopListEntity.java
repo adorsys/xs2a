@@ -29,7 +29,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tpp_stop_list")
-public class TppStopListEntity {
+public class TppStopListEntity extends InstanceDependableEntity {
 
     @Id
     @Column(name = "id")
@@ -54,7 +54,9 @@ public class TppStopListEntity {
 
     public void block(@Nullable Duration lockPeriod) {
         this.status = TppStatus.BLOCKED;
-        this.blockingExpirationTimestamp = lockPeriod != null ? OffsetDateTime.now().plus(lockPeriod) : null;
+        this.blockingExpirationTimestamp = lockPeriod != null
+                                               ? OffsetDateTime.now().plus(lockPeriod)
+                                               : null;
     }
 
     public void unblock() {

@@ -24,9 +24,5 @@ import lombok.Value;
 public class TppUniqueParamsHolder {
     private String authorisationNumber;
     private String authorityId;
-
-    public TppUniqueParamsHolder(TppInfo tppInfo) {
-        this.authorisationNumber = tppInfo.getAuthorisationNumber();
-        this.authorityId = tppInfo.getAuthorityId();
-    }
+    private String instanceId;
 }

@@ -32,7 +32,7 @@ public class TppStopListServiceInternal implements TppStopListService {
 
     @Override
     public boolean checkIfTppBlocked(TppUniqueParamsHolder tppUniqueParams) {
-        Optional<TppStopListEntity> stopListEntityOptional = tppStopListRepository.findByTppAuthorisationNumberAndNationalAuthorityId(tppUniqueParams.getAuthorisationNumber(), tppUniqueParams.getAuthorityId());
+        Optional<TppStopListEntity> stopListEntityOptional = tppStopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppUniqueParams.getAuthorisationNumber(), tppUniqueParams.getAuthorityId(), tppUniqueParams.getInstanceId());
 
         return stopListEntityOptional
                    .map(TppStopListEntity::isBlocked)

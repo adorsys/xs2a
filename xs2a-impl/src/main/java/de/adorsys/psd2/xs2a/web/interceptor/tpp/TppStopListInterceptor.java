@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.TppService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -36,6 +37,9 @@ import javax.servlet.http.HttpServletResponse;
 public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     private static final String STOP_LIST_ERROR_MESSAGE = "Signature/corporate seal certificate has been blocked by the ASPSP";
 
+    @Value("${cms.service.instance-id:UNDEFINED}")
+    private String serviceInstanceId;
+
     private final TppService tppService;
     private final TppStopListService tppStopListService;
     private final ObjectMapper objectMapper;
@@ -44,7 +48,7 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         TppInfo tppInfo = tppService.getTppInfo();
 
-        if (tppStopListService.checkIfTppBlocked(new TppUniqueParamsHolder(tppInfo))) {
+        if (tppStopListService.checkIfTppBlocked(new TppUniqueParamsHolder(tppInfo.getAuthorisationNumber(), tppInfo.getAuthorityId(), serviceInstanceId))) {
             response.getWriter().write(objectMapper.writeValueAsString(buildErrorTppMessages()));
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(MessageErrorCode.CERTIFICATE_BLOCKED.getCode());
