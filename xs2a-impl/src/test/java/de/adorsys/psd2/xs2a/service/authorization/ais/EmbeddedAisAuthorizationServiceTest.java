@@ -48,7 +48,10 @@ public class EmbeddedAisAuthorizationServiceTest {
     private static final String PSU_ID = "Test psuId";
     private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final String CONSENT_ID = "Test consentId";
+    private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "Test authorisationId";
+    private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @InjectMocks
     private EmbeddedAisAuthorizationService authorizationService;
@@ -78,6 +81,12 @@ public class EmbeddedAisAuthorizationServiceTest {
 
         when(startAuthorisationStage.apply(updateConsentPsuDataRequest))
             .thenReturn(updateConsentPsuDataResponse);
+
+        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.of(SCA_STATUS));
+        when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+
     }
 
     @Test
@@ -123,5 +132,25 @@ public class EmbeddedAisAuthorizationServiceTest {
 
         verify(aisConsentService).updateConsentAuthorization(updateConsentPsuDataRequest);
         assertThat(updateConsentPsuDataResponse).isNotNull();
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_success() {
+        // When
+        Optional<ScaStatus> actual = authorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertThat(actual.isPresent()).isTrue();
+        //noinspection OptionalGetWithoutIsPresent
+        assertThat(actual.get()).isEqualTo(SCA_STATUS);
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_failure_wrongIds() {
+        // When
+        Optional<ScaStatus> actual = authorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
+
+        // Then
+        assertThat(actual.isPresent()).isFalse();
     }
 }

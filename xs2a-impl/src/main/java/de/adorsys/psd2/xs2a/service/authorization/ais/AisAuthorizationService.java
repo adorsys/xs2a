@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 
 import java.util.Optional;
@@ -29,4 +30,6 @@ public interface AisAuthorizationService {
     AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId);
 
     Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId);
+
+    Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
 }

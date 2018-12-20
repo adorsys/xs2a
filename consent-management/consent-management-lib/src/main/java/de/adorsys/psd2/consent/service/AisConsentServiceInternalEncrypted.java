@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,5 +117,11 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getAuthorisationsByConsentId);
+    }
+
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
+        return securityDataService.decryptId(encryptedConsentId)
+                   .flatMap(consentId -> aisConsentService.getAuthorisationScaStatus(consentId, authorisationId));
     }
 }

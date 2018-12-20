@@ -21,10 +21,10 @@ import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.consent.domain.AspspConsentDataEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
+import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -33,6 +33,7 @@ import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +48,7 @@ import java.util.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -77,10 +77,13 @@ public class AisConsentServiceInternalTest {
     private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
     private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
 
+    private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
+    private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @Before
     public void setUp() {
-        aisConsent = buildConsent();
+        aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
         CmsAspspConsentDataBase64 cmsAspspConsentDataBase64 = buildUpdateBlobRequest();
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
@@ -168,12 +171,60 @@ public class AisConsentServiceInternalTest {
         assertFalse(result);
     }
 
-    private AisConsent buildConsent() {
+    @Test
+    public void getAuthorisationScaStatus_success() {
+        List<AisConsentAuthorization> authorisations = Collections.singletonList(buildConsentAuthorisation(AUTHORISATION_ID));
+        AisConsent consent = buildConsentWithAuthorisations(EXTERNAL_CONSENT_ID, authorisations);
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(consent));
+
+        // When
+        Optional<ScaStatus> actual = aisConsentService.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.isPresent());
+        assertEquals(SCA_STATUS, actual.get());
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_failure_wrongConsentId() {
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST))
+            .thenReturn(Optional.empty());
+
+        // When
+        Optional<ScaStatus> actual = aisConsentService.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID_NOT_EXIST, AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.isPresent());
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_failure_wrongAuthorisationId() {
+        List<AisConsentAuthorization> authorisations = Collections.singletonList(buildConsentAuthorisation(WRONG_AUTHORISATION_ID));
+        AisConsent consent = buildConsentWithAuthorisations(EXTERNAL_CONSENT_ID, authorisations);
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(consent));
+
+        // When
+        Optional<ScaStatus> actual = aisConsentService.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.isPresent());
+    }
+
+
+    private AisConsent buildConsent(String externalId) {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
-        aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
+        aisConsent.setExternalId(externalId);
         aisConsent.setExpireDate(LocalDate.now());
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
+        return aisConsent;
+    }
+
+    private AisConsent buildConsentWithAuthorisations(String externalId, List<AisConsentAuthorization> authorisations) {
+        AisConsent aisConsent = buildConsent(externalId);
+        aisConsent.setAuthorizations(authorisations);
         return aisConsent;
     }
 
@@ -213,13 +264,6 @@ public class AisConsentServiceInternalTest {
             false, false, null, null, null);
     }
 
-    private AspspConsentDataEntity getAspspConsentData() {
-        AspspConsentDataEntity consentData = new AspspConsentDataEntity();
-        consentData.setConsentId(EXTERNAL_CONSENT_ID);
-        consentData.setData(ENCRYPTED_CONSENT_DATA);
-        return consentData;
-    }
-
     private AisConsent buildFinalisedConsent() {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
@@ -239,5 +283,12 @@ public class AisConsentServiceInternalTest {
         TppInfoEntity tppInfoEntity = new TppInfoEntity();
         tppInfoEntity.setAuthorisationNumber("tpp-id-1");
         return tppInfoEntity;
+    }
+
+    private AisConsentAuthorization buildConsentAuthorisation(String externalId) {
+        AisConsentAuthorization authorisation = new AisConsentAuthorization();
+        authorisation.setExternalId(externalId);
+        authorisation.setScaStatus(SCA_STATUS);
+        return authorisation;
     }
 }

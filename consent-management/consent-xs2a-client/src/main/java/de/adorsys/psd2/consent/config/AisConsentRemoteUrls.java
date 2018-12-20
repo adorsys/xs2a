@@ -122,4 +122,15 @@ public class AisConsentRemoteUrls {
     public String getAuthorisationSubResources() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorisations";
     }
+
+    /**
+     * @return ScaStatus authorisation status
+     * Method: GET
+     * PathVariables: String consentId
+     * PathVariables: String authorisationId
+     */
+    public String getAuthorisationScaStatus() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorisations/{authorisation-id}/status";
+    }
+
 }

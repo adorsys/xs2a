@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +45,7 @@ public class AisConsentServiceInternalEncryptedTest {
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.RECEIVED;
     private static final String AUTHORISATION_ID = "b3ecf205-da94-4e83-837b-5cd93ab88120";
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @InjectMocks
     private AisConsentServiceInternalEncrypted aisConsentServiceInternalEncrypted;
@@ -81,6 +83,9 @@ public class AisConsentServiceInternalEncryptedTest {
             .thenReturn(Optional.of(buildPsuIdData()));
         when(aisConsentService.getAuthorisationsByConsentId(DECRYPTED_CONSENT_ID))
             .thenReturn(Optional.of(buildAuthorisations()));
+
+        when(aisConsentService.getAuthorisationScaStatus(DECRYPTED_CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.of(SCA_STATUS));
     }
 
     @Test
@@ -474,6 +479,39 @@ public class AisConsentServiceInternalEncryptedTest {
     public void getAuthorisationsByConsentId_decryptionFailed() {
         // When
         Optional<List<String>> actual = aisConsentServiceInternalEncrypted.getAuthorisationsByConsentId(UNDECRYPTABLE_CONSENT_ID);
+
+        // Then
+        assertFalse(actual.isPresent());
+        verify(aisConsentService, never()).getAuthorisationsByConsentId(any());
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_success() {
+        // When
+        Optional<ScaStatus> actual = aisConsentServiceInternalEncrypted.getAuthorisationScaStatus(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.isPresent());
+        assertEquals(SCA_STATUS, actual.get());
+        verify(aisConsentService, times(1)).getAuthorisationScaStatus(DECRYPTED_CONSENT_ID, AUTHORISATION_ID);
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_internalServiceFailed() {
+        when(aisConsentService.getAuthorisationScaStatus(anyString(), anyString())).thenReturn(Optional.empty());
+
+        // When
+        Optional<ScaStatus> actual = aisConsentServiceInternalEncrypted.getAuthorisationScaStatus(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.isPresent());
+        verify(aisConsentService, times(1)).getAuthorisationScaStatus(DECRYPTED_CONSENT_ID, AUTHORISATION_ID);
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_decryptionFailed() {
+        // When
+        Optional<ScaStatus> actual = aisConsentServiceInternalEncrypted.getAuthorisationScaStatus(UNDECRYPTABLE_CONSENT_ID, AUTHORISATION_ID);
 
         // Then
         assertFalse(actual.isPresent());

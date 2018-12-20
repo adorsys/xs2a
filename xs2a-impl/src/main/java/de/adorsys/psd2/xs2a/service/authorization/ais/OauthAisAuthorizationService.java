@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,11 @@ public class OauthAisAuthorizationService implements AisAuthorizationService {
 
     @Override
     public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
         return Optional.empty();
     }
 }
