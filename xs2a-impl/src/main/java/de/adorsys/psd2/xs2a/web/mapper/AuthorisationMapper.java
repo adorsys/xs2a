@@ -19,11 +19,13 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.ScaStatusResponse;
 import de.adorsys.psd2.model.StartScaprocessResponse;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -36,16 +38,22 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequiredArgsConstructor
 public class AuthorisationMapper {
     private final CoreObjectsMapper coreObjectsMapper;
+    private final AspspProfileServiceWrapper aspspProfileService;
+    private final RedirectLinkBuilder redirectLinkBuilder;
 
     public StartScaprocessResponse mapToStartScaProcessResponse(
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse) {
         return Optional.ofNullable(createConsentAuthorizationResponse)
                    .map(csar -> {
-                       ControllerLinkBuilder link = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                       boolean redirectApproachUsed = aspspProfileService.getScaApproach() == ScaApproach.REDIRECT;
+                       String link = redirectApproachUsed
+                                         ? redirectLinkBuilder.buildConsentScaRedirectLink(csar.getConsentId(), csar.getAuthorizationId())
+                                         : linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null))
+                                               .toString();
 
                        return new StartScaprocessResponse()
                                   .scaStatus(coreObjectsMapper.mapToModelScaStatus(createConsentAuthorizationResponse.getScaStatus()))
-                                  ._links(Collections.singletonMap(csar.getResponseLinkType().getValue(), link.toString()));
+                                  ._links(Collections.singletonMap(csar.getResponseLinkType().getValue(), link));
                    })
                    .orElse(null);
     }
