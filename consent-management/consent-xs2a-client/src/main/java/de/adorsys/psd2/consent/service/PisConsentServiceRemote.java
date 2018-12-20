@@ -66,7 +66,7 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
     @Override
     public Optional<PisConsentResponse> getConsentById(String consentId) {
         try {
-            return Optional.of(consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId)
+            return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId)
                                    .getBody());
         } catch (CmsRestException cmsRestException) {
             return Optional.empty();
