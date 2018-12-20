@@ -17,7 +17,9 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.api.ConsentApi;
+import de.adorsys.psd2.model.ScaStatusResponse;
 import de.adorsys.psd2.model.StartScaprocessResponse;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -45,6 +47,10 @@ public class AuthorisationMapper {
                                   ._links(Collections.singletonMap(csar.getResponseLinkType().getValue(), link.toString()));
                    })
                    .orElse(null);
+    }
+
+    public ScaStatusResponse mapToScaStatusResponse(ScaStatus scaStatus) {
+        return new ScaStatusResponse().scaStatus(coreObjectsMapper.mapToModelScaStatus(scaStatus));
     }
 
 }

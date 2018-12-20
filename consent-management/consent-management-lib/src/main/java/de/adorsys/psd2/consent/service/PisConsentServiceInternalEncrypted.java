@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,6 +131,12 @@ public class PisConsentServiceInternalEncrypted implements PisConsentServiceEncr
                                                                CmsAuthorisationType authorisationType) {
         return securityDataService.decryptId(encryptedPaymentId)
                    .flatMap(id -> pisConsentService.getAuthorisationsByPaymentId(id, authorisationType));
+    }
+
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedPaymentId, String authorisationId, CmsAuthorisationType authorisationType) {
+        return securityDataService.decryptId(encryptedPaymentId)
+                   .flatMap(id -> pisConsentService.getAuthorisationScaStatus(id, authorisationId, authorisationType));
     }
 
     @Override

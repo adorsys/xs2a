@@ -63,6 +63,7 @@ public class PisConsentControllerTest {
     private static final String WRONG_CONSENT_ID = "67890";
 
     private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null);
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @InjectMocks
     private PisConsentController pisConsentController;
@@ -255,6 +256,32 @@ public class PisConsentControllerTest {
         // When
         ResponseEntity<GetPisConsentAuthorisationResponse> result =
             pisConsentController.getConsentAuthorization(AUTHORISATION_ID);
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(result.getBody()).isNull();
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_success() {
+        when(pisConsentService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.of(SCA_STATUS));
+
+        // When
+        ResponseEntity<ScaStatus> result = pisConsentController.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isEqualTo(SCA_STATUS);
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_failure_wrongIds() {
+        when(pisConsentService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseEntity<ScaStatus> result = pisConsentController.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

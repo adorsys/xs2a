@@ -27,8 +27,10 @@ import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ConsentService;
+import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
@@ -54,6 +56,8 @@ public class PaymentController implements PaymentApi {
     private final PaymentModelMapperXs2a paymentModelMapperXs2a;
     private final ConsentService consentService;
     private final ConsentModelMapper consentModelMapper;
+    private final PaymentAuthorisationService paymentAuthorisationService;
+    private final AuthorisationMapper authorisationMapper;
 
     @Override
     public ResponseEntity getPaymentInitiationStatus(String paymentService, String paymentId, UUID xRequestID, String digest,
@@ -146,7 +150,7 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity getPaymentInitiationScaStatus(String paymentService, String paymentId, String authorisationId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null; //TODO implement
+        return responseMapper.ok(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(paymentId, authorisationId), authorisationMapper::mapToScaStatusResponse);
     }
 
     @Override
