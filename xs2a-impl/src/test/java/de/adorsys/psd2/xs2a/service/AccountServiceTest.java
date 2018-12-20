@@ -22,10 +22,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.Xs2aBookingStatus;
+import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
@@ -145,7 +142,10 @@ public class AccountServiceTest {
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private AccountReferenceInConsentUpdater accountReferenceUpdater;
-
+    @Mock
+    private SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
+    @Mock
+    private Transactions transactions;
 
     @Before
     public void setUp() {
@@ -661,11 +661,11 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountReportByTransactionId_Failure_AllowedAccountDataHasError() {
+    public void getTransactionDetails_Failure_AllowedAccountDataHasError() {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        ResponseObject<Xs2aAccountReport> actualResponse = accountService.getAccountReportByTransactionId(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
+        ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -673,7 +673,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountReportByTransactionId_Failure_SpiResponseHasError() {
+    public void getTransactionDetails_Failure_SpiResponseHasError() {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
@@ -698,7 +698,7 @@ public class AccountServiceTest {
         when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
             .thenReturn(FORMAT_ERROR_CODE);
 
-        ResponseObject<Xs2aAccountReport> actualResponse = accountService.getAccountReportByTransactionId(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
+        ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -711,7 +711,7 @@ public class AccountServiceTest {
 
 
     @Test
-    public void getAccountReportByTransactionId_Success() {
+    public void getTransactionDetails_Success() {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
@@ -733,18 +733,21 @@ public class AccountServiceTest {
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
             .thenReturn(Optional.of(xs2aAccountReport));
 
-        ResponseObject<Xs2aAccountReport> actualResponse = accountService.getAccountReportByTransactionId(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
+        when(spiToXs2aTransactionMapper.mapToXs2aTransaction(spiTransaction))
+            .thenReturn(transactions);
+
+        ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
 
-        Xs2aAccountReport body = actualResponse.getBody();
+        Transactions body = actualResponse.getBody();
 
-        assertThat(body).isEqualTo(xs2aAccountReport);
+        assertThat(body).isEqualTo(transactions);
     }
 
     @Test
-    public void getAccountReportByTransactionId_Success_ShouldRecordEvent() {
+    public void getTransactionDetails_Success_ShouldRecordEvent() {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
         doNothing()
@@ -759,12 +762,14 @@ public class AccountServiceTest {
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
             .thenReturn(Optional.of(xs2aAccountReport));
+        when(spiToXs2aTransactionMapper.mapToXs2aTransaction(spiTransaction))
+            .thenReturn(transactions);
 
         // Given
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        accountService.getAccountReportByTransactionId(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
+        accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
 
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());

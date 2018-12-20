@@ -19,10 +19,7 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.xs2a.core.event.EventType;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.Xs2aBookingStatus;
+import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
@@ -67,6 +64,7 @@ public class AccountService {
     private final SpiToXs2aAccountReferenceMapper referenceMapper;
     private final SpiTransactionListToXs2aAccountReportMapper transactionsToAccountReportMapper;
     private final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
+    private final SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
 
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
@@ -346,23 +344,19 @@ public class AccountService {
     }
 
     /**
-     * Gets AccountReport with Booked/Pending or both transactions dependent on request.
-     * Uses one of two ways to get transaction from ASPSP: 1. By transactionId, 2. By time period limited with
-     * dateFrom/dateTo variables
-     * Checks if all transactions are related to accounts set in AccountConsent Transactions section
+     * Gets transaction details by transaction id
      *
      * @param consentId     String representing an AccountConsent identification
      * @param accountId     String representing a PSU`s Account at
      * @param transactionId String representing the ASPSP identification of transaction
-     * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances
-     * sections is added
+     * @return Transactions based on transaction id.
      */
-    public ResponseObject<Xs2aAccountReport> getAccountReportByTransactionId(String consentId, String accountId,
-                                                                             String transactionId) {
+    public ResponseObject<Transactions> getTransactionDetails(String consentId, String accountId,
+                                                              String transactionId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRANSACTION_DETAILS_REQUEST_RECEIVED);
         ResponseObject<AccountConsent> accountConsentResponse = consentService.getValidatedConsent(consentId);
         if (accountConsentResponse.hasError()) {
-            return ResponseObject.<Xs2aAccountReport>builder()
+            return ResponseObject.<Transactions>builder()
                        .fail(accountConsentResponse.getError()).build();
         }
 
@@ -371,7 +365,7 @@ public class AccountService {
         Optional<SpiAccountReference> requestedAccountReference = findAccountReference(accountConsent.getAccess().getTransactions(), accountId);
 
         if (!requestedAccountReference.isPresent()) {
-            return ResponseObject.<Xs2aAccountReport>builder()
+            return ResponseObject.<Transactions>builder()
                        .fail(new MessageError(RESOURCE_UNKNOWN_404))
                        .build();
         }
@@ -385,7 +379,7 @@ public class AccountService {
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
-            return ResponseObject.<Xs2aAccountReport>builder()
+            return ResponseObject.<Transactions>builder()
                        .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())))
                        .build();
         }
@@ -393,18 +387,15 @@ public class AccountService {
         SpiTransaction payload = spiResponse.getPayload();
 
         if (payload == null) {
-            return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
+            return ResponseObject.<Transactions>builder()
+                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .build();
         }
 
-        List<SpiTransaction> transactions = Collections.singletonList(payload);
-        Optional<Xs2aAccountReport> report = transactionsToAccountReportMapper.mapToXs2aAccountReport(transactions, null);
-
-        ResponseObject<Xs2aAccountReport> response =
-            ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build();
-
-        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(false,
-                                                                                                TypeAccess.TRANSACTION, response));
-        return response;
+        Transactions transactions = spiToXs2aTransactionMapper.mapToXs2aTransaction(payload);
+        return ResponseObject.<Transactions>builder()
+                   .body(transactions)
+                   .build();
     }
 
     private ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {
