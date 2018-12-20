@@ -16,10 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
-import de.adorsys.psd2.model.AccountAccess;
-import de.adorsys.psd2.model.ConsentInformationResponse200Json;
-import de.adorsys.psd2.model.Consents;
-import de.adorsys.psd2.model.ConsentsResponse201;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -238,6 +235,52 @@ public class ConsentControllerTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
+    @Test
+    public void getConsentScaStatus_success() {
+        ResponseObject<ScaStatus> responseObject = ResponseObject.<ScaStatus>builder()
+                                                       .body(ScaStatus.RECEIVED)
+                                                       .build();
+        when(consentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(responseObject);
+        doReturn(ResponseEntity.ok(buildScaStatusResponse(de.adorsys.psd2.model.ScaStatus.RECEIVED)))
+            .when(responseMapper).ok(eq(responseObject), any());
+
+        // Given
+        ScaStatusResponse expected = buildScaStatusResponse(de.adorsys.psd2.model.ScaStatus.RECEIVED);
+
+        // When
+        ResponseEntity actual = consentController.getConsentScaStatus(CONSENT_ID, AUTHORISATION_ID, REQUEST_ID,
+                                                                      null, null, null,
+                                                                      null, null,
+                                                                      null, null,
+                                                                      null, null,
+                                                                      null, null,
+                                                                      null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(actual.getBody()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getConsentScaStatus_failure() {
+        when(consentService.getConsentAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(buildScaStatusError());
+        when(responseMapper.ok(any(), any())).thenReturn(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
+
+        // When
+        ResponseEntity actual = consentController.getConsentScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID, REQUEST_ID,
+                                                                      null, null, null,
+                                                                      null, null,
+                                                                      null, null,
+                                                                      null, null,
+                                                                      null, null,
+                                                                      null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
     private ResponseObject<ConsentsResponse201> createConsentResponse(String consentId) {
         ConsentsResponse201 response = new ConsentsResponse201();
         response.setConsentStatus(de.adorsys.psd2.model.ConsentStatus.RECEIVED);
@@ -306,5 +349,15 @@ public class ConsentControllerTest {
         response.setAuthorizationId(AUTHORISATION_ID);
         response.setScaStatus(ScaStatus.STARTED);
         return response;
+    }
+
+    private ScaStatusResponse buildScaStatusResponse(de.adorsys.psd2.model.ScaStatus scaStatus) {
+        return new ScaStatusResponse().scaStatus(scaStatus);
+    }
+
+    private ResponseObject<ScaStatus> buildScaStatusError() {
+        return ResponseObject.<ScaStatus>builder()
+                   .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403))
+                   .build();
     }
 }

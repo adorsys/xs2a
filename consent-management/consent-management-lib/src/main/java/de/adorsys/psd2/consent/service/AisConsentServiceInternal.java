@@ -202,6 +202,17 @@ public class AisConsentServiceInternal implements AisConsentService {
                                    .collect(Collectors.toList()));
     }
 
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
+        Optional<AisConsent> consent = aisConsentRepository.findByExternalId(consentId);
+        if (!consent.isPresent()) {
+            return Optional.empty();
+        }
+
+        Optional<AisConsentAuthorization> authorisation = findAuthorisationInConsent(authorisationId, consent.get());
+        return authorisation.map(AisConsentAuthorization::getScaStatus);
+    }
+
     /**
      * Update consent authorization
      *
@@ -348,5 +359,12 @@ public class AisConsentServiceInternal implements AisConsentService {
         consentAuthorization.setScaStatus(request.getScaStatus());
         consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
         return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
+    }
+
+    private Optional<AisConsentAuthorization> findAuthorisationInConsent(String authorisationId, AisConsent consent) {
+        return consent.getAuthorizations()
+                   .stream()
+                   .filter(auth -> auth.getExternalId().equals(authorisationId))
+                   .findFirst();
     }
 }

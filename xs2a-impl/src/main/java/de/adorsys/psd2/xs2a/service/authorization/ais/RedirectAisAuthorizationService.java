@@ -80,4 +80,16 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
         return aisConsentService.getAuthorisationSubResources(consentId)
                    .map(Xs2aAuthorisationSubResources::new);
     }
+
+    /**
+     * Gets SCA status of the authorisation from CMS
+     *
+     * @param consentId       String representation of consent identifier
+     * @param authorisationId String representation of authorisation identifier
+     * @return SCA status of the authorisation
+     */
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
+        return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
+    }
 }

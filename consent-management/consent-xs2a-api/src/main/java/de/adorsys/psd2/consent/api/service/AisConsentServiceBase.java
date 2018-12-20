@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api.service;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -113,8 +114,17 @@ interface AisConsentServiceBase {
     /**
      * Gets list of consent authorisation IDs by consent ID
      *
-     * @param encryptedConsentId id of consent
+     * @param consentId id of consent
      * @return list of consent authorisation IDs
      */
-    Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId);
+    Optional<List<String>> getAuthorisationsByConsentId(String consentId);
+
+    /**
+     * Gets SCA status of the authorisation by consent ID and authorisation ID
+     *
+     * @param consentId       String representation of the consent identifier
+     * @param authorisationId String representation of the authorisation identifier
+     * @return SCA status of the authorisation
+     */
+    Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
 }
