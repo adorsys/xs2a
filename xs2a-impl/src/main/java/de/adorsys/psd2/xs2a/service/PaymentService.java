@@ -149,7 +149,7 @@ public class PaymentService {
 
         if (!pisConsentOptional.isPresent()) {
             return ResponseObject.builder()
-                       .fail(new MessageError(FORMAT_ERROR, "Consent not found"))
+                       .fail(new MessageError(RESOURCE_UNKNOWN_403))
                        .build();
         }
 

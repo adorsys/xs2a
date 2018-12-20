@@ -214,7 +214,7 @@ public class ConsentService {
 
         AccountConsent consent = getValidatedAccountConsent(consentId);
         return consent == null
-                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build()
+                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
