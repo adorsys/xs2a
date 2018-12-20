@@ -183,8 +183,7 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
             case CREATED:
                 return remotePisConsentUrls.getAuthorisationScaStatus();
             case CANCELLED:
-                // TODO will be replaced in scope of https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/271
-                return null;
+                return remotePisConsentUrls.getCancellationAuthorisationScaStatus();
             default:
                 log.error("Unknown payment authorisation type {}", authorisationType);
                 throw new IllegalArgumentException("Unknown payment authorisation type " + authorisationType);

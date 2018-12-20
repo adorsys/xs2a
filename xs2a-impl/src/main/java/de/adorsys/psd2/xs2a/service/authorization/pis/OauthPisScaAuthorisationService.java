@@ -63,4 +63,9 @@ public class OauthPisScaAuthorisationService implements PisScaAuthorisationServi
     public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId) {
         return Optional.empty();
     }
+
+    @Override
+    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
+        return Optional.empty();
+    }
 }

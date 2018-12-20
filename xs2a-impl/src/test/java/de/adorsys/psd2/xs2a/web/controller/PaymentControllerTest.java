@@ -29,10 +29,7 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.AccountReferenceValidationService;
-import de.adorsys.psd2.xs2a.service.ConsentService;
-import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentService;
+import de.adorsys.psd2.xs2a.service.*;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
@@ -75,6 +72,7 @@ public class PaymentControllerTest {
     private static final String BULK_PAYMENT_RESP_DATA = "/json/BulkPaymentResponseTestData.json";
     private static final String PAYMENT_CANCELLATION_ID = "42af2f4a-0d9f-4a7f-8677-8acda5e718f0";
     private static final String AUTHORISATION_ID = "3e96e9e0-9974-42aa-beb8-003e91416652";
+    private static final String CANCELLATION_AUTHORISATION_ID = "d7ba791c-2231-4ed5-8232-cb1ad4cf7332";
 
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private JsonConverter jsonConverter = new JsonConverter(objectMapper);
@@ -101,6 +99,8 @@ public class PaymentControllerTest {
     private ConsentModelMapper consentModelMapper;
     @Mock
     private PaymentAuthorisationService paymentAuthorisationService;
+    @Mock
+    private PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
     @Mock
     private AuthorisationMapper authorisationMapper;
 
@@ -349,6 +349,54 @@ public class PaymentControllerTest {
                                                                                 null, null,
                                                                                 null, null,
                                                                                 null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
+    }
+
+    @Test
+    public void getPaymentCancellationScaStatus_success() {
+        ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
+                                                                                     .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
+                                                                                     .build();
+        when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(responseObject);
+        doReturn(ResponseEntity.ok(buildScaStatusResponse(ScaStatus.RECEIVED)))
+            .when(responseMapper).ok(eq(responseObject), any());
+
+        // Given
+        ScaStatusResponse expected = buildScaStatusResponse(ScaStatus.RECEIVED);
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentCancellationScaStatus(SINGLE.getValue(), CORRECT_PAYMENT_ID,
+                                                                                  CANCELLATION_AUTHORISATION_ID, REQUEST_ID, null,
+                                                                                  null, null,
+                                                                                  null, null,
+                                                                                  null, null,
+                                                                                  null, null,
+                                                                                  null, null,
+                                                                                  null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(OK);
+        assertThat(actual.getBody()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getPaymentCancellationScaStatus_failure() {
+        when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(buildScaStatusError());
+        when(responseMapper.ok(any(), any())).thenReturn(ResponseEntity.status(FORBIDDEN).build());
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentCancellationScaStatus(SINGLE.getValue(), WRONG_PAYMENT_ID,
+                                                                                  CANCELLATION_AUTHORISATION_ID, REQUEST_ID, null,
+                                                                                  null, null,
+                                                                                  null, null,
+                                                                                  null, null,
+                                                                                  null, null,
+                                                                                  null, null,
+                                                                                  null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);

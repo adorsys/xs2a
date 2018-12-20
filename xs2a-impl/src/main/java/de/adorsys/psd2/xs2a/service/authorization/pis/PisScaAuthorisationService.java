@@ -42,4 +42,6 @@ public interface PisScaAuthorisationService {
     Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String paymentId);
 
     Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId);
+
+    Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId);
 }

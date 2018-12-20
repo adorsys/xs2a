@@ -148,7 +148,6 @@ interface PisConsentServiceBase {
      */
     Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, CmsAuthorisationType authorisationType);
 
-
     /**
      * Get information about PSU by payment identifier
      *
