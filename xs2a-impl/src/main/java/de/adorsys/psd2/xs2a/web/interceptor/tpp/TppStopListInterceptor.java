@@ -44,7 +44,7 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         TppInfo tppInfo = tppService.getTppInfo();
 
-        if (tppStopListService.checkIfTppBlocked(new TppUniqueParamsHolder(tppInfo))) {
+        if (tppStopListService.checkIfTppBlocked(new TppUniqueParamsHolder(tppInfo.getAuthorisationNumber(), tppInfo.getAuthorityId()))) {
             response.getWriter().write(objectMapper.writeValueAsString(buildErrorTppMessages()));
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(MessageErrorCode.CERTIFICATE_BLOCKED.getCode());

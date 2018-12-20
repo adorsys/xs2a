@@ -33,6 +33,7 @@ public class TppStopListMapper {
                        record.setNationalAuthorityId(entity.getNationalAuthorityId());
                        record.setBlockingExpirationTimestamp(entity.getBlockingExpirationTimestamp());
                        record.setStatus(entity.getStatus());
+                       record.setInstanceId(entity.getInstanceId());
                        return record;
                    })
                    .orElse(null);
