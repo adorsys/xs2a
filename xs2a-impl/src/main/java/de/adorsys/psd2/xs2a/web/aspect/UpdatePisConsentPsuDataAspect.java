@@ -38,7 +38,7 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updatePisConsentPsuData(..)) && args( request)", returning = "result", argNames = "result,request")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.updatePisConsentPsuData(..)) && args( request)", returning = "result", argNames = "result,request")
     public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentAuthorizationAspect(ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> result, Xs2aUpdatePisConsentPsuDataRequest request) {
         if (!result.hasError()) {
             Xs2aUpdatePisConsentPsuDataResponse body = result.getBody();
