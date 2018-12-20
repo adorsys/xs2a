@@ -245,6 +245,19 @@ public class PisConsentServiceInternal implements PisConsentService {
                    .map(cnst -> readAuthorisationsFromConsent(cnst, authorisationType));
     }
 
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, CmsAuthorisationType authorisationType) {
+        Optional<PisConsent> consent = readPisConsentByPaymentId(paymentId);
+        if (!consent.isPresent()) {
+            return Optional.empty();
+        }
+
+        Optional<PisConsentAuthorization> authorisation = findAuthorisationInConsent(authorisationId,
+                                                                                     consent.get(),
+                                                                                     authorisationType);
+        return authorisation.map(PisConsentAuthorization::getScaStatus);
+    }
+
     /**
      * Reads Psu data by payment Id
      *
@@ -341,6 +354,14 @@ public class PisConsentServiceInternal implements PisConsentService {
                    .filter(auth -> auth.getAuthorizationType() == authorisationType)
                    .map(PisConsentAuthorization::getExternalId)
                    .collect(Collectors.toList());
+    }
+
+    private Optional<PisConsentAuthorization> findAuthorisationInConsent(String authorisationId, PisConsent pisConsent, CmsAuthorisationType authorisationType) {
+        return pisConsent.getAuthorizations()
+                   .stream()
+                   .filter(auth -> auth.getAuthorizationType() == authorisationType)
+                   .filter(auth -> auth.getExternalId().equals(authorisationId))
+                   .findFirst();
     }
 
     private ScaStatus doUpdateConsentAuthorisation(UpdatePisConsentPsuDataRequest request, PisConsentAuthorization pisConsentAuthorisation) {

@@ -18,13 +18,12 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import de.adorsys.psd2.model.PaymentInitiationCancelResponse200202;
-import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
-import de.adorsys.psd2.model.PaymentInitiationTarget2WithStatusResponse;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
@@ -32,9 +31,11 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.psd2.xs2a.service.ConsentService;
+import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
@@ -98,6 +99,10 @@ public class PaymentControllerTest {
     private ConsentService consentService;
     @Mock
     private ConsentModelMapper consentModelMapper;
+    @Mock
+    private PaymentAuthorisationService paymentAuthorisationService;
+    @Mock
+    private AuthorisationMapper authorisationMapper;
 
     @Before
     public void setUp() {
@@ -272,10 +277,10 @@ public class PaymentControllerTest {
         ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = ResponseEntity.badRequest().build();
 
         ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(),
-            CORRECT_PAYMENT_ID, null, null, null,
-            null, null, null, null, null,
-            null, null,
-            null, null, null, null);
+                                                                      CORRECT_PAYMENT_ID, null, null, null,
+                                                                      null, null, null, null, null,
+                                                                      null, null,
+                                                                      null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -292,13 +297,61 @@ public class PaymentControllerTest {
         ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = ResponseEntity.badRequest().build();
         // When
         ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(),
-            CORRECT_PAYMENT_ID, null, null, null,
-            null, null, null, null, null,
-            null, null,
-            null, null, null, null);
+                                                                      CORRECT_PAYMENT_ID, null, null, null,
+                                                                      null, null, null, null, null,
+                                                                      null, null,
+                                                                      null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
+    }
+
+    @Test
+    public void getPaymentInitiationScaStatus_success() {
+        ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
+                                                                                     .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
+                                                                                     .build();
+        when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(CORRECT_PAYMENT_ID, AUTHORISATION_ID))
+            .thenReturn(responseObject);
+        doReturn(ResponseEntity.ok(buildScaStatusResponse(ScaStatus.RECEIVED)))
+            .when(responseMapper).ok(eq(responseObject), any());
+
+        // Given
+        ScaStatusResponse expected = buildScaStatusResponse(ScaStatus.RECEIVED);
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationScaStatus(SINGLE.getValue(), CORRECT_PAYMENT_ID,
+                                                                                AUTHORISATION_ID, REQUEST_ID, null,
+                                                                                null, null,
+                                                                                null, null,
+                                                                                null, null,
+                                                                                null, null,
+                                                                                null, null,
+                                                                                null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(OK);
+        assertThat(actual.getBody()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getPaymentInitiationScaStatus_failure() {
+        when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID))
+            .thenReturn(buildScaStatusError());
+        when(responseMapper.ok(any(), any())).thenReturn(ResponseEntity.status(FORBIDDEN).build());
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationScaStatus(SINGLE.getValue(), WRONG_PAYMENT_ID,
+                                                                                AUTHORISATION_ID, REQUEST_ID, null,
+                                                                                null, null,
+                                                                                null, null,
+                                                                                null, null,
+                                                                                null, null,
+                                                                                null, null,
+                                                                                null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
     }
 
     private ResponseObject<CancelPaymentResponse> getCancelPaymentResponseObject(boolean startAuthorisationRequired) {
@@ -316,6 +369,16 @@ public class PaymentControllerTest {
     private ResponseObject<CancelPaymentResponse> getErrorOnPaymentCancellation() {
         return ResponseObject.<CancelPaymentResponse>builder()
                    .fail(new MessageError(FORMAT_ERROR))
+                   .build();
+    }
+
+    private ScaStatusResponse buildScaStatusResponse(ScaStatus scaStatus) {
+        return new ScaStatusResponse().scaStatus(scaStatus);
+    }
+
+    private ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> buildScaStatusError() {
+        return ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
+                   .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403))
                    .build();
     }
 }
