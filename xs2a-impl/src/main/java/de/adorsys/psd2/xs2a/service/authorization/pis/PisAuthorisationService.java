@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequ
 import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.PisScaStage;
@@ -134,5 +135,27 @@ public class PisAuthorisationService {
      */
     public Optional<List<String>> getAuthorisationSubResources(String paymentId) {
         return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CREATED);
+    }
+
+    /**
+     * Gets SCA status of the authorisation
+     *
+     * @param paymentId       String representation of the payment identifier
+     * @param authorisationId String representation of the authorisation identifier
+     * @return SCA status of the authorisation
+     */
+    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId) {
+        return pisConsentService.getAuthorisationScaStatus(paymentId, authorisationId, CmsAuthorisationType.CREATED);
+    }
+
+    /**
+     * Gets SCA status of the cancellation authorisation
+     *
+     * @param paymentId      String representation of the payment identifier
+     * @param cancellationId String representation of the cancellation authorisation identifier
+     * @return SCA status of the authorisation
+     */
+    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
+        return pisConsentService.getAuthorisationScaStatus(paymentId, cancellationId, CmsAuthorisationType.CANCELLED);
     }
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-12-19-1">
+        <comment>Add column instance_id for tpp_stop_list table.</comment>
+
+        <addColumn tableName="tpp_stop_list">
+            <column name="instance_id" type="VARCHAR(100)" defaultValue="UNDEFINED">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-12-19-2">
+        <comment>Modify composite unique constraint for tpp_stop_list table to add instance_id into it</comment>
+
+        <dropUniqueConstraint constraintName="uniq_auth_num_and_auth_id"
+                              tableName="tpp_stop_list"
+                              uniqueColumns="tpp_authorisation_number authority_id"/>
+
+        <addUniqueConstraint columnNames="tpp_authorisation_number, authority_id, instance_id"
+                             constraintName="uniq_auth_num_and_auth_id"
+                             deferrable="false" initiallyDeferred="false"
+                             tableName="tpp_stop_list"/>
+    </changeSet>
+</databaseChangeLog>

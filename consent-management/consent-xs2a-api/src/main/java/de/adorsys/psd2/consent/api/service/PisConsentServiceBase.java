@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -136,6 +137,16 @@ interface PisConsentServiceBase {
      * @return Response containing information about authorisation IDs
      */
     Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType);
+
+    /**
+     * Gets SCA status of the authorisation by payment ID, authorisation ID and authorisation type
+     *
+     * @param paymentId         String representation of the payment identifier
+     * @param authorisationId   String representation of the authorisation identifier
+     * @param authorisationType Type of authorisation
+     * @return SCA status of the authorisation
+     */
+    Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, CmsAuthorisationType authorisationType);
 
     /**
      * Get information about PSU by payment identifier

@@ -28,6 +28,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -149,6 +150,21 @@ public class PisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping(path = "/{payment-id}/authorisations/{authorisation-id}/status")
+    @ApiOperation(value = "Gets SCA status of pis consent authorisation.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<ScaStatus> getAuthorisationScaStatus(
+        @ApiParam(name = "payment-id", value = "Identification of the payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("payment-id") String paymentId,
+        @ApiParam(name = "authorisation-id", value = "The consent authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId) {
+        return pisConsentService.getAuthorisationScaStatus(paymentId, authorisationId, CmsAuthorisationType.CREATED)
+                   .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @PutMapping(path = "/cancellation-authorisations/{cancellation-id}")
     @ApiOperation(value = "Update pis consent cancellation authorisation.")
     @ApiResponses(value = {
@@ -186,6 +202,21 @@ public class PisConsentController {
         @PathVariable("payment-id") String paymentId) {
         return pisConsentService.getAuthorisationsByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
                    .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/{payment-id}/cancellation-authorisations/{cancellation-id}/status")
+    @ApiOperation(value = "Gets SCA status of pis consent cancellation authorisation.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<ScaStatus> getCancellationAuthorisationScaStatus(
+        @ApiParam(name = "payment-id", value = "Identification of the payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("payment-id") String paymentId,
+        @ApiParam(name = "cancellation-id", value = "Identification of the consent cancellation authorisation", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("cancellation-id") String authorisationId) {
+        return pisConsentService.getAuthorisationScaStatus(paymentId, authorisationId, CmsAuthorisationType.CANCELLED)
+                   .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

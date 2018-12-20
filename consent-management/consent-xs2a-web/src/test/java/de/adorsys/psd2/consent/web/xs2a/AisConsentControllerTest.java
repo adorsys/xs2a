@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.web.xs2a.controller.AisConsentController;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +57,8 @@ public class AisConsentControllerTest {
     private static final String AUTHORIZATION_ID_1 = "4400de4c-1c74-4ca0-941d-8f56b828f31d";
     private static final String WRONG_AUTHORIZATION_ID = "Wrong authorization id";
     private static final AisConsentAuthorizationResponse CONSENT_AUTHORIZATION_RESPONSE = getConsentAuthorizationResponse();
+
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @InjectMocks
     private AisConsentController aisConsentController;
@@ -245,6 +248,33 @@ public class AisConsentControllerTest {
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+
+    @Test
+    public void getConsentAuthorizationScaStatus_success() {
+        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORIZATION_ID))
+            .thenReturn(Optional.of(SCA_STATUS));
+
+        // When
+        ResponseEntity<ScaStatus> result = aisConsentController.getConsentAuthorizationScaStatus(CONSENT_ID, AUTHORIZATION_ID);
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isEqualTo(SCA_STATUS);
+    }
+
+    @Test
+    public void getConsentAuthorizationScaStatus_failure_wrongIds() {
+        when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORIZATION_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseEntity<ScaStatus> result = aisConsentController.getConsentAuthorizationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORIZATION_ID);
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(result.getBody()).isNull();
+    }
+
 
     private static AisConsentAuthorizationRequest getConsentAuthorizationRequest() {
         AisConsentAuthorizationRequest request = new AisConsentAuthorizationRequest();

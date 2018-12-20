@@ -106,6 +106,8 @@ public class PisConsentServiceInternalEncryptedTest {
             .thenReturn(Optional.of(buildPsuIdData()));
         when(pisConsentService.getPsuDataByConsentId(DECRYPTED_CONSENT_ID))
             .thenReturn(Optional.of(buildPsuIdData()));
+        when(pisConsentService.getAuthorisationScaStatus(DECRYPTED_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.of(SCA_STATUS));
     }
 
     @Test
@@ -295,6 +297,17 @@ public class PisConsentServiceInternalEncryptedTest {
         assertEquals(expected, actual.get());
         verify(pisConsentService, times(1))
             .getAuthorisationsByPaymentId(DECRYPTED_PAYMENT_ID, CmsAuthorisationType.CREATED);
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_success() {
+        // When
+        Optional<ScaStatus> actual = pisConsentServiceInternalEncrypted.getAuthorisationScaStatus(ENCRYPTED_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED);
+
+        // Then
+        assertTrue(actual.isPresent());
+        assertEquals(SCA_STATUS, actual.get());
+        verify(pisConsentService, times(1)).getAuthorisationScaStatus(DECRYPTED_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED);
     }
 
     @Test

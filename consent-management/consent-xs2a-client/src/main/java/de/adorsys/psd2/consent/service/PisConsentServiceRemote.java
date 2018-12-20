@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisConsentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,7 +72,7 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
     @Override
     public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
         HttpStatus statusCode = consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentStatus(), HttpMethod.PUT,
-            null, Void.class, consentId, status).getStatusCode();
+                                                             null, Void.class, consentId, status).getStatusCode();
 
         return Optional.of(statusCode == HttpStatus.OK);
     }
@@ -85,27 +86,27 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
     @Override
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
+                                                                     psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
                                        .getBody());
     }
 
     @Override
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisationCancellation(),
-            psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
+                                                                     psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
                                        .getBody());
     }
 
     @Override
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
+                                                                UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
     }
 
     @Override
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentCancellationAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
+                                                                UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
     }
 
     @Override
@@ -140,6 +141,19 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, CmsAuthorisationType authorisationType) {
+        String url = getAuthorisationScaStatusUrl(authorisationType);
+        try {
+            ResponseEntity<ScaStatus> request = consentRestTemplate.getForEntity(url, ScaStatus.class,
+                                                                                 paymentId, authorisationId);
+            return Optional.ofNullable(request.getBody());
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Couldn't get authorisation SCA Status by paymentId {} and authorisationId {}", paymentId, authorisationId);
+        }
+        return Optional.empty();
+    }
+
     private String getAuthorisationSubResourcesUrl(CmsAuthorisationType authorisationType) {
         switch (authorisationType) {
             case CREATED:
@@ -162,5 +176,17 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
     public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
         return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPsuDataByConsentId(), PsuIdData.class, consentId)
                                        .getBody());
+    }
+
+    private String getAuthorisationScaStatusUrl(CmsAuthorisationType authorisationType) {
+        switch (authorisationType) {
+            case CREATED:
+                return remotePisConsentUrls.getAuthorisationScaStatus();
+            case CANCELLED:
+                return remotePisConsentUrls.getCancellationAuthorisationScaStatus();
+            default:
+                log.error("Unknown payment authorisation type {}", authorisationType);
+                throw new IllegalArgumentException("Unknown payment authorisation type " + authorisationType);
+        }
     }
 }

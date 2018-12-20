@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
@@ -27,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRespon
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -38,6 +40,8 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -51,6 +55,9 @@ public class PaymentCancellationAuthorisationServiceTest {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
+    private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
+    private static final String WRONG_PAYMENT_ID = "wrong payment id";
+    private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
 
     @InjectMocks
     private PaymentCancellationAuthorisationServiceImpl paymentCancellationAuthorisationService;
@@ -62,6 +69,13 @@ public class PaymentCancellationAuthorisationServiceTest {
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
 
+    @Before
+    public void setUp() {
+        when(pisScaAuthorisationService.getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(Optional.of(ScaStatus.RECEIVED));
+        when(pisScaAuthorisationService.getCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+    }
 
     @Test
     public void createPisConsentCancellationAuthorization_Success_ShouldRecordEvent() {
@@ -112,6 +126,45 @@ public class PaymentCancellationAuthorisationServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture(), any());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getPaymentCancellationAuthorisationScaStatus_success() {
+        // When
+        ResponseObject<ScaStatus> actual =
+            paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID,
+                CANCELLATION_AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.hasError());
+        assertEquals(ScaStatus.RECEIVED, actual.getBody());
+    }
+
+    @Test
+    public void getPaymentCancellationAuthorisationScaStatus_success_shouldRecordEvent() {
+        // Given:
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID,
+            CANCELLATION_AUTHORISATION_ID);
+
+        // Then
+        verify(xs2aEventService, times(1))
+            .recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_CANCELLATION_SCA_STATUS_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getPaymentCancellationAuthorisationScaStatus_failure_wrongIds() {
+        // When
+        ResponseObject<ScaStatus> actual =
+            paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID,
+                WRONG_CANCELLATION_AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.hasError());
+        assertNull(actual.getBody());
     }
 
     private Xs2aUpdatePisConsentPsuDataRequest buildXs2aUpdatePisConsentPsuDataRequest() {

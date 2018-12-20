@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -117,6 +118,18 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
             return Optional.ofNullable(request.getBody());
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation found by consentId {}", encryptedConsentId);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
+        try {
+            ResponseEntity<ScaStatus> request = consentRestTemplate.getForEntity(
+                remoteAisConsentUrls.getAuthorisationScaStatus(), ScaStatus.class, encryptedConsentId, authorisationId);
+            return Optional.ofNullable(request.getBody());
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Couldn't get authorisation SCA Status by consentId {} and authorisationId {}");
         }
         return Optional.empty();
     }

@@ -170,4 +170,15 @@ public class Xs2aAisConsentService {
     public Optional<List<String>> getAuthorisationSubResources(String consentId) {
         return aisConsentService.getAuthorisationsByConsentId(consentId);
     }
+
+    /**
+     * Requests CMS to retrieve SCA status of AIS consent authorisation
+     *
+     * @param consentId       String representation of consent identifier
+     * @param authorisationId String representation of authorisation identifier
+     * @return SCA status of the authorisation
+     */
+    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
+        return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
+    }
 }

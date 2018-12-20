@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
 import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,9 +31,12 @@ import java.util.Optional;
 public class TppStopListServiceInternal implements TppStopListService {
     private final TppStopListRepository tppStopListRepository;
 
+    @Value("${cms.service.instance-id:UNDEFINED}")
+    private String serviceInstanceId;
+
     @Override
     public boolean checkIfTppBlocked(TppUniqueParamsHolder tppUniqueParams) {
-        Optional<TppStopListEntity> stopListEntityOptional = tppStopListRepository.findByTppAuthorisationNumberAndNationalAuthorityId(tppUniqueParams.getAuthorisationNumber(), tppUniqueParams.getAuthorityId());
+        Optional<TppStopListEntity> stopListEntityOptional = tppStopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppUniqueParams.getAuthorisationNumber(), tppUniqueParams.getAuthorityId(), serviceInstanceId);
 
         return stopListEntityOptional
                    .map(TppStopListEntity::isBlocked)

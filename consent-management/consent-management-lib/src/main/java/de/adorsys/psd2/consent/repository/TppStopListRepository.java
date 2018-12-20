@@ -27,7 +27,7 @@ import java.util.Optional;
 
 public interface TppStopListRepository extends CrudRepository<TppStopListEntity, Long> {
 
-    Optional<TppStopListEntity> findByTppAuthorisationNumberAndNationalAuthorityId(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
+    Optional<TppStopListEntity> findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
 
     List<TppStopListEntity> findAllByStatusAndBlockingExpirationTimestampLessThanEqual(@NotNull TppStatus tppStatus, @NotNull OffsetDateTime dateTimeToCompare);
 }

@@ -141,7 +141,7 @@ public class PisConsentServiceInternal implements PisConsentService {
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType,
                                                                                PsuIdData psuData) {
         return readReceivedConsentByPaymentId(paymentId)
-                   .map(pisConsent -> saveNewAuthorisation(pisConsent, authorizationType, psuData))
+                   .map(pisConsent -> saveNewAuthorisation(pisConsent, authorizationType))
                    .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
 
@@ -245,6 +245,19 @@ public class PisConsentServiceInternal implements PisConsentService {
                    .map(cnst -> readAuthorisationsFromConsent(cnst, authorisationType));
     }
 
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, CmsAuthorisationType authorisationType) {
+        Optional<PisConsent> consent = readPisConsentByPaymentId(paymentId);
+        if (!consent.isPresent()) {
+            return Optional.empty();
+        }
+
+        Optional<PisConsentAuthorization> authorisation = findAuthorisationInConsent(authorisationId,
+                                                                                     consent.get(),
+                                                                                     authorisationType);
+        return authorisation.map(PisConsentAuthorization::getScaStatus);
+    }
+
     /**
      * Reads Psu data by payment Id
      *
@@ -324,13 +337,13 @@ public class PisConsentServiceInternal implements PisConsentService {
      * @param pisConsent PIS Consent, for which authorisation is performed
      * @return PisConsentAuthorization
      */
-    private PisConsentAuthorization saveNewAuthorisation(PisConsent pisConsent, CmsAuthorisationType authorisationType, PsuIdData psuData) {
+    private PisConsentAuthorization saveNewAuthorisation(PisConsent pisConsent, CmsAuthorisationType authorisationType) {
         PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
         consentAuthorization.setConsent(pisConsent);
         consentAuthorization.setScaStatus(STARTED);
         consentAuthorization.setAuthorizationType(authorisationType);
-        consentAuthorization.setPsuData(psuDataMapper.mapToPsuData(psuData));
+        consentAuthorization.setPsuData(pisConsent.getPsuData());
         consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
         return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
@@ -341,6 +354,14 @@ public class PisConsentServiceInternal implements PisConsentService {
                    .filter(auth -> auth.getAuthorizationType() == authorisationType)
                    .map(PisConsentAuthorization::getExternalId)
                    .collect(Collectors.toList());
+    }
+
+    private Optional<PisConsentAuthorization> findAuthorisationInConsent(String authorisationId, PisConsent pisConsent, CmsAuthorisationType authorisationType) {
+        return pisConsent.getAuthorizations()
+                   .stream()
+                   .filter(auth -> auth.getAuthorizationType() == authorisationType)
+                   .filter(auth -> auth.getExternalId().equals(authorisationId))
+                   .findFirst();
     }
 
     private ScaStatus doUpdateConsentAuthorisation(UpdatePisConsentPsuDataRequest request, PisConsentAuthorization pisConsentAuthorisation) {

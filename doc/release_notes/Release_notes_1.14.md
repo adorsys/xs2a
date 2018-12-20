@@ -38,8 +38,17 @@ consent-psu-client module is not actuall and not supported anymore, therefore re
 
 ## Bugfix: added possibility to config SCA Redirect links in ASPSP-profile using redirectId parameter 
 Now ASPSP Developer is able to config aisRedirectUrlToAspsp and pisRedirectUrlToAspsp with custom url pattern and redirectId parameter. For example:
-* http://localhost:4200/pis/{redirect-id}
-* http://localhost:4200/pis?redirectId={redirect-id}
+```yaml
+setting:
+ pisRedirectUrlToAspsp: http://localhost:4200/pis/{redirect-id}
+ aisRedirectUrlToAspsp: http://localhost:4200/ais/{redirect-id}
+```
+Encrypted Consent/Payment Id is still posssible to put into the URL using the `{encrypted-consent-id}` or `{encrypted-payment-id}` parameter respectively. For example:
+```yaml
+setting:
+ pisRedirectUrlToAspsp: http://localhost:4200/pis?paymentId={encrypted-payment-id}&redirectId={redirect-id}
+ aisRedirectUrlToAspsp: http://localhost:4200/ais?consentId={encrypted-consent-id}&redirectId={redirect-id}
+```
 
 ## Bugfix: changes to CmsPsuAisService and CmsPsuPisService
 Now methods updatePsuDataInConsent and updatePsuInPayment take redirectId as an argument instead of consentId and paymentId accordingly.
@@ -84,3 +93,6 @@ Now CMS contains several endpoints for TPP Stop List proceeding:
 
 Scheduler service has been created: it will unblock the TPPs with blocking period expired (if TPP was blocked for the provided period of time).
 The scheduler service invocation frequency could be modified by changing `stoplist.cron.expression` value in `application.properties`.
+
+## Integration tests subproject is frozen
+Due to some internal reasons further development of integration tests in xs2a-Repository is frozen. `integration-tests` folder will be removed from repo soon.

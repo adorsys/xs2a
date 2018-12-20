@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
@@ -293,6 +294,29 @@ public class ConsentService {
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                   .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
                                   ::build);
+    }
+
+    /**
+     * Gets SCA status of consent authorisation
+     *
+     * @param consentId       String representation of consent identifier
+     * @param authorisationId String representation of authorisation identifier
+     * @return Response containing SCA status of the authorisation or corresponding error
+     */
+    public ResponseObject<ScaStatus> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
+        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
+
+        Optional<ScaStatus> scaStatus = aisAuthorizationService.getAuthorisationScaStatus(consentId, authorisationId);
+
+        if (!scaStatus.isPresent()) {
+            return ResponseObject.<ScaStatus>builder()
+                       .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403))
+                       .build();
+        }
+
+        return ResponseObject.<ScaStatus>builder()
+                   .body(scaStatus.get())
+                   .build();
     }
 
     @SuppressWarnings("WeakerAccess")  // fixes the issue https://github.com/adorsys/xs2a/issues/16

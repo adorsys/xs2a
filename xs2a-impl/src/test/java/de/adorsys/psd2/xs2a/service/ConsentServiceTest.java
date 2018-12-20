@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
@@ -69,7 +70,7 @@ import java.time.Period;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -618,6 +619,48 @@ public class ConsentServiceTest {
         List<String> authorisationIds = paymentInitiationAuthorisation.getBody().getAuthorisationIds();
         assertFalse(authorisationIds.isEmpty());
         assertThat(authorisationIds.get(0)).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void getConsentAuthorisationScaStatus_success() {
+        when(aisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.of(ScaStatus.RECEIVED));
+
+        // When
+        ResponseObject<ScaStatus> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.hasError());
+        assertEquals(ScaStatus.RECEIVED, actual.getBody());
+    }
+
+    @Test
+    public void getConsentAuthorisationScaStatus_success_shouldRecordEvent() {
+        when(aisAuthorizationService.getAuthorisationScaStatus(any(), any()))
+            .thenReturn(Optional.of(ScaStatus.RECEIVED));
+
+        // Given:
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        consentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getConsentAuthorisationScaStatus_failure() {
+        when(aisAuthorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseObject<ScaStatus> actual = consentService.getConsentAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.hasError());
+        assertNull(actual.getBody());
     }
 
     /**

@@ -35,4 +35,7 @@ public class TppStopListRecord {
 
     @ApiModelProperty(value = "Blocking expiration datetime", example = "2020-01-01T15:30:35.035Z")
     private OffsetDateTime blockingExpirationTimestamp;
+
+    @ApiModelProperty(value = "Service instance id", example = "instance id")
+    private String instanceId;
 }

@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataReques
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -50,6 +51,8 @@ public class PaymentAuthorisationServiceTest {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
+    private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
+    private static final String WRONG_PAYMENT_ID = "wrong payment id";
 
     @InjectMocks
     private PaymentAuthorisationServiceImpl paymentAuthorisationService;
@@ -59,6 +62,14 @@ public class PaymentAuthorisationServiceTest {
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
 
+
+    @Before
+    public void setUp() {
+        when(pisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.of(ScaStatus.RECEIVED));
+        when(pisScaAuthorisationService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+    }
     @Test
     public void createPisConsentAuthorization_Success_ShouldRecordEvent() {
         when(pisScaAuthorisationService.createConsentAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA))
@@ -111,6 +122,43 @@ public class PaymentAuthorisationServiceTest {
         List<String> authorisationIds = paymentInitiationAuthorisation.getBody().getAuthorisationIds();
         assertFalse(authorisationIds.isEmpty());
         assertThat(authorisationIds.get(0)).isEqualTo(PAYMENT_ID);
+    }
+
+
+    @Test
+    public void getPaymentInitiationAuthorisationScaStatus_success() {
+        // When
+        ResponseObject<ScaStatus> actual = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID,
+            AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.hasError());
+        assertEquals(ScaStatus.RECEIVED, actual.getBody());
+    }
+
+    @Test
+    public void getPaymentInitiationAuthorisationScaStatus_success_shouldRecordEvent() {
+        // Given:
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID);
+
+
+        // Then
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_SCA_STATUS_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getPaymentInitiationAuthorisationScaStatus_failure_wrongIds() {
+        // When
+        ResponseObject<ScaStatus> actual = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(WRONG_PAYMENT_ID,
+            WRONG_AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.hasError());
+        assertNull(actual.getBody());
     }
 
     private Xs2aUpdatePisConsentPsuDataRequest buildXs2aUpdatePisConsentPsuDataRequest() {

@@ -52,6 +52,7 @@ import static org.mockito.Mockito.when;
 public class PisConsentControllerTest {
 
     private static final String AUTHORISATION_ID = "345-9245-2359";
+    private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
     private static final String PAYMENT_ID = "33333-999999999";
     private static final String CONSENT_ID = "12345";
     private static final String STATUS_RECEIVED = "RECEIVED";
@@ -59,10 +60,12 @@ public class PisConsentControllerTest {
     private static final String PASSWORD = "password";
 
     private static final String WRONG_AUTHORISATION_ID = "3254890-5";
+    private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
     private static final String WRONG_PAYMENT_ID = "32343-999997777";
     private static final String WRONG_CONSENT_ID = "67890";
 
     private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null);
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @InjectMocks
     private PisConsentController pisConsentController;
@@ -255,6 +258,58 @@ public class PisConsentControllerTest {
         // When
         ResponseEntity<GetPisConsentAuthorisationResponse> result =
             pisConsentController.getConsentAuthorization(AUTHORISATION_ID);
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(result.getBody()).isNull();
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_success() {
+        when(pisConsentService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.of(SCA_STATUS));
+
+        // When
+        ResponseEntity<ScaStatus> result = pisConsentController.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isEqualTo(SCA_STATUS);
+    }
+
+    @Test
+    public void getAuthorisationScaStatus_failure_wrongIds() {
+        when(pisConsentService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseEntity<ScaStatus> result = pisConsentController.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID);
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(result.getBody()).isNull();
+    }
+
+    @Test
+    public void getCancellationAuthorisationScaStatus_success() {
+        when(pisConsentService.getAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
+            .thenReturn(Optional.of(SCA_STATUS));
+
+        // When
+        ResponseEntity<ScaStatus> result = pisConsentController.getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID);
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isEqualTo(SCA_STATUS);
+    }
+
+    @Test
+    public void getCancellationAuthorisationScaStatus_failure_wrongIds() {
+        when(pisConsentService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseEntity<ScaStatus> result = pisConsentController.getCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID);
 
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

@@ -20,6 +20,7 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -149,6 +150,22 @@ public class AisConsentController {
         @PathVariable("authorization-id") String authorizationId) {
 
         return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId)
+                   .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/{consent-id}/authorisations/{authorisation-id}/status")
+    @ApiOperation(value = "Gets SCA status of consent authorisation.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<ScaStatus> getConsentAuthorizationScaStatus(
+        @ApiParam(name = "consent-id", value = "Account consent identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId,
+        @ApiParam(name = "authorisation-id", value = "Consent authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId) {
+
+        return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId)
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
@@ -81,13 +82,9 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountReportByTransactionId(..)) && args( consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
-    public ResponseObject<Xs2aAccountReport> getAccountReportByTransactionIdAspect(ResponseObject<Xs2aAccountReport> result, String consentID, String accountId, String resourceId) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionDetails(..)) && args( consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
+    public ResponseObject<Transactions> getTransactionDetailsAspect(ResponseObject<Transactions> result, String consentID, String accountId, String resourceId) {
         if (!result.hasError()) {
-            Xs2aAccountReport accountReport = result.getBody();
-            Links links = new Links();
-            links.setViewBalances(buildPath("/v1/accounts/{account-id}/transactions/{resourceId}", accountId, resourceId));
-            accountReport.setLinks(links);
             return result;
         }
         return enrichErrorTextMessage(result);

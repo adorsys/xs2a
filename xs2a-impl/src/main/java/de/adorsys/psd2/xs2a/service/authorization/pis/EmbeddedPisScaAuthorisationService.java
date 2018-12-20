@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.authorization.pis;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
@@ -104,5 +105,29 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
     public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String paymentId) {
         return authorisationService.getAuthorisationSubResources(paymentId)
                    .map(Xs2aAuthorisationSubResources::new);
+    }
+
+    /**
+     * Gets SCA status of authorisation
+     *
+     * @param paymentId       ASPSP identifier of the payment, associated with the authorisation
+     * @param authorisationId authorisation identifier
+     * @return SCA status
+     */
+    @Override
+    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId) {
+        return authorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
+    }
+
+    /**
+     * Gets SCA status of cancellation authorisation
+     *
+     * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
+     * @param cancellationId cancellation authorisation identifier
+     * @return SCA status
+     */
+    @Override
+    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
+        return authorisationService.getCancellationAuthorisationScaStatus(paymentId, cancellationId);
     }
 }

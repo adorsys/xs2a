@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
@@ -31,17 +32,19 @@ import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationService {
     private final Xs2aEventService xs2aEventService;
-    private final PisScaAuthorisationService pisAuthorizationService;
+    private final PisScaAuthorisationService pisScaAuthorisationService;
 
     @Override
     public ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> createPisConsentAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
-        return pisAuthorizationService.createConsentAuthorisation(paymentId, paymentType, psuData)
+        return pisScaAuthorisationService.createConsentAuthorisation(paymentId, paymentType, psuData)
                    .map(resp -> ResponseObject.<Xsa2CreatePisConsentAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())
@@ -53,7 +56,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     @Override
     public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
-        Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentPsuData(request);
+        Xs2aUpdatePisConsentPsuDataResponse response = pisScaAuthorisationService.updateConsentPsuData(request);
 
         if (response.hasError()) {
             return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
@@ -69,10 +72,34 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     public ResponseObject<Xs2aAuthorisationSubResources> getPaymentInitiationAuthorisations(String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
-        return pisAuthorizationService.getAuthorisationSubResources(paymentId)
+        return pisScaAuthorisationService.getAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                   .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
                                   ::build);
+    }
+
+    /**
+     * Gets SCA status of payment initiation authorisation
+     *
+     * @param paymentId       ASPSP identifier of the payment, associated with the authorisation
+     * @param authorisationId authorisation identifier
+     * @return Response containing SCA status of authorisation or corresponding error
+     */
+    @Override
+    public ResponseObject<ScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId) {
+        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_SCA_STATUS_REQUEST_RECEIVED);
+
+        Optional<ScaStatus> scaStatus = pisScaAuthorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
+
+        if (!scaStatus.isPresent()) {
+            return ResponseObject.<ScaStatus>builder()
+                       .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403))
+                       .build();
+        }
+
+        return ResponseObject.<ScaStatus>builder()
+                   .body(scaStatus.get())
+                   .build();
     }
 }
