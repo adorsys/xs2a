@@ -147,4 +147,15 @@ public class PisAuthorisationService {
     public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId) {
         return pisConsentService.getAuthorisationScaStatus(paymentId, authorisationId, CmsAuthorisationType.CREATED);
     }
+
+    /**
+     * Gets SCA status of the cancellation authorisation
+     *
+     * @param paymentId      String representation of the payment identifier
+     * @param cancellationId String representation of the cancellation authorisation identifier
+     * @return SCA status of the authorisation
+     */
+    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
+        return pisConsentService.getAuthorisationScaStatus(paymentId, cancellationId, CmsAuthorisationType.CANCELLED);
+    }
 }

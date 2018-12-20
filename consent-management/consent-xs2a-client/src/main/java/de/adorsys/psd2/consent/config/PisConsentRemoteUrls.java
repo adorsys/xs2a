@@ -157,4 +157,14 @@ public class PisConsentRemoteUrls {
     public String getAuthorisationScaStatus() {
         return consentServiceBaseUrl + "/pis/consent/{payment-id}/authorisations/{authorisation-id}/status";
     }
+
+    /**
+     * @return ScaStatus cancellation authorisation status
+     * Method: GET
+     * PathVariables: String paymentId
+     * PathVariables: String cancellationId
+     */
+    public String getCancellationAuthorisationScaStatus() {
+        return consentServiceBaseUrl + "/pis/consent/{payment-id}/cancellation-authorisations/{cancellation-id}/status";
+    }
 }

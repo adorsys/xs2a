@@ -37,6 +37,9 @@ public class PisAuthorisationServiceTest {
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
+    private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
+    private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @InjectMocks
     private PisAuthorisationService pisAuthorisationService;
@@ -46,8 +49,12 @@ public class PisAuthorisationServiceTest {
     @Before
     public void setUp() {
         when(pisConsentServiceEncrypted.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
-            .thenReturn(Optional.of(ScaStatus.RECEIVED));
+            .thenReturn(Optional.of(SCA_STATUS));
         when(pisConsentServiceEncrypted.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.empty());
+        when(pisConsentServiceEncrypted.getAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
+            .thenReturn(Optional.of(SCA_STATUS));
+        when(pisConsentServiceEncrypted.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
             .thenReturn(Optional.empty());
     }
 
@@ -58,13 +65,32 @@ public class PisAuthorisationServiceTest {
 
         // Then
         assertTrue(actual.isPresent());
-        assertEquals(ScaStatus.RECEIVED, actual.get());
+        assertEquals(SCA_STATUS, actual.get());
     }
 
     @Test
     public void getAuthorisationScaStatus_failure_wrongIds() {
         // When
         Optional<ScaStatus> actual = pisAuthorisationService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.isPresent());
+    }
+
+    @Test
+    public void getCancellationAuthorisationScaStatus_success() {
+        // When
+        Optional<ScaStatus> actual = pisAuthorisationService.getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.isPresent());
+        assertEquals(SCA_STATUS, actual.get());
+    }
+
+    @Test
+    public void getCancellationAuthorisationScaStatus_failure_wrongIds() {
+        // When
+        Optional<ScaStatus> actual = pisAuthorisationService.getCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID);
 
         // Then
         assertFalse(actual.isPresent());

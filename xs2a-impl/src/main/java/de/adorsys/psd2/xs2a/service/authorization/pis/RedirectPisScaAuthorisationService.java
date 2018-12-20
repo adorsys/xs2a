@@ -118,4 +118,16 @@ public class RedirectPisScaAuthorisationService implements PisScaAuthorisationSe
     public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId) {
         return authorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
     }
+
+    /**
+     * Gets SCA status of cancellation authorisation
+     *
+     * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
+     * @param cancellationId cancellation authorisation identifier
+     * @return SCA status
+     */
+    @Override
+    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
+        return authorisationService.getCancellationAuthorisationScaStatus(paymentId, cancellationId);
+    }
 }
