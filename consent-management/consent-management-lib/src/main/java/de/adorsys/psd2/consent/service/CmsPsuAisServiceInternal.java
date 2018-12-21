@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -52,6 +53,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentMapper consentMapper;
     private final PsuDataRepository psuDataRepository;
+    private final PsuDataMapper psuDataMapper;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
 
     @Override
@@ -113,20 +115,33 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
-        Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorizationRepository.findByExternalId(redirectId);
+        Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorizationRepository.findByExternalId(redirectId)
+                                                                      .filter(a -> isConsentAuthorisationValidForPsuAndStatus(psuIdData, a));
 
-        if (!authorisationOptional.isPresent()) {
-            return Optional.empty();
-        }
+        if (authorisationOptional.isPresent()) {
+            AisConsentAuthorization authorisation = authorisationOptional.get();
 
-        AisConsentAuthorization authorisation = authorisationOptional.get();
+            if (authorisation.isNotExpired()) {
+                return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
+            }
 
-        if (authorisation.isExpired()) {
             updateAuthorisationOnExpiration(authorisation);
-            return Optional.empty();
+            String tppNokRedirectUri = authorisation.getConsent().getTppInfo().getNokRedirectUri();
+
+            return Optional.of(new CmsAisConsentResponse(tppNokRedirectUri));
         }
 
-        return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
+        return Optional.empty();
+    }
+
+    private boolean isConsentAuthorisationValidForPsuAndStatus(PsuIdData givenPsuIdData, AisConsentAuthorization authorisation) {
+        if (authorisation.getScaStatus().isFinalisedStatus()) {
+            return false;
+        }
+        PsuIdData actualPsuIdData = psuDataMapper.mapToPsuIdData(authorisation.getPsuData());
+        return Optional.ofNullable(actualPsuIdData)
+                   .map(givenPsuIdData::contentEquals)
+                   .orElse(false);
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status) {
