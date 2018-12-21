@@ -43,7 +43,6 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final PisPsuDataService pisPsuDataService;
     private final Xs2aEventService xs2aEventService;
 
-
     @Override
     public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisCancellationAuthorization(String paymentId, PsuIdData psuData, PaymentType paymentType) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);

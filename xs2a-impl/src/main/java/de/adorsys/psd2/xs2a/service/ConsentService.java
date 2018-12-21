@@ -32,10 +32,8 @@ import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
-import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
@@ -72,14 +70,11 @@ import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCO
 public class ConsentService {
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;
-    private final Xs2aAisConsentMapper consentMapper;
     private final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     private final Xs2aAisConsentService aisConsentService;
     private final AisConsentDataService aisConsentDataService;
     private final AisAuthorizationService aisAuthorizationService;
     private final AspspProfileServiceWrapper aspspProfileService;
-    private final PisScaAuthorisationService pisAuthorizationService;
-    private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final AuthorisationMethodService authorisationMethodService;

@@ -68,6 +68,12 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                    .build();
     }
 
+    /**
+     * Gets authorisations for current payment
+     *
+     * @param paymentId ASPSP identifier of the payment, associated with the authorisation
+     * @return Response containing list of authorisations
+     */
     @Override
     public ResponseObject<Xs2aAuthorisationSubResources> getPaymentInitiationAuthorisations(String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);

@@ -62,7 +62,7 @@ public class PisCommonPaymentServiceInternalTest {
     private PisCommonPaymentData pisCommonPaymentData;
     private List<PisAuthorization> pisAuthorizationList = new ArrayList<>();
 
-    private final PisAuthorization pisAuthorization = buildPisConsentAuthorisation(EXTERNAL_ID, CmsAuthorisationType.CREATED);
+    private final PisAuthorization pisAuthorization = buildPisAuthorisation(EXTERNAL_ID, CmsAuthorisationType.CREATED);
 
     private PisPaymentData pisPaymentData;
     private final long PIS_PAYMENT_DATA_ID = 1;
@@ -79,8 +79,8 @@ public class PisCommonPaymentServiceInternalTest {
     public void setUp() {
         pisCommonPaymentData = buildPisCommonPaymentData();
         pisPaymentData = buildPaymentData(pisCommonPaymentData);
-        pisAuthorizationList.add(buildPisConsentAuthorisation(EXTERNAL_ID, CmsAuthorisationType.CANCELLED));
-        pisAuthorizationList.add(buildPisConsentAuthorisation(AUTHORISATION_ID, CmsAuthorisationType.CREATED));
+        pisAuthorizationList.add(buildPisAuthorisation(EXTERNAL_ID, CmsAuthorisationType.CANCELLED));
+        pisAuthorizationList.add(buildPisAuthorisation(AUTHORISATION_ID, CmsAuthorisationType.CREATED));
     }
 
     @Test
@@ -206,7 +206,7 @@ public class PisCommonPaymentServiceInternalTest {
         return pisCommonPaymentData;
     }
 
-    private PisAuthorization buildPisConsentAuthorisation(String externalId, CmsAuthorisationType authorisationType) {
+    private PisAuthorization buildPisAuthorisation(String externalId, CmsAuthorisationType authorisationType) {
         PisAuthorization pisAuthorization = new PisAuthorization();
         pisAuthorization.setExternalId(externalId);
         pisAuthorization.setAuthorizationType(authorisationType);
