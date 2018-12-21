@@ -55,7 +55,8 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
 
     @Override
     public Optional<CreatePisConsentResponse> createPaymentConsent(PisConsentRequest request) {
-        return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody());
+        return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
@@ -65,8 +66,12 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
 
     @Override
     public Optional<PisConsentResponse> getConsentById(String consentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId)
-                                       .getBody());
+        try {
+            return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId))
+                       .map(ResponseEntity::getBody);
+        } catch (CmsRestException cmsRestException) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -79,34 +84,36 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
 
     @Override
     public Optional<String> getDecryptedId(String encryptedId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPaymentIdByEncryptedString(), String.class, encryptedId)
-                                       .getBody());
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPaymentIdByEncryptedString(), String.class, encryptedId))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
-                                                                     psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
-                                       .getBody());
+                                                                     psuData, CreatePisConsentAuthorisationResponse.class, paymentId))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData) {
         return Optional.ofNullable(consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisationCancellation(),
-                                                                     psuData, CreatePisConsentAuthorisationResponse.class, paymentId)
-                                       .getBody());
+                                                                     psuData, CreatePisConsentAuthorisationResponse.class, paymentId))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                                                                UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
+                                                                UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentCancellationAuthorisation(String authorisationId, UpdatePisConsentPsuDataRequest request) {
         return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentCancellationAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                                                                UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody());
+                                                                UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
@@ -116,25 +123,24 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
 
     @Override
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorisationById(String authorizationId) {
-        return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, null, GetPisConsentAuthorisationResponse.class, authorizationId)
-                                       .getBody());
+        return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, null, GetPisConsentAuthorisationResponse.class, authorizationId))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentCancellationAuthorisationById(String cancellationId) {
-        return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentCancellationAuthorisationById(), HttpMethod.GET, null, GetPisConsentAuthorisationResponse.class, cancellationId)
-                                       .getBody());
+        return Optional.ofNullable(consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentCancellationAuthorisationById(), HttpMethod.GET, null, GetPisConsentAuthorisationResponse.class, cancellationId))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
     public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
         String url = getAuthorisationSubResourcesUrl(authorisationType);
         try {
-            ResponseEntity<List<String>> request = consentRestTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<String>>() {
-                }, paymentId);
-            return Optional.ofNullable(request.getBody());
+            return Optional.ofNullable(consentRestTemplate.exchange(url, HttpMethod.GET, null,
+                                                                    new ParameterizedTypeReference<List<String>>() {
+                                                                    }, paymentId))
+                       .map(ResponseEntity::getBody);
         } catch (CmsRestException cmsRestException) {
             log.warn("No authorisation found by paymentId {}", paymentId);
         }
@@ -145,9 +151,9 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
     public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId, CmsAuthorisationType authorisationType) {
         String url = getAuthorisationScaStatusUrl(authorisationType);
         try {
-            ResponseEntity<ScaStatus> request = consentRestTemplate.getForEntity(url, ScaStatus.class,
-                                                                                 paymentId, authorisationId);
-            return Optional.ofNullable(request.getBody());
+            return Optional.ofNullable(consentRestTemplate.getForEntity(url, ScaStatus.class,
+                                                                        paymentId, authorisationId))
+                       .map(ResponseEntity::getBody);
         } catch (CmsRestException cmsRestException) {
             log.warn("Couldn't get authorisation SCA Status by paymentId {} and authorisationId {}", paymentId, authorisationId);
         }
@@ -168,14 +174,14 @@ public class PisConsentServiceRemote implements PisConsentServiceEncrypted {
 
     @Override
     public Optional<PsuIdData> getPsuDataByPaymentId(String paymentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPsuDataByPaymentId(), PsuIdData.class, paymentId)
-                                       .getBody());
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPsuDataByPaymentId(), PsuIdData.class, paymentId))
+                   .map(ResponseEntity::getBody);
     }
 
     @Override
     public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPsuDataByConsentId(), PsuIdData.class, consentId)
-                                       .getBody());
+        return Optional.ofNullable(consentRestTemplate.getForEntity(remotePisConsentUrls.getPsuDataByConsentId(), PsuIdData.class, consentId))
+                   .map(ResponseEntity::getBody);
     }
 
     private String getAuthorisationScaStatusUrl(CmsAuthorisationType authorisationType) {
