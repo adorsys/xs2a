@@ -25,11 +25,25 @@ import org.springframework.stereotype.Service;
 public class AuthorisationMethodDecider {
     private final AspspProfileServiceWrapper aspspProfileService;
 
+    /**
+     * Decides whether explicit authorisation method will be used based on tppExplicitAuthorisationPreferred and signingBasketSupported values.
+     * Explicit authorisation will be used only in case if tppExplicitAuthorisationPreferred = true and signingBasketSupported = true
+     *
+     * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
+     * @return is explicit method of authorisation will be used
+     */
     public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred) {
         return tppExplicitAuthorisationPreferred &&
                    aspspProfileService.isSigningBasketSupported();
     }
 
+    /**
+     * Decides whether implicit authorisation method will be used based on tppExplicitAuthorisationPreferred and signingBasketSupported values.
+     * Implicit authorisation will be used in all the cases where tppExplicitAuthorisationPreferred or signingBasketSupported not equals true
+     *
+     * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
+     * @return is implicit method of authorisation will be used
+     */
     public boolean isImplicitMethod(boolean tppExplicitAuthorisationPreferred) {
         return !isExplicitMethod(tppExplicitAuthorisationPreferred);
     }
