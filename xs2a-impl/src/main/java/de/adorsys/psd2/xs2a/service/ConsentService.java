@@ -33,7 +33,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataReques
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
@@ -85,7 +85,7 @@ public class ConsentService {
     private final PisPsuDataService pisPsuDataService;
     private final TppService tppService;
     private final SpiContextDataProvider spiContextDataProvider;
-    private final AuthorisationMethodService authorisationMethodService;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
     private final AisConsentSpi aisConsentSpi;
     private final CreateConsentRequestValidator createConsentRequestValidator;
     private final Xs2aEventService xs2aEventService;
@@ -142,7 +142,7 @@ public class ConsentService {
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build();
 
         if (isEmbeddedOrRedirectScaApproach()
-                && authorisationMethodService.isImplicitMethod(explicitPreferred)) {
+                && authorisationMethodDecider.isImplicitMethod(explicitPreferred)) {
             proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, consentId);
         }
 

@@ -28,7 +28,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisConsentService;
@@ -63,7 +63,7 @@ public class CreatePeriodicPaymentTest {
     @Mock
     private Xs2aPisConsentService pisConsentService;
     @Mock
-    private AuthorisationMethodService authorisationMethodService;
+    private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock

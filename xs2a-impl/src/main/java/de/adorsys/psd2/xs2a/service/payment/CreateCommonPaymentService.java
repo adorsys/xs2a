@@ -25,7 +25,7 @@ import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisConsentService;
@@ -39,7 +39,7 @@ import java.util.Optional;
 public class CreateCommonPaymentService implements CreatePaymentService<CommonPayment, PaymentInitiationResponse> {
     private final ScaCommonPaymentService scaPaymentService;
     private final Xs2aPisConsentService pisConsentService;
-    private final AuthorisationMethodService authorisationMethodService;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PisScaAuthorisationService pisScaAuthorisationService;
     private final PisConsentDataService pisConsentDataService;
 
@@ -68,7 +68,7 @@ public class CreateCommonPaymentService implements CreatePaymentService<CommonPa
 
         pisConsentService.updatePaymentInPisConsent(payment, pisConsent.getConsentId());
 
-        boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
+        boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {
             Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(externalPaymentId, payment.getPaymentType(), paymentInitiationParameters.getPsuData());
             if (!consentAuthorisation.isPresent()) {

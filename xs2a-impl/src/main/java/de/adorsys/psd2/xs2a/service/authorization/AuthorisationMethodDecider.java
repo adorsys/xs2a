@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthorisationMethodService {
+public class AuthorisationMethodDecider {
     private final AspspProfileServiceWrapper aspspProfileService;
 
     public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred) {

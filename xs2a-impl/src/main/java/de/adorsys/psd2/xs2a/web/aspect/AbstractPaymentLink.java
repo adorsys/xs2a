@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -29,13 +29,13 @@ import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
-    private final AuthorisationMethodService authorisationMethodService;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
     private final RedirectLinkBuilder redirectLinkBuilder;
 
 
-    public AbstractPaymentLink(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodService authorisationMethodService, RedirectLinkBuilder redirectLinkBuilder) {
+    public AbstractPaymentLink(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder) {
         super(aspspProfileService, messageService);
-        this.authorisationMethodService = authorisationMethodService;
+        this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String paymentId = body.getPaymentId();
         String authorizationId = body.getAuthorizationId();
 
-        if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
+        if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
             links.setScaStatus(
@@ -94,7 +94,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String paymentId = body.getPaymentId();
         String authorisationId = body.getAuthorizationId();
 
-        if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
+        if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
             String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(body.getPaymentId(), authorisationId);
