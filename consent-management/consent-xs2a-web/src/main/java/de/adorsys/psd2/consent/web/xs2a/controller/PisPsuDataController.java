@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
-import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -27,35 +27,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/pis")
 @Api(value = "api/v1/pis", tags = "PIS, PSU Data", description = "Provides access to consent management system for PSU Data")
 public class PisPsuDataController {
-    private final PisConsentServiceEncrypted pisConsentService;
+    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
     @GetMapping(path = "/payment/{payment-id}/psu-data")
     @ApiOperation(value = "Get PSU data identified by given payment id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PsuIdData> getPsuDataByPaymentId(
+    public ResponseEntity<List<PsuIdData>> getPsuDataByPaymentId(
         @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.getPsuDataByPaymentId(paymentId)
-                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping(path = "/consent/{consent-id}/psu-data")
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PsuIdData> getPsuDataByConsentId(
-        @ApiParam(name = "consent-id", value = "The consent identification.", example = "32454656712432")
-        @PathVariable("consent-id") String consentId) {
-        return pisConsentService.getPsuDataByConsentId(consentId)
+        return pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId)
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

@@ -16,23 +16,20 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
-import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PisPsuDataService {
-    private final PisConsentServiceEncrypted pisConsentService;
+    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
-    public PsuIdData getPsuDataByPaymentId(String paymentId) {
-        return pisConsentService.getPsuDataByPaymentId(paymentId)
-                   .orElse(null);
-    }
-
-    public PsuIdData getPsuDataByConsentId(String consentId) {
-        return pisConsentService.getPsuDataByConsentId(consentId)
+    public List<PsuIdData> getPsuDataByPaymentId(String paymentId) {
+        return pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId)
                    .orElse(null);
     }
 }

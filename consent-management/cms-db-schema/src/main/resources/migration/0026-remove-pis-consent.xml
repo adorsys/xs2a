@@ -18,4 +18,55 @@
 <databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <include relativeToChangelogFile="true" file="_typedef.xml"/>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-12-20-1">
+        <comment>Drop FK constraints that use consent_id column in pis_common_payment, pis_consent_authorization and
+            pis_payment_data tables.
+        </comment>
+
+        <dropForeignKeyConstraint baseTableName="pis_common_payment" constraintName="fk_com_payment_pis_consent"/>
+        <dropForeignKeyConstraint baseTableName="pis_consent_authorization" constraintName="fk_pis_auth_pis_consent"/>
+        <dropForeignKeyConstraint baseTableName="pis_payment_data" constraintName="fk_pis_payment_pis_consent"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2018-12-12-1">
+        <comment>Remove consent_id column from pis_common_payment, pis_consent_authorization and pis_payment_data tables.</comment>
+
+        <dropColumn columnName="consent_id" tableName="pis_common_payment"/>
+        <dropColumn columnName="consent_id" tableName="pis_consent_authorization"/>
+        <dropColumn columnName="consent_id" tableName="pis_payment_data"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2018-12-12-2">
+        <comment>Add constraint on payment_id column in pis_consent_authorization table.</comment>
+
+        <addNotNullConstraint tableName="pis_consent_authorization" columnName="payment_id" columnDataType="BIGINT"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2018-12-12-3">
+        <comment>Add column payment_internal_id column and FK constraint to pis_payment_data table.</comment>
+
+        <addColumn tableName="pis_payment_data">
+            <column name="common_payment_id" type="BIGINT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="common_payment_id" baseTableName="pis_payment_data"
+                                 constraintName="fk_pis_payment_com_payment" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="pis_common_payment"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2018-12-12-4">
+        <comment>Drop pis_consent table.</comment>
+
+        <dropTable tableName="pis_consent"/>
+    </changeSet>
+
+    <changeSet author="iiu@adorsys.com.ua" id="2018-12-12-5">
+        <comment>Remove not null constraint from payment column in pis_common_payment.</comment>
+
+        <dropNotNullConstraint columnName="payment" tableName="pis_common_payment" columnDataType="${blob.type}"/>
+    </changeSet>
 </databaseChangeLog>

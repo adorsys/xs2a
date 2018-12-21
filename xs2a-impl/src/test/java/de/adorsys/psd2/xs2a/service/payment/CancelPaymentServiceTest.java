@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -61,7 +61,7 @@ public class CancelPaymentServiceTest {
     @Mock
     private SpiToXs2aCancelPaymentMapper spiToXs2aCancelPaymentMapper;
     @Mock
-    private PisConsentDataService pisConsentDataService;
+    private PisAspspDataService pisAspspDataService;
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
 

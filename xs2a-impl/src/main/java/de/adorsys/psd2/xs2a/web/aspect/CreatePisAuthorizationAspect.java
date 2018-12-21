@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
@@ -37,10 +37,10 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createPisConsentAuthorization(..)) && args(paymentId, paymentType, psuData)", returning = "result", argNames = "result,paymentId,paymentType,psuData")
-    public ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> createPisConsentAuthorizationAspect(ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> result, String paymentId, PaymentType paymentType, PsuIdData psuData) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createPisAuthorization(..)) && args(paymentId, paymentType, psuData)", returning = "result", argNames = "result,paymentId,paymentType,psuData")
+    public ResponseObject<Xsa2CreatePisAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xsa2CreatePisAuthorisationResponse> result, String paymentId, PaymentType paymentType, PsuIdData psuData) {
         if (!result.hasError()) {
-            Xsa2CreatePisConsentAuthorisationResponse body = result.getBody();
+            Xsa2CreatePisAuthorisationResponse body = result.getBody();
             body.setLinks(buildLink(paymentType.getValue(), paymentId, body.getAuthorizationId()));
             return result;
         }

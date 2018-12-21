@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.config.rest.consent.PisConsentRemoteUrls;
 import de.adorsys.aspsp.aspspmockserver.domain.pis.AspspPayment;
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
@@ -25,15 +24,12 @@ import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountDetails;
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
-import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
 import de.adorsys.psd2.aspsp.mock.api.payment.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -48,9 +44,6 @@ import static de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType.SINGLE;
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    @Qualifier("consentRestTemplate")
-    private final RestTemplate consentRestTemplate;
-    private final PisConsentRemoteUrls remotePisConsentUrls;
     private final PaymentMapper paymentMapper;
     private final AccountService accountService;
 
@@ -176,16 +169,6 @@ public class PaymentService {
     }
 
     //TODO Create GlobalExceptionHandler for error 400 from consentManagement https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/158
-
-    /**
-     * Updates status of PIS consent
-     *
-     * @param consentId     Consent primary identifier
-     * @param consentStatus New status of the PIS consent
-     */
-    public void updatePaymentConsentStatus(String consentId, AspspConsentStatus consentStatus) {
-        consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, consentStatus.name());
-    }
 
     /**
      * Gets payments by paymentId

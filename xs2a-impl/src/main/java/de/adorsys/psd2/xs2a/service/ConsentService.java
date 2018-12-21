@@ -29,8 +29,8 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.*;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
@@ -292,59 +292,71 @@ public class ConsentService {
     }
 
     // TODO extract this method to PaymentAuthorisationService https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/507
-    public ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> createPisConsentAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
+    public ResponseObject<Xsa2CreatePisAuthorisationResponse> createPisAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
-        return pisAuthorizationService.createConsentAuthorisation(paymentId, paymentType, psuData)
-                   .map(resp -> ResponseObject.<Xsa2CreatePisConsentAuthorisationResponse>builder()
+        return pisAuthorizationService.createCommonPaymentAuthorisation(paymentId, paymentType, psuData)
+                   .map(resp -> ResponseObject.<Xsa2CreatePisAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())
-                   .orElseGet(ResponseObject.<Xsa2CreatePisConsentAuthorisationResponse>builder()
+                   .orElseGet(ResponseObject.<Xsa2CreatePisAuthorisationResponse>builder()
                                   .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
                                   ::build);
     }
 
     // TODO extract this method to PaymentAuthorisationService https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/507
-    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+    public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
-        Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentPsuData(request);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisAuthorizationService.updateCommonPaymentPsuData(request);
 
         if (response.hasError()) {
-            return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+            return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
                        .build();
         }
-        return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+        return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                    .body(response)
                    .build();
     }
 
     // TODO extract this method to PaymentCancellationAuthorisationService https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/507
-    public ResponseObject<Xs2aCreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
+    public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisCancellationAuthorization(String paymentId, PsuIdData psuData, PaymentType paymentType) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
 
-        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
-        return pisAuthorizationService.createConsentCancellationAuthorisation(paymentId, paymentType, psuData)
-                   .map(resp -> ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
+        if (!isPsuDataCorrect(paymentId, psuData)) {
+            return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                       .fail(new MessageError(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                       .build();
+        }
+
+        return pisAuthorizationService.createCommonPaymentCancellationAuthorisation(paymentId, paymentType, psuData)
+                   .map(resp -> ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())
-                   .orElseGet(ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
+                   .orElseGet(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                                   .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
                                   ::build);
     }
 
+    private boolean isPsuDataCorrect(String paymentId, PsuIdData psuData) {
+        List<PsuIdData> psuIdDataList = pisPsuDataService.getPsuDataByPaymentId(paymentId);
+
+        return psuIdDataList.stream()
+                   .anyMatch(psu -> psu.contentEquals(psuData));
+    }
+
     // TODO extract this method to PaymentCancellationAuthorisationService https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/507
-    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentCancellationPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+    public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED, request);
 
-        Xs2aUpdatePisConsentPsuDataResponse response = pisAuthorizationService.updateConsentCancellationPsuData(request);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisAuthorizationService.updateCommonPaymentCancellationPsuData(request);
 
         if (response.hasError()) {
-            return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+            return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
                        .build();
         }
-        return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+        return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                    .body(response)
                    .build();
     }
