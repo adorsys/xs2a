@@ -46,6 +46,7 @@ This value should be decremented each time the TPP of PSU requests any consent r
 - An endpoint to update consent usage counter (decrements usage value by 1 use) and log the information on account/operation etc the consent was used for
 - An endpoint to retrieve the AIS consent by its external identifier. 
 - An endpoint to retrieve the AIS consent status by its external identifier.
+- An endpoint to retrieve the SCA status of consent authorisation by external consent identifier and external authorisation identifier.
 - An endpoint to update the AIS consent status by its external identifier. 
 - An endpoint to update the AIS consent aspsp data.
 
@@ -53,6 +54,8 @@ This value should be decremented each time the TPP of PSU requests any consent r
 - An endpoint to create PIS consent.
 - An endpoint to retrieve the PIS consent status by its external identifier.
 - An endpoint to retrieve the PIS consent by its external identifier. 
+- An endpoint to retrieve the SCA status of payment initiation authorisation by external payment identifier and external authorisation identifier.
+- An endpoint to retrieve the SCA status of payment cancellation authorisation by external payment identifier and external authorisation identifier.
 - An endpoint to update the PIS consent aspsp data.
 - An endpoint to update the PIS consent status by its external identifier.
 
