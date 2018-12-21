@@ -22,10 +22,10 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,34 +43,47 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final PisPsuDataService pisPsuDataService;
     private final Xs2aEventService xs2aEventService;
 
+
     @Override
-    public ResponseObject<Xs2aCreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
+    public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisCancellationAuthorization(String paymentId, PsuIdData psuData, PaymentType paymentType) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
 
-        PsuIdData psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
-        return pisScaAuthorisationService.createConsentCancellationAuthorisation(paymentId, paymentType, psuData)
-                   .map(resp -> ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
+        if (!isPsuDataCorrect(paymentId, psuData)) {
+            return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                       .fail(new MessageError(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                       .build();
+        }
+
+        return pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(paymentId, paymentType, psuData)
+                   .map(resp -> ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())
-                   .orElseGet(ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
+                   .orElseGet(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                                   .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
                                   ::build);
     }
 
     @Override
-    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentCancellationPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+    public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED, request);
 
-        Xs2aUpdatePisConsentPsuDataResponse response = pisScaAuthorisationService.updateConsentCancellationPsuData(request);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(request);
 
         if (response.hasError()) {
-            return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+            return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
                        .build();
         }
-        return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+        return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                    .body(response)
                    .build();
+    }
+
+    private boolean isPsuDataCorrect(String paymentId, PsuIdData psuData) {
+        List<PsuIdData> psuIdDataList = pisPsuDataService.getPsuDataByPaymentId(paymentId);
+
+        return psuIdDataList.stream()
+                   .anyMatch(psu -> psu.contentEquals(psuData));
     }
 
     @Override

@@ -23,9 +23,9 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
@@ -41,29 +41,29 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     private final PisScaAuthorisationService pisScaAuthorisationService;
 
     @Override
-    public ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> createPisConsentAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
+    public ResponseObject<Xsa2CreatePisAuthorisationResponse> createPisAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
-        return pisScaAuthorisationService.createConsentAuthorisation(paymentId, paymentType, psuData)
-                   .map(resp -> ResponseObject.<Xsa2CreatePisConsentAuthorisationResponse>builder()
+        return pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, paymentType, psuData)
+                   .map(resp -> ResponseObject.<Xsa2CreatePisAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())
-                   .orElseGet(ResponseObject.<Xsa2CreatePisConsentAuthorisationResponse>builder()
+                   .orElseGet(ResponseObject.<Xsa2CreatePisAuthorisationResponse>builder()
                                   .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
                                   ::build);
     }
 
     @Override
-    public ResponseObject<Xs2aUpdatePisConsentPsuDataResponse> updatePisConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
+    public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
-        Xs2aUpdatePisConsentPsuDataResponse response = pisScaAuthorisationService.updateConsentPsuData(request);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthorisationService.updateCommonPaymentPsuData(request);
 
         if (response.hasError()) {
-            return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+            return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(new MessageError(response.getErrorHolder().getErrorCode(), response.getErrorHolder().getMessage()))
                        .build();
         }
-        return ResponseObject.<Xs2aUpdatePisConsentPsuDataResponse>builder()
+        return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                    .body(response)
                    .build();
     }

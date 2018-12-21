@@ -22,9 +22,9 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import org.junit.Before;
@@ -62,7 +62,6 @@ public class PaymentAuthorisationServiceTest {
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
 
-
     @Before
     public void setUp() {
         when(pisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID))
@@ -70,16 +69,17 @@ public class PaymentAuthorisationServiceTest {
         when(pisScaAuthorisationService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
     }
+
     @Test
-    public void createPisConsentAuthorization_Success_ShouldRecordEvent() {
-        when(pisScaAuthorisationService.createConsentAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA))
-            .thenReturn(Optional.of(new Xsa2CreatePisConsentAuthorisationResponse(null, null, null)));
+    public void createPisAuthorization_Success_ShouldRecordEvent() {
+        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA))
+            .thenReturn(Optional.of(new Xsa2CreatePisAuthorisationResponse(null, null, null)));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentAuthorisationService.createPisConsentAuthorization(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA);
+        paymentAuthorisationService.createPisAuthorization(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -87,16 +87,16 @@ public class PaymentAuthorisationServiceTest {
     }
 
     @Test
-    public void updatePisConsentPsuData_Success_ShouldRecordEvent() {
-        when(pisScaAuthorisationService.updateConsentPsuData(any()))
-            .thenReturn(new Xs2aUpdatePisConsentPsuDataResponse(ScaStatus.STARTED));
+    public void updatePisPsuData_Success_ShouldRecordEvent() {
+        when(pisScaAuthorisationService.updateCommonPaymentPsuData(any()))
+            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.STARTED));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
-        Xs2aUpdatePisConsentPsuDataRequest request = buildXs2aUpdatePisConsentPsuDataRequest();
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
 
         // When
-        paymentAuthorisationService.updatePisConsentPsuData(request);
+        paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture(), any());
@@ -123,7 +123,6 @@ public class PaymentAuthorisationServiceTest {
         assertFalse(authorisationIds.isEmpty());
         assertThat(authorisationIds.get(0)).isEqualTo(PAYMENT_ID);
     }
-
 
     @Test
     public void getPaymentInitiationAuthorisationScaStatus_success() {
@@ -161,8 +160,8 @@ public class PaymentAuthorisationServiceTest {
         assertNull(actual.getBody());
     }
 
-    private Xs2aUpdatePisConsentPsuDataRequest buildXs2aUpdatePisConsentPsuDataRequest() {
-        Xs2aUpdatePisConsentPsuDataRequest request = new Xs2aUpdatePisConsentPsuDataRequest();
+    private Xs2aUpdatePisCommonPaymentPsuDataRequest buildXs2aUpdatePisPsuDataRequest() {
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setAuthorizationId(AUTHORISATION_ID);
         request.setPaymentId(PAYMENT_ID);
         return request;

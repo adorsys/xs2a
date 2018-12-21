@@ -21,7 +21,6 @@ import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
-import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -60,13 +59,5 @@ public class PaymentConfirmationController {
         return CollectionUtils.isNotEmpty(paymentService.getPaymentById(confirmation.getPaymentId()))
                    ? tanConfirmationService.confirmTan(confirmation.getPsuId(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.PAYMENT)
                    : new ResponseEntity<>(new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request"), HttpStatus.BAD_REQUEST);
-    }
-
-    @PutMapping(path = "/{consent-id}/{status}")
-    @ApiOperation(value = "Update pis consent status of the corresponding consent", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity updatePisConsentStatus(@PathVariable("consent-id") String consentId,
-                                                 @PathVariable("status") AspspConsentStatus status) {
-        paymentService.updatePaymentConsentStatus(consentId, status);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -17,14 +17,14 @@
 package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PisPaymentDataRepository extends CrudRepository<PisPaymentData, Long> {
-    Optional<List<PisPaymentData>> findByPaymentIdAndConsent_ConsentStatus(String paymentId, ConsentStatus cmsConsentStatus);
+    Optional<List<PisPaymentData>> findByPaymentIdAndPaymentDataTransactionStatus(String paymentId, TransactionStatus status);
 
     Optional<List<PisPaymentData>> findByPaymentId(String paymentId); //TODO It should be changed after BulkPayment will be added to the Database https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/446
 }

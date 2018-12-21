@@ -17,13 +17,13 @@
 package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
 public interface PisCommonPaymentDataRepository extends CrudRepository<PisCommonPaymentData, Long> {
-    Optional<PisCommonPaymentData> findByPaymentIdAndConsent_ConsentStatus(String paymentId, ConsentStatus cmsConsentStatus);// todo method should be changed to  findByPaymentIdAndTransactionStatus https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
+    Optional<PisCommonPaymentData> findByPaymentIdAndTransactionStatus(String paymentId, TransactionStatus status);// todo method should be changed to  findByPaymentIdAndTransactionStatus https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
 
     Optional<PisCommonPaymentData> findByPaymentId(String paymentId);
 }

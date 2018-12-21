@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
@@ -91,6 +92,21 @@ public class CmsToXs2aPaymentMapper {
         return bulk;
     }
 
+    public CommonPayment mapToXs2aCommonPayment(PisCommonPaymentResponse response) {
+        return Optional.ofNullable(response)
+                   .map(r -> {
+                            CommonPayment commonPayment = new CommonPayment();
+                            commonPayment.setPaymentId(r.getExternalId());
+                            commonPayment.setPaymentProduct(r.getPaymentProduct());
+                            commonPayment.setPaymentType(r.getPaymentType());
+                            commonPayment.setPaymentData(r.getPaymentData());
+                            commonPayment.setTppInfo(r.getTppInfo());
+                            return commonPayment;
+                        }
+                   )
+                   .orElse(null);
+    }
+
     public CommonPayment mapToXs2aCommonPayment(PisPaymentInfo paymentInfo) {
         return Optional.ofNullable(paymentInfo)
                    .map(dta -> {
@@ -100,6 +116,7 @@ public class CmsToXs2aPaymentMapper {
                             commonPayment.setPaymentType(dta.getPaymentType());
                             commonPayment.setTransactionStatus(dta.getTransactionStatus());
                             commonPayment.setPaymentData(dta.getPaymentData());
+                            commonPayment.setPsuDataList(dta.getPsuDataList());
                             commonPayment.setTppInfo(dta.getTppInfo());
                             return commonPayment;
                         }

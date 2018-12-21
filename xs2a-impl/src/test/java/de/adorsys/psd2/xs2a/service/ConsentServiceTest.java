@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
@@ -666,6 +667,7 @@ public class ConsentServiceTest {
     /**
      * Basic test AccountDetails used in all cases
      */
+
     private SpiAccountReference getSpiReference(String iban, Currency currency) {
         return new SpiAccountReference(null, iban, null, null, null, null, currency);
     }
