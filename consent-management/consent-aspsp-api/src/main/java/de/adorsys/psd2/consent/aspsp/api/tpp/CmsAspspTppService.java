@@ -33,7 +33,7 @@ public interface CmsAspspTppService {
      * @return TPP Stop list object object if found in DB
      */
     @NotNull
-    Optional<TppStopListRecord> getTppStopListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
+    Optional<TppStopListRecord> getTppStopListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
 
     /**
      * Blocks requests from TPP by given TPP ID and National competent authority ID.
@@ -46,7 +46,7 @@ public interface CmsAspspTppService {
      * @param lockPeriod             Time period of locking. May be omitted.
      * @return <code>true</code> if lock was done. <code>false</code> otherwise.
      */
-    boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @Nullable Duration lockPeriod);
+    boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId, @Nullable Duration lockPeriod);
 
     /**
      * Releases lock of requests from TPP by given TPP ID and National competent authority ID.
@@ -56,5 +56,5 @@ public interface CmsAspspTppService {
      * @param nationalAuthorityId    National competent authority id
      * @return <code>true</code> if TPP was found and unlock was done. <code>false</code> otherwise.
      */
-    boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId);
+    boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
 }

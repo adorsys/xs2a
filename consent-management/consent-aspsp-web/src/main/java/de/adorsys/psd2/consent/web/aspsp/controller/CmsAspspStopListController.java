@@ -42,8 +42,10 @@ public class CmsAspspStopListController {
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
-        @RequestHeader(value = "authority-id") String nationalAuthorityId) {
-        return cmsAspspTppService.getTppStopListRecord(tppAuthorisationNumber, nationalAuthorityId)
+        @RequestHeader(value = "authority-id") String nationalAuthorityId,
+        @ApiParam(value = "Service instance id", example = "instance id")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId) {
+        return cmsAspspTppService.getTppStopListRecord(tppAuthorisationNumber, nationalAuthorityId, instanceId)
                    .map(record -> new ResponseEntity<>(record, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -56,10 +58,12 @@ public class CmsAspspStopListController {
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
         @RequestHeader(value = "authority-id") String nationalAuthorityId,
+        @ApiParam(value = "Service instance id", example = "instance id")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId,
         @ApiParam(value = "Period of TPP locking (in milliseconds)", example = "1000")
         @RequestHeader(value = "lock-period", required = false) Long lockPeriod) {
         Duration lockPeriodDuration = lockPeriod != null ? Duration.ofMillis(lockPeriod) : null;
-        boolean isBlocked = cmsAspspTppService.blockTpp(tppAuthorisationNumber, nationalAuthorityId, lockPeriodDuration);
+        boolean isBlocked = cmsAspspTppService.blockTpp(tppAuthorisationNumber, nationalAuthorityId, instanceId, lockPeriodDuration);
         return new ResponseEntity<>(isBlocked, HttpStatus.OK);
     }
 
@@ -70,8 +74,10 @@ public class CmsAspspStopListController {
         @ApiParam(value = "ID of TPP", example = "12345987")
         @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
         @ApiParam(value = "National competent authority id", example = "authority id")
-        @RequestHeader(value = "authority-id") String nationalAuthorityId) {
-        boolean isUnblocked = cmsAspspTppService.unblockTpp(tppAuthorisationNumber, nationalAuthorityId);
+        @RequestHeader(value = "authority-id") String nationalAuthorityId,
+        @ApiParam(value = "Service instance id", example = "instance id")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId) {
+        boolean isUnblocked = cmsAspspTppService.unblockTpp(tppAuthorisationNumber, nationalAuthorityId, instanceId);
         return new ResponseEntity<>(isUnblocked, HttpStatus.OK);
     }
 }
