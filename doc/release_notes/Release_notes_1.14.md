@@ -96,3 +96,13 @@ The scheduler service invocation frequency could be modified by changing `stopli
 
 ## Integration tests subproject is frozen
 Due to some internal reasons further development of integration tests in xs2a-Repository is frozen. `integration-tests` folder will be removed from repo soon.
+
+## PisConsent is deleted from cms
+PIS Consent isn't mentioned in specification, so it has been removed. 
+Warning: All data form 'pis_consent' table will be deleted!
+
+## New CommonPayment entity
+Instead of PisConsent we need to use a new entity 'CommonPayment'. It will replace all types of payments, which we use now (BULK, SINGLE, PERIODIC)
+
+## Several PSUs in payment
+Due to multilevel authorisation of payments, we can store data of several PSUs for each payment

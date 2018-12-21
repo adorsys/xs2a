@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
-import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentInfoMapper;
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReadCommonPaymentService {
     private final CommonPaymentSpi commonPaymentSpi;
-    private final PisConsentDataService pisConsentDataService;
+    private final PisAspspDataService pisAspspDataService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiErrorMapper spiErrorMapper;
     private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
@@ -48,7 +48,7 @@ public class ReadCommonPaymentService {
 
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
         SpiResponse<SpiPaymentInfo> spiResponse = commonPaymentSpi.getPaymentById(spiContextData, spiPaymentInfo, aspspConsentData);
-        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+        pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
             return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse));

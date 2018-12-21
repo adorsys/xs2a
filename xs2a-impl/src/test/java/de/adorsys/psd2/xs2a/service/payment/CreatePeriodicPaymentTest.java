@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.consent.api.pis.proto.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -24,14 +26,16 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisConsent;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
+import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aPisConsentService;
+import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -50,32 +54,38 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CreatePeriodicPaymentTest {
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
-    private static final String CONSENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
     private final TppInfo TPP_INFO = buildTppInfo();
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("aspsp", null, null, null);
+    private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = buildXs2aPisCommonPayment();
+    private final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
+    private final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
 
     @InjectMocks
     private CreatePeriodicPaymentService createPeriodicPaymentService;
     @Mock
     private ScaPaymentService scaPaymentService;
     @Mock
-    private Xs2aPisConsentService pisConsentService;
-    @Mock
     private AuthorisationMethodService authorisationMethodService;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
-    private PisConsentDataService pisConsentDataService;
+    private PisAspspDataService pisAspspDataService;
+    @Mock
+    private Xs2aPisCommonPaymentService pisCommonPaymentService;
+    @Mock
+    private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
 
     @Test
     public void success_initiate_periodic_payment() {
         //When
-        when(pisConsentDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
-        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, "sepa-credit-transfers", buildXs2aPisConsent())).thenReturn(buildPeriodicPaymentInitiationResponse());
+        when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
+        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, "sepa-credit-transfers", buildXs2aPisCommonPayment())).thenReturn(buildPeriodicPaymentInitiationResponse());
+        when(pisCommonPaymentService.createCommonPayment(PARAM, TPP_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
 
-        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo(), buildXs2aPisConsent());
+        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo());
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -110,14 +120,15 @@ public class CreatePeriodicPaymentTest {
         return reference;
     }
 
-    private Xs2aPisConsent buildXs2aPisConsent() {
-        return new Xs2aPisConsent(CONSENT_ID, PSU_ID_DATA);
+    private Xs2aPisCommonPayment buildXs2aPisCommonPayment() {
+        return new Xs2aPisCommonPayment(PAYMENT_ID, PSU_ID_DATA);
     }
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentProduct("sepa-credit-transfers");
         parameters.setPaymentType(PaymentType.PERIODIC);
+        parameters.setPsuData(PSU_ID_DATA);
         return parameters;
     }
 
@@ -125,7 +136,6 @@ public class CreatePeriodicPaymentTest {
         PeriodicPaymentInitiationResponse response = new PeriodicPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
-        response.setPisConsentId(CONSENT_ID);
         return response;
     }
 
@@ -136,5 +146,15 @@ public class CreatePeriodicPaymentTest {
         tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfo.setAuthorityId("authorityId");
         return tppInfo;
+    }
+
+    private CommonPayment buildCommonPayment() {
+        CommonPayment request = new CommonPayment();
+        request.setPaymentType(PaymentType.SINGLE);
+        request.setPaymentProduct("sepa-credit-transfers");
+        request.setPaymentData(new byte[16]);
+        request.setTppInfo(TPP_INFO);
+
+        return request;
     }
 }

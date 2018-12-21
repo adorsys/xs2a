@@ -19,7 +19,6 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
-import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
 import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
 import de.adorsys.psd2.aspsp.mock.api.psu.Tan;
 import de.adorsys.psd2.aspsp.mock.api.psu.TanStatus;
@@ -57,8 +56,6 @@ public class TanConfirmationService {
     private final JavaMailSender emailSender;
     private final Configuration fmConfiguration;
     private final AccountService accountService;
-    private final PaymentService paymentService;
-    private final ConsentService consentService;
 
     /**
      * Sends Authorization Request to user with selected Sca Method
@@ -107,7 +104,7 @@ public class TanConfirmationService {
             ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "WRONG_TAN", "Bad request");
             return new ResponseEntity<>(error, error.getStatus());
         }
-        changeConsentStatusToRejected(consentId, confirmationType);
+
         ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "LIMIT_EXCEEDED", "Bad request");
         return new ResponseEntity<>(error, error.getStatus());
     }
@@ -203,13 +200,5 @@ public class TanConfirmationService {
             return "Your TAN number is " + tanNumber;
         }
         return content.toString();
-    }
-
-    private void changeConsentStatusToRejected(String consentId, ConfirmationType confirmationType) {
-        if (confirmationType == ConfirmationType.PAYMENT) {
-            paymentService.updatePaymentConsentStatus(consentId, AspspConsentStatus.REJECTED);
-        } else {
-            consentService.updateAisConsentStatus(consentId, AspspConsentStatus.REJECTED);
-        }
     }
 }

@@ -70,8 +70,10 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     }
 
     private boolean isPsuIdDataContentEquals(PiisConsentEntity piisConsentEntity, PsuIdData psuIdData) {
-        return psuDataMapper.mapToPsuIdData(piisConsentEntity.getPsuData())
-                   .contentEquals(psuIdData);
+        PsuIdData psuIdDataMapped = psuDataMapper.mapToPsuIdData(piisConsentEntity.getPsuData());
+        return Optional.ofNullable(psuIdDataMapped)
+                   .map(psu -> psu.contentEquals(psuIdData))
+                   .orElse(false);
     }
 
     private boolean revokeConsent(PiisConsentEntity consent) {

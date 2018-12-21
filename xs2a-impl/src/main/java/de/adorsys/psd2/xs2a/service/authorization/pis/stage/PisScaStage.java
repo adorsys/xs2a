@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.authorization.pis.stage;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePayme
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.service.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -46,10 +47,10 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     @Autowired
     private ApplicationContext applicationContext;
 
-    protected PaymentSpi getPaymentService(GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse, PaymentType paymentType) {
+    protected PaymentSpi getPaymentService(GetPisAuthorisationResponse pisAuthorisationResponse, PaymentType paymentType) {
         // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
-        if (pisConsentAuthorisationResponse.getPaymentInfo() != null) {
-           return applicationContext.getBean(CommonPaymentSpi.class);
+        if (CollectionUtils.isEmpty(pisAuthorisationResponse.getPayments())) {
+            return applicationContext.getBean(CommonPaymentSpi.class);
         }
 
         if (PaymentType.SINGLE == paymentType) {
@@ -61,12 +62,12 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
         }
     }
 
-    protected SpiPayment mapToSpiPayment(GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse,
+    protected SpiPayment mapToSpiPayment(GetPisAuthorisationResponse pisAuthorisationResponse,
                                          PaymentType paymentType, String paymentProduct) {
-        if (pisConsentAuthorisationResponse.getPaymentInfo() != null) {
-            return mapToSpiPayment(pisConsentAuthorisationResponse.getPaymentInfo());
+        if (CollectionUtils.isEmpty(pisAuthorisationResponse.getPayments())) {
+            return mapToSpiPayment(pisAuthorisationResponse.getPaymentInfo());
         } else {
-            return mapToSpiPayment(pisConsentAuthorisationResponse.getPayments(), paymentType, paymentProduct);
+            return mapToSpiPayment(pisAuthorisationResponse.getPayments(), paymentType, paymentProduct);
         }
     }
 

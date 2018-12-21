@@ -45,7 +45,6 @@ public abstract class PaymentInitiationResponse {
     private MessageErrorCode[] tppMessages;
     @JsonProperty("_links")
     private Links links;
-    private String pisConsentId;
     private String authorizationId;
     private ErrorHolder errorHolder;
 

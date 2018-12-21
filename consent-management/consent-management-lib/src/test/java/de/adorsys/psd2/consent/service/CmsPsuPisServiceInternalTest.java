@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
+
+
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
-import de.adorsys.psd2.consent.api.service.PisConsentService;
+import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
-import de.adorsys.psd2.consent.domain.payment.PisConsent;
-import de.adorsys.psd2.consent.domain.payment.PisConsentAuthorization;
+import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
+import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.repository.PisAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
-import de.adorsys.psd2.consent.repository.PisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
@@ -62,7 +64,6 @@ public class CmsPsuPisServiceInternalTest {
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
     private static final String AUTHORISATION_ID = "authorisation id";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
-    private static final String CONSENT_ID = "consent id";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String FINALISED_PAYMENT_ID = "finalised payment id";
     private static final String FINALISED_AUTHORISATION_ID = "finalised authorisation id";
@@ -81,11 +82,11 @@ public class CmsPsuPisServiceInternalTest {
     @Mock
     PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
     @Mock
-    PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
+    PisAuthorizationRepository pisAuthorizationRepository;
     @Mock
     CmsPsuPisMapper cmsPsuPisMapper;
     @Mock
-    PisConsentService pisConsentService;
+    PisCommonPaymentService pisCommonPaymentService;
     @Mock
     PsuDataRepository psuDataRepository;
     @Mock
@@ -96,7 +97,7 @@ public class CmsPsuPisServiceInternalTest {
     @Before
     public void setUp() {
         List<PisPaymentData> pisPaymentDataList = buildPisPaymentDataList();
-        PisConsentAuthorization pisConsentAuthorisation = buildPisConsentAuthorisation();
+        PisAuthorization pisAuthorisation = buildPisAuthorisation();
         PsuData psuData = buildPsuData();
         PsuIdData psuIdData = buildPsuIdData();
         CmsPayment cmsPayment = buildCmsPayment();
@@ -107,22 +108,24 @@ public class CmsPsuPisServiceInternalTest {
             .thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
+        when(pisCommonPaymentDataRepository.save(buildPisCommonPaymentData()))
+            .thenReturn(buildPisCommonPaymentData());
         when(pisPaymentDataRepository.save(any(PisPaymentData.class)))
             .thenReturn(pisPaymentDataList.get(0));
 
-        when(pisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID))
-            .thenReturn(Optional.of(pisConsentAuthorisation));
-        when(pisConsentAuthorizationRepository.findByExternalId(WRONG_AUTHORISATION_ID))
+        when(pisAuthorizationRepository.findByExternalId(AUTHORISATION_ID))
+            .thenReturn(Optional.of(pisAuthorisation));
+        when(pisAuthorizationRepository.findByExternalId(WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
-        when(pisConsentAuthorizationRepository.save(any(PisConsentAuthorization.class)))
-            .thenReturn(pisConsentAuthorisation);
+        when(pisAuthorizationRepository.save(any(PisAuthorization.class)))
+            .thenReturn(pisAuthorisation);
 
         when(cmsPsuPisMapper.mapToCmsPayment(buildPisPaymentDataList()))
             .thenReturn(cmsPayment);
 
-        when(pisConsentService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Optional.of(psuIdData));
-        when(pisConsentService.getPsuDataByPaymentId(WRONG_PAYMENT_ID))
+        when(pisCommonPaymentService.getPsuDataListByPaymentId(PAYMENT_ID))
+            .thenReturn(Optional.of(Collections.singletonList(psuIdData)));
+        when(pisCommonPaymentService.getPsuDataListByPaymentId(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
 
         when(commonPaymentDataService.getPisCommonPaymentData(WRONG_PAYMENT_ID))
@@ -239,8 +242,8 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updateAuthorisationStatus_Fail_FinalisedStatus() {
         //Given
-        PisConsentAuthorization finalisedPisAuthorisation = buildFinalisedAuthorisation();
-        when(pisConsentAuthorizationRepository.findByExternalId(FINALISED_AUTHORISATION_ID))
+        PisAuthorization finalisedPisAuthorisation = buildFinalisedAuthorisation();
+        when(pisAuthorizationRepository.findByExternalId(FINALISED_AUTHORISATION_ID))
             .thenReturn(Optional.of(finalisedPisAuthorisation));
 
         // When
@@ -266,9 +269,9 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void getPaymentByAuthorisationId_Success() {
         //Given
-        PisConsentAuthorization expectedAuthorisation = buildPisConsentAuthorisation();
+        PisAuthorization expectedAuthorisation = buildPisAuthorisation();
         CmsPaymentResponse expectedCmsPaymentResponse = buildCmsPaymentResponse(expectedAuthorisation.getExternalId());
-        when(pisConsentAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
+        when(pisAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
 
         // When
         Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, AUTHORISATION_ID);
@@ -281,8 +284,8 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void getPaymentByAuthorisationId_Fail_ExpiredRedirectUrl() {
         //Given
-        PisConsentAuthorization expectedAuthorisation = buildExpiredAuthorisation();
-        when(pisConsentAuthorizationRepository.findByExternalId(EXPIRED_AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
+        PisAuthorization expectedAuthorisation = buildExpiredAuthorisation();
+        when(pisAuthorizationRepository.findByExternalId(EXPIRED_AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
 
         // When
         Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID);
@@ -318,29 +321,29 @@ public class CmsPsuPisServiceInternalTest {
         );
     }
 
-    private PisConsentAuthorization buildPisConsentAuthorisation() {
-        PisConsentAuthorization pisConsentAuthorisation = new PisConsentAuthorization();
-        pisConsentAuthorisation.setScaStatus(ScaStatus.PSUAUTHENTICATED);
-        pisConsentAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
-        pisConsentAuthorisation.setConsent(buildPisConsent());
-        pisConsentAuthorisation.setExternalId(AUTHORISATION_ID);
-        pisConsentAuthorisation.setPsuData(buildPsuData());
-        pisConsentAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2022-12-03T10:15:30+01:00"));
-        pisConsentAuthorisation.setConsent(buildPisConsent());
+    private PisAuthorization buildPisAuthorisation() {
+        PisAuthorization pisAuthorisation = new PisAuthorization();
+        pisAuthorisation.setScaStatus(ScaStatus.PSUAUTHENTICATED);
+        pisAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
+        pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
+        pisAuthorisation.setExternalId(AUTHORISATION_ID);
+        pisAuthorisation.setPsuData(buildPsuData());
+        pisAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2022-12-03T10:15:30+01:00"));
+        pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
 
-        return pisConsentAuthorisation;
+        return pisAuthorisation;
     }
 
-    private PisConsent buildPisConsent() {
-        PisConsent pisConsent = new PisConsent();
-        pisConsent.setPsuData(buildPsuData());
-        pisConsent.setExternalId(CONSENT_ID);
-        pisConsent.setPaymentType(PaymentType.SINGLE);
-        pisConsent.setPaymentProduct(PAYMENT_PRODUCT);
-        pisConsent.setPayments(buildPisPaymentDataListForConsent());
-        pisConsent.setTppInfo(buildTppInfo());
-
-        return pisConsent;
+    private PisCommonPaymentData buildPisCommonPaymentData() {
+        PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
+        pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
+        pisCommonPaymentData.setPsuData(Collections.singletonList(buildPsuData()));
+        pisCommonPaymentData.setPaymentType(PaymentType.SINGLE);
+        pisCommonPaymentData.setPaymentProduct(PAYMENT_PRODUCT);
+        pisCommonPaymentData.setPayments(buildPisPaymentDataListForCommonData());
+        pisCommonPaymentData.setTppInfo(buildTppInfo());
+        pisCommonPaymentData.setPaymentId(PAYMENT_ID);
+        return pisCommonPaymentData;
     }
 
     private TppInfoEntity buildTppInfo() {
@@ -367,7 +370,7 @@ public class CmsPsuPisServiceInternalTest {
     private List<PisPaymentData> buildPisPaymentDataList() {
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentId(PAYMENT_ID);
-        pisPaymentData.setConsent(buildPisConsent());
+        pisPaymentData.setPaymentData(buildPisCommonPaymentData());
         pisPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisPaymentData.setDebtorAccount(buildAccountReference());
         pisPaymentData.setCreditorAccount(buildAccountReference());
@@ -377,7 +380,7 @@ public class CmsPsuPisServiceInternalTest {
         return Collections.singletonList(pisPaymentData);
     }
 
-    private List<PisPaymentData> buildPisPaymentDataListForConsent() {
+    private List<PisPaymentData> buildPisPaymentDataListForCommonData() {
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentId(PAYMENT_ID);
         pisPaymentData.setTransactionStatus(TransactionStatus.ACCP);
@@ -404,21 +407,21 @@ public class CmsPsuPisServiceInternalTest {
         return cmsPayment;
     }
 
-    private PisConsentAuthorization buildFinalisedAuthorisation() {
-        PisConsentAuthorization pisConsentAuthorisation = new PisConsentAuthorization();
-        pisConsentAuthorisation.setScaStatus(ScaStatus.FINALISED);
-        pisConsentAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
-        pisConsentAuthorisation.setConsent(buildPisConsent());
-        pisConsentAuthorisation.setExternalId(AUTHORISATION_ID);
-        pisConsentAuthorisation.setPsuData(buildPsuData());
+    private PisAuthorization buildFinalisedAuthorisation() {
+        PisAuthorization pisAuthorisation = new PisAuthorization();
+        pisAuthorisation.setScaStatus(ScaStatus.FINALISED);
+        pisAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
+        pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
+        pisAuthorisation.setExternalId(AUTHORISATION_ID);
+        pisAuthorisation.setPsuData(buildPsuData());
 
-        return pisConsentAuthorisation;
+        return pisAuthorisation;
     }
 
     private List<PisPaymentData> buildFinalisedPisPaymentDataList() {
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentId(PAYMENT_ID);
-        pisPaymentData.setConsent(buildPisConsent());
+        pisPaymentData.setPaymentData(buildPisCommonPaymentData());
         pisPaymentData.setTransactionStatus(TransactionStatus.RJCT);
         pisPaymentData.setDebtorAccount(buildAccountReference());
         pisPaymentData.setCreditorAccount(buildAccountReference());
@@ -428,16 +431,16 @@ public class CmsPsuPisServiceInternalTest {
         return Collections.singletonList(pisPaymentData);
     }
 
-    private PisConsentAuthorization buildExpiredAuthorisation() {
-        PisConsentAuthorization pisConsentAuthorisation = new PisConsentAuthorization();
-        pisConsentAuthorisation.setScaStatus(ScaStatus.STARTED);
-        pisConsentAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
-        pisConsentAuthorisation.setConsent(buildPisConsent());
-        pisConsentAuthorisation.setExternalId(EXPIRED_AUTHORISATION_ID);
-        pisConsentAuthorisation.setPsuData(buildPsuData());
-        pisConsentAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2017-12-03T10:15:30+01:00"));
+    private PisAuthorization buildExpiredAuthorisation() {
+        PisAuthorization pisAuthorisation = new PisAuthorization();
+        pisAuthorisation.setScaStatus(ScaStatus.STARTED);
+        pisAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
+        pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
+        pisAuthorisation.setExternalId(EXPIRED_AUTHORISATION_ID);
+        pisAuthorisation.setPsuData(buildPsuData());
+        pisAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2017-12-03T10:15:30+01:00"));
 
-        return pisConsentAuthorisation;
+        return pisAuthorisation;
     }
 
     private CmsPaymentResponse buildCmsPaymentResponse(String authorisationId) {
@@ -449,3 +452,4 @@ public class CmsPsuPisServiceInternalTest {
         );
     }
 }
+

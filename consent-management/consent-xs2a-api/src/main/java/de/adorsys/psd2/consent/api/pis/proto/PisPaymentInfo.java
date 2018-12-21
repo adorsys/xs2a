@@ -18,9 +18,12 @@ package de.adorsys.psd2.consent.api.pis.proto;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class PisPaymentInfo {
@@ -41,4 +44,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Tpp information", required = true)
     private TppInfo tppInfo;
+
+    @ApiModelProperty(value = "Corresponding PSU list", required = true)
+    private List<PsuIdData> psuDataList;
 }
