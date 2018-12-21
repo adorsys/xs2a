@@ -17,9 +17,16 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,26 +36,33 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentCancellationAuthorisationServiceTest {
-    private static final String PAYMENT_ID = "c713a32c-15ff-4f90-afa0-34a500359844";
+    private static final String CORRECT_PSU_ID = "123456789";
+    private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
+    private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
+    private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
     private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
-    private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
 
     @InjectMocks
-    private PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
-    @Mock
-    private PisScaAuthorisationService pisScaAuthorisationService;
+    private PaymentCancellationAuthorisationServiceImpl paymentCancellationAuthorisationService;
+
     @Mock
     private Xs2aEventService xs2aEventService;
+    @Mock
+    private PisPsuDataService pisPsuDataService;
+    @Mock
+    private PisScaAuthorisationService pisScaAuthorisationService;
 
     @Before
     public void setUp() {
@@ -59,11 +73,62 @@ public class PaymentCancellationAuthorisationServiceTest {
     }
 
     @Test
+    public void createPisCancellationAuthorization_Success_ShouldRecordEvent() {
+        when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(anyString(), any(), any()))
+            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(null, null, null)));
+        when(pisPsuDataService.getPsuDataByPaymentId(anyString())).thenReturn(Collections.singletonList(PSU_ID_DATA));
+
+        // Given:
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        paymentCancellationAuthorisationService.createPisCancellationAuthorization(PAYMENT_ID, PSU_ID_DATA, PaymentType.SINGLE);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void updatePisCancellationPsuData_Success_ShouldRecordEvent() {
+        when(pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(any()))
+            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.STARTED));
+
+        // Given:
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        paymentCancellationAuthorisationService.updatePisCancellationPsuData(request);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture(), any());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformation_Success_ShouldRecordEvent() {
+        when(pisScaAuthorisationService.getCancellationAuthorisationSubResources(anyString()))
+            .thenReturn(Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.emptyList())));
+
+        // Given:
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(PAYMENT_ID);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
+    }
+
+    @Test
     public void getPaymentCancellationAuthorisationScaStatus_success() {
         // When
         ResponseObject<ScaStatus> actual =
             paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID,
-                                                                                                 CANCELLATION_AUTHORISATION_ID);
+                CANCELLATION_AUTHORISATION_ID);
 
         // Then
         assertFalse(actual.hasError());
@@ -77,8 +142,7 @@ public class PaymentCancellationAuthorisationServiceTest {
 
         // When
         paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID,
-                                                                                             CANCELLATION_AUTHORISATION_ID);
-
+            CANCELLATION_AUTHORISATION_ID);
 
         // Then
         verify(xs2aEventService, times(1))
@@ -91,10 +155,17 @@ public class PaymentCancellationAuthorisationServiceTest {
         // When
         ResponseObject<ScaStatus> actual =
             paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID,
-                                                                                                 WRONG_CANCELLATION_AUTHORISATION_ID);
+                WRONG_CANCELLATION_AUTHORISATION_ID);
 
         // Then
         assertTrue(actual.hasError());
         assertNull(actual.getBody());
+    }
+
+    private Xs2aUpdatePisCommonPaymentPsuDataRequest buildXs2aUpdatePisPsuDataRequest() {
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        request.setAuthorizationId(AUTHORISATION_ID);
+        request.setPaymentId(PAYMENT_ID);
+        return request;
     }
 }

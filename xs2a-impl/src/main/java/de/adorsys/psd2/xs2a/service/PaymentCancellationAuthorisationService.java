@@ -16,44 +16,21 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 
-import java.util.Optional;
+public interface PaymentCancellationAuthorisationService {
+    ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisCancellationAuthorization(String paymentId, PsuIdData psuData, PaymentType paymentType);
 
-@Service
-@RequiredArgsConstructor
-public class PaymentCancellationAuthorisationService {
-    private final Xs2aEventService xs2aEventService;
-    private final PisScaAuthorisationService pisScaAuthorisationService;
+    ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request);
 
-    /**
-     * Gets SCA status of payment cancellation authorisation
-     *
-     * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
-     * @param cancellationId cancellation authorisation identifier
-     * @return Response containing SCA status of authorisation or corresponding error
-     */
-    public ResponseObject<ScaStatus> getPaymentCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_CANCELLATION_SCA_STATUS_REQUEST_RECEIVED);
+    ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId);
 
-        Optional<ScaStatus> scaStatus = pisScaAuthorisationService.getCancellationAuthorisationScaStatus(paymentId, cancellationId);
-
-        if (!scaStatus.isPresent()) {
-            return ResponseObject.<ScaStatus>builder()
-                       .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403))
-                       .build();
-        }
-
-        return ResponseObject.<ScaStatus>builder()
-                   .body(scaStatus.get())
-                   .build();
-    }
+    ResponseObject<ScaStatus> getPaymentCancellationAuthorisationScaStatus(String paymentId, String cancellationId);
 }
