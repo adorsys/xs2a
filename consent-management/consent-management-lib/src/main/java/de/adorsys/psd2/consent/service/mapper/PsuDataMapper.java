@@ -18,26 +18,49 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class PsuDataMapper {
+    public List<PsuData> mapToPsuDataList(List<PsuIdData> psuIdDataList) {
+        return psuIdDataList.stream()
+                   .map(this::mapToPsuData)
+                   .collect(Collectors.toList());
+    }
 
-    public PsuData mapToPsuData(PsuIdData psuData) {
-        return new PsuData(
-            psuData.getPsuId(),
-            psuData.getPsuIdType(),
-            psuData.getPsuCorporateId(),
-            psuData.getPsuCorporateIdType()
-        );
+    public List<PsuIdData> mapToPsuIdDataList(List<PsuData> psuIdDataList) {
+        return psuIdDataList.stream()
+                   .map(this::mapToPsuIdData)
+                   .collect(Collectors.toList());
+    }
+
+    public PsuData mapToPsuData(PsuIdData psuIdData) {
+        return Optional.ofNullable(psuIdData)
+                   .filter(psu -> StringUtils.isNotBlank(psu.getPsuId()))
+                   .map(psu -> new PsuData(
+                       psu.getPsuId(),
+                       psu.getPsuIdType(),
+                       psu.getPsuCorporateId(),
+                       psu.getPsuCorporateIdType()
+                   ))
+                   .orElse(null);
     }
 
     public PsuIdData mapToPsuIdData(PsuData psuData) {
-        return new PsuIdData(
-            psuData.getPsuId(),
-            psuData.getPsuIdType(),
-            psuData.getPsuCorporateId(),
-            psuData.getPsuCorporateIdType()
-        );
+        return Optional.ofNullable(psuData)
+                   .filter(psu -> StringUtils.isNotBlank(psu.getPsuId()))
+                   .map(psu ->
+                            new PsuIdData(
+                                psu.getPsuId(),
+                                psu.getPsuIdType(),
+                                psu.getPsuCorporateId(),
+                                psu.getPsuCorporateIdType()
+                            ))
+                   .orElse(null);
     }
 }

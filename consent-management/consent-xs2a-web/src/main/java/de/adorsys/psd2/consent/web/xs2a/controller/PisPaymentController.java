@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
-import de.adorsys.psd2.consent.api.service.PisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.*;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "api/v1/pis")
 @Api(value = "api/v1/pis", tags = "PIS, Payments", description = "Provides access to consent management system for PIS")
 public class PisPaymentController {
-    private final PisConsentServiceEncrypted pisConsentService;
+    private final PisCommonPaymentServiceEncrypted pisCommonPaymentService;
     private final UpdatePaymentStatusAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
 
     @GetMapping(path = "/payment/{payment-id}")
@@ -41,7 +41,7 @@ public class PisPaymentController {
     public ResponseEntity<String> getPaymentIdByEncryptedString(
         @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
         @PathVariable("payment-id") String encryptedId) {
-        return pisConsentService.getDecryptedId(encryptedId)
+        return pisCommonPaymentService.getDecryptedId(encryptedId)
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

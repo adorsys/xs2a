@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
-import de.adorsys.psd2.xs2a.service.consent.PisConsentDataService;
+import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentInfoMapper;
@@ -64,7 +64,7 @@ public class ReadCommonPaymentServiceTest {
     @Mock
     private CommonPaymentSpi commonPaymentSpi;
     @Mock
-    private PisConsentDataService pisConsentDataService;
+    private PisAspspDataService pisAspspDataService;
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock

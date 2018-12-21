@@ -61,6 +61,12 @@
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+
+        <addColumn tableName="pis_common_payment">
+            <column name="instance_id" type="VARCHAR(100)" defaultValue="UNDEFINED">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

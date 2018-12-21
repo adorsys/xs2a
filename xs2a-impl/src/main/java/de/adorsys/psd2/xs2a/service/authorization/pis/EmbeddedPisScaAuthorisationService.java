@@ -20,12 +20,12 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
-import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
@@ -33,7 +33,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationService {
     private final PisAuthorisationService authorisationService;
-    private final Xs2aPisConsentMapper pisConsentMapper;
+    private final Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
 
     /**
      * Creates authorization for pis consent
@@ -44,8 +44,8 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return create consent authorization response, which contains authorization id, sca status, payment type and links
      */
     @Override
-    public Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
-        return pisConsentMapper.mapToXsa2CreatePisConsentAuthorizationResponse(authorisationService.createPisConsentAuthorisation(paymentId, psuData), paymentType);
+    public Optional<Xsa2CreatePisAuthorisationResponse> createCommonPaymentAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
+        return pisCommonPaymentMapper.mapToXsa2CreatePisAuthorizationResponse(authorisationService.createPisAuthorisation(paymentId, psuData), paymentType);
     }
 
     /**
@@ -55,8 +55,8 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
      */
     @Override
-    public Xs2aUpdatePisConsentPsuDataResponse updateConsentPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
-        return authorisationService.updatePisConsentAuthorisation(request);
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
+        return authorisationService.updatePisAuthorisation(request);
     }
 
     /**
@@ -68,8 +68,8 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return
      */
     @Override
-    public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
-        return pisConsentMapper.mapToXs2aCreatePisConsentCancellationAuthorisationResponse(authorisationService.createPisConsentAuthorisationCancellation(paymentId, psuData), paymentType);
+    public Optional<Xs2aCreatePisCancellationAuthorisationResponse> createCommonPaymentCancellationAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
+        return pisCommonPaymentMapper.mapToXs2aCreatePisCancellationAuthorisationResponse(authorisationService.createPisAuthorisationCancellation(paymentId, psuData), paymentType);
     }
 
     /**
@@ -91,8 +91,8 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      * @return update consent authorisation response, which contains payment id, authorisation id, sca status, psu message and links
      */
     @Override
-    public Xs2aUpdatePisConsentPsuDataResponse updateConsentCancellationPsuData(Xs2aUpdatePisConsentPsuDataRequest request) {
-        return authorisationService.updatePisConsentCancellationAuthorisation(request);
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
+        return authorisationService.updatePisCancellationAuthorisation(request);
     }
 
     /**

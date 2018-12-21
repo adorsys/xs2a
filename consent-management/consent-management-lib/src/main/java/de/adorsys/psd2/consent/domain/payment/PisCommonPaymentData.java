@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -24,17 +24,15 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = "consent")
 @Entity(name = "pis_common_payment")
 @ApiModel(description = "pis common payment entity", value = "PisCommonPaymentData")
-public class PisCommonPaymentData {
+public class PisCommonPaymentData extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_common_payment_generator")
     @SequenceGenerator(name = "pis_common_payment_generator", sequenceName = "pis_common_payment_id_seq")
@@ -74,12 +72,13 @@ public class PisCommonPaymentData {
     @OneToMany(mappedBy = "paymentData",
         cascade = CascadeType.ALL,
         orphanRemoval = true)
-    @ApiModelProperty(value = "List of authorizations related to the consent", required = true)
-    private List<PisConsentAuthorization> authorizations = new ArrayList<>();
+    @ApiModelProperty(value = "List of authorizations", required = true)
+    private List<PisAuthorization> authorizations = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "consent_id")
-    @ApiModelProperty(value = "Detailed information about consent")
-    private PisConsent consent;
+    @OneToMany(mappedBy = "paymentData",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true)
+    @ApiModelProperty(value = "List of single payments ", required = true)
+    private List<PisPaymentData> payments = new ArrayList<>();
 }
+

@@ -126,10 +126,10 @@ public class SecurityDataService {
     }
 
     /**
-     * Checks whether consentId is encrypted or not
+     * Checks whether paymentId is encrypted or not
      *
      * @param consentId id of consent
-     * @return <code>true</code> if consentId is encrypted. <code>false</code> otherwise.
+     * @return <code>true</code> if paymentId is encrypted. <code>false</code> otherwise.
      */
     public boolean isConsentIdEncrypted(String consentId) {
         return consentId.contains(SEPARATOR);
