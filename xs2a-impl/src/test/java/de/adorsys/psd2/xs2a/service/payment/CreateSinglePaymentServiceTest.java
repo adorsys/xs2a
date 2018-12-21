@@ -30,7 +30,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -67,7 +67,7 @@ public class CreateSinglePaymentServiceTest {
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
-    private AuthorisationMethodService authorisationMethodService;
+    private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private PisAspspDataService pisAspspDataService;
     @Mock

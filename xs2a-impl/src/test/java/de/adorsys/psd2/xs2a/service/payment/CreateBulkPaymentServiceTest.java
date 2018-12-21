@@ -31,7 +31,7 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodService;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -70,7 +70,7 @@ public class CreateBulkPaymentServiceTest<resp> {
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
     @Mock
-    private AuthorisationMethodService authorisationMethodService;
+    private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
