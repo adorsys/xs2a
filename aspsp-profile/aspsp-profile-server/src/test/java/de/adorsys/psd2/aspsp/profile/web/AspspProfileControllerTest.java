@@ -63,6 +63,7 @@ public class AspspProfileControllerTest {
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
+    private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://aspsp-mock-integ.cloud.adorsys.de/payment/cancellation/";
 
     @InjectMocks
     private AspspProfileController aspspProfileController;
@@ -125,7 +126,8 @@ public class AspspProfileControllerTest {
             PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
             PIIS_CONSENT_SUPPORTED,
             DELTA_REPORT_SUPPORTED,
-            REDIRECT_URL_EXPIRATION_TIME_MS);
+            REDIRECT_URL_EXPIRATION_TIME_MS,
+            PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
