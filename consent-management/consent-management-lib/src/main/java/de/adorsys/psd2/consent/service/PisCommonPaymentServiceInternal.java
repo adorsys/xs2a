@@ -328,7 +328,27 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
         consentAuthorization.setPsuData(handlePsuForAuthorisation(psuData, paymentData.getPsuData()));
         consentAuthorization.setPaymentData(enrichPsuData(psuData, paymentData));
-        return pisAuthorizationRepository.save(consentAuthorization);
+        PisAuthorization pisAuthorization = pisAuthorizationRepository.save(consentAuthorization);
+        closePreviousAuthorisationsByPsu(paymentData, psuData);
+        return pisAuthorization;
+    }
+
+    private void closePreviousAuthorisationsByPsu(PisCommonPaymentData paymentData, PsuData psuData) {
+        if (!isPsuDataCorrect(psuData)) {
+            return;
+        }
+
+        List<PisAuthorization> pisAuthorizationList = paymentData.getAuthorizations()
+                                                          .stream()
+                                                          .filter(auth -> auth.getAuthorizationType() == CmsAuthorisationType.CREATED)
+                                                          .filter(auth -> auth.getPsuData().contentEquals(psuData))
+                                                          .peek(auth -> {
+                                                              auth.setScaStatus(ScaStatus.FAILED);
+                                                              auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
+                                                          })
+                                                          .collect(Collectors.toList());
+
+        pisAuthorizationRepository.save(pisAuthorizationList);
     }
 
     private PsuData handlePsuForAuthorisation(PsuData psuData, List<PsuData> psuDataList) {
