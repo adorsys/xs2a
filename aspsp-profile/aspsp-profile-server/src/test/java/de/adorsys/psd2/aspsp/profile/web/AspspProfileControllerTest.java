@@ -48,8 +48,8 @@ public class AspspProfileControllerTest {
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<PaymentType> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
-    private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
-    private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
+    private static final String PIS_REDIRECT_LINK = "https://localhost/payment/confirmation/";
+    private static final String AIS_REDIRECT_LINK = "https://localhost/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
@@ -63,7 +63,7 @@ public class AspspProfileControllerTest {
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
-    private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://aspsp-mock-integ.cloud.adorsys.de/payment/cancellation/";
+    private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://localhost/payment/cancellation/";
 
     @InjectMocks
     private AspspProfileController aspspProfileController;
