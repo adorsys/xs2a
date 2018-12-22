@@ -32,6 +32,8 @@ import java.util.List;
 @RequestMapping(path = "psu-api/v1/piis/consents")
 @Api(value = "psu-api/v1/piis/consents", tags = "PSU PIIS, Consents", description = "Provides access to consent management system for PSU PIIS")
 public class CmsPsuPiisController {
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
+
     private final CmsPsuPiisService cmsPsuPiisService;
 
     @GetMapping(path = "/{consent-id}")
@@ -49,9 +51,10 @@ public class CmsPsuPiisController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType) {
+        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsPsuPiisService.getConsent(psuIdData, consentId)
+        return cmsPsuPiisService.getConsent(psuIdData, consentId, instanceId)
                    .map(con -> new ResponseEntity<>(con, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -68,9 +71,10 @@ public class CmsPsuPiisController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType) {
+        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return new ResponseEntity<>(cmsPsuPiisService.getConsentsForPsu(psuIdData), HttpStatus.OK);
+        return new ResponseEntity<>(cmsPsuPiisService.getConsentsForPsu(psuIdData, instanceId), HttpStatus.OK);
     }
 
     @PutMapping(path = "/{consent-id}/revoke-consent")
@@ -87,8 +91,9 @@ public class CmsPsuPiisController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType) {
+        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return new ResponseEntity<>(cmsPsuPiisService.revokeConsent(psuIdData, consentId), HttpStatus.OK);
+        return new ResponseEntity<>(cmsPsuPiisService.revokeConsent(psuIdData, consentId, instanceId), HttpStatus.OK);
     }
 }

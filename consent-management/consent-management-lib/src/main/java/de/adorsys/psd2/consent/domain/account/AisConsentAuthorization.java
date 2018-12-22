@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
@@ -25,7 +26,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @Entity(name = "ais_consent_authorization")
-public class AisConsentAuthorization {
+public class AisConsentAuthorization extends InstanceDependableEntity {
     @Id
     @Column(name = "authorization_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_authorization_generator")

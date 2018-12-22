@@ -33,7 +33,7 @@ public interface CmsPsuPiisService {
      * @return Consent object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<PiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+    Optional<PiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Returns a list of PIIS Consent objects by PSU ID
@@ -42,7 +42,7 @@ public interface CmsPsuPiisService {
      * @return List of PIIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData);
+    List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
 
     /**
      * Revokes PIIS Consent object by its ID. Consent gets status "Revoked by PSU".
@@ -51,5 +51,5 @@ public interface CmsPsuPiisService {
      * @param consentId ID of Consent
      * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
      */
-    boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+    boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 }
