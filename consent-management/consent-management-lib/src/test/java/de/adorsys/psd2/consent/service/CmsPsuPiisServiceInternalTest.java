@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.psu.CmsPsuPiisServiceInternal;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -44,6 +45,16 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsPsuPiisServiceInternalTest {
+    private PiisConsent piisConsent;
+    private PiisConsentEntity piisConsentEntity;
+    private PsuIdData psuIdData;
+    private PsuIdData psuIdDataNotExist;
+    private PsuData psuData;
+    private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
+    private final String EXTERNAL_CONSENT_ID_FINALISED = "4b112130-6a96-4941-a220-2da8a4af2c64";
+    private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
+
     @InjectMocks
     CmsPsuPiisServiceInternal cmsPsuPiisServiceInternal;
     @Mock
@@ -53,14 +64,6 @@ public class CmsPsuPiisServiceInternalTest {
     @Spy
     private PsuDataMapper psuDataMapper;
 
-    private PiisConsent piisConsent;
-    private PiisConsentEntity piisConsentEntity;
-    private PsuIdData psuIdData;
-    private PsuIdData psuIdDataNotExist;
-    private PsuData psuData;
-    private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
-    private final String EXTERNAL_CONSENT_ID_FINALISED = "4b112130-6a96-4941-a220-2da8a4af2c64";
-    private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
 
     @Before
     public void setUp() {
@@ -82,7 +85,7 @@ public class CmsPsuPiisServiceInternalTest {
     public void getConsent_success() {
         // Given
         // When
-        Optional<PiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID);
+        Optional<PiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertTrue(consent.isPresent());
         assertEquals(consent.get(), piisConsent);
@@ -92,7 +95,7 @@ public class CmsPsuPiisServiceInternalTest {
     public void getConsent_fail() {
         // Given
         // When
-        Optional<PiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID_NOT_EXIST);
+        Optional<PiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID_NOT_EXIST, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertFalse(consent.isPresent());
     }
@@ -101,7 +104,7 @@ public class CmsPsuPiisServiceInternalTest {
     public void getConsentsForPsu_success() {
         // Given
         // When
-        List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData);
+        List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertFalse(consents.isEmpty());
         assertEquals(consents.size(), 1);
@@ -111,7 +114,7 @@ public class CmsPsuPiisServiceInternalTest {
     public void getConsentsForPsu_fail() {
         // Given
         // When
-        List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdDataNotExist);
+        List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdDataNotExist, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertTrue(consents.isEmpty());
     }
@@ -121,7 +124,7 @@ public class CmsPsuPiisServiceInternalTest {
         // Given
         ArgumentCaptor<PiisConsentEntity> argumentCaptor = ArgumentCaptor.forClass(PiisConsentEntity.class);
         // When
-        boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID);
+        boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertThat(revokeConsent).isTrue();
         verify(piisConsentRepository).save(argumentCaptor.capture());
@@ -132,7 +135,7 @@ public class CmsPsuPiisServiceInternalTest {
     public void revokeConsent_fail_wrongPsu() {
         // Given
         // When
-        boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdDataNotExist, EXTERNAL_CONSENT_ID);
+        boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdDataNotExist, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertThat(revokeConsent).isFalse();
     }
@@ -141,7 +144,7 @@ public class CmsPsuPiisServiceInternalTest {
     public void revokeConsent_fail_statusFinalised() {
         // Given
         // When
-        boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID_FINALISED);
+        boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID_FINALISED, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertThat(revokeConsent).isFalse();
     }

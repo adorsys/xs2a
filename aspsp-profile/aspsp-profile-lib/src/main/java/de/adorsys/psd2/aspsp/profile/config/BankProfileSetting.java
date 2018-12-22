@@ -136,4 +136,9 @@ public class BankProfileSetting {
      * The limit of an expiration time of redirect url set in milliseconds
      */
     private long redirectUrlExpirationTimeMs;
+
+    /**
+     * URL to ASPSP service in order to to work with PIS payment cancellation
+     */
+    private String pisPaymentCancellationRedirectUrlToAspsp;
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service;
+package de.adorsys.psd2.consent.service.psu;
 
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPiisService;
@@ -44,14 +44,14 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     private final PsuDataMapper psuDataMapper;
 
     @Override
-    public @NotNull Optional<PiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
+    public @NotNull Optional<PiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         return piisConsentRepository.findByExternalId(consentId)
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentMapper::mapToPiisConsent);
     }
 
     @Override
-    public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData) {
+    public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
         return piisConsentRepository.findByPsuDataPsuId(psuIdData.getPsuId()).stream()
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentMapper::mapToPiisConsent)
@@ -60,7 +60,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
 
     @Override
     @Transactional
-    public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
+    public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         Optional<PiisConsentEntity> piisConsentEntity = piisConsentRepository.findByExternalId(consentId)
                                                             .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                                                             .filter(con -> !con.getConsentStatus().isFinalisedStatus());

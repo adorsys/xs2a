@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.aspsp.api.CmsAspspEventService;
 import de.adorsys.psd2.consent.domain.event.EventEntity;
 import de.adorsys.psd2.consent.repository.EventRepository;
+import de.adorsys.psd2.consent.repository.specification.EventEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.EventMapper;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.event.EventOrigin;
@@ -32,32 +33,29 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static de.adorsys.psd2.consent.repository.specification.EventEntitySpecification.getEventsForPeriodAndConsentIdAndInstanceId;
-import static de.adorsys.psd2.consent.repository.specification.EventEntitySpecification.getEventsForPeriodAndInstanceId;
-import static de.adorsys.psd2.consent.repository.specification.EventEntitySpecification.getEventsForPeriodAndPaymentIdAndInstanceId;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CmsAspspEventServiceInternal implements CmsAspspEventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
+    private final EventEntitySpecification eventEntitySpecification;
 
     @Override
     public List<Event> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId) {
-        List<EventEntity> eventEntity = eventRepository.findAll(getEventsForPeriodAndInstanceId(start, end, instanceId));
+        List<EventEntity> eventEntity = eventRepository.findAll(eventEntitySpecification.byPeriodAndInstanceId(start, end, instanceId));
         return eventMapper.mapToEventList(eventEntity);
     }
 
     @Override
     public List<Event> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId) {
-        List<EventEntity> eventEntity = eventRepository.findAll(getEventsForPeriodAndConsentIdAndInstanceId(start, end, consentId, instanceId));
+        List<EventEntity> eventEntity = eventRepository.findAll(eventEntitySpecification.byPeriodAndConsentIdAndInstanceId(start, end, consentId, instanceId));
         return eventMapper.mapToEventList(eventEntity);
     }
 
     @Override
     public List<Event> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId) {
-        List<EventEntity> eventEntity = eventRepository.findAll(getEventsForPeriodAndPaymentIdAndInstanceId(start, end, paymentId, instanceId));
+        List<EventEntity> eventEntity = eventRepository.findAll(eventEntitySpecification.byPeriodAndPaymentIdAndInstanceId(start, end, paymentId, instanceId));
         return eventMapper.mapToEventList(eventEntity);
     }
 

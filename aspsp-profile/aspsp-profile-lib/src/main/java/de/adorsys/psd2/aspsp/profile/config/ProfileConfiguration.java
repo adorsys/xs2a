@@ -21,14 +21,12 @@ import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
 import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
 
 @Data
-@Configuration
 public class ProfileConfiguration implements InitializingBean {
     private BankProfileSetting setting;
 

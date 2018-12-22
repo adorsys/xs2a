@@ -34,7 +34,7 @@ public interface CmsPsuAisService {
      * @param redirectId ID of redirect
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
-    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
+    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
 
     /**
      * Returns AIS Consent object by its ID
@@ -44,7 +44,7 @@ public interface CmsPsuAisService {
      * @return Consent object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+    Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Updates a Status of AIS Consent Authorisation by its ID and PSU ID
@@ -55,7 +55,7 @@ public interface CmsPsuAisService {
      * @param status          Status of Authorisation to be set
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
-    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status);
+    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId);
 
 
     /**
@@ -65,7 +65,7 @@ public interface CmsPsuAisService {
      * @param consentId ID of Consent
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
-    boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+    boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Puts a Status of AIS Consent object by its ID and PSU ID to REJECTED
@@ -74,7 +74,7 @@ public interface CmsPsuAisService {
      * @param consentId ID of Consent
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
-    boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+    boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Returns a list of AIS Consent objects by PSU ID
@@ -83,7 +83,7 @@ public interface CmsPsuAisService {
      * @return List of AIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData);
+    List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
 
     /**
      * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".
@@ -92,7 +92,7 @@ public interface CmsPsuAisService {
      * @param consentId ID of Consent
      * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
      */
-    boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId);
+    boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Returns CMS AIS consent response object by redirect id if redirect id has not expired
@@ -102,6 +102,6 @@ public interface CmsPsuAisService {
      * @return CMS AIS consent response object if it has been found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
+    Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
 
 }

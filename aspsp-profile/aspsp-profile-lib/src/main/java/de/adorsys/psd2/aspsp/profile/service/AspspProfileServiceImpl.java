@@ -51,7 +51,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isPaymentCancellationAuthorizationMandated(),
             setting.isPiisConsentSupported(),
             setting.isDeltaReportSupported(),
-            setting.getRedirectUrlExpirationTimeMs());
+            setting.getRedirectUrlExpirationTimeMs(),
+            setting.getPisPaymentCancellationRedirectUrlToAspsp());
     }
 
     @Override
