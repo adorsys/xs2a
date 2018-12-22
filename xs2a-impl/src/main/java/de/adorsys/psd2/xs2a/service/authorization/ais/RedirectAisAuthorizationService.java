@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
+import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.SCA_REDIRECT;
 
 /**
  * AisAuthorizationService implementation to be used in case of redirect approach
@@ -52,7 +52,7 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
                        resp.setConsentId(consentId);
                        resp.setAuthorizationId(authId);
                        resp.setScaStatus(ScaStatus.STARTED);
-                       resp.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+                       resp.setResponseLinkType(SCA_REDIRECT);
 
                        return resp;
                    });

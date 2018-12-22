@@ -37,7 +37,7 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createPisAuthorization(..)) && args(paymentId, paymentType, psuData)", returning = "result", argNames = "result,paymentId,paymentType,psuData")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorization(..)) && args(paymentId, paymentType, psuData)", returning = "result", argNames = "result,paymentId,paymentType,psuData")
     public ResponseObject<Xsa2CreatePisAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xsa2CreatePisAuthorisationResponse> result, String paymentId, PaymentType paymentType, PsuIdData psuData) {
         if (!result.hasError()) {
             Xsa2CreatePisAuthorisationResponse body = result.getBody();

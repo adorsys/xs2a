@@ -42,7 +42,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
         this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createPisCancellationAuthorization(..)) && args( paymentId, psuData, paymentType)", returning = "result", argNames = "result,paymentId,psuData,paymentType")
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService.createPisCancellationAuthorization(..)) && args( paymentId, psuData, paymentType)", returning = "result", argNames = "result,paymentId,psuData,paymentType")
     public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> result, String paymentId, PsuIdData psuData, PaymentType paymentType) {
         if (!result.hasError()) {
             Xs2aCreatePisCancellationAuthorisationResponse body = result.getBody();

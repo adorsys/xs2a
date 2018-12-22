@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,20 +36,17 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
     private final TppStopListRepository stopListRepository;
     private final TppStopListMapper tppStopListMapper;
 
-    @Value("${cms.service.instance-id:UNDEFINED}")
-    private String serviceInstanceId;
-
     @NotNull
     @Override
-    public Optional<TppStopListRecord> getTppStopListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId) {
-        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, serviceInstanceId);
+    public Optional<TppStopListRecord> getTppStopListRecord(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId) {
+        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, instanceId);
         return stopListEntityOptional.map(tppStopListMapper::mapToTppStopListRecord);
     }
 
     @Transactional
     @Override
-    public boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @Nullable Duration lockPeriod) {
-        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, serviceInstanceId);
+    public boolean blockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId, @Nullable Duration lockPeriod) {
+        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, instanceId);
 
         TppStopListEntity entityToBeBlocked = stopListEntityOptional
                                                   .orElseGet(() -> {
@@ -67,8 +63,8 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
 
     @Transactional
     @Override
-    public boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId) {
-        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, serviceInstanceId);
+    public boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId) {
+        Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, instanceId);
 
         if (!stopListEntityOptional.isPresent()) {
             return true;

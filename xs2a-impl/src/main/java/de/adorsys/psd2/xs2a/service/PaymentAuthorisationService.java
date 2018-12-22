@@ -16,44 +16,21 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
+import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 
-import java.util.Optional;
+public interface PaymentAuthorisationService {
+    ResponseObject<Xsa2CreatePisAuthorisationResponse> createPisAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData);
 
-@Service
-@RequiredArgsConstructor
-public class PaymentAuthorisationService {
-    private final Xs2aEventService xs2aEventService;
-    private final PisScaAuthorisationService pisScaAuthorisationService;
+    ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request);
 
-    /**
-     * Gets SCA status of payment initiation authorisation
-     *
-     * @param paymentId       ASPSP identifier of the payment, associated with the authorisation
-     * @param authorisationId authorisation identifier
-     * @return Response containing SCA status of authorisation or corresponding error
-     */
-    public ResponseObject<ScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId) {
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_SCA_STATUS_REQUEST_RECEIVED);
+    ResponseObject<Xs2aAuthorisationSubResources> getPaymentInitiationAuthorisations(String paymentId);
 
-        Optional<ScaStatus> scaStatus = pisScaAuthorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
-
-        if (!scaStatus.isPresent()) {
-            return ResponseObject.<ScaStatus>builder()
-                       .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403))
-                       .build();
-        }
-
-        return ResponseObject.<ScaStatus>builder()
-                   .body(scaStatus.get())
-                   .build();
-    }
+    ResponseObject<ScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId);
 }
