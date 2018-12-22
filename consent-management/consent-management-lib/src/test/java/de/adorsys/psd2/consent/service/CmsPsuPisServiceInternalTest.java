@@ -35,6 +35,7 @@ import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.psu.CmsPsuPisServiceInternal;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -73,6 +74,7 @@ public class CmsPsuPisServiceInternalTest {
     private final PsuIdData WRONG_PSU_ID_DATA = buildWrongPsuIdData();
     private final PsuIdData PSU_ID_DATA = buildPsuIdData();
     private static final String PAYMENT_ID = "payment id";
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
     @InjectMocks
     private CmsPsuPisServiceInternal cmsPsuPisServiceInternal;
@@ -142,7 +144,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePsuInPayment_Success() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, AUTHORISATION_ID);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult);
@@ -151,7 +153,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePsuInPayment_Fail_WrongPaymentId() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, WRONG_AUTHORISATION_ID);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
@@ -160,7 +162,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void getPayment_Success() {
         // When
-        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, PAYMENT_ID);
+        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -170,7 +172,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void getPayment_Fail_WrongPaymentId() {
         // When
-        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, WRONG_PAYMENT_ID);
+        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, WRONG_PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult.isPresent());
@@ -179,7 +181,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void getPayment_Fail_WrongPsuIdData() {
         // When
-        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(WRONG_PSU_ID_DATA, PAYMENT_ID);
+        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(WRONG_PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult.isPresent());
@@ -188,7 +190,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updateAuthorisationStatus_Success() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED);
+        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult);
@@ -197,7 +199,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updateAuthorisationStatus_WrongPaymentId() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, WRONG_PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED);
+        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, WRONG_PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
@@ -206,7 +208,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updateAuthorisationStatus_WrongPsuIdData() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(WRONG_PSU_ID_DATA, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED);
+        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(WRONG_PSU_ID_DATA, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
@@ -215,7 +217,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updateAuthorisationStatus_WrongAuthorisationId() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, PAYMENT_ID, WRONG_AUTHORISATION_ID, ScaStatus.FAILED);
+        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, PAYMENT_ID, WRONG_AUTHORISATION_ID, ScaStatus.FAILED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
@@ -224,7 +226,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePaymentStatus_Success() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.RCVD);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.RCVD, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult);
@@ -233,7 +235,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePaymentStatus_Fail_WrongPaymentId() {
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(WRONG_PAYMENT_ID, TransactionStatus.CANC);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(WRONG_PAYMENT_ID, TransactionStatus.CANC, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
@@ -247,7 +249,7 @@ public class CmsPsuPisServiceInternalTest {
             .thenReturn(Optional.of(finalisedPisAuthorisation));
 
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, PAYMENT_ID, FINALISED_AUTHORISATION_ID, ScaStatus.SCAMETHODSELECTED);
+        boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, PAYMENT_ID, FINALISED_AUTHORISATION_ID, ScaStatus.SCAMETHODSELECTED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
@@ -260,7 +262,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisPaymentDataRepository.findByPaymentId(FINALISED_PAYMENT_ID)).thenReturn(Optional.of(finalisedPisPaymentDataList));
 
         // When
-        boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(FINALISED_PAYMENT_ID, TransactionStatus.CANC);
+        boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(FINALISED_PAYMENT_ID, TransactionStatus.CANC, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
@@ -274,7 +276,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisAuthorizationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, AUTHORISATION_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -288,7 +290,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisAuthorizationRepository.findByExternalId(EXPIRED_AUTHORISATION_ID)).thenReturn(Optional.of(expectedAuthorisation));
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.of(new CmsPaymentResponse( TPP_NOK_REDIRECT_URI)));
@@ -297,7 +299,7 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void getPaymentByAuthorisationId_Fail_WrongId() {
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, WRONG_AUTHORISATION_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.empty());

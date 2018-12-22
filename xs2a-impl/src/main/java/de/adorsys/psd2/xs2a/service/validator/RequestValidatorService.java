@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.psd2.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
@@ -41,7 +40,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
 public class RequestValidatorService {
     @Autowired
     private ParametersFactory parametersFactory;

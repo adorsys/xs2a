@@ -19,35 +19,37 @@ package de.adorsys.psd2.consent.repository.specification;
 import de.adorsys.psd2.consent.domain.event.EventEntity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
+@Service
 public class EventEntitySpecification {
     private static final String INSTANCE_ID_ATTRIBUTE = "instanceId";
     private static final String CONSENT_ID_ATTRIBUTE = "consentId";
     private static final String PAYMENT_ID_ATTRIBUTE = "paymentId";
     private static final String TIMESTAMP_ID_ATTRIBUTE = "timestamp";
 
-    public static Specification<EventEntity> getEventsForPeriodAndInstanceId(OffsetDateTime start, OffsetDateTime end, String instanceId) {
+    public Specification<EventEntity> byPeriodAndInstanceId(OffsetDateTime start, OffsetDateTime end, String instanceId) {
         return Specifications.where(eventPeriodSpecification(start, end))
                    .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
     }
 
-    public static Specification<EventEntity> getEventsForPeriodAndConsentIdAndInstanceId(OffsetDateTime start, OffsetDateTime end, String consentId, String instanceId) {
+    public Specification<EventEntity> byPeriodAndConsentIdAndInstanceId(OffsetDateTime start, OffsetDateTime end, String consentId, String instanceId) {
         return Specifications.where(eventPeriodSpecification(start, end))
                    .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
                    .and(provideSpecificationForEntityAttribute(CONSENT_ID_ATTRIBUTE, consentId));
     }
 
-    public static Specification<EventEntity> getEventsForPeriodAndPaymentIdAndInstanceId(OffsetDateTime start, OffsetDateTime end, String paymentId, String instanceId) {
+    public Specification<EventEntity> byPeriodAndPaymentIdAndInstanceId(OffsetDateTime start, OffsetDateTime end, String paymentId, String instanceId) {
         return Specifications.where(eventPeriodSpecification(start, end))
                    .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
                    .and(provideSpecificationForEntityAttribute(PAYMENT_ID_ATTRIBUTE, paymentId));
     }
 
-    private static Specification<EventEntity> eventPeriodSpecification(OffsetDateTime start, OffsetDateTime end) {
+    private Specification<EventEntity> eventPeriodSpecification(OffsetDateTime start, OffsetDateTime end) {
         return (root, criteriaQuery, criteriaBuilder) -> {
             criteriaQuery.orderBy(criteriaBuilder.asc(root.get(TIMESTAMP_ID_ATTRIBUTE)));
             return criteriaBuilder.between(root.get(TIMESTAMP_ID_ATTRIBUTE), start, end);

@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.model.AccountStatus;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;

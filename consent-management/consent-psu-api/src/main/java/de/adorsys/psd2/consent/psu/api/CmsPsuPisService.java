@@ -33,7 +33,7 @@ public interface CmsPsuPisService {
      * @param redirectId ID of redirect
      * @return <code>true</code> if payment was found and data was updated. <code>false</code> otherwise.
      */
-    boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
+    boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
 
     /**
      * Returns Payment object by its ID
@@ -43,7 +43,7 @@ public interface CmsPsuPisService {
      * @return Payment object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId);
+    Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String instanceId);
 
     /**
      * Checks redirect url and corresponding authorisation on expiration and returns Payment Response object if authorisation is valid
@@ -54,7 +54,7 @@ public interface CmsPsuPisService {
      * it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId);
+    Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
 
     /**
      * Updates a Status of Payment's autorisation by its ID and PSU ID
@@ -65,7 +65,7 @@ public interface CmsPsuPisService {
      * @param status          Status of Authorisation to be set
      * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
      */
-    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String authorisationId, @NotNull ScaStatus status);
+    boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId);
 
     /**
      * Updates a Status of Payment object by its ID and PSU ID
@@ -74,5 +74,5 @@ public interface CmsPsuPisService {
      * @param status    Status of Payment to be set
      * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
      */
-    boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status);
+    boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status, @NotNull String instanceId);
 }

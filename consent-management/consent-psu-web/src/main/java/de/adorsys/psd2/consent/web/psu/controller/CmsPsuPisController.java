@@ -37,6 +37,8 @@ import java.util.Optional;
 @RequestMapping(path = "psu-api/v1/pis/consent")
 @Api(value = "psu-api/v1/pis/consent", tags = "PSU PIS, Consents", description = "Controller for cms-psu-api providing access for PIS consents")
 public class CmsPsuPisController {
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
+
     private final CmsPsuPisService cmsPsuPisService;
 
     @PutMapping(path = "/redirects/{redirect-id}/psu-data")
@@ -53,9 +55,10 @@ public class CmsPsuPisController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("redirect-id") String redirectId) {
+        @PathVariable("redirect-id") String redirectId,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsPsuPisService.updatePsuInPayment(psuIdData, redirectId)
+        return cmsPsuPisService.updatePsuInPayment(psuIdData, redirectId, instanceId)
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }
@@ -75,10 +78,11 @@ public class CmsPsuPisController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("payment-id") String paymentId) {
+        @PathVariable("payment-id") String paymentId,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsPsuPisService.getPayment(psuIdData, paymentId)
+        return cmsPsuPisService.getPayment(psuIdData, paymentId, instanceId)
                    .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
@@ -99,10 +103,11 @@ public class CmsPsuPisController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("redirect-id") String redirectId) {
+        @PathVariable("redirect-id") String redirectId,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        Optional<CmsPaymentResponse> response = cmsPsuPisService.checkRedirectAndGetPayment(psuIdData, redirectId);
+        Optional<CmsPaymentResponse> response = cmsPsuPisService.checkRedirectAndGetPayment(psuIdData, redirectId, instanceId);
 
         if (!response.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -136,10 +141,11 @@ public class CmsPsuPisController {
         @ApiParam(name = "authorisation-id", value = "The payment authorisation identification assigned to the created payment authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorisation-id") String authorisationId,
         @ApiParam(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted'. These values might be extended by ASPSP by more values.", allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED")
-        @PathVariable("status") String status) {
+        @PathVariable("status") String status,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsPsuPisService.updateAuthorisationStatus(psuIdData, paymentId, authorisationId, ScaStatus.valueOf(status))
+        return cmsPsuPisService.updateAuthorisationStatus(psuIdData, paymentId, authorisationId, ScaStatus.valueOf(status), instanceId)
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }
@@ -153,8 +159,9 @@ public class CmsPsuPisController {
         @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId,
         @ApiParam(value = "The following code values are permitted 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'PDNG', 'RCVD', 'RJCT', 'CANC'. These values might be extended by ASPSP by more values.", allowableValues = "ACCP,  ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC")
-        @PathVariable("status") String status) {
-        return cmsPsuPisService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status))
+        @PathVariable("status") String status,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        return cmsPsuPisService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status), instanceId)
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }

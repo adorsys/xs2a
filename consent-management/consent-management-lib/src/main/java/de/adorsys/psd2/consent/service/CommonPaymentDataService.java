@@ -31,12 +31,12 @@ import java.util.Optional;
 public class CommonPaymentDataService {
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
 
-    protected Optional<PisCommonPaymentData> getPisCommonPaymentData(String paymentId) {
+    public Optional<PisCommonPaymentData> getPisCommonPaymentData(String paymentId) {
         return pisCommonPaymentDataRepository.findByPaymentId(paymentId);
     }
 
     @Transactional
-    protected boolean updateStatusInPaymentData(PisCommonPaymentData paymentData, TransactionStatus status) {
+    public boolean updateStatusInPaymentData(PisCommonPaymentData paymentData, TransactionStatus status) {
         paymentData.setTransactionStatus(status);
         PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(paymentData);
         return saved.getPaymentId() != null;

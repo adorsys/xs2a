@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.domain.event.EventEntity;
 import de.adorsys.psd2.consent.repository.EventRepository;
+import de.adorsys.psd2.consent.repository.specification.EventEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.EventMapper;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import org.junit.Test;
@@ -45,6 +46,8 @@ public class CmsAspspEventServiceInternalTest {
     private EventRepository eventRepository;
     @Mock
     private EventMapper eventMapper;
+    @Mock
+    private EventEntitySpecification eventEntitySpecification;
 
     @Test
     public void getEventsForPeriod_Success() {

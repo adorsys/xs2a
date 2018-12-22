@@ -26,14 +26,12 @@ import de.adorsys.psd2.xs2a.service.message.MessageService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component
 @RequiredArgsConstructor
 public class MessageErrorMapper {
     private final MessageService messageService;
