@@ -246,7 +246,8 @@ public class PisCommonPaymentServiceInternalTest {
                                  false,
                                  false,
                                  false,
-                                 1);
+                                 1,
+                                 null);
     }
 
     private PsuIdData buildPsuIdData() {
