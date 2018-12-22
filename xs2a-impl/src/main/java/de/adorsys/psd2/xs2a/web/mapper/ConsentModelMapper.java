@@ -58,7 +58,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public StartScaprocessResponse mapToStartScaProcessResponse(Xsa2CreatePisAuthorisationResponse response) {
+    public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisAuthorisationResponse response) {
         return Optional.ofNullable(response)
                    .map(r -> new StartScaprocessResponse()
                                  .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
@@ -235,7 +235,7 @@ public class ConsentModelMapper {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setPsuData(psuData);
         request.setPaymentId(paymentId);
-        request.setAuthorizationId(authorisationId);
+        request.setAuthorisationId(authorisationId);
         request.setPaymentService(paymentService);
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
