@@ -23,14 +23,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 
+import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
 @Service
 public class EventEntitySpecification {
-    private static final String INSTANCE_ID_ATTRIBUTE = "instanceId";
-    private static final String CONSENT_ID_ATTRIBUTE = "consentId";
-    private static final String PAYMENT_ID_ATTRIBUTE = "paymentId";
-    private static final String TIMESTAMP_ID_ATTRIBUTE = "timestamp";
 
     public Specification<EventEntity> byPeriodAndInstanceId(OffsetDateTime start, OffsetDateTime end, String instanceId) {
         return Specifications.where(eventPeriodSpecification(start, end))
