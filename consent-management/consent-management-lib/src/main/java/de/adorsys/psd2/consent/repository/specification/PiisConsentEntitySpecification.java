@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.repository.specification;
 
-import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
@@ -26,12 +26,10 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.I
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
 @Service
-public class AisConsentAuthorizationSpecification {
+public class PiisConsentEntitySpecification extends GenericSpecification {
 
-    private AisConsentAuthorizationSpecification() {}
-
-    public Specification<AisConsentAuthorization> byExternalIdAndInstanceId(String externalId, String instanceId) {
-        return Specifications.<AisConsentAuthorization>where(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
-                   .and(provideSpecificationForEntityAttribute(CONSENT_EXTERNAL_ID_ATTRIBUTE, externalId));
+    public Specification<PiisConsentEntity> byConsentIdAndInstanceId(String consentId, String instanceId) {
+        return Specifications.<PiisConsentEntity>where(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId))
+                   .and(provideSpecificationForEntityAttribute(CONSENT_EXTERNAL_ID_ATTRIBUTE, consentId));
     }
 }
