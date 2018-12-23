@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +28,9 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class AccountReferenceMapper {
-    CmsAccountReference mapToCmsAccountReference(AccountReferenceEntity accountReferenceEntity) {
+    AccountReference mapToCmsAccountReference(AccountReferenceEntity accountReferenceEntity) {
         return Optional.ofNullable(accountReferenceEntity)
-                   .map(ref -> new CmsAccountReference(null,
+                   .map(ref -> new AccountReference(null,
                                                        ref.getIban(),
                                                        ref.getBban(),
                                                        ref.getPan(),
@@ -39,21 +38,6 @@ public class AccountReferenceMapper {
                                                        ref.getMsisdn(),
                                                        ref.getCurrency())
                    ).orElse(null);
-    }
-
-    AccountReferenceEntity mapToAccountReferenceEntity(CmsAccountReference cmsAccountReference) {
-        return Optional.ofNullable(cmsAccountReference)
-                   .map(ref -> {
-                       AccountReferenceEntity accountReferenceEntity = new AccountReferenceEntity();
-                       accountReferenceEntity.setIban(cmsAccountReference.getIban());
-                       accountReferenceEntity.setBban(cmsAccountReference.getBban());
-                       accountReferenceEntity.setPan(cmsAccountReference.getPan());
-                       accountReferenceEntity.setMaskedPan(cmsAccountReference.getMaskedPan());
-                       accountReferenceEntity.setMsisdn(cmsAccountReference.getMsisdn());
-                       accountReferenceEntity.setCurrency(cmsAccountReference.getCurrency());
-
-                       return accountReferenceEntity;
-                   }).orElse(null);
     }
 
     public List<AccountReference> mapToAccountReferenceList(List<AccountReferenceEntity> accountReferenceEntities) {
@@ -83,7 +67,7 @@ public class AccountReferenceMapper {
                    .collect(Collectors.toList());
     }
 
-    private AccountReferenceEntity mapToAccountReferenceEntity(AccountReference accountReference) {
+    public AccountReferenceEntity mapToAccountReferenceEntity(AccountReference accountReference) {
         return Optional.ofNullable(accountReference)
                    .map(ref -> {
                        AccountReferenceEntity accountReferenceEntity = new AccountReferenceEntity();

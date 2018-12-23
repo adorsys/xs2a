@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.domain.pis;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -37,7 +37,7 @@ public class BulkPayment {
 
     @NotNull
     @ApiModelProperty(value = "debtor account", required = true)
-    private Xs2aAccountReference debtorAccount;
+    private AccountReference debtorAccount;
 
     @ApiModelProperty(value = "requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;

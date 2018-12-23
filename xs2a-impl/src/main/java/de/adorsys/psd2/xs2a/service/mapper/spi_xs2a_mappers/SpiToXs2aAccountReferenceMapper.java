@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Component
 public class SpiToXs2aAccountReferenceMapper {
 
-    public List<Xs2aAccountReference> mapToXs2aAccountReferences(List<SpiAccountReference> references) {
+    public List<AccountReference> mapToXs2aAccountReferences(List<SpiAccountReference> references) {
         if (CollectionUtils.isEmpty(references)) {
             return Collections.emptyList();
         }
@@ -40,10 +40,10 @@ public class SpiToXs2aAccountReferenceMapper {
                    .collect(Collectors.toList());
     }
 
-    public Optional<Xs2aAccountReference> mapToXs2aAccountReference(SpiAccountReference spiAccountRef) {
+    public Optional<AccountReference> mapToXs2aAccountReference(SpiAccountReference spiAccountRef) {
         return Optional.ofNullable(spiAccountRef)
                    .map(a -> {
-                       Xs2aAccountReference accRef = new Xs2aAccountReference();
+                       AccountReference accRef = new AccountReference();
                        accRef.setResourceId(a.getResourceId());
                        accRef.setIban(a.getIban());
                        accRef.setBban(a.getBban());

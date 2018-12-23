@@ -18,10 +18,10 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.Consents;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
@@ -60,7 +60,7 @@ public class ConsentController implements ConsentApi {
     public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body);
 
-        Set<Xs2aAccountReference> references = createConsent.getAccountReferences();
+        Set<AccountReference> references = createConsent.getAccountReferences();
         ResponseObject accountReferenceValidationResponse = references.isEmpty()
                                                                 ? ResponseObject.builder().build()
                                                                 : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());

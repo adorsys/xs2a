@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -54,13 +54,13 @@ public class CreateConsentReq implements AccountReferenceCollector {
 
     @JsonIgnore
     @Override
-    public Set<Xs2aAccountReference> getAccountReferences() {
+    public Set<AccountReference> getAccountReferences() {
         return getReferenceSet(this.access.getAccounts(), this.access.getBalances(), this.access.getTransactions());
     }
 
     @JsonIgnore
     @SafeVarargs
-    private final Set<Xs2aAccountReference> getReferenceSet(List<Xs2aAccountReference>... referencesList) {
+    private final Set<AccountReference> getReferenceSet(List<AccountReference>... referencesList) {
         return Arrays.stream(referencesList)
                    .map(this::getReferenceList)
                    .flatMap(Collection::stream)
@@ -68,7 +68,7 @@ public class CreateConsentReq implements AccountReferenceCollector {
     }
 
     @JsonIgnore
-    private List<Xs2aAccountReference> getReferenceList(List<Xs2aAccountReference> reference) {
+    private List<AccountReference> getReferenceList(List<AccountReference> reference) {
         return Optional.ofNullable(reference)
                    .orElseGet(Collections::emptyList);
     }

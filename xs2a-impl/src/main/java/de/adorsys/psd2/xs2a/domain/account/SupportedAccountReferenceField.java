@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import org.apache.commons.validator.routines.CreditCardValidator;
 import org.apache.commons.validator.routines.IBANValidator;
 
@@ -24,41 +25,41 @@ import java.util.Optional;
 public enum SupportedAccountReferenceField {
     IBAN {
         @Override
-        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
+        public Optional<Boolean> isValid(AccountReference reference) {
             return Optional.ofNullable(reference.getIban())
                        .map(SupportedAccountReferenceField::isValidIban);
         }
     },
     BBAN {
         @Override
-        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
+        public Optional<Boolean> isValid(AccountReference reference) {
             return Optional.ofNullable(reference.getBban())
                        .map(SupportedAccountReferenceField::isValidBban);
         }
     },
     PAN {
         @Override
-        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
+        public Optional<Boolean> isValid(AccountReference reference) {
             return Optional.ofNullable(reference.getPan())
                        .map(SupportedAccountReferenceField::isValidPan);
         }
     },
     MASKEDPAN {
         @Override
-        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
+        public Optional<Boolean> isValid(AccountReference reference) {
             return Optional.ofNullable(reference.getMaskedPan())
                        .map(SupportedAccountReferenceField::isValidMaskedPan);
         }
     },
     MSISDN {
         @Override
-        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
+        public Optional<Boolean> isValid(AccountReference reference) {
             return Optional.ofNullable(reference.getMsisdn())
                        .map(SupportedAccountReferenceField::isValidMsisdn);
         }
     };
 
-    public abstract Optional<Boolean> isValid(Xs2aAccountReference reference);
+    public abstract Optional<Boolean> isValid(AccountReference reference);
 
     private static boolean isValidIban(String iban) {
         IBANValidator validator = IBANValidator.getInstance();
