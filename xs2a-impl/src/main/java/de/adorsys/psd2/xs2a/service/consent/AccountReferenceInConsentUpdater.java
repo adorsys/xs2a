@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -101,14 +101,14 @@ public class AccountReferenceInConsentUpdater {
         return accountAccess;
     }
 
-    private void updateResourceId(List<Xs2aAccountReference> consentAccountReferences, Xs2aAccountDetails xs2aAccountDetails, String resourceId) {
-        consentAccountReferences.stream()
-            .filter(xs2aAccountReference -> isSameAccountReference(xs2aAccountReference, xs2aAccountDetails))
+    private void updateResourceId(List<AccountReference> accountReferences, Xs2aAccountDetails xs2aAccountDetails, String resourceId) {
+        accountReferences.stream()
+            .filter(accountReference -> isSameAccountReference(accountReference, xs2aAccountDetails))
             .findFirst()
             .ifPresent(xs2aAccountReference -> xs2aAccountReference.setResourceId(resourceId));
     }
 
-    private boolean isSameAccountReference(Xs2aAccountReference accountReference, Xs2aAccountDetails accountDetails) {
+    private boolean isSameAccountReference(AccountReference accountReference, Xs2aAccountDetails accountDetails) {
         boolean same = Optional.ofNullable(accountReference.getIban())
                            .map(iban -> StringUtils.equals(iban, accountDetails.getIban()))
                            .orElse(false);

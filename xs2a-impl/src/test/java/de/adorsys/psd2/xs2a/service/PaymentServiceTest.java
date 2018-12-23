@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -33,7 +34,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
@@ -373,8 +373,8 @@ public class PaymentServiceTest {
         return singlePayments;
     }
 
-    private static Xs2aAccountReference getReference(String iban) {
-        Xs2aAccountReference reference = new Xs2aAccountReference();
+    private static AccountReference getReference(String iban) {
+        AccountReference reference = new AccountReference();
         reference.setIban(iban);
         reference.setCurrency(CURRENCY);
 

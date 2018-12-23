@@ -19,8 +19,8 @@ package de.adorsys.psd2.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -95,7 +95,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToXs2aPayment_Single_success() {
         when(objectMapper.convertValue(getSinglePayment(true, true, true, true, true, true, true), PaymentInitiationSctJson.class)).thenReturn(getSinglePayment12(true, true, true, true, true, true, true));
-        when(objectMapper.convertValue(getAccountReference12Map(true, true), Xs2aAccountReference.class)).thenReturn(getAccountReference(true, true));
+        when(objectMapper.convertValue(getAccountReference12Map(true, true), AccountReference.class)).thenReturn(getAccountReference(true, true));
         //Given
         Object payment = getSinglePayment(true, true, true, true, true, true, true);
         //When
@@ -128,7 +128,7 @@ public class PaymentModelMapperTest {
             .thenReturn(getPeriodicPayment(true, true, true, true, true,
                                            true, true, true, true, true, true,
                                            true));
-        when(objectMapper.convertValue(getAccountReference12Map(true, true), Xs2aAccountReference.class))
+        when(objectMapper.convertValue(getAccountReference12Map(true, true), AccountReference.class))
             .thenReturn(getAccountReference(true, true));
         //Given
         Object payment = getPeriodicPayment(true, true, true, true, true,
@@ -160,7 +160,7 @@ public class PaymentModelMapperTest {
         when(objectMapper.convertValue(getBulkPayment(true, true, true,
                                                       true), BulkPaymentInitiationSctJson.class))
             .thenReturn(getBulkPayment(true, true, true, true));
-        when(objectMapper.convertValue(getAccountReference12Map(true, true), Xs2aAccountReference.class))
+        when(objectMapper.convertValue(getAccountReference12Map(true, true), AccountReference.class))
             .thenReturn(getAccountReference(true, true));
         //Given
         Object payment = getBulkPayment(true, true, true, true);
@@ -285,8 +285,8 @@ public class PaymentModelMapperTest {
         return ref;
     }
 
-    private Xs2aAccountReference getAccountReference(boolean iban, boolean currency) {
-        Xs2aAccountReference ref = new Xs2aAccountReference();
+    private AccountReference getAccountReference(boolean iban, boolean currency) {
+        AccountReference ref = new AccountReference();
         ref.setIban(iban ? IBAN : null);
         ref.setCurrency(currency ? Currency.getInstance(CURRENCY) : null);
         return ref;

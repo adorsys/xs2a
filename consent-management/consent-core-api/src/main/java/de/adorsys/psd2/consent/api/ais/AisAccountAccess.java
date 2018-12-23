@@ -16,13 +16,14 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.Value;
 
 import java.util.List;
 
 @Value
 public class AisAccountAccess {
-    private List<CmsAccountReference> accounts;
-    private List<CmsAccountReference> balances;
-    private List<CmsAccountReference> transactions;
+    private List<AccountReference> accounts;
+    private List<AccountReference> balances;
+    private List<AccountReference> transactions;
 }

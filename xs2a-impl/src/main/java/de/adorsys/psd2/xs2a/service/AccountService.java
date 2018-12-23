@@ -19,8 +19,12 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -331,7 +335,7 @@ public class AccountService {
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(report.orElseGet(() -> new Xs2aAccountReport(Collections.emptyList(),
             Collections.emptyList(), null)));
-        transactionsReport.setXs2aAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference.get()).orElse(null));
+        transactionsReport.setAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference.get()).orElse(null));
         transactionsReport.setBalances(balanceMapper.mapToXs2aBalanceList(spiTransactionReport.getBalances()));
         transactionsReport.setResponseContentType(spiTransactionReport.getResponseContentType());
 
@@ -417,7 +421,7 @@ public class AccountService {
 
     private boolean isNotPermittedAccountReference(Optional<SpiAccountReference> requestedAccountReference, Xs2aAccountAccess consentAccountAccess, boolean withBalance) {
         return requestedAccountReference.map(accountReference -> {
-            List<Xs2aAccountReference> accountReferences;
+            List<AccountReference> accountReferences;
             if (withBalance) {
                 accountReferences = consentAccountAccess.getBalances();
             } else {
@@ -427,7 +431,7 @@ public class AccountService {
         }).orElse(true);
     }
 
-    private Optional<SpiAccountReference> findAccountReference(List<Xs2aAccountReference> references, String resourceId) {
+    private Optional<SpiAccountReference> findAccountReference(List<AccountReference> references, String resourceId) {
         return references.stream()
                    .filter(xs2aAccountReference -> StringUtils.equals(xs2aAccountReference.getResourceId(), resourceId))
                    .findFirst()

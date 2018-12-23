@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,5 +32,5 @@ public class Xs2aBalancesReport {
     private List<Xs2aBalance> balances;
 
     @ApiModelProperty(value = "Xs2aAccountReference")
-    private Xs2aAccountReference xs2aAccountReference;
+    private AccountReference xs2aAccountReference;
 }

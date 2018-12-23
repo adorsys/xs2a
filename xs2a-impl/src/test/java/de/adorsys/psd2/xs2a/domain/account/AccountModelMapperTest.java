@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.domain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.BalanceType;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
 import de.adorsys.psd2.xs2a.domain.*;
@@ -156,7 +157,7 @@ public class AccountModelMapperTest {
 
         assertEquals(transactions.getCheckId(), transactionDetails.getCheckId());
 
-        Xs2aAccountReference expectedCreditorAccount = transactions.getCreditorAccount();
+        AccountReference expectedCreditorAccount = transactions.getCreditorAccount();
         assertNotNull(expectedCreditorAccount);
 
         AccountReferenceIban actualCreditorAccount = (AccountReferenceIban) transactionDetails.getCreditorAccount();
@@ -167,7 +168,7 @@ public class AccountModelMapperTest {
         assertEquals(transactions.getCreditorId(), transactionDetails.getCreditorId());
         assertEquals(transactions.getCreditorName(), transactionDetails.getCreditorName());
 
-        Xs2aAccountReference expectedDebtorAccount = transactions.getDebtorAccount();
+        AccountReference expectedDebtorAccount = transactions.getDebtorAccount();
         assertNotNull(expectedDebtorAccount);
 
         AccountReferenceIban actualDebtorAccount = (AccountReferenceIban) transactionDetails.getDebtorAccount();
@@ -242,8 +243,8 @@ public class AccountModelMapperTest {
         return amount;
     }
 
-    private Xs2aAccountReference createAccountReference() {
-        Xs2aAccountReference xs2aAccountReference = new Xs2aAccountReference();
+    private AccountReference createAccountReference() {
+        AccountReference xs2aAccountReference = new AccountReference();
         xs2aAccountReference.setBban("bban");
         xs2aAccountReference.setCurrency(Currency.getInstance("EUR"));
         xs2aAccountReference.setIban("DE1234");

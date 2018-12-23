@@ -20,11 +20,11 @@ import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AccountAccess;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -78,10 +78,10 @@ public class AisConsentMapper {
                                     mapToCmsAccountReference(accountAccesses, TypeAccess.TRANSACTION));
     }
 
-    private List<CmsAccountReference> mapToCmsAccountReference(List<AccountAccess> aisAccounts, TypeAccess typeAccess) {
+    private List<AccountReference> mapToCmsAccountReference(List<AccountAccess> aisAccounts, TypeAccess typeAccess) {
         return aisAccounts.stream()
                    .filter(ass -> ass.getTypeAccess() == typeAccess)
-                   .map(access -> new CmsAccountReference(access.getResourceId(), access.getIban(), access.getCurrency()))
+                   .map(access -> new AccountReference(access.getResourceId(), access.getIban(), access.getCurrency()))
                    .collect(Collectors.toList());
     }
 }

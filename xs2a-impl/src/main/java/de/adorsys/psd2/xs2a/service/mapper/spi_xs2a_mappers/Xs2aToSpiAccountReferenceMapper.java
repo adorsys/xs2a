@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -32,18 +31,7 @@ import java.util.stream.Collectors;
 @Component
 public class Xs2aToSpiAccountReferenceMapper {
 
-    public SpiAccountReference mapToSpiAccountReference(Xs2aAccountReference account) {
-        return new SpiAccountReference(
-            account.getResourceId(),
-            account.getIban(),
-            account.getBban(),
-            account.getPan(),
-            account.getMaskedPan(),
-            account.getMsisdn(),
-            account.getCurrency());
-    }
-
-    public List<SpiAccountReference> mapToSpiAccountReferences(List<Xs2aAccountReference> references) {
+    public List<SpiAccountReference> mapToSpiAccountReferences(List<AccountReference> references) {
         if (CollectionUtils.isEmpty(references)) {
             return Collections.emptyList();
         }

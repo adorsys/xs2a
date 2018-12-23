@@ -20,10 +20,10 @@ import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPsuDataMapper;
@@ -170,6 +170,7 @@ public class Xs2aAisConsentMapper {
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
                                             .map(accessType -> AisAccountAccessType.valueOf(accessType.name()))
                                             .orElse(null));
+
         accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
                                   .map(accessType -> AisAccountAccessType.valueOf(accessType.name()))
                                   .orElse(null));
@@ -177,13 +178,13 @@ public class Xs2aAisConsentMapper {
         return accessInfo;
     }
 
-    private List<AccountInfo> mapToListAccountInfo(List<Xs2aAccountReference> refs) {
+    private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
         return refs.stream()
                    .map(this::mapToAccountInfo)
                    .collect(Collectors.toList());
     }
 
-    private AccountInfo mapToAccountInfo(Xs2aAccountReference ref) {
+    private AccountInfo mapToAccountInfo(AccountReference ref) {
         AccountInfo info = new AccountInfo();
         info.setResourceId(ref.getResourceId());
         info.setIban(ref.getIban());
@@ -210,27 +211,10 @@ public class Xs2aAisConsentMapper {
 
     private Xs2aAccountAccess mapToXs2aAccountAccess(AisAccountAccess ais) {
         return new Xs2aAccountAccess(
-            mapToXs2aAccountReference(ais.getAccounts()),
-            mapToXs2aAccountReference(ais.getBalances()),
-            mapToXs2aAccountReference(ais.getTransactions()),
+            ais.getAccounts(),
+            ais.getBalances(),
+            ais.getTransactions(),
             null,
             null);
-    }
-
-    private List<Xs2aAccountReference> mapToXs2aAccountReference(List<CmsAccountReference> cms) {
-        return cms.stream()
-                   .map(this::mapToXs2aAccountReference)
-                   .collect(Collectors.toList());
-    }
-
-    private Xs2aAccountReference mapToXs2aAccountReference(CmsAccountReference cms) {
-        return new Xs2aAccountReference(
-            cms.getResourceId(),
-            cms.getIban(),
-            cms.getBban(),
-            cms.getPan(),
-            cms.getMaskedPan(),
-            cms.getMsisdn(),
-            cms.getCurrency());
     }
 }

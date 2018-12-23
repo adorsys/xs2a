@@ -23,6 +23,7 @@ import de.adorsys.psd2.model.AccountList;
 import de.adorsys.psd2.model.AccountReport;
 import de.adorsys.psd2.model.ReadBalanceResponse200;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
@@ -216,7 +217,7 @@ public class AccountControllerTest {
         amount.setAmount("3000.45");
         amount.setCurrency(Currency.getInstance("EUR"));
         transaction.setAmount(amount);
-        Xs2aAccountReference debtor = new Xs2aAccountReference();
+        AccountReference debtor = new AccountReference();
         debtor.setIban("DE371234599997");
         debtor.setCurrency(Currency.getInstance("EUR"));
         transaction.setDebtorAccount(debtor);
