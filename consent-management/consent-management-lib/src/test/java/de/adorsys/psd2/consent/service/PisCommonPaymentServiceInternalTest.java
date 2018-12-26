@@ -217,8 +217,8 @@ public class PisCommonPaymentServiceInternalTest {
         assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
 
         verify(pisAuthorizationRepository).save(argumentList.capture());
-        List<PisAuthorization> authorizationsFailed = argumentList.getValue();
-        Set<ScaStatus> scaStatuses = authorizationsFailed.stream()
+        List<PisAuthorization> authorisationsFailed = argumentList.getValue();
+        Set<ScaStatus> scaStatuses = authorisationsFailed.stream()
                                           .map(PisAuthorization::getScaStatus)
                                           .collect(Collectors.toSet());
         assertEquals(scaStatuses.size(), 1);
