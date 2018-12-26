@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service("status-bulk-payments")
@@ -36,8 +37,8 @@ public class ReadBulkPaymentStatusService implements ReadPaymentStatusService {
     private final BulkPaymentSpi bulkPaymentSpi;
 
     @Override
-    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
-        Optional<SpiBulkPayment> spiBulkPaymentOptional = spiPaymentFactory.createSpiBulkPayment(pisPayment, paymentProduct);
+    public SpiResponse<SpiTransactionStatus> readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
+        Optional<SpiBulkPayment> spiBulkPaymentOptional = spiPaymentFactory.createSpiBulkPayment(pisPayments, paymentProduct);
 
         return spiBulkPaymentOptional
                    .map(spiBulkPayment -> bulkPaymentSpi.getPaymentStatusById(spiContextData, spiBulkPayment, aspspConsentData))

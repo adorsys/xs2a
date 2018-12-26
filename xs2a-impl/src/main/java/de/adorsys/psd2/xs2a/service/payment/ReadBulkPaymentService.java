@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service("bulk-payments")
@@ -48,8 +49,8 @@ public class ReadBulkPaymentService extends ReadPaymentService<PaymentInformatio
     private final SpiPaymentFactory spiPaymentFactory;
 
     @Override
-    public PaymentInformationResponse<BulkPayment> getPayment(PisPayment pisPayment, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
-        Optional<SpiBulkPayment> spiPaymentOptional = spiPaymentFactory.createSpiBulkPayment(pisPayment, paymentProduct);
+    public PaymentInformationResponse<BulkPayment> getPayment(List<PisPayment> pisPayments, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
+        Optional<SpiBulkPayment> spiPaymentOptional = spiPaymentFactory.createSpiBulkPayment(pisPayments, paymentProduct);
 
         if (!spiPaymentOptional.isPresent()) {
             return new PaymentInformationResponse<>(
