@@ -143,7 +143,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     public Optional<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType,
                                                                         PsuIdData psuData) {
         return readReceivedCommonPaymentDataByPaymentId(paymentId)
-                   .map(pmt -> saveNewAuthorisation(pmt, authorizationType, psuData))
+                   .map(pmt -> {
+                       closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), authorizationType, psuData);
+                       return saveNewAuthorisation(pmt, authorizationType, psuData);
+                   })
                    .map(c -> new CreatePisAuthorisationResponse(c.getExternalId()));
     }
 
@@ -328,12 +331,12 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
         consentAuthorisation.setPsuData(handlePsuForAuthorisation(psuData, paymentData.getPsuData()));
         consentAuthorisation.setPaymentData(enrichPsuData(psuData, paymentData));
-        PisAuthorization pisAuthorisation = pisAuthorizationRepository.save(consentAuthorisation);
-        closePreviousAuthorisationsByPsu(paymentData.getAuthorizations(), psuData, authorisationType);
-        return pisAuthorisation;
+        return pisAuthorizationRepository.save(consentAuthorisation);
     }
 
-    private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, PsuData psuData, CmsAuthorisationType authorisationType) {
+    private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {
+        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
+
         if (!isPsuDataCorrect(psuData)) {
             return;
         }
@@ -342,13 +345,16 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                                                           .stream()
                                                           .filter(auth -> auth.getAuthorizationType() == authorisationType)
                                                           .filter(auth -> auth.getPsuData().contentEquals(psuData))
-                                                          .peek(auth -> {
-                                                              auth.setScaStatus(ScaStatus.FAILED);
-                                                              auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
-                                                          })
+                                                          .map(this::failAuthorisation)
                                                           .collect(Collectors.toList());
 
         pisAuthorizationRepository.save(pisAuthorisationList);
+    }
+
+    private PisAuthorization failAuthorisation(PisAuthorization auth) {
+        auth.setScaStatus(ScaStatus.FAILED);
+        auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
+        return auth;
     }
 
     private PsuData handlePsuForAuthorisation(PsuData psuData, List<PsuData> psuDataList) {
