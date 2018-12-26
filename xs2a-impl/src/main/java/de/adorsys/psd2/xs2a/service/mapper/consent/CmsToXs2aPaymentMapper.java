@@ -17,12 +17,9 @@
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
@@ -46,8 +43,8 @@ public class CmsToXs2aPaymentMapper {
                        PeriodicPayment periodic = new PeriodicPayment();
                        periodic.setPaymentId(p.getPaymentId());
                        periodic.setEndToEndIdentification(p.getEndToEndIdentification());
-                       periodic.setDebtorAccount(mapToXs2aAccountReference(p.getDebtorAccount()));
-                       periodic.setCreditorAccount(mapToXs2aAccountReference(p.getCreditorAccount()));
+                       periodic.setDebtorAccount(p.getDebtorAccount());
+                       periodic.setCreditorAccount(p.getCreditorAccount());
                        periodic.setInstructedAmount(new Xs2aAmount(p.getCurrency(), p.getAmount().toPlainString()));
                        periodic.setCreditorAgent(p.getCreditorAgent());
                        periodic.setCreditorName(p.getCreditorName());
@@ -69,8 +66,8 @@ public class CmsToXs2aPaymentMapper {
                        single.setPaymentId(p.getPaymentId());
                        single.setEndToEndIdentification(p.getEndToEndIdentification());
                        single.setInstructedAmount(new Xs2aAmount(p.getCurrency(), p.getAmount().toPlainString()));
-                       single.setDebtorAccount(mapToXs2aAccountReference(p.getDebtorAccount()));
-                       single.setCreditorAccount(mapToXs2aAccountReference(p.getCreditorAccount()));
+                       single.setDebtorAccount(p.getDebtorAccount());
+                       single.setCreditorAccount(p.getCreditorAccount());
                        single.setCreditorAgent(p.getCreditorAgent());
                        single.setCreditorName(p.getCreditorName());
                        single.setCreditorAddress(mapToXs2aAddress(p.getCreditorAddress()));
@@ -83,7 +80,7 @@ public class CmsToXs2aPaymentMapper {
         BulkPayment bulk = new BulkPayment();
         bulk.setPaymentId(payments.get(0).getPaymentId());
         bulk.setBatchBookingPreferred(false);
-        bulk.setDebtorAccount(mapToXs2aAccountReference(payments.get(0).getDebtorAccount()));
+        bulk.setDebtorAccount(payments.get(0).getDebtorAccount());
         bulk.setRequestedExecutionDate(payments.get(0).getRequestedExecutionDate());
         List<SinglePayment> paymentList = payments.stream()
                                               .map(this::mapToSinglePayment)
@@ -107,23 +104,6 @@ public class CmsToXs2aPaymentMapper {
                    .orElse(null);
     }
 
-    public CommonPayment mapToXs2aCommonPayment(PisPaymentInfo paymentInfo) {
-        return Optional.ofNullable(paymentInfo)
-                   .map(dta -> {
-                            CommonPayment commonPayment = new CommonPayment();
-                            commonPayment.setPaymentId(dta.getPaymentId());
-                            commonPayment.setPaymentProduct(dta.getPaymentProduct());
-                            commonPayment.setPaymentType(dta.getPaymentType());
-                            commonPayment.setTransactionStatus(dta.getTransactionStatus());
-                            commonPayment.setPaymentData(dta.getPaymentData());
-                            commonPayment.setPsuDataList(dta.getPsuDataList());
-                            commonPayment.setTppInfo(dta.getTppInfo());
-                            return commonPayment;
-                        }
-                   )
-                   .orElse(null);
-    }
-
     private Xs2aAddress mapToXs2aAddress(CmsAddress address) {
         return Optional.ofNullable(address)
                    .map(a -> {
@@ -135,18 +115,5 @@ public class CmsToXs2aPaymentMapper {
                        xs2aAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
                        return xs2aAddress;
                    }).orElseGet(Xs2aAddress::new);
-    }
-
-    private Xs2aAccountReference mapToXs2aAccountReference(CmsAccountReference reference) {
-        return Optional.ofNullable(reference)
-                   .map(ref -> new Xs2aAccountReference(
-                       ref.getResourceId(),
-                       ref.getIban(),
-                       ref.getBban(),
-                       ref.getPan(),
-                       ref.getMaskedPan(),
-                       ref.getMsisdn(),
-                       ref.getCurrency())
-                   ).orElse(null);
     }
 }

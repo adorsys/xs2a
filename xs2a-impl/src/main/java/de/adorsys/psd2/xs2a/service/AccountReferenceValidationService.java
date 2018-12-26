@@ -17,11 +17,11 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 public class AccountReferenceValidationService {
     private final AspspProfileServiceWrapper profileService;
 
-    public ResponseObject validateAccountReferences(Set<Xs2aAccountReference> references) {
+    public ResponseObject validateAccountReferences(Set<AccountReference> references) {
         List<SupportedAccountReferenceField> supportedFields = profileService.getSupportedAccountReferenceFields();
 
         boolean isInvalidReferenceSet = references.stream()
@@ -60,7 +60,7 @@ public class AccountReferenceValidationService {
                    : ResponseObject.builder().build();
     }
 
-    private boolean isValidAccountReference(Xs2aAccountReference reference, List<SupportedAccountReferenceField> supportedFields) {
+    private boolean isValidAccountReference(AccountReference reference, List<SupportedAccountReferenceField> supportedFields) {
         Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap = supportedFields.stream()
                                                                               .map(fld -> Pair.of(fld, fld.isValid(reference)))
                                                                               .filter(p -> p.getValue().isPresent())
@@ -68,7 +68,7 @@ public class AccountReferenceValidationService {
         return areValidAllFields(validatedFieldsMap, reference);
     }
 
-    private boolean areValidAllFields(Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap, Xs2aAccountReference reference) {
+    private boolean areValidAllFields(Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap, AccountReference reference) {
 
         List<SupportedAccountReferenceField> validFields = getFilteredFields(validatedFieldsMap, true);
         List<SupportedAccountReferenceField> invalidFields = getFilteredFields(validatedFieldsMap, false);

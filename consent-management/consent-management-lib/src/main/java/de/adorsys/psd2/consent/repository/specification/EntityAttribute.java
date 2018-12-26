@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain;
+package de.adorsys.psd2.consent.repository.specification;
 
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+public class EntityAttribute {
+    public static final String INSTANCE_ID_ATTRIBUTE = "instanceId";
+    public static final String CONSENT_EXTERNAL_ID_ATTRIBUTE = "externalId";
+    public static final String PSU_ID_ATTRIBUTE = "psuId";
+    public static final String PSU_DATA_ATTRIBUTE = "psuData";
+    public static final String CONSENT_ID_ATTRIBUTE = "consentId";
+    public static final String PAYMENT_ID_ATTRIBUTE = "paymentId";
+    public static final String TIMESTAMP_ID_ATTRIBUTE = "timestamp";
 
-import java.util.Set;
-
-public interface AccountReferenceCollector {
-    Set<AccountReference> getAccountReferences();
+    private EntityAttribute() {
+    }
 }

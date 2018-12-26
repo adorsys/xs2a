@@ -20,8 +20,8 @@ import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import lombok.RequiredArgsConstructor;
@@ -82,13 +82,13 @@ public class ConsentMapper {
         return accessInfo;
     }
 
-    private List<AccountInfo> mapToListAccountInfo(List<Xs2aAccountReference> refs) {
+    private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
         return refs.stream()
                    .map(this::mapToAccountInfo)
                    .collect(Collectors.toList());
     }
 
-    private AccountInfo mapToAccountInfo(Xs2aAccountReference ref) {
+    private AccountInfo mapToAccountInfo(AccountReference ref) {
         AccountInfo info = new AccountInfo();
         info.setResourceId(ref.getResourceId());
         info.setIban(ref.getIban());

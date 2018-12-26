@@ -47,7 +47,7 @@
     <include relativeToChangelogFile="true" file="migration/0025-create-tpp-stop-list-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0026-remove-pis-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0027-add-column-instance-id-for-tpp-stop-list-table.xml"/>
-    <include relativeToChangelogFile="true"
-             file="migration/0028-add-column-instance-id-for-ais-consent-authorisation.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0028-add-column-instance-id-for-ais-consent-authorisation.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0029-add-column-instance-id-for-piis_consent.xml"/>
 
 </databaseChangeLog>

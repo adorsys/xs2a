@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuPiisServiceInternal;
@@ -28,11 +29,11 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +41,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,6 +62,8 @@ public class CmsPsuPiisServiceInternalTest {
     private PiisConsentRepository piisConsentRepository;
     @Mock
     private PiisConsentMapper piisConsentMapper;
+    @Mock
+    private PiisConsentEntitySpecification piisConsentEntitySpecification;
     @Spy
     private PsuDataMapper psuDataMapper;
 
@@ -72,20 +75,18 @@ public class CmsPsuPiisServiceInternalTest {
         psuData = psuDataMapper.mapToPsuData(psuIdData);
         piisConsentEntity = buildPiisConsentEntity(ConsentStatus.VALID);
         piisConsent = buildConsent();
-        when(piisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(piisConsentEntity));
-        when(piisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_FINALISED)).thenReturn(Optional.of(buildPiisConsentEntity(ConsentStatus.TERMINATED_BY_ASPSP)));
-        when(piisConsentRepository.findByPsuDataPsuId(psuIdData.getPsuId())).thenReturn(Collections.singletonList(piisConsentEntity));
-        when(piisConsentRepository.findByPsuDataPsuId(psuIdDataNotExist.getPsuId())).thenReturn(Collections.emptyList());
-        when(piisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
         when(piisConsentRepository.save(piisConsentEntity)).thenReturn(piisConsentEntity);
         when(piisConsentMapper.mapToPiisConsent(piisConsentEntity)).thenReturn(piisConsent);
     }
 
     @Test
     public void getConsent_success() {
-        // Given
+        //noinspection unchecked
+        when(piisConsentRepository.findOne(any(Specification.class))).thenReturn(piisConsentEntity);
+
         // When
         Optional<PiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+
         // Then
         assertTrue(consent.isPresent());
         assertEquals(consent.get(), piisConsent);
@@ -103,6 +104,8 @@ public class CmsPsuPiisServiceInternalTest {
     @Test
     public void getConsentsForPsu_success() {
         // Given
+        //noinspection unchecked
+        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.singletonList(piisConsentEntity));
         // When
         List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
@@ -117,18 +120,6 @@ public class CmsPsuPiisServiceInternalTest {
         List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdDataNotExist, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
         assertTrue(consents.isEmpty());
-    }
-
-    @Test
-    public void revokeConsent_success() {
-        // Given
-        ArgumentCaptor<PiisConsentEntity> argumentCaptor = ArgumentCaptor.forClass(PiisConsentEntity.class);
-        // When
-        boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        // Then
-        assertThat(revokeConsent).isTrue();
-        verify(piisConsentRepository).save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue().getConsentStatus()).isEqualTo(ConsentStatus.REVOKED_BY_PSU);
     }
 
     @Test

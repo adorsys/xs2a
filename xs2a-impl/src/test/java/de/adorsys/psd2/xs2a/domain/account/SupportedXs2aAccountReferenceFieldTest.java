@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -168,8 +169,8 @@ public class SupportedXs2aAccountReferenceFieldTest {
         assertThat(result.get()).isFalse();
     }
 
-    private Xs2aAccountReference getReference(String iban, String bban, String pan, String masked, String msisdn) {
-        Xs2aAccountReference reference = new Xs2aAccountReference();
+    private AccountReference getReference(String iban, String bban, String pan, String masked, String msisdn) {
+        AccountReference reference = new AccountReference();
         reference.setIban(iban);
         reference.setBban(bban);
         reference.setPan(pan);

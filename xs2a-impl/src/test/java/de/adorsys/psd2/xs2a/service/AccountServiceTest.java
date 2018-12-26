@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.*;
@@ -87,7 +88,7 @@ public class AccountServiceTest {
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
     private static final List<SpiAccountDetails> EMPTY_ACCOUNT_DETAILS_LIST = Collections.emptyList();
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE = buildSpiAccountReference();
-    private static final Xs2aAccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
+    private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final SpiTransactionReport SPI_TRANSACTION_REPORT = buildSpiTransactionReport();
     private static final ResponseObject<AccountConsent> ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE = buildErrorAllowedAccountDataResponse();
     private static final ResponseObject<AccountConsent> SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE = buildSuccessAllowedAccountDataResponse();
@@ -614,7 +615,7 @@ public class AccountServiceTest {
 
         assertThat(body).isNotNull();
         assertThat(body.getAccountReport()).isEqualTo(xs2aAccountReport);
-        assertThat(body.getXs2aAccountReference()).isEqualTo(XS2A_ACCOUNT_REFERENCE);
+        assertThat(body.getAccountReference()).isEqualTo(XS2A_ACCOUNT_REFERENCE);
         assertThat(CollectionUtils.isEqualCollection(body.getBalances(), Collections.emptyList())).isTrue();
     }
 
@@ -797,8 +798,8 @@ public class AccountServiceTest {
         return new SpiAccountReference(ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
-    private static Xs2aAccountReference buildXs2aAccountReference() {
-        return new Xs2aAccountReference(ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+    private static AccountReference buildXs2aAccountReference() {
+        return new AccountReference(ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it
@@ -837,7 +838,7 @@ public class AccountServiceTest {
         return tppInfo;
     }
 
-    private static Xs2aAccountAccess createAccountAccess(Xs2aAccountReference accountReference) {
+    private static Xs2aAccountAccess createAccountAccess(AccountReference accountReference) {
         return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
     }
 
