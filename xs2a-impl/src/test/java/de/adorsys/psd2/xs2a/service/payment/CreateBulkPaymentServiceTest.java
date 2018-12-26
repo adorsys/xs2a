@@ -19,13 +19,13 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPaymentInitiationResponse;
@@ -125,8 +125,8 @@ public class CreateBulkPaymentServiceTest<resp> {
         return amount;
     }
 
-    private Xs2aAccountReference buildReference() {
-        Xs2aAccountReference reference = new Xs2aAccountReference();
+    private AccountReference buildReference() {
+        AccountReference reference = new AccountReference();
         reference.setIban(IBAN);
         reference.setCurrency(EUR_CURRENCY);
         return reference;

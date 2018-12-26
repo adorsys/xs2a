@@ -14,6 +14,8 @@ setting:
  bankOfferedConsentSupport: false
 # pisRedirectUrlToAspsp: http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}
  pisRedirectUrlToAspsp: http://localhost:4200/pis/{redirect-id}/
+# pisPaymentCancellationRedirectUrlToAspsp: http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}
+ pisPaymentCancellationRedirectUrlToAspsp: http://localhost:4200/pis/cancellation/{redirect-id}/
 #aisRedirectUrlToAspsp: http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}
  aisRedirectUrlToAspsp: http://localhost:4200/ais/{redirect-id}/
  multicurrencyAccountLevel: SUBACCOUNT

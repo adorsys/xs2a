@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
@@ -38,10 +38,10 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorization(..)) && args(paymentId, paymentType, psuData)", returning = "result", argNames = "result,paymentId,paymentType,psuData")
-    public ResponseObject<Xsa2CreatePisAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xsa2CreatePisAuthorisationResponse> result, String paymentId, PaymentType paymentType, PsuIdData psuData) {
+    public ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xs2aCreatePisAuthorisationResponse> result, String paymentId, PaymentType paymentType, PsuIdData psuData) {
         if (!result.hasError()) {
-            Xsa2CreatePisAuthorisationResponse body = result.getBody();
-            body.setLinks(buildLink(paymentType.getValue(), paymentId, body.getAuthorizationId()));
+            Xs2aCreatePisAuthorisationResponse body = result.getBody();
+            body.setLinks(buildLink(paymentType.getValue(), paymentId, body.getAuthorisationId()));
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -51,7 +51,7 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
         Links links = new Links();
         links.setSelf(buildPath("/v1/{payment-service}/{payment-id}", paymentService, paymentId));
         links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status", paymentService, paymentId));
-        links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorizationId}", paymentService, paymentId, authorizationId));
+        links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisationId}", paymentService, paymentId, authorizationId));
         return links;
     }
 }

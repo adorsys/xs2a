@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.domain.piis;
 
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -34,7 +35,7 @@ import java.util.List;
 @Data
 @Entity(name = "piis_consent")
 @ApiModel(description = "Piis consent entity", value = "PiisConsentEntity")
-public class PiisConsentEntity {
+public class PiisConsentEntity extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "piis_consent_generator")
     @SequenceGenerator(name = "piis_consent_generator", sequenceName = "piis_consent_id_seq")

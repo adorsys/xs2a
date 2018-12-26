@@ -43,6 +43,14 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final PisPsuDataService pisPsuDataService;
     private final Xs2aEventService xs2aEventService;
 
+    /**
+     * Creates authorisation for payment cancellation request if given psu data is valid
+     *
+     * @param paymentId   String representation of payment identification
+     * @param psuData     Contains authorisation data about PSU
+     * @param paymentType Payment type supported by aspsp
+     * @return Xs2aCreatePisCancellationAuthorisationResponse that contains authorisationId, scaStatus, paymentType and related links
+     */
     @Override
     public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisCancellationAuthorization(String paymentId, PsuIdData psuData, PaymentType paymentType) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
@@ -62,6 +70,12 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                                   ::build);
     }
 
+    /**
+     * Update psu data for payment cancellation request if psu data and password are valid
+     *
+     * @param request update psu data request, which contains paymentId, authorisationId, psuData, password, authenticationMethodId, scaStatus, paymentService and scaAuthenticationData
+     * @return Xs2aUpdatePisCommonPaymentPsuDataResponse that contains authorisationId, scaStatus, psuId and related links in case of success, otherwise contains error
+     */
     @Override
     public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED, request);
@@ -85,6 +99,12 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                    .anyMatch(psu -> psu.contentEquals(psuData));
     }
 
+    /**
+     * Gets list of cancellation identifiers
+     *
+     * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
+     * @return Response containing list of cancellation identifiers in case of success or empty list in case of failure
+     */
     @Override
     public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);

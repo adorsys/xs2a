@@ -25,7 +25,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
-import de.adorsys.psd2.xs2a.domain.consent.Xsa2CreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -36,8 +36,8 @@ import java.util.Optional;
 @Component
 public class Xs2aPisCommonPaymentMapper {
 
-    public Optional<Xsa2CreatePisAuthorisationResponse> mapToXsa2CreatePisAuthorizationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.of(new Xsa2CreatePisAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType));
+    public Optional<Xs2aCreatePisAuthorisationResponse> mapToXsa2CreatePisAuthorizationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
+        return Optional.of(new Xs2aCreatePisAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType));
     }
 
     public Optional<Xs2aCreatePisCancellationAuthorisationResponse> mapToXs2aCreatePisCancellationAuthorisationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
@@ -55,7 +55,7 @@ public class Xs2aPisCommonPaymentMapper {
                        UpdatePisCommonPaymentPsuDataRequest request = new UpdatePisCommonPaymentPsuDataRequest();
                        request.setPsuData(request.getPsuData());
                        request.setPaymentId(updatePsuDataRequest.getPaymentId());
-                       request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
+                       request.setAuthorizationId(updatePsuDataRequest.getAuthorisationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));
                        request.setScaStatus(data.getScaStatus());
                        return request;

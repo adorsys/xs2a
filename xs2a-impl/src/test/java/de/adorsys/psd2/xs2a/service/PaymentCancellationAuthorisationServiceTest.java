@@ -164,7 +164,7 @@ public class PaymentCancellationAuthorisationServiceTest {
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildXs2aUpdatePisPsuDataRequest() {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
-        request.setAuthorizationId(AUTHORISATION_ID);
+        request.setAuthorisationId(AUTHORISATION_ID);
         request.setPaymentId(PAYMENT_ID);
         return request;
     }

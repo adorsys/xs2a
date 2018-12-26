@@ -29,7 +29,7 @@ import java.util.Currency;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Account Reference", value = "Xs2aAccountReference")
+@ApiModel(description = "Account Reference", value = "AccountReference")
 public class AccountReference {
 
     @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
@@ -52,6 +52,12 @@ public class AccountReference {
 
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
+
+    public AccountReference(String resourceId, String iban, Currency currency) {
+        this.resourceId = resourceId;
+        this.iban = iban;
+        this.currency = currency;
+    }
 
     @JsonIgnore
     public AccountReferenceSelector getUsedAccountReferenceSelector() {

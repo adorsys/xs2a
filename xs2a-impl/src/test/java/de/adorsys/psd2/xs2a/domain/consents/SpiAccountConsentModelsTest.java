@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.domain.consents;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import org.apache.commons.io.IOUtils;
@@ -139,24 +139,24 @@ public class SpiAccountConsentModelsTest {
 
     private CreateConsentReq getCreateConsentsRequestTest() {
 
-        Xs2aAccountReference iban1 = new Xs2aAccountReference();
+        AccountReference iban1 = new AccountReference();
         iban1.setIban("DE2310010010123456789");
 
-        Xs2aAccountReference iban2 = new Xs2aAccountReference();
+        AccountReference iban2 = new AccountReference();
         iban2.setIban("DE2310010010123456790");
         iban2.setCurrency(Currency.getInstance("USD"));
 
-        Xs2aAccountReference iban3 = new Xs2aAccountReference();
+        AccountReference iban3 = new AccountReference();
         iban3.setIban("DE2310010010123456788");
 
-        Xs2aAccountReference iban4 = new Xs2aAccountReference();
+        AccountReference iban4 = new AccountReference();
         iban4.setIban("DE2310010010123456789");
 
-        Xs2aAccountReference maskedPan = new Xs2aAccountReference();
+        AccountReference maskedPan = new AccountReference();
         maskedPan.setMaskedPan("123456xxxxxx1234");
 
-        List<Xs2aAccountReference> balances = Arrays.asList(iban1, iban2, iban3);
-        List<Xs2aAccountReference> transactions = Arrays.asList(iban4, maskedPan);
+        List<AccountReference> balances = Arrays.asList(iban1, iban2, iban3);
+        List<AccountReference> transactions = Arrays.asList(iban4, maskedPan);
 
         Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), balances, transactions, null, null);
 

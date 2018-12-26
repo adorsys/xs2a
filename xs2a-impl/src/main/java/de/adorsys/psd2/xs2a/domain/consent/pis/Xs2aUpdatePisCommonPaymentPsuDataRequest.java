@@ -23,7 +23,7 @@ import lombok.Data;
 @Data
 public class Xs2aUpdatePisCommonPaymentPsuDataRequest {
     private String paymentId;
-    private String authorizationId;
+    private String authorisationId;
     private PsuIdData psuData;
     private String password;
     private String authenticationMethodId;

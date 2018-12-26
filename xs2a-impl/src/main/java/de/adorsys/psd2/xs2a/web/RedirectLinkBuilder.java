@@ -57,7 +57,6 @@ public class RedirectLinkBuilder {
                    .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId);
     }
 
-
     /**
      * Builds redirect links by template from AspspProfile.
      * Variables "{redirect-id}" and {encrypted-payment-id} may be used in template.
@@ -67,8 +66,8 @@ public class RedirectLinkBuilder {
      * @return redirect link
      */
     public String buildPaymentCancellationScaRedirectLink(String encryptedPaymentId, String authorisationId) {
-        //TODO replace with right profile call https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/522
-        return aspspProfileService.getPisRedirectUrlToAspsp()
+        return aspspProfileService.getPisPaymentCancellationRedirectUrlToAspsp()
                    .replace(REDIRECT_URL, authorisationId)
-                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId);    }
+                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId);
+    }
 }

@@ -37,6 +37,8 @@ import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 
 @Service("PIS_PSUAUTHENTICATED")
@@ -70,18 +72,19 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisCommonPay
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = paymentAuthorisationSpi.requestAuthorisationCode(contextData, authenticationMethodId, payment, aspspConsentData);
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
-        if (spiResponse.hasError()) {
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
-        }
+        Optional<SpiAuthorizationCodeResult> optionalSpiAuthorizationCodeResult = Optional.ofNullable(spiResponse.getPayload());
 
-        SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
-
-        if (authorizationCodeResult.isEmpty()) {
+        if (!optionalSpiAuthorizationCodeResult.isPresent()) {
             ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.SCA_METHOD_UNKNOWN)
                                           .build();
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder);
         }
 
+        if (spiResponse.hasError()) {
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
+        }
+
+        SpiAuthorizationCodeResult authorizationCodeResult = optionalSpiAuthorizationCodeResult.get();
         SpiAuthenticationObject spiAuthenticationObject = authorizationCodeResult.getSelectedScaMethod();
         ChallengeData challengeData = authorizationCodeResult.getChallengeData();
 
