@@ -119,11 +119,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<AisConsentAuthorization> authorisationOptional = Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+        Optional<AisConsentAuthorization> optionalAuthorisation = Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
                                                                       .filter(a -> isConsentAuthorisationValidForPsuAndStatus(psuIdData, a));
 
-        if (authorisationOptional.isPresent()) {
-            AisConsentAuthorization authorisation = authorisationOptional.get();
+        if (optionalAuthorisation.isPresent()) {
+            AisConsentAuthorization authorisation = optionalAuthorisation.get();
 
             if (authorisation.isNotExpired()) {
                 return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
