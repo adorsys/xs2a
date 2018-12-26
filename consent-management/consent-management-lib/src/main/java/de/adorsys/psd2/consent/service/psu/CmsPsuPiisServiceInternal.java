@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service;
+package de.adorsys.psd2.consent.service.psu;
 
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPiisService;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -42,17 +43,18 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     private final PiisConsentRepository piisConsentRepository;
     private final PiisConsentMapper piisConsentMapper;
     private final PsuDataMapper psuDataMapper;
+    private final PiisConsentEntitySpecification piisConsentEntitySpecification;
 
     @Override
-    public @NotNull Optional<PiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        return piisConsentRepository.findByExternalId(consentId)
+    public @NotNull Optional<PiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)))
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentMapper::mapToPiisConsent);
     }
 
     @Override
-    public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData) {
-        return piisConsentRepository.findByPsuDataPsuId(psuIdData.getPsuId()).stream()
+    public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdIdAndInstanceId(psuIdData.getPsuId(), instanceId)).stream()
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentMapper::mapToPiisConsent)
                    .collect(Collectors.toList());
@@ -60,8 +62,8 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
 
     @Override
     @Transactional
-    public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        Optional<PiisConsentEntity> piisConsentEntity = piisConsentRepository.findByExternalId(consentId)
+    public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        Optional<PiisConsentEntity> piisConsentEntity = Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)))
                                                             .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                                                             .filter(con -> !con.getConsentStatus().isFinalisedStatus());
 

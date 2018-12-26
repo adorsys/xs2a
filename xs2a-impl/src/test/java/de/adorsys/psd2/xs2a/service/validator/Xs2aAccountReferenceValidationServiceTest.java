@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.junit.Before;
@@ -56,7 +56,7 @@ public class Xs2aAccountReferenceValidationServiceTest {
     @Test
     public void validateAccountReferences_Success() {
         //Given:
-        Set<Xs2aAccountReference> references = new HashSet<>(Arrays.asList(getReference(IBAN, BBAN, PAN, MASKED_PAN, MSISDN), getReference(null, BBAN, null, null, WRONG_MSISDN)));
+        Set<AccountReference> references = new HashSet<>(Arrays.asList(getReference(IBAN, BBAN, PAN, MASKED_PAN, MSISDN), getReference(null, BBAN, null, null, WRONG_MSISDN)));
         //When:
         ResponseObject error = validationService.validateAccountReferences(references);
         //Then:
@@ -66,7 +66,7 @@ public class Xs2aAccountReferenceValidationServiceTest {
     @Test
     public void validateAccountReferences_Failure_Not_in_ASPSP_profile() {
         //Given:
-        Set<Xs2aAccountReference> references = new HashSet<>(Arrays.asList(getReference(null, null, PAN, MASKED_PAN, MSISDN), getReference(null, BBAN, null, null, WRONG_MSISDN)));
+        Set<AccountReference> references = new HashSet<>(Arrays.asList(getReference(null, null, PAN, MASKED_PAN, MSISDN), getReference(null, BBAN, null, null, WRONG_MSISDN)));
         //When:
         ResponseObject error = validationService.validateAccountReferences(references);
         //Then:
@@ -76,14 +76,14 @@ public class Xs2aAccountReferenceValidationServiceTest {
     @Test
     public void validateAccountReferences_Failure_wrong_iban() {
         //Given:
-        Set<Xs2aAccountReference> references = new HashSet<>(Arrays.asList(getReference(WRONG_IBAN, null, null, null, null), getReference(null, BBAN, null, null, null)));
+        Set<AccountReference> references = new HashSet<>(Arrays.asList(getReference(WRONG_IBAN, null, null, null, null), getReference(null, BBAN, null, null, null)));
         //When:
         ResponseObject error = validationService.validateAccountReferences(references);
         //Then:
         assertThat(error.hasError()).isTrue();
     }
 
-    private Xs2aAccountReference getReference(String iban, String bban, String pan, String masked, String msisdn) {
-        return new Xs2aAccountReference(UUID.randomUUID().toString(), iban, bban, pan, masked, msisdn, Currency.getInstance("EUR"));
+    private AccountReference getReference(String iban, String bban, String pan, String masked, String msisdn) {
+        return new AccountReference(UUID.randomUUID().toString(), iban, bban, pan, masked, msisdn, Currency.getInstance("EUR"));
     }
 }

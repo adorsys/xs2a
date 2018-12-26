@@ -178,6 +178,15 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().getRedirectUrlExpirationTimeMs();
     }
 
+    /**
+     * Reads get PIS payment cancellation redirect url to aspsp from ASPSP profile service
+     *
+     * @return Url in order to redirect SCA approach
+     */
+    public String getPisPaymentCancellationRedirectUrlToAspsp() {
+        return readAspspSettings().getPisPaymentCancellationRedirectUrlToAspsp();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

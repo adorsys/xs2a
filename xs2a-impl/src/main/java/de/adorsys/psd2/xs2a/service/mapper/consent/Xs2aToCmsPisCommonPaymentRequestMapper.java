@@ -17,14 +17,12 @@
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
@@ -112,11 +110,11 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
                        pisPayment.setPaymentId(pmt.getPaymentId());
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
-                       pisPayment.setDebtorAccount(mapToPisAccountReference(pmt.getDebtorAccount()));
+                       pisPayment.setDebtorAccount(pmt.getDebtorAccount());
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());
                        pisPayment.setAmount(new BigDecimal(pmt.getInstructedAmount().getAmount())); // todo remake amount type from String to BigDecimal
-                       pisPayment.setCreditorAccount(mapToPisAccountReference(pmt.getCreditorAccount()));
+                       pisPayment.setCreditorAccount(pmt.getCreditorAccount());
                        pisPayment.setCreditorAgent(pmt.getCreditorAgent());
                        pisPayment.setCreditorName(pmt.getCreditorName());
                        pisPayment.setCreditorAddress(mapToCmsAddress(pmt.getCreditorAddress()));
@@ -141,11 +139,11 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
                        pisPayment.setPaymentId(pmt.getPaymentId());
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
-                       pisPayment.setDebtorAccount(mapToPisAccountReference(pmt.getDebtorAccount()));
+                       pisPayment.setDebtorAccount(pmt.getDebtorAccount());
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());
                        pisPayment.setAmount(new BigDecimal(pmt.getInstructedAmount().getAmount())); // todo remake amount type from String to BigDecimal
-                       pisPayment.setCreditorAccount(mapToPisAccountReference(pmt.getCreditorAccount()));
+                       pisPayment.setCreditorAccount(pmt.getCreditorAccount());
                        pisPayment.setCreditorAgent(pmt.getCreditorAgent());
                        pisPayment.setCreditorName(pmt.getCreditorName());
                        pisPayment.setCreditorAddress(mapToCmsAddress(pmt.getCreditorAddress()));
@@ -165,19 +163,6 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
                        return pisPayment;
                    }).orElse(null);
-    }
-
-    private CmsAccountReference mapToPisAccountReference(Xs2aAccountReference xs2aAccountReference) {
-        return Optional.ofNullable(xs2aAccountReference)
-                   .map(ref -> new CmsAccountReference(
-                       ref.getResourceId(),
-                       ref.getIban(),
-                       ref.getBban(),
-                       ref.getPan(),
-                       ref.getMaskedPan(),
-                       ref.getMsisdn(),
-                       ref.getCurrency())
-                   ).orElse(null);
     }
 
     private CmsAddress mapToCmsAddress(Xs2aAddress address) {

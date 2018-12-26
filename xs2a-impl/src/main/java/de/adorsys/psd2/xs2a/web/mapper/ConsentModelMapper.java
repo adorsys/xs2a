@@ -19,8 +19,8 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -58,7 +58,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public StartScaprocessResponse mapToStartScaProcessResponse(Xsa2CreatePisAuthorisationResponse response) {
+    public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisAuthorisationResponse response) {
         return Optional.ofNullable(response)
                    .map(r -> new StartScaprocessResponse()
                                  .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
@@ -194,7 +194,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private List<Xs2aAccountReference> mapToXs2aAccountReferences(List<Object> references) {
+    private List<AccountReference> mapToXs2aAccountReferences(List<Object> references) {
         return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
                                    .map(this::mapToXs2aAccountReference)
@@ -202,8 +202,8 @@ public class ConsentModelMapper {
                    .orElseGet(Collections::emptyList);
     }
 
-    private Xs2aAccountReference mapToXs2aAccountReference(Object reference) {
-        return objectMapper.convertValue(reference, Xs2aAccountReference.class);
+    private AccountReference mapToXs2aAccountReference(Object reference) {
+        return objectMapper.convertValue(reference, AccountReference.class);
     }
 
     public UpdateConsentPsuDataReq mapToUpdatePsuData(PsuIdData psuData, String consentId, String authorizationId, Map body) {
@@ -235,7 +235,7 @@ public class ConsentModelMapper {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setPsuData(psuData);
         request.setPaymentId(paymentId);
-        request.setAuthorizationId(authorisationId);
+        request.setAuthorisationId(authorisationId);
         request.setPaymentService(paymentService);
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))

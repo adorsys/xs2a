@@ -23,13 +23,13 @@ import lombok.Data;
 
 @Data
 public class Xs2aCreatePisCancellationAuthorisationResponse {
-    private String authorizationId;
+    private String authorisationId;
     private ScaStatus scaStatus;
     private PaymentType paymentType;
     private Links links = new Links();
 
-    public Xs2aCreatePisCancellationAuthorisationResponse(String authorizationId, ScaStatus scaStatus, PaymentType paymentType) {
-        this.authorizationId = authorizationId;
+    public Xs2aCreatePisCancellationAuthorisationResponse(String authorisationId, ScaStatus scaStatus, PaymentType paymentType) {
+        this.authorisationId = authorisationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;
     }

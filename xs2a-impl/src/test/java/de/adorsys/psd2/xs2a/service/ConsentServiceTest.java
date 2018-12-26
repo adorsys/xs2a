@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -29,7 +30,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -672,8 +672,8 @@ public class ConsentServiceTest {
         return new SpiAccountReference(null, iban, null, null, null, null, currency);
     }
 
-    private Xs2aAccountReference getXs2aReference(String iban, Currency currency) {
-        return new Xs2aAccountReference(null, iban, null, null, null, null, currency);
+    private AccountReference getXs2aReference(String iban, Currency currency) {
+        return new AccountReference(null, iban, null, null, null, null, currency);
     }
 
     private Optional<SpiAccountAccess> getSpiAccountAccessOptional(List<SpiAccountReference> accounts, List<SpiAccountReference> balances, List<SpiAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
@@ -684,7 +684,7 @@ public class ConsentServiceTest {
         return new SpiAccountAccess(accounts, balances, transactions, allAccounts ? SpiAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? SpiAccountAccessType.ALL_ACCOUNTS : null);
     }
 
-    private Xs2aAccountAccess getXs2aAccountAccess(List<Xs2aAccountReference> accounts, List<Xs2aAccountReference> balances, List<Xs2aAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+    private Xs2aAccountAccess getXs2aAccountAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
         return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? Xs2aAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? Xs2aAccountAccessType.ALL_ACCOUNTS : null);
     }
 
@@ -714,20 +714,20 @@ public class ConsentServiceTest {
         return req;
     }
 
-    private Xs2aAccountAccess getAccess(List<Xs2aAccountReference> accounts, List<Xs2aAccountReference> balances, List<Xs2aAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+    private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
         return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? Xs2aAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? Xs2aAccountAccessType.ALL_ACCOUNTS : null);
     }
 
-    private List<Xs2aAccountReference> getReferenceList() {
-        List<Xs2aAccountReference> list = new ArrayList<>();
+    private List<AccountReference> getReferenceList() {
+        List<AccountReference> list = new ArrayList<>();
         list.add(getReference(CORRECT_IBAN, CURRENCY));
         list.add(getReference(CORRECT_IBAN_1, CURRENCY_2));
 
         return list;
     }
 
-    private Xs2aAccountReference getReference(String iban, Currency currency) {
-        Xs2aAccountReference ref = new Xs2aAccountReference();
+    private AccountReference getReference(String iban, Currency currency) {
+        AccountReference ref = new AccountReference();
         ref.setIban(iban);
         ref.setCurrency(currency);
         return ref;

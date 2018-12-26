@@ -17,8 +17,9 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.model.AccountStatus;
+import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
@@ -165,7 +166,7 @@ public class AccountModelMapper {
         return target;
     }
 
-    public <T> T mapToAccountReference12(Xs2aAccountReference reference) {
+    public <T> T mapToAccountReference12(AccountReference reference) {
         if (reference == null) {
             return null;
         }
@@ -232,7 +233,7 @@ public class AccountModelMapper {
         TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
         transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));
         transactionsResponse200Json.setBalances(mapToBalanceList(transactionsReport.getBalances()));
-        transactionsResponse200Json.setAccount(mapToAccountReference12(transactionsReport.getXs2aAccountReference()));
+        transactionsResponse200Json.setAccount(mapToAccountReference12(transactionsReport.getAccountReference()));
         transactionsResponse200Json.setLinks(objectMapper.convertValue(transactionsReport.getLinks(), Map.class));
         return transactionsResponse200Json;
 
@@ -250,8 +251,8 @@ public class AccountModelMapper {
         return transactionDetails;
     }
 
-    private Object createAccountObject(Xs2aAccountReference xs2aAccountReference) {
-        return Optional.ofNullable(xs2aAccountReference)
+    private Object createAccountObject(AccountReference accountReference) {
+        return Optional.ofNullable(accountReference)
                    .map(account -> {
                        if (account.getIban() != null) {
                            return new AccountReferenceIban()
@@ -280,8 +281,8 @@ public class AccountModelMapper {
                    .orElse(null);
     }
 
-    private String getCurrencyFromAccountReference(Xs2aAccountReference xs2aAccountReference) {
-        return Optional.ofNullable(xs2aAccountReference.getCurrency())
+    private String getCurrencyFromAccountReference(AccountReference accountReference) {
+        return Optional.ofNullable(accountReference.getCurrency())
                    .map(Currency::getCurrencyCode)
                    .orElse(null);
     }

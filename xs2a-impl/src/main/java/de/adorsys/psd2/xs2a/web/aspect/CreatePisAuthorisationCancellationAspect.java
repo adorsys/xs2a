@@ -46,7 +46,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> result, String paymentId, PsuIdData psuData, PaymentType paymentType) {
         if (!result.hasError()) {
             Xs2aCreatePisCancellationAuthorisationResponse body = result.getBody();
-            body.setLinks(buildLink(paymentType.getValue(), paymentId, body.getAuthorizationId()));
+            body.setLinks(buildLink(paymentType.getValue(), paymentId, body.getAuthorisationId()));
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -68,7 +68,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     }
 
     private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentId, String authorizationId) {
-        links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{paymentId}/cancellation-authorisations/{authorizationId}", paymentService, paymentId, authorizationId));
+        links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{paymentId}/cancellation-authorisations/{authorisationId}", paymentService, paymentId, authorizationId));
         return links;
     }
 

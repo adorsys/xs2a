@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service;
+package de.adorsys.psd2.consent.service.psu;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
@@ -25,6 +25,8 @@ import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
+import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
+import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -47,17 +49,19 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-// TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
+//TODO Discuss instanceId security workflow https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/577
 public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentMapper consentMapper;
     private final PsuDataRepository psuDataRepository;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
+    private final AisConsentAuthorizationSpecification aisConsentAuthorizationSpecification;
+    private final AisConsentSpecification aisConsentSpecification;
 
     @Override
     @Transactional
-    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
-        return aisConsentAuthorizationRepository.findByExternalId(redirectId)
+    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
+        return Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
                    .map(AisConsentAuthorization::getConsent)
                    .map(con -> updatePsuData(con, psuIdData))
                    .orElse(false);
@@ -65,55 +69,55 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
-    public @NotNull Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
+    public @NotNull Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return Optional.ofNullable(aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId)))
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
     }
 
     @Override
     @Transactional
-    public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status) {
-        Optional<AisConsent> actualAisConsent = getActualAisConsent(consentId);
+    public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) {
+        Optional<AisConsent> actualAisConsent = getActualAisConsent(consentId, instanceId);
 
         if (!actualAisConsent.isPresent()) {
             return false;
         }
 
-        return aisConsentAuthorizationRepository.findByExternalId(authorisationId)
+        return Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)))
                    .map(auth -> updateScaStatus(status, auth))
                    .orElse(false);
     }
 
     @Override
     @Transactional
-    public boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        return changeConsentStatus(consentId, VALID);
+    public boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return changeConsentStatus(consentId, VALID, instanceId);
     }
 
     @Override
     @Transactional
-    public boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        return changeConsentStatus(consentId, REJECTED);
+    public boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return changeConsentStatus(consentId, REJECTED, instanceId);
     }
 
     @Override
-    public @NotNull List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData) {
-        return aisConsentRepository.findByPsuDataPsuId(psuIdData.getPsuId()).stream()
+    public @NotNull List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+        return aisConsentRepository.findAll(aisConsentSpecification.byPsuIdIdAndInstanceId(psuIdData.getPsuId(), instanceId)).stream()
                    .map(consentMapper::mapToAisAccountConsent)
                    .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId) {
-        return changeConsentStatus(consentId, REVOKED_BY_PSU);
+    public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
+        return changeConsentStatus(consentId, REVOKED_BY_PSU, instanceId);
     }
 
     @Override
     @Transactional
-    public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
-        Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorizationRepository.findByExternalId(redirectId);
+    public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
+        Optional<AisConsentAuthorization> authorisationOptional = Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)));
 
         if (!authorisationOptional.isPresent()) {
             return Optional.empty();
@@ -129,8 +133,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
     }
 
-    private boolean changeConsentStatus(String consentId, ConsentStatus status) {
-        return aisConsentRepository.findByExternalId(consentId)
+    private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {
+        return Optional.ofNullable(aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId)))
                    .map(con -> updateConsentStatus(con, status))
                    .orElse(false);
     }
@@ -145,8 +149,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return consent;
     }
 
-    private Optional<AisConsent> getActualAisConsent(String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
+    private Optional<AisConsent> getActualAisConsent(String consentId, String instanceId) {
+        return Optional.ofNullable(aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId)))
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
