@@ -119,9 +119,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<AisConsentAuthorization> authorisationOptional = Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)));
-    public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId) {
-        Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorizationRepository.findByExternalId(redirectId)
+        Optional<AisConsentAuthorization> authorisationOptional = Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
                                                                       .filter(a -> isConsentAuthorisationValidForPsuAndStatus(psuIdData, a));
 
         if (authorisationOptional.isPresent()) {
@@ -140,7 +138,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return Optional.empty();
     }
 
-    private boolean isConsentAuthorisationValidForPsuAndStatus(PsuIdData givenPsuIdData, AisConsentAuthorization authorisation) {
+    private boolean isConsentAuthorisationValidForPsuAndStatus(PsuIdData givenPsuIdData, AisConsentAuthorization
+                                                                                             authorisation) {
         if (authorisation.getScaStatus().isFinalisedStatus()) {
             return false;
         }
@@ -203,7 +202,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         aisConsentAuthorizationRepository.save(authorisation);
     }
 
-    private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String redirectId) {
+    private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String
+                                                                                                                 redirectId) {
         if (aisConsent == null) {
             return Optional.empty();
         }
