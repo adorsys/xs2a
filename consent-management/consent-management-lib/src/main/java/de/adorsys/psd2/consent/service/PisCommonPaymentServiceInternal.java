@@ -333,12 +333,12 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         return pisAuthorization;
     }
 
-    private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorizations, PsuData psuData, CmsAuthorisationType authorisationType) {
+    private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, PsuData psuData, CmsAuthorisationType authorisationType) {
         if (!isPsuDataCorrect(psuData)) {
             return;
         }
 
-        List<PisAuthorization> pisAuthorizationList = authorizations.stream()
+        List<PisAuthorization> pisAuthorizationList = authorisations.stream()
                                                           .filter(auth -> auth.getAuthorizationType() == authorisationType)
                                                           .filter(auth -> auth.getPsuData().contentEquals(psuData))
                                                           .peek(auth -> {
