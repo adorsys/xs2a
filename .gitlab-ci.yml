@@ -253,7 +253,7 @@ build_package_java8:
 build_package_java11:
   image: "maven:3.6-jdk-11"
   variables:
-    JAVA_TOOL_OPTIONS: "-XX:MaxRAM=3G -XX:MaxRAMFraction=3"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   <<: *build_java
 
 
@@ -303,7 +303,7 @@ check_javadoc_java11:
   stage: "build:qa"
   image: "maven:3.6-jdk-11"
   variables:
-    JAVA_TOOL_OPTIONS: "-XX:MaxRAM=3G -XX:MaxRAMFraction=3"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   script:
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
@@ -322,7 +322,7 @@ unit_tests_java11:
   <<: *java_tests
   image: "maven:3.6-jdk-11"
   variables:
-    JAVA_TOOL_OPTIONS: "-XX:MaxRAM=3G -XX:MaxRAMFraction=3"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
 
 test_build_docker:
   stage: "build:qa"
