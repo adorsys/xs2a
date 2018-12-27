@@ -68,6 +68,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
@@ -204,7 +205,7 @@ public class PaymentServiceTest {
         when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
         doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(pisPayment), eq("sepa-credit-transfers"), any(PaymentType.class));
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -224,7 +225,7 @@ public class PaymentServiceTest {
         when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
         doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(pisPayment), eq("sepa-credit-transfers"), any(PaymentType.class));
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
         ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
@@ -278,7 +279,7 @@ public class PaymentServiceTest {
         when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
         doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(pisPayment), eq("sepa-credit-transfers"), any(PaymentType.class));
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -333,7 +334,7 @@ public class PaymentServiceTest {
         when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
         when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
-        when(readPaymentStatusService.readPaymentStatus(eq(pisPayment), eq("sepa-credit-transfers"), any(SpiContextData.class), eq(ASPSP_CONSENT_DATA)))
+        when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(SpiContextData.class), eq(ASPSP_CONSENT_DATA)))
             .thenReturn(
                 SpiResponse.<SpiTransactionStatus>builder()
                     .payload(SpiTransactionStatus.RCVD)
@@ -466,7 +467,7 @@ public class PaymentServiceTest {
     private Optional<PisCommonPaymentResponse> getFinalisedPisCommonPayment() {
         PisCommonPaymentResponse response = new PisCommonPaymentResponse();
         response.setPaymentProduct("sepa-credit-transfers");
-        response.setPayments(Collections.singletonList(getFinalisedPisPayment()));
+        response.setPayments(getFinalisedPisPayment());
         return Optional.of(response);
     }
 
@@ -476,10 +477,10 @@ public class PaymentServiceTest {
         return pisPayment;
     }
 
-    private PisPayment getFinalisedPisPayment() {
+    private List<PisPayment> getFinalisedPisPayment() {
         PisPayment pisPayment = new PisPayment();
         pisPayment.setTransactionStatus(TransactionStatus.RJCT);
-        return pisPayment;
+        return Collections.singletonList(pisPayment);
     }
 
 }

@@ -154,16 +154,15 @@ public class PaymentService {
         if (commonPayment.getPaymentData() != null) {
             response = readCommonPaymentService.getPayment(commonPayment, readPsuIdDataFromList(commonPayment.getPsuDataList()), aspspConsentData);
         } else {
-            PisPayment pisPayment = getPisPaymentFromCommonPaymentResponse(commonPaymentResponse);
-
-            if (pisPayment == null) {
+            List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(commonPaymentResponse);
+            if (CollectionUtils.isEmpty(pisPayments)) {
                 return ResponseObject.builder()
                            .fail(new MessageError(FORMAT_ERROR, "Payment not found"))
                            .build();
             }
 
             ReadPaymentService<PaymentInformationResponse> readPaymentService = readPaymentFactory.getService(paymentType.getValue());
-            response = readPaymentService.getPayment(pisPayment, commonPaymentResponse.getPaymentProduct(), readPsuIdDataFromList(commonPayment.getPsuDataList()), aspspConsentData); //NOT USED IN 1.2
+            response = readPaymentService.getPayment(pisPayments, commonPaymentResponse.getPaymentProduct(), readPsuIdDataFromList(commonPayment.getPsuDataList()), aspspConsentData); //NOT USED IN 1.2
         }
 
         if (response.hasError()) {
@@ -204,16 +203,15 @@ public class PaymentService {
             SpiPaymentInfo request = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
             spiResponse = commonPaymentSpi.getPaymentStatusById(spiContextData, request, aspspConsentData);
         } else {
-            PisPayment pisPayment = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
-
-            if (pisPayment == null) {
+            List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
+            if (CollectionUtils.isEmpty(pisPayments)) {
                 return ResponseObject.<TransactionStatus>builder()
                            .fail(new MessageError(FORMAT_ERROR, "Payment not found"))
                            .build();
             }
 
             ReadPaymentStatusService readPaymentStatusService = readPaymentStatusFactory.getService(ReadPaymentStatusFactory.SERVICE_PREFIX + paymentType.getValue());
-            spiResponse = readPaymentStatusService.readPaymentStatus(pisPayment, pisCommonPaymentResponse.getPaymentProduct(), spiContextData, aspspConsentData);
+            spiResponse = readPaymentStatusService.readPaymentStatus(pisPayments, pisCommonPaymentResponse.getPaymentProduct(), spiContextData, aspspConsentData);
         }
 
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -245,8 +243,8 @@ public class PaymentService {
     /**
      * Cancels payment by its ASPSP identifier and payment type
      *
-     * @param paymentType type of payment (payments, bulk-payments, periodic-payments)
-     * @param encryptedPaymentId   ASPSP identifier of the payment
+     * @param paymentType        type of payment (payments, bulk-payments, periodic-payments)
+     * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about cancelled payment or corresponding error
      */
     public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String encryptedPaymentId) {
@@ -266,14 +264,14 @@ public class PaymentService {
             CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentResponse);
             spiPayment = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
         } else {
-            PisPayment pisPayment = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
-            if (pisPayment == null) {
+            List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
+            if (CollectionUtils.isEmpty(pisPayments)) {
                 return ResponseObject.<CancelPaymentResponse>builder()
                            .fail(new MessageError(FORMAT_ERROR, "Payment not found"))
                            .build();
             }
 
-            Optional<? extends SpiPayment> spiPaymentOptional = spiPaymentFactory.createSpiPaymentByPaymentType(pisPayment, pisCommonPaymentResponse.getPaymentProduct(), paymentType);
+            Optional<? extends SpiPayment> spiPaymentOptional = spiPaymentFactory.createSpiPaymentByPaymentType(pisPayments, pisCommonPaymentResponse.getPaymentProduct(), paymentType);
 
             if (!spiPaymentOptional.isPresent()) {
                 log.error("Unknown payment type: {}", paymentType);
@@ -310,12 +308,10 @@ public class PaymentService {
         return CollectionUtils.isNotEmpty(finalisedPayments);
     }
 
-    private PisPayment getPisPaymentFromCommonPaymentResponse(PisCommonPaymentResponse pisCommonPaymentResponse) {
+    private List<PisPayment> getPisPaymentFromCommonPaymentResponse(PisCommonPaymentResponse pisCommonPaymentResponse) {
         return Optional.of(pisCommonPaymentResponse)
                    .map(PisCommonPaymentResponse::getPayments)
-                   .filter(CollectionUtils::isNotEmpty)
-                   .map(payments -> payments.get(0))
-                   .orElse(null);
+                   .orElse(Collections.emptyList());
     }
 
     private PsuIdData readPsuIdDataFromList(List<PsuIdData> psuIdDataList) { //TODO rework psudata list
