@@ -154,6 +154,7 @@
         <nimbus-jose-jwt.version>6.1.1</nimbus-jose-jwt.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
 
         <jackson.version>2.9.7</jackson.version>
 
@@ -549,7 +550,6 @@
                     <printFailingErrors>true</printFailingErrors>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
