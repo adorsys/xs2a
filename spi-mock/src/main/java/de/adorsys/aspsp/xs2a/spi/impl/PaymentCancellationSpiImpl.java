@@ -140,6 +140,12 @@ public class PaymentCancellationSpiImpl implements PaymentCancellationSpi {
                              .map(String::getBytes)
                              .orElse(null);
 
+        if (spiAuthorisationStatus == FAILURE) {
+            return SpiResponse.<SpiAuthorisationStatus>builder()
+                       .aspspConsentData(aspspConsentData.respondWith(payload))
+                       .fail(SpiResponseStatus.UNAUTHORIZED_FAILURE);
+        }
+
         return SpiResponse.<SpiAuthorisationStatus>builder()
                    .aspspConsentData(aspspConsentData.respondWith(payload))
                    .payload(spiAuthorisationStatus)
