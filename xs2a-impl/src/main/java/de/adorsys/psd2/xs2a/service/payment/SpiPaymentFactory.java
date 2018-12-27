@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -52,19 +52,19 @@ public class SpiPaymentFactory {
     /**
      * Creates Optional of SpiPayment from PisPayment, PaymentProduct and PaymentType. Should be used, when general SpiPayment type is needed.
      *
-     * @param pisPayment     PisPayment
+     * @param pisPayments     PisPayment
      * @param paymentProduct PaymentProduct
      * @param paymentType    PaymentType
      * @return Optional of SpiPayment subclass of requested payment type or throws IllegalArgumentException for unknown payment type
      */
-    public Optional<? extends SpiPayment> createSpiPaymentByPaymentType(PisPayment pisPayment, String paymentProduct, PaymentType paymentType) {
+    public Optional<? extends SpiPayment> createSpiPaymentByPaymentType(List<PisPayment> pisPayments, String paymentProduct, PaymentType paymentType) {
         switch (paymentType) {
             case SINGLE:
-                return createSpiSinglePayment(pisPayment, paymentProduct);
+                return createSpiSinglePayment(pisPayments.get(0), paymentProduct);
             case PERIODIC:
-                return createSpiPeriodicPayment(pisPayment, paymentProduct);
+                return createSpiPeriodicPayment(pisPayments.get(0), paymentProduct);
             case BULK:
-                return createSpiBulkPayment(pisPayment, paymentProduct);
+                return createSpiBulkPayment(pisPayments, paymentProduct);
             default:
                 log.error("Unknown payment type: {}", paymentType);
                 throw new IllegalArgumentException("Unknown payment type");
@@ -108,12 +108,12 @@ public class SpiPaymentFactory {
     /**
      * Creates SpiBulkPayment from PisPayment and PaymentProduct. Should be used, when concrete SpiBulkPayment type is needed.
      *
-     * @param pisPayment     PisPayment
+     * @param pisPayments List of PisPayments
      * @param paymentProduct PaymentProduct
      * @return Optional of SpiBulkPayment from PisPayment
      */
-    public Optional<SpiBulkPayment> createSpiBulkPayment(PisPayment pisPayment, String paymentProduct) {
-        BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(Collections.singletonList(pisPayment));
+    public Optional<SpiBulkPayment> createSpiBulkPayment(List<PisPayment> pisPayments, String paymentProduct) {
+        BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(pisPayments);
 
         if (bulkPayment == null) {
             return Optional.empty();

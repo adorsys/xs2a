@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service("payments")
@@ -49,8 +50,8 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
     private final SpiPaymentFactory spiPaymentFactory;
 
     @Override
-    public PaymentInformationResponse<SinglePayment> getPayment(PisPayment pisPayment, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
-        Optional<SpiSinglePayment> spiPaymentOptional = spiPaymentFactory.createSpiSinglePayment(pisPayment, paymentProduct);
+    public PaymentInformationResponse<SinglePayment> getPayment(List<PisPayment> pisPayments, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData) {
+        Optional<SpiSinglePayment> spiPaymentOptional = spiPaymentFactory.createSpiSinglePayment(pisPayments.get(0), paymentProduct);
 
         if (!spiPaymentOptional.isPresent()) {
             return new PaymentInformationResponse<>(

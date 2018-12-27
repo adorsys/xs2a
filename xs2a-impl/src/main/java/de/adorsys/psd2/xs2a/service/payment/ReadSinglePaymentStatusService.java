@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service("status-payments")
@@ -36,8 +37,8 @@ public class ReadSinglePaymentStatusService implements ReadPaymentStatusService 
     private final SinglePaymentSpi singlePaymentSpi;
 
     @Override
-    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
-        Optional<SpiSinglePayment> spiSinglePaymentOptional = spiPaymentFactory.createSpiSinglePayment(pisPayment, paymentProduct);
+    public SpiResponse<SpiTransactionStatus> readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
+        Optional<SpiSinglePayment> spiSinglePaymentOptional = spiPaymentFactory.createSpiSinglePayment(pisPayments.get(0), paymentProduct);
 
         return spiSinglePaymentOptional
                    .map(spiSinglePayment -> singlePaymentSpi.getPaymentStatusById(spiContextData, spiSinglePayment, aspspConsentData))

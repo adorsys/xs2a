@@ -22,7 +22,9 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 
+import java.util.List;
+
 public interface ReadPaymentStatusService {
 
-    SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionStatus> readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData);
 }
