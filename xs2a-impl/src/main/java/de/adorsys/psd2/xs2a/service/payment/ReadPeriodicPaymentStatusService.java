@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service("status-periodic-payments")
@@ -36,8 +37,8 @@ public class ReadPeriodicPaymentStatusService implements ReadPaymentStatusServic
     private final PeriodicPaymentSpi periodicPaymentSpi;
 
     @Override
-    public SpiResponse<SpiTransactionStatus> readPaymentStatus(PisPayment pisPayment, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
-        Optional<SpiPeriodicPayment> spiPeriodicPaymentOptional = spiPaymentFactory.createSpiPeriodicPayment(pisPayment, paymentProduct);
+    public SpiResponse<SpiTransactionStatus> readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
+        Optional<SpiPeriodicPayment> spiPeriodicPaymentOptional = spiPaymentFactory.createSpiPeriodicPayment(pisPayments.get(0), paymentProduct);
 
         return spiPeriodicPaymentOptional
                    .map(spiPeriodicPayment -> periodicPaymentSpi.getPaymentStatusById(spiContextData, spiPeriodicPayment, aspspConsentData))
