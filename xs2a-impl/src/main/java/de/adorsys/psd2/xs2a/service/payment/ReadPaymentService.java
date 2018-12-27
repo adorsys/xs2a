@@ -20,6 +20,8 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
+import java.util.List;
+
 public abstract class ReadPaymentService<T> {
-    public abstract T getPayment(PisPayment pisPayment, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData);
+    public abstract T getPayment(List<PisPayment> pisPayments, String paymentProduct, PsuIdData psuData, AspspConsentData aspspConsentData);
 }
