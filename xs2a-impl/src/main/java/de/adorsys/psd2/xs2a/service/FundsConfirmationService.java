@@ -115,8 +115,7 @@ public class FundsConfirmationService {
         }
 
         List<PiisConsent> response = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
-                                                                                              selector,
-                                                                                              selector.getAccountReferenceValue(accountReference));
+                                                                                              selector);
 
         return piisConsentValidationService.validatePiisConsentData(response);
     }

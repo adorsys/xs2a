@@ -197,12 +197,12 @@ public class ConsentModelMapper {
     private List<AccountReference> mapToXs2aAccountReferences(List<Object> references) {
         return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
-                                   .map(this::mapToXs2aAccountReference)
+                                   .map(this::mapToAccountReference)
                                    .collect(Collectors.toList()))
                    .orElseGet(Collections::emptyList);
     }
 
-    private AccountReference mapToXs2aAccountReference(Object reference) {
+    private AccountReference mapToAccountReference(Object reference) {
         return objectMapper.convertValue(reference, AccountReference.class);
     }
 

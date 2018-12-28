@@ -81,7 +81,7 @@ public class AisConsentMapper {
     private List<AccountReference> mapToCmsAccountReference(List<AccountAccess> aisAccounts, TypeAccess typeAccess) {
         return aisAccounts.stream()
                    .filter(ass -> ass.getTypeAccess() == typeAccess)
-                   .map(access -> new AccountReference(access.getResourceId(), access.getIban(), access.getCurrency()))
+                   .map(access -> new AccountReference(access.getAccountReferenceType(), access.getAccountIdentifier(), access.getCurrency(), access.getResourceId()))
                    .collect(Collectors.toList());
     }
 }
