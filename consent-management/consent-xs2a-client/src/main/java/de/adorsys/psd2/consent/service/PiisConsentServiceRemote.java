@@ -42,7 +42,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
     private final PiisConsentRemoteUrls remotePiisConsentUrls;
 
     @Override
-    public List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier) {
+    public List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountReferenceSelector) {
         List<PiisConsent> response = Collections.emptyList();
 
         try {
@@ -53,8 +53,8 @@ public class PiisConsentServiceRemote implements PiisConsentService {
                 new ParameterizedTypeReference<List<PiisConsent>>() {
                 },
                 currency.toString(),
-                accountIdentifierName.name(),
-                accountIdentifier
+                accountReferenceSelector.getAccountReferenceType().name(),
+                accountReferenceSelector.getAccountReferenceValue()
             ).getBody();
         } catch (CmsRestException e) {
             log.error("Failed to retrieve piis consent validation data!");

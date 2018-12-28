@@ -132,9 +132,9 @@ public class AisConsentServiceInternalTest {
         // Then
         AisAccountAccessInfo info = new AisAccountAccessInfo();
         info.setAccounts(Arrays.asList(
-            new AccountInfo(UUID.randomUUID().toString(), "iban-1", "EUR"),
-            new AccountInfo(UUID.randomUUID().toString(), "iban-1", "USD")
-        ));
+            AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency("EUR").build(),
+            AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency("USD").build())
+        );
         Optional<String> consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
         assertTrue(consentId.isPresent());
@@ -142,11 +142,11 @@ public class AisConsentServiceInternalTest {
         // Then
         info = new AisAccountAccessInfo();
         info.setAccounts(Arrays.asList(
-            new AccountInfo(UUID.randomUUID().toString(), "iban-1", "EUR"),
-            new AccountInfo(UUID.randomUUID().toString(), "iban-2", "USD"),
-            new AccountInfo(UUID.randomUUID().toString(), "iban-2", "EUR"),
-            new AccountInfo(UUID.randomUUID().toString(), "iban-3", "USD")
-        ));
+            AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency("EUR").build(),
+            AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-2").currency("USD").build(),
+            AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-3").currency("EUR").build(),
+            AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-3").currency("USD").build())
+        );
         consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
         assertTrue(consentId.isPresent());
@@ -249,7 +249,11 @@ public class AisConsentServiceInternalTest {
     }
 
     private List<AccountInfo> buildAccountsInfo() {
-        return Collections.singletonList(new AccountInfo(UUID.randomUUID().toString(), "iban-1", "EUR"));
+        return Collections.singletonList(AccountInfo.builder()
+                                             .resourceId(UUID.randomUUID().toString())
+                                             .accountIdentifier("iban-1")
+                                             .currency("EUR")
+                                             .build());
     }
 
     private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {

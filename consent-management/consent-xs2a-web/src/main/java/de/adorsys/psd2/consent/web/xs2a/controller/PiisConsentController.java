@@ -19,14 +19,12 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Currency;
 import java.util.List;
@@ -38,7 +36,7 @@ import java.util.List;
 public class PiisConsentController {
     private final PiisConsentService piisConsentService;
 
-    @GetMapping(path = "/{currency}/{account-identifier-name}/{account-identifier}")
+    @GetMapping(path = "/{currency}/{account-reference-type}/{account-identifier}")
     @ApiOperation(value = "Gets list of consents by account reference data.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -46,11 +44,11 @@ public class PiisConsentController {
     public ResponseEntity<List<PiisConsent>> getPiisConsentListByAccountReference(
         @ApiParam(name = "currency", value = "3 capital letters of currency name.", example = "EUR")
         @PathVariable("currency") String currency,
-        @ApiParam(name = "account-identifier-name", value = "Account identifier, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
-        @PathVariable("account-identifier-name") AccountReferenceSelector accountIdentifierName,
+        @ApiParam(name = "account-reference-type", value = "Account reference type, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.", example = "IBAN")
+        @PathVariable("account-reference-type") AccountReferenceType accountReferenceType,
         @ApiParam(name = "account-identifier", value = "The value of account identifier.", example = "DE2310010010123456789")
         @PathVariable("account-identifier") String accountIdentifier) {
-        List<PiisConsent> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(Currency.getInstance(currency), accountIdentifierName, accountIdentifier);
+        List<PiisConsent> responseList = piisConsentService.getPiisConsentListByAccountIdentifier(Currency.getInstance(currency), new AccountReferenceSelector(accountReferenceType, accountIdentifier));
         return CollectionUtils.isEmpty(responseList)
                    ? ResponseEntity.notFound().build()
                    : ResponseEntity.ok(responseList);
