@@ -18,19 +18,35 @@ package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import lombok.Value;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
 
+import static de.adorsys.psd2.consent.api.TypeAccess.*;
+
 @Value
 public class AccountAccessHolder {
-    private final Set<AccountAccess> accountAccesses = new HashSet<>();
+    private Set<AccountAccess> accountAccesses = new HashSet<>();
+    private AisAccountAccessInfo accountAccessInfo;
 
-    public void fillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
+    public AccountAccessHolder(AisAccountAccessInfo accountAccessInfo) {
+        this.accountAccessInfo = accountAccessInfo;
+        fillAccess(this.accountAccessInfo);
+    }
+
+    private void fillAccess(AisAccountAccessInfo accountAccessInfo) {
+        doFillAccess(accountAccessInfo.getAccounts(), ACCOUNT);
+        doFillAccess(accountAccessInfo.getBalances(), BALANCE);
+        doFillAccess(accountAccessInfo.getTransactions(), TRANSACTION);
+    }
+
+    private void doFillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
         if (CollectionUtils.isNotEmpty(info)) {
             for (AccountInfo a : info) {
-                addAccountAccess(a.getResourceId(), a.getIban(), getCurrencyByString(a.getCurrency()), typeAccess);
+                addAccountAccess(a.getResourceId(), a.getAccountIdentifier(), getCurrencyByString(a.getCurrency()), typeAccess, a.getAccountReferenceType());
             }
         }
     }
@@ -41,10 +57,16 @@ public class AccountAccessHolder {
                    .orElse(null);
     }
 
-    private void addAccountAccess(String resourceId, String iban, Currency currency, TypeAccess typeAccess) {
-        accountAccesses.add(new AccountAccess(resourceId, iban, currency, typeAccess));
-        if (EnumSet.of(TypeAccess.BALANCE, TypeAccess.TRANSACTION).contains(typeAccess)) {
-            accountAccesses.add(new AccountAccess(resourceId, iban, currency, TypeAccess.ACCOUNT));
+    private void addAccountAccess(String resourceId, String accountIdentifier, Currency currency, TypeAccess typeAccess, AccountReferenceType accountReferenceType) {
+        accountAccesses.add(buildAccountAccess(resourceId, accountIdentifier, currency, accountReferenceType, typeAccess));
+        if (EnumSet.of(BALANCE, TRANSACTION).contains(typeAccess)) {
+            accountAccesses.add(buildAccountAccess(resourceId, accountIdentifier, currency, accountReferenceType, ACCOUNT));
         }
+    }
+
+    private AccountAccess buildAccountAccess(String resourceId, String accountIdentifier, Currency currency, AccountReferenceType accountReferenceType, TypeAccess typeAccess) {
+        return new AccountAccess(accountIdentifier, typeAccess, accountReferenceType)
+                   .resourceId(resourceId)
+                   .currency(currency);
     }
 }

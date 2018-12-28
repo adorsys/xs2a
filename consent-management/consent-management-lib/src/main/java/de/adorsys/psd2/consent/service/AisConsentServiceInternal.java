@@ -42,7 +42,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.consent.api.TypeAccess.*;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 
 @Service
@@ -257,11 +256,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
-        AccountAccessHolder holder = new AccountAccessHolder();
-        holder.fillAccess(access.getAccounts(), ACCOUNT);
-        holder.fillAccess(access.getBalances(), BALANCE);
-        holder.fillAccess(access.getTransactions(), TRANSACTION);
-        return holder.getAccountAccesses();
+        return new AccountAccessHolder(access)
+                   .getAccountAccesses();
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {

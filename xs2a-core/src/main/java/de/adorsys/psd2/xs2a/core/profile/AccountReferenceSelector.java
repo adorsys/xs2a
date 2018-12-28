@@ -16,39 +16,11 @@
 
 package de.adorsys.psd2.xs2a.core.profile;
 
-import org.jetbrains.annotations.NotNull;
 
-public enum AccountReferenceSelector {
-    IBAN {
-        @Override
-        public String getAccountReferenceValue(@NotNull AccountReference accountReference) {
-            return accountReference.getIban();
-        }
-    },
-    BBAN {
-        @Override
-        public String getAccountReferenceValue(@NotNull AccountReference accountReference) {
-            return accountReference.getBban();
-        }
-    },
-    PAN {
-        @Override
-        public String getAccountReferenceValue(@NotNull AccountReference accountReference) {
-            return accountReference.getPan();
-        }
-    },
-    MASKED_PAN {
-        @Override
-        public String getAccountReferenceValue(@NotNull AccountReference accountReference) {
-            return accountReference.getMaskedPan();
-        }
-    },
-    MSISDN {
-        @Override
-        public String getAccountReferenceValue(@NotNull AccountReference accountReference) {
-            return accountReference.getMsisdn();
-        }
-    };
+import lombok.Value;
 
-    public abstract String getAccountReferenceValue(@NotNull AccountReference accountReference);
+@Value
+public class AccountReferenceSelector {
+    private AccountReferenceType accountReferenceType;
+    private String accountReferenceValue;
 }

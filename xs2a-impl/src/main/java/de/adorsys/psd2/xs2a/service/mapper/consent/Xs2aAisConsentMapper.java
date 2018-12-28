@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
@@ -70,18 +71,18 @@ public class Xs2aAisConsentMapper {
     public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
                    .map(ac -> new AccountConsent(
-                            ac.getId(),
-                            spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()).orElse(null),
-                            ac.isRecurringIndicator(),
-                            ac.getValidUntil(),
-                            ac.getFrequencyPerDay(),
-                            ac.getLastActionDate(),
-                            ac.getConsentStatus(),
-                            ac.isWithBalance(),
-                            ac.isTppRedirectPreferred(),
-                            spiToXs2aPsuDataMapper.mapToPsuIdData(ac.getPsuData()),
-                            ac.getTppInfo()
-                        )
+                           ac.getId(),
+                           spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()).orElse(null),
+                           ac.isRecurringIndicator(),
+                           ac.getValidUntil(),
+                           ac.getFrequencyPerDay(),
+                           ac.getLastActionDate(),
+                           ac.getConsentStatus(),
+                           ac.isWithBalance(),
+                           ac.isTppRedirectPreferred(),
+                           spiToXs2aPsuDataMapper.mapToPsuIdData(ac.getPsuData()),
+                           ac.getTppInfo()
+                       )
                    )
                    .orElse(null);
     }
@@ -89,18 +90,18 @@ public class Xs2aAisConsentMapper {
     public SpiAccountConsent mapToSpiAccountConsent(AccountConsent accountConsent) {
         return Optional.ofNullable(accountConsent)
                    .map(ac -> new SpiAccountConsent(
-                            ac.getId(),
-                            xs2aToSpiAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
-                            ac.isRecurringIndicator(),
-                            ac.getValidUntil(),
-                            ac.getFrequencyPerDay(),
-                            ac.getLastActionDate(),
-                            ac.getConsentStatus(),
-                            ac.isWithBalance(),
-                            ac.isTppRedirectPreferred(),
-                            xs2aToSpiPsuDataMapper.mapToSpiPsuData(ac.getPsuData()),
-                            ac.getTppInfo()
-                        )
+                           ac.getId(),
+                           xs2aToSpiAccountAccessMapper.mapToAccountAccess(ac.getAccess()),
+                           ac.isRecurringIndicator(),
+                           ac.getValidUntil(),
+                           ac.getFrequencyPerDay(),
+                           ac.getLastActionDate(),
+                           ac.getConsentStatus(),
+                           ac.isWithBalance(),
+                           ac.isTppRedirectPreferred(),
+                           xs2aToSpiPsuDataMapper.mapToSpiPsuData(ac.getPsuData()),
+                           ac.getTppInfo()
+                       )
                    )
                    .orElse(null);
     }
@@ -185,13 +186,15 @@ public class Xs2aAisConsentMapper {
     }
 
     private AccountInfo mapToAccountInfo(AccountReference ref) {
-        AccountInfo info = new AccountInfo();
-        info.setResourceId(ref.getResourceId());
-        info.setIban(ref.getIban());
-        info.setCurrency(Optional.ofNullable(ref.getCurrency())
-                             .map(Currency::getCurrencyCode)
-                             .orElse(null));
-        return info;
+        AccountReferenceSelector selector = ref.getUsedAccountReferenceSelector();
+        return AccountInfo.builder()
+                   .resourceId(ref.getResourceId())
+                   .accountIdentifier(selector.getAccountReferenceValue())
+                   .currency(Optional.ofNullable(ref.getCurrency())
+                                 .map(Currency::getCurrencyCode)
+                                 .orElse(null))
+                   .accountReferenceType(selector.getAccountReferenceType())
+                   .build();
     }
 
     public AccountConsent mapToAccountConsent(AisAccountConsent ais) {

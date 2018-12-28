@@ -26,6 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Currency;
 
+import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceType.*;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -53,28 +55,38 @@ public class AccountReference {
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
-    public AccountReference(String resourceId, String iban, Currency currency) {
-        this.resourceId = resourceId;
-        this.iban = iban;
+    public AccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency, String resourceId) {
+        if (accountReferenceType == IBAN) {
+            this.iban = accountReferenceValue;
+        } else if (accountReferenceType == BBAN) {
+            this.bban = accountReferenceValue;
+        } else if (accountReferenceType == PAN) {
+            this.pan = accountReferenceValue;
+        } else if (accountReferenceType == MSISDN) {
+            this.msisdn = accountReferenceValue;
+        } else if (accountReferenceType == MASKED_PAN) {
+            this.maskedPan = accountReferenceValue;
+        }
         this.currency = currency;
+        this.resourceId = resourceId;
     }
 
     @JsonIgnore
     public AccountReferenceSelector getUsedAccountReferenceSelector() {
         if (StringUtils.isNotBlank(iban)) {
-            return AccountReferenceSelector.IBAN;
+            return new AccountReferenceSelector(IBAN, this.iban);
         }
         if (StringUtils.isNotBlank(bban)) {
-            return AccountReferenceSelector.BBAN;
+            return new AccountReferenceSelector(BBAN, this.bban);
         }
         if (StringUtils.isNotBlank(pan)) {
-            return AccountReferenceSelector.PAN;
+            return new AccountReferenceSelector(PAN, this.pan);
         }
         if (StringUtils.isNotBlank(msisdn)) {
-            return AccountReferenceSelector.MSISDN;
+            return new AccountReferenceSelector(MSISDN, this.msisdn);
         }
         if (StringUtils.isNotBlank(maskedPan)) {
-            return AccountReferenceSelector.MASKED_PAN;
+            return new AccountReferenceSelector(MASKED_PAN, this.maskedPan);
         }
         return null;
     }
