@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
@@ -55,6 +54,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsPsuAisServiceTest {
+
     @InjectMocks
     CmsPsuAisServiceInternal cmsPsuAisService;
     @Mock
@@ -431,23 +431,21 @@ public class CmsPsuAisServiceTest {
     public void getConsentByRedirectId_Fail_AuthorisationExpire() {
         //noinspection unchecked
         when(aisConsentAuthorizationRepository.findOne(any(Specification.class))).thenReturn(mockAisConsentAuthorization);
-        when(mockAisConsentAuthorization.isExpired()).thenReturn(true);
+        when(mockAisConsentAuthorization.isNotExpired()).thenReturn(false);
+        when(mockAisConsentAuthorization.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         doReturn(mockAisConsentAuthorization).when(aisConsentAuthorizationRepository).save(mockAisConsentAuthorization);
 
         Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         assertFalse(consentResponseOptional.isPresent());
-        verify(aisConsentAuthorizationRepository).save(mockAisConsentAuthorization);
-        verify(mockAisConsentAuthorization).setScaStatus(ScaStatus.FAILED);
-        verify(aisConsentAuthorizationSpecification, times(1))
-            .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
     public void getConsentByRedirectId_Fail_NullAisConsent() {
         //noinspection unchecked
         when(aisConsentAuthorizationRepository.findOne(any(Specification.class))).thenReturn(mockAisConsentAuthorization);
-        when(mockAisConsentAuthorization.isExpired()).thenReturn(false);
+        when(mockAisConsentAuthorization.isNotExpired()).thenReturn(true);
+        when(mockAisConsentAuthorization.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(null);
 
         Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -461,11 +459,14 @@ public class CmsPsuAisServiceTest {
     public void getConsentByRedirectId_Success() {
         //noinspection unchecked
         when(aisConsentAuthorizationRepository.findOne(any(Specification.class))).thenReturn(mockAisConsentAuthorization);
-        when(mockAisConsentAuthorization.isExpired()).thenReturn(false);
+        when(mockAisConsentAuthorization.isNotExpired()).thenReturn(true);
+        when(mockAisConsentAuthorization.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
+        when(mockAisConsentAuthorization.getPsuData()).thenReturn(psuData);
         when(aisConsentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(mockAisAccountConsent);
         when(mockAisAccountConsent.getTppInfo()).thenReturn(tppInfo);
         when(tppInfo.getTppRedirectUri()).thenReturn(buildTppRedirectUri());
+        when(psuDataMapper.mapToPsuIdData(psuData)).thenReturn(psuIdData);
 
         Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 

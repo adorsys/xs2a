@@ -16,12 +16,18 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
+@Data
+@AllArgsConstructor
 public class CmsAisConsentResponse {
     private AisAccountConsent accountConsent;
     private String authorisationId;
     private String tppOkRedirectUri;
     private String tppNokRedirectUri;
+
+    public CmsAisConsentResponse(String tppNokRedirectUri) {
+        this.tppNokRedirectUri = tppNokRedirectUri;
+    }
 }

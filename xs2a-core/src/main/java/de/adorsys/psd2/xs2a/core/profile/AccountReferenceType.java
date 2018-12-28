@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.xs2a.core.profile;
 
-public enum TypeAccess {
-    ACCOUNT,
-    BALANCE,
-    TRANSACTION
+public enum AccountReferenceType {
+    IBAN,
+    BBAN,
+    PAN,
+    MASKED_PAN,
+    MSISDN;
 }

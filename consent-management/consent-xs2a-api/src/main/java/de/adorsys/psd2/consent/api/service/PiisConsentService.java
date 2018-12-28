@@ -29,8 +29,7 @@ public interface PiisConsentService {
      *
      * @param currency              Chosen currency
      * @param accountIdentifierName The name of account reference identifier
-     * @param accountIdentifier     The value of account reference identifier
      * @return PIIS consents
      */
-    List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountIdentifierName, String accountIdentifier);
+    List<PiisConsent> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountIdentifierName);
 }

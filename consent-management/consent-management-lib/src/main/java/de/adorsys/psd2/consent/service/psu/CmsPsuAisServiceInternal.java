@@ -28,6 +28,7 @@ import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -54,6 +55,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentMapper consentMapper;
     private final PsuDataRepository psuDataRepository;
+    private final PsuDataMapper psuDataMapper;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
     private final AisConsentAuthorizationSpecification aisConsentAuthorizationSpecification;
     private final AisConsentSpecification aisConsentSpecification;
@@ -117,20 +119,34 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<AisConsentAuthorization> authorisationOptional = Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)));
+        Optional<AisConsentAuthorization> optionalAuthorisation = Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+                                                                      .filter(a -> isConsentAuthorisationValidForPsuAndStatus(psuIdData, a));
 
-        if (!authorisationOptional.isPresent()) {
-            return Optional.empty();
-        }
+        if (optionalAuthorisation.isPresent()) {
+            AisConsentAuthorization authorisation = optionalAuthorisation.get();
 
-        AisConsentAuthorization authorisation = authorisationOptional.get();
+            if (authorisation.isNotExpired()) {
+                return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
+            }
 
-        if (authorisation.isExpired()) {
             updateAuthorisationOnExpiration(authorisation);
-            return Optional.empty();
+            String tppNokRedirectUri = authorisation.getConsent().getTppInfo().getNokRedirectUri();
+
+            return Optional.of(new CmsAisConsentResponse(tppNokRedirectUri));
         }
 
-        return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
+        return Optional.empty();
+    }
+
+    private boolean isConsentAuthorisationValidForPsuAndStatus(PsuIdData givenPsuIdData, AisConsentAuthorization
+                                                                                             authorisation) {
+        if (authorisation.getScaStatus().isFinalisedStatus()) {
+            return false;
+        }
+        PsuIdData actualPsuIdData = psuDataMapper.mapToPsuIdData(authorisation.getPsuData());
+        return Optional.ofNullable(actualPsuIdData)
+                   .map(givenPsuIdData::contentEquals)
+                   .orElse(false);
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {
@@ -186,7 +202,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         aisConsentAuthorizationRepository.save(authorisation);
     }
 
-    private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String redirectId) {
+    private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String
+                                                                                                                 redirectId) {
         if (aisConsent == null) {
             return Optional.empty();
         }
