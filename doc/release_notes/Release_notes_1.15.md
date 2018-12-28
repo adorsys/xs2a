@@ -14,11 +14,10 @@ Available endpoints are listed below.
 Now for AIS if scaRedirect URI is expired we deliver TPP-Nok-Redirect-URI in the response from CMS to Online-banking. This response is returned with code 408.
 If TPP-Nok-Redirect-URI was not sent from TPP and in CMS is stored null, then CMS returns empty response with code 408. If payment is not found or psu data is incorrect, CMS returns 404. 
 
-## Bugfix: validating PSU identification during updates PSU data requests
-Now PSU identification is validating in next services:
+## Bugfix: validate PSU credentials during update PSU data requests
+Now PSU credentials are being validated in the following services:
 - PaymentAuthorisationSpi
 - PaymentCancellationSpi
 - AisConsentSpi
 
-If PSU can not be matched by the addressed ASPSP or is blocked, or a password resp. OTP was not correct, TPP will receive 
-HTTP 401 response code with message code "PSU_CREDENTIALS_INVALID". 
+If PSU credentials are not correct, TPP will receive HTTP 401 response code with message code "PSU_CREDENTIALS_INVALID".
