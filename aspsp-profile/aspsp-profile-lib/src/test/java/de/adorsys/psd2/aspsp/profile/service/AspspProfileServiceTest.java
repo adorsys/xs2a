@@ -63,6 +63,8 @@ public class AspspProfileServiceTest {
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
+    private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS = 86400000;
+    private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -138,6 +140,24 @@ public class AspspProfileServiceTest {
         Assertions.assertThat(actualResponse.getFrequencyPerDay()).isEqualTo(FREQUENCY_PER_DAY);
     }
 
+    @Test
+    public void getNotConfirmedConsentExpirationPeriodMs_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getNotConfirmedConsentExpirationPeriodMs()).isEqualTo(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
+    }
+
+    @Test
+    public void getNotConfirmedPaymentExpirationPeriodMs_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getNotConfirmedPaymentExpirationPeriodMs()).isEqualTo(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
+    }
+
     private BankProfileSetting buildBankProfileSetting() {
         BankProfileSetting setting = new BankProfileSetting();
         setting.setFrequencyPerDay(FREQUENCY_PER_DAY);
@@ -161,6 +181,8 @@ public class AspspProfileServiceTest {
         setting.setDeltaReportSupported(DELTA_REPORT_SUPPORTED);
         setting.setRedirectUrlExpirationTimeMs(REDIRECT_URL_EXPIRATION_TIME_MS);
         setting.setScaApproach(REDIRECT_APPROACH);
+        setting.setNotConfirmedConsentExpirationPeriodMs(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
+        setting.setNotConfirmedPaymentExpirationPeriodMs(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
         return setting;
     }
 

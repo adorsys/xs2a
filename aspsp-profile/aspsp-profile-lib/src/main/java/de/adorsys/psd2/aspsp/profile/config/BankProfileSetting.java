@@ -141,4 +141,14 @@ public class BankProfileSetting {
      * URL to ASPSP service in order to to work with PIS payment cancellation
      */
     private String pisPaymentCancellationRedirectUrlToAspsp;
+
+    /**
+     * The limit of an expiration time of not confirmed consent url set in milliseconds
+     */
+    private long notConfirmedConsentExpirationPeriodMs;
+
+    /**
+     * The limit of an expiration time of not confirmed payment url set in milliseconds
+     */
+    private long notConfirmedPaymentExpirationPeriodMs;
 }
