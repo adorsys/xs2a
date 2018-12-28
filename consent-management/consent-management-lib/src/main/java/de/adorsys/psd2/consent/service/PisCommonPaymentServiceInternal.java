@@ -143,7 +143,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     public Optional<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType,
                                                                         PsuIdData psuData) {
         return readReceivedCommonPaymentDataByPaymentId(paymentId)
-                   .map(pmt -> saveNewAuthorisation(pmt, authorizationType, psuData))
+                   .map(pmt -> {
+                       closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), authorizationType, psuData);
+                       return saveNewAuthorisation(pmt, authorizationType, psuData);
+                   })
                    .map(c -> new CreatePisAuthorisationResponse(c.getExternalId()));
     }
 
@@ -319,16 +322,39 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private PisAuthorization saveNewAuthorisation(PisCommonPaymentData paymentData, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {
         PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
 
-        PisAuthorization consentAuthorization = new PisAuthorization();
-        consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPaymentData(paymentData);
-        consentAuthorization.setScaStatus(STARTED);
-        consentAuthorization.setAuthorizationType(authorisationType);
-        consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
+        PisAuthorization consentAuthorisation = new PisAuthorization();
+        consentAuthorisation.setExternalId(UUID.randomUUID().toString());
+        consentAuthorisation.setPaymentData(paymentData);
+        consentAuthorisation.setScaStatus(STARTED);
+        consentAuthorisation.setAuthorizationType(authorisationType);
+        consentAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
 
-        consentAuthorization.setPsuData(handlePsuForAuthorisation(psuData, paymentData.getPsuData()));
-        consentAuthorization.setPaymentData(enrichPsuData(psuData, paymentData));
-        return pisAuthorizationRepository.save(consentAuthorization);
+        consentAuthorisation.setPsuData(handlePsuForAuthorisation(psuData, paymentData.getPsuData()));
+        consentAuthorisation.setPaymentData(enrichPsuData(psuData, paymentData));
+        return pisAuthorizationRepository.save(consentAuthorisation);
+    }
+
+    private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {
+        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
+
+        if (!isPsuDataCorrect(psuData)) {
+            return;
+        }
+
+        List<PisAuthorization> pisAuthorisationList = authorisations
+                                                          .stream()
+                                                          .filter(auth -> auth.getAuthorizationType() == authorisationType)
+                                                          .filter(auth -> auth.getPsuData().contentEquals(psuData))
+                                                          .map(this::failAuthorisation)
+                                                          .collect(Collectors.toList());
+
+        pisAuthorizationRepository.save(pisAuthorisationList);
+    }
+
+    private PisAuthorization failAuthorisation(PisAuthorization auth) {
+        auth.setScaStatus(ScaStatus.FAILED);
+        auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
+        return auth;
     }
 
     private PsuData handlePsuForAuthorisation(PsuData psuData, List<PsuData> psuDataList) {
