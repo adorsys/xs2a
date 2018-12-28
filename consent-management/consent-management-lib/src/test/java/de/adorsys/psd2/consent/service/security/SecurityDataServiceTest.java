@@ -43,7 +43,6 @@ public class SecurityDataServiceTest {
     private static final String CONSENT_KEY = "rvIgmcYarc8eMbqk";
     private static final int CONSENT_KEY_LENGTH = 16;
     private static final byte[] CONSENT_DATA = "Consent data".getBytes();
-    private static final String CONSENT_DATA_BASE64 = Base64.getEncoder().encodeToString(CONSENT_DATA);
 
     private static final String CRYPTO_PROVIDER_ID = "mock";
     private static final String FAILING_CRYPTO_PROVIDER_ID = "failing";
@@ -175,7 +174,7 @@ public class SecurityDataServiceTest {
         EncryptedData expected = new EncryptedData(dataWithKey);
 
         // When
-        Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA_BASE64);
+        Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA);
 
         // Then
         assertThat(actual.isPresent()).isTrue();
@@ -191,7 +190,7 @@ public class SecurityDataServiceTest {
         String encryptedId = getEncryptedConsentId(NON_EXISTING_CRYPT_PROVIDER_ID);
 
         // When
-        Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA_BASE64);
+        Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
@@ -206,7 +205,7 @@ public class SecurityDataServiceTest {
         String encryptedId = getEncryptedConsentId(CRYPTO_PROVIDER_ID);
 
         // When
-        Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA_BASE64);
+        Optional<EncryptedData> actual = securityDataService.encryptConsentData(encryptedId, CONSENT_DATA);
 
         // Then
         assertThat(actual.isPresent()).isFalse();
