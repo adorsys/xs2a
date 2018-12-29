@@ -31,6 +31,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -137,6 +138,19 @@ public class AisConsent extends InstanceDependableEntity {
 
     public boolean hasUsagesAvailable() {
         return usageCounter > 0;
+    }
+
+    public boolean isConfirmationExpired(long expirationPeriodMs) {
+        if (isNotConfirmed()) {
+            return creationTimestamp.plus(expirationPeriodMs, ChronoUnit.MILLIS)
+                .isBefore(OffsetDateTime.now());
+        }
+
+        return false;
+    }
+
+    public boolean isNotConfirmed() {
+        return consentStatus == ConsentStatus.RECEIVED;
     }
 
     public void addAccountAccess(Set<AccountAccess> accountAccesses) {

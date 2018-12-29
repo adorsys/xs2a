@@ -86,6 +86,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return aisConsentRepository.findByExternalId(consentId)
+                   .map(this::checkAndUpdateOnConfirmationExpiration)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(AisConsent::getConsentStatus);
     }
@@ -114,6 +115,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
         return aisConsentRepository.findByExternalId(consentId)
+                   .map(this::checkAndUpdateOnConfirmationExpiration)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
     }
@@ -129,6 +131,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<AisConsent> consentOpt = getActualAisConsent(request.getConsentId());
         if (consentOpt.isPresent()) {
             AisConsent consent = consentOpt.get();
+            checkAndUpdateOnConfirmationExpiration(consent);
             checkAndUpdateOnExpiration(consent);
             updateAisConsentCounter(consent);
             logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
@@ -332,6 +335,16 @@ public class AisConsentServiceInternal implements AisConsentService {
             consent.setConsentStatus(ConsentStatus.EXPIRED);
             consent.setExpireDate(LocalDate.now());
             consent.setLastActionDate(LocalDate.now());
+            aisConsentRepository.save(consent);
+        }
+        return consent;
+    }
+
+    private AisConsent checkAndUpdateOnConfirmationExpiration(AisConsent consent) {
+        long expirationPeriodMs = aspspProfileService.getAspspSettings().getNotConfirmedConsentExpirationPeriodMs();
+        if (consent != null && consent.isConfirmationExpired(expirationPeriodMs)) {
+            consent.setConsentStatus(ConsentStatus.EXPIRED);
+            consent.getAuthorizations().forEach(auth -> auth.setScaStatus(ScaStatus.FAILED));
             aisConsentRepository.save(consent);
         }
         return consent;

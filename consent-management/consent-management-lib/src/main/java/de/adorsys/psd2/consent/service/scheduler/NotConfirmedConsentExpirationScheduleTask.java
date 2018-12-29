@@ -27,8 +27,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +38,7 @@ public class NotConfirmedConsentExpirationScheduleTask {
     private final AspspProfileService aspspProfileService;
     private final AisConsentRepository aisConsentRepository;
 
-    @Scheduled(cron = "not-confirmed-consent-expiration.cron.expression")
+    @Scheduled(cron = "${not-confirmed-consent-expiration.cron.expression}")
     @Transactional
     public void obsoleteNotConfirmedConsentIfExpired() {
         log.info("Not confirmed consent expiration schedule task is run!");
@@ -49,16 +47,12 @@ public class NotConfirmedConsentExpirationScheduleTask {
 
         List<AisConsent> expiredNotConfirmedConsents = aisConsentRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED))
                                        .stream()
-                                       .filter(c -> isConsentExpired(c, expirationPeriodMs))
+                                       .filter(c -> c.isConfirmationExpired(expirationPeriodMs))
                                        .collect(Collectors.toList());
 
         if (!expiredNotConfirmedConsents.isEmpty()) {
             aisConsentRepository.save(obsoleteConsents(expiredNotConfirmedConsents));
         }
-    }
-
-    private boolean isConsentExpired(AisConsent consent, long expirationPeriodMs) {
-        return consent.getCreationTimestamp().plus(expirationPeriodMs, ChronoUnit.MILLIS).isAfter(OffsetDateTime.now());
     }
 
     private List<AisConsent> obsoleteConsents(List<AisConsent> expiredConsents) {
