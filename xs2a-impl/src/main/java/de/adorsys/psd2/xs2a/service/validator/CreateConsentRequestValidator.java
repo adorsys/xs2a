@@ -54,7 +54,7 @@ public class CreateConsentRequestValidator {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
         }
         if (isNotSupportedBankOfferedConsent(request)) {
-            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
+            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SERVICE_INVALID_405)));
         }
         if (!isValidExpirationDate(request.getValidUntil())) {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID)));
