@@ -309,9 +309,13 @@ public class PaymentService {
     }
 
     private List<PisPayment> getPisPaymentFromCommonPaymentResponse(PisCommonPaymentResponse pisCommonPaymentResponse) {
-        return Optional.of(pisCommonPaymentResponse)
-                   .map(PisCommonPaymentResponse::getPayments)
-                   .orElse(Collections.emptyList());
+        List<PisPayment> pisPayments = Optional.of(pisCommonPaymentResponse)
+                                           .map(PisCommonPaymentResponse::getPayments)
+                                           .orElse(Collections.emptyList());
+
+        pisPayments.forEach(pmt -> pmt.setPaymentId(pisCommonPaymentResponse.getExternalId()));
+
+        return pisPayments;
     }
 
     private PsuIdData readPsuIdDataFromList(List<PsuIdData> psuIdDataList) { //TODO rework psudata list
