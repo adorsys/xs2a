@@ -18,6 +18,7 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -36,6 +37,7 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,6 +64,7 @@ public class CreateBulkPaymentServiceTest<resp> {
     private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = new Xs2aPisCommonPayment(PAYMENT_ID, PSU_DATA);
     private final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
     private final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
+    private final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
 
     @InjectMocks
     private CreateBulkPaymentService createBulkPaymentService;
@@ -77,13 +80,18 @@ public class CreateBulkPaymentServiceTest<resp> {
     private PisAspspDataService pisAspspDataService;
     @Mock
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
+    @Mock
+    private Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
+
 
     @Before
     public void init() {
-        when(scaPaymentService.createBulkPayment(buildBulkPayment(), TPP_INFO, "sepa-credit-transfers", buildXs2aPisCommonPayment())).thenReturn(buildBulkPaymentInitiationResponse());
+        when(scaPaymentService.createBulkPayment(buildBulkPayment(), TPP_INFO, "sepa-credit-transfers", PSU_DATA)).thenReturn(buildBulkPaymentInitiationResponse());
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
-        when(pisCommonPaymentService.createCommonPayment(PARAM, TPP_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, TransactionStatus.RCVD,PAYMENT_ID ))
+            .thenReturn(PAYMENT_INFO);
     }
 
     @Test
@@ -158,5 +166,9 @@ public class CreateBulkPaymentServiceTest<resp> {
         tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfo.setAuthorityId("authorityId");
         return tppInfo;
+    }
+
+    private PisPaymentInfo buildPisPaymentInfoRequest() {
+        return new PisPaymentInfo();
     }
 }

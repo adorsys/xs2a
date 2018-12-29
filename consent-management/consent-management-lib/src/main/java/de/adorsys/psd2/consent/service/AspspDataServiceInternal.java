@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -70,7 +69,7 @@ public class AspspDataServiceInternal implements AspspDataService {
             return false;
         }
 
-        Optional<EncryptedData> encryptedData = encryptConsentData(encryptedConsentId, Base64.getEncoder().encodeToString(data));
+        Optional<EncryptedData> encryptedData = securityDataService.encryptConsentData(encryptedConsentId, data);
         if (!encryptedData.isPresent()) {
             return false;
         }
@@ -101,10 +100,6 @@ public class AspspDataServiceInternal implements AspspDataService {
     private Optional<AspspConsentDataEntity> getAspspConsentDataEntity(String externalId) {
         return securityDataService.decryptId(externalId)
                    .flatMap(aspspConsentDataRepository::findByConsentId);
-    }
-
-    private Optional<EncryptedData> encryptConsentData(String externalId, String aspspConsentDataBase64) {
-        return securityDataService.encryptConsentData(externalId, aspspConsentDataBase64);
     }
 
     private boolean updateAndSaveAspspConsentData(String consentId, byte[] encryptConsentData) {

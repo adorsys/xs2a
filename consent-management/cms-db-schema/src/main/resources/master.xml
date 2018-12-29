@@ -50,6 +50,7 @@
     <include relativeToChangelogFile="true" file="migration/0028-add-column-instance-id-for-ais-consent-authorisation.xml"/>
     <include relativeToChangelogFile="true" file="migration/0029-add-column-instance-id-for-piis_consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0030-change-structure-for-ais-account-access.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0031-add-column-instance-id-for-pis-consent-authorisation.xml"/>
     <include relativeToChangelogFile="true"
              file="migration/0032-add-creation-timestamp-ais-consent-pis-common-payment.xml"/>
 

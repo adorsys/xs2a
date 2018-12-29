@@ -18,11 +18,13 @@ package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface PisAuthorizationRepository extends CrudRepository<PisAuthorization, Long> {
+public interface PisAuthorizationRepository extends CrudRepository<PisAuthorization, Long>, JpaSpecificationExecutor<PisAuthorization> {
     Optional<PisAuthorization> findByExternalId(String externalId);
+
     Optional<PisAuthorization> findByExternalIdAndAuthorizationType(String externalId, CmsAuthorisationType authorizationType);
 }

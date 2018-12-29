@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.repository.specification;
 
 public class EntityAttribute {
     public static final String INSTANCE_ID_ATTRIBUTE = "instanceId";
+    public static final String AUTHORISATION_EXTERNAL_ID_ATTRIBUTE = "externalId";
     public static final String CONSENT_EXTERNAL_ID_ATTRIBUTE = "externalId";
     public static final String PSU_ID_ATTRIBUTE = "psuId";
     public static final String PSU_DATA_ATTRIBUTE = "psuData";
