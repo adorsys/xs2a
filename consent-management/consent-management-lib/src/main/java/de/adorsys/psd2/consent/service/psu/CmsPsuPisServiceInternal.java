@@ -28,6 +28,8 @@ import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.repository.PisAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
+import de.adorsys.psd2.consent.repository.specification.PisAuthorisationSpecification;
+import de.adorsys.psd2.consent.repository.specification.PisPaymentDataSpecification;
 import de.adorsys.psd2.consent.service.CommonPaymentDataService;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -36,7 +38,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -57,11 +58,13 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final CommonPaymentDataService commonPaymentDataService;
     private final PsuDataMapper psuDataMapper;
     private final PsuDataRepository psuDataRepository;
+    private final PisAuthorisationSpecification pisAuthorisationSpecification;
+    private final PisPaymentDataSpecification pisPaymentDataSpecification;
 
     @Override
     @Transactional
     public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        return pisAuthorizationRepository.findByExternalId(redirectId)
+        return Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
                    .map(PisAuthorization::getPsuData)
                    .map(psuData -> updatePsuData(psuData, psuIdData))
                    .orElse(false);
@@ -70,15 +73,13 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     public @NotNull Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String instanceId) {
         if (isPsuDataEquals(paymentId, psuIdData)) {
-            Optional<List<PisPaymentData>> list = pisPaymentDataRepository.findByPaymentId(paymentId);
+            List<PisPaymentData> list = pisPaymentDataRepository.findAll(pisPaymentDataSpecification.byPaymentIdAndInstanceId(paymentId, instanceId));
 
             // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
-            if (list.isPresent()) {
-                return list
-                           .filter(CollectionUtils::isNotEmpty)
-                           .map(cmsPsuPisMapper::mapToCmsPayment);
+            if (!list.isEmpty()) {
+                return Optional.of(cmsPsuPisMapper.mapToCmsPayment(list));
             } else {
-                return commonPaymentDataService.getPisCommonPaymentData(paymentId)
+                return commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId)
                            .map(cmsPsuPisMapper::mapToCmsPayment);
             }
         }
@@ -89,11 +90,11 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorization = pisAuthorizationRepository.findByExternalId(redirectId)
+        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
                                                                .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
 
-        if (optionalAuthorization.isPresent()) {
-            PisAuthorization authorisation = optionalAuthorization.get();
+        if (optionalAuthorisation.isPresent()) {
+            PisAuthorization authorisation = optionalAuthorisation.get();
 
             if (authorisation.isNotExpired()) {
                 return Optional.of(buildCmsPaymentResponse(authorisation));
@@ -112,8 +113,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Transactional
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) {
-
-        Optional<PisAuthorization> pisAuthorisation = pisAuthorizationRepository.findByExternalId(authorisationId);
+        Optional<PisAuthorization> pisAuthorisation = Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)));
 
         boolean isValid = pisAuthorisation
                               .map(auth -> auth.getPaymentData().getPaymentId())
@@ -126,13 +126,13 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status, @NotNull String instanceId) {
-        Optional<List<PisPaymentData>> list = pisPaymentDataRepository.findByPaymentId(paymentId);
+        List<PisPaymentData> list = pisPaymentDataRepository.findAll(pisPaymentDataSpecification.byPaymentIdAndInstanceId(paymentId, instanceId));
 
         // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
-        if (list.isPresent()) {
-            return updateStatusInPaymentDataList(list.get(), status);
+        if (!list.isEmpty()) {
+            return updateStatusInPaymentDataList(list, status);
         } else {
-            Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId);
+            Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId);
 
             return paymentDataOptional.isPresent()
                        && commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);

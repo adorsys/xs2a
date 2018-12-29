@@ -35,7 +35,7 @@ public class SpiResponseStatusToXs2aMessageErrorCodeMapper {
     static {    // TODO discuss error mapping https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
         spiResponseStatusToMessageErrorCode = new HashMap<>();
         spiResponseStatusToMessageErrorCode.put(TECHNICAL_FAILURE, INTERNAL_SERVER_ERROR);
-        spiResponseStatusToMessageErrorCode.put(UNAUTHORIZED_FAILURE, UNAUTHORIZED);
+        spiResponseStatusToMessageErrorCode.put(UNAUTHORIZED_FAILURE, PSU_CREDENTIALS_INVALID);
         spiResponseStatusToMessageErrorCode.put(LOGICAL_FAILURE, FORMAT_ERROR);
         spiResponseStatusToMessageErrorCode.put(NOT_SUPPORTED, PARAMETER_NOT_SUPPORTED);
     }

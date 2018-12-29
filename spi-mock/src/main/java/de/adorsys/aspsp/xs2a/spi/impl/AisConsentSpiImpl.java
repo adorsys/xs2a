@@ -100,6 +100,11 @@ public class AisConsentSpiImpl implements AisConsentSpi {
             byte[] payload = accessToken.flatMap(jsonConverter::toJson)
                                  .map(String::getBytes)
                                  .orElse(null);
+            if (spiAuthorisationStatus == FAILURE) {
+                return SpiResponse.<SpiAuthorisationStatus>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(payload))
+                           .fail(SpiResponseStatus.UNAUTHORIZED_FAILURE);
+            }
             return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData.respondWith(payload));
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {

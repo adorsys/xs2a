@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,5 +81,9 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
         orphanRemoval = true)
     @ApiModelProperty(value = "List of single payments ", required = true)
     private List<PisPaymentData> payments = new ArrayList<>();
+
+    @Column(name = "creation_timestamp")
+    @ApiModelProperty(value = "Creation timestamp of the consent.", required = true, example = "2018-12-28T00:00:00Z")
+    private OffsetDateTime creationTimestamp = OffsetDateTime.now();
 }
 
