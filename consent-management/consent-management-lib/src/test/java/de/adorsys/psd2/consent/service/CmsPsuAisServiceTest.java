@@ -44,6 +44,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -516,6 +518,7 @@ public class CmsPsuAisServiceTest {
         aisConsent.setLastActionDate(LocalDate.now());
         aisConsent.setPsuData(psuData);
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
+        aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
         return aisConsent;
     }
 

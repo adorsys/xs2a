@@ -30,6 +30,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -117,6 +118,10 @@ public class AisConsent extends InstanceDependableEntity {
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Type of the consent request: GLOBAL, BANK_OFFERED or DEDICATED_ACCOUNTS.", required = true, example = "GLOBAL")
     private AisConsentRequestType aisConsentRequestType;
+
+    @Column(name = "creation_timestamp")
+    @ApiModelProperty(value = "Creation timestamp of the consent.", required = true, example = "2018-12-28T00:00:00Z")
+    private OffsetDateTime creationTimestamp = OffsetDateTime.now();
 
     public List<AccountAccess> getAccesses() {
         return new ArrayList<>(accesses);
