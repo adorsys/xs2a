@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
@@ -69,8 +70,15 @@ public class CreateConsentRequestValidator {
     }
 
     private boolean isNotSupportedBankOfferedConsent(CreateConsentReq request) {
-        return !isNotEmptyAccess(request.getAccess())
-                   && !aspspProfileService.isBankOfferedConsentSupported();
+        if (isNotEmptyAccess(request.getAccess())) {
+            return false;
+        }
+
+        if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
+            return true;
+        }
+
+        return !aspspProfileService.isBankOfferedConsentSupported();
     }
 
     private boolean isValidExpirationDate(LocalDate validUntil) {

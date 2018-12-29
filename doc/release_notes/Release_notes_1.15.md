@@ -18,8 +18,6 @@ If TPP-Nok-Redirect-URI was not sent from TPP and in CMS is stored null, then CM
 When PSU creates new authorisation for a payment, all previous authorisations, created by this PSU for the same payment, will be failed and expired.
 
 ## Bugfix: Embedded SCA Approach is not supported for Bank Offered Consent
-When TPP creates Bank Offered Consent and Embedded approach is used then TPP won't receive any authorisation links.
-TPP will only receive self and status links.
+Now Bank Offered Consent is not supported for Embedded SCA Approach.
 
-If ASPSP doesn't support Bank Offered Consent then TPP will receive HTTP 405 response code with message code "SERVICE_INVALID" for any approach.
-
+If ASPSP doesn't support Bank Offered Consent then TPP will receive HTTP 405 response code with message code "SERVICE_INVALID" for any approach, instead of "PARAMETER_NOT_SUPPORTED"(HTTP 400 response code)
