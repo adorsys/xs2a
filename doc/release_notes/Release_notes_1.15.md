@@ -22,6 +22,9 @@ From now on SPI response status UNAUTHORIZED_FAILURE corresponds to PSU_CREDENTI
 
 Now SPI-Mock correctly handles invalid PSU credentials.
 
+## Bugfix: method encryptConsentData in SecurityDataService takes byte array as an argument
+Now to encrypt aspspConsentData in SecurityDataService we should provide byte array as an argument instead of Base64 encoded string
+
 ## Bugfix: Embedded SCA Approach is not supported for Bank Offered Consent
 Now Bank Offered Consent is not supported for Embedded SCA Approach.
 

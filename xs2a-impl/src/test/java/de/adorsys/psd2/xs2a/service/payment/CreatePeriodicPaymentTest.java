@@ -18,6 +18,7 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -36,6 +37,7 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -61,6 +63,7 @@ public class CreatePeriodicPaymentTest {
     private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = buildXs2aPisCommonPayment();
     private final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
     private final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
+    private final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
 
     @InjectMocks
     private CreatePeriodicPaymentService createPeriodicPaymentService;
@@ -76,14 +79,18 @@ public class CreatePeriodicPaymentTest {
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
     @Mock
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
+    @Mock
+    private Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
 
     @Test
     public void success_initiate_periodic_payment() {
         //When
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
-        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, "sepa-credit-transfers", buildXs2aPisCommonPayment())).thenReturn(buildPeriodicPaymentInitiationResponse());
-        when(pisCommonPaymentService.createCommonPayment(PARAM, TPP_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(buildPeriodicPaymentInitiationResponse());
+        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, TransactionStatus.RCVD,PAYMENT_ID ))
+            .thenReturn(PAYMENT_INFO);
 
         ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo());
 
@@ -156,5 +163,8 @@ public class CreatePeriodicPaymentTest {
         request.setTppInfo(TPP_INFO);
 
         return request;
+    }
+    private PisPaymentInfo buildPisPaymentInfoRequest() {
+        return new PisPaymentInfo();
     }
 }
