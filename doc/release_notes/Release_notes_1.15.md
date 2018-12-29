@@ -18,9 +18,6 @@ If TPP-Nok-Redirect-URI was not sent from TPP and in CMS is stored null, then CM
 When PSU creates new authorisation for a payment, all previous authorisations, created by this PSU for the same payment, will be failed and expired.
 
 ## Bugfix: validate PSU credentials during update PSU data requests
-Now PSU credentials are being validated in the following services:
-- PaymentAuthorisationSpi
-- PaymentCancellationSpi
-- AisConsentSpi
+From now on SPI response status UNAUTHORIZED_FAILURE corresponds to PSU_CREDENTIALS_INVALID error(response code HTTP 401).
 
-If PSU credentials are not correct, TPP will receive HTTP 401 response code with message code "PSU_CREDENTIALS_INVALID".
+Now SPI-Mock correctly handles invalid PSU credentials.
