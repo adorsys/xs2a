@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="now" value="now()" dbms="mariadb"/>
+    <property name="now" value="now()" dbms="postgresql"/>
+    <property name="now" value="2018-12-28 00:00:00"/>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-12-28-1">
+        <comment>Add creation_timestamp column to ais_consent and pis_common_payment</comment>
+
+        <addColumn tableName="ais_consent">
+            <column name="creation_timestamp" type="DATETIME" valueDate="${now}"/>
+        </addColumn>
+        <addColumn tableName="pis_common_payment">
+            <column name="creation_timestamp" type="DATETIME" valueDate="${now}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2018-12-28-2">
+        <comment>Add not null constraint to the creation_timestamp columns</comment>
+
+        <addNotNullConstraint tableName="ais_consent" columnName="creation_timestamp" columnDataType="DATETIME"/>
+        <addNotNullConstraint tableName="pis_common_payment" columnName="creation_timestamp" columnDataType="DATETIME"/>
+
+    </changeSet>
+
+</databaseChangeLog>
