@@ -49,6 +49,11 @@ public class Xs2aPisCommonPaymentService {
         return createCommonPayment(parameters, tppInfo, null);
     }
 
+    public CreatePisCommonPaymentResponse createCommonPayment(PisPaymentInfo request) {
+        return pisCommonPaymentServiceEncrypted.createCommonPayment(request)
+                   .orElse(null);
+    }
+
     public CreatePisCommonPaymentResponse createCommonPayment(PaymentInitiationParameters parameters, TppInfo tppInfo, byte[] paymentData) {
         PisPaymentInfo request = new PisPaymentInfo();
         request.setPaymentProduct(parameters.getPaymentProduct());

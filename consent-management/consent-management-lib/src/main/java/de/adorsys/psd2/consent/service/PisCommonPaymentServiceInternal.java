@@ -79,9 +79,6 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public Optional<CreatePisCommonPaymentResponse> createCommonPayment(PisPaymentInfo request) {
         PisCommonPaymentData commonPaymentData = pisCommonPaymentMapper.mapToPisCommonPaymentData(request);
-        String externalId = UUID.randomUUID().toString();
-        commonPaymentData.setPaymentId(externalId);
-
         PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(commonPaymentData);
 
         if (saved.getId() == null) {

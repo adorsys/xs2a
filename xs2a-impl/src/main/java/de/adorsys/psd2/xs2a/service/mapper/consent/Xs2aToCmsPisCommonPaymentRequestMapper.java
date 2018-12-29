@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
@@ -68,6 +69,18 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                    .orElse(null);
     }
 
+    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, TransactionStatus transactionStatus, String paymentId) {
+        PisPaymentInfo request = new PisPaymentInfo();
+        request.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
+        request.setPaymentType(paymentInitiationParameters.getPaymentType());
+        request.setTransactionStatus(transactionStatus);
+        request.setPaymentData(null);
+        request.setTppInfo(tppInfo);
+        request.setPaymentId(paymentId);
+        request.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
+        return request;
+    }
+
     public PisCommonPaymentRequest mapToCmsSinglePisCommonPaymentRequest(SinglePayment singlePayment, String paymentProduct) {
         PisCommonPaymentRequest request = new PisCommonPaymentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
@@ -88,6 +101,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
     public PisCommonPaymentRequest mapToCmsBulkPisCommonPaymentRequest(BulkPayment bulkPayment, String paymentProduct) {
         PisCommonPaymentRequest request = new PisCommonPaymentRequest();
+        request.setPaymentId(bulkPayment.getPaymentId());
         request.setPayments(mapToListPisPayment(bulkPayment.getPayments()));
         request.setPaymentProduct(paymentProduct);
         request.setPaymentType(PaymentType.BULK);
