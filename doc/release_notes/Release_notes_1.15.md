@@ -39,3 +39,8 @@ The following services were affected by this change:
     - de.adorsys.psd2.consent.psu.api.CmsPsuAisService
     - de.adorsys.psd2.consent.psu.api.CmsPsuPiisService
     - de.adorsys.psd2.consent.psu.api.CmsPsuPisService
+
+## Bugfix: Embedded SCA Approach is not supported for Bank Offered Consent
+Now Bank Offered Consent is not supported for Embedded SCA Approach.
+
+If ASPSP doesn't support Bank Offered Consent then TPP will receive HTTP 405 response code with message code "SERVICE_INVALID" for any approach, instead of "PARAMETER_NOT_SUPPORTED"(HTTP 400 response code)
