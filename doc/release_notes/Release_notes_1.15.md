@@ -24,3 +24,18 @@ Now SPI-Mock correctly handles invalid PSU credentials.
 
 ## Bugfix: method encryptConsentData in SecurityDataService takes byte array as an argument
 Now to encrypt aspspConsentData in SecurityDataService we should provide byte array as an argument instead of Base64 encoded string
+
+## Add instanceId to services in cms-aspsp-api and cms-psu-api
+From now methods in cms-aspsp-api and cms-psu-api also require instanceId to be provided as a mandatory argument.
+This id represents particular service instance and is used for filtering data from the database.
+
+All corresponding CMS endpoints were also updated and from now on support instanceId as an optional header. 
+If the header isn't provided, default value `UNDEFINED` will be used instead.
+
+The following services were affected by this change:
+  - In consent-aspsp-api:
+    - de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService
+  - In consent-psu-api:
+    - de.adorsys.psd2.consent.psu.api.CmsPsuAisService
+    - de.adorsys.psd2.consent.psu.api.CmsPsuPiisService
+    - de.adorsys.psd2.consent.psu.api.CmsPsuPisService
