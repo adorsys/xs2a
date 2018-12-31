@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.AccountReferenceMapper;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -48,6 +49,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 @RequiredArgsConstructor
 public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private final PiisConsentRepository piisConsentRepository;
+    private final PiisConsentEntitySpecification piisConsentEntitySpecification;
     private final PiisConsentMapper piisConsentMapper;
     private final PsuDataMapper psuDataMapper;
     private final TppInfoMapper tppInfoMapper;
@@ -69,16 +71,17 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     }
 
     @Override
-    public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData) {
-        return piisConsentRepository.findByPsuDataPsuId(psuIdData.getPsuId()).stream()
+    public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdIdAndInstanceId(psuIdData.getPsuId(), instanceId))
+                   .stream()
                    .map(piisConsentMapper::mapToPiisConsent)
                    .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public boolean terminateConsent(@NotNull String consentId) {
-        Optional<PiisConsentEntity> entityOptional = piisConsentRepository.findByExternalId(consentId);
+    public boolean terminateConsent(@NotNull String consentId, @NotNull String instanceId) {
+        Optional<PiisConsentEntity> entityOptional = Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)));
 
         if (!entityOptional.isPresent()) {
             return false;

@@ -34,6 +34,8 @@ import java.util.List;
 @RequestMapping(path = "aspsp-api/v1/piis/consents")
 @Api(value = "aspsp-api/v1/piis/consents", tags = "ASPSP PIIS, Consents", description = "Controller for cms-aspsp-api providing access to PIIS consents")
 public class CmsAspspPiisController {
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
+
     private final CmsAspspPiisService cmsAspspPiisService;
 
     @PostMapping(path = "/")
@@ -69,9 +71,11 @@ public class CmsAspspPiisController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType) {
+        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
+        @ApiParam(value = "ID of the particular service instance")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return new ResponseEntity<>(cmsAspspPiisService.getConsentsForPsu(psuIdData), HttpStatus.OK);
+        return new ResponseEntity<>(cmsAspspPiisService.getConsentsForPsu(psuIdData, instanceId), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/{consent-id}")
@@ -81,8 +85,10 @@ public class CmsAspspPiisController {
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Boolean> terminateConsent(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId) {
-        return new ResponseEntity<>(cmsAspspPiisService.terminateConsent(consentId), HttpStatus.OK);
+        @PathVariable("consent-id") String consentId,
+        @ApiParam(value = "ID of the particular service instance")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        return new ResponseEntity<>(cmsAspspPiisService.terminateConsent(consentId, instanceId), HttpStatus.OK);
     }
 
     private PsuIdData getPsuIdData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {

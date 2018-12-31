@@ -42,7 +42,8 @@ public class PiisConsentMapper {
                                piisConsentEntity.getConsentStatus(),
                                accountReferenceMapper.mapToAccountReferenceList(piisConsentEntity.getAccounts()),
                                piisConsentEntity.getTppAccessType(),
-                               piisConsentEntity.getAllowedFrequencyPerDay());
+                               piisConsentEntity.getAllowedFrequencyPerDay(),
+                               piisConsentEntity.getInstanceId());
     }
 
     public List<PiisConsent> mapToPiisConsentList(List<PiisConsentEntity> consentEntities) {

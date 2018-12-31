@@ -45,6 +45,7 @@ public class CmsAspspPiisControllerTest {
     private static final String WRONG_CONSENT_ID = "efe6d8bd-c6bc-4866-81a3-87ac755ffa4b";
     private static final String PSU_ID = "PSU-ID-1";
     private static final String WRONG_PSU_ID = "PSU-ID-2";
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
     @Mock
     private CmsAspspPiisService cmsAspspPiisService;
@@ -56,10 +57,14 @@ public class CmsAspspPiisControllerTest {
     public void setUp() {
         when(cmsAspspPiisService.createConsent(any(), any(), any(), any(), anyInt()))
             .thenReturn(Optional.of(CONSENT_ID));
-        when(cmsAspspPiisService.getConsentsForPsu(buildPsuIdData(PSU_ID))).thenReturn(buildPiisConsentList());
-        when(cmsAspspPiisService.getConsentsForPsu(buildPsuIdData(WRONG_PSU_ID))).thenReturn(Collections.emptyList());
-        when(cmsAspspPiisService.terminateConsent(eq(CONSENT_ID))).thenReturn(true);
-        when(cmsAspspPiisService.terminateConsent(eq(WRONG_CONSENT_ID))).thenReturn(false);
+        when(cmsAspspPiisService.getConsentsForPsu(eq(buildPsuIdData(PSU_ID)), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+            .thenReturn(buildPiisConsentList());
+        when(cmsAspspPiisService.getConsentsForPsu(eq(buildPsuIdData(WRONG_PSU_ID)), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+            .thenReturn(Collections.emptyList());
+        when(cmsAspspPiisService.terminateConsent(eq(CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+            .thenReturn(true);
+        when(cmsAspspPiisService.terminateConsent(eq(WRONG_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+            .thenReturn(false);
     }
 
     @Test
@@ -93,7 +98,7 @@ public class CmsAspspPiisControllerTest {
 
         //When
         ResponseEntity<List<PiisConsent>> actual =
-            cmsAspspPiisController.getConsentsForPsu(PSU_ID, null, null, null);
+            cmsAspspPiisController.getConsentsForPsu(PSU_ID, null, null, null, DEFAULT_SERVICE_INSTANCE_ID);
 
         //Then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -104,7 +109,7 @@ public class CmsAspspPiisControllerTest {
     public void getConsentsForPsu_Failure() {
         //When
         ResponseEntity<List<PiisConsent>> actual =
-            cmsAspspPiisController.getConsentsForPsu(WRONG_PSU_ID, null, null, null);
+            cmsAspspPiisController.getConsentsForPsu(WRONG_PSU_ID, null, null, null, null);
 
         //Then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -116,7 +121,7 @@ public class CmsAspspPiisControllerTest {
     public void terminateConsent_Success() {
         //When
         ResponseEntity<Boolean> actual =
-            cmsAspspPiisController.terminateConsent(CONSENT_ID);
+            cmsAspspPiisController.terminateConsent(CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         //Then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -127,7 +132,7 @@ public class CmsAspspPiisControllerTest {
     public void terminateConsent_Failure() {
         //When
         ResponseEntity<Boolean> actual =
-            cmsAspspPiisController.terminateConsent(WRONG_CONSENT_ID);
+            cmsAspspPiisController.terminateConsent(WRONG_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         //Then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
