@@ -94,15 +94,10 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
 
 
     private void buildLinkForEmbeddedScaApproach(CreateConsentResponse response, Links links, boolean explicitPreferred) {
-        if (aspspProfileService.isBankOfferedConsentSupported()) {
-            links.setStatus(buildPath("/v1/consents/{consentId}/status", response.getConsentId()));
-            links.setSelf(buildPath("/v1/consents/{consentId}", response.getConsentId()));
+        if (authorisationMethodDecider.isExplicitMethod(explicitPreferred)) {
+            links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
         } else {
-            if (authorisationMethodDecider.isExplicitMethod(explicitPreferred)) {
-                links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
-            } else {
-                links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", response.getConsentId(), response.getAuthorizationId()));
-            }
+            links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", response.getConsentId(), response.getAuthorizationId()));
         }
     }
 
