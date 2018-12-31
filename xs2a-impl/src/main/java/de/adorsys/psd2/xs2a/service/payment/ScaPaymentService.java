@@ -16,14 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 
 public interface ScaPaymentService {
-    SinglePaymentInitiationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct, Xs2aPisCommonPayment commonPayment);
+    SinglePaymentInitiationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData);
 
-    PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct, Xs2aPisCommonPayment commonPayment);
+    PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData);
 
-    BulkPaymentInitiationResponse createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct, Xs2aPisCommonPayment commonPayment);
+    BulkPaymentInitiationResponse createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData);
 }

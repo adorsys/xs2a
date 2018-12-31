@@ -18,8 +18,11 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
+import de.adorsys.psd2.consent.repository.specification.PisCommonPaymentDataSpecification;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +33,15 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class CommonPaymentDataService {
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+    private final PisCommonPaymentDataSpecification pisCommonPaymentDataSpecification;
 
-    public Optional<PisCommonPaymentData> getPisCommonPaymentData(String paymentId) {
-        return pisCommonPaymentDataRepository.findByPaymentId(paymentId);
+    public Optional<PisCommonPaymentData> getPisCommonPaymentData(String paymentId, @Nullable String instanceId) {
+        Specification<PisCommonPaymentData> specification = Optional.ofNullable(instanceId)
+                                                                .map(i -> pisCommonPaymentDataSpecification.byPaymentIdAndInstanceId(paymentId, i))
+                                                                .orElseGet(() -> pisCommonPaymentDataSpecification.byPaymentId(paymentId));
+
+        return Optional.ofNullable(pisCommonPaymentDataRepository.findOne(specification));
+
     }
 
     @Transactional

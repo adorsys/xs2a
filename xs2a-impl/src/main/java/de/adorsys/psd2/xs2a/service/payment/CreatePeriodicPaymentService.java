@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -28,9 +30,9 @@ import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -44,8 +46,8 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PisScaAuthorisationService pisScaAuthorisationService;
-    private final PisAspspDataService pisAspspDataService;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
+    private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
 
     /**
      * Initiates periodic payment
@@ -57,7 +59,14 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
      */
     @Override
     public ResponseObject<PeriodicPaymentInitiationResponse> createPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
-        Xs2aPisCommonPayment pisCommonPayment = xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(pisCommonPaymentService.createCommonPayment(paymentInitiationParameters, tppInfo), paymentInitiationParameters.getPsuData());
+
+        PsuIdData psuData = paymentInitiationParameters.getPsuData();
+
+        PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), psuData);
+
+        PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response.getTransactionStatus(), response.getPaymentId());
+
+        Xs2aPisCommonPayment pisCommonPayment = xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(pisCommonPaymentService.createCommonPayment(pisPaymentInfo), psuData);
 
         if (StringUtils.isBlank(pisCommonPayment.getPaymentId())) {
             return ResponseObject.<PeriodicPaymentInitiationResponse>builder()
@@ -65,18 +74,13 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
                        .build();
         }
 
+        periodicPayment.setTransactionStatus(response.getTransactionStatus());
+        periodicPayment.setPaymentId(response.getPaymentId());
+        pisCommonPaymentService.updatePeriodicPaymentInCommonPayment(periodicPayment, paymentInitiationParameters, pisCommonPayment.getPaymentId());
+
         String externalPaymentId = pisCommonPayment.getPaymentId();
 
-        // we need to get decrypted payment ID
-        String internalPaymentId = pisAspspDataService.getInternalPaymentIdByEncryptedString(externalPaymentId);
-        periodicPayment.setPaymentId(internalPaymentId);
-
-        PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisCommonPayment);
-        response.setPaymentId(pisCommonPayment.getPaymentId());
-
-        periodicPayment.setTransactionStatus(response.getTransactionStatus());
-
-        pisCommonPaymentService.updatePeriodicPaymentInCommonPayment(periodicPayment, paymentInitiationParameters, pisCommonPayment.getPaymentId());
+        response.setPaymentId(externalPaymentId);
 
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {
@@ -90,9 +94,6 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
             response.setAuthorizationId(authorisationResponse.getAuthorisationId());
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
-
-        // we need to return encrypted payment ID
-        response.setPaymentId(externalPaymentId);
 
         return ResponseObject.<PeriodicPaymentInitiationResponse>builder()
                    .body(response)

@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.AccountReferenceMapper;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -35,6 +36,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -57,6 +59,7 @@ public class CmsAspspPiisServiceInternalTest {
     private static final String PSU_ID_WRONG = "PSU-ID-2";
     private static final LocalDate EXPIRE_DATE = LocalDate.now().plusDays(100);
     private static final int FREQUENCY_PER_DAY = 4;
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
     @Mock
     private PiisConsentRepository piisConsentRepository;
@@ -68,6 +71,8 @@ public class CmsAspspPiisServiceInternalTest {
     private AccountReferenceMapper accountReferenceMapper;
     @Mock
     private PiisConsentMapper piisConsentMapper;
+    @Mock
+    private PiisConsentEntitySpecification piisConsentEntitySpecification;
     @InjectMocks
     private CmsAspspPiisServiceInternal cmsAspspPiisServiceInternal;
 
@@ -96,6 +101,7 @@ public class CmsAspspPiisServiceInternalTest {
 
         // Then
         assertThat(actual.isPresent()).isTrue();
+        //noinspection OptionalGetWithoutIsPresent
         assertThat(StringUtils.isNotBlank(actual.get())).isTrue();
     }
 
@@ -119,50 +125,70 @@ public class CmsAspspPiisServiceInternalTest {
     @Test
     public void getConsentsForPsu_Success() {
         // Given
+        //noinspection unchecked
+        when(piisConsentRepository.findAll(any(Specification.class)))
+            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PsuIdData psuIdData = buildPsuIdData(PSU_ID);
         PiisConsent expected = buildPiisConsent();
 
         // When
-        List<PiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData);
+        List<PiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actual.isEmpty()).isFalse();
         assertThat(actual.get(0)).isEqualTo(expected);
+        verify(piisConsentEntitySpecification, times(1))
+            .byPsuIdIdAndInstanceId(PSU_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
     public void getConsentsForPsu_Failure_WrongPsuId() {
         // Given
+        //noinspection unchecked
+        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
         PsuIdData psuIdData = buildPsuIdData(PSU_ID_WRONG);
 
         // When
-        List<PiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData);
+        List<PiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actual.isEmpty()).isTrue();
+        verify(piisConsentEntitySpecification, times(1))
+            .byPsuIdIdAndInstanceId(PSU_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
     public void terminateConsent_Success() {
+        // Given
+        //noinspection unchecked
+        when(piisConsentRepository.findOne(any(Specification.class))).thenReturn(buildPiisConsentEntity());
         ArgumentCaptor<PiisConsentEntity> argumentCaptor = ArgumentCaptor.forClass(PiisConsentEntity.class);
 
         // When
-        boolean actual = cmsAspspPiisServiceInternal.terminateConsent(CONSENT_EXTERNAL_ID);
+        boolean actual = cmsAspspPiisServiceInternal.terminateConsent(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actual).isTrue();
         verify(piisConsentRepository).save(argumentCaptor.capture());
         assertThat(argumentCaptor.getValue().getConsentStatus()).isEqualTo(ConsentStatus.TERMINATED_BY_ASPSP);
+        verify(piisConsentEntitySpecification, times(1))
+            .byConsentIdAndInstanceId(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
     public void terminateConsent_Failure_WrongConsentId() {
+        // Given
+        //noinspection unchecked
+        when(piisConsentRepository.findOne(any(Specification.class))).thenReturn(null);
+
         // When
-        boolean actual = cmsAspspPiisServiceInternal.terminateConsent(CONSENT_EXTERNAL_ID_WRONG);
+        boolean actual = cmsAspspPiisServiceInternal.terminateConsent(CONSENT_EXTERNAL_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actual).isFalse();
         verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+        verify(piisConsentEntitySpecification, times(1))
+            .byConsentIdAndInstanceId(CONSENT_EXTERNAL_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     private PiisConsentEntity buildConsent() {

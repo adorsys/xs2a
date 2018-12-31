@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
@@ -84,12 +83,11 @@ public class AisConsentServiceInternalTest {
     @Before
     public void setUp() {
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
-        CmsAspspConsentDataBase64 cmsAspspConsentDataBase64 = buildUpdateBlobRequest();
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
         when(securityDataService.encryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.encryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
-        when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, cmsAspspConsentDataBase64.getAspspConsentDataBase64()))
+        when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA))
             .thenReturn(Optional.of(new EncryptedData(ENCRYPTED_CONSENT_DATA)));
         when(tppInfoMapper.mapToTppInfoEntity(buildTppInfo())).thenReturn(buildTppInfoEntity());
     }
@@ -254,10 +252,6 @@ public class AisConsentServiceInternalTest {
                                              .accountIdentifier("iban-1")
                                              .currency("EUR")
                                              .build());
-    }
-
-    private CmsAspspConsentDataBase64 buildUpdateBlobRequest() {
-        return new CmsAspspConsentDataBase64("encryptedId", Base64.getEncoder().encodeToString("decrypted consent data".getBytes()));
     }
 
     private AisAccountConsent buildSpiAccountConsent() {

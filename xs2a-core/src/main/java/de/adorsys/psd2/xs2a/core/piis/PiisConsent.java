@@ -43,4 +43,5 @@ public class PiisConsent {
     private List<AccountReference> accounts;
     private PiisConsentTppAccessType tppAccessType;
     private int allowedFrequencyPerDay;
+    private String instanceId;
 }

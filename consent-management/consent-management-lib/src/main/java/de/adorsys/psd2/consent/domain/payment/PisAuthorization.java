@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.domain.payment;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
@@ -28,7 +29,7 @@ import java.time.OffsetDateTime;
 @Data
 @ToString(exclude = "paymentData")
 @Entity(name = "pis_consent_authorization")
-public class PisAuthorization {
+public class PisAuthorization extends InstanceDependableEntity {
     @Id
     @Column(name = "authorization_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_consent_authorization_generator")
