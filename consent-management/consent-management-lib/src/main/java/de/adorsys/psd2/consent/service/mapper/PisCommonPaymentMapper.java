@@ -116,6 +116,7 @@ public class PisCommonPaymentMapper {
                        response.setTppInfo(tppInfoMapper.mapToTppInfo(cmd.getTppInfo()));
                        response.setPsuData(psuDataMapper.mapToPsuIdDataList(commonPaymentData.getPsuData()));
                        response.setPaymentData(cmd.getPayment());
+                       response.setTransactionStatus(cmd.getTransactionStatus());
                        return response;
                    });
     }

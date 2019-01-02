@@ -45,6 +45,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    @Transactional
     public Optional<ConsentStatus> getConsentStatusById(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getConsentStatusById);
@@ -59,6 +60,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    @Transactional
     public Optional<AisAccountConsent> getAisAccountConsentById(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getAisAccountConsentById);
@@ -120,6 +122,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    @Transactional
     public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(consentId -> aisConsentService.getAuthorisationScaStatus(consentId, authorisationId));

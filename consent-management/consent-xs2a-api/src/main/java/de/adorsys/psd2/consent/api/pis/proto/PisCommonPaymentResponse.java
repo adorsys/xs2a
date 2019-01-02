@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.api.pis.proto;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -49,4 +50,7 @@ public class PisCommonPaymentResponse {
 
     @ApiModelProperty(value = "Payment info")
     private byte[] paymentData;
+
+    @ApiModelProperty(value = "Transaction status", required = true)
+    private TransactionStatus transactionStatus;
 }
