@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.consent.service.scheduler;
 
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
+import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Component
 public class NotConfirmedConsentExpirationScheduleTask {
-    private final AspspProfileService aspspProfileService;
+    private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final AisConsentRepository aisConsentRepository;
 
     @Scheduled(cron = "${not-confirmed-consent-expiration.cron.expression}")
@@ -43,27 +42,13 @@ public class NotConfirmedConsentExpirationScheduleTask {
     public void obsoleteNotConfirmedConsentIfExpired() {
         log.info("Not confirmed consent expiration schedule task is run!");
 
-        long expirationPeriodMs = aspspProfileService.getAspspSettings().getNotConfirmedConsentExpirationPeriodMs();
-
         List<AisConsent> expiredNotConfirmedConsents = aisConsentRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED))
                                        .stream()
-                                       .filter(c -> c.isConfirmationExpired(expirationPeriodMs))
+                                       .filter(aisConsentConfirmationExpirationService::isConsentConfirmationExpired)
                                        .collect(Collectors.toList());
 
         if (!expiredNotConfirmedConsents.isEmpty()) {
-            aisConsentRepository.save(obsoleteConsents(expiredNotConfirmedConsents));
+            aisConsentConfirmationExpirationService.updateConsentListOnConfirmationExpiration(expiredNotConfirmedConsents);
         }
-    }
-
-    private List<AisConsent> obsoleteConsents(List<AisConsent> expiredConsents) {
-        return expiredConsents.stream()
-            .map(this::obsoleteConsentParameters)
-            .collect(Collectors.toList());
-    }
-
-    private AisConsent obsoleteConsentParameters(AisConsent consent) {
-        consent.setConsentStatus(ConsentStatus.EXPIRED);
-        consent.getAuthorizations().forEach(auth -> auth.setScaStatus(ScaStatus.FAILED));
-        return consent;
     }
 }
