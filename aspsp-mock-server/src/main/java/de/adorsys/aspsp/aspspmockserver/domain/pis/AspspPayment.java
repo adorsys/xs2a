@@ -20,6 +20,8 @@ import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspAddress;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspDayOfExecution;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspExecutionRule;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspRemittance;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -58,9 +60,9 @@ public class AspspPayment {
     private LocalDateTime requestedExecutionTime;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String executionRule;
+    private AspspExecutionRule executionRule;
     private String frequency; // TODO consider using an enum similar to FrequencyCode based on the the "EventFrequency7Code" of ISO 20022
-    private int dayOfExecution; //Day here max 31
+    private AspspDayOfExecution dayOfExecution; //Day here max 31
     private String bulkId;
 
     public AspspPayment() {}

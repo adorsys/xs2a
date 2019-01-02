@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,9 +30,9 @@ public class CmsPeriodicPayment extends CmsSinglePayment {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private String executionRule;
+    private PisExecutionRule executionRule;
     private CmsFrequencyCode frequency;
-    private int dayOfExecution;
+    private PisDayOfExecution dayOfExecution;
 
     public CmsPeriodicPayment(String paymentProduct) {
         super(paymentProduct);

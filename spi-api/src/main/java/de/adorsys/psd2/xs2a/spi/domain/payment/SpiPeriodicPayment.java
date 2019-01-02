@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import lombok.Data;
@@ -28,9 +30,9 @@ import java.time.LocalDate;
 public class SpiPeriodicPayment extends SpiSinglePayment {
     private LocalDate startDate;
     private LocalDate endDate;
-    private String executionRule;
+    private PisExecutionRule executionRule;
     private SpiFrequencyCode frequency;
-    private int dayOfExecution;
+    private PisDayOfExecution dayOfExecution;
 
     public SpiPeriodicPayment(String paymentProduct) {
         super(paymentProduct);

@@ -25,7 +25,7 @@ public class AspspPeriodicPayment extends AspspSinglePayment {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private String executionRule;
+    private AspspExecutionRule executionRule;
     private String frequency; // TODO consider using an enum similar to FrequencyCode based on the the "EventFrequency7Code" of ISO 20022
-    private int dayOfExecution; //Day here max 31
+    private AspspDayOfExecution dayOfExecution; //Day here max 31
 }

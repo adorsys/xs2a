@@ -25,6 +25,7 @@ import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
 import de.adorsys.psd2.aspsp.mock.api.account.*;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspDayOfExecution;
 import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
 import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import de.adorsys.psd2.aspsp.mock.api.psu.Tan;
@@ -76,16 +77,16 @@ public class AccountMockServerData {
     private void fillPayments() {
         // Payment data for Cucumber Test
         paymentRepository.save(getPayment("a9115f14-4f72-4e4e-8798-202808e85238", psus.get(3), EUR, BigDecimal.valueOf(150), psus.get(7),
-                                          "Online-Shoppping Amazon", LocalDate.parse("2018-07-15"), LocalDateTime.parse("2018-07-15T18:30:35.035"), AspspTransactionStatus.RCVD, PisPaymentType.SINGLE, 15));
+                                          "Online-Shoppping Amazon", LocalDate.parse("2018-07-15"), LocalDateTime.parse("2018-07-15T18:30:35.035"), AspspTransactionStatus.RCVD, PisPaymentType.SINGLE, AspspDayOfExecution._15));
         paymentRepository.save(getPayment("68147b90-e4ef-41c6-9c8b-c848c1e93700", psus.get(3), EUR, BigDecimal.valueOf(1030), psus.get(8),
-                                          "Holidays", LocalDate.parse("2018-07-31"), LocalDateTime.parse("2018-07-31T18:30:35.035"), AspspTransactionStatus.PDNG, PisPaymentType.SINGLE, 31));
+                                          "Holidays", LocalDate.parse("2018-07-31"), LocalDateTime.parse("2018-07-31T18:30:35.035"), AspspTransactionStatus.PDNG, PisPaymentType.SINGLE, AspspDayOfExecution._31));
         paymentRepository.save(getPayment("97694f0d-32e2-43a4-9e8d-261f2fc28236", psus.get(3), EUR, BigDecimal.valueOf(70), psus.get(9),
-                                          "Concert Tickets", LocalDate.parse("2018-07-08"), LocalDateTime.parse("2018-07-08T18:30:35.035"), AspspTransactionStatus.RJCT, PisPaymentType.SINGLE, 8));
+                                          "Concert Tickets", LocalDate.parse("2018-07-08"), LocalDateTime.parse("2018-07-08T18:30:35.035"), AspspTransactionStatus.RJCT, PisPaymentType.SINGLE, AspspDayOfExecution._08));
 
     }
 
     private AspspPayment getPayment(String paymentId, Psu debtor, Currency currency, BigDecimal amount, Psu creditor, String purposeCode, LocalDate requestedExecutionDate,
-                                    LocalDateTime requestedExecutionTime, AspspTransactionStatus paymentStatus, PisPaymentType paymentType, int dayOfExecution) {
+                                    LocalDateTime requestedExecutionTime, AspspTransactionStatus paymentStatus, PisPaymentType paymentType, AspspDayOfExecution dayOfExecution) {
         AspspPayment payment = new AspspPayment();
         payment.setPaymentId(paymentId);
         payment.setDebtorAccount(getRef(debtor, currency));

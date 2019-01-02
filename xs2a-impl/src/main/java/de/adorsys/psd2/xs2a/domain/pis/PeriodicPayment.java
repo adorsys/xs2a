@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -31,13 +31,11 @@ public class PeriodicPayment extends SinglePayment {
 
     @NotNull
     private LocalDate startDate;
-    private String executionRule;
+    private PisExecutionRule executionRule;
     private LocalDate endDate;
 
     @NotNull
     private Xs2aFrequencyCode frequency;
 
-    @Min(0)
-    @Max(31)
-    private int dayOfExecution; //Day here max 31
+    private PisDayOfExecution dayOfExecution;
 }
