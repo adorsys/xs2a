@@ -17,20 +17,53 @@
 package de.adorsys.psd2.consent.repository.specification;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.Join;
 
 /**
  * This is a class for providing Spring Data Jpa Specification for different entities attributes
  */
 public class EntityAttributeSpecificationProvider {
-    private EntityAttributeSpecificationProvider(){}
+    private EntityAttributeSpecificationProvider() {
+    }
 
+    /**
+     * Provides specification for the attribute in some entity.
+     *
+     * @param attribute name of the attribute in entity
+     * @param value     optional value of the attribute
+     * @param <T>       type of the entity, for which this specification will be created
+     * @return resulting specification, or <code>null</code> if the attribute's value was omitted
+     */
     public static <T> Specification<T> provideSpecificationForEntityAttribute(String attribute, String value) {
-        return  (root, criteriaQuery, criteriaBuilder) -> {
+        return (root, criteriaQuery, criteriaBuilder) -> {
             if (StringUtils.isBlank(value)) {
                 return null;
             }
             return criteriaBuilder.and(criteriaBuilder.equal(root.get(attribute), value));
+        };
+    }
+
+    /**
+     * Provides specification for the attribute in a joined entity.
+     *
+     * @param join      join to an entity
+     * @param attribute name of the attribute in joined entity
+     * @param value     optional value of the attribute
+     * @param <T>       type of the entity, for which this specification will be created
+     * @return resulting specification, or <code>null</code> if the attribute's value was omitted
+     */
+    public static <T> Specification<T> provideSpecificationForJoinedEntityAttribute(@NotNull Join<T, ?> join,
+                                                                                    @NotNull String attribute,
+                                                                                    @Nullable String value) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            if (StringUtils.isBlank(value)) {
+                return null;
+            }
+            return criteriaBuilder.and(criteriaBuilder.equal(join.get(attribute), value));
         };
     }
 }
