@@ -18,6 +18,8 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
@@ -116,17 +118,23 @@ public class PaymentModelMapperXs2a {
         payment.setRequestedExecutionTime(OffsetDateTime.now().plusHours(1));
 
         payment.setStartDate(paymentRequest.getStartDate());
-        payment.setExecutionRule(Optional.ofNullable(paymentRequest.getExecutionRule()).map(ExecutionRule::toString).orElse(null));
+        payment.setExecutionRule(mapToPisExecutionRule(paymentRequest.getExecutionRule()).orElse(null));
         payment.setEndDate(paymentRequest.getEndDate());
         payment.setFrequency(mapToXs2aFrequencyCode(paymentRequest.getFrequency()));
-        payment.setDayOfExecution(mapToDayOfExecution(paymentRequest.getDayOfExecution()));
+        payment.setDayOfExecution(mapToPisDayOfExecution(paymentRequest.getDayOfExecution()).orElse(null));
         return payment;
     }
 
-    private int mapToDayOfExecution(DayOfExecution dayOfExecution) {
+    private Optional<PisDayOfExecution> mapToPisDayOfExecution(DayOfExecution dayOfExecution) {
         return Optional.ofNullable(dayOfExecution)
-            .map(d -> Integer.parseInt(d.toString()))
-            .orElse(0);
+                   .map(DayOfExecution::toString)
+                   .flatMap(PisDayOfExecution::getByValue);
+    }
+
+    private Optional<PisExecutionRule> mapToPisExecutionRule(ExecutionRule rule) {
+        return Optional.ofNullable(rule)
+                   .map(ExecutionRule::toString)
+                   .flatMap(PisExecutionRule::getByValue);
     }
 
     private Xs2aFrequencyCode mapToXs2aFrequencyCode(FrequencyCode frequency) {

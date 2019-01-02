@@ -19,6 +19,8 @@ package de.adorsys.psd2.consent.domain.payment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -111,8 +113,8 @@ public class PisPaymentData extends InstanceDependableEntity {
     private LocalDate startDate;
 
     @Column(name = "execution_rule")
-    @ApiModelProperty(name = "Execution rule", example = "latest")
-    private String executionRule;
+    @ApiModelProperty(name = "Execution rule", example = "following")
+    private PisExecutionRule executionRule;
 
     @Column(name = "end_date")
     @ApiModelProperty(name = "endDate", example = "2020-03-03")
@@ -123,7 +125,7 @@ public class PisPaymentData extends InstanceDependableEntity {
 
     @Column(name = "day_of_execution")
     @ApiModelProperty(name = "dayOfExecution", example = "14")
-    private int dayOfExecution;
+    private PisDayOfExecution dayOfExecution;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
