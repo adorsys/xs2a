@@ -20,11 +20,19 @@ public class EntityAttribute {
     public static final String INSTANCE_ID_ATTRIBUTE = "instanceId";
     public static final String AUTHORISATION_EXTERNAL_ID_ATTRIBUTE = "externalId";
     public static final String CONSENT_EXTERNAL_ID_ATTRIBUTE = "externalId";
-    public static final String PSU_ID_ATTRIBUTE = "psuId";
     public static final String PSU_DATA_ATTRIBUTE = "psuData";
     public static final String CONSENT_ID_ATTRIBUTE = "consentId";
     public static final String PAYMENT_ID_ATTRIBUTE = "paymentId";
     public static final String TIMESTAMP_ID_ATTRIBUTE = "timestamp";
+    public static final String CREATION_TIMESTAMP_ATTRIBUTE = "creationTimestamp";
+
+    public static final String PSU_ID_ATTRIBUTE = "psuId";
+    public static final String PSU_ID_TYPE_ATTRIBUTE = "psuIdType";
+    public static final String PSU_CORPORATE_ID_ATTRIBUTE = "psuCorporateId";
+    public static final String PSU_CORPORATE_ID_TYPE_ATTRIBUTE = "psuCorporateIdType";
+
+    public static final String TPP_INFO_ATTRIBUTE = "tppInfo";
+    public static final String TPP_INFO_AUTHORISATION_NUMBER_ATTRIBUTE = "authorisationNumber";
 
     private EntityAttribute() {
     }
