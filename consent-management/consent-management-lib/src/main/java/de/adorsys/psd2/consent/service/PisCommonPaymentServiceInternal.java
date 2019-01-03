@@ -96,6 +96,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return Information about the status of a common payment
      */
     @Override
+    @Transactional
     public Optional<TransactionStatus> getPisCommonPaymentStatusById(String paymentId) {
         return pisCommonPaymentDataRepository.findByPaymentId(paymentId)
                    .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
@@ -109,6 +110,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return Response containing full information about pis common payment
      */
     @Override
+    @Transactional
     public Optional<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
         return pisCommonPaymentDataRepository.findByPaymentId(paymentId)
                    .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
@@ -252,6 +254,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     }
 
     @Override
+    @Transactional
     public Optional<ScaStatus> getAuthorisationScaStatus(@NotNull String paymentId, @NotNull String authorisationId, CmsAuthorisationType authorisationType) {
         Optional<PisAuthorization> authorizationOptional = pisAuthorizationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType);
 
