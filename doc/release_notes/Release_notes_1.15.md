@@ -34,7 +34,9 @@ If the header isn't provided, default value `UNDEFINED` will be used instead.
 
 The following services were affected by this change:
   - In consent-aspsp-api:
+    - de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService
     - de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService
+    - de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService
   - In consent-psu-api:
     - de.adorsys.psd2.consent.psu.api.CmsPsuAisService
     - de.adorsys.psd2.consent.psu.api.CmsPsuPiisService
@@ -44,3 +46,16 @@ The following services were affected by this change:
 Now Bank Offered Consent is not supported for Embedded SCA Approach.
 
 If ASPSP doesn't support Bank Offered Consent then TPP will receive HTTP 405 response code with message code "SERVICE_INVALID" for any approach, instead of "PARAMETER_NOT_SUPPORTED"(HTTP 400 response code)
+
+## Implement interfaces for exporting consents/payments from CMS
+Implementations for Java interfaces de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService and
+ de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService were provided.
+
+Corresponding endpoints were also added to CMS, they are listed in the table below.
+
+| Method | Endpoint                               | Description                                                                                                          |
+|--------|----------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| GET    | aspsp-api/v1/ais/consents/tpp/{tpp-id} | Returns a list of AIS consent objects by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID |
+| GET    | aspsp-api/v1/ais/consents/psu          | Returns a list of AIS consent objects by given mandatory PSU ID Data, optional creation date and instance ID         |
+| GET    | aspsp-api/v1/pis/payments/tpp/{tpp-id} | Returns a list of payments by given mandatory PSU ID Data, optional creation date and instance ID.                   |
+| GET    | aspsp-api/v1/pis/payments/psu          | Returns a list of payments by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID.           |
