@@ -19,6 +19,8 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
@@ -92,10 +94,9 @@ public class PaymentModelMapperPsd2 {
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
             paymentResponse.setStartDate(xs2aPayment.getStartDate());
             paymentResponse.setEndDate(xs2aPayment.getEndDate());
-            paymentResponse.setExecutionRule(ExecutionRule.fromValue(xs2aPayment.getExecutionRule()));
+            paymentResponse.setExecutionRule(mapToExecutionRule(xs2aPayment.getExecutionRule()).orElse(null));
             paymentResponse.setFrequency(FrequencyCode.valueOf(xs2aPayment.getFrequency().name()));
-            String executionDateString = String.format("%02d", xs2aPayment.getDayOfExecution());
-            paymentResponse.setDayOfExecution(DayOfExecution.fromValue(executionDateString));
+            paymentResponse.setDayOfExecution(mapToDayOfExecution(xs2aPayment.getDayOfExecution()).orElse(null));
             paymentResponse.setTransactionStatus(mapToTransactionStatus12(xs2aPayment.getTransactionStatus()));
             return paymentResponse;
         } else {
@@ -235,5 +236,17 @@ public class PaymentModelMapperPsd2 {
             log.warn("Can not convert payment from byte[] ", e);
             return null;
         }
+    }
+
+    private Optional<DayOfExecution> mapToDayOfExecution(PisDayOfExecution dayOfExecution) {
+        return Optional.ofNullable(dayOfExecution)
+                   .map(PisDayOfExecution::toString)
+                   .map(DayOfExecution::fromValue);
+    }
+
+    private Optional<ExecutionRule> mapToExecutionRule(PisExecutionRule rule) {
+        return Optional.ofNullable(rule)
+                   .map(PisExecutionRule::toString)
+                   .map(ExecutionRule::fromValue);
     }
 }

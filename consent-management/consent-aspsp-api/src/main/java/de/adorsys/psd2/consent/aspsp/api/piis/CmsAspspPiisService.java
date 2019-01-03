@@ -38,23 +38,27 @@ public interface CmsAspspPiisService {
      * @param allowedFrequencyPerDay Maximum frequency for an access per day
      * @return Consent id if the consent was created
      */
-    Optional<String> createConsent(@NotNull PsuIdData psuIdData, @Nullable TppInfo tppInfo, @NotNull List<AccountReference> accounts, @NotNull LocalDate validUntil, int allowedFrequencyPerDay);
+    Optional<String> createConsent(@NotNull PsuIdData psuIdData, @Nullable TppInfo tppInfo,
+                                   @NotNull List<AccountReference> accounts, @NotNull LocalDate validUntil,
+                                   int allowedFrequencyPerDay);
 
     /**
      * Terminates PIIS Consent object by its ID. Consent gets status "Terminated by ASPSP".
      *
-     * @param consentId ID of Consent
+     * @param consentId  ID of Consent
+     * @param instanceId Id of the particular service instance
      * @return <code>true</code> if consent was found and terminated. <code>false</code> otherwise.
      */
-    boolean terminateConsent(@NotNull String consentId);
+    boolean terminateConsent(@NotNull String consentId, @NotNull String instanceId);
 
 
     /**
      * Returns a list of PIIS Consent objects by PSU ID
      *
-     * @param psuIdData PSU credentials data
+     * @param psuIdData  PSU credentials data
+     * @param instanceId Id of the particular service instance
      * @return List of PIIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData);
+    List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
 }

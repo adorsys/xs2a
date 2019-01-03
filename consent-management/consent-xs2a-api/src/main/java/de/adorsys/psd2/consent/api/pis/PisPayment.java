@@ -17,6 +17,8 @@
 package de.adorsys.psd2.consent.api.pis;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import io.swagger.annotations.ApiModelProperty;
@@ -92,12 +94,12 @@ public class PisPayment {
     @ApiModelProperty(name = "End date", example = "2020-03-03")
     private LocalDate endDate;
 
-    @ApiModelProperty(name = "Execution rule", example = "latest")
-    private String executionRule;
+    @ApiModelProperty(name = "Execution rule", example = "following")
+    private PisExecutionRule executionRule;
 
     @ApiModelProperty(name = "Frequency", example = "ANNUAL")
     private String frequency;
 
     @ApiModelProperty(name = "Day of execution", example = "14")
-    private int dayOfExecution; //Day here max 31
+    private PisDayOfExecution dayOfExecution; //Day here max 31
 }

@@ -149,10 +149,10 @@ public class PaymentModelMapperTest {
         assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
         assertThat(result.getDebtorAccount()).isNotNull();
         assertThat(result.getStartDate()).isNotNull();
-        assertThat(result.getExecutionRule()).isNotBlank();
+        assertThat(result.getExecutionRule().getValue()).isNotBlank();
         assertThat(result.getEndDate()).isNotNull();
         assertThat(result.getFrequency()).isNotNull();
-        assertThat(result.getDayOfExecution()).isEqualTo(Integer.parseInt(DAY_OF_EXECUTION));
+        assertThat(result.getDayOfExecution().getValue()).isEqualTo(DAY_OF_EXECUTION);
     }
 
     @Test

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
@@ -54,7 +55,7 @@ public class CreateConsentRequestValidator {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
         }
         if (isNotSupportedBankOfferedConsent(request)) {
-            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
+            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SERVICE_INVALID_405)));
         }
         if (!isValidExpirationDate(request.getValidUntil())) {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID)));
@@ -69,8 +70,15 @@ public class CreateConsentRequestValidator {
     }
 
     private boolean isNotSupportedBankOfferedConsent(CreateConsentReq request) {
-        return !isNotEmptyAccess(request.getAccess())
-                   && !aspspProfileService.isBankOfferedConsentSupported();
+        if (isNotEmptyAccess(request.getAccess())) {
+            return false;
+        }
+
+        if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
+            return true;
+        }
+
+        return !aspspProfileService.isBankOfferedConsentSupported();
     }
 
     private boolean isValidExpirationDate(LocalDate validUntil) {

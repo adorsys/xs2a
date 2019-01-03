@@ -16,7 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspDayOfExecution;
+import de.adorsys.psd2.aspsp.mock.api.payment.AspspExecutionRule;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -48,9 +52,9 @@ public class SpiPeriodicPaymentMapper {
         periodic.setPaymentStatus(spiPaymentMapper.mapToAspspTransactionStatus(transactionStatus));
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
-        periodic.setExecutionRule(payment.getExecutionRule());
+        periodic.setExecutionRule(mapToAspspExecutionRule(payment.getExecutionRule()).orElse(null));
         periodic.setFrequency(payment.getFrequency().name());
-        periodic.setDayOfExecution(payment.getDayOfExecution());
+        periodic.setDayOfExecution(mapToAspspDayOfExecution(payment.getDayOfExecution()).orElse(null));
         periodic.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(OffsetDateTime::toLocalDateTime).orElse(null));
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         return periodic;
@@ -70,9 +74,9 @@ public class SpiPeriodicPaymentMapper {
         periodic.setPaymentStatus(spiPaymentMapper.mapToSpiTransactionStatus(payment.getPaymentStatus()));
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
-        periodic.setExecutionRule(payment.getExecutionRule());
+        periodic.setExecutionRule(mapToPisExecutionRule(payment.getExecutionRule()).orElse(null));
         periodic.setFrequency(SpiFrequencyCode.valueOf(payment.getFrequency()));
-        periodic.setDayOfExecution(payment.getDayOfExecution());
+        periodic.setDayOfExecution(mapToPisDayOfExecution(payment.getDayOfExecution()).orElse(null));
         periodic.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(t -> t.atOffset(ZoneOffset.UTC)).orElse(null));
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         return periodic;
@@ -87,5 +91,29 @@ public class SpiPeriodicPaymentMapper {
             spi.setTransactionStatus(SpiTransactionStatus.RCVD);
         }
         return spi;
+    }
+
+    private Optional<PisDayOfExecution> mapToPisDayOfExecution(AspspDayOfExecution dayOfExecution) {
+        return Optional.ofNullable(dayOfExecution)
+                   .map(AspspDayOfExecution::toString)
+                   .flatMap(PisDayOfExecution::getByValue);
+    }
+
+    private Optional<PisExecutionRule> mapToPisExecutionRule(AspspExecutionRule rule) {
+        return Optional.ofNullable(rule)
+                   .map(AspspExecutionRule::toString)
+                   .flatMap(PisExecutionRule::getByValue);
+    }
+
+    private Optional<AspspDayOfExecution> mapToAspspDayOfExecution(PisDayOfExecution dayOfExecution) {
+        return Optional.ofNullable(dayOfExecution)
+                   .map(PisDayOfExecution::toString)
+                   .flatMap(AspspDayOfExecution::getByValue);
+    }
+
+    private Optional<AspspExecutionRule> mapToAspspExecutionRule(PisExecutionRule rule) {
+        return Optional.ofNullable(rule)
+                   .map(PisExecutionRule::toString)
+                   .flatMap(AspspExecutionRule::getByValue);
     }
 }

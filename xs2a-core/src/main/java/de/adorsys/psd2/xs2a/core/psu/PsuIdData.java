@@ -16,9 +16,10 @@
 
 package de.adorsys.psd2.xs2a.core.psu;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Value;
-import org.jetbrains.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Contains authorisation data about PSU.
@@ -43,5 +44,13 @@ public class PsuIdData {
                    && StringUtils.equals(this.getPsuCorporateId(), otherPsuIdData.getPsuCorporateId())
                    && StringUtils.equals(this.getPsuCorporateIdType(), otherPsuIdData.getPsuCorporateIdType())
                    && StringUtils.equals(this.getPsuIdType(), otherPsuIdData.getPsuIdType());
+    }
+
+    @JsonIgnore
+    public boolean isEmpty() {
+        return StringUtils.isBlank(this.getPsuId())
+                   && StringUtils.isBlank(this.getPsuIdType())
+                   && StringUtils.isBlank(this.getPsuCorporateId())
+                   && StringUtils.isBlank(this.getPsuCorporateIdType());
     }
 }

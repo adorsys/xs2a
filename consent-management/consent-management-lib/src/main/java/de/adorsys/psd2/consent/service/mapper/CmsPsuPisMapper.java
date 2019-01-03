@@ -62,6 +62,22 @@ public class CmsPsuPisMapper {
         }
     }
 
+    // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
+    public List<CmsPayment> mapPaymentDataToCmsPayments(@NotNull List<PisCommonPaymentData> pisCommonPaymentData) {
+        return pisCommonPaymentData.stream()
+                   .map(this::mapPaymentDataToCmsPayment)
+                   .collect(Collectors.toList());
+    }
+
+    private CmsPayment mapPaymentDataToCmsPayment(@NotNull PisCommonPaymentData pisCommonPaymentData) {
+        List<PisPaymentData> pisPaymentData = pisCommonPaymentData.getPayments();
+        if (pisPaymentData.isEmpty()) {
+            return mapToCmsPayment(pisCommonPaymentData);
+        } else {
+            return mapToCmsPayment(pisPaymentData);
+        }
+    }
+
     private CmsPayment mapToCmsPeriodicPayment(PisPaymentData pisPaymentData, String paymentProduct) {
         CmsPeriodicPayment periodicPayment = new CmsPeriodicPayment(paymentProduct);
         periodicPayment.setPaymentId(pisPaymentData.getPaymentId());

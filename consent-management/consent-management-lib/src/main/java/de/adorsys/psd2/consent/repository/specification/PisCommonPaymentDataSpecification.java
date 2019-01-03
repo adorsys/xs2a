@@ -17,14 +17,19 @@
 package de.adorsys.psd2.consent.repository.specification;
 
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
 @Service
-public class PisCommonPaymentDataSpecification {
+public class PisCommonPaymentDataSpecification extends GenericSpecification {
     public Specification<PisCommonPaymentData> byPaymentId(String paymentId) {
         return Specifications.where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId));
     }
@@ -32,5 +37,44 @@ public class PisCommonPaymentDataSpecification {
     public Specification<PisCommonPaymentData> byPaymentIdAndInstanceId(String paymentId, String instanceId) {
         return Specifications.<PisCommonPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId))
                    .and(provideSpecificationForEntityAttribute(EntityAttribute.INSTANCE_ID_ATTRIBUTE, instanceId));
+    }
+
+    /**
+     * Returns specification for PisCommonPaymentData entity for filtering payments by TPP authorisation number, creation date, PSU ID data and instance ID.
+     *
+     * @param tppAuthorisationNumber mandatory TPP authorisation number
+     * @param createDateFrom         optional creation date that limits results to payments created after this date(inclusive)
+     * @param createDateTo           optional creation date that limits results to payments created before this date(inclusive)
+     * @param psuIdData              optional PSU ID data
+     * @param instanceId             optional instance ID
+     * @return resulting specification for PisCommonPaymentData entity
+     */
+    public Specification<PisCommonPaymentData> byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(@NotNull String tppAuthorisationNumber,
+                                                                                                 @Nullable LocalDate createDateFrom,
+                                                                                                 @Nullable LocalDate createDateTo,
+                                                                                                 @Nullable PsuIdData psuIdData,
+                                                                                                 @Nullable String instanceId) {
+        return Specifications.<PisCommonPaymentData>where(byTppAuthorisationNumber(tppAuthorisationNumber))
+                   .and(byCreationTimestamp(createDateFrom, createDateTo))
+                   .and(byPsuIdData(psuIdData))
+                   .and(byInstanceId(instanceId));
+    }
+
+    /**
+     * Returns specification for PisCommonPaymentData entity for filtering payments by PSU ID Data, creation date and instance ID.
+     *
+     * @param psuIdData      mandatory PSU ID data
+     * @param createDateFrom optional creation date that limits resulting data to payments created after this date(inclusive)
+     * @param createDateTo   optional creation date that limits resulting data to payments created before this date(inclusive)
+     * @param instanceId     optional instance ID
+     * @return resulting specification for PisCommonPaymentData entity
+     */
+    public Specification<PisCommonPaymentData> byPsuIdDataAndCreationPeriodAndInstanceId(@NotNull PsuIdData psuIdData,
+                                                                                         @Nullable LocalDate createDateFrom,
+                                                                                         @Nullable LocalDate createDateTo,
+                                                                                         @Nullable String instanceId) {
+        return Specifications.<PisCommonPaymentData>where(byPsuIdData(psuIdData))
+                   .and(byCreationTimestamp(createDateFrom, createDateTo))
+                   .and(byInstanceId(instanceId));
     }
 }
