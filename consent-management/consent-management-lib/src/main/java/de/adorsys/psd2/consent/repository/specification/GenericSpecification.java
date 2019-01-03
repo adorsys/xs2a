@@ -114,8 +114,8 @@ public abstract class GenericSpecification {
      * <p>
      * If both optional parameters are not provided, this specification will not affect resulting data.
      *
-     * @param start optional creation date that limits resulting data to AIS consents created after this date(inclusive)
-     * @param end   optional creation date that limits resulting data to AIS consents created before this date(inclusive)
+     * @param start optional creation date that limits resulting data to objects created after this date(inclusive)
+     * @param end   optional creation date that limits resulting data to objects created before this date(inclusive)
      * @param <T>   type of the entity, for which this specification will be created
      * @return resulting specification
      */
@@ -137,8 +137,8 @@ public abstract class GenericSpecification {
      * <p>
      * If both optional parameters are not provided, this specification will not affect resulting data.
      *
-     * @param start optional creation date-time that limits resulting data to AIS consents created after this date-time(inclusive)
-     * @param end   optional creation date-time that limits resulting data to AIS consents created before this date-time(inclusive)
+     * @param start optional creation date-time that limits resulting data to objects created after this date-time(inclusive)
+     * @param end   optional creation date-time that limits resulting data to objects created before this date-time(inclusive)
      * @param <T>   type of the entity, for which this specification will be created
      * @return resulting specification
      */
