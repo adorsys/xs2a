@@ -24,3 +24,29 @@ Now SPI-Mock correctly handles invalid PSU credentials.
 
 ## Bugfix: method encryptConsentData in SecurityDataService takes byte array as an argument
 Now to encrypt aspspConsentData in SecurityDataService we should provide byte array as an argument instead of Base64 encoded string
+
+## Obsoleting Consents that were not confirmed
+Now ASPSP developer is able to provide the period of time (in milliseconds),that not confirmed AIS consents should be obsoleted after.
+The default value for this is 24 hours.
+Consent status becomes EXPIRED and SCA status for dedicated consent authorisation becomes FAILED on such a requests:
+* TPP sends Get consent status request
+* xs2a receives start authorisation request for this consent
+* TPP sends Get SCA status request
+* xs2a receives Update PSU Data request for this payment
+
+Also, scheduler service has been created: it will obsolete all the AIS consents with confirmation expired.
+The scheduler service invocation frequency could be modified by changing `not-confirmed-consent-expiration.cron.expression` value in `application.properties`.
+The default value is the top of every hour of every day.
+
+## Obsoleting Payments that were not confirmed
+Now ASPSP developer is able to provide the period of time (in milliseconds),that not confirmed payments should be obsoleted after.
+The default value for this is 24 hours.
+Transaction status becomes REJECTED and SCA status for dedicated payment authorisation becomes FAILED on such a requests:
+* TPP sends Get transaction status request
+* xs2a receives start authorisation request for this payment
+* TPP sends Get SCA status request
+* xs2a receives Update PSU Data request for this payment
+
+Also, scheduler service has been created: it will obsolete all the payments with confirmation expired.
+The scheduler service invocation frequency could be modified by changing `not-confirmed-payment-expiration.cron.expression` value in `application.properties`.
+The default value is the top of every hour of every day.
