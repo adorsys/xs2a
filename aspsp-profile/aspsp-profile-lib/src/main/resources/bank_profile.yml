@@ -33,6 +33,8 @@ setting:
  piisConsentSupported: false
  deltaReportSupported: false
  redirectUrlExpirationTimeMs: 600000
+ notConfirmedConsentExpirationPeriodMs: 86400000
+ notConfirmedPaymentExpirationPeriodMs: 86400000
  typeProductMatrix:
   SINGLE:
    - sepa-credit-transfers

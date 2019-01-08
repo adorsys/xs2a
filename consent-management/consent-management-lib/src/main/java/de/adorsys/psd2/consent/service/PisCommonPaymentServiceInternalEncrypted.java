@@ -55,12 +55,14 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     }
 
     @Override
+    @Transactional
     public Optional<TransactionStatus> getPisCommonPaymentStatusById(String encryptedPaymentId) {
         return securityDataService.decryptId(encryptedPaymentId)
                    .flatMap(pisCommonPaymentService::getPisCommonPaymentStatusById);
     }
 
     @Override
+    @Transactional
     public Optional<PisCommonPaymentResponse> getCommonPaymentById(String encryptedPaymentId) {
         return securityDataService.decryptId(encryptedPaymentId)
                    .flatMap(pisCommonPaymentService::getCommonPaymentById);
@@ -135,6 +137,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     }
 
     @Override
+    @Transactional
     public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedPaymentId, String authorisationId, CmsAuthorisationType authorisationType) {
         return securityDataService.decryptId(encryptedPaymentId)
                    .flatMap(id -> pisCommonPaymentService.getAuthorisationScaStatus(id, authorisationId, authorisationType));

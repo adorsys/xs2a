@@ -71,4 +71,9 @@ public class AccountConsent {
     public boolean isValidFrequency() {
         return frequencyPerDay > 0;
     }
+
+    @JsonIgnore
+    public boolean isExpired() {
+        return consentStatus == ConsentStatus.EXPIRED;
+    }
 }

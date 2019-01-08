@@ -144,6 +144,16 @@ public class BankProfileSetting {
     private String pisPaymentCancellationRedirectUrlToAspsp;
 
     /**
+     * The limit of an expiration time of not confirmed consent url set in milliseconds
+     */
+    private long notConfirmedConsentExpirationPeriodMs;
+
+    /**
+     * The limit of an expiration time of not confirmed payment url set in milliseconds
+     */
+    private long notConfirmedPaymentExpirationPeriodMs;
+
+    /**
      * A matrix payment-product/payment-type which allows to choose needed types
      */
     private Map<PaymentType, List<String>> typeProductMatrix;

@@ -55,6 +55,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentMapper consentMapper;
     private final PsuDataMapper psuDataMapper;
     private final AspspProfileService aspspProfileService;
+    private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final TppInfoMapper tppInfoMapper;
 
     /**
@@ -84,8 +85,10 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return ConsentStatus
      */
     @Override
+    @Transactional
     public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return aisConsentRepository.findByExternalId(consentId)
+                   .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(AisConsent::getConsentStatus);
     }
@@ -112,8 +115,10 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return AisAccountConsent
      */
     @Override
+    @Transactional
     public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
         return aisConsentRepository.findByExternalId(consentId)
+                   .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
     }
@@ -129,6 +134,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<AisConsent> consentOpt = getActualAisConsent(request.getConsentId());
         if (consentOpt.isPresent()) {
             AisConsent consent = consentOpt.get();
+            aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent);
             checkAndUpdateOnExpiration(consent);
             updateAisConsentCounter(consent);
             logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
@@ -202,13 +208,20 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     @Override
+    @Transactional
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        Optional<AisConsent> consent = aisConsentRepository.findByExternalId(consentId);
-        if (!consent.isPresent()) {
+        Optional<AisConsent> consentOptional = aisConsentRepository.findByExternalId(consentId);
+        if (!consentOptional.isPresent()) {
             return Optional.empty();
         }
 
-        Optional<AisConsentAuthorization> authorisation = findAuthorisationInConsent(authorisationId, consent.get());
+        AisConsent consent = consentOptional.get();
+        if (aisConsentConfirmationExpirationService.isConsentConfirmationExpired(consent)) {
+            aisConsentConfirmationExpirationService.updateConsentOnConfirmationExpiration(consent);
+            return Optional.of(ScaStatus.FAILED);
+        }
+
+        Optional<AisConsentAuthorization> authorisation = findAuthorisationInConsent(authorisationId, consent);
         return authorisation.map(AisConsentAuthorization::getScaStatus);
     }
 

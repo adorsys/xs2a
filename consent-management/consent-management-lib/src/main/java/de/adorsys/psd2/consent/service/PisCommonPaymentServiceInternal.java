@@ -68,6 +68,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
     private final AspspProfileService aspspProfileService;
+    private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
 
     /**
      * Creates new pis common payment with full information about payment
@@ -95,8 +96,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return Information about the status of a common payment
      */
     @Override
+    @Transactional
     public Optional<TransactionStatus> getPisCommonPaymentStatusById(String paymentId) {
         return pisCommonPaymentDataRepository.findByPaymentId(paymentId)
+                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
                    .map(PisCommonPaymentData::getTransactionStatus);
     }
 
@@ -107,8 +110,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return Response containing full information about pis common payment
      */
     @Override
+    @Transactional
     public Optional<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
         return pisCommonPaymentDataRepository.findByPaymentId(paymentId)
+                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
                    .flatMap(pisCommonPaymentMapper::mapToPisCommonPaymentResponse);
     }
 
@@ -123,6 +128,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public Optional<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status) {
         return pisCommonPaymentDataRepository.findByPaymentId(paymentId)
+                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
                    .filter(pm -> !pm.getTransactionStatus().isFinalisedStatus())
                    .map(pmt -> setStatusAndSaveCommonPaymentData(pmt, status))
                    .map(con -> con.getTransactionStatus() == status);
@@ -248,8 +254,19 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     }
 
     @Override
+    @Transactional
     public Optional<ScaStatus> getAuthorisationScaStatus(@NotNull String paymentId, @NotNull String authorisationId, CmsAuthorisationType authorisationType) {
         Optional<PisAuthorization> authorizationOptional = pisAuthorizationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType);
+
+        if (!authorizationOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        PisCommonPaymentData paymentData = authorizationOptional.get().getPaymentData();
+        if (pisCommonPaymentConfirmationExpirationService.isPaymentDataOnConfirmationExpired(paymentData)) {
+            pisCommonPaymentConfirmationExpirationService.updatePaymentDataOnConfirmationExpiration(paymentData);
+            return Optional.of(ScaStatus.FAILED);
+        }
 
         return authorizationOptional
                    .filter(auth -> paymentId.equals(auth.getPaymentData().getPaymentId()))
@@ -278,10 +295,14 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
         Optional<PisCommonPaymentData> commonPaymentData = pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatus(paymentId, TransactionStatus.RCVD)
                                                                .filter(CollectionUtils::isNotEmpty)
-                                                               .map(list -> list.get(0).getPaymentData());
+                                                               .map(list -> list.get(0).getPaymentData())
+                                                               .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                                               .filter(p -> p.getTransactionStatus() == TransactionStatus.RCVD);
 
         if (!commonPaymentData.isPresent()) {
-            commonPaymentData = pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatus(paymentId, TransactionStatus.RCVD);
+            commonPaymentData = pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatus(paymentId, TransactionStatus.RCVD)
+                                    .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                    .filter(p -> p.getTransactionStatus() == TransactionStatus.RCVD);
         }
 
         return commonPaymentData;
