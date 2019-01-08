@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -28,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,7 @@ import java.util.Optional;
 public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationService {
     private final Xs2aEventService xs2aEventService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
+    private final Xs2aPisCommonPaymentService pisCommonPaymentService;
 
     /**
      * Creates authorisation for payment request if given psu data is valid
@@ -51,6 +55,14 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     @Override
     public ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
+
+        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
+        Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
+        if (pisCommonPaymentResponse.isPresent() && pisCommonPaymentResponse.get().getTransactionStatus() == TransactionStatus.RJCT) {
+            return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
+                       .fail(new MessageError(MessageErrorCode.RESOURCE_EXPIRED_403))
+                       .build();
+        }
 
         return pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, paymentType, psuData)
                    .map(resp -> ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
@@ -70,6 +82,15 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     @Override
     public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
+
+        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
+        Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(request.getPaymentId());
+        if (pisCommonPaymentResponse.isPresent() && pisCommonPaymentResponse.get().getTransactionStatus() == TransactionStatus.RJCT) {
+            return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                       .fail(new MessageError(MessageErrorCode.RESOURCE_EXPIRED_403))
+                       .build();
+        }
+
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthorisationService.updateCommonPaymentPsuData(request);
 
         if (response.hasError()) {

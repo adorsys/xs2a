@@ -67,6 +67,8 @@ public class AisConsentServiceInternalTest {
     SecurityDataService securityDataService;
     @Mock
     private TppInfoMapper tppInfoMapper;
+    @Mock
+    private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
 
     private AisConsent aisConsent;
     private static final long CONSENT_ID = 1;
@@ -96,6 +98,7 @@ public class AisConsentServiceInternalTest {
     public void shouldReturnAisConsent_whenGetConsentByIdIsCalled() {
         // When
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent)).thenReturn(aisConsent);
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
 
         // Then

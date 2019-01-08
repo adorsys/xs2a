@@ -44,4 +44,6 @@ public class AspspSettings {
     private boolean deltaReportSupported;
     private long redirectUrlExpirationTimeMs;
     private String pisPaymentCancellationRedirectUrlToAspsp;
+    private long notConfirmedConsentExpirationPeriodMs;
+    private long notConfirmedPaymentExpirationPeriodMs;
 }

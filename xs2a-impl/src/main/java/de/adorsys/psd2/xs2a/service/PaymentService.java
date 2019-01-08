@@ -191,10 +191,15 @@ public class PaymentService {
                        .build();
         }
 
+        // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
+        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
+        if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
+            return ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build();
+        }
+
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
         List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(readPsuIdDataFromList(psuData));
-        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
         SpiResponse<SpiTransactionStatus> spiResponse;
 
         // TODO should be refactored https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
