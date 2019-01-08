@@ -32,9 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
@@ -63,6 +61,7 @@ public class AspspProfileServiceTest {
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
+    private static Map<PaymentType, List<String>> TYPE_PRODUCT_MATRIX = buildTypeProductMatrix();
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -161,6 +160,7 @@ public class AspspProfileServiceTest {
         setting.setDeltaReportSupported(DELTA_REPORT_SUPPORTED);
         setting.setRedirectUrlExpirationTimeMs(REDIRECT_URL_EXPIRATION_TIME_MS);
         setting.setScaApproach(REDIRECT_APPROACH);
+        setting.setTypeProductMatrix(TYPE_PRODUCT_MATRIX);
         return setting;
     }
 
@@ -188,5 +188,12 @@ public class AspspProfileServiceTest {
             PENDING,
             BOTH
         );
+    }
+
+    private static Map<PaymentType, List<String>> buildTypeProductMatrix() {
+        Map<PaymentType, List<String>> matrix = new HashMap<>();
+        List<String> availablePaymentProducts = Arrays.asList("sepa-credit-transfers", "instant-sepa-credit-transfers");
+        matrix.put(PaymentType.SINGLE, availablePaymentProducts);
+        return matrix;
     }
 }

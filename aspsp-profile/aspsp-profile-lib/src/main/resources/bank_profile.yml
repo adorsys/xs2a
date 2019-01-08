@@ -33,3 +33,13 @@ setting:
  piisConsentSupported: false
  deltaReportSupported: false
  redirectUrlExpirationTimeMs: 600000
+ typeProductMatrix:
+  SINGLE:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+  PERIODIC:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+  BULK:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers

@@ -26,6 +26,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -141,4 +142,9 @@ public class BankProfileSetting {
      * URL to ASPSP service in order to to work with PIS payment cancellation
      */
     private String pisPaymentCancellationRedirectUrlToAspsp;
+
+    /**
+     * A matrix payment-product/payment-type which allows to choose needed types
+     */
+    private Map<PaymentType, List<String>> typeProductMatrix;
 }

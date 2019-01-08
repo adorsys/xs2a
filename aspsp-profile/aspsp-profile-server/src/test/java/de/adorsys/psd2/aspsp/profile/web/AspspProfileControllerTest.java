@@ -32,9 +32,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
@@ -64,6 +62,7 @@ public class AspspProfileControllerTest {
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://localhost/payment/cancellation/";
+    private static Map<PaymentType, Map<String, Boolean>> TYPE_PRODUCT_MATRIX = buildTypeProductMatrix();
 
     @InjectMocks
     private AspspProfileController aspspProfileController;
@@ -127,7 +126,8 @@ public class AspspProfileControllerTest {
             PIIS_CONSENT_SUPPORTED,
             DELTA_REPORT_SUPPORTED,
             REDIRECT_URL_EXPIRATION_TIME_MS,
-            PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP);
+            PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP,
+            TYPE_PRODUCT_MATRIX);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
@@ -152,5 +152,15 @@ public class AspspProfileControllerTest {
             PENDING,
             BOTH
         );
+    }
+
+    private static Map<PaymentType, Map<String, Boolean>> buildTypeProductMatrix() {
+        Map<PaymentType, Map<String, Boolean>> matrix = new HashMap<>();
+        Map<String, Boolean> availableProducts = new HashMap<>();
+        availableProducts.put("sepa-credit-transfers", true);
+        availableProducts.put( "instant-sepa-credit-transfers", true);
+
+        matrix.put(PaymentType.SINGLE, availableProducts);
+        return matrix;
     }
 }

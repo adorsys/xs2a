@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Value;
 
 import java.util.List;
+import java.util.Map;
 
 @Value
 public class AspspSettings {
@@ -44,4 +45,5 @@ public class AspspSettings {
     private boolean deltaReportSupported;
     private long redirectUrlExpirationTimeMs;
     private String pisPaymentCancellationRedirectUrlToAspsp;
+    private Map<PaymentType, Map<String, Boolean>> typeProductMatrix;
 }

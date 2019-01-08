@@ -19,10 +19,14 @@ package de.adorsys.psd2.aspsp.profile.service;
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -74,5 +78,28 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setDeltaReportSupported(aspspSettings.isDeltaReportSupported());
         setting.setRedirectUrlExpirationTimeMs(aspspSettings.getRedirectUrlExpirationTimeMs());
         setting.setPisPaymentCancellationRedirectUrlToAspsp(aspspSettings.getPisPaymentCancellationRedirectUrlToAspsp());
+        setting.setTypeProductMatrix(createShortTypeProductMatrix(aspspSettings.getTypeProductMatrix()));
+    }
+
+    private Map<PaymentType, List<String>> createShortTypeProductMatrix(Map<PaymentType, Map<String, Boolean>> typeProductMatrix) {
+        PaymentType[] paymentTypes = PaymentType.values();
+        Map<PaymentType, List<String>> shortTypeProductMatrix = new HashMap<>();
+        List<String> list = new ArrayList<>();
+
+        for (PaymentType paymentType : paymentTypes) {
+            Map<String, Boolean> availableProductsMap = typeProductMatrix.get(paymentType);
+
+            for (Map.Entry<String, Boolean> availableProduct : availableProductsMap.entrySet()) {
+                if (availableProduct.getValue()) {
+                    list.add(availableProduct.getKey());
+                }
+            }
+
+            if (!CollectionUtils.isEmpty(list)) {
+                shortTypeProductMatrix.put(paymentType, list);
+            }
+        }
+
+        return shortTypeProductMatrix;
     }
 }
