@@ -72,11 +72,11 @@ public class AspspProfileServiceImpl implements AspspProfileService {
     private Map<PaymentType, Map<String, Boolean>> createFullTypeProductMatrix(Map<PaymentType, List<String>> typeProductMatrix) {
         PaymentType[] paymentTypes = PaymentType.values();
         String[] paymentProducts = {"sepa-credit-transfers", "instant-sepa-credit-transfers", "target-2-payments", "cross-border-credit-transfers"};
-        Map<String, Boolean> productMatrix = new HashMap<>();
         Map<PaymentType, Map<String, Boolean>> fullTypeProductMatrix = new HashMap<>();
 
-
         for (PaymentType paymentType : paymentTypes) {
+            Map<String, Boolean> productMatrix = new HashMap<>();
+
             for (String paymentProduct : paymentProducts) {
                 boolean availableProduct = typeProductMatrix.containsKey(paymentType)
                                                && typeProductMatrix.get(paymentType).contains(paymentProduct);

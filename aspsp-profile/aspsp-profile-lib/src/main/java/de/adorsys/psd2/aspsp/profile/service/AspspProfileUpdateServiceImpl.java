@@ -86,19 +86,19 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     private Map<PaymentType, List<String>> createShortTypeProductMatrix(Map<PaymentType, Map<String, Boolean>> typeProductMatrix) {
         PaymentType[] paymentTypes = PaymentType.values();
         Map<PaymentType, List<String>> shortTypeProductMatrix = new HashMap<>();
-        List<String> list = new ArrayList<>();
 
         for (PaymentType paymentType : paymentTypes) {
+            List<String> availablePaymentProductsList = new ArrayList<>();
             Map<String, Boolean> availableProductsMap = typeProductMatrix.get(paymentType);
 
             for (Map.Entry<String, Boolean> availableProduct : availableProductsMap.entrySet()) {
                 if (availableProduct.getValue()) {
-                    list.add(availableProduct.getKey());
+                    availablePaymentProductsList.add(availableProduct.getKey());
                 }
             }
 
-            if (!CollectionUtils.isEmpty(list)) {
-                shortTypeProductMatrix.put(paymentType, list);
+            if (!CollectionUtils.isEmpty(availablePaymentProductsList)) {
+                shortTypeProductMatrix.put(paymentType, availablePaymentProductsList);
             }
         }
 
