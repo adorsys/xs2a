@@ -63,7 +63,7 @@ public class AspspProfileServiceTest {
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
-    private static Map<PaymentType, Set<String>> TYPE_PRODUCT_MATRIX = buildTypeProductMatrix();
+    private static Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -182,7 +182,7 @@ public class AspspProfileServiceTest {
         setting.setScaApproach(REDIRECT_APPROACH);
         setting.setNotConfirmedConsentExpirationPeriodMs(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
         setting.setNotConfirmedPaymentExpirationPeriodMs(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
-        setting.setSupportedPaymentTypeAndProductMatrix(TYPE_PRODUCT_MATRIX);
+        setting.setSupportedPaymentTypeAndProductMatrix(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX);
         return setting;
     }
 
@@ -212,7 +212,7 @@ public class AspspProfileServiceTest {
         );
     }
 
-    private static Map<PaymentType, Set<String>> buildTypeProductMatrix() {
+    private static Map<PaymentType, Set<String>> buildSupportedPaymentTypeAndProductMatrix() {
         Map<PaymentType, Set<String>> matrix = new HashMap<>();
         Set<String> availablePaymentProducts = Collections.singleton( "sepa-credit-transfers");
         matrix.put(PaymentType.SINGLE, availablePaymentProducts);
