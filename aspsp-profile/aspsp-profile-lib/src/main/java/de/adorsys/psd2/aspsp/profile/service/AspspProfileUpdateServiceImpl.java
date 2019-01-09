@@ -22,11 +22,14 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -91,13 +94,13 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
             List<String> availablePaymentProductsList = new ArrayList<>();
             Map<String, Boolean> availableProductsMap = typeProductMatrix.get(paymentType);
 
-            for (Map.Entry<String, Boolean> availableProduct : availableProductsMap.entrySet()) {
-                if (availableProduct.getValue()) {
-                    availablePaymentProductsList.add(availableProduct.getKey());
+            availableProductsMap.forEach((product, available) -> {
+                if (available) {
+                    availablePaymentProductsList.add(product);
                 }
-            }
+            });
 
-            if (!CollectionUtils.isEmpty(availablePaymentProductsList)) {
+            if (CollectionUtils.isNotEmpty(availablePaymentProductsList)) {
                 shortTypeProductMatrix.put(paymentType, availablePaymentProductsList);
             }
         }
