@@ -5,7 +5,7 @@
 ASPSP now has a possibility to chose which payment-product/payment-type to work with. Now to set available payment products for each type, the following table in bank_profile.yaml
 should be filled:
 
-**typeProductMatrix**:
+**supportedPaymentTypeAndProductMatrix**:
 
   *SINGLE*:
    - sepa-credit-transfers

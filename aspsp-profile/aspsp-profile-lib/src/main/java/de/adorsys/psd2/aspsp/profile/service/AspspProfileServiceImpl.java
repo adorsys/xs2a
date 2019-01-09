@@ -19,14 +19,9 @@ package de.adorsys.psd2.aspsp.profile.service;
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -60,32 +55,12 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.getPisPaymentCancellationRedirectUrlToAspsp(),
             setting.getNotConfirmedConsentExpirationPeriodMs(),
             setting.getNotConfirmedPaymentExpirationPeriodMs(),
-            createFullTypeProductMatrix(setting.getTypeProductMatrix()));
+            setting.getSupportedPaymentTypeAndProductMatrix());
     }
 
     @Override
     public ScaApproach getScaApproach() {
         return profileConfiguration.getSetting()
                    .getScaApproach();
-    }
-
-    private Map<PaymentType, Map<String, Boolean>> createFullTypeProductMatrix(Map<PaymentType, List<String>> typeProductMatrix) {
-        PaymentType[] paymentTypes = PaymentType.values();
-        String[] paymentProducts = {"sepa-credit-transfers", "instant-sepa-credit-transfers", "target-2-payments", "cross-border-credit-transfers"};
-        Map<PaymentType, Map<String, Boolean>> fullTypeProductMatrix = new HashMap<>();
-
-        for (PaymentType paymentType : paymentTypes) {
-            Map<String, Boolean> productMatrix = new HashMap<>();
-
-            for (String paymentProduct : paymentProducts) {
-                boolean availableProduct = typeProductMatrix.containsKey(paymentType)
-                                               && typeProductMatrix.get(paymentType).contains(paymentProduct);
-                productMatrix.put(paymentProduct, availableProduct);
-            }
-
-            fullTypeProductMatrix.put(paymentType, productMatrix);
-        }
-
-        return fullTypeProductMatrix;
     }
 }

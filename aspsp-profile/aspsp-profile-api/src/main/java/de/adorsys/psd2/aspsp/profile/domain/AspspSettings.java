@@ -21,6 +21,7 @@ import lombok.Value;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Value
 public class AspspSettings {
@@ -47,5 +48,5 @@ public class AspspSettings {
     private String pisPaymentCancellationRedirectUrlToAspsp;
     private long notConfirmedConsentExpirationPeriodMs;
     private long notConfirmedPaymentExpirationPeriodMs;
-    private Map<PaymentType, Map<String, Boolean>> typeProductMatrix;
+    private Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix;
 }

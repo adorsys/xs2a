@@ -27,6 +27,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -156,5 +157,5 @@ public class BankProfileSetting {
     /**
      * A matrix payment-product/payment-type which allows to choose needed types
      */
-    private Map<PaymentType, List<String>> typeProductMatrix;
+    private Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix;
 }

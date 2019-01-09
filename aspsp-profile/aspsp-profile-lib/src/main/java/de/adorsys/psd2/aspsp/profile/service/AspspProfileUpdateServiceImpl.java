@@ -19,17 +19,10 @@ package de.adorsys.psd2.aspsp.profile.service;
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -83,28 +76,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setPisPaymentCancellationRedirectUrlToAspsp(aspspSettings.getPisPaymentCancellationRedirectUrlToAspsp());
         setting.setNotConfirmedConsentExpirationPeriodMs(aspspSettings.getNotConfirmedConsentExpirationPeriodMs());
         setting.setNotConfirmedPaymentExpirationPeriodMs(aspspSettings.getNotConfirmedPaymentExpirationPeriodMs());
-        setting.setTypeProductMatrix(createShortTypeProductMatrix(aspspSettings.getTypeProductMatrix()));
-    }
-
-    private Map<PaymentType, List<String>> createShortTypeProductMatrix(Map<PaymentType, Map<String, Boolean>> typeProductMatrix) {
-        PaymentType[] paymentTypes = PaymentType.values();
-        Map<PaymentType, List<String>> shortTypeProductMatrix = new HashMap<>();
-
-        for (PaymentType paymentType : paymentTypes) {
-            List<String> availablePaymentProductsList = new ArrayList<>();
-            Map<String, Boolean> availableProductsMap = typeProductMatrix.get(paymentType);
-
-            availableProductsMap.forEach((product, available) -> {
-                if (available) {
-                    availablePaymentProductsList.add(product);
-                }
-            });
-
-            if (CollectionUtils.isNotEmpty(availablePaymentProductsList)) {
-                shortTypeProductMatrix.put(paymentType, availablePaymentProductsList);
-            }
-        }
-
-        return shortTypeProductMatrix;
+        setting.setSupportedPaymentTypeAndProductMatrix(aspspSettings.getSupportedPaymentTypeAndProductMatrix());
     }
 }
