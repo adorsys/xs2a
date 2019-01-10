@@ -85,3 +85,24 @@ Transaction status becomes REJECTED and SCA status for dedicated payment authori
 Also, scheduler service has been created: it will obsolete all the payments with confirmation expired.
 The scheduler service invocation frequency could be modified by changing `not-confirmed-payment-expiration.cron.expression` value in `application.properties`.
 The default value is the top of every hour of every day.
+
+## Aspsp-Profile supports matrix payment-product/payment-type
+
+ASPSP now has a possibility to chose which payment-product/payment-type to work with. Now to set available payment products for each type, the following table in bank_profile.yaml
+should be filled:
+
+**supportedPaymentTypeAndProductMatrix**:
+
+  *SINGLE*:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+   
+  *PERIODIC*:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+   
+  *BULK*:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+  
+Other payment products can be added for every payment type.
