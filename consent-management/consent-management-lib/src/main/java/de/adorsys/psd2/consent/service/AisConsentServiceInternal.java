@@ -389,13 +389,13 @@ public class AisConsentServiceInternal implements AisConsentService {
             return;
         }
 
-        List<AisConsentAuthorization> aisConsentAuthorizations = authorisations
+        List<AisConsentAuthorization> aisConsentAuthorisations = authorisations
                                                           .stream()
                                                           .filter(auth -> auth.getPsuData().contentEquals(psuData))
                                                           .map(this::failAuthorisation)
                                                           .collect(Collectors.toList());
 
-        aisConsentAuthorizationRepository.save(aisConsentAuthorizations);
+        aisConsentAuthorizationRepository.save(aisConsentAuthorisations);
     }
 
     private boolean isPsuDataCorrect(PsuData psuData) {
