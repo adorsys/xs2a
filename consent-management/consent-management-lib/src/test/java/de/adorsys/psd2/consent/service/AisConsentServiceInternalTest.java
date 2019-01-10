@@ -61,6 +61,19 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AisConsentServiceInternalTest {
+    private AisConsent aisConsent;
+    private AisConsentAuthorization aisConsentAuthorisation;
+    private List<AisConsentAuthorization> aisConsentAuthorisationList = new ArrayList<>();
+    private static final long CONSENT_ID = 1;
+    private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id-1", null, null, null);
+    private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
+    private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
+    private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+
     @InjectMocks
     private AisConsentServiceInternal aisConsentService;
     @Mock
@@ -81,21 +94,6 @@ public class AisConsentServiceInternalTest {
     private AspspProfileService aspspProfileService;
     @Mock
     private AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
-
-
-    private AisConsent aisConsent;
-    private AisConsentAuthorization aisConsentAuthorisation;
-    private List<AisConsentAuthorization> aisConsentAuthorisationList = new ArrayList<>();
-    private static final long CONSENT_ID = 1;
-    private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
-    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu-id-1", null, null, null);
-    private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
-    private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
-
-    private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
-    private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
-    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     @Before
     public void setUp() {
@@ -236,7 +234,7 @@ public class AisConsentServiceInternalTest {
         //Given
         ArgumentCaptor<AisConsentAuthorization> argument = ArgumentCaptor.forClass(AisConsentAuthorization.class);
         //noinspection unchecked
-        ArgumentCaptor<List<AisConsentAuthorization>> argumentList = ArgumentCaptor.forClass((Class) List.class);
+        ArgumentCaptor<List<AisConsentAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
 
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         when(aisConsentAuthorizationRepository.save(any(AisConsentAuthorization.class))).thenReturn(aisConsentAuthorisation);
@@ -254,9 +252,9 @@ public class AisConsentServiceInternalTest {
         verify(aisConsentAuthorizationRepository).save(argument.capture());
         assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
 
-        verify(aisConsentAuthorizationRepository).save(argumentList.capture());
-        List<AisConsentAuthorization> authorisationsFailed = argumentList.getValue();
-        Set<ScaStatus> scaStatuses = authorisationsFailed.stream()
+        verify(aisConsentAuthorizationRepository).save(failedAuthorisationsArgument.capture());
+        List<AisConsentAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
+        Set<ScaStatus> scaStatuses = failedAuthorisations.stream()
                                          .map(AisConsentAuthorization::getScaStatus)
                                          .collect(Collectors.toSet());
         assertEquals(scaStatuses.size(), 1);

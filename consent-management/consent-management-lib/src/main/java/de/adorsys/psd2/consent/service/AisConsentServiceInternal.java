@@ -403,7 +403,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         List<AisConsentAuthorization> aisConsentAuthorisations = authorisations
                                                           .stream()
                                                           .filter(auth -> auth.getPsuData().contentEquals(psuData))
-                                                          .map(this::failAuthorisation)
+                                                          .map(this::makeAuthorisationFailedAndExpired)
                                                           .collect(Collectors.toList());
 
         aisConsentAuthorizationRepository.save(aisConsentAuthorisations);
@@ -414,7 +414,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                    && StringUtils.isNotBlank(psuData.getPsuId());
     }
 
-    private AisConsentAuthorization failAuthorisation(AisConsentAuthorization auth) {
+    private AisConsentAuthorization makeAuthorisationFailedAndExpired(AisConsentAuthorization auth) {
         auth.setScaStatus(ScaStatus.FAILED);
         auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
         return auth;
