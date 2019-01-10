@@ -86,6 +86,9 @@ Also, scheduler service has been created: it will obsolete all the payments with
 The scheduler service invocation frequency could be modified by changing `not-confirmed-payment-expiration.cron.expression` value in `application.properties`.
 The default value is the top of every hour of every day.
 
+## Upgrade version of Jackson library
+We updated Jackson version because FasterXML jackson-databind 2.x before 2.9.8 might allow attackers to have unspecified impact by leveraging failure to block the axis2-transport-jms class from polymorphic deserialization. https://nvd.nist.gov/vuln/detail/CVE-2018-19360
+
 ## Aspsp-Profile supports matrix payment-product/payment-type
 
 ASPSP now has a possibility to chose which payment-product/payment-type to work with. Now to set available payment products for each type, the following table in bank_profile.yaml

@@ -218,7 +218,7 @@ public class CmsAspspPiisServiceInternalTest {
     }
 
     private AccountReference buildAccountReference() {
-        return new AccountReference("resourceId",
+        return new AccountReference("aspspAccountId", "resourceId",
                                     "DE89370400440532013000",
                                     null,
                                     null,

@@ -156,7 +156,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
 
-        <jackson.version>2.9.7</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
 
         <spring.version>4.3.21.RELEASE</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>

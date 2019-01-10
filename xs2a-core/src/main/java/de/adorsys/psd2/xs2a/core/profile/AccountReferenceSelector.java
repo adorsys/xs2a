@@ -22,5 +22,5 @@ import lombok.Value;
 @Value
 public class AccountReferenceSelector {
     private AccountReferenceType accountReferenceType;
-    private String accountReferenceValue;
+    private String accountValue;
 }

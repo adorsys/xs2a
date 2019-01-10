@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class AccountReferenceMapper {
     AccountReference mapToCmsAccountReference(AccountReferenceEntity accountReferenceEntity) {
         return Optional.ofNullable(accountReferenceEntity)
-                   .map(ref -> new AccountReference(null,
+                   .map(ref -> new AccountReference(null, null,
                                                        ref.getIban(),
                                                        ref.getBban(),
                                                        ref.getPan(),

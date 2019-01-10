@@ -45,6 +45,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceTest {
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String PAYMENT_ID = "123456789";
     private static final String WRONG_PAYMENT_ID = "0";
     private static final String IBAN = "DE123456789";
@@ -180,7 +181,7 @@ public class PaymentServiceTest {
         //Given
         AspspBulkPayment spiBulkPayment = new AspspBulkPayment();
         List<AspspSinglePayment> payments = Arrays.asList(getAspspSinglePayment(AMOUNT_TO_TRANSFER),
-                                                          getAspspSinglePayment(EXCEEDING_AMOUNT_TO_TRANSFER));
+            getAspspSinglePayment(EXCEEDING_AMOUNT_TO_TRANSFER));
         spiBulkPayment.setPayments(payments);
 
         //When
@@ -316,7 +317,7 @@ public class PaymentServiceTest {
 
     private List<AspspAccountDetails> getAccountDetails() {
         return Collections.singletonList(
-            new AspspAccountDetails("12345", IBAN, null, null, null, null, CURRENCY, "Peter", null, null, null, null, null, null, null, getBalances())
+            new AspspAccountDetails(ASPSP_ACCOUNT_ID, "12345", IBAN, null, null, null, null, CURRENCY, "Peter", null, null, null, null, null, null, null, getBalances())
         );
     }
 

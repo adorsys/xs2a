@@ -26,8 +26,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.*;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -45,8 +43,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Xs2aAisConsentMapper {
     // TODO remove this dependency. Should not be dependencies between spi-api and consent-api https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/437
-    private final SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;
-    private final SpiToXs2aPsuDataMapper spiToXs2aPsuDataMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final Xs2aToSpiAccountAccessMapper xs2aToSpiAccountAccessMapper;
 
@@ -68,25 +64,6 @@ public class Xs2aAisConsentMapper {
                    .orElse(null);
     }
 
-    public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
-        return Optional.ofNullable(spiAccountConsent)
-                   .map(ac -> new AccountConsent(
-                           ac.getId(),
-                           spiToXs2aAccountAccessMapper.mapToAccountAccess(ac.getAccess()).orElse(null),
-                           ac.isRecurringIndicator(),
-                           ac.getValidUntil(),
-                           ac.getFrequencyPerDay(),
-                           ac.getLastActionDate(),
-                           ac.getConsentStatus(),
-                           ac.isWithBalance(),
-                           ac.isTppRedirectPreferred(),
-                           spiToXs2aPsuDataMapper.mapToPsuIdData(ac.getPsuData()),
-                           ac.getTppInfo()
-                       )
-                   )
-                   .orElse(null);
-    }
-
     public SpiAccountConsent mapToSpiAccountConsent(AccountConsent accountConsent) {
         return Optional.ofNullable(accountConsent)
                    .map(ac -> new SpiAccountConsent(
@@ -100,7 +77,7 @@ public class Xs2aAisConsentMapper {
                            ac.isWithBalance(),
                            ac.isTppRedirectPreferred(),
                            xs2aToSpiPsuDataMapper.mapToSpiPsuData(ac.getPsuData()),
-                           ac.getTppInfo()
+                           ac.getTppInfo(), ac.getAisConsentRequestType()
                        )
                    )
                    .orElse(null);
@@ -189,11 +166,12 @@ public class Xs2aAisConsentMapper {
         AccountReferenceSelector selector = ref.getUsedAccountReferenceSelector();
         return AccountInfo.builder()
                    .resourceId(ref.getResourceId())
-                   .accountIdentifier(selector.getAccountReferenceValue())
+                   .accountIdentifier(selector.getAccountValue())
                    .currency(Optional.ofNullable(ref.getCurrency())
                                  .map(Currency::getCurrencyCode)
                                  .orElse(null))
                    .accountReferenceType(selector.getAccountReferenceType())
+                   .aspspAccountId(ref.getAspspAccountId())
                    .build();
     }
 
@@ -208,7 +186,10 @@ public class Xs2aAisConsentMapper {
                        ac.getLastActionDate(),
                        ac.getConsentStatus(),
                        ac.isWithBalance(),
-                       ac.isTppRedirectPreferred(), ac.getPsuData(), ac.getTppInfo()))
+                       ac.isTppRedirectPreferred(),
+                       ac.getPsuData(),
+                       ac.getTppInfo(),
+                       ac.getAisConsentRequestType()))
                    .orElse(null);
     }
 

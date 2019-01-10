@@ -433,7 +433,7 @@ public class AccountService {
 
     private Optional<SpiAccountReference> findAccountReference(List<AccountReference> references, String resourceId) {
         return references.stream()
-                   .filter(xs2aAccountReference -> StringUtils.equals(xs2aAccountReference.getResourceId(), resourceId))
+                   .filter(accountReference -> StringUtils.equals(accountReference.getResourceId(), resourceId))
                    .findFirst()
                    .map(xs2aToSpiAccountReferenceMapper::mapToSpiAccountReference);
     }
