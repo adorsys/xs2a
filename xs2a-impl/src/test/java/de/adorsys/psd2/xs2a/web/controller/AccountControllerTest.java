@@ -56,10 +56,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountControllerTest {
-    private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
-    private static final String RESOURCE_ID = "5738a1d4-89f2-459a-95b0-82717274a097";
-    private static final String BOOKING_STATUS = "pending";
-
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private final String ACCOUNT_ID = "33333-999999999";
     private final String CONSENT_ID = "12345";
     private final String ACCOUNT_DETAILS_LIST_SOURCE = "/json/AccountDetailsList.json";
@@ -170,7 +167,7 @@ public class AccountControllerTest {
 
     private ResponseObject<Map<String, List<Xs2aAccountDetails>>> getXs2aAccountDetailsList() {
         List<Xs2aAccountDetails> accountDetails = Collections.singletonList(
-            new Xs2aAccountDetails("33333-999999999", "DE371234599997", null, null, null,
+            new Xs2aAccountDetails(ASPSP_ACCOUNT_ID, "33333-999999999", "DE371234599997", null, null, null,
                                    null, Currency.getInstance("EUR"), "Schmidt", null,
                                    CashAccountType.CACC, AccountStatus.ENABLED, "GENODEF1N02", "", Xs2aUsageType.PRIV, "", null));
         Map<String, List<Xs2aAccountDetails>> result = new HashMap<>();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,22 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
-import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import io.swagger.annotations.ApiModel;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
 import java.util.Currency;
 
 @Data
-@Embeddable
-@ApiModel(description = "Account access", value = "AccountAccess")
-//TODO refactor class and change DB scheme https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/491
-public class AccountAccess {
-
-    @Column(name = "resource_id")
-    @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
-    private String resourceId;
-
-    @Column(name = "aspsp_account_id", length = 34)
-    @ApiModelProperty(value = "Aspsp-Account-ID: Bank specific account ID", example = "DE2310010010123456789")
-    private String aspspAccountId;
-
+@NoArgsConstructor
+@MappedSuperclass
+public abstract class AccountAccess {
     @Column(name = "account_identifier", length = 34, nullable = false)
     @ApiModelProperty(value = "Account-Identifier: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789", required = true)
     private String accountIdentifier;
@@ -50,37 +40,20 @@ public class AccountAccess {
     @ApiModelProperty(value = "Currency Type", example = "EUR")
     private Currency currency;
 
-    @Column(name = "type_access", length = 15, nullable = false)
+    @Column(name = "type_access", length = 30, nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Types of given accesses: account, balance, transaction, payment", example = "ACCOUNT")
     private TypeAccess typeAccess;
 
-    @Column(name = "account_reference_type", nullable = false, length = 15)
+    @Column(name = "account_reference_type", nullable = false, length = 30)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Type of the account reference: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
+    @ApiModelProperty(value = "Type of the account: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
     private AccountReferenceType accountReferenceType;
 
-    public AccountAccess() {
-    }
-
-    public AccountAccess(String accountIdentifier, TypeAccess typeAccess, AccountReferenceType accountReferenceType) {
+    public AccountAccess(String accountIdentifier, TypeAccess typeAccess, AccountReferenceType accountReferenceType, Currency currency) {
         this.accountIdentifier = accountIdentifier;
         this.typeAccess = typeAccess;
         this.accountReferenceType = accountReferenceType;
-    }
-
-    public AccountAccess resourceId(String resourceId) {
-        this.resourceId = resourceId;
-        return this;
-    }
-
-    public AccountAccess aspspAccountId(String aspspAccountId) {
-        this.aspspAccountId = aspspAccountId;
-        return this;
-    }
-
-    public AccountAccess currency(Currency currency) {
         this.currency = currency;
-        return this;
     }
 }

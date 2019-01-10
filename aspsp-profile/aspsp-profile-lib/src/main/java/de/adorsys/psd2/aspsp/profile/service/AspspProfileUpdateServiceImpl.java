@@ -76,5 +76,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setPisPaymentCancellationRedirectUrlToAspsp(aspspSettings.getPisPaymentCancellationRedirectUrlToAspsp());
         setting.setNotConfirmedConsentExpirationPeriodMs(aspspSettings.getNotConfirmedConsentExpirationPeriodMs());
         setting.setNotConfirmedPaymentExpirationPeriodMs(aspspSettings.getNotConfirmedPaymentExpirationPeriodMs());
+        setting.setSupportedPaymentTypeAndProductMatrix(aspspSettings.getSupportedPaymentTypeAndProductMatrix());
     }
 }

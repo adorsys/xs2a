@@ -18,39 +18,25 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
 @Value
-@ApiModel(description = "Account access", value = "AccountAccess")
 public class Xs2aAccountAccess {
-
-    @ApiModelProperty(value = "detailed account information")
     private List<AccountReference> accounts;
-
-    @ApiModelProperty(value = "balances of the addressed accounts")
     private List<AccountReference> balances;
-
-    @ApiModelProperty(value = "transactions of the addressed accounts")
     private List<AccountReference> transactions;
-
-    @ApiModelProperty(value = "only the value 'allAccounts' or 'allAccountsWithBalances' is admitted", example =
-        "allAccounts")
     private Xs2aAccountAccessType availableAccounts;
-
-    @ApiModelProperty(value = "only the value 'allAccounts' is admitted", example = "allAccounts")
     private Xs2aAccountAccessType allPsd2;
 
     @JsonIgnore
     public boolean isNotEmpty() {
         return !(CollectionUtils.isEmpty(accounts)
-            && CollectionUtils.isEmpty(balances)
-            && CollectionUtils.isEmpty(transactions)
-            && allPsd2 == null
-            && availableAccounts == null);
+                     && CollectionUtils.isEmpty(balances)
+                     && CollectionUtils.isEmpty(transactions)
+                     && allPsd2 == null
+                     && availableAccounts == null);
     }
 }

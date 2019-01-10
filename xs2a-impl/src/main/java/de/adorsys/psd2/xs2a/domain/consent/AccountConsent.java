@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -66,6 +67,9 @@ public class AccountConsent {
     @ApiModelProperty(value = "TPP information", required = true)
     @JsonIgnore
     private final TppInfo tppInfo;
+
+    @JsonIgnore
+    private final AisConsentRequestType aisConsentRequestType;
 
     @JsonIgnore
     public boolean isValidFrequency() {

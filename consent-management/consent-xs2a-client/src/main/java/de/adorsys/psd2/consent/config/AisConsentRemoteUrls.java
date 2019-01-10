@@ -43,6 +43,15 @@ public class AisConsentRemoteUrls {
     }
 
     /**
+     * @return SpiAccountConsent initial consent
+     * Method: GET
+     * PathVariable: String consentId
+     */
+    public String getInitialAisConsentById() {
+        return consentServiceBaseUrl + "/ais/consent/initial/{consent-id}";
+    }
+
+    /**
      * @return ConsentStatus status
      * Method: GET
      * PathVariable: String consentId

@@ -72,6 +72,19 @@ public class Xs2aAisConsentService {
     }
 
     /**
+     * Requests CMS to retrieve AIS consent by its identifier
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return Response containing AIS Consent
+     */
+    // TODO return Optional instead of orElse(null) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/585
+    public AccountConsent getInitialAccountConsentById(String consentId) {
+        AisAccountConsent aisAccountConsent = aisConsentService.getInitialAisAccountConsentById(consentId)
+                                                  .orElse(null);
+        return aisConsentMapper.mapToAccountConsent(aisAccountConsent);
+    }
+
+    /**
      * Requests CMS to retrieve AIS consent status by its identifier
      *
      * @param consentId String representation of identifier of stored consent
@@ -157,8 +170,8 @@ public class Xs2aAisConsentService {
      * @param consentId            consentId String representation of identifier of stored consent
      * @param aisAccountAccessInfo AIS account access information
      */
-    public void updateAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
-        aisConsentService.updateAccountAccess(consentId, aisAccountAccessInfo);
+    public void updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
+        aisConsentService.updateAspspAccountAccess(consentId, aisAccountAccessInfo);
     }
 
     /**

@@ -33,6 +33,8 @@ import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceType.*;
 @NoArgsConstructor
 @ApiModel(description = "Account Reference", value = "AccountReference")
 public class AccountReference {
+    @JsonIgnore
+    private String aspspAccountId;
 
     @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
     private String resourceId;
@@ -55,7 +57,17 @@ public class AccountReference {
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
-    public AccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency, String resourceId) {
+    /**
+     * This constructor should be used for storing initial accounts data (as it was requested by TPP)
+     */
+    public AccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency) {
+        this(accountReferenceType, accountReferenceValue, currency, null, null);
+    }
+
+    /**
+     * This constructor should be used for storing accounts data received from aspsp
+     */
+    public AccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency, String resourceId, String aspspAccountId) {
         if (accountReferenceType == IBAN) {
             this.iban = accountReferenceValue;
         } else if (accountReferenceType == BBAN) {
@@ -69,6 +81,7 @@ public class AccountReference {
         }
         this.currency = currency;
         this.resourceId = resourceId;
+        this.aspspAccountId = aspspAccountId;
     }
 
     @JsonIgnore
@@ -88,6 +101,6 @@ public class AccountReference {
         if (StringUtils.isNotBlank(maskedPan)) {
             return new AccountReferenceSelector(MASKED_PAN, this.maskedPan);
         }
-        return null;
+        throw new IllegalArgumentException("At least one account reference property must be set!");
     }
 }

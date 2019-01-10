@@ -26,6 +26,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -151,4 +153,9 @@ public class BankProfileSetting {
      * The limit of an expiration time of not confirmed payment url set in milliseconds
      */
     private long notConfirmedPaymentExpirationPeriodMs;
+
+    /**
+     * A matrix payment-product/payment-type which allows to choose needed types
+     */
+    private Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix;
 }

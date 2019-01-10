@@ -67,6 +67,14 @@ interface AisConsentServiceBase {
     Optional<AisAccountConsent> getAisAccountConsentById(String consentId);
 
     /**
+     * Reads full initial information of consent by id
+     *
+     * @param consentId id of consent
+     * @return AisAccountConsent
+     */
+    Optional<AisAccountConsent> getInitialAisAccountConsentById(String consentId);
+
+    /**
      * Saves information about uses of consent
      *
      * @param request needed parameters for logging usage AIS consent
@@ -74,13 +82,13 @@ interface AisConsentServiceBase {
     void checkConsentAndSaveActionLog(AisConsentActionRequest request);
 
     /**
-     * Updates AIS consent account access by id
+     * Updates AIS consent aspsp account access by id
      *
      * @param request   needed parameters for updating AIS consent
      * @param consentId id of the consent to be updated
      * @return String   consent id
      */
-    Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request);
+    Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request);
 
     /**
      * Creates consent authorization

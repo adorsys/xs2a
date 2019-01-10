@@ -43,6 +43,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FutureBookingsControllerTest {
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String IBAN = "123456789";
     private static final String WRONG_IBAN = "Wrong iban";
     private static final BigDecimal BALANCE = BigDecimal.valueOf(2000);
@@ -90,7 +91,7 @@ public class FutureBookingsControllerTest {
     }
 
     private Optional<AspspAccountDetails> getAspspAccountDetails(BigDecimal amount) {
-        return Optional.of(new AspspAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
+        return Optional.of(new AspspAccountDetails(ASPSP_ACCOUNT_ID, "qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
                                                    "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
                                                    null, null, "ACVB222", null, null, null, getNewBalanceList(amount)));
     }
