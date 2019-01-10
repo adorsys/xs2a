@@ -33,3 +33,4 @@ setting:
  piisConsentSupported: false
  deltaReportSupported: false
  redirectUrlExpirationTimeMs: 600000
+ paymentCancellationRedirectUrlExpirationTimeMs: 600000

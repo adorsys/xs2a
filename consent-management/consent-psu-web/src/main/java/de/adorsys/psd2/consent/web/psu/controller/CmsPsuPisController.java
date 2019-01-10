@@ -122,6 +122,40 @@ public class CmsPsuPisController {
 
     }
 
+    @GetMapping(path = "/redirects/cancellation/{redirect-id}")
+    @ApiOperation(value = "")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 408, message = "Request Timeout")})
+    public ResponseEntity<CmsPaymentResponse> getPaymentByRedirectIdForCancellation(
+        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ")
+        @RequestHeader(value = "psu-id", required = false) String psuId,
+        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
+        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
+        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
+        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
+        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
+        @ApiParam(name = "redirect-id", value = "The redirect identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("redirect-id") String redirectId,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
+        Optional<CmsPaymentResponse> response = cmsPsuPisService.checkRedirectAndGetPaymentForCancellation(psuIdData, redirectId, instanceId);
+
+        if (!response.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        CmsPaymentResponse paymentResponse = response.get();
+        if (StringUtils.isBlank(paymentResponse.getAuthorisationId())) {
+            return new ResponseEntity<>(paymentResponse, HttpStatus.REQUEST_TIMEOUT);
+        }
+
+        return new ResponseEntity<>(paymentResponse, HttpStatus.OK);
+    }
+
     @PutMapping(path = "/{payment-id}/{authorisation-id}/status/{status}")
     @ApiOperation(value = "")
     @ApiResponses(value = {

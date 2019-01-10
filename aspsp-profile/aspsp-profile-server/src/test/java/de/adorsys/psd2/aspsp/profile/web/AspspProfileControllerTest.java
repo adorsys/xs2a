@@ -64,6 +64,7 @@ public class AspspProfileControllerTest {
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://localhost/payment/cancellation/";
+    private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
 
     @InjectMocks
     private AspspProfileController aspspProfileController;
@@ -127,7 +128,8 @@ public class AspspProfileControllerTest {
             PIIS_CONSENT_SUPPORTED,
             DELTA_REPORT_SUPPORTED,
             REDIRECT_URL_EXPIRATION_TIME_MS,
-            PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP);
+            PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP,
+            PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

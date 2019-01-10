@@ -324,11 +324,23 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         consentAuthorisation.setPaymentData(paymentData);
         consentAuthorisation.setScaStatus(STARTED);
         consentAuthorisation.setAuthorizationType(authorisationType);
-        consentAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
+        consentAuthorisation.setRedirectUrlExpirationTimestamp(countRedirectUrlExpirationTimestampForAuthorisationType(authorisationType));
 
         consentAuthorisation.setPsuData(handlePsuForAuthorisation(psuData, paymentData.getPsuData()));
         consentAuthorisation.setPaymentData(enrichPsuData(psuData, paymentData));
         return pisAuthorizationRepository.save(consentAuthorisation);
+    }
+
+    private OffsetDateTime countRedirectUrlExpirationTimestampForAuthorisationType(CmsAuthorisationType authorisationType) {
+        long redirectUrlExpirationTimeMs;
+
+        if (authorisationType == CmsAuthorisationType.CANCELLED) {
+            redirectUrlExpirationTimeMs = aspspProfileService.getAspspSettings().getPaymentCancellationRedirectUrlExpirationTimeMs();
+        } else {
+            redirectUrlExpirationTimeMs = aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs();
+        }
+
+        return OffsetDateTime.now().plus(redirectUrlExpirationTimeMs, ChronoUnit.MILLIS);
     }
 
     private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {
