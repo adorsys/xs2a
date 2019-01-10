@@ -53,5 +53,7 @@
     <include relativeToChangelogFile="true" file="migration/0031-add-column-instance-id-for-pis-consent-authorisation.xml"/>
     <include relativeToChangelogFile="true"
              file="migration/0032-add-creation-timestamp-ais-consent-pis-common-payment.xml"/>
+    <include relativeToChangelogFile="true"
+             file="migration/0033-add-not-null-constraint-ais-aspsp-account-access.xml"/>
 
 </databaseChangeLog>
