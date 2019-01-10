@@ -16,14 +16,18 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -34,21 +38,25 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -69,8 +77,15 @@ public class AisConsentServiceInternalTest {
     private TppInfoMapper tppInfoMapper;
     @Mock
     private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
+    @Mock
+    private AspspProfileService aspspProfileService;
+    @Mock
+    private AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
+
 
     private AisConsent aisConsent;
+    private AisConsentAuthorization aisConsentAuthorization;
+    private List<AisConsentAuthorization> aisConsentAuthorizationList = new ArrayList<>();
     private static final long CONSENT_ID = 1;
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
@@ -84,6 +99,9 @@ public class AisConsentServiceInternalTest {
 
     @Before
     public void setUp() {
+        when(psuDataMapper.mapToPsuData(any(PsuIdData.class))).thenCallRealMethod();
+        aisConsentAuthorization = buildAisConsentAuthorization();
+        aisConsentAuthorizationList.add(aisConsentAuthorization);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
@@ -213,6 +231,59 @@ public class AisConsentServiceInternalTest {
         assertFalse(actual.isPresent());
     }
 
+    @Test
+    public void createAuthorizationWithClosingPreviousAuthorisations_success() {
+        //Given
+        ArgumentCaptor<AisConsentAuthorization> argument = ArgumentCaptor.forClass(AisConsentAuthorization.class);
+        //noinspection unchecked
+        ArgumentCaptor<List<AisConsentAuthorization>> argumentList = ArgumentCaptor.forClass((Class) List.class);
+
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        when(aisConsentAuthorizationRepository.save(any(AisConsentAuthorization.class))).thenReturn(aisConsentAuthorization);
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+
+        AisConsentAuthorizationRequest aisConsentAuthorizationRequest = new AisConsentAuthorizationRequest();
+        aisConsentAuthorizationRequest.setPsuData(buildPsuIdData());
+        aisConsentAuthorizationRequest.setScaStatus(aisConsentAuthorization.getScaStatus());
+
+        // When
+        Optional<String> actual = aisConsentService.createAuthorization(EXTERNAL_CONSENT_ID, aisConsentAuthorizationRequest);
+
+        // Then
+        assertTrue(actual.isPresent());
+        verify(aisConsentAuthorizationRepository).save(argument.capture());
+        assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
+
+        verify(aisConsentAuthorizationRepository).save(argumentList.capture());
+        List<AisConsentAuthorization> authorisationsFailed = argumentList.getValue();
+        Set<ScaStatus> scaStatuses = authorisationsFailed.stream()
+                                         .map(AisConsentAuthorization::getScaStatus)
+                                         .collect(Collectors.toSet());
+        assertEquals(scaStatuses.size(), 1);
+        assertTrue(scaStatuses.contains(ScaStatus.FAILED));
+    }
+
+    private AisConsentAuthorization buildAisConsentAuthorization() {
+        AisConsentAuthorization aisConsentAuthorization = new AisConsentAuthorization();
+        aisConsentAuthorization.setConsent(aisConsent);
+        aisConsentAuthorization.setExternalId(AUTHORISATION_ID);
+        aisConsentAuthorization.setPsuData(psuDataMapper.mapToPsuData(buildPsuIdData()));
+        aisConsentAuthorization.setScaStatus(ScaStatus.STARTED);
+        return aisConsentAuthorization;
+    }
+
+    @NotNull
+    private AspspSettings getAspspSettings() {
+        return new AspspSettings(1, false, null, null, false, null, null,
+                                 null, false, null, null, 1, 1, false,
+                                 false, false, false, false, false, 1,
+                                 null, 1, 1);
+    }
+
+    private PsuIdData buildPsuIdData() {
+        return new PsuIdData("id", "type", "corporate ID", "corporate type");
+    }
+
 
     private AisConsent buildConsent(String externalId) {
         AisConsent aisConsent = new AisConsent();
@@ -220,6 +291,7 @@ public class AisConsentServiceInternalTest {
         aisConsent.setExternalId(externalId);
         aisConsent.setExpireDate(LocalDate.now());
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
+        aisConsent.setAuthorizations(aisConsentAuthorizationList);
         return aisConsent;
     }
 

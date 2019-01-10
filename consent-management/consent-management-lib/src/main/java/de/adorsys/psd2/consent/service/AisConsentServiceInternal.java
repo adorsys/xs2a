@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
@@ -32,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -171,7 +173,10 @@ public class AisConsentServiceInternal implements AisConsentService {
     public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
         return aisConsentRepository.findByExternalId(consentId)
                    .filter(con -> !con.getConsentStatus().isFinalisedStatus())
-                   .map(aisConsent -> saveNewAuthorization(aisConsent, request));
+                   .map(aisConsent -> {
+                       closePreviousAuthorisationsByPsu(aisConsent.getAuthorizations(), request.getPsuData());
+                       return saveNewAuthorization(aisConsent, request);
+                   });
     }
 
     /**
@@ -375,5 +380,32 @@ public class AisConsentServiceInternal implements AisConsentService {
                    .stream()
                    .filter(auth -> auth.getExternalId().equals(authorisationId))
                    .findFirst();
+    }
+
+    private void closePreviousAuthorisationsByPsu(List<AisConsentAuthorization> authorisations, PsuIdData psuIdData) {
+        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
+
+        if (!isPsuDataCorrect(psuData)) {
+            return;
+        }
+
+        List<AisConsentAuthorization> aisConsentAuthorizations = authorisations
+                                                          .stream()
+                                                          .filter(auth -> auth.getPsuData().contentEquals(psuData))
+                                                          .map(this::failAuthorisation)
+                                                          .collect(Collectors.toList());
+
+        aisConsentAuthorizationRepository.save(aisConsentAuthorizations);
+    }
+
+    private boolean isPsuDataCorrect(PsuData psuData) {
+        return Objects.nonNull(psuData)
+                   && StringUtils.isNotBlank(psuData.getPsuId());
+    }
+
+    private AisConsentAuthorization failAuthorisation(AisConsentAuthorization auth) {
+        auth.setScaStatus(ScaStatus.FAILED);
+        auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
+        return auth;
     }
 }

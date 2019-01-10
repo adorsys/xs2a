@@ -88,3 +88,6 @@ The default value is the top of every hour of every day.
 
 ## Upgrade version of Jackson library
 We updated Jackson version because FasterXML jackson-databind 2.x before 2.9.8 might allow attackers to have unspecified impact by leveraging failure to block the axis2-transport-jms class from polymorphic deserialization. https://nvd.nist.gov/vuln/detail/CVE-2018-19360
+
+## One active authorisation per consent for one PSU
+When PSU creates new authorisation for consent, all previous authorisations, created by this PSU for the same consent, will be failed and expired.
