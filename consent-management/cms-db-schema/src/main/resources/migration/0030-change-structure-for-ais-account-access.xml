@@ -22,21 +22,17 @@
 
     <changeSet author="pru@adorsys.de" id="2018-12-25-1">
         <renameColumn columnDataType="VARCHAR(34)"
-                      newColumnName="aspsp_account_id"
+                      newColumnName="account_identifier"
                       oldColumnName="iban"
                       tableName="ais_account_access"/>
 
         <addColumn tableName="ais_account_access">
-            <column name="account_identifier" type="VARCHAR(34)">
+            <column name="account_reference_type" type="VARCHAR(30)">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
 
-        <addColumn tableName="ais_account_access">
-            <column name="account_reference_type" type="VARCHAR(15)">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
+        <dropColumn columnName="resource_id" tableName="ais_account_access"/>
 
         <dropForeignKeyConstraint constraintName="fk_ais_access_ais_consent"
                                   baseTableName="ais_account_access"/>
@@ -45,13 +41,40 @@
                         tableName="ais_account_access"/>
 
         <dropNotNullConstraint columnName="currency" tableName="ais_account_access" columnDataType="VARCHAR(3)"/>
-        <dropNotNullConstraint columnName="aspsp_account_id" tableName="ais_account_access" columnDataType="VARCHAR(34)"/>
-
-        <addPrimaryKey columnNames="consent_id, account_identifier, type_access" constraintName="ais_account_access_pkey"
-                       tableName="ais_account_access"/>
 
         <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="ais_account_access"
                                  constraintName="fk_ais_access_ais_consent" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="ais_consent"/>
+    </changeSet>
+
+    <changeSet author="pru@adorsys.com.ua" id="2019-01-02-1">
+        <comment>Create table ais_aspsp_account_access.</comment>
+
+        <createTable tableName="ais_aspsp_account_access">
+            <column name="consent_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="resource_id" type="VARCHAR(100)"/>
+
+            <column name="aspsp_account_id" type="VARCHAR(100)"/>
+
+            <column name="account_identifier" type="VARCHAR(34)"/>
+
+            <column name="currency" type="VARCHAR(3)"/>
+
+            <column name="type_access" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="account_reference_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="ais_aspsp_account_access"
+                                 constraintName="fk_aspsp_access_ais_consent" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="ais_consent"/>
     </changeSet>

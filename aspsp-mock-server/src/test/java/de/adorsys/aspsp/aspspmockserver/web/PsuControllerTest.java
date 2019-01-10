@@ -40,6 +40,7 @@ import static org.springframework.http.HttpStatus.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PsuControllerTest {
     private static final String ASPSP_PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String WRONG_ASPSP_PSU_ID = "WRONG_ASPSP_PSU_ID";
     private static final String PSU_ID = "aspsp";
     private static final String WRONG_PSU_ID = "zzz";
@@ -170,7 +171,7 @@ public class PsuControllerTest {
     private List<AspspAccountDetails> getDetails(boolean isEmpty) {
         return isEmpty
                    ? Collections.emptyList()
-                   : Collections.singletonList(new AspspAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, Collections.emptyList()));
+                   : Collections.singletonList(new AspspAccountDetails(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, Collections.emptyList()));
 
     }
 }

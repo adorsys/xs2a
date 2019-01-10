@@ -61,8 +61,6 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
-import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
-import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
 
 @Service
 @RequiredArgsConstructor
@@ -100,7 +98,7 @@ public class ConsentService {
             return ResponseObject.<CreateConsentResponse>builder().fail(validationResult.getMessageError()).build();
         }
 
-        if (isConsentGlobal(request) || isConsentForAllAvailableAccounts(request)) {
+        if (request.isGlobalOrAllAccountsAccessConsent()) {
             request.setAccess(getAccessForGlobalOrAllAvailableAccountsConsent(request));
         }
 
@@ -113,7 +111,7 @@ public class ConsentService {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
         }
 
-        AccountConsent accountConsent = getValidatedAccountConsent(consentId);
+        AccountConsent accountConsent = getInitialAccountConsent(consentId);
 
         SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
 
@@ -205,25 +203,19 @@ public class ConsentService {
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_AIS_CONSENT_REQUEST_RECEIVED);
 
-        AccountConsent consent = getValidatedAccountConsent(consentId);
+        AccountConsent consent = getInitialAccountConsent(consentId);
         return consent == null
                    ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
-    @SuppressWarnings("WeakerAccess")  // fixes the issue https://github.com/adorsys/xs2a/issues/16
+    @SuppressWarnings("WeakerAccess") // fixes the issue https://github.com/adorsys/xs2a/issues/16
     public ResponseObject<AccountConsent> getValidatedConsent(String consentId, boolean withBalance) {
         AccountConsent accountConsent = getValidatedAccountConsent(consentId);
 
         if (accountConsent == null) {
             return ResponseObject.<AccountConsent>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
-        }
-
-        if (withBalance && !accountConsent.isWithBalance()) {
-            return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_INVALID)))
-                       .build();
         }
 
         if (LocalDate.now().compareTo(accountConsent.getValidUntil()) >= 0) {
@@ -254,6 +246,14 @@ public class ConsentService {
     public ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuData, String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
+        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
+        AccountConsent accountConsent = getValidatedAccountConsent(consentId);
+        if (accountConsent != null && accountConsent.isExpired()) {
+            return ResponseObject.<CreateConsentAuthorizationResponse>builder()
+                       .fail(new MessageError(MessageErrorCode.CONSENT_EXPIRED))
+                       .build();
+        }
+
         return aisAuthorizationService.createConsentAuthorization(psuData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
                    .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder().fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400))::build);
@@ -261,6 +261,14 @@ public class ConsentService {
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
         xs2aEventService.recordAisTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
+
+        // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
+        AccountConsent accountConsent = getValidatedAccountConsent(updatePsuData.getConsentId());
+        if (accountConsent != null && accountConsent.isExpired()) {
+            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                       .fail(new MessageError(MessageErrorCode.CONSENT_EXPIRED))
+                       .build();
+        }
 
         return Optional.ofNullable(aisAuthorizationService.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId()))
                    .map(conAuth -> getUpdateConsentPsuDataResponse(updatePsuData, conAuth))
@@ -323,22 +331,6 @@ public class ConsentService {
                           .anyMatch(a -> a.getResourceId().equals(resourceId));
     }
 
-    private boolean isNotEmptyAccess(Xs2aAccountAccess access) {
-        return Optional.ofNullable(access)
-                   .map(Xs2aAccountAccess::isNotEmpty)
-                   .orElse(false);
-    }
-
-    private boolean isConsentGlobal(CreateConsentReq request) {
-        return isNotEmptyAccess(request.getAccess())
-                   && request.getAccess().getAllPsd2() == ALL_ACCOUNTS;
-    }
-
-    private boolean isConsentForAllAvailableAccounts(CreateConsentReq request) {
-        return request.getAccess().getAvailableAccounts() == ALL_ACCOUNTS
-                   || request.getAccess().getAvailableAccounts() == ALL_ACCOUNTS_WITH_BALANCES;
-    }
-
     private Xs2aAccountAccess getAccessForGlobalOrAllAvailableAccountsConsent(CreateConsentReq request) {
         return new Xs2aAccountAccess(
             new ArrayList<>(),
@@ -351,6 +343,14 @@ public class ConsentService {
 
     private AccountConsent getValidatedAccountConsent(String consentId) {
         return Optional.ofNullable(aisConsentService.getAccountConsentById(consentId))
+                   .filter(consent -> tppService.getTppId().equals(consent.getTppInfo()
+                                                                       .getAuthorisationNumber()))
+                   .orElse(null);
+    }
+
+    // TODO return Optional instead of orElse(null) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/585
+    private AccountConsent getInitialAccountConsent(String consentId) {
+        return Optional.ofNullable(aisConsentService.getInitialAccountConsentById(consentId))
                    .filter(consent -> tppService.getTppId().equals(consent.getTppInfo()
                                                                        .getAuthorisationNumber()))
                    .orElse(null);

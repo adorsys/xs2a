@@ -32,9 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
@@ -63,6 +61,9 @@ public class AspspProfileServiceTest {
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
     private static final boolean DELTA_REPORT_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
+    private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS = 86400000;
+    private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
+    private static final Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
 
     @InjectMocks
@@ -139,6 +140,24 @@ public class AspspProfileServiceTest {
         Assertions.assertThat(actualResponse.getFrequencyPerDay()).isEqualTo(FREQUENCY_PER_DAY);
     }
 
+    @Test
+    public void getNotConfirmedConsentExpirationPeriodMs_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getNotConfirmedConsentExpirationPeriodMs()).isEqualTo(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
+    }
+
+    @Test
+    public void getNotConfirmedPaymentExpirationPeriodMs_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getNotConfirmedPaymentExpirationPeriodMs()).isEqualTo(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
+    }
+
     public void getPaymentCancellationRedirectUrlExpirationTimeMs_success() {
         //When:
         AspspSettings actualResponse = aspspProfileService.getAspspSettings();
@@ -170,6 +189,9 @@ public class AspspProfileServiceTest {
         setting.setDeltaReportSupported(DELTA_REPORT_SUPPORTED);
         setting.setRedirectUrlExpirationTimeMs(REDIRECT_URL_EXPIRATION_TIME_MS);
         setting.setScaApproach(REDIRECT_APPROACH);
+        setting.setNotConfirmedConsentExpirationPeriodMs(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
+        setting.setNotConfirmedPaymentExpirationPeriodMs(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
+        setting.setSupportedPaymentTypeAndProductMatrix(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX);
         setting.setPaymentCancellationRedirectUrlExpirationTimeMs(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
         return setting;
     }
@@ -198,5 +220,12 @@ public class AspspProfileServiceTest {
             PENDING,
             BOTH
         );
+    }
+
+    private static Map<PaymentType, Set<String>> buildSupportedPaymentTypeAndProductMatrix() {
+        Map<PaymentType, Set<String>> matrix = new HashMap<>();
+        Set<String> availablePaymentProducts = Collections.singleton("sepa-credit-transfers");
+        matrix.put(PaymentType.SINGLE, availablePaymentProducts);
+        return matrix;
     }
 }

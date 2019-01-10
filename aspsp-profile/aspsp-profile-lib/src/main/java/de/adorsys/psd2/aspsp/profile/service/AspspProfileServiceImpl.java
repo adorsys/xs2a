@@ -53,6 +53,9 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isDeltaReportSupported(),
             setting.getRedirectUrlExpirationTimeMs(),
             setting.getPisPaymentCancellationRedirectUrlToAspsp(),
+            setting.getNotConfirmedConsentExpirationPeriodMs(),
+            setting.getNotConfirmedPaymentExpirationPeriodMs(),
+            setting.getSupportedPaymentTypeAndProductMatrix(),
             setting.getPaymentCancellationRedirectUrlExpirationTimeMs());
     }
 

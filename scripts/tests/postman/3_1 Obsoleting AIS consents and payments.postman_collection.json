@@ -1,0 +1,604 @@
+{
+	"info": {
+		"_postman_id": "8c214568-b08c-476c-99cf-6a945b70a755",
+		"name": "Obsoleting",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AIS Consent",
+			"item": [
+				{
+					"name": "1. Create AIS Consent",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6f709a09-78fc-40ce-8274-dc29bbcd560e",
+								"exec": [
+									"pm.globals.unset(\"consent_id\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "27c858ba-9ceb-426a-8e5d-438f019c0598",
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Consent status is received\", () => {",
+									"    pm.expect(jsonData.consentStatus).to.eql('received');",
+									"});",
+									"",
+									"pm.globals.set(\"consent_id\", jsonData.consentId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "date",
+								"value": "Sun, 11 Aug 2019 15:02:37 GMT"
+							},
+							{
+								"key": "tpp-qwac-certificate",
+								"value": "qwac certificate"
+							},
+							{
+								"key": "x-request-id",
+								"value": "{{x_request_id}}"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_multiple}}"
+							},
+							{
+								"key": "TPP-Explicit-Authorisation-Preferred",
+								"value": "true",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"access\": {\n        \"accounts\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE52500105173911841934\"\n          }\n        ],\n        \"balances\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE52500105173911841934\"\n          }\n        ],\n        \"transactions\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE52500105173911841934\"\n          }\n        ]\n      },\n      \"combinedServiceIndicator\": false,\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": false,\n      \"validUntil\": \"2019-11-30\"\n    }"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Start authorisation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "898a97c1-12fd-4166-82b5-9a8f4fc1106c",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Sca status is psuAuthenticated\", () => {",
+									"    pm.expect(jsonData.scaStatus).to.eql('psuAuthenticated');",
+									"});",
+									"",
+									"// splits string link by '/' to array and gets the last element - authorisationId",
+									"// e.g. \"http://localhost:8080/v1/consents/d917f39f-6308-4f81-9b51-bfbd8bc934c6/authorisations/554fda7d-bc70-44da-8670-15e299f817a6\"",
+									"      // needs to get 554fda7d-bc70-44da-8670-15e299f817a6 value",
+									"const authorisationId = jsonData.links.startAuthorisationWithPsuAuthentication.split('/').pop();",
+									"",
+									"pm.globals.set(\"authorisation_id\", authorisationId);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "befc2b29-5dab-4f51-b077-032638f06ac0",
+								"exec": [
+									"pm.globals.unset(\"authorisation_id\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_multiple}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}",
+								"authorisations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Update PSU data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a9ee083f-2b6d-42df-a671-49d5160d90ef",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Sca status is psuAuthenticated\", () => {",
+									"    pm.expect(jsonData.scaStatus).to.eql('psuAuthenticated');",
+									"});",
+									"",
+									"pm.test(\"Select authentication method link exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    pm.expect(_links).to.have.property('selectAuthenticationMethod');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_multiple}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}",
+								"authorisations",
+								"{{authorisation_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Get consent status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "x-request-id",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/status",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get SCA status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}",
+								"authorisations",
+								"{{authorisation_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "1. Initiate payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "96d686a3-5f56-4cd2-b043-50dc3bf36d7c",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.globals.set(\"payment_id\", jsonData.paymentId);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b4cbc456-5fd9-4fd5-a8cc-c601b228c824",
+								"exec": [
+									"pm.globals.unset(\"payment_id\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							},
+							{
+								"key": "TPP-Explicit-Authorisation-Preferred",
+								"value": "true",
+								"type": "text"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_multiple}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"Some AGENT\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"49\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/sepa-credit-transfers",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"payments",
+								"sepa-credit-transfers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Start authorisation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d56d427f-c556-496e-a0ad-693046fd39f6",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"const authorisationId = jsonData.links.startAuthorisationWithPsuAuthentication.split('/').pop();",
+									"pm.globals.set(\"authorisation_id\", authorisationId);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4e1898ce-dc16-4c98-a814-d70ce1571ddf",
+								"exec": [
+									"pm.globals.unset(\"authorisation_id\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_multiple}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/{{payment_id}}/authorisations",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"payments",
+								"{{payment_id}}",
+								"authorisations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Update PSU data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "06adf1b3-cff1-4ff3-a698-6295757d8474",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_multiple}}"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"psuData\":{\n   \"password\":\"zzz\"\n}}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/{{payment_id}}/authorisations/{{authorisation_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"payments",
+								"{{payment_id}}",
+								"authorisations",
+								"{{authorisation_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Get payment status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/status",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"{{payment_service}}",
+								"{{payment_id}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get SCA status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"{{payment_service}}",
+								"{{payment_id}}",
+								"authorisations",
+								"{{authorisation_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

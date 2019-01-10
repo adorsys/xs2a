@@ -17,30 +17,26 @@
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
 import lombok.AllArgsConstructor;
-import lombok.Setter;
-import lombok.Value;
-import lombok.experimental.NonFinal;
+import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Currency;
 
+@Data
 @NotNull
-@Value
 @AllArgsConstructor
 public class SpiAccountReference {
-
+    private String aspspAccountId;
     private String resourceId;
-    @Setter
-    @NonFinal
-    private String iban;    // TODO don't use it as an identifier during the account access validation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
+    private String iban;
     private String bban;
     private String pan;
     private String maskedPan;
     private String msisdn;
     private Currency currency;
 
-    // TODO provide a new field for the account access validation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
     public SpiAccountReference(@NotNull SpiAccountDetails accountDetails) {
+        this.aspspAccountId = accountDetails.getAspspAccountId();
         this.resourceId = accountDetails.getResourceId();
         this.iban = accountDetails.getIban();
         this.bban = accountDetails.getBban();
@@ -48,5 +44,15 @@ public class SpiAccountReference {
         this.maskedPan = accountDetails.getMaskedPan();
         this.msisdn = accountDetails.getMsisdn();
         this.currency = accountDetails.getCurrency();
+    }
+
+    public SpiAccountReference(String resourceId, String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
+        this.resourceId = resourceId;
+        this.iban = iban;
+        this.bban = bban;
+        this.pan = pan;
+        this.maskedPan = maskedPan;
+        this.msisdn = msisdn;
+        this.currency = currency;
     }
 }

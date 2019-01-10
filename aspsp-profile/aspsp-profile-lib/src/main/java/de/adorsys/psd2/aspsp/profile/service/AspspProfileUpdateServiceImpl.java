@@ -74,6 +74,9 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setDeltaReportSupported(aspspSettings.isDeltaReportSupported());
         setting.setRedirectUrlExpirationTimeMs(aspspSettings.getRedirectUrlExpirationTimeMs());
         setting.setPisPaymentCancellationRedirectUrlToAspsp(aspspSettings.getPisPaymentCancellationRedirectUrlToAspsp());
+        setting.setNotConfirmedConsentExpirationPeriodMs(aspspSettings.getNotConfirmedConsentExpirationPeriodMs());
+        setting.setNotConfirmedPaymentExpirationPeriodMs(aspspSettings.getNotConfirmedPaymentExpirationPeriodMs());
+        setting.setSupportedPaymentTypeAndProductMatrix(aspspSettings.getSupportedPaymentTypeAndProductMatrix());
         setting.setPaymentCancellationRedirectUrlExpirationTimeMs(aspspSettings.getPaymentCancellationRedirectUrlExpirationTimeMs());
     }
 }

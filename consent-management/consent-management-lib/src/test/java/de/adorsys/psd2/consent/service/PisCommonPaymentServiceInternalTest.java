@@ -70,6 +70,8 @@ public class PisCommonPaymentServiceInternalTest {
     private PsuDataMapper psuDataMapper;
     @Mock
     private AspspProfileService aspspProfileService;
+    @Mock
+    private PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
 
     private PisCommonPaymentData pisCommonPaymentData;
     private List<PisAuthorization> pisAuthorizationList = new ArrayList<>();
@@ -136,6 +138,7 @@ public class PisCommonPaymentServiceInternalTest {
         //When
         when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID));
         when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatus(PAYMENT_ID, TransactionStatus.RCVD)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
         //Then
         Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID, CmsAuthorisationType.CANCELLED);
         //Assert
@@ -207,6 +210,7 @@ public class PisCommonPaymentServiceInternalTest {
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         when(pisAuthorizationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
         when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatus(PAYMENT_ID, TransactionStatus.RCVD)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
 
         // When
         Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, AUTHORISATION_TYPE, psuIdData);
@@ -229,8 +233,8 @@ public class PisCommonPaymentServiceInternalTest {
     private AspspSettings getAspspSettings() {
         return new AspspSettings(1, false, null, null, false, null, null,
             null, false, null, null, 1, 1, false,
-            false, false, false, false, false, 1,
-            null, 1);
+            false, false, false, false, false, 1, null,
+            1, 1, null, 1);
     }
 
     private PsuIdData buildPsuIdData() {

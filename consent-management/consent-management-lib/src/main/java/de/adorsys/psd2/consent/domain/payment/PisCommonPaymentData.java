@@ -27,6 +27,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,5 +86,18 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
     @Column(name = "creation_timestamp")
     @ApiModelProperty(value = "Creation timestamp of the consent.", required = true, example = "2018-12-28T00:00:00Z")
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
+
+    public boolean isConfirmationExpired(long expirationPeriodMs) {
+        if (isNotConfirmed()) {
+            return creationTimestamp.plus(expirationPeriodMs, ChronoUnit.MILLIS)
+                       .isBefore(OffsetDateTime.now());
+        }
+
+        return false;
+    }
+
+    public boolean isNotConfirmed() {
+        return transactionStatus == TransactionStatus.RCVD;
+    }
 }
 

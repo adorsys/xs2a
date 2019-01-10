@@ -40,7 +40,7 @@ public class AccountInfo {
     private String currency;
 
     @ApiModelProperty(value = "Type of the account reference: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
-    private AccountReferenceType accountReferenceType;
+    private AccountReferenceType accountType;
 
     private AccountInfo(){}
 
@@ -89,7 +89,7 @@ public class AccountInfo {
             accountInfo.setAspspAccountId(aspspAccountId);
             accountInfo.setAccountIdentifier(accountIdentifier);
             accountInfo.setCurrency(currency);
-            accountInfo.setAccountReferenceType(accountReferenceType);
+            accountInfo.setAccountType(accountReferenceType);
             return accountInfo;
         }
     }

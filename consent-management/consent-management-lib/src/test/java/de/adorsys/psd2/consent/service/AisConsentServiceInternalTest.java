@@ -67,6 +67,8 @@ public class AisConsentServiceInternalTest {
     SecurityDataService securityDataService;
     @Mock
     private TppInfoMapper tppInfoMapper;
+    @Mock
+    private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
 
     private AisConsent aisConsent;
     private static final long CONSENT_ID = 1;
@@ -96,6 +98,7 @@ public class AisConsentServiceInternalTest {
     public void shouldReturnAisConsent_whenGetConsentByIdIsCalled() {
         // When
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent)).thenReturn(aisConsent);
         when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
 
         // Then
@@ -133,7 +136,7 @@ public class AisConsentServiceInternalTest {
             AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency("EUR").build(),
             AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency("USD").build())
         );
-        Optional<String> consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
+        Optional<String> consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
         assertTrue(consentId.isPresent());
 
@@ -145,12 +148,12 @@ public class AisConsentServiceInternalTest {
             AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-3").currency("EUR").build(),
             AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-3").currency("USD").build())
         );
-        consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
+        consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
         assertTrue(consentId.isPresent());
 
         // Then
-        Optional<String> consentId_notExist = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
+        Optional<String> consentId_notExist = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
         // Assert
         assertFalse(consentId_notExist.isPresent());
     }

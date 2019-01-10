@@ -25,10 +25,13 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -48,9 +51,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType.BANK_OFFERED;
+import static de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType.GLOBAL;
 import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
 import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
 
@@ -72,12 +79,39 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     @Override
     public SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsent(@NotNull SpiContextData spiContextData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
         log.info("AisConsentSpi initiateAisConsent() mock implementation");
+        try {
+            SpiAccountAccess access = accountConsent.getAccess();
+            if (EnumSet.of(GLOBAL, BANK_OFFERED).contains(accountConsent.getAisConsentRequestType())) {
+                List<SpiAccountDetails> accountDetailsByPsuId = getAccountDetailsByPsuId(accountConsent);
 
-        return SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                   .payload(new SpiInitiateAisConsentResponse()) //TODO provide here correct accountAccess in case of global consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/548
-                   .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))     // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
-                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
-                   .success();
+                List<SpiAccountReference> spiAccountReferences = accountDetailsByPsuId.stream()
+                                                                     .map(SpiAccountReference::new)
+                                                                     .collect(Collectors.toList());
+                access.setAccounts(spiAccountReferences);
+                access.setTransactions(spiAccountReferences);
+                if (accountConsent.isWithBalance()) {
+                    access.setBalances(spiAccountReferences);
+                }
+            } else {
+                access = getAccountDetailsFromReferences(accountConsent);
+            }
+
+            return SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                       .payload(new SpiInitiateAisConsentResponse(access))
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
+
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                           .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 
     @Override
@@ -205,5 +239,58 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         resultTmp.setSelectedScaMethod(method);
 
         return resultTmp;
+    }
+
+    private List<SpiAccountDetails> getAccountDetailsByPsuId(SpiAccountConsent accountConsent) {
+        return Optional.ofNullable(aspspRestTemplate.exchange(
+            remoteSpiUrls.getAccountDetailsByPsuId(),
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<SpiAccountDetails>>() {
+            },
+            Optional.ofNullable(accountConsent.getPsuData()).map(SpiPsuData::getPsuId).orElse(null)
+        ).getBody())
+                   .orElseGet(Collections::emptyList);
+    }
+
+    private SpiAccountAccess getAccountDetailsFromReferences(SpiAccountConsent accountConsent) {
+        SpiAccountAccess accountAccess = accountConsent.getAccess();
+
+        updateAspspAccountId(accountAccess.getAccounts());
+        updateAspspAccountId(accountAccess.getTransactions());
+        if (accountConsent.isWithBalance()) {
+            updateAspspAccountId(accountAccess.getBalances());
+        }
+        return accountAccess;
+    }
+
+    private void updateAspspAccountId(List<SpiAccountReference> references) {
+        for (SpiAccountReference reference : references) {
+            Optional<SpiAccountDetails> spiAccountDetails = getAccountDetailsByAccountReference(reference);
+            if (spiAccountDetails.isPresent()) {
+                SpiAccountDetails details = spiAccountDetails.get();
+                reference.setResourceId(details.getResourceId());
+                reference.setAspspAccountId(details.getAspspAccountId());
+            }
+        }
+    }
+
+    private Optional<SpiAccountDetails> getAccountDetailsByAccountReference(SpiAccountReference reference) {
+        if (reference == null) {
+            return Optional.empty();
+        }
+        List<SpiAccountDetails> accountDetails = Optional.ofNullable(
+            aspspRestTemplate.exchange(
+                remoteSpiUrls.getAccountDetailsByIban(),
+                HttpMethod.GET,
+                new HttpEntity<>(null), new ParameterizedTypeReference<List<SpiAccountDetails>>() {
+                },
+                reference.getIban()
+            ).getBody()
+        ).orElseGet(Collections::emptyList);
+
+        return accountDetails.stream()
+                   .filter(acc -> acc.getCurrency() == reference.getCurrency())
+                   .findFirst();
     }
 }

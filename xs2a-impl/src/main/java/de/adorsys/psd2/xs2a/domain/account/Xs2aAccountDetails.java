@@ -17,22 +17,30 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Currency;
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceType.*;
+
 @Data
 @ApiModel(description = "SpiAccountDetails information", value = "SpiAccountDetails")
 public class Xs2aAccountDetails {
+
+    @JsonIgnore
+    private final String aspspAccountId;
 
     @ApiModelProperty(value = "ID: This is the data element to be used in the path when retrieving data from a dedicated account", required = true, example = "3dc3d5b3-7023-4848-9853-f5400a64e80f")
     @Size(max = 35)
@@ -93,4 +101,30 @@ public class Xs2aAccountDetails {
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     @JsonProperty("_links")
     private Links links = new Links();
+
+    @JsonIgnore
+    public String getAccountReferenceValue() {
+        return getAccountSelector()
+                   .getAccountValue();
+    }
+
+    @JsonIgnore
+    public AccountReferenceSelector getAccountSelector() {
+        if (StringUtils.isNotBlank(iban)) {
+            return new AccountReferenceSelector(IBAN, this.iban);
+        }
+        if (StringUtils.isNotBlank(bban)) {
+            return new AccountReferenceSelector(BBAN, this.bban);
+        }
+        if (StringUtils.isNotBlank(pan)) {
+            return new AccountReferenceSelector(PAN, this.pan);
+        }
+        if (StringUtils.isNotBlank(msisdn)) {
+            return new AccountReferenceSelector(MSISDN, this.msisdn);
+        }
+        if (StringUtils.isNotBlank(maskedPan)) {
+            return new AccountReferenceSelector(MASKED_PAN, this.maskedPan);
+        }
+        throw new IllegalArgumentException("At least one account reference property must be set!");
+    }
 }

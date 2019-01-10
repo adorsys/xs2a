@@ -45,6 +45,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    @Transactional
     public Optional<ConsentStatus> getConsentStatusById(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getConsentStatusById);
@@ -59,9 +60,16 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    @Transactional
     public Optional<AisAccountConsent> getAisAccountConsentById(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getAisAccountConsentById);
+    }
+
+    @Override
+    public Optional<AisAccountConsent> getInitialAisAccountConsentById(String encryptedConsentId) {
+        return securityDataService.decryptId(encryptedConsentId)
+                   .flatMap(aisConsentService::getInitialAisAccountConsentById);
     }
 
     @Override
@@ -81,9 +89,9 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
 
     @Override
     @Transactional
-    public Optional<String> updateAccountAccess(String encryptedConsentId, AisAccountAccessInfo request) {
+    public Optional<String> updateAspspAccountAccess(String encryptedConsentId, AisAccountAccessInfo request) {
         return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(decrypted -> aisConsentService.updateAccountAccess(decrypted, request))
+                   .flatMap(decrypted -> aisConsentService.updateAspspAccountAccess(decrypted, request))
                    .flatMap(securityDataService::encryptId);
     }
 
@@ -120,6 +128,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    @Transactional
     public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(consentId -> aisConsentService.getAuthorisationScaStatus(consentId, authorisationId));

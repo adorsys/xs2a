@@ -11,7 +11,7 @@ setting:
   - SINGLE
  scaApproach: REDIRECT
  tppSignatureRequired: false
- bankOfferedConsentSupport: false
+ bankOfferedConsentSupport: true
 # pisRedirectUrlToAspsp: http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}
  pisRedirectUrlToAspsp: http://localhost:4200/pis/{redirect-id}/
 # pisPaymentCancellationRedirectUrlToAspsp: http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}
@@ -26,11 +26,22 @@ setting:
   - MSISDN
  consentLifetime: 0
  transactionLifetime: 0
- allPsd2Support: false
+ allPsd2Support: true
  transactionsWithoutBalancesSupported: true
  signingBasketSupported: false
  paymentCancellationAuthorizationMandated: false
  piisConsentSupported: false
  deltaReportSupported: false
  redirectUrlExpirationTimeMs: 600000
- paymentCancellationRedirectUrlExpirationTimeMs: 600000
+ notConfirmedConsentExpirationPeriodMs: 86400000
+ notConfirmedPaymentExpirationPeriodMs: 86400000
+ supportedPaymentTypeAndProductMatrix:
+  SINGLE:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+  PERIODIC:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+  BULK:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers

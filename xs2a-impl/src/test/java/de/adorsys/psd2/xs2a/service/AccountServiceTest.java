@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
@@ -66,6 +67,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountServiceTest {
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final boolean WITH_BALANCE = false;
     private static final String CONSENT_ID = "Test consentId";
     private static final String ACCOUNT_ID = UUID.randomUUID().toString();
@@ -795,11 +797,11 @@ public class AccountServiceTest {
 
     // Needed because SpiAccountReference is final, so it's impossible to mock it
     private static SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference(ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+        return new SpiAccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
     private static AccountReference buildXs2aAccountReference() {
-        return new AccountReference(ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it
@@ -829,7 +831,7 @@ public class AccountServiceTest {
     }
 
     private static AccountConsent createConsent(String id, Xs2aAccountAccess access) {
-        return new AccountConsent(id, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo());
+        return new AccountConsent(id, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL);
     }
 
     private static TppInfo createTppInfo() {

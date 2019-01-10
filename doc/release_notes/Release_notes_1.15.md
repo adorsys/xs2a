@@ -59,3 +59,53 @@ Corresponding endpoints were also added to CMS, they are listed in the table bel
 | GET    | aspsp-api/v1/ais/consents/psu          | Returns a list of AIS consent objects by given mandatory PSU ID Data, optional creation date and instance ID         |
 | GET    | aspsp-api/v1/pis/payments/tpp/{tpp-id} | Returns a list of payments by given mandatory PSU ID Data, optional creation date and instance ID.                   |
 | GET    | aspsp-api/v1/pis/payments/psu          | Returns a list of payments by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID.           |
+
+## Obsoleting Consents that were not confirmed
+Now ASPSP developer is able to provide the period of time (in milliseconds),that not confirmed AIS consents should be obsoleted after.
+The default value for this is 24 hours.
+Consent status becomes EXPIRED and SCA status for dedicated consent authorisation becomes FAILED on such a requests:
+* TPP sends Get consent status request
+* xs2a receives start authorisation request for this consent
+* TPP sends Get SCA status request
+* xs2a receives Update PSU Data request for this payment
+
+Also, scheduler service has been created: it will obsolete all the AIS consents with confirmation expired.
+The scheduler service invocation frequency could be modified by changing `not-confirmed-consent-expiration.cron.expression` value in `application.properties`.
+The default value is the top of every hour of every day.
+
+## Obsoleting Payments that were not confirmed
+Now ASPSP developer is able to provide the period of time (in milliseconds),that not confirmed payments should be obsoleted after.
+The default value for this is 24 hours.
+Transaction status becomes REJECTED and SCA status for dedicated payment authorisation becomes FAILED on such a requests:
+* TPP sends Get transaction status request
+* xs2a receives start authorisation request for this payment
+* TPP sends Get SCA status request
+* xs2a receives Update PSU Data request for this payment
+
+Also, scheduler service has been created: it will obsolete all the payments with confirmation expired.
+The scheduler service invocation frequency could be modified by changing `not-confirmed-payment-expiration.cron.expression` value in `application.properties`.
+The default value is the top of every hour of every day.
+
+## Upgrade version of Jackson library
+We updated Jackson version because FasterXML jackson-databind 2.x before 2.9.8 might allow attackers to have unspecified impact by leveraging failure to block the axis2-transport-jms class from polymorphic deserialization. https://nvd.nist.gov/vuln/detail/CVE-2018-19360
+
+## Aspsp-Profile supports matrix payment-product/payment-type
+
+ASPSP now has a possibility to chose which payment-product/payment-type to work with. Now to set available payment products for each type, the following table in bank_profile.yaml
+should be filled:
+
+**supportedPaymentTypeAndProductMatrix**:
+
+  *SINGLE*:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+   
+  *PERIODIC*:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+   
+  *BULK*:
+   - sepa-credit-transfers
+   - instant-sepa-credit-transfers
+  
+Other payment products can be added for every payment type.

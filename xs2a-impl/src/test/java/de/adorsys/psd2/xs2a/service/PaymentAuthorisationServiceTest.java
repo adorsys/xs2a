@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -26,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +64,8 @@ public class PaymentAuthorisationServiceTest {
     private Xs2aEventService xs2aEventService;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
+    @Mock
+    private Xs2aPisCommonPaymentService pisCommonPaymentService;
 
     @Before
     public void setUp() {
@@ -74,6 +79,8 @@ public class PaymentAuthorisationServiceTest {
     public void createPisAuthorization_Success_ShouldRecordEvent() {
         when(pisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA))
             .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, null, null)));
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(buildPisCommonPaymentResponse()));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -90,6 +97,8 @@ public class PaymentAuthorisationServiceTest {
     public void updatePisPsuData_Success_ShouldRecordEvent() {
         when(pisScaAuthorisationService.updateCommonPaymentPsuData(any()))
             .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.STARTED));
+        when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(buildPisCommonPaymentResponse()));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -165,5 +174,11 @@ public class PaymentAuthorisationServiceTest {
         request.setAuthorisationId(AUTHORISATION_ID);
         request.setPaymentId(PAYMENT_ID);
         return request;
+    }
+
+    private PisCommonPaymentResponse buildPisCommonPaymentResponse() {
+        PisCommonPaymentResponse response = new PisCommonPaymentResponse();
+        response.setTransactionStatus(TransactionStatus.ACCP);
+        return response;
     }
 }

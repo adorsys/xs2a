@@ -26,6 +26,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -141,6 +143,21 @@ public class BankProfileSetting {
      * URL to ASPSP service in order to to work with PIS payment cancellation
      */
     private String pisPaymentCancellationRedirectUrlToAspsp;
+
+    /**
+     * The limit of an expiration time of not confirmed consent url set in milliseconds
+     */
+    private long notConfirmedConsentExpirationPeriodMs;
+
+    /**
+     * The limit of an expiration time of not confirmed payment url set in milliseconds
+     */
+    private long notConfirmedPaymentExpirationPeriodMs;
+
+    /**
+     * A matrix payment-product/payment-type which allows to choose needed types
+     */
+    private Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix;
 
     /**
      * This field contains the limit of an expiration time of redirect url for payment cancellation set in milliseconds

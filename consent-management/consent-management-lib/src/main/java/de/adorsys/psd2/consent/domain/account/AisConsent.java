@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ConsentType;
-import de.adorsys.psd2.consent.api.ais.AisConsentRequestType;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -31,6 +31,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -108,7 +109,12 @@ public class AisConsent extends InstanceDependableEntity {
     @ElementCollection
     @CollectionTable(name = "ais_account_access", joinColumns = @JoinColumn(name = "consent_id"))
     @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
-    private List<AccountAccess> accesses = new ArrayList<>();
+    private List<TppAccountAccess> accesses = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "ais_aspsp_account_access", joinColumns = @JoinColumn(name = "consent_id"))
+    @ApiModelProperty(value = "Set of aspsp account accesses given by aspsp for this account", required = true)
+    private List<AspspAccountAccess> aspspAccountAccesses = new ArrayList<>();
 
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @ApiModelProperty(value = "List of authorizations related to the consent", required = true)
@@ -123,7 +129,7 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Creation timestamp of the consent.", required = true, example = "2018-12-28T00:00:00Z")
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
 
-    public List<AccountAccess> getAccesses() {
+    public List<TppAccountAccess> getAccesses() {
         return new ArrayList<>(accesses);
     }
 
@@ -139,7 +145,24 @@ public class AisConsent extends InstanceDependableEntity {
         return usageCounter > 0;
     }
 
-    public void addAccountAccess(Set<AccountAccess> accountAccesses) {
+    public boolean isConfirmationExpired(long expirationPeriodMs) {
+        if (isNotConfirmed()) {
+            return creationTimestamp.plus(expirationPeriodMs, ChronoUnit.MILLIS)
+                .isBefore(OffsetDateTime.now());
+        }
+
+        return false;
+    }
+
+    public boolean isNotConfirmed() {
+        return consentStatus == ConsentStatus.RECEIVED;
+    }
+
+    public void addAccountAccess(Set<TppAccountAccess> accountAccesses) {
         accesses = new ArrayList<>(accountAccesses);
+    }
+
+    public void addAspspAccountAccess(Set<AspspAccountAccess> aspspAccesses) {
+        aspspAccountAccesses = new ArrayList<>(aspspAccesses);
     }
 }

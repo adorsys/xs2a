@@ -43,6 +43,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType.BANK_OFFERED;
+import static de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType.GLOBAL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
@@ -61,10 +63,10 @@ public class AccountSpiImpl implements AccountSpi {
         try {
             List<SpiAccountDetails> accountDetailsList;
 
-            if (isBankOfferedConsent(accountConsent.getAccess())) {
-                accountDetailsList = getAccountDetailsByConsentId(accountConsent);
+            if (EnumSet.of(GLOBAL, BANK_OFFERED).contains(accountConsent.getAisConsentRequestType())) {
+                accountDetailsList = getAccountDetailsByPsuId(accountConsent);
             } else {
-                accountDetailsList = getAccountDetailsFromReferences(withBalance, accountConsent);
+                accountDetailsList = getAccountDetailsFromReferences(accountConsent);
             }
 
             return SpiResponse.<List<SpiAccountDetails>>builder()
@@ -231,13 +233,7 @@ public class AccountSpiImpl implements AccountSpi {
         }
     }
 
-    private boolean isBankOfferedConsent(SpiAccountAccess accountAccess) {
-        return CollectionUtils.isEmpty(accountAccess.getBalances())
-            && CollectionUtils.isEmpty(accountAccess.getTransactions())
-            && CollectionUtils.isEmpty(accountAccess.getAccounts());
-    }
-
-    private List<SpiAccountDetails> getAccountDetailsByConsentId(SpiAccountConsent accountConsent) {
+    private List<SpiAccountDetails> getAccountDetailsByPsuId(SpiAccountConsent accountConsent) {
         return Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getAccountDetailsByPsuId(),
             HttpMethod.GET,
@@ -249,14 +245,9 @@ public class AccountSpiImpl implements AccountSpi {
             .orElseGet(Collections::emptyList);
     }
 
-    private List<SpiAccountDetails> getAccountDetailsFromReferences(boolean withBalance, SpiAccountConsent accountConsent) { // TODO remove consentId param, when SpiAccountConsent contains it https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/430
+    private List<SpiAccountDetails> getAccountDetailsFromReferences(SpiAccountConsent accountConsent) { // TODO remove consentId param, when SpiAccountConsent contains it https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/430
         SpiAccountAccess accountAccess = accountConsent.getAccess();
-
-        List<SpiAccountReference> references = withBalance
-            ? accountAccess.getBalances()
-            : accountAccess.getAccounts();
-
-        return getAccountDetailsFromReferences(references);
+        return getAccountDetailsFromReferences(accountAccess.getAccounts());
     }
 
     private List<SpiAccountDetails> getAccountDetailsFromReferences(List<SpiAccountReference> references) {
