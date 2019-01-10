@@ -67,6 +67,19 @@ public class AisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
+    @GetMapping(path = "/initial/{consent-id}")
+    @ApiOperation(value = "Read account consent by given initial consent id.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = AisAccountConsent.class),
+        @ApiResponse(code = 204, message = "No Content")})
+    public ResponseEntity<AisAccountConsent> getInitialConsentById(
+        @ApiParam(name = "consent-id", value = "The account initial consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId) {
+        return aisConsentService.getInitialAisAccountConsentById(consentId)
+                   .map(consent -> new ResponseEntity<>(consent, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+    }
+
     @PutMapping(path = "/{consent-id}/access")
     @ApiOperation(value = "Update AccountAccess in the consent identified by given consent id.")
     @ApiResponses(value = {
@@ -76,7 +89,7 @@ public class AisConsentController {
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
         @RequestBody AisAccountAccessInfo request) {
-        return aisConsentService.updateAccountAccess(consentId, request)
+        return aisConsentService.updateAspspAccountAccess(consentId, request)
                    .map(consentIdUpdated -> new ResponseEntity<>(new CreateAisConsentResponse(consentIdUpdated), HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

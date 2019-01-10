@@ -30,6 +30,11 @@ import java.util.Optional;
 @Data
 @AllArgsConstructor
 public class AspspAccountDetails {
+    /**
+     * Bank specific account identifier. Should not be provided for TPP (for these purposes resourceId should be used)
+     */
+    private String aspspAccountId;
+
     @Id
     @Setter
     @NonFinal

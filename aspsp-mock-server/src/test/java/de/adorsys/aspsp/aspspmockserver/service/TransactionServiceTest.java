@@ -40,6 +40,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionServiceTest {
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static LocalDate DATE = LocalDate.parse("2019-03-03");
     private static final String TRANSACTION_ID = "00001";
     private static final String WRONG_TRANSACTION_ID = "00002";
@@ -133,7 +134,7 @@ public class TransactionServiceTest {
     }
 
     private AspspAccountDetails getDetails() {
-        return new AspspAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null, null, null, null, null);
+        return new AspspAccountDetails(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null, null, null, null, null);
     }
 
 }

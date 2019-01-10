@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
@@ -42,4 +43,5 @@ public class SpiAccountConsent {
     private boolean tppRedirectPreferred;
     private SpiPsuData psuData;
     private TppInfo tppInfo;
+    private AisConsentRequestType aisConsentRequestType;
 }

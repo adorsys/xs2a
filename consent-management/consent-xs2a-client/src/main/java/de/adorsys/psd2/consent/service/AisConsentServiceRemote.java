@@ -71,12 +71,18 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
     }
 
     @Override
+    public Optional<AisAccountConsent> getInitialAisAccountConsentById(String consentId) {
+        AisAccountConsent accountConsent = consentRestTemplate.getForEntity(remoteAisConsentUrls.getInitialAisConsentById(), AisAccountConsent.class, consentId).getBody();
+        return Optional.ofNullable(accountConsent);
+    }
+
+    @Override
     public void checkConsentAndSaveActionLog(AisConsentActionRequest request) {
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), request, Void.class);
     }
 
     @Override
-    public Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request) {
+    public Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
         CreateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
             new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
         return Optional.ofNullable(response.getConsentId());

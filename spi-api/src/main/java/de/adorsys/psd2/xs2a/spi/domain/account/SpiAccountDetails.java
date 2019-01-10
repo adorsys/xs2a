@@ -16,17 +16,20 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Currency;
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @AllArgsConstructor
 public class SpiAccountDetails {
+    /**
+     * Bank specific account identifier. Should not be provided for TPP (for these purposes resourceId should be used)
+     */
+    private String aspspAccountId;
+
     private String resourceId;
     /**
      * International Bank Account Number
@@ -73,20 +76,6 @@ public class SpiAccountDetails {
     private String details;
 
     private List<SpiAccountBalance> balances;
-
-    @JsonIgnore
-    public Optional<SpiAccountBalance> getFirstBalance() {
-        return balances.stream()
-                   .filter(bal -> SpiBalanceType.INTERIM_AVAILABLE == bal.getSpiBalanceType())
-                   .findFirst();
-    }
-
-    public void updateFirstBalance(SpiAccountBalance balance) {
-        balances.stream()
-            .filter(bal -> SpiBalanceType.INTERIM_AVAILABLE == bal.getSpiBalanceType())
-            .findFirst()
-            .map(b -> balance);
-    }
 
     public void emptyBalances() {
         balances = null;

@@ -67,6 +67,12 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    public Optional<AisAccountConsent> getInitialAisAccountConsentById(String encryptedConsentId) {
+        return securityDataService.decryptId(encryptedConsentId)
+                   .flatMap(aisConsentService::getInitialAisAccountConsentById);
+    }
+
+    @Override
     @Transactional
     public void checkConsentAndSaveActionLog(AisConsentActionRequest encryptedRequest) {
         String consentId = encryptedRequest.getConsentId();
@@ -83,9 +89,9 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
 
     @Override
     @Transactional
-    public Optional<String> updateAccountAccess(String encryptedConsentId, AisAccountAccessInfo request) {
+    public Optional<String> updateAspspAccountAccess(String encryptedConsentId, AisAccountAccessInfo request) {
         return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(decrypted -> aisConsentService.updateAccountAccess(decrypted, request))
+                   .flatMap(decrypted -> aisConsentService.updateAspspAccountAccess(decrypted, request))
                    .flatMap(securityDataService::encryptId);
     }
 

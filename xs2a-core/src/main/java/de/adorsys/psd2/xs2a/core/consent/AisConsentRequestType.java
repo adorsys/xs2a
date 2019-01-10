@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.ais;
+package de.adorsys.psd2.xs2a.core.consent;
 
 import io.swagger.annotations.ApiModel;
 

@@ -54,7 +54,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
                 },
                 currency.toString(),
                 accountReferenceSelector.getAccountReferenceType().name(),
-                accountReferenceSelector.getAccountReferenceValue()
+                accountReferenceSelector.getAccountValue()
             ).getBody();
         } catch (CmsRestException e) {
             log.error("Failed to retrieve piis consent validation data!");

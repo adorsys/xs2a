@@ -28,6 +28,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
+import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
+
 @Data
 @ApiModel(description = "Request creates an account information consent resource at the ASPSP regarding access to accounts specified in this request")
 public class CreateConsentReq implements AccountReferenceCollector {
@@ -59,6 +62,10 @@ public class CreateConsentReq implements AccountReferenceCollector {
     }
 
     @JsonIgnore
+    public boolean isGlobalOrAllAccountsAccessConsent() {
+        return isConsentGlobal() || isConsentForAllAvailableAccounts();
+    }
+
     @SafeVarargs
     private final Set<AccountReference> getReferenceSet(List<AccountReference>... referencesList) {
         return Arrays.stream(referencesList)
@@ -67,9 +74,18 @@ public class CreateConsentReq implements AccountReferenceCollector {
                    .collect(Collectors.toSet());
     }
 
-    @JsonIgnore
     private List<AccountReference> getReferenceList(List<AccountReference> reference) {
         return Optional.ofNullable(reference)
                    .orElseGet(Collections::emptyList);
+    }
+
+    private boolean isConsentGlobal() {
+        return access.isNotEmpty()
+                   && access.getAllPsd2() == ALL_ACCOUNTS;
+    }
+
+    private boolean isConsentForAllAvailableAccounts() {
+        return access.getAvailableAccounts() == ALL_ACCOUNTS
+                   || access.getAvailableAccounts() == ALL_ACCOUNTS_WITH_BALANCES;
     }
 }

@@ -34,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class AccountModelMapperTest {
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
 
     AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
 
@@ -69,13 +70,13 @@ public class AccountModelMapperTest {
         List<Xs2aAccountDetails> accountDetailsList = new ArrayList<>();
         Xs2aBalance inputBalance = createBalance();
 
-        accountDetailsList.add(new Xs2aAccountDetails("1", "2", "3", "4",
+        accountDetailsList.add(new Xs2aAccountDetails(ASPSP_ACCOUNT_ID,"1", "2", "3", "4",
             "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CACC,
             AccountStatus.ENABLED, "11", "linked", Xs2aUsageType.PRIV, "details", new ArrayList<>()));
-        accountDetailsList.add(new Xs2aAccountDetails("x1", "x2", "x3", "x4",
+        accountDetailsList.add(new Xs2aAccountDetails(ASPSP_ACCOUNT_ID,"x1", "x2", "x3", "x4",
             "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CACC,
             AccountStatus.ENABLED, "x11", "linked2", Xs2aUsageType.ORGA, "details2", Arrays.asList(inputBalance)));
-        Xs2aAccountDetails accountDetails = new Xs2aAccountDetails("y1", "y2", "y3", "y4",
+        Xs2aAccountDetails accountDetails = new Xs2aAccountDetails(ASPSP_ACCOUNT_ID, "y1", "y2", "y3", "y4",
             "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CACC,
             AccountStatus.ENABLED, "y11", "linked3", Xs2aUsageType.PRIV, "details3", new ArrayList<>());
         accountDetails.setLinks(createLinks());

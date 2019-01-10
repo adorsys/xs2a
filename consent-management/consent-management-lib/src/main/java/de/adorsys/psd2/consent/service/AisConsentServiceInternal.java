@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -124,6 +125,19 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     /**
+     * Read full initial information of consent by id
+     *
+     * @param consentId id of consent
+     * @return AisAccountConsent
+     */
+    @Override
+    public Optional<AisAccountConsent> getInitialAisAccountConsentById(String consentId) {
+        return aisConsentRepository.findByExternalId(consentId)
+                   .map(this::checkAndUpdateOnExpiration)
+                   .map(consentMapper::mapToInitialAisAccountConsent);
+    }
+
+    /**
      * Save information about uses of consent
      *
      * @param request needed parameters for logging usage AIS consent
@@ -150,10 +164,11 @@ public class AisConsentServiceInternal implements AisConsentService {
      */
     @Override
     @Transactional
-    public Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request) {
+    public Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
         return getActualAisConsent(consentId)
                    .map(consent -> {
-                       consent.addAccountAccess(readAccountAccess(request));
+                       consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
+                                                         .getAccountAccesses());
                        return aisConsentRepository.save(consent)
                                   .getExternalId();
                    });
@@ -268,11 +283,6 @@ public class AisConsentServiceInternal implements AisConsentService {
                    .map(ac -> psuDataMapper.mapToPsuIdData(ac.getPsuData()));
     }
 
-    private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
-        return new AccountAccessHolder(access)
-                   .getAccountAccesses();
-    }
-
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
 
         AisConsent consent = new AisConsent();
@@ -284,7 +294,8 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
         consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
-        consent.addAccountAccess(readAccountAccess(request.getAccess()));
+        consent.addAccountAccess(new TppAccountAccessHolder(request.getAccess())
+                                     .getAccountAccesses());
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
