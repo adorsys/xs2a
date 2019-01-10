@@ -109,3 +109,16 @@ should be filled:
    - instant-sepa-credit-transfers
   
 Other payment products can be added for every payment type.
+
+## Added expiration time for payment cancellation redirect url
+A new `paymentCancellationRedirectUrlExpirationTimeMs` parameter has been added to ASPSP profile.
+
+| Option                                         | Meaning                                                                                                          | Default value | Possible values         |
+|------------------------------------------------|------------------------------------------------------------------------------------------------------------------|---------------|-------------------------|
+| paymentCancellationRedirectUrlExpirationTimeMs | This field contains the limit of an expiration time of redirect url for payment cancellation set in milliseconds | 600 000       | milliseconds (1, 2,...) |
+
+Payment cancellation redirect url and related authorisation now have an expiration time. The value for expiration time is counted with formula 
+"current time of authorisation creation + payment cancellation redirect url expiration time (set in ASPSP-profile)". 
+We give redirect id (= authorisation id) in redirect link now, and to get payment information, online banking should call 
+ **GET /psu-api/v1/pis/consent/redirects/cancellation/{redirect-id}** endpoint of consent management system.
+If redirect url is not expired, online banking gets payment, authorisation id, not ok tpp redirect url and ok tpp redirect url (for now these urls are null temporary) in response, otherwise http code 408 Request Timeout is sent.
