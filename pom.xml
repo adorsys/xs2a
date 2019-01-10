@@ -145,6 +145,7 @@
         <mockito-all.version>1.10.19</mockito-all.version>
         <postgresql.version>42.2.4</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
+        <h2.version>1.4.197</h2.version>
         <snakeyaml.version>1.23</snakeyaml.version>
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
@@ -488,6 +489,18 @@
                 <artifactId>mariadb-java-client</artifactId>
                 <version>${mariadb.version}</version>
             </dependency>
+
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-core</artifactId>
+				<version>${liquibase.version}</version>
+			</dependency>
 
             <dependency>
                 <groupId>org.apache.commons</groupId>
