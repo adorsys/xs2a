@@ -51,7 +51,7 @@ public class PiisConsentServiceInternal implements PiisConsentService {
     // TODO refactor according to https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/580
     private List<PiisConsentEntity> extractPiisConsentList(Currency currency, AccountReferenceSelector accountReferenceSelector) {
         AccountReferenceType accountReferenceType = accountReferenceSelector.getAccountReferenceType();
-        String accountReferenceValue = accountReferenceSelector.getAccountReferenceValue();
+        String accountReferenceValue = accountReferenceSelector.getAccountValue();
         if (accountReferenceType == IBAN) {
             return piisConsentRepository.findAllByAccountsIbanAndAccountsCurrency(accountReferenceValue, currency);
         } else if (accountReferenceType == BBAN) {

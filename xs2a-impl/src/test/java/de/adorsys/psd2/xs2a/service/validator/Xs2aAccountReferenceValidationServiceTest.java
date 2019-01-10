@@ -84,6 +84,6 @@ public class Xs2aAccountReferenceValidationServiceTest {
     }
 
     private AccountReference getReference(String iban, String bban, String pan, String masked, String msisdn) {
-        return new AccountReference(UUID.randomUUID().toString(), iban, bban, pan, masked, msisdn, Currency.getInstance("EUR"));
+        return new AccountReference(UUID.randomUUID().toString(), UUID.randomUUID().toString(), iban, bban, pan, masked, msisdn, Currency.getInstance("EUR"));
     }
 }

@@ -69,7 +69,7 @@ public class AisConsentServiceInternalEncryptedTest {
             .thenReturn(Optional.of(CONSENT_STATUS));
         when(aisConsentService.updateConsentStatusById(DECRYPTED_CONSENT_ID, CONSENT_STATUS))
             .thenReturn(true);
-        when(aisConsentService.updateAccountAccess(eq(DECRYPTED_CONSENT_ID), any()))
+        when(aisConsentService.updateAspspAccountAccess(eq(DECRYPTED_CONSENT_ID), any()))
             .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.getAisAccountConsentById(DECRYPTED_CONSENT_ID))
             .thenReturn(Optional.of(buildAisAccountConsent()));
@@ -266,28 +266,28 @@ public class AisConsentServiceInternalEncryptedTest {
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
+        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
 
         // Then
         assertTrue(actual.isPresent());
 
         assertEquals(ENCRYPTED_CONSENT_ID, actual.get());
-        verify(aisConsentService, times(1)).updateAccountAccess(DECRYPTED_CONSENT_ID, accountAccessInfo);
+        verify(aisConsentService, times(1)).updateAspspAccountAccess(DECRYPTED_CONSENT_ID, accountAccessInfo);
     }
 
     @Test
     public void updateAccountAccess_internalServiceFailed() {
-        when(aisConsentService.updateAccountAccess(any(), any())).thenReturn(Optional.empty());
+        when(aisConsentService.updateAspspAccountAccess(any(), any())).thenReturn(Optional.empty());
 
         // Given
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
+        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
 
         // Then
         assertFalse(actual.isPresent());
-        verify(aisConsentService, times(1)).updateAccountAccess(DECRYPTED_CONSENT_ID, accountAccessInfo);
+        verify(aisConsentService, times(1)).updateAspspAccountAccess(DECRYPTED_CONSENT_ID, accountAccessInfo);
     }
 
     @Test
@@ -296,11 +296,11 @@ public class AisConsentServiceInternalEncryptedTest {
         AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
 
         // When
-        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAccountAccess(UNDECRYPTABLE_CONSENT_ID, accountAccessInfo);
+        Optional<String> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(UNDECRYPTABLE_CONSENT_ID, accountAccessInfo);
 
         // Then
         assertFalse(actual.isPresent());
-        verify(aisConsentService, never()).updateAccountAccess(any(), any());
+        verify(aisConsentService, never()).updateAspspAccountAccess(any(), any());
     }
 
     @Test

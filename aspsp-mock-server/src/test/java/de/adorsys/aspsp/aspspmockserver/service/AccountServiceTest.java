@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountServiceTest {
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String PSU_ID = "334455777";
     private static final String WRONG_PSU_ID = "Wrong psu id";
     private static final String ACCOUNT_ID = "3278921mxl-n2131-13nw-2n123";
@@ -178,13 +179,13 @@ public class AccountServiceTest {
     }
 
     private AspspAccountDetails getAspspAccountDetails_1() {
-        return new AspspAccountDetails(ACCOUNT_ID, IBAN, null, "1111222233334444",
+        return new AspspAccountDetails(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, null, "1111222233334444",
             "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
             null, null, "XE3DDD", null, null, null, getNewBalanceList());
     }
 
     private AspspAccountDetails getAspspAccountDetails_2() {
-        return new AspspAccountDetails("qwertyuiop12345678", IBAN, null,
+        return new AspspAccountDetails(ASPSP_ACCOUNT_ID,"qwertyuiop12345678", IBAN, null,
             "4444333322221111", "444433xxxxxx1111", null, null, "Emily",
             "GIRO", null, null, "ACVB222", null, null, null, null);
     }
