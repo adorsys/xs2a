@@ -64,8 +64,12 @@
         <comment>Create table piis_consent_account_reference.</comment>
 
         <createTable tableName="piis_consent_acc_reference">
-            <column name="piis_consent_id" type="BIGINT"/>
-            <column name="account_reference_id" type="BIGINT"/>
+            <column name="piis_consent_id" type="BIGINT">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="account_reference_id" type="BIGINT">
+            	<constraints nullable="false"/>
+            </column>
         </createTable>
 
         <addPrimaryKey columnNames="piis_consent_id, account_reference_id"

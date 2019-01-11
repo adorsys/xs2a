@@ -19,7 +19,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <property name="blob.type" value="blob" dbms="oracle,postgresql"/>
+    <property name="blob.type" value="blob" dbms="oracle,postgresql,h2"/>
     <property name="blob.type" value="mediumblob" dbms="mariadb"/>
 
 </databaseChangeLog>
