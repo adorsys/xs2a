@@ -52,6 +52,12 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         return request;
     }
 
+    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, TransactionStatus transactionStatus, String paymentId, byte[] paymentData) {
+        PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, transactionStatus, paymentId);
+        paymentInfo.setPaymentData(paymentData);
+        return paymentInfo;
+    }
+
     private PisPaymentInfo mapToPisPaymentInfo(CommonPayment paymentInitRequest) {
         return Optional.ofNullable(paymentInitRequest)
                    .map(dta -> {
@@ -70,15 +76,14 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
     }
 
     public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, TransactionStatus transactionStatus, String paymentId) {
-        PisPaymentInfo request = new PisPaymentInfo();
-        request.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
-        request.setPaymentType(paymentInitiationParameters.getPaymentType());
-        request.setTransactionStatus(transactionStatus);
-        request.setPaymentData(null);
-        request.setTppInfo(tppInfo);
-        request.setPaymentId(paymentId);
-        request.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
-        return request;
+        PisPaymentInfo paymentInfo = new PisPaymentInfo();
+        paymentInfo.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
+        paymentInfo.setPaymentType(paymentInitiationParameters.getPaymentType());
+        paymentInfo.setTransactionStatus(transactionStatus);
+        paymentInfo.setTppInfo(tppInfo);
+        paymentInfo.setPaymentId(paymentId);
+        paymentInfo.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
+        return paymentInfo;
     }
 
     public PisCommonPaymentRequest mapToCmsSinglePisCommonPaymentRequest(SinglePayment singlePayment, String paymentProduct) {

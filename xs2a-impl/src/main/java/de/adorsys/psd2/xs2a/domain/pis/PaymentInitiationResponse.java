@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
@@ -46,6 +47,7 @@ public abstract class PaymentInitiationResponse {
     @JsonProperty("_links")
     private Links links;
     private String authorizationId;
+    private AspspConsentData aspspConsentData;
     private ErrorHolder errorHolder;
 
     PaymentInitiationResponse(ErrorHolder errorHolder) {
