@@ -109,3 +109,6 @@ should be filled:
    - instant-sepa-credit-transfers
   
 Other payment products can be added for every payment type.
+
+## Bugfix: Deleted consent changes its status to TerminatedByTpp
+When TPP sends request to delete consent, status of consent will be TerminatedByTpp instead of REVOKED_BY_PSU
