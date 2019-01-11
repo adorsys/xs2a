@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -31,6 +32,7 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
@@ -51,6 +53,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
     private final PisScaAuthorisationService pisScaAuthorisationService;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
+    private final PisAspspDataService pisAspspDataService;
 
     /**
      * Initiates bulk payment
@@ -68,14 +71,18 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
         BulkPaymentInitiationResponse response = scaPaymentService.createBulkPayment(bulkPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), psuData);
 
         PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response.getTransactionStatus(), response.getPaymentId());
-
         Xs2aPisCommonPayment pisCommonPayment = xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(pisCommonPaymentService.createCommonPayment(pisPaymentInfo), psuData);
 
-        if (StringUtils.isBlank(pisCommonPayment.getPaymentId())) {
+        String externalPaymentId = pisCommonPayment.getPaymentId();
+
+        if (StringUtils.isBlank(externalPaymentId)) {
             return ResponseObject.<BulkPaymentInitiationResponse>builder()
                        .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
                        .build();
         }
+
+        AspspConsentData aspspConsentData = response.getAspspConsentData();
+        pisAspspDataService.updateAspspConsentData(new AspspConsentData(aspspConsentData.getAspspConsentData(), externalPaymentId));
 
         bulkPayment.setTransactionStatus(response.getTransactionStatus());
         bulkPayment.setPaymentId(response.getPaymentId());
@@ -83,7 +90,6 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
         BulkPayment bulkPaymentUpdated = setRandomIdsToPaymentListInBulkPayment(bulkPayment);
         pisCommonPaymentService.updateBulkPaymentInCommonPayment(bulkPaymentUpdated, paymentInitiationParameters, pisCommonPayment.getPaymentId());
 
-        String externalPaymentId = pisCommonPayment.getPaymentId();
         response.setPaymentId(externalPaymentId);
 
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());

@@ -160,7 +160,7 @@ public class FundsConfirmationService {
     private @NotNull AspspConsentData getAspspConsentData(@Nullable PiisConsent consent) {
         if (consent == null) {
             // TODO Do not pass AspspConsentData at all if there is no PIIS consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/526
-            return new AspspConsentData(null, null);
+            return AspspConsentData.emptyConsentData();
         }
 
         return fundsConfirmationConsentDataService.getAspspConsentData(consent.getId());

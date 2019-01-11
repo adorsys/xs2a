@@ -54,6 +54,10 @@ public class AspspDataServiceInternal implements AspspDataService {
     @Override
     @Transactional
     public boolean updateAspspConsentData(@NotNull AspspConsentData aspspConsentData) {
+        if(aspspConsentData.isEmptyConsentData()){
+            return false;
+        }
+
         byte[] data = aspspConsentData.getAspspConsentData();
         if (Objects.isNull(data)) {
             return deleteAspspConsentData(aspspConsentData.getConsentId());
