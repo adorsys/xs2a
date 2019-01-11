@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -30,6 +31,7 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
@@ -48,6 +50,7 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
+    private final PisAspspDataService pisAspspDataService;
 
     /**
      * Initiates single payment
@@ -67,17 +70,21 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
         PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response.getTransactionStatus(), response.getPaymentId());
         Xs2aPisCommonPayment pisCommonPayment = xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(pisCommonPaymentService.createCommonPayment(pisPaymentInfo), psuData);
 
-        if (StringUtils.isBlank(pisCommonPayment.getPaymentId())) {
+        String externalPaymentId = pisCommonPayment.getPaymentId();
+
+        if (StringUtils.isBlank(externalPaymentId)) {
             return ResponseObject.<SinglePaymentInitiationResponse>builder()
                        .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
                        .build();
         }
 
+        AspspConsentData aspspConsentData = response.getAspspConsentData();
+        pisAspspDataService.updateAspspConsentData(new AspspConsentData(aspspConsentData.getAspspConsentData(), externalPaymentId));
+
         singlePayment.setTransactionStatus(response.getTransactionStatus());
         singlePayment.setPaymentId(response.getPaymentId());
         pisCommonPaymentService.updateSinglePaymentInCommonPayment(singlePayment, paymentInitiationParameters, pisCommonPayment.getPaymentId());
 
-        String externalPaymentId = pisCommonPayment.getPaymentId();
         response.setPaymentId(externalPaymentId);
 
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
