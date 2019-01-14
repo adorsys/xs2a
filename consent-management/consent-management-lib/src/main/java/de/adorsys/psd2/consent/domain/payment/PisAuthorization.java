@@ -66,6 +66,6 @@ public class PisAuthorization extends InstanceDependableEntity {
     }
 
     public boolean isExpired() {
-        return redirectUrlExpirationTimestamp.isBefore(OffsetDateTime.now());
+        return !isNotExpired();
     }
 }
