@@ -362,7 +362,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         List<PisAuthorization> pisAuthorisationList = authorisations
                                                           .stream()
                                                           .filter(auth -> auth.getAuthorizationType() == authorisationType)
-                                                          .filter(auth -> auth.getPsuData().contentEquals(psuData))
+                                                          .filter(auth -> Objects.nonNull(auth.getPsuData()) && auth.getPsuData().contentEquals(psuData))
                                                           .map(this::makeAuthorisationFailedAndExpired)
                                                           .collect(Collectors.toList());
 

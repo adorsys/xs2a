@@ -401,10 +401,10 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         List<AisConsentAuthorization> aisConsentAuthorisations = authorisations
-                                                          .stream()
-                                                          .filter(auth -> auth.getPsuData().contentEquals(psuData))
-                                                          .map(this::makeAuthorisationFailedAndExpired)
-                                                          .collect(Collectors.toList());
+                                                                     .stream()
+                                                                     .filter(auth -> Objects.nonNull(auth.getPsuData()) && auth.getPsuData().contentEquals(psuData))
+                                                                     .map(this::makeAuthorisationFailedAndExpired)
+                                                                     .collect(Collectors.toList());
 
         aisConsentAuthorizationRepository.save(aisConsentAuthorisations);
     }
