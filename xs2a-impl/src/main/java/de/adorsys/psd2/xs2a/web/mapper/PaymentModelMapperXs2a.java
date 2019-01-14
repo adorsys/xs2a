@@ -52,9 +52,6 @@ public class PaymentModelMapperXs2a {
     private final HttpServletRequest httpServletRequest;
 
     public Object mapToXs2aPayment(Object payment, PaymentInitiationParameters requestParameters) {
-        if (isRawPaymentProduct(requestParameters.getPaymentProduct())) {
-            return buildBinaryBodyData(httpServletRequest);
-        }
         if (requestParameters.getPaymentType() == SINGLE) {
             return mapToXs2aSinglePayment(validatePayment(payment, PaymentInitiationSctJson.class));
         } else if (requestParameters.getPaymentType() == PERIODIC) {
@@ -64,9 +61,8 @@ public class PaymentModelMapperXs2a {
         }
     }
 
-    private boolean isRawPaymentProduct(String paymentProduct) {
-        // TODO make correct value of method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
-        return paymentProduct.contains("pain.");
+    public Object mapToXs2aXmlPayment(PaymentInitiationParameters requestParameters) {
+        return buildBinaryBodyData(httpServletRequest);
     }
 
     private <R> R validatePayment(Object payment, Class<R> clazz) {
