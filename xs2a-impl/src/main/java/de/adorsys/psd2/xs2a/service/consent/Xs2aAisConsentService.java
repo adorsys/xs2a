@@ -96,15 +96,6 @@ public class Xs2aAisConsentService {
     }
 
     /**
-     * Requests CMS to update consent status to "Terminated by TPP" state
-     *
-     * @param consentId String representation of identifier of stored consent
-     */
-    public void revokeConsent(String consentId) {
-        aisConsentService.updateConsentStatusById(consentId, ConsentStatus.TERMINATED_BY_TPP);
-    }
-
-    /**
      * Requests CMS to update consent status into provided one
      *
      * @param consentId     String representation of identifier of stored consent

@@ -186,7 +186,7 @@ public class ConsentService {
                            .build();
             }
 
-            aisConsentService.revokeConsent(consentId);
+            aisConsentService.updateConsentStatus(consentId, ConsentStatus.TERMINATED_BY_TPP);
             return ResponseObject.<Void>builder().build();
         }
 
