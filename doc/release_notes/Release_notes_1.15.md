@@ -109,3 +109,6 @@ should be filled:
    - instant-sepa-credit-transfers
   
 Other payment products can be added for every payment type.
+
+## Bugfix: Correct response during sending not existing sca method
+Now when PSU sends unknown sca method during the selection of authorisation method, SCA_METHOD_UNKNOWN message code and appropriate description will be returned
