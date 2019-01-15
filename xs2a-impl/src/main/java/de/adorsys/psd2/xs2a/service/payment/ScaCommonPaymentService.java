@@ -16,10 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 
 public interface ScaCommonPaymentService {
-    PaymentInitiationResponse createPayment(CommonPayment payment, TppInfo tppInfo, String paymentProduct);
+    PaymentInitiationResponse createPayment(CommonPayment payment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData);
 }

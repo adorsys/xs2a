@@ -205,7 +205,7 @@ public class PisCommonPaymentServiceInternalTest {
         //Given
         ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
         //noinspection unchecked
-        ArgumentCaptor<List<PisAuthorization>> argumentList = ArgumentCaptor.forClass((Class) List.class);
+        ArgumentCaptor<List<PisAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
         PsuIdData psuIdData = buildPsuIdData();
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         when(pisAuthorizationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
@@ -220,11 +220,11 @@ public class PisCommonPaymentServiceInternalTest {
         verify(pisAuthorizationRepository).save(argument.capture());
         assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
 
-        verify(pisAuthorizationRepository).save(argumentList.capture());
-        List<PisAuthorization> authorisationsFailed = argumentList.getValue();
-        Set<ScaStatus> scaStatuses = authorisationsFailed.stream()
-                                         .map(PisAuthorization::getScaStatus)
-                                         .collect(Collectors.toSet());
+        verify(pisAuthorizationRepository).save(failedAuthorisationsArgument.capture());
+        List<PisAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
+        Set<ScaStatus> scaStatuses = failedAuthorisations.stream()
+                                          .map(PisAuthorization::getScaStatus)
+                                          .collect(Collectors.toSet());
         assertEquals(scaStatuses.size(), 1);
         assertTrue(scaStatuses.contains(ScaStatus.FAILED));
     }

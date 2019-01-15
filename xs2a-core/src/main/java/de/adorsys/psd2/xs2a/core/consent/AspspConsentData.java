@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.core.consent;
 
 import lombok.Value;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +50,25 @@ public class AspspConsentData {
      */
     public final AspspConsentData respondWith(byte[] responseAspspConsentData) {
         return new AspspConsentData(responseAspspConsentData, this.consentId);
+    }
+
+    /**
+     * Returns consent data without information. To be used in case when need to create empty object.
+     *
+     * @return empty AspspConsentData
+     */
+    @SuppressWarnings("ConstantConditions") //this is the only one case when we use consentId as null
+    public static AspspConsentData emptyConsentData() {
+        return new AspspConsentData(null, null);
+    }
+
+    /**
+     * Checks whether consent data is contains information or not
+     *
+     * @return <code>true</code> if consent data is empty. <code>false</code> otherwise.
+     */
+    public boolean isEmptyConsentData() {
+        return aspspConsentData == null && StringUtils.isBlank(consentId);
     }
 
     @Override

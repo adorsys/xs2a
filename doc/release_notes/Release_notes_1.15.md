@@ -110,6 +110,9 @@ should be filled:
   
 Other payment products can be added for every payment type.
 
+## One active authorisation per consent for one PSU
+When PSU creates new authorisation for consent, all previous authorisations, created by this PSU for the same consent, will be failed and expired.
+
 ## Added expiration time for payment cancellation redirect url
 A new `paymentCancellationRedirectUrlExpirationTimeMs` parameter has been added to ASPSP profile.
 

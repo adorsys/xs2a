@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -19,7 +19,10 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <property name="blob.type" value="blob" dbms="oracle,postgresql,h2"/>
-    <property name="blob.type" value="mediumblob" dbms="mariadb"/>
+    <changeSet author="pru@adorsys.com.ua" id="2019-01-10-1">
+        <addNotNullConstraint columnDataType="VARCHAR(34)"
+                              columnName="account_identifier"
+                              tableName="ais_aspsp_account_access"/>
+    </changeSet>
 
 </databaseChangeLog>
