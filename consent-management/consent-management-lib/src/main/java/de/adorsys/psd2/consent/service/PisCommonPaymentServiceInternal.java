@@ -362,14 +362,14 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         List<PisAuthorization> pisAuthorisationList = authorisations
                                                           .stream()
                                                           .filter(auth -> auth.getAuthorizationType() == authorisationType)
-                                                          .filter(auth -> auth.getPsuData().contentEquals(psuData))
-                                                          .map(this::failAuthorisation)
+                                                          .filter(auth -> Objects.nonNull(auth.getPsuData()) && auth.getPsuData().contentEquals(psuData))
+                                                          .map(this::makeAuthorisationFailedAndExpired)
                                                           .collect(Collectors.toList());
 
         pisAuthorizationRepository.save(pisAuthorisationList);
     }
 
-    private PisAuthorization failAuthorisation(PisAuthorization auth) {
+    private PisAuthorization makeAuthorisationFailedAndExpired(PisAuthorization auth) {
         auth.setScaStatus(ScaStatus.FAILED);
         auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
         return auth;

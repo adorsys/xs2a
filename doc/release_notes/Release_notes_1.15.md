@@ -110,5 +110,8 @@ should be filled:
   
 Other payment products can be added for every payment type.
 
+## One active authorisation per consent for one PSU
+When PSU creates new authorisation for consent, all previous authorisations, created by this PSU for the same consent, will be failed and expired.
+
 ## Bugfix: Deleted consent changes its status to terminatedByTpp
-When TPP sends request to delete consent, status of consent will be terminatedByTpp instead of revokedByPsu
+When TPP sends request to delete consent, status of consent will be terminatedByTpp instead of revokedByPsu.
