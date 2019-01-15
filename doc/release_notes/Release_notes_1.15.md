@@ -109,3 +109,6 @@ should be filled:
    - instant-sepa-credit-transfers
   
 Other payment products can be added for every payment type.
+
+## One active authorisation per consent for one PSU
+When PSU creates new authorisation for consent, all previous authorisations, created by this PSU for the same consent, will be failed and expired.
