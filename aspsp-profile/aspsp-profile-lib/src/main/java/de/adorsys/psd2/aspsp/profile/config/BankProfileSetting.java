@@ -158,4 +158,9 @@ public class BankProfileSetting {
      * A matrix payment-product/payment-type which allows to choose needed types
      */
     private Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix;
+
+    /**
+     * This field contains the limit of an expiration time of redirect url for payment cancellation set in milliseconds
+     */
+    private long paymentCancellationRedirectUrlExpirationTimeMs;
 }

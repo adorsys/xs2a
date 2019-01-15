@@ -111,6 +111,26 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     @Transactional
+    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
+        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+                                                               .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
+
+        if (!optionalAuthorisation.isPresent()) {
+            return Optional.empty();
+        }
+
+        PisAuthorization authorisation = optionalAuthorisation.get();
+
+        if (authorisation.isExpired()) {
+            changeAuthorisationStatusToFailed(authorisation);
+            return Optional.of(new CmsPaymentResponse());
+        }
+
+        return Optional.of(buildCmsPaymentResponseForCancellation(authorisation));
+    }
+
+    @Override
+    @Transactional
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) {
         Optional<PisAuthorization> pisAuthorisation = Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)));
@@ -208,6 +228,17 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             authorisation.getExternalId(),
             tppOkRedirectUri,
             tppNokRedirectUri);
+    }
+
+    private CmsPaymentResponse buildCmsPaymentResponseForCancellation(PisAuthorization authorisation) {
+        PisCommonPaymentData commonPayment = authorisation.getPaymentData();
+        CmsPayment payment = cmsPsuPisMapper.mapToCmsPayment(commonPayment.getPayments());
+
+        return new CmsPaymentResponse(
+            payment,
+            authorisation.getExternalId(),
+            null,   // TODO temporary solution to keep the response the same as for payment confirmation (till the specification clarification) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/588
+            null);
     }
 
     private void changeAuthorisationStatusToFailed(PisAuthorization authorisation) {

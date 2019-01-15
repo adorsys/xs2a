@@ -275,7 +275,7 @@ public class AisConsentServiceInternalTest {
         return new AspspSettings(1, false, null, null, false, null, null,
                                  null, false, null, null, 1, 1, false,
                                  false, false, false, false, false, 1,
-                                 null, 1, 1,  null);
+                                 null, 1, 1,  null, 1);
     }
 
     private AisConsent buildConsent(String externalId) {

@@ -383,6 +383,54 @@ public class CmsPsuPisServiceInternalTest {
             .byExternalIdAndInstanceId(WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
+    @Test
+    public void checkRedirectAndGetPaymentForCancellation_Success() {
+        //Given
+        PisAuthorization expectedAuthorisation = buildPisAuthorisation();
+        //noinspection unchecked
+        when(pisAuthorizationRepository.findOne(any(Specification.class))).thenReturn(expectedAuthorisation);
+
+        // When
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(PSU_ID_DATA, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertTrue(actualResult.isPresent());
+        assertThat(actualResult.get().getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
+        verify(pisAuthorisationSpecification, times(1))
+            .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+    }
+
+    @Test
+    public void checkRedirectAndGetPaymentForCancellation_Fail_ExpiredRedirectUrl() {
+        //Given
+        PisAuthorization expectedAuthorisation = buildExpiredAuthorisation();
+        //noinspection unchecked
+        when(pisAuthorizationRepository.findOne(any(Specification.class))).thenReturn(expectedAuthorisation);
+
+        // When
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertThat(actualResult).isEqualTo(Optional.of(new CmsPaymentResponse()));
+        verify(pisAuthorisationSpecification, times(1))
+            .byExternalIdAndInstanceId(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+    }
+
+    @Test
+    public void checkRedirectAndGetPaymentForCancellation_Fail_WrongId() {
+        // Given
+        //noinspection unchecked
+        when(pisAuthorizationRepository.findOne(any(Specification.class))).thenReturn(null);
+
+        // When
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(PSU_ID_DATA, WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertThat(actualResult).isEqualTo(Optional.empty());
+        verify(pisAuthorisationSpecification, times(1))
+            .byExternalIdAndInstanceId(WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+    }
+
     private PsuIdData buildPsuIdData() {
         return new PsuIdData(
             "psuId",

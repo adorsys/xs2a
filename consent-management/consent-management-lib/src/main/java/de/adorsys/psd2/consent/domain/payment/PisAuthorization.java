@@ -61,6 +61,10 @@ public class PisAuthorization extends InstanceDependableEntity {
     @JoinColumn(name = "payment_id", nullable = false)
     private PisCommonPaymentData paymentData;
 
+    public boolean isExpired() {
+        return !isNotExpired();
+    }
+
     public boolean isNotExpired() {
         return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());
     }
