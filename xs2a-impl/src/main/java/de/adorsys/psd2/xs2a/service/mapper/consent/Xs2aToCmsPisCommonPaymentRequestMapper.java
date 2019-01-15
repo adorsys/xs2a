@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
@@ -52,8 +51,8 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         return request;
     }
 
-    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, TransactionStatus transactionStatus, String paymentId, byte[] paymentData) {
-        PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, transactionStatus, paymentId);
+    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData) {
+        PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response);
         paymentInfo.setPaymentData(paymentData);
         return paymentInfo;
     }
@@ -75,14 +74,15 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                    .orElse(null);
     }
 
-    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, TransactionStatus transactionStatus, String paymentId) {
+    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response) {
         PisPaymentInfo paymentInfo = new PisPaymentInfo();
         paymentInfo.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
         paymentInfo.setPaymentType(paymentInitiationParameters.getPaymentType());
-        paymentInfo.setTransactionStatus(transactionStatus);
+        paymentInfo.setTransactionStatus(response.getTransactionStatus());
         paymentInfo.setTppInfo(tppInfo);
-        paymentInfo.setPaymentId(paymentId);
+        paymentInfo.setPaymentId(response.getPaymentId());
         paymentInfo.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
+        paymentInfo.setAspspAccountId(response.getAspspAccountId());
         return paymentInfo;
     }
 

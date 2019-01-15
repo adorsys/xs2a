@@ -66,6 +66,8 @@ public class PaymentService {
      */
     public Optional<AspspSinglePayment> addPayment(AspspSinglePayment payment) {
         if (payment.getInstructedAmount() != null && areFundsSufficient(payment.getDebtorAccount(), payment.getInstructedAmount().getAmount())) {
+            payment.setDebtorAccount(enrichAccountReferenceWithAspspAccountId(payment.getDebtorAccount()));
+
             AspspPayment saved = paymentRepository.save(paymentMapper.mapToAspspPayment(payment, SINGLE));
             return Optional.ofNullable(paymentMapper.mapToAspspSinglePayment(saved));
         }
@@ -81,6 +83,8 @@ public class PaymentService {
      * @return Optional of saved periodic payment
      */
     public Optional<AspspPeriodicPayment> addPeriodicPayment(AspspPeriodicPayment payment) {
+        payment.setDebtorAccount(enrichAccountReferenceWithAspspAccountId(payment.getDebtorAccount()));
+
         AspspPayment saved = paymentRepository.save(paymentMapper.mapToAspspPayment(payment, PERIODIC));
         return Optional.ofNullable(paymentMapper.mapToAspspPeriodicPayment(saved));
     }
@@ -139,6 +143,7 @@ public class PaymentService {
         AspspBulkPayment result = new AspspBulkPayment();
         result.setPayments(paymentMapper.mapToAspspSinglePaymentList(savedPayments));
         result.setPaymentId(savedPayments.get(0).getBulkId());
+        result.setDebtorAccount(enrichAccountReferenceWithAspspAccountId(payments.getDebtorAccount()));
 
         return Optional.of(result);
     }
@@ -290,5 +295,14 @@ public class PaymentService {
         return Optional.ofNullable(amount)
                    .map(AspspAmount::getAmount)
                    .orElse(BigDecimal.ZERO);
+    }
+
+    private AspspAccountReference enrichAccountReferenceWithAspspAccountId(AspspAccountReference reference) {
+        if (reference != null) {
+            accountService.getAccountIdByIbanAndCurrency(reference.getIban(), reference.getCurrency())
+                .ifPresent(reference::setAccountId);
+        }
+
+        return reference;
     }
 }

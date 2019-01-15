@@ -18,13 +18,16 @@ package de.adorsys.aspsp.aspspmockserver.service.mapper;
 
 import de.adorsys.aspsp.aspspmockserver.domain.pis.AspspPayment;
 import de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType;
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPaymentInfo;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import org.springframework.stereotype.Component;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -37,6 +40,7 @@ public class PaymentMapper {
         aspspPayment.setPaymentProduct(paymentInfo.getPaymentProduct());
         aspspPayment.setPisPaymentType(PisPaymentType.valueOf(paymentInfo.getPisPaymentType()));
         aspspPayment.setPaymentData(paymentInfo.getPaymentData());
+        aspspPayment.setDebtorAccount(new AspspAccountReference(UUID.randomUUID().toString(), Currency.getInstance("EUR")));
         return aspspPayment;
     }
 
@@ -45,7 +49,10 @@ public class PaymentMapper {
                                     aspspPayment.getPaymentStatus(),
                                     aspspPayment.getPaymentProduct(),
                                     aspspPayment.getPisPaymentType().name(),
-                                    aspspPayment.getPaymentData()
+                                    aspspPayment.getPaymentData(),
+                                    Optional.ofNullable(aspspPayment.getDebtorAccount())
+                                        .map(AspspAccountReference::getAccountId)
+                                        .orElse(null)
         );
     }
 

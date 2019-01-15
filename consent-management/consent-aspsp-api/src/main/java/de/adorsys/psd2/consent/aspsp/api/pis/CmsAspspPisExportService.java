@@ -61,4 +61,23 @@ public interface CmsAspspPisExportService {
     Collection<CmsPayment> exportPaymentsByPsu(PsuIdData psuIdData,
                                                @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
                                                @NotNull String instanceId);
+
+    /**
+     * Returns list of payments by given criteria.
+     *
+     * @param aspspAccountId         Bank specific account identifier
+     * @param tppAuthorisationNumber Mandatory TPP ID
+     * @param createDateFrom         Optional starting creation date criteria
+     * @param createDateTo           Optional ending creation date criteria
+     * @param instanceId             Mandatory id of particular service instance
+     * @return Collection of payments for PSU by given criteria.
+     * By inconsistent criteria an empty list will be returned
+     * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
+     *                                 developer shall limit his/her request, making pagination by dates.
+     */
+    Collection<CmsPayment> exportPaymentsByAccountIdAndTpp(@NotNull String aspspAccountId,
+                                                           @NotNull String tppAuthorisationNumber,
+                                                           @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
+                                                           @NotNull String instanceId);
+
 }

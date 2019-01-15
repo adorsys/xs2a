@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspDayOfExecution;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspExecutionRule;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
@@ -84,6 +85,9 @@ public class SpiPeriodicPaymentMapper {
 
     public SpiPeriodicPaymentInitiationResponse mapToSpiPeriodicPaymentResponse(@NotNull AspspPeriodicPayment payment) {
         SpiPeriodicPaymentInitiationResponse spi = new SpiPeriodicPaymentInitiationResponse();
+        spi.setAspspAccountId(Optional.ofNullable(payment.getDebtorAccount())
+                                  .map(AspspAccountReference::getAccountId)
+                                  .orElse(null));
         spi.setPaymentId(payment.getPaymentId());
         if (payment.getPaymentId() == null) {
             spi.setTransactionStatus(SpiTransactionStatus.RJCT);

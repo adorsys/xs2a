@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
 
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,6 +52,9 @@ public class SpiBulkPaymentMapper {
 
     public SpiBulkPaymentInitiationResponse mapToSpiBulkPaymentResponse(@NotNull AspspBulkPayment payment, String paymentProduct) {
         SpiBulkPaymentInitiationResponse spi = new SpiBulkPaymentInitiationResponse();
+        spi.setAspspAccountId(Optional.ofNullable(payment.getDebtorAccount())
+                                  .map(AspspAccountReference::getAccountId)
+                                  .orElse(null));
         spi.setPayments(mapToListSpiSinglePayments(payment.getPayments(), paymentProduct));
         spi.setPaymentId(payment.getPaymentId());
 

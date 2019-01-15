@@ -26,4 +26,5 @@ public class AspspPaymentInfo {
     private String paymentProduct;
     private String pisPaymentType;
     private byte[] paymentData;
+    private String aspspAccountId;
 }

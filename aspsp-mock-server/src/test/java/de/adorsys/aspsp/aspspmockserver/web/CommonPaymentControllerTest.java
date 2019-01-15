@@ -38,6 +38,7 @@ import static org.mockito.Mockito.when;
 public class CommonPaymentControllerTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String WRONG_PAYMENT_ID = "Wrong payment id";
+    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
 
     @InjectMocks
     private CommonPaymentController commonPaymentController;
@@ -122,7 +123,8 @@ public class CommonPaymentControllerTest {
             transactionStatus,
             "sepa-credit-transfers",
             "SINGLE",
-            new byte[16]
+            new byte[16],
+            ASPSP_ACCOUNT_ID
         );
     }
 }
