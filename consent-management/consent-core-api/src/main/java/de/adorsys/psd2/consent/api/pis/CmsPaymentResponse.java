@@ -18,8 +18,10 @@ package de.adorsys.psd2.consent.api.pis;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class CmsPaymentResponse {
 

@@ -205,7 +205,7 @@ public class PisCommonPaymentServiceInternalTest {
         //Given
         ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
         //noinspection unchecked
-        ArgumentCaptor<List<PisAuthorization>> argumentList = ArgumentCaptor.forClass((Class) List.class);
+        ArgumentCaptor<List<PisAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
         PsuIdData psuIdData = buildPsuIdData();
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         when(pisAuthorizationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
@@ -220,9 +220,9 @@ public class PisCommonPaymentServiceInternalTest {
         verify(pisAuthorizationRepository).save(argument.capture());
         assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
 
-        verify(pisAuthorizationRepository).save(argumentList.capture());
-        List<PisAuthorization> authorisationsFailed = argumentList.getValue();
-        Set<ScaStatus> scaStatuses = authorisationsFailed.stream()
+        verify(pisAuthorizationRepository).save(failedAuthorisationsArgument.capture());
+        List<PisAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
+        Set<ScaStatus> scaStatuses = failedAuthorisations.stream()
                                           .map(PisAuthorization::getScaStatus)
                                           .collect(Collectors.toSet());
         assertEquals(scaStatuses.size(), 1);
@@ -234,7 +234,7 @@ public class PisCommonPaymentServiceInternalTest {
         return new AspspSettings(1, false, null, null, false, null, null,
             null, false, null, null, 1, 1, false,
             false, false, false, false, false, 1, null,
-            1, 1, null);
+            1, 1, null, 1);
     }
 
     private PsuIdData buildPsuIdData() {

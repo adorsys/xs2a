@@ -77,4 +77,25 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }
+
+    /**
+     * Returns specification for PisCommonPaymentData entity for filtering payments by aspsp account id, TPP authorisation number, creation date and instance ID.
+     *
+     * @param aspspAccountId         Bank specific account identifier
+     * @param tppAuthorisationNumber mandatory TPP authorisation number
+     * @param createDateFrom         optional creation date that limits resulting data to payments created after this date(inclusive)
+     * @param createDateTo           optional creation date that limits resulting data to payments created before this date(inclusive)
+     * @param instanceId             optional instance ID
+     * @return resulting specification for PisCommonPaymentData entity
+     */
+    public Specification<PisCommonPaymentData> byAspspAccountIdAndTppIdAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
+                                                                                                      @NotNull String tppAuthorisationNumber,
+                                                                                                      @Nullable LocalDate createDateFrom,
+                                                                                                      @Nullable LocalDate createDateTo,
+                                                                                                      @Nullable String instanceId) {
+        return Specifications.<PisCommonPaymentData>where(byAspspAccountId(aspspAccountId))
+                                                 .and(byTppAuthorisationNumber(tppAuthorisationNumber))
+                                                 .and(byCreationTimestamp(createDateFrom, createDateTo))
+                                                 .and(byInstanceId(instanceId));
+    }
 }

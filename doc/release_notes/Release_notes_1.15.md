@@ -110,5 +110,26 @@ should be filled:
   
 Other payment products can be added for every payment type.
 
+## Add specific bank account identifier in all types of payments
+Now we get `aspspAccountId` from ASPSP in response when payment is created. 
+And add this `aspspAccountId` to new commonPayment when we save payment to CMS.
+Also we can export payment list by `aspspAccountId, tppAuthorisationNumber, createDateFrom, createDateTo and instanceId` from CMS.  
+
+## One active authorisation per consent for one PSU
+When PSU creates new authorisation for consent, all previous authorisations, created by this PSU for the same consent, will be failed and expired.
+
+## Added expiration time for payment cancellation redirect url
+A new `paymentCancellationRedirectUrlExpirationTimeMs` parameter has been added to ASPSP profile.
+
+| Option                                         | Meaning                                                                                                          | Default value | Possible values         |
+|------------------------------------------------|------------------------------------------------------------------------------------------------------------------|---------------|-------------------------|
+| paymentCancellationRedirectUrlExpirationTimeMs | This field contains the limit of an expiration time of redirect url for payment cancellation set in milliseconds | 600 000       | milliseconds (1, 2,...) |
+
+Payment cancellation redirect url and related authorisation now have an expiration time. The value for expiration time is counted with formula 
+"current time of authorisation creation + payment cancellation redirect url expiration time (set in ASPSP-profile)". 
+We give redirect id (= authorisation id) in redirect link now, and to get payment information, online banking should call 
+ **GET /psu-api/v1/pis/consent/redirects/cancellation/{redirect-id}** endpoint of consent management system.
+If redirect url is not expired, online banking gets payment, authorisation id, not ok tpp redirect url and ok tpp redirect url (for now these urls are null temporary) in response, otherwise http code 408 Request Timeout is sent.
+
 ## Bugfix: Correct response during sending not existing sca method
 Now when PSU sends unknown sca method during the selection of authorisation method, SCA_METHOD_UNKNOWN message code and appropriate description will be returned

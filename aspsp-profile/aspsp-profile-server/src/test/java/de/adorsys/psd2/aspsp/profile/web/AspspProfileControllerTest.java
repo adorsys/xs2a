@@ -65,6 +65,7 @@ public class AspspProfileControllerTest {
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://localhost/payment/cancellation/";
     private static Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
+    private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
 
     @InjectMocks
     private AspspProfileController aspspProfileController;
@@ -131,7 +132,8 @@ public class AspspProfileControllerTest {
             PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP,
             NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS,
             NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS,
-            SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX);
+            SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX,
+            PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

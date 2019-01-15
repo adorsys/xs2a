@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ public class SpiResponseTest {
 
         builder
             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+            .message("some message")
+            .payload(null)
             .fail(SOME_STATUS);
     }
 
@@ -56,11 +58,10 @@ public class SpiResponseTest {
             .success();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void builder_should_fail_on_null_payload() {
         SpiResponse.SpiResponseBuilder<Object> builder = SpiResponse.builder();
 
-        //noinspection ConstantConditions
         builder
             .payload(null)
             .success();

@@ -30,7 +30,7 @@ public class AccountInfo {
     @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
     private String resourceId;
 
-    @ApiModelProperty(value = "Aspsp-Account-ID: Bank specific account ID", example = "DE2310010010156789")
+    @ApiModelProperty(value = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
     private String aspspAccountId;
 
     @ApiModelProperty(value = "Account-Identifier: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789")
