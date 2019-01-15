@@ -163,7 +163,7 @@ public class ConsentService {
     }
 
     /**
-     * Revokes account consent on PSU request
+     * Terminates account consent on PSU request
      *
      * @param consentId String representation of AccountConsent identification
      * @return VOID
