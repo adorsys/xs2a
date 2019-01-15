@@ -48,6 +48,7 @@ public abstract class PaymentInitiationResponse {
     private Links links;
     private String authorizationId;
     private AspspConsentData aspspConsentData;
+    private String aspspAccountId;
     private ErrorHolder errorHolder;
 
     PaymentInitiationResponse(ErrorHolder errorHolder) {

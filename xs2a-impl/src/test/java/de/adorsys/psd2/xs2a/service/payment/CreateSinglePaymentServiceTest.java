@@ -58,12 +58,15 @@ public class CreateSinglePaymentServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
     private static final PsuIdData PSU_DATA = new PsuIdData("aspsp", null, null, null);
+    private static final String DEB_ACCOUNT_ID = "11111_debtorAccount";
+    private static final String CRED_ACCOUNT_ID = "2222_creditorAccount";
     private final TppInfo TPP_INFO = buildTppInfo();
     private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = new Xs2aPisCommonPayment(PAYMENT_ID, PSU_DATA);
     private final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
     private final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
     private final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
+    private final SinglePaymentInitiationResponse RESPONSE = buildSinglePaymentInitiationResponse();
 
     @InjectMocks
     private CreateSinglePaymentService createSinglePaymentService;
@@ -84,11 +87,11 @@ public class CreateSinglePaymentServiceTest {
 
     @Before
     public void init() {
-        when(scaPaymentService.createSinglePayment(buildSinglePayment(), TPP_INFO, "sepa-credit-transfers", PSU_DATA)).thenReturn(buildSinglePaymentInitiationResponse());
+        when(scaPaymentService.createSinglePayment(buildSinglePayment(), TPP_INFO, "sepa-credit-transfers", PSU_DATA)).thenReturn(RESPONSE);
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, TransactionStatus.RCVD,PAYMENT_ID ))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, RESPONSE ))
             .thenReturn(PAYMENT_INFO);
     }
 
@@ -108,8 +111,8 @@ public class CreateSinglePaymentServiceTest {
         Xs2aAmount amount = buildXs2aAmount();
         payment.setPaymentId(PAYMENT_ID);
         payment.setInstructedAmount(amount);
-        payment.setDebtorAccount(buildReference());
-        payment.setCreditorAccount(buildReference());
+        payment.setDebtorAccount(buildReference(DEB_ACCOUNT_ID));
+        payment.setCreditorAccount(buildReference(CRED_ACCOUNT_ID));
         payment.setTransactionStatus(TransactionStatus.RCVD);
         return payment;
     }
@@ -121,10 +124,11 @@ public class CreateSinglePaymentServiceTest {
         return amount;
     }
 
-    private AccountReference buildReference() {
+    private AccountReference buildReference(String accountId) {
         AccountReference reference = new AccountReference();
         reference.setIban(IBAN);
         reference.setCurrency(EUR_CURRENCY);
+        reference.setAspspAccountId(accountId);
         return reference;
     }
 

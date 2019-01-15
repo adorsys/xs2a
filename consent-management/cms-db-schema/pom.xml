@@ -59,6 +59,20 @@
                         <artifactId>mariadb-java-client</artifactId>
                         <version>${mariadb.version}</version>
                     </dependency>
+<!--
+                    Oracle driver:
+                    1. Download it from Oracle's web-site
+                    2. Install it to your maven repo:
+					mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle -DartifactId=ojdbc8 -Dversion=18.3.0.0 -Dpackaging=jar
+					3. Uncomment the dependency below and adjust it if necessary to your version
+-->
+<!--
+                    <dependency>
+                        <groupId>com.oracle</groupId>
+                        <artifactId>ojdbc8</artifactId>
+                        <version>18.3.0.0</version>
+                    </dependency>
+-->
                 </dependencies>
 
                 <groupId>org.liquibase</groupId>

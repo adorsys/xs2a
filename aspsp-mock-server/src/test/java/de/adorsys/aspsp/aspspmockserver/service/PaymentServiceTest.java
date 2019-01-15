@@ -86,6 +86,7 @@ public class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(WRONG_PAYMENT_ID)).thenReturn(Optional.empty());
         when(paymentMapper.mapToAspspPaymentInfo(any(AspspPayment.class))).thenReturn(getAspspPaymentInfo(AspspTransactionStatus.RCVD));
         when(paymentMapper.mapToAspspPayment(any(AspspPaymentInfo.class))).thenReturn(new AspspPayment());
+        when(accountService.getAccountIdByIbanAndCurrency(IBAN, CURRENCY)).thenReturn(Optional.of("111111-99999"));
 
     }
 
@@ -289,7 +290,8 @@ public class PaymentServiceTest {
             transactionStatus,
             "sepa-credit-transfers",
             "SINGLE",
-            new byte[16]
+            new byte[16],
+            ASPSP_ACCOUNT_ID
         );
     }
 

@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
+import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -69,6 +70,9 @@ public class SpiSinglePaymentMapper {
 
     public SpiSinglePaymentInitiationResponse mapToSpiSinglePaymentResponse(@NotNull AspspSinglePayment payment) {
         SpiSinglePaymentInitiationResponse spi = new SpiSinglePaymentInitiationResponse();
+        spi.setAspspAccountId(Optional.ofNullable(payment.getDebtorAccount())
+                                  .map(AspspAccountReference::getAccountId)
+                                  .orElse(null));
         spi.setPaymentId(payment.getPaymentId());
         if (payment.getPaymentId() == null) {
             spi.setTransactionStatus(SpiTransactionStatus.RJCT);

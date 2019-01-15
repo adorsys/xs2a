@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,11 +120,7 @@ public class SpiResponse<T> {
         private SpiResponseBuilder() {
         }
 
-        public SpiResponseBuilder<T> payload(@NotNull T payload) {
-            //noinspection ConstantConditions - we cannot be sure that @NotNull annotation will be processed be external developer
-            if (payload == null) {
-                throw new IllegalArgumentException("payload cannot be null");
-            }
+        public SpiResponseBuilder<T> payload(T payload) {
             this.payload = payload;
             return this;
         }

@@ -29,7 +29,7 @@ public interface CmsPsuPisService {
     /**
      * Updates PSU Data in Payment, based on the trusted information about PSU known to ASPSP (i.e. after authorisation)
      *
-     * @param psuIdData PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
+     * @param psuIdData  PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
      * @param redirectId ID of redirect
      * @return <code>true</code> if payment was found and data was updated. <code>false</code> otherwise.
      */
@@ -55,6 +55,17 @@ public interface CmsPsuPisService {
      */
     @NotNull
     Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
+
+    /**
+     * Checks redirect url and corresponding authorisation on expiration for payment cancellation and returns Payment Response object if authorisation is valid
+     *
+     * @param psuIdData  PSU credentials data
+     * @param redirectId ID of redirect
+     * @return Payment Response object that includes payment, authorisation id and ok/nok tpp redirect urls, if the payment was found and
+     * it corresponds to the user data given in parameter
+     */
+    @NotNull
+    Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
 
     /**
      * Updates a Status of Payment's autorisation by its ID and PSU ID

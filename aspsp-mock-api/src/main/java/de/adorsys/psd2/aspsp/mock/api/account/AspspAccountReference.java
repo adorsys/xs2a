@@ -37,4 +37,14 @@ public class AspspAccountReference {
     private String maskedPan;
     private String msisdn;
     private Currency currency;
+
+    /**
+     * Creates AspspAccountReference by default
+     *
+     * @param aspspAccountId Bank specific account ID
+     * @param currency Currency according codes following ISO 4217
+     */
+    public AspspAccountReference(String aspspAccountId, Currency currency) {
+        this(aspspAccountId, null, null, null, null, null, currency);
+    }
 }
