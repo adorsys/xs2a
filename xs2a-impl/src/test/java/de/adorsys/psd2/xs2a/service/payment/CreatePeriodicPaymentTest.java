@@ -66,6 +66,7 @@ public class CreatePeriodicPaymentTest {
     private final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
     private final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
+    private final PeriodicPaymentInitiationResponse RESPONSE = buildPeriodicPaymentInitiationResponse();
 
     @InjectMocks
     private CreatePeriodicPaymentService createPeriodicPaymentService;
@@ -88,10 +89,10 @@ public class CreatePeriodicPaymentTest {
     public void success_initiate_periodic_payment() {
         //When
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
-        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(buildPeriodicPaymentInitiationResponse());
+        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(RESPONSE);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, TransactionStatus.RCVD,PAYMENT_ID ))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, RESPONSE))
             .thenReturn(PAYMENT_INFO);
 
         ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo());
@@ -167,6 +168,7 @@ public class CreatePeriodicPaymentTest {
 
         return request;
     }
+
     private PisPaymentInfo buildPisPaymentInfoRequest() {
         return new PisPaymentInfo();
     }

@@ -36,6 +36,7 @@ public class SpiToXs2aPaymentMapper {
         response.setPaymentId(spi.getPaymentId());
         response.setTransactionStatus(TransactionStatus.getByValue(spi.getTransactionStatus().getName()));
         response.setAspspConsentData(aspspConsentData);
+        response.setAspspAccountId(spi.getAspspAccountId());
         return response;
     }
 
@@ -45,6 +46,7 @@ public class SpiToXs2aPaymentMapper {
         commonPaymentInitiationResponse.setPaymentId(spiResponse.getPaymentId());
         commonPaymentInitiationResponse.setTransactionStatus(TransactionStatus.getByValue(spiResponse.getTransactionStatus().getName()));
         commonPaymentInitiationResponse.setAspspConsentData(aspspConsentData);
+        commonPaymentInitiationResponse.setAspspAccountId(spiResponse.getAspspAccountId());
 
         return commonPaymentInitiationResponse;
     }

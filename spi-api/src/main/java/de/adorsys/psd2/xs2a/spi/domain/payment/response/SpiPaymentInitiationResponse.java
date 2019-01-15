@@ -35,4 +35,5 @@ public abstract class SpiPaymentInitiationResponse {
     private ChallengeData challengeData;
     private String psuMessage;
     private List<String> tppMessages;
+    private String aspspAccountId;
 }

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.repository.specification;
 
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
@@ -91,10 +92,24 @@ public abstract class GenericSpecification {
      */
     protected <T> Specification<T> byTppAuthorisationNumber(@Nullable String tppAuthorisationNumber) {
         return (root, query, cb) -> {
-            Join<T, PsuData> tppInfoJoin = root.join(TPP_INFO_ATTRIBUTE);
+            Join<T, TppInfoEntity> tppInfoJoin = root.join(TPP_INFO_ATTRIBUTE);
             return provideSpecificationForJoinedEntityAttribute(tppInfoJoin, TPP_INFO_AUTHORISATION_NUMBER_ATTRIBUTE, tppAuthorisationNumber)
                        .toPredicate(root, query, cb);
         };
+    }
+
+    /**
+     * Returns specification for some entity for filtering data by aspsp account id.
+     *
+     * <p>
+     * If optional parameter is not provided, this specification will not affect resulting data.
+     *
+     * @param aspspAccountId Bank specific account identifier
+     * @param <T>            type of the entity, for which this specification will be created
+     * @return resulting specification
+     */
+    protected <T> Specification<T> byAspspAccountId(@Nullable String aspspAccountId) {
+            return provideSpecificationForEntityAttribute(ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId);
     }
 
     /**
