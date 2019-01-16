@@ -2,13 +2,6 @@
 setting:
  frequencyPerDay: 5
  combinedServiceIndicator: false
- availablePaymentProducts:
-  - sepa-credit-transfers
-  - instant-sepa-credit-transfers
- availablePaymentTypes:
-  - BULK
-  - PERIODIC
-  - SINGLE
  scaApproach: REDIRECT
  tppSignatureRequired: false
  bankOfferedConsentSupport: true

@@ -61,11 +61,10 @@ public class RequestValidatorServiceTest {
 
     @Before
     public void setUp() {
-        when(aspspProfileService.getAvailablePaymentProducts())
-            .thenReturn(Arrays.asList("sepa-credit-transfers", "instant-sepa-credit-transfers"));
+        Map<PaymentType, Set<String>> matrix = getSupportedPaymentTypeAndProductMatrix();
 
-        when(aspspProfileService.getAvailablePaymentTypes())
-            .thenReturn(Arrays.asList(PaymentType.SINGLE, PaymentType.BULK));
+        when(aspspProfileService.getSupportedPaymentTypeAndProductMatrix())
+            .thenReturn(matrix);
     }
 
     @Test
@@ -78,7 +77,7 @@ public class RequestValidatorServiceTest {
         Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
-        assertThat(actualViolations.isEmpty()).isTrue();
+        assertThat(actualViolations.isEmpty()).isFalse();
     }
 
     @Test
@@ -113,8 +112,12 @@ public class RequestValidatorServiceTest {
     @Test
     public void getRequestPathVariablesViolationMap_WrongProduct() throws Exception {
         //Given:
+
         HttpServletRequest request = getCorrectRequestForPayment();
-        request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", "cross-border-credit-transfers"));
+        Map<String, String> templates = new HashMap<>();
+        templates.put("payment-product", "cross-border-credit-transfers");
+        templates.put("payment-service", PaymentType.SINGLE.getValue());
+        request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
         HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
@@ -268,5 +271,13 @@ public class RequestValidatorServiceTest {
             String.class, Boolean.class, String.class, String.class, Boolean.class, Object.class, String.class,
             String.class, String.class, String.class, String.class, String.class, UUID.class, String.class};
         return new HandlerMethod(paymentController, "initiatePayment", params);
+    }
+
+    private Map<PaymentType, Set<String>> getSupportedPaymentTypeAndProductMatrix() {
+        Map<PaymentType, Set<String>> matrix = new HashMap<>();
+        Set<String> availablePaymentProducts = new HashSet<>(Arrays.asList("sepa-credit-transfers", "instant-sepa-credit-transfers"));
+        matrix.put(PaymentType.SINGLE, availablePaymentProducts);
+        matrix.put(PaymentType.BULK, availablePaymentProducts);
+        return matrix;
     }
 }

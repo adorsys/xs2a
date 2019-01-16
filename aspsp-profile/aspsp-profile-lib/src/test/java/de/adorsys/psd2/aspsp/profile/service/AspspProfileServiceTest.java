@@ -42,8 +42,6 @@ import static org.mockito.Mockito.when;
 public class AspspProfileServiceTest {
     private static final int FREQUENCY_PER_DAY = 5;
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
-    private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
-    private static final List<PaymentType> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final ScaApproach REDIRECT_APPROACH = ScaApproach.REDIRECT;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
@@ -101,16 +99,7 @@ public class AspspProfileServiceTest {
         AspspSettings actualResponse = aspspProfileService.getAspspSettings();
 
         //Then:
-        Assertions.assertThat(actualResponse.getAvailablePaymentTypes()).isEqualTo(AVAILABLE_PAYMENT_TYPES);
-    }
-
-    @Test
-    public void getAvailablePaymentProducts_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
-        Assertions.assertThat(actualResponse.getAvailablePaymentProducts()).isEqualTo(AVAILABLE_PAYMENT_PRODUCTS);
+        Assertions.assertThat(actualResponse.getSupportedPaymentTypeAndProductMatrix()).isEqualTo(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX);
     }
 
     @Test
@@ -170,8 +159,6 @@ public class AspspProfileServiceTest {
         BankProfileSetting setting = new BankProfileSetting();
         setting.setFrequencyPerDay(FREQUENCY_PER_DAY);
         setting.setCombinedServiceIndicator(COMBINED_SERVICE_INDICATOR);
-        setting.setAvailablePaymentProducts(AVAILABLE_PAYMENT_PRODUCTS);
-        setting.setAvailablePaymentTypes(AVAILABLE_PAYMENT_TYPES);
         setting.setTppSignatureRequired(TPP_SIGNATURE_REQUIRED);
         setting.setPisRedirectUrlToAspsp(PIS_REDIRECT_LINK);
         setting.setAisRedirectUrlToAspsp(AIS_REDIRECT_LINK);
@@ -199,19 +186,6 @@ public class AspspProfileServiceTest {
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
         return Collections.singletonList(IBAN);
-    }
-
-    private static List<String> getPaymentProducts() {
-        return Arrays.asList(
-            "sepa-credit-transfers",
-            "instant-sepa-credit-transfers");
-    }
-
-    private static List<PaymentType> getPaymentTypes() {
-        return Arrays.asList(
-            PaymentType.PERIODIC,
-            PaymentType.BULK
-        );
     }
 
     private static List<BookingStatus> getBookingStatuses() {

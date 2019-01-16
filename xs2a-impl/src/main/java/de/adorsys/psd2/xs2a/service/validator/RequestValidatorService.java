@@ -46,7 +46,7 @@ public class RequestValidatorService {
     @Autowired
     private Validator validator;
     @Autowired
-    private AspspProfileServiceWrapper aspspProfileService;
+    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
@@ -120,19 +120,50 @@ public class RequestValidatorService {
 
     private Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request) {
         Map<String, String> requestPathViolationMap = new HashMap<>();
-        requestPathViolationMap.putAll(checkPaymentProductByRequest(request));
-        requestPathViolationMap.putAll(getPaymentTypeViolationMap(request));
+        requestPathViolationMap.putAll(getViolationMapForPaymentTypeAndPaymentProduct(request));
 
         return requestPathViolationMap;
     }
 
-    private Map<String, String> getPaymentTypeViolationMap(HttpServletRequest request) {
+    private Map<String, String> getViolationMapForPaymentTypeAndPaymentProduct(HttpServletRequest request) {
         Map<String, String> pathVariableMap = getPathVariableMap(request);
+        Optional<PaymentType> paymentType = getPaymentTypeFromRequest(pathVariableMap);
+
+        if (!paymentType.isPresent()) {
+            return Collections.singletonMap(MessageErrorCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type");
+        }
+
+        Optional<String> paymentProduct = getPaymentProductFromRequest(pathVariableMap);
+
+        if (!paymentProduct.isPresent()) {
+            return Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product!");
+        }
+
+        return arePaymentTypeAndProductAvailable(paymentType.get(), paymentProduct.get());
+    }
+
+    private Optional<String> getPaymentProductFromRequest(Map<String, String> pathVariableMap) {
+        return Optional.ofNullable(pathVariableMap)
+                   .map(mp -> mp.get(PAYMENT_PRODUCT_PATH_VAR));
+    }
+
+    private Optional<PaymentType> getPaymentTypeFromRequest(Map<String, String> pathVariableMap) {
         return Optional.ofNullable(pathVariableMap)
                    .map(m -> m.get(PAYMENT_SERVICE_PATH_VAR))
-                   .flatMap(PaymentType::getByValue)
-                   .map(this::getViolationMapForPaymentType)
-                   .orElseGet(Collections::emptyMap);
+                   .flatMap(PaymentType::getByValue);
+    }
+
+    private Map<String, String> arePaymentTypeAndProductAvailable(PaymentType paymentType, String paymentProduct) {
+        Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix = aspspProfileServiceWrapper.getSupportedPaymentTypeAndProductMatrix();
+
+        if (supportedPaymentTypeAndProductMatrix.containsKey(paymentType)) {
+            if (supportedPaymentTypeAndProductMatrix.get(paymentType).contains(paymentProduct)) {
+                return Collections.emptyMap();
+            }
+            return Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct);
+        }
+        return Collections.singletonMap(MessageErrorCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type: " + paymentType.getValue());
+
     }
 
     private Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, HandlerMethod handler) {
@@ -173,45 +204,6 @@ public class RequestValidatorService {
                    .collect(Collectors.toMap(
                        Map.Entry::getKey,
                        e -> String.join(",", e.getValue())));
-    }
-
-    private Map<String, String> checkPaymentProductByRequest(HttpServletRequest request) {
-        //noinspection unchecked
-        Map<String, String> pathVariableMap = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-
-        return Optional.ofNullable(pathVariableMap)
-                   .map(mp -> mp.get(PAYMENT_PRODUCT_PATH_VAR))
-                   .map(this::checkPaymentProductSupportAndGetViolationMap)
-                   .orElseGet(Collections::emptyMap);
-    }
-
-    private Map<String, String> checkPaymentProductSupportAndGetViolationMap(String paymentProduct) {
-        return Optional.ofNullable(paymentProduct)
-                   .map(this::getViolationMapForPaymentProduct)
-                   .orElseGet(() -> Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
-    }
-
-    private Map<String, String> getViolationMapForPaymentProduct(String paymentProduct) {
-        return isPaymentProductAvailable(paymentProduct)
-                   ? Collections.emptyMap()
-                   : Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct);
-    }
-
-    private Map<String, String> getViolationMapForPaymentType(PaymentType paymentType) {
-        PaymentType consentPaymentType = PaymentType.valueOf(paymentType.name());
-        return isPaymentTypeAvailable(consentPaymentType)
-                   ? Collections.emptyMap()
-                   : Collections.singletonMap(MessageErrorCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type: " + paymentType.getValue());
-    }
-
-    private boolean isPaymentProductAvailable(String paymentProduct) {
-        List<String> paymentProducts = aspspProfileService.getAvailablePaymentProducts();
-        return paymentProducts.contains(paymentProduct);
-    }
-
-    private boolean isPaymentTypeAvailable(PaymentType paymentType) {
-        List<PaymentType> paymentTypes = aspspProfileService.getAvailablePaymentTypes();
-        return paymentTypes.contains(paymentType);
     }
 
     private <T> Map<String, String> getViolationMessagesMap(Set<ConstraintViolation<T>> collection) {

@@ -43,8 +43,6 @@ import static org.mockito.Mockito.when;
 public class AspspProfileControllerTest {
     private static final int FREQUENCY_PER_DAY = 5;
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
-    private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
-    private static final List<PaymentType> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "https://localhost/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://localhost/view/account/";
@@ -111,8 +109,6 @@ public class AspspProfileControllerTest {
         return new AspspSettings(
             FREQUENCY_PER_DAY,
             COMBINED_SERVICE_INDICATOR,
-            AVAILABLE_PAYMENT_PRODUCTS,
-            AVAILABLE_PAYMENT_TYPES,
             TPP_SIGNATURE_REQUIRED,
             PIS_REDIRECT_LINK,
             AIS_REDIRECT_LINK,
@@ -138,18 +134,6 @@ public class AspspProfileControllerTest {
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
         return Collections.singletonList(IBAN);
-    }
-
-    private static List<String> getPaymentProducts() {
-        return Arrays.asList(
-            "sepa-credit-transfers",
-            "instant-sepa-credit-transfers");
-    }
-
-    private static List<PaymentType> getPaymentTypes() {
-        return Arrays.asList(
-            PaymentType.PERIODIC,
-            PaymentType.BULK);
     }
 
     private static List<BookingStatus> getBookingStatuses() {
