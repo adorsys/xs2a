@@ -77,7 +77,7 @@ public class RequestValidatorServiceTest {
         Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
 
         //Then:
-        assertThat(actualViolations.isEmpty()).isFalse();
+        assertThat(actualViolations.isEmpty()).isTrue();
     }
 
     @Test
