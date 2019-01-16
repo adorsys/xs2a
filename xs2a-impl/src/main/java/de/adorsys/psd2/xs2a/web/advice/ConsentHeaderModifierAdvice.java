@@ -46,7 +46,7 @@ public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
 
         if ("_createConsent".equals(methodName)) {
             response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
-            if (!hasError(body)) {
+            if (!hasError(body, ConsentsResponse201.class)) {
                 ConsentsResponse201 consentResponse = (ConsentsResponse201) body;
                 response.getHeaders().add("Location", Optional.ofNullable(consentResponse.getLinks().get("self"))
                                                           .map(Object::toString)

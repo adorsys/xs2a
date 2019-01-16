@@ -1,197 +1,230 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Exchange Rate
  */
 @ApiModel(description = "Exchange Rate")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
-    ":45.627+02:00[Europe/Berlin]")
-public class ExchangeRate {
-    @JsonProperty("currencyFrom")
-    private String currencyFrom = null;
-    @JsonProperty("rateFrom")
-    private String rateFrom = null;
-    @JsonProperty("currencyTo")
-    private String currencyTo = null;
-    @JsonProperty("rateTo")
-    private String rateTo = null;
-    @JsonProperty("rateDate")
-    private LocalDate rateDate = null;
-    @JsonProperty("rateContract")
-    private String rateContract = null;
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
 
-    public ExchangeRate currencyFrom(String currencyFrom) {
-        this.currencyFrom = currencyFrom;
-        return this;
-    }
+public class ExchangeRate   {
+  @JsonProperty("sourceCurrency")
+  private String sourceCurrency = null;
 
-    /**
-     * Get currencyFrom
-     *
-     * @return currencyFrom
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    public String getCurrencyFrom() {
-        return currencyFrom;
-    }
+  @JsonProperty("rate")
+  private String rate = null;
 
-    public void setCurrencyFrom(String currencyFrom) {
-        this.currencyFrom = currencyFrom;
-    }
+  @JsonProperty("unitCurrency")
+  private String unitCurrency = null;
 
-    public ExchangeRate rateFrom(String rateFrom) {
-        this.rateFrom = rateFrom;
-        return this;
-    }
+  @JsonProperty("targetCurrency")
+  private String targetCurrency = null;
 
-    /**
-     * Get rateFrom
-     *
-     * @return rateFrom
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    public String getRateFrom() {
-        return rateFrom;
-    }
+  @JsonProperty("rateDate")
+  private LocalDate rateDate = null;
 
-    public void setRateFrom(String rateFrom) {
-        this.rateFrom = rateFrom;
-    }
+  @JsonProperty("rateContract")
+  private String rateContract = null;
 
-    public ExchangeRate currencyTo(String currencyTo) {
-        this.currencyTo = currencyTo;
-        return this;
-    }
+  public ExchangeRate sourceCurrency(String sourceCurrency) {
+    this.sourceCurrency = sourceCurrency;
+    return this;
+  }
 
-    /**
-     * Get currencyTo
-     *
-     * @return currencyTo
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    public String getCurrencyTo() {
-        return currencyTo;
-    }
+  /**
+   * Get sourceCurrency
+   * @return sourceCurrency
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
 
-    public void setCurrencyTo(String currencyTo) {
-        this.currencyTo = currencyTo;
-    }
+@Pattern(regexp="[A-Z]{3}") 
+  public String getSourceCurrency() {
+    return sourceCurrency;
+  }
 
-    public ExchangeRate rateTo(String rateTo) {
-        this.rateTo = rateTo;
-        return this;
-    }
+  public void setSourceCurrency(String sourceCurrency) {
+    this.sourceCurrency = sourceCurrency;
+  }
 
-    /**
-     * Get rateTo
-     *
-     * @return rateTo
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    public String getRateTo() {
-        return rateTo;
-    }
+  public ExchangeRate rate(String rate) {
+    this.rate = rate;
+    return this;
+  }
 
-    public void setRateTo(String rateTo) {
-        this.rateTo = rateTo;
-    }
+  /**
+   * Get rate
+   * @return rate
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
 
-    public ExchangeRate rateDate(LocalDate rateDate) {
-        this.rateDate = rateDate;
-        return this;
-    }
 
-    /**
-     * Get rateDate
-     *
-     * @return rateDate
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    @Valid
-    public LocalDate getRateDate() {
-        return rateDate;
-    }
+  public String getRate() {
+    return rate;
+  }
 
-    public void setRateDate(LocalDate rateDate) {
-        this.rateDate = rateDate;
-    }
+  public void setRate(String rate) {
+    this.rate = rate;
+  }
 
-    public ExchangeRate rateContract(String rateContract) {
-        this.rateContract = rateContract;
-        return this;
-    }
+  public ExchangeRate unitCurrency(String unitCurrency) {
+    this.unitCurrency = unitCurrency;
+    return this;
+  }
 
-    /**
-     * Get rateContract
-     *
-     * @return rateContract
-     **/
-    @ApiModelProperty(value = "")
-    public String getRateContract() {
-        return rateContract;
-    }
+  /**
+   * Get unitCurrency
+   * @return unitCurrency
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
 
-    public void setRateContract(String rateContract) {
-        this.rateContract = rateContract;
-    }
 
-    @Override
-    public boolean equals(java.lang.Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ExchangeRate exchangeRate = (ExchangeRate) o;
-        return Objects.equals(this.currencyFrom, exchangeRate.currencyFrom) && Objects.equals(this.rateFrom,
-            exchangeRate.rateFrom) && Objects.equals(this.currencyTo, exchangeRate.currencyTo) && Objects.equals(this.rateTo, exchangeRate.rateTo) && Objects.equals(this.rateDate, exchangeRate.rateDate) && Objects.equals(this.rateContract, exchangeRate.rateContract);
-    }
+  public String getUnitCurrency() {
+    return unitCurrency;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(currencyFrom, rateFrom, currencyTo, rateTo, rateDate, rateContract);
-    }
+  public void setUnitCurrency(String unitCurrency) {
+    this.unitCurrency = unitCurrency;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class ExchangeRate {\n");
-        sb.append("    currencyFrom: ").append(toIndentedString(currencyFrom)).append("\n");
-        sb.append("    rateFrom: ").append(toIndentedString(rateFrom)).append("\n");
-        sb.append("    currencyTo: ").append(toIndentedString(currencyTo)).append("\n");
-        sb.append("    rateTo: ").append(toIndentedString(rateTo)).append("\n");
-        sb.append("    rateDate: ").append(toIndentedString(rateDate)).append("\n");
-        sb.append("    rateContract: ").append(toIndentedString(rateContract)).append("\n");
-        sb.append("}");
-        return sb.toString();
-    }
+  public ExchangeRate targetCurrency(String targetCurrency) {
+    this.targetCurrency = targetCurrency;
+    return this;
+  }
 
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(java.lang.Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
+  /**
+   * Get targetCurrency
+   * @return targetCurrency
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
+
+@Pattern(regexp="[A-Z]{3}") 
+  public String getTargetCurrency() {
+    return targetCurrency;
+  }
+
+  public void setTargetCurrency(String targetCurrency) {
+    this.targetCurrency = targetCurrency;
+  }
+
+  public ExchangeRate rateDate(LocalDate rateDate) {
+    this.rateDate = rateDate;
+    return this;
+  }
+
+  /**
+   * Get rateDate
+   * @return rateDate
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
+
+  @Valid
+
+  public LocalDate getRateDate() {
+    return rateDate;
+  }
+
+  public void setRateDate(LocalDate rateDate) {
+    this.rateDate = rateDate;
+  }
+
+  public ExchangeRate rateContract(String rateContract) {
+    this.rateContract = rateContract;
+    return this;
+  }
+
+  /**
+   * Get rateContract
+   * @return rateContract
+  **/
+  @ApiModelProperty(value = "")
+
+
+  public String getRateContract() {
+    return rateContract;
+  }
+
+  public void setRateContract(String rateContract) {
+    this.rateContract = rateContract;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ExchangeRate exchangeRate = (ExchangeRate) o;
+    return Objects.equals(this.sourceCurrency, exchangeRate.sourceCurrency) &&
+        Objects.equals(this.rate, exchangeRate.rate) &&
+        Objects.equals(this.unitCurrency, exchangeRate.unitCurrency) &&
+        Objects.equals(this.targetCurrency, exchangeRate.targetCurrency) &&
+        Objects.equals(this.rateDate, exchangeRate.rateDate) &&
+        Objects.equals(this.rateContract, exchangeRate.rateContract);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(sourceCurrency, rate, unitCurrency, targetCurrency, rateDate, rateContract);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class ExchangeRate {\n");
+    
+    sb.append("    sourceCurrency: ").append(toIndentedString(sourceCurrency)).append("\n");
+    sb.append("    rate: ").append(toIndentedString(rate)).append("\n");
+    sb.append("    unitCurrency: ").append(toIndentedString(unitCurrency)).append("\n");
+    sb.append("    targetCurrency: ").append(toIndentedString(targetCurrency)).append("\n");
+    sb.append("    rateDate: ").append(toIndentedString(rateDate)).append("\n");
+    sb.append("    rateContract: ").append(toIndentedString(rateContract)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
 }
 

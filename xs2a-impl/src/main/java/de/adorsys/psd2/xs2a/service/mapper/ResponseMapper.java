@@ -91,9 +91,8 @@ public class ResponseMapper {
                    : mapper.apply(body);
     }
 
+    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
     private ResponseEntity createErrorResponse(MessageError error) {
-        return new ResponseEntity<>(messageErrorMapper.mapToTppMessages(error), valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
+        return new ResponseEntity<>(messageErrorMapper.mapToTppMessage(error), valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
     }
-
-
 }
