@@ -134,7 +134,6 @@ public class PaymentModelMapperPsd2 {
                    .orElse(null);
     }
 
-    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
     public Object mapToPaymentInitiationResponse12(Object response) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
         PaymentInitiationResponse specificResponse = (PaymentInitiationResponse) response;
@@ -161,8 +160,8 @@ public class PaymentModelMapperPsd2 {
         return parameters;
     }
 
-    public PaymentInitiationCancelResponse204202 mapToPaymentInitiationCancelResponse(CancelPaymentResponse cancelPaymentResponse) {
-        PaymentInitiationCancelResponse204202 response = new PaymentInitiationCancelResponse204202();
+    public PaymentInitiationCancelResponse200202 mapToPaymentInitiationCancelResponse(CancelPaymentResponse cancelPaymentResponse) {
+        PaymentInitiationCancelResponse200202 response = new PaymentInitiationCancelResponse200202();
         response.setTransactionStatus(mapToTransactionStatus12(cancelPaymentResponse.getTransactionStatus()));
         response.setScaMethods(mapToScaMethods(cancelPaymentResponse.getScaMethods()));
         response.setChosenScaMethod(mapToChosenScaMethod(cancelPaymentResponse.getChosenScaMethod()));

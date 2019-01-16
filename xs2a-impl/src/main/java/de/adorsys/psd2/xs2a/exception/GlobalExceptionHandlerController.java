@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.exception;
 
 import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
-import de.adorsys.psd2.model.TppMessage2XX;
+import de.adorsys.psd2.model.TppMessages;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.validation.ValidationException;
-import java.util.List;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CERTIFICATE_INVALID;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
@@ -111,8 +110,7 @@ public class GlobalExceptionHandlerController {
         return new ResponseEntity<>(getTppMessages(CERTIFICATE_INVALID), HttpStatus.BAD_REQUEST);
     }
 
-    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
-    private List<TppMessage2XX> getTppMessages(MessageErrorCode errorCode) {
+    private TppMessages getTppMessages(MessageErrorCode errorCode) {
         return messageErrorMapper.mapToTppMessages(errorCode);
     }
 }

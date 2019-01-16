@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -34,33 +17,25 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body for a SCT payment initation. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
-
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T15:31" +
+    ":52.888+02:00[Europe/Berlin]")
 public class PaymentInitiationSctJson {
     @JsonProperty("endToEndIdentification")
     private String endToEndIdentification = null;
-
     @JsonProperty("debtorAccount")
-    private AccountReference debtorAccount = null;
-
+    private Object debtorAccount = null;
     @JsonProperty("instructedAmount")
     private Amount instructedAmount = null;
-
     @JsonProperty("creditorAccount")
-    private AccountReference creditorAccount = null;
-
+    private Object creditorAccount = null;
     @JsonProperty("creditorAgent")
     private String creditorAgent = null;
-
     @JsonProperty("creditorName")
     private String creditorName = null;
-
     @JsonProperty("creditorAddress")
     private Address creditorAddress = null;
-
     @JsonProperty("remittanceInformationUnstructured")
     private String remittanceInformationUnstructured = null;
-
     @JsonProperty("requestedExecutionDate")
     private LocalDate requestedExecutionDate = null;
     @JsonProperty("requestedExecutionTime")
@@ -77,7 +52,6 @@ public class PaymentInitiationSctJson {
      * @return endToEndIdentification
      **/
     @ApiModelProperty(value = "")
-
     @Size(max = 35)
     public String getEndToEndIdentification() {
         return endToEndIdentification;
@@ -87,7 +61,7 @@ public class PaymentInitiationSctJson {
         this.endToEndIdentification = endToEndIdentification;
     }
 
-    public PaymentInitiationSctJson debtorAccount(AccountReference debtorAccount) {
+    public PaymentInitiationSctJson debtorAccount(Object debtorAccount) {
         this.debtorAccount = debtorAccount;
         return this;
     }
@@ -99,14 +73,11 @@ public class PaymentInitiationSctJson {
      **/
     @ApiModelProperty(required = true, value = "")
     @NotNull
-
-    @Valid
-
-    public AccountReference getDebtorAccount() {
+    public Object getDebtorAccount() {
         return debtorAccount;
     }
 
-    public void setDebtorAccount(AccountReference debtorAccount) {
+    public void setDebtorAccount(Object debtorAccount) {
         this.debtorAccount = debtorAccount;
     }
 
@@ -122,9 +93,7 @@ public class PaymentInitiationSctJson {
      **/
     @ApiModelProperty(required = true, value = "")
     @NotNull
-
     @Valid
-
     public Amount getInstructedAmount() {
         return instructedAmount;
     }
@@ -133,7 +102,7 @@ public class PaymentInitiationSctJson {
         this.instructedAmount = instructedAmount;
     }
 
-    public PaymentInitiationSctJson creditorAccount(AccountReference creditorAccount) {
+    public PaymentInitiationSctJson creditorAccount(Object creditorAccount) {
         this.creditorAccount = creditorAccount;
         return this;
     }
@@ -145,14 +114,11 @@ public class PaymentInitiationSctJson {
      **/
     @ApiModelProperty(required = true, value = "")
     @NotNull
-
-    @Valid
-
-    public AccountReference getCreditorAccount() {
+    public Object getCreditorAccount() {
         return creditorAccount;
     }
 
-    public void setCreditorAccount(AccountReference creditorAccount) {
+    public void setCreditorAccount(Object creditorAccount) {
         this.creditorAccount = creditorAccount;
     }
 
@@ -167,8 +133,6 @@ public class PaymentInitiationSctJson {
      * @return creditorAgent
      **/
     @ApiModelProperty(value = "")
-
-    @Pattern(regexp = "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")
     public String getCreditorAgent() {
         return creditorAgent;
     }
@@ -189,8 +153,6 @@ public class PaymentInitiationSctJson {
      **/
     @ApiModelProperty(required = true, value = "")
     @NotNull
-
-    @Size(max = 70)
     public String getCreditorName() {
         return creditorName;
     }
@@ -210,9 +172,7 @@ public class PaymentInitiationSctJson {
      * @return creditorAddress
      **/
     @ApiModelProperty(value = "")
-
     @Valid
-
     public Address getCreditorAddress() {
         return creditorAddress;
     }
@@ -232,8 +192,6 @@ public class PaymentInitiationSctJson {
      * @return remittanceInformationUnstructured
      **/
     @ApiModelProperty(value = "")
-
-    @Size(max = 140)
     public String getRemittanceInformationUnstructured() {
         return remittanceInformationUnstructured;
     }
@@ -305,7 +263,6 @@ public class PaymentInitiationSctJson {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PaymentInitiationSctJson {\n");
-
         sb.append("    endToEndIdentification: ").append(toIndentedString(endToEndIdentification)).append("\n");
         sb.append("    debtorAccount: ").append(toIndentedString(debtorAccount)).append("\n");
         sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");
@@ -324,7 +281,7 @@ public class PaymentInitiationSctJson {
      * Convert the given object to string with each line indented by 4 spaces
      * (except the first line).
      */
-    private String toIndentedString(Object o) {
+    private String toIndentedString(java.lang.Object o) {
         if (o == null) {
             return "null";
         }
