@@ -1,0 +1,173 @@
+{
+    "info": {
+        "_postman_id": "eb01d152-e083-46d1-88f8-fb651981b475",
+        "name": "Test pain payments export",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Initiate pain bulk payment",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "name": "Content-Type",
+                        "value": "application/xml",
+                        "type": "text"
+                    },
+                    {
+                        "key": "X-Request-ID",
+                        "value": "{{X-Request-ID}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "PSU-IP-Address",
+                        "value": "{{ip_address}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "PSU-ID",
+                        "value": "{{psu_id_none}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Document\n   xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\"\n   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n      <MsgId>MessageId</MsgId>\n      <CreDtTm>2014-01-08T10:33:56</CreDtTm>\n      <NbOfTxs>3</NbOfTxs>\n      <CtrlSum>49.00</CtrlSum>\n      <InitgPty>\n        <Nm>Accountholder-Name</Nm>\n      </InitgPty>\n    </GrpHdr>\n    <PmtInf>\n      <PmtInfId>PaymentInformationId</PmtInfId>\n      <PmtMtd>TRF</PmtMtd>\n      <NbOfTxs>3</NbOfTxs>\n      <CtrlSum>49.00</CtrlSum>\n      <PmtTpInf>\n        <SvcLvl>\n          <Cd>SEPA</Cd>\n        </SvcLvl>\n      </PmtTpInf>\n      <ReqdExctnDt>2014-01-08</ReqdExctnDt>\n      <Dbtr>\n        <Nm>Accountholder-Name</Nm>\n      </Dbtr>\n      <DbtrAcct>\n        <Id>\n          <IBAN>NL72ABNC0123456789</IBAN>\n        </Id>\n      </DbtrAcct>\n      <DbtrAgt>\n        <FinInstnId>\n          <BIC>ABNCNL2A</BIC>\n        </FinInstnId>\n      </DbtrAgt>\n      <ChrgBr>SLEV</ChrgBr>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-1</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">13.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary1</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation1</Ustrd>\n          </RmtInf>\n      </CdtTrfTxInf>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-2</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">17.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary2</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation2</Ustrd>\n        </RmtInf>\n      </CdtTrfTxInf>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-3</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">19.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary3</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation3</Ustrd>\n        </RmtInf>\n      </CdtTrfTxInf>\n    </PmtInf>\n  </CstmrCdtTrfInitn>\n</Document>"
+                },
+                "url": {
+                    "raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{pain_payment_product}}",
+                    "protocol": "{{protocol}}",
+                    "host": [
+                        "{{url_xs2a}}"
+                    ],
+                    "path": [
+                        "v1",
+                        "bulk-payments",
+                        "{{pain_payment_product}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Initiate pain periodic payment",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "name": "Content-Type",
+                        "type": "text",
+                        "value": "multipart/form-data; boundary=--AaaBbbCcc"
+                    },
+                    {
+                        "key": "X-Request-ID",
+                        "type": "text",
+                        "value": "{{X-Request-ID}}"
+                    },
+                    {
+                        "key": "PSU-IP-Address",
+                        "type": "text",
+                        "value": "{{ip_address}}"
+                    },
+                    {
+                        "key": "PSU-ID",
+                        "type": "text",
+                        "value": "{{psu_id_none}}"
+                    }
+                ],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "xml_sct",
+                            "value": "<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\">\n\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n<MsgId>MIPI-123456789RI-123456789</MsgId> <CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> <NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n\n<InitgPty>\n\n<Id><OrgId><Othr><Id>DE10000000012</Id>\n\n<SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>\n\n</GrpHdr>\n<PmtInf>\n<PmtInfId>BIPI-123456789RI-123456789</PmtInfId> <PmtMtd>TRF</PmtMtd>\n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n\n<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> <ReqdExctnDt>2017-02-15</ReqdExctnDt>\n<Dbtr><Nm>PSU Name</Nm></Dbtr> <DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct>\n\n<ChrgBr>SLEV</ChrgBr>\n<CdtTrfTxInf>\t\t\t\t\t\n<PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId>\n<Amt><InstdAmt Ccy=\"EUR\">123</InstdAmt></Amt>\n<Cdtr><Nm>Merchant123</Nm></Cdtr>\n<CdtrAcct><Id><IBAN>DE23100120020123456789</IBAN></Id></CdtrAcct>\n<RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf>\n\n      </CdtTrfTxInf>\n    </PmtInf>\t\t\t\t\t\n</CstmrCdtTrfInitn>\n</Document>",
+                            "type": "text"
+                        },
+                        {
+                            "key": "json_standingordermanagement",
+                            "value": "{\"startDate\": \"2018-03-01\",\n \"frequency\": \"monthly\",\n \"executionRule\": \"latest\",\n \"dayOfExecution\": \"01\"\n}",
+                            "type": "text"
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{protocol}}://{{url_xs2a}}/v1/periodic-payments/{{pain_payment_product}}",
+                    "protocol": "{{protocol}}",
+                    "host": [
+                        "{{url_xs2a}}"
+                    ],
+                    "path": [
+                        "v1",
+                        "periodic-payments",
+                        "{{pain_payment_product}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Initiate pain single payment",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "id": "aba475f0-c4a4-4b02-8e0f-9c447e9f7282",
+                        "exec": [
+                            "const jsonData = pm.response.json();",
+                            "",
+                            "pm.globals.set(\"payment_id\", jsonData.paymentId);",
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "name": "Content-Type",
+                        "value": "application/xml",
+                        "type": "text"
+                    },
+                    {
+                        "key": "X-Request-ID",
+                        "value": "{{X-Request-ID}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "PSU-IP-Address",
+                        "value": "{{ip_address}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "PSU-ID",
+                        "value": "{{psu_id_none}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\"> \n<CstmrCdtTrfInitn>\n<GrpHdr> \n<MsgId>MIPI-123456789RI-123456789</MsgId> \n<CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> \n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n<InitgPty>\n<Nm>PaymentInitiator</Nm> \n<Id><OrgId><Othr><Id>DE10000000012</Id>\n<SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>\n    </GrpHdr>\n    <PmtInf>\n<PmtInfId>BIPI-123456789RI-123456789</PmtInfId> \n<PmtMtd>TRF</PmtMtd>\n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum> \n<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> \n<ReqdExctnDt>2017-02-15</ReqdExctnDt>\n<Dbtr><Nm>PSU Name</Nm></Dbtr> \n<DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct> \n<ChrgBr>SLEV</ChrgBr>\n<CdtTrfTxInf>\n<PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId> \n<Amt><InstdAmt Ccy=\"EUR\">123</InstdAmt></Amt> \n<Cdtr><Nm>Merchant123</Nm></Cdtr>\n<CdtrAcct><Id><IBAN> DE23100120020123456789</IBAN></Id></CdtrAcct>\n<RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf> \n</CdtTrfTxInf>\n    </PmtInf>\n  </CstmrCdtTrfInitn>\n</Document>\n"
+                },
+                "url": {
+                    "raw": "{{protocol}}://{{url_xs2a}}/v1/payments/{{pain_payment_product}}",
+                    "protocol": "{{protocol}}",
+                    "host": [
+                        "{{url_xs2a}}"
+                    ],
+                    "path": [
+                        "v1",
+                        "payments",
+                        "{{pain_payment_product}}"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}

@@ -73,7 +73,7 @@ public class XmlPaymentController {
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
         ResponseObject serviceResponse =
-            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aXmlPayment(paymentInitiationParameters), paymentInitiationParameters);
+            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aXmlPayment(paymentInitiationParameters, xmlPayment, jsonPeriodicData), paymentInitiationParameters);
 
         return serviceResponse.hasError()
                    ? responseMapper.created(serviceResponse)
