@@ -65,6 +65,7 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisCommonPay
         PsuIdData psuData = request.getPsuData();
 
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(psuData);
+
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(request.getPaymentId());
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = paymentAuthorisationSpi.requestAuthorisationCode(contextData, authenticationMethodId, payment, aspspConsentData);
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -90,4 +91,5 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisCommonPay
         response.setChallengeData(challengeData);
         return response;
     }
+
 }
