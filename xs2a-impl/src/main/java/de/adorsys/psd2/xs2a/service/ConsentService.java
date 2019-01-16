@@ -163,7 +163,7 @@ public class ConsentService {
     }
 
     /**
-     * Revokes account consent on PSU request
+     * Terminates account consent on PSU request
      *
      * @param consentId String representation of AccountConsent identification
      * @return VOID
@@ -186,7 +186,7 @@ public class ConsentService {
                            .build();
             }
 
-            aisConsentService.revokeConsent(consentId);
+            aisConsentService.updateConsentStatus(consentId, ConsentStatus.TERMINATED_BY_TPP);
             return ResponseObject.<Void>builder().build();
         }
 

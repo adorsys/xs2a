@@ -96,15 +96,6 @@ public class Xs2aAisConsentService {
     }
 
     /**
-     * Requests CMS to update consent status to "Revoked by PSU" state
-     *
-     * @param consentId String representation of identifier of stored consent
-     */
-    public void revokeConsent(String consentId) {
-        aisConsentService.updateConsentStatusById(consentId, ConsentStatus.REVOKED_BY_PSU);
-    }
-
-    /**
      * Requests CMS to update consent status into provided one
      *
      * @param consentId     String representation of identifier of stored consent
