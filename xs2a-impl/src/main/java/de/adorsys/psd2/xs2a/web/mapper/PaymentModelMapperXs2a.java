@@ -29,10 +29,12 @@ import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -61,7 +63,11 @@ public class PaymentModelMapperXs2a {
         }
     }
 
-    public Object mapToXs2aXmlPayment(PaymentInitiationParameters requestParameters) {
+    public Object mapToXs2aXmlPayment(PaymentInitiationParameters requestParameters, String xmlPayment, String jsonPeriodicData) {
+        if (requestParameters.getPaymentType() == PERIODIC) {
+            return buildPeriodicBinaryBodyData(xmlPayment, jsonPeriodicData);
+        }
+
         return buildBinaryBodyData(httpServletRequest);
     }
 
@@ -177,5 +183,18 @@ public class PaymentModelMapperXs2a {
         }
 
         return null;
+    }
+
+    private byte[] buildPeriodicBinaryBodyData(String xmlPart, String jsonPart) {
+        if (StringUtils.isBlank(xmlPart) || StringUtils.isBlank(jsonPart)) {
+            throw new IllegalArgumentException("Invalid body of the multipart request!");
+        }
+
+        String body = new StringBuilder()
+                          .append(xmlPart)
+                          .append("\n")
+                          .append(jsonPart)
+                          .toString();
+        return body.getBytes(Charset.forName("UTF-8"));
     }
 }

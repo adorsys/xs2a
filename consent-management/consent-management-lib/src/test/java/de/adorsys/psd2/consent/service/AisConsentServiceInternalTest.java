@@ -272,10 +272,10 @@ public class AisConsentServiceInternalTest {
 
     @NotNull
     private AspspSettings getAspspSettings() {
-        return new AspspSettings(1, false, null, null, false, null, null,
+        return new AspspSettings(1, false, false, null, null,
                                  null, false, null, null, 1, 1, false,
                                  false, false, false, false, false, 1,
-                                 null, 1, 1,  null, 1);
+                                 null, 1, 1, null, 1);
     }
 
     private AisConsent buildConsent(String externalId) {
@@ -324,10 +324,10 @@ public class AisConsentServiceInternalTest {
 
     private AisAccountConsent buildSpiAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
-            null, false,
-            null, 0,
-            null, null,
-            false, false, null, null, null);
+                                     null, false,
+                                     null, 0,
+                                     null, null,
+                                     false, false, null, null, null);
     }
 
     private AisConsent buildFinalisedConsent() {

@@ -43,16 +43,6 @@ public class BankProfileSetting {
     private boolean combinedServiceIndicator;
 
     /**
-     * List of payment products supported by ASPSP
-     */
-    private List<String> availablePaymentProducts = new ArrayList<>();
-
-    /**
-     * List of payment types supported by ASPSP
-     */
-    private List<PaymentType> availablePaymentTypes = new ArrayList<>();
-
-    /**
      * SCA Approach supported by ASPSP
      */
     private ScaApproach scaApproach;
