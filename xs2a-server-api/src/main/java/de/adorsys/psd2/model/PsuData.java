@@ -1,79 +1,99 @@
+/*
+ * Copyright 2018-2019 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotNull;
-import java.util.Objects;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * PSU Data for Update PSU Authentication.
  */
 @ApiModel(description = "PSU Data for Update PSU Authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
-    ":45.627+02:00[Europe/Berlin]")
-public class PsuData {
-    @JsonProperty("password")
-    private String password = null;
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
 
-    public PsuData password(String password) {
-        this.password = password;
-        return this;
-    }
+public class PsuData   {
+  @JsonProperty("password")
+  private String password = null;
 
-    /**
-     * Password
-     *
-     * @return password
-     **/
-    @ApiModelProperty(required = true, value = "Password")
-    @NotNull
-    public String getPassword() {
-        return password;
-    }
+  public PsuData password(String password) {
+    this.password = password;
+    return this;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  /**
+   * Password
+   * @return password
+  **/
+  @ApiModelProperty(required = true, value = "Password")
+  @NotNull
 
-    @Override
-    public boolean equals(java.lang.Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        PsuData psuData = (PsuData) o;
-        return Objects.equals(this.password, psuData.password);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(password);
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class PsuData {\n");
-        sb.append("    password: ").append(toIndentedString(password)).append("\n");
-        sb.append("}");
-        return sb.toString();
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(java.lang.Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    PsuData psuData = (PsuData) o;
+    return Objects.equals(this.password, psuData.password);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(password);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class PsuData {\n");
+    
+    sb.append("    password: ").append(toIndentedString(password)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
 }
 

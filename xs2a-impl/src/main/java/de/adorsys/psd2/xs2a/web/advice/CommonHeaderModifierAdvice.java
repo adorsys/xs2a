@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.advice;
 
-import de.adorsys.psd2.model.TppMessages;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +53,8 @@ public class CommonHeaderModifierAdvice implements ResponseBodyAdvice<Object> {
         return scaApproach;
     }
 
-    protected boolean hasError(Object body) {
-        return Optional.ofNullable(body).isPresent() && body.getClass()
-                                                            .isAssignableFrom(TppMessages.class);
+    protected boolean hasError(Object body, Class expectedClass) {
+        return Optional.ofNullable(body).isPresent() && !body.getClass()
+                                                             .isAssignableFrom(expectedClass);
     }
 }

@@ -18,9 +18,7 @@ package de.adorsys.psd2.xs2a.web.interceptor.tpp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
-import de.adorsys.psd2.model.TppMessageCategory;
-import de.adorsys.psd2.model.TppMessageGeneric;
-import de.adorsys.psd2.model.TppMessages;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
@@ -54,15 +52,12 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
         return true;
     }
 
-    private TppMessages buildErrorTppMessages() {
-        TppMessageGeneric errorMessage = new TppMessageGeneric()
-                                             .category(TppMessageCategory.ERROR)
-                                             .code(MessageErrorCode.CERTIFICATE_BLOCKED)
-                                             .text(STOP_LIST_ERROR_MESSAGE);
-
-        TppMessages errorMessages = new TppMessages();
-        errorMessages.add(errorMessage);
-
-        return errorMessages;
+    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
+    private TppMessage401PIS buildErrorTppMessages() {
+        TppMessage401PIS tppMessage = new TppMessage401PIS();
+        tppMessage.setCategory(TppMessageCategory.ERROR);
+        tppMessage.setCode(MessageCode401PIS.CERTIFICATE_BLOCKED);
+        tppMessage.setText(STOP_LIST_ERROR_MESSAGE);
+        return tppMessage;
     }
 }
