@@ -142,7 +142,7 @@ and `multipart/form-data; boundary=AaaBbbCcc` for periodic payments with xml bod
 The body of the pain.001 xml payment is stored as a byte array in the consent management system.
 
 ## Implementation of specification 1.3 according to the yaml file from Berlin Group.
-Now XS2A interface are updated according to the requirements of specification 1.3 from Berlin Group. No changed on SPI level were performed, only controllers and related classes were changed.
+Now XS2A interface are updated according to the requirements of specification 1.3 from Berlin Group. No changes on SPI level were performed, only controllers and related classes were changed.
 For successful migration, we followed next steps: 
 
 1. Open https://github.com/swagger-api/swagger-codegen and clone the repository.
