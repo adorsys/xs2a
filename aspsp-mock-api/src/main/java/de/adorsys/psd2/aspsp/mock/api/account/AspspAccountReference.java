@@ -16,16 +16,16 @@
 
 package de.adorsys.psd2.aspsp.mock.api.account;
 
-import lombok.AllArgsConstructor;
 import lombok.Setter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 
+import java.beans.ConstructorProperties;
 import java.util.Currency;
 
 @Value
-@AllArgsConstructor
 public class AspspAccountReference {
     @Id
     @Setter
@@ -42,9 +42,21 @@ public class AspspAccountReference {
      * Creates AspspAccountReference by default
      *
      * @param aspspAccountId Bank specific account ID
-     * @param currency Currency according codes following ISO 4217
+     * @param currency       Currency according codes following ISO 4217
      */
     public AspspAccountReference(String aspspAccountId, Currency currency) {
         this(aspspAccountId, null, null, null, null, null, currency);
+    }
+
+    @PersistenceConstructor
+    @ConstructorProperties({"accountId", "iban", "bban", "pan", "maskedPan", "msisdn", "currency"})
+    public AspspAccountReference(String accountId, String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
+        this.accountId = accountId;
+        this.iban = iban;
+        this.bban = bban;
+        this.pan = pan;
+        this.maskedPan = maskedPan;
+        this.msisdn = msisdn;
+        this.currency = currency;
     }
 }
