@@ -110,10 +110,12 @@ should be filled:
   
 Other payment products can be added for every payment type.
 
-## Add specific bank account identifier in all types of payments
+## Add specific bank account identifier in all types of payments and accounts
 Now we get `aspspAccountId` from ASPSP in response when payment is created. 
 And add this `aspspAccountId` to new commonPayment when we save payment to CMS.
 Also we can export payment list by `aspspAccountId, tppAuthorisationNumber, createDateFrom, createDateTo and instanceId` from CMS.  
+
+Also we store `aspspAccountId` in account details in consents.
 
 ## One active authorisation per consent for one PSU
 When PSU creates new authorisation for consent, all previous authorisations, created by this PSU for the same consent, will be failed and expired.
@@ -139,3 +141,27 @@ Now TPP can initiate payments with pain.001 XML message body. Content type of th
 and `multipart/form-data; boundary=AaaBbbCcc` for periodic payments with xml body part named `xml_sct` and json body part named `json_standingorderType`. 
 The body of the pain.001 xml payment is stored as a byte array in the consent management system.
 
+## Implementation of specification 1.3 according to the yaml file from Berlin Group.
+Now XS2A interface are updated according to the requirements of specification 1.3 from Berlin Group. No changed on SPI level were performed, only controllers and related classes were changed.
+For successful migration, we followed next steps: 
+
+1. Open https://github.com/swagger-api/swagger-codegen and clone the repository.
+2. Build project with `mvn clean install`.
+3. Copy file with a new version of PSD2 API `psd2-api-1.3.yaml` to directory `swagger-codegen-cli/target`.
+4. Add the following file `config.json` to directory `swagger-codegen-cli/target`: 
+```{
+ “title”: “XS2A server api”,
+ “basePackage”: “de.adorsys.psd2",
+ “configPackage”: “de.adorsys.psd2",
+ “modelPackage”: “de.adorsys.psd2.model”,
+ “apiPackage”: “de.adorsys.psd2.api”,
+ “interfaceOnly”: true,
+ “dateLibrary” : “java8”,
+ “java8": true,
+ “implicitHeaders” : false,
+ “delegatePattern” : true
+}
+```
+
+5. Run in command line: `java -jar swagger-codegen-cli.jar generate -i psd2-api-1.3.yaml -c config.json -l spring -o psd2-api-spring --template-engine mustache`.
+6. You will get generated classes and interfaces in the folder `psd2-api-spring`.
