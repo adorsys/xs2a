@@ -130,3 +130,6 @@ Payment cancellation redirect url and related authorisation now have an expirati
 We give redirect id (= authorisation id) in redirect link now, and to get payment information, online banking should call 
  **GET /psu-api/v1/pis/consent/redirects/cancellation/{redirect-id}** endpoint of consent management system.
 If redirect url is not expired, online banking gets payment, authorisation id, not ok tpp redirect url and ok tpp redirect url (for now these urls are null temporary) in response, otherwise http code 408 Request Timeout is sent.
+
+## Bugfix: Deleted consent changes its status to terminatedByTpp
+When TPP sends request to delete consent, status of consent will be terminatedByTpp instead of revokedByPsu.
