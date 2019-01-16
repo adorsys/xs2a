@@ -47,7 +47,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,8 +55,8 @@ public class PisScaAuthenticatedStageTest {
     private static final String AUTHENTICATION_METHOD_ID = "sms";
     private static final String AUTHENTICATION_METHOD_ID_UNKNOWN = "unknown";
     private static final String PAYMENT_ID = "123456789";
-    private final AspspConsentData aspspConsentData = new AspspConsentData(TEST_ASPSP_DATA.getBytes(), "");
-    private final SpiContextData contextData = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo());
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(TEST_ASPSP_DATA.getBytes(), "");
+    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo());
 
     @InjectMocks
     private PisScaAuthenticatedStage pisScaAuthenticatedStage;
@@ -74,9 +73,8 @@ public class PisScaAuthenticatedStageTest {
 
     @Before
     public void setUp() {
-        when(pisAspspDataService.getAspspConsentData(PAYMENT_ID)).thenReturn(aspspConsentData);
-        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(contextData);
-        doNothing().when(pisAspspDataService).updateAspspConsentData(any(AspspConsentData.class));
+        when(pisAspspDataService.getAspspConsentData(PAYMENT_ID)).thenReturn(ASPSP_CONSENT_DATA);
+        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
     }
 
     @Test
@@ -86,7 +84,7 @@ public class PisScaAuthenticatedStageTest {
         ChallengeData challengeData = new ChallengeData(null, "some data", "some link", 100, null, "info");
         spiAuthorizationCodeResult.setChallengeData(challengeData);
 
-        when(paymentAuthorisationSpi.requestAuthorisationCode(contextData, AUTHENTICATION_METHOD_ID, buildSpiPaymentInfo(PAYMENT_ID), aspspConsentData))
+        when(paymentAuthorisationSpi.requestAuthorisationCode(CONTEXT_DATA, AUTHENTICATION_METHOD_ID, buildSpiPaymentInfo(PAYMENT_ID), ASPSP_CONSENT_DATA))
             .thenReturn(buildSpiResponse(spiAuthorizationCodeResult));
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthenticatedStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
@@ -100,7 +98,7 @@ public class PisScaAuthenticatedStageTest {
         SpiAuthorizationCodeResult spiAuthorizationCodeResultScaMethodUnknown = new SpiAuthorizationCodeResult();
         spiAuthorizationCodeResultScaMethodUnknown.setChallengeData(new ChallengeData());
 
-        when(paymentAuthorisationSpi.requestAuthorisationCode(contextData, AUTHENTICATION_METHOD_ID_UNKNOWN, buildSpiPaymentInfo(PAYMENT_ID), aspspConsentData))
+        when(paymentAuthorisationSpi.requestAuthorisationCode(CONTEXT_DATA, AUTHENTICATION_METHOD_ID_UNKNOWN, buildSpiPaymentInfo(PAYMENT_ID), ASPSP_CONSENT_DATA))
             .thenReturn(buildSpiResponse(spiAuthorizationCodeResultScaMethodUnknown));
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthenticatedStage.apply(buildRequest(AUTHENTICATION_METHOD_ID_UNKNOWN, PAYMENT_ID), buildResponse(PAYMENT_ID));
@@ -111,7 +109,7 @@ public class PisScaAuthenticatedStageTest {
 
     private SpiResponse<SpiAuthorizationCodeResult> buildSpiResponse(SpiAuthorizationCodeResult spiAuthorizationCodeResult) {
         return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                   .aspspConsentData(aspspConsentData)
+                   .aspspConsentData(ASPSP_CONSENT_DATA)
                    .payload(spiAuthorizationCodeResult)
                    .success();
     }
