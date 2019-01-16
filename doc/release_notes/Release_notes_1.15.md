@@ -133,6 +133,3 @@ If redirect url is not expired, online banking gets payment, authorisation id, n
 
 ## Bugfix: Deleted consent changes its status to terminatedByTpp
 When TPP sends request to delete consent, status of consent will be terminatedByTpp instead of revokedByPsu.
-
-## Bugfix: Correct response during sending not existing sca method
-Now when PSU sends unknown sca method during the selection of authorisation method, SCA_METHOD_UNKNOWN message code and appropriate description will be returned.

@@ -67,7 +67,7 @@ interface AuthorisationSpi<T> {
      * @param businessObject         generic consent/payment object
      * @param aspspConsentData       Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                               May be null if consent does not contain such data, or request isn't done from a workflow with a consent
-     * @return Return a positive or negative response as part of SpiResponse
+     * @return Return a positive or negative response as part of SpiResponse. If sca method is unknown, then empty SpiAuthorizationCodeResult should be returned
      */
     @NotNull
     SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData);
