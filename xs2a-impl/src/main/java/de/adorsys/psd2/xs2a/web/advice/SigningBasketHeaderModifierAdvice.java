@@ -47,7 +47,7 @@ public class SigningBasketHeaderModifierAdvice extends CommonHeaderModifierAdvic
 
         if ("_createSigningBasket".equals(methodName)) {
             response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
-            if (!hasError(body)) {
+            if (!hasError(body, SigningBasketResponse201.class)) {
                 SigningBasketResponse201 signingBasketResponse = (SigningBasketResponse201) body;
                 response.getHeaders().add("Location", Optional.ofNullable(signingBasketResponse.getLinks())
                                                           .map(LinksSigningBasket::getSelf)

@@ -138,7 +138,7 @@ public class PaymentControllerTest {
         ResponseEntity response = paymentController.getPaymentInformation(SINGLE.getValue(), CORRECT_PAYMENT_ID,
                                                                           null, null, null, null, null, null,
                                                                           null, null, null, null, null,
-                                                                          null, null, null);
+                                                                          null, null, null, null);
 
         //Then
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -155,7 +155,7 @@ public class PaymentControllerTest {
         ResponseEntity response = paymentController.getPaymentInformation(SINGLE.getValue(), WRONG_PAYMENT_ID,
                                                                           null, null, null, null, null, null,
                                                                           null, null, null, null, null,
-                                                                          null, null, null);
+                                                                          null, null, null, null);
 
         //Then
         assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -188,7 +188,7 @@ public class PaymentControllerTest {
                 PaymentType.SINGLE.getValue(), CORRECT_PAYMENT_ID, null, null, null,
                 null, null, null, null, null,
                 null, null, null, null, null,
-                null);
+                null, null);
 
         //Then:
         HttpStatus actualHttpStatus = actualResponse.getStatusCode();
@@ -216,7 +216,7 @@ public class PaymentControllerTest {
                 PaymentType.SINGLE.getValue(), WRONG_PAYMENT_ID, null, null, null,
                 null, null, null, null, null,
                 null, null, null, null, null,
-                null);
+                null, null);
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedHttpStatus);
@@ -230,14 +230,14 @@ public class PaymentControllerTest {
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
-        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.CANC), HttpStatus.OK);
+        ResponseEntity<PaymentInitiationCancelResponse204202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.CANC), HttpStatus.OK);
 
         // When
-        ResponseEntity<PaymentInitiationCancelResponse200202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse200202>) paymentController.cancelPayment(paymentType.getValue(),
+        ResponseEntity<PaymentInitiationCancelResponse204202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse204202>) paymentController.cancelPayment(paymentType.getValue(),
                                                                                                                                                                      CORRECT_PAYMENT_ID, null, null, null,
                                                                                                                                                                      null, null, null, null, null,
                                                                                                                                                                      null, null,
-                                                                                                                                                                     null, null, null, null);
+                                                                                                                                                                     null, null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -252,14 +252,14 @@ public class PaymentControllerTest {
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
-        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED);
+        ResponseEntity<PaymentInitiationCancelResponse204202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED);
 
         // When
-        ResponseEntity<PaymentInitiationCancelResponse200202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse200202>) paymentController.cancelPayment(paymentType.getValue(),
+        ResponseEntity<PaymentInitiationCancelResponse204202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse204202>) paymentController.cancelPayment(paymentType.getValue(),
                                                                                                                                                                      CORRECT_PAYMENT_ID, null, null, null,
                                                                                                                                                                      null, null, null, null, null,
                                                                                                                                                                      null, null,
-                                                                                                                                                                     null, null, null, null);
+                                                                                                                                                                     null, null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -274,13 +274,13 @@ public class PaymentControllerTest {
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
-        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = ResponseEntity.badRequest().build();
+        ResponseEntity<PaymentInitiationCancelResponse204202> expectedResult = ResponseEntity.badRequest().build();
 
         ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(),
                                                                       CORRECT_PAYMENT_ID, null, null, null,
                                                                       null, null, null, null, null,
                                                                       null, null,
-                                                                      null, null, null, null);
+                                                                      null, null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -294,13 +294,13 @@ public class PaymentControllerTest {
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
-        ResponseEntity<PaymentInitiationCancelResponse200202> expectedResult = ResponseEntity.badRequest().build();
+        ResponseEntity<PaymentInitiationCancelResponse204202> expectedResult = ResponseEntity.badRequest().build();
         // When
         ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(),
                                                                       CORRECT_PAYMENT_ID, null, null, null,
                                                                       null, null, null, null, null,
                                                                       null, null,
-                                                                      null, null, null, null);
+                                                                      null, null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -311,7 +311,7 @@ public class PaymentControllerTest {
         ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
                                                                                      .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
                                                                                      .build();
-        when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(CORRECT_PAYMENT_ID, AUTHORISATION_ID))
+        when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(any(String.class), any(String.class)))
             .thenReturn(responseObject);
         doReturn(ResponseEntity.ok(buildScaStatusResponse(ScaStatus.RECEIVED)))
             .when(responseMapper).ok(eq(responseObject), any());
@@ -321,13 +321,13 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity actual = paymentController.getPaymentInitiationScaStatus(SINGLE.getValue(), CORRECT_PAYMENT_ID,
-                                                                                AUTHORISATION_ID, REQUEST_ID, null,
+                                                                                AUTHORISATION_ID, AUTHORISATION_ID, REQUEST_ID,
                                                                                 null, null,
                                                                                 null, null,
                                                                                 null, null,
                                                                                 null, null,
                                                                                 null, null,
-                                                                                null, null);
+                                                                                null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
@@ -342,13 +342,13 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity actual = paymentController.getPaymentInitiationScaStatus(SINGLE.getValue(), WRONG_PAYMENT_ID,
-                                                                                AUTHORISATION_ID, REQUEST_ID, null,
+                                                                                AUTHORISATION_ID, AUTHORISATION_ID, REQUEST_ID,
                                                                                 null, null,
                                                                                 null, null,
                                                                                 null, null,
                                                                                 null, null,
                                                                                 null, null,
-                                                                                null, null);
+                                                                                null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -359,7 +359,7 @@ public class PaymentControllerTest {
         ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
                                                                                      .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
                                                                                      .build();
-        when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
+        when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(any(String.class), any(String.class)))
             .thenReturn(responseObject);
         doReturn(ResponseEntity.ok(buildScaStatusResponse(ScaStatus.RECEIVED)))
             .when(responseMapper).ok(eq(responseObject), any());
@@ -369,13 +369,13 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity actual = paymentController.getPaymentCancellationScaStatus(SINGLE.getValue(), CORRECT_PAYMENT_ID,
-                                                                                  CANCELLATION_AUTHORISATION_ID, REQUEST_ID, null,
+                                                                                  CANCELLATION_AUTHORISATION_ID, AUTHORISATION_ID, REQUEST_ID,
                                                                                   null, null,
                                                                                   null, null,
                                                                                   null, null,
                                                                                   null, null,
                                                                                   null, null,
-                                                                                  null, null);
+                                                                                  null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
@@ -390,13 +390,13 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity actual = paymentController.getPaymentCancellationScaStatus(SINGLE.getValue(), WRONG_PAYMENT_ID,
-                                                                                  CANCELLATION_AUTHORISATION_ID, REQUEST_ID, null,
+                                                                                  CANCELLATION_AUTHORISATION_ID, AUTHORISATION_ID, REQUEST_ID,
                                                                                   null, null,
                                                                                   null, null,
                                                                                   null, null,
                                                                                   null, null,
                                                                                   null, null,
-                                                                                  null, null);
+                                                                                  null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -408,8 +408,8 @@ public class PaymentControllerTest {
         return ResponseObject.<CancelPaymentResponse>builder().body(response).build();
     }
 
-    private PaymentInitiationCancelResponse200202 getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus transactionStatus) {
-        PaymentInitiationCancelResponse200202 response = new PaymentInitiationCancelResponse200202();
+    private PaymentInitiationCancelResponse204202 getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus transactionStatus) {
+        PaymentInitiationCancelResponse204202 response = new PaymentInitiationCancelResponse204202();
         response.setTransactionStatus(transactionStatus);
         return response;
     }

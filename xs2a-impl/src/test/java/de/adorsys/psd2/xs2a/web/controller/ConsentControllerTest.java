@@ -99,7 +99,7 @@ public class ConsentControllerTest {
         ResponseEntity responseEntity = consentController.createConsent(null, consents,
                                                                         null, null, null, CORRECT_PSU_ID, null, null,
                                                                         null, null, null, null,
-                                                                        null, null, null, null, null,
+                                                                        false, null, null, null, null,
                                                                         null, null, null, null, null,
                                                                         null);
         ConsentsResponse201 resp = (ConsentsResponse201) responseEntity.getBody();
@@ -119,7 +119,7 @@ public class ConsentControllerTest {
         ResponseEntity responseEntity = consentController.createConsent(null, consents,
                                                                         null, null, null, WRONG_PSU_ID, null, null,
                                                                         null, null, null, null,
-                                                                        null, null, null, null, null,
+                                                                        false, null, null, null, null,
                                                                         null, null, null, null, null,
                                                                         null);
         //Then:

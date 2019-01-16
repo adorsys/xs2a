@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.model.TppMessages;
+import de.adorsys.psd2.model.TppMessage2XX;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
@@ -29,6 +29,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -70,7 +71,8 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
                    .orElse(MessageErrorCode.FORMAT_ERROR);
     }
 
-    private TppMessages getTppMessages(MessageErrorCode errorCode) {
+    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
+    private List<TppMessage2XX> getTppMessages(MessageErrorCode errorCode) {
         return messageErrorMapper.mapToTppMessages(errorCode);
     }
 }
