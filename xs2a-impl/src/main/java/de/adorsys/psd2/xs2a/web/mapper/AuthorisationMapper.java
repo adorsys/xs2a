@@ -48,7 +48,7 @@ public class AuthorisationMapper {
                        boolean redirectApproachUsed = aspspProfileService.getScaApproach() == ScaApproach.REDIRECT;
                        String link = redirectApproachUsed
                                          ? redirectLinkBuilder.buildConsentScaRedirectLink(csar.getConsentId(), csar.getAuthorizationId())
-                                         : linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null))
+                                         : linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(null, csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null))
                                                .toString();
 
                        return new StartScaprocessResponse()

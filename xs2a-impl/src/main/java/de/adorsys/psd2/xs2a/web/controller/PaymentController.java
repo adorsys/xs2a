@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.PaymentApi;
-import de.adorsys.psd2.model.PaymentInitiationCancelResponse200202;
+import de.adorsys.psd2.model.PaymentInitiationCancelResponse204202;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -59,26 +59,30 @@ public class PaymentController implements PaymentApi {
     private final PaymentCancellationAuthorisationService paymentCancellationAuthorisationService;
     private final AuthorisationMapper authorisationMapper;
 
+
     @Override
-    public ResponseEntity getPaymentInitiationStatus(String paymentService, String paymentId, UUID xRequestID, String digest,
-                                                     String signature, byte[] tpPSignatureCertificate, String psUIPAddress,
-                                                     Object psUIPPort, String psUAccept, String psUAcceptCharset,
-                                                     String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
+    public ResponseEntity getPaymentInitiationStatus(String paymentService, String paymentProduct,
+                                                     String paymentId, UUID xRequestID, String digest,
+                                                     String signature, byte[] tpPSignatureCertificate,
+                                                     String psUIPAddress, String psUIPPort, String psUAccept,
+                                                     String psUAcceptCharset, String psUAcceptEncoding,
+                                                     String psUAcceptLanguage, String psUUserAgent,
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+
         ResponseObject<TransactionStatus> response = PaymentType.getByValue(paymentService)
-                                                         .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId))
-                                                         .orElseGet(ResponseObject.<TransactionStatus>builder()
-                                                                        .fail(new MessageError(FORMAT_ERROR))::build);
+                                                                                       .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId))
+                                                                                       .orElseGet(ResponseObject.<TransactionStatus>builder()
+                                                                                                      .fail(new MessageError(FORMAT_ERROR))::build);
 
         return responseMapper.ok(response, PaymentModelMapperPsd2::mapToStatusResponse12);
     }
 
     @Override
-    public ResponseEntity getPaymentInformation(String paymentService, String paymentId, UUID xRequestID, String digest,
-                                                String signature, byte[] tpPSignatureCertificate, String psUIPAddress,
-                                                Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
-                                                String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
-                                                UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity getPaymentInformation(String paymentService, String paymentProduct, String paymentId, UUID xRequestID, String digest,
+                                                String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort,
+                                                String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
+                                                String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+
         ResponseObject response = PaymentType.getByValue(paymentService)
                                       .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentId))
                                       .orElseGet(ResponseObject.builder()
@@ -91,15 +95,16 @@ public class PaymentController implements PaymentApi {
                                                                                                                       "sepa-credit-transfers")).build());
     }
 
+    //Method for JSON format payments
     @Override
-    public ResponseEntity initiatePayment(Object body, String paymentService, String paymentProduct, UUID xRequestID,
-                                          String psUIPAddress, String digest, String signature, byte[] tpPSignatureCertificate,
-                                          String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType,
-                                          String consentID, Boolean tpPRedirectPreferred, String tpPRedirectURI,
-                                          String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
-                                          Object psUIPPort, String psUAccept, String psUAcceptCharset,
-                                          String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
-                                          String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity initiatePayment(Object body, UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct,
+                                          String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType,
+                                          String psUCorporateID, String psUCorporateIDType, String consentID, String tpPRedirectPreferred,
+                                          String tpPRedirectURI, String tpPNokRedirectURI, boolean tpPExplicitAuthorisationPreferred,
+                                          String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
+                                          String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
+                                          String psUGeoLocation) {
+
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
         ResponseObject serviceResponse =
@@ -113,8 +118,35 @@ public class PaymentController implements PaymentApi {
                                                 .build());
     }
 
+    //Method for pain.001 payments
     @Override
-    public ResponseEntity cancelPayment(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity<Object> initiatePayment(UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct,
+                                                  String xmlSct, String jsonStandingorderType, String digest, String signature,
+                                                  byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID,
+                                                  String psUCorporateIDType, String consentID, String tpPRedirectPreferred, String tpPRedirectURI,
+                                                  String tpPNokRedirectURI, boolean tpPExplicitAuthorisationPreferred, String psUIPPort, String psUAccept,
+                                                  String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
+                                                  String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
+        ResponseObject serviceResponse =
+            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aXmlPayment(paymentInitiationParameters, xmlSct, jsonStandingorderType), paymentInitiationParameters);
+
+        return serviceResponse.hasError()
+                   ? responseMapper.created(serviceResponse)
+                   : responseMapper.created(ResponseObject
+                                                .builder()
+                                                .body(paymentModelMapperPsd2.mapToPaymentInitiationResponse12(serviceResponse.getBody()))
+                                                .build());
+    }
+
+    @Override
+    public ResponseEntity cancelPayment(String paymentService, String paymentProduct, String paymentId,
+                                        UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate,
+                                        String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset,
+                                        String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
+                                        String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+
         ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
                                                                     .map(type -> xs2aPaymentService.cancelPayment(type, paymentId))
                                                                     .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
@@ -125,7 +157,7 @@ public class PaymentController implements PaymentApi {
         }
 
         CancelPaymentResponse cancelPayment = serviceResponse.getBody();
-        PaymentInitiationCancelResponse200202 response = paymentModelMapperPsd2.mapToPaymentInitiationCancelResponse(cancelPayment);
+        PaymentInitiationCancelResponse204202 response = paymentModelMapperPsd2.mapToPaymentInitiationCancelResponse(cancelPayment);
 
         return cancelPayment.isStartAuthorisationRequired()
                    ? responseMapper.accepted(ResponseObject.builder().body(response).build())
@@ -133,48 +165,99 @@ public class PaymentController implements PaymentApi {
     }
 
     @Override
-    public ResponseEntity getPaymentCancellationScaStatus(String paymentService, String paymentId, String cancellationId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity getPaymentCancellationScaStatus(String paymentService, String paymentProduct, String paymentId,
+                                                          String cancellationId, UUID xRequestID, String digest, String signature,
+                                                          byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort,
+                                                          String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
+                                                          String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
+                                                          UUID psUDeviceID, String psUGeoLocation) {
+
         return responseMapper.ok(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(paymentId, cancellationId), authorisationMapper::mapToScaStatusResponse);
     }
 
     @Override
-    public ResponseEntity getPaymentInitiationAuthorisation(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity getPaymentInitiationAuthorisation(String paymentService, String paymentProduct, String paymentId, UUID xRequestID, String digest,
+                                                            String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort,
+                                                            String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
+                                                            String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+
         return responseMapper.ok(paymentAuthorisationService.getPaymentInitiationAuthorisations(paymentId), consentModelMapper::mapToAuthorisations);
     }
 
     @Override
-    public ResponseEntity getPaymentInitiationCancellationAuthorisationInformation(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity getPaymentInitiationCancellationAuthorisationInformation(String paymentService, String paymentProduct, String paymentId,
+                                                                                   UUID xRequestID, String digest, String signature,
+                                                                                   byte[] tpPSignatureCertificate, String psUIPAddress,
+                                                                                   String psUIPPort, String psUAccept, String psUAcceptCharset,
+                                                                                   String psUAcceptEncoding, String psUAcceptLanguage,
+                                                                                   String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
+                                                                                   String psUGeoLocation) {
+
         //Todo map response to CancellationList, when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/402
         return responseMapper.ok(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(paymentId));
     }
 
     @Override
-    public ResponseEntity getPaymentInitiationScaStatus(String paymentService, String paymentId, String authorisationId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity getPaymentInitiationScaStatus(String paymentService, String paymentProduct, String paymentId, String authorisationId,
+                                                        UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate,
+                                                        String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset,
+                                                        String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
+                                                        String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+
         return responseMapper.ok(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(paymentId, authorisationId), authorisationMapper::mapToScaStatusResponse);
     }
 
     @Override
-    public ResponseEntity startPaymentAuthorisation(String paymentService, String paymentId, UUID xRequestID, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity startPaymentAuthorisation(String paymentService, String paymentProduct, String paymentId,
+                                                    UUID xRequestID, String PSU_ID, String psUIDType, String psUCorporateID,
+                                                    String psUCorporateIDType, String digest, String signature,
+                                                    byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort,
+                                                    String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
+                                                    String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
+                                                    UUID psUDeviceID, String psUGeoLocation) {
+
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
         return responseMapper.created(paymentAuthorisationService.createPisAuthorization(paymentId, PaymentType.getByValue(paymentService).get(), psuData), consentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override
-    public ResponseEntity startPaymentInitiationCancellationAuthorisation(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity startPaymentInitiationCancellationAuthorisation(String paymentService, String paymentProduct,
+                                                                                                   String paymentId, UUID xRequestID, String digest,
+                                                                                                   String signature, byte[] tpPSignatureCertificate,
+                                                                                                   String PSU_ID, String psUIDType, String psUCorporateID,
+                                                                                                   String psUCorporateIDType, String psUIPAddress,
+                                                                                                   String psUIPPort, String psUAccept, String psUAcceptCharset,
+                                                                                                   String psUAcceptEncoding, String psUAcceptLanguage,
+                                                                                                   String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
+                                                                                                   String psUGeoLocation) {
+
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         return responseMapper.created(paymentCancellationAuthorisationService.createPisCancellationAuthorization(paymentId, psuData, PaymentType.getByValue(paymentService).get()), consentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override
-    public ResponseEntity updatePaymentCancellationPsuData(String paymentService, String paymentId, String cancellationId, UUID xRequestID, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity updatePaymentCancellationPsuData(UUID xRequestID, String paymentService, String paymentProduct, String paymentId,
+                                                                   String cancellationId, Object body, String digest, String signature,
+                                                                   byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType,
+                                                                   String psUCorporateID, String psUCorporateIDType, String psUIPAddress,
+                                                                   String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
+                                                                   String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
+                                                                   String psUGeoLocation) {
+
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> response = paymentCancellationAuthorisationService.updatePisCancellationPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, cancellationId, paymentService, (Map) body));
         return responseMapper.ok(response, consentModelMapper::mapToUpdatePsuAuthenticationResponse);
     }
 
     @Override
-    public ResponseEntity updatePaymentPsuData(String paymentService, String paymentId, String authorisationId, UUID xRequestID, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity updatePaymentPsuData(UUID xRequestID, String paymentService, String paymentProduct, String paymentId,
+                                                       String authorisationId, Object body, String digest, String signature, byte[] tpPSignatureCertificate,
+                                                       String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType,
+                                                       String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset,
+                                                       String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
+                                                       UUID psUDeviceID, String psUGeoLocation) {
+
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         return responseMapper.ok(paymentAuthorisationService.updatePisCommonPaymentPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, paymentService, (Map) body)), consentModelMapper::mapToUpdatePsuAuthenticationResponse);
     }

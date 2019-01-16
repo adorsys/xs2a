@@ -161,7 +161,7 @@ public class AccountModelMapperTest {
         AccountReference expectedCreditorAccount = transactions.getCreditorAccount();
         assertNotNull(expectedCreditorAccount);
 
-        AccountReferenceIban actualCreditorAccount = (AccountReferenceIban) transactionDetails.getCreditorAccount();
+        de.adorsys.psd2.model.AccountReference actualCreditorAccount =  transactionDetails.getCreditorAccount();
         assertNotNull(actualCreditorAccount);
 
         assertEquals(expectedCreditorAccount.getIban(), actualCreditorAccount.getIban());
@@ -172,7 +172,7 @@ public class AccountModelMapperTest {
         AccountReference expectedDebtorAccount = transactions.getDebtorAccount();
         assertNotNull(expectedDebtorAccount);
 
-        AccountReferenceIban actualDebtorAccount = (AccountReferenceIban) transactionDetails.getDebtorAccount();
+        de.adorsys.psd2.model.AccountReference actualDebtorAccount = transactionDetails.getDebtorAccount();
         assertNotNull(actualDebtorAccount);
 
         assertEquals(expectedDebtorAccount.getIban(), actualDebtorAccount.getIban());
@@ -295,10 +295,9 @@ public class AccountModelMapperTest {
 
     private Xs2aExchangeRate createExchangeRate() {
         Xs2aExchangeRate exchangeRate = new Xs2aExchangeRate();
-        exchangeRate.setCurrencyFrom(Currency.getInstance("EUR"));
-        exchangeRate.setRateFrom("Rate from");
-        exchangeRate.setCurrencyTo(Currency.getInstance("USD"));
-        exchangeRate.setRateTo("Rate to");
+        exchangeRate.setUnitCurrency("unit currency");
+        exchangeRate.setRate("rate");
+        exchangeRate.setSourceCurrency("source currency");
         exchangeRate.setRateDate(LocalDate.of(2017, 1, 1));
         exchangeRate.setRateContract("Rate contract");
         return exchangeRate;

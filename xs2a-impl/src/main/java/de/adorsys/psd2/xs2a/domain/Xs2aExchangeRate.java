@@ -20,35 +20,27 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Currency;
 
 @Data
 @ApiModel(description = "Exchange Rate ", value = "ExchangeRate")
 public class Xs2aExchangeRate {
 
-    @ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
-    @NotNull
-    private Currency currencyFrom;
+    @ApiModelProperty(value = "sourceCurrency")
+    private String sourceCurrency;
 
-    @ApiModelProperty(value = "Rate from", required = true, example = "zzz")
-    @NotNull
-    private String rateFrom;
+    @ApiModelProperty(value = "rate")
+    private String rate;
 
-    @ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
-    @NotNull
-    private Currency currencyTo;
+    @ApiModelProperty(value = "unitCurrency")
+    private String unitCurrency;
 
-    @ApiModelProperty(value = "Rate to", required = true, example = "zzz")
-    @NotNull
-    private String rateTo;
+    @ApiModelProperty(value = "targetCurrency")
+    private String targetCurrency;
 
-    @ApiModelProperty(value = "Rate date", required = true, example = "2017-01-01")
-    @NotNull
+    @ApiModelProperty(value = "rateDate")
     private LocalDate rateDate;
 
-    @ApiModelProperty(value = "Rate contract", example = "zzz")
-    @NotNull
+    @ApiModelProperty(value = "rateContract")
     private String rateContract;
 }

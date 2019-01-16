@@ -33,12 +33,13 @@ public class SpiToXs2aExchangeRateMapper {
         return Optional.ofNullable(spiExchangeRate)
                    .map(e -> {
                        Xs2aExchangeRate exchangeRate = new Xs2aExchangeRate();
-                       exchangeRate.setCurrencyFrom(e.getCurrencyFrom());
-                       exchangeRate.setRateFrom(e.getRateFrom());
-                       exchangeRate.setCurrencyTo(e.getCurrencyTo());
-                       exchangeRate.setRateTo(e.getRateTo());
-                       exchangeRate.setRateDate(e.getRateDate());
-                       exchangeRate.setRateContract(e.getRateContract());
+                       exchangeRate.setRateContract(spiExchangeRate.getRateContract());
+                       exchangeRate.setUnitCurrency(spiExchangeRate.getUnitCurrency());
+                       exchangeRate.setRate(spiExchangeRate.getRate());
+                       exchangeRate.setSourceCurrency(spiExchangeRate.getSourceCurrency());
+                       exchangeRate.setTargetCurrency(spiExchangeRate.getTargetCurrency());
+                       exchangeRate.setRateDate(spiExchangeRate.getRateDate());
+
                        return exchangeRate;
                    })
                    .orElse(null);

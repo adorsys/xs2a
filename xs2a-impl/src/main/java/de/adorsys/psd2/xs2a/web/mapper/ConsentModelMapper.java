@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 public class ConsentModelMapper {
     private final CoreObjectsMapper coreObjectsMapper;
     private final ObjectMapper objectMapper;
+    public final AccountModelMapper accountModelMapper;
 
     public CreateConsentReq mapToCreateConsentReq(Consents consent) {
         return Optional.ofNullable(consent)
@@ -158,9 +160,9 @@ public class ConsentModelMapper {
         return Optional.ofNullable(accountAccess)
                    .map(access -> {
                            AccountAccess mappedAccountAccess = new AccountAccess();
-                           mappedAccountAccess.setAccounts(new ArrayList<>(access.getAccounts()));
-                           mappedAccountAccess.setBalances(new ArrayList<>(access.getBalances()));
-                           mappedAccountAccess.setTransactions(new ArrayList<>(access.getTransactions()));
+                           mappedAccountAccess.setAccounts(accountModelMapper.mapToAccountReferences(access.getAccounts()));
+                           mappedAccountAccess.setBalances(accountModelMapper.mapToAccountReferences(access.getBalances()));
+                           mappedAccountAccess.setTransactions(accountModelMapper.mapToAccountReferences(access.getTransactions()));
                            mappedAccountAccess.setAvailableAccounts(
                                AccountAccess.AvailableAccountsEnum.fromValue(
                                    Optional.ofNullable(access.getAvailableAccounts())
@@ -194,7 +196,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private List<AccountReference> mapToXs2aAccountReferences(List<Object> references) {
+    private List<AccountReference> mapToXs2aAccountReferences(List<de.adorsys.psd2.model.AccountReference> references) {
         return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
                                    .map(this::mapToAccountReference)
