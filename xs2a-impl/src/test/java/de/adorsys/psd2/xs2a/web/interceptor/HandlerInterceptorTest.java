@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.interceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
+import de.adorsys.psd2.xs2a.web.controller.ConsentController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -26,15 +27,16 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,6 +50,9 @@ public class HandlerInterceptorTest {
     private ObjectMapper objectMapper;
     @Mock
     private MessageErrorMapper messageErrorMapper;
+
+    @InjectMocks
+    private ConsentController consentController;
 
     @Test
     public void preHandle() throws Exception {
@@ -139,15 +144,20 @@ public class HandlerInterceptorTest {
     }
 
     private HttpServletResponse getResponse() {
-        return new MockHttpServletResponse();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        return response;
     }
 
-    private Object getHandler() {
-        return mock(HandlerInterceptor.class);
+    private Object getHandler() throws NoSuchMethodException {
+        Class<?>[] parameters = new Class<?>[] {String.class, UUID.class, String.class, String.class, byte[].class,
+            String.class, Object.class, String.class, String.class, String.class, String.class, String.class,
+            String.class, UUID.class, String.class };
+        return new HandlerMethod(consentController, "getConsentInformation", parameters);
     }
 
     private Map<String, String> getErrorMap() {
-        Map<String, String> errors = new HashMap<>();
+        Map<String, String> errors = new HashMap();
         errors.put("error1", "errorMgs1");
         return errors;
     }

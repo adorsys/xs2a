@@ -21,7 +21,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.psd2.model.AccountDetails;
 import de.adorsys.psd2.model.AccountList;
 import de.adorsys.psd2.model.AccountReport;
-import de.adorsys.psd2.model.ReadAccountBalanceResponse200;
+import de.adorsys.psd2.model.ReadBalanceResponse200;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
@@ -127,11 +127,11 @@ public class AccountControllerTest {
         doReturn(new ResponseEntity<>(createReadBalances().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
         //Given:
-        ReadAccountBalanceResponse200 expectedResult = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                              ReadAccountBalanceResponse200.class).get();
+        ReadBalanceResponse200 expectedResult = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
+                                                                       ReadBalanceResponse200.class).get();
 
         //When:
-        ReadAccountBalanceResponse200 result = (ReadAccountBalanceResponse200) accountController.getBalances(ACCOUNT_ID,
+        ReadBalanceResponse200 result = (ReadBalanceResponse200) accountController.getBalances(ACCOUNT_ID,
                                                                                                null, CONSENT_ID, null, null, null, null,
                                                                                                null, null, null, null, null,
                                                                                                null, null, null, null).getBody();
@@ -227,10 +227,10 @@ public class AccountControllerTest {
         return ResponseObject.<Xs2aAccountReport>builder().body(accountReport).build();
     }
 
-    private ResponseObject<ReadAccountBalanceResponse200> createReadBalances() throws IOException {
-        ReadAccountBalanceResponse200 read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                    ReadAccountBalanceResponse200.class).get();
-        return ResponseObject.<ReadAccountBalanceResponse200>builder()
+    private ResponseObject<ReadBalanceResponse200> createReadBalances() throws IOException {
+        ReadBalanceResponse200 read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
+                                                             ReadBalanceResponse200.class).get();
+        return ResponseObject.<ReadBalanceResponse200>builder()
                    .body(read).build();
     }
 

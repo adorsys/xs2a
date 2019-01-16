@@ -19,13 +19,14 @@ package de.adorsys.psd2.xs2a.spi.domain.account;
 import lombok.Value;
 
 import java.time.LocalDate;
+import java.util.Currency;
 
 @Value
 public class SpiExchangeRate {
-    private String sourceCurrency;
-    private String rate;
-    private String unitCurrency;
-    private String targetCurrency;
+    private Currency currencyFrom;
+    private String rateFrom;
+    private Currency currencyTo;
+    private String rateTo;
     private LocalDate rateDate;
     private String rateContract;
 }

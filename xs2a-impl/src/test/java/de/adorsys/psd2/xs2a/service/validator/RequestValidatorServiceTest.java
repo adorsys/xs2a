@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.psd2.xs2a.web.controller.ConsentController;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,6 @@ import org.springframework.web.servlet.HandlerMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.lang.reflect.Method;
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PARAMETER_NOT_SUPPORTED;
@@ -48,6 +48,8 @@ public class RequestValidatorServiceTest {
 
     @InjectMocks
     private RequestValidatorService requestValidatorService;
+    @Mock
+    private ConsentController consentController;
     @Mock
     private PaymentController paymentController;
     @Mock
@@ -69,7 +71,7 @@ public class RequestValidatorServiceTest {
     public void getRequestHeaderViolationMap() throws Exception {
         //Given:
         HttpServletRequest request = getCorrectRequest();
-        HandlerMethod handler = getInitiatePaymentHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
@@ -82,7 +84,7 @@ public class RequestValidatorServiceTest {
     public void shouldFail_getRequestHeaderViolationMap_wrongRequest() throws Exception {
         //Given:
         HttpServletRequest request = getWrongRequestNoXRequestId();
-        HandlerMethod handler = getInitiatePaymentHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
 
@@ -97,7 +99,7 @@ public class RequestValidatorServiceTest {
     public void shouldFail_getRequestHeaderViolationMap_wrongRequestHeaderFormat() throws Exception {
         //Given:
         HttpServletRequest request = getWrongRequestWrongTppRequestIdFormat();
-        HandlerMethod handler = getInitiatePaymentHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestViolationMapInitiatePayment(request);
@@ -116,7 +118,7 @@ public class RequestValidatorServiceTest {
         templates.put("payment-product", "cross-border-credit-transfers");
         templates.put("payment-service", PaymentType.SINGLE.getValue());
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
-        HandlerMethod handler = getInitiatePaymentHandler();
+        HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
@@ -134,7 +136,7 @@ public class RequestValidatorServiceTest {
         templates.put("payment-product", "sepa-credit-transfers");
         templates.put("payment-service", PaymentType.SINGLE.getValue());
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
-        HandlerMethod handler = getPaymentInitiationStatusHandler();
+        HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
@@ -151,7 +153,7 @@ public class RequestValidatorServiceTest {
         templates.put("payment-product", "sepa-credit-transfers");
         templates.put("payment-service", PaymentType.PERIODIC.getValue());
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
-        HandlerMethod handler = getInitiatePaymentHandler();
+        HandlerMethod handler = getPaymentsControllerHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
@@ -162,7 +164,7 @@ public class RequestValidatorServiceTest {
     }
 
     @Test
-    public void getRequestHeaderViolationMap_wrongIpAddressV4() {
+    public void getRequestHeaderViolationMap_wrongIpAddressV4() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("wrong ip");
 
@@ -175,7 +177,7 @@ public class RequestValidatorServiceTest {
     }
 
     @Test
-    public void getRequestHeaderViolationMap_wrongIpAddressV6() {
+    public void getRequestHeaderViolationMap_wrongIpAddressV6() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("1200::AB00:1234::2552:7777:1313");
 
@@ -188,7 +190,7 @@ public class RequestValidatorServiceTest {
     }
 
     @Test
-    public void getRequestHeaderViolationMap_correctIpAddressV6() {
+    public void getRequestHeaderViolationMap_correctIpAddressV6() throws Exception {
         //Given:
         HttpServletRequest request = getRequestWithIpAddress("1200:0000:AB00:1234:0000:2552:7777:1313");
 
@@ -249,21 +251,26 @@ public class RequestValidatorServiceTest {
         return request;
     }
 
-    private HandlerMethod getPaymentInitiationStatusHandler() throws NoSuchMethodException {
-        Method method = getPaymentControllerMethodByName("getPaymentInitiationStatus");
-        return new HandlerMethod(paymentController, method);
+    private HandlerMethod getHandler() throws NoSuchMethodException {
+        Class<?>[] params = new Class<?>[]{String.class, UUID.class, String.class, String.class, byte[].class,
+            String.class, Object.class, String.class, String.class, String.class, String.class, String.class,
+            String.class, UUID.class, String.class};
+        return new HandlerMethod(consentController, "getConsentInformation", params);
     }
 
-    private HandlerMethod getInitiatePaymentHandler() throws NoSuchMethodException {
-        Method method = getPaymentControllerMethodByName("initiatePayment");
-        return new HandlerMethod(paymentController, method);
+    private HandlerMethod getPaymentInitiationControllerHandler() throws NoSuchMethodException {
+        Class<?>[] params = new Class<?>[]{String.class, String.class, UUID.class, String.class, String.class,
+            byte[].class, String.class, Object.class, String.class, String.class, String.class, String.class,
+            String.class, String.class, UUID.class, String.class};
+        return new HandlerMethod(paymentController, "getPaymentInitiationStatus", params);
     }
 
-    private Method getPaymentControllerMethodByName(String methodName) throws NoSuchMethodException {
-        return Arrays.stream(PaymentController.class.getMethods())
-                   .filter(m -> m.getName().equals(methodName))
-                   .findFirst()
-                   .orElseThrow(NoSuchMethodException::new);
+    private HandlerMethod getPaymentsControllerHandler() throws NoSuchMethodException {
+        Class<?>[] params = new Class<?>[]{Object.class, String.class, String.class, UUID.class, String.class,
+            String.class, String.class, byte[].class, String.class, String.class, String.class, String.class,
+            String.class, Boolean.class, String.class, String.class, Boolean.class, Object.class, String.class,
+            String.class, String.class, String.class, String.class, String.class, UUID.class, String.class};
+        return new HandlerMethod(paymentController, "initiatePayment", params);
     }
 
     private Map<PaymentType, Set<String>> getSupportedPaymentTypeAndProductMatrix() {

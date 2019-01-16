@@ -16,16 +16,18 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.model.MessageCode2XX;
-import de.adorsys.psd2.model.TppMessage2XX;
 import de.adorsys.psd2.model.TppMessageCategory;
+import de.adorsys.psd2.model.TppMessageGeneric;
+import de.adorsys.psd2.model.TppMessages;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,27 +36,44 @@ import java.util.stream.Collectors;
 public class MessageErrorMapper {
     private final MessageService messageService;
 
-    public List<TppMessage2XX> mapToTppMessages(MessageErrorCode... errorCodes) {
+    public TppMessages mapToTppMessages(MessageErrorCode... errorCodes) {
         return Optional.ofNullable(errorCodes)
                    .map(m -> Arrays.stream(m)
-                                 .map(this::getTppMessage2XX)
+                                 .map(str -> mapToGenericError(str, "N/A"))  //TODO add actual path https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/300
                                  .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .map(this::mapTppMessageGenericListToTppMessages)
+                   .orElseGet(TppMessages::new);
     }
 
-    public TppMessage2XX mapToTppMessage(MessageError error) {
+    public TppMessages mapToTppMessages(MessageError error) {
         return Optional.ofNullable(error)
-                   .map(e -> e.getTppMessage().getMessageErrorCode())
-                   .map(this::getTppMessage2XX)
-                   .orElseGet(TppMessage2XX::new);
+                   .map(MessageError::getTppMessages)
+                   .map(e -> e.stream()
+                                 .map(this::mapToGenericError)
+                                 .collect(Collectors.toList()))
+                   .map(this::mapTppMessageGenericListToTppMessages)
+                   .orElseGet(TppMessages::new);
     }
 
-    private TppMessage2XX getTppMessage2XX(MessageErrorCode code) {
-        TppMessage2XX tppMessage2XX = new TppMessage2XX();
-        tppMessage2XX.setCategory(TppMessageCategory.ERROR);
-        tppMessage2XX.setCode(MessageCode2XX.WARNING); // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
-        tppMessage2XX.setPath("N/A"); //TODO add actual path https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/300
-        tppMessage2XX.setText(messageService.getMessage(code.name()));
-        return tppMessage2XX;
+    private TppMessages mapTppMessageGenericListToTppMessages(@NonNull List<TppMessageGeneric> messageGenericList) {
+        return messageGenericList.stream()
+                   .collect(Collectors.toCollection(TppMessages::new));
+    }
+
+    private TppMessageGeneric mapToGenericError(@NonNull TppMessageInformation info) {
+        TppMessageGeneric tppMessageGeneric = mapToGenericError(info.getMessageErrorCode(), info.getPath());
+        if (StringUtils.isNotBlank(info.getText())) {
+            tppMessageGeneric.setText(info.getText());
+        }
+        return tppMessageGeneric;
+    }
+
+    private TppMessageGeneric mapToGenericError(@NonNull MessageErrorCode code, String path) {
+        TppMessageGeneric tppMessage = new TppMessageGeneric();
+        tppMessage.setCategory(TppMessageCategory.ERROR);
+        tppMessage.setCode(code);
+        tppMessage.setPath(path);
+        tppMessage.setText(messageService.getMessage(code.name()));
+        return tppMessage;
     }
 }
