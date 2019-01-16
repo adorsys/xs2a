@@ -133,3 +133,9 @@ If redirect url is not expired, online banking gets payment, authorisation id, n
 
 ## Bugfix: Deleted consent changes its status to terminatedByTpp
 When TPP sends request to delete consent, status of consent will be terminatedByTpp instead of revokedByPsu.
+
+## Support single, periodic and bulk payment initiation with pain.001 XML message
+Now TPP can initiate payments with pain.001 XML message body. Content type of the request should be `application/xml` for single and bulk payments 
+and `multipart/form-data; boundary=AaaBbbCcc` for periodic payments with xml body part named `xml_sct` and json body part named `json_standingorderType`. 
+The body of the pain.001 xml payment is stored as a byte array in the consent management system.
+
