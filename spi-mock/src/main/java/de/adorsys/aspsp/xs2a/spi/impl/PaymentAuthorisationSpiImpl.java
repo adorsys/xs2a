@@ -129,6 +129,15 @@ public class PaymentAuthorisationSpiImpl implements PaymentAuthorisationSpi {
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
+            if (e.getHttpStatus() == HttpStatus.BAD_REQUEST) {
+                SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
+                spiAuthorizationCodeResult.setChallengeData(new ChallengeData());
+                return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                           .payload(spiAuthorizationCodeResult)
+                           .success();
+            }
+
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);

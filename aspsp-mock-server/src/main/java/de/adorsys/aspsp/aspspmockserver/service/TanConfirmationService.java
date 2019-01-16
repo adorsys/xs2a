@@ -19,7 +19,6 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
-import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
 import de.adorsys.psd2.aspsp.mock.api.psu.Tan;
 import de.adorsys.psd2.aspsp.mock.api.psu.TanStatus;
 import freemarker.template.Configuration;
@@ -39,7 +38,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
@@ -60,21 +58,12 @@ public class TanConfirmationService {
     /**
      * Sends Authorization Request to user with selected Sca Method
      *
-     * @param psuId                  PSU id
-     * @param authenticationMethodId An Id of Sca method selected by PSU
+     * @param psuId PSU id
      * @return true if PSU was found and Authorisation request sent successfully
      */
-    public boolean sendUserAuthRequestWithPreSelectedScaMethod(String psuId, String authenticationMethodId) {
+    public boolean sendUserAuthRequestWithPreSelectedScaMethod(String psuId) {
         return accountService.getPsuByPsuId(psuId)
-                   .map(psu -> {
-                       Optional<AspspAuthenticationObject> scaMethod = psu.getScaMethods().stream()
-                                                                           .filter(m -> authenticationMethodId.equals(m.getAuthenticationMethodId()))
-                                                                           .findFirst();
-                       if (scaMethod.isPresent()) {
-                           return generateAndSendTanForPsuById(psuId);
-                       }
-                       return false;
-                   })
+                   .map(psu -> generateAndSendTanForPsuById(psuId))
                    .orElse(false);
     }
 

@@ -132,4 +132,4 @@ We give redirect id (= authorisation id) in redirect link now, and to get paymen
 If redirect url is not expired, online banking gets payment, authorisation id, not ok tpp redirect url and ok tpp redirect url (for now these urls are null temporary) in response, otherwise http code 408 Request Timeout is sent.
 
 ## Bugfix: Correct response during sending not existing sca method
-Now when PSU sends unknown sca method during the selection of authorisation method, SCA_METHOD_UNKNOWN message code and appropriate description will be returned
+Now when PSU sends unknown sca method during the selection of authorisation method, SCA_METHOD_UNKNOWN message code and appropriate description will be returned.

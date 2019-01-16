@@ -37,8 +37,6 @@ import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 
 @Service("PIS_PSUAUTHENTICATED")
@@ -67,18 +65,6 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisCommonPay
         PsuIdData psuData = request.getPsuData();
 
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(psuData);
-
-        SpiResponse<List<SpiAuthenticationObject>> availableScaMethods = getAvailableScaMethods(request.getPaymentId(), contextData, payment);
-        if (availableScaMethods.hasError()) {
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(availableScaMethods));
-        } else {
-            if (isScaMethodUnknown(availableScaMethods.getPayload(), authenticationMethodId)) {
-                ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.SCA_METHOD_UNKNOWN)
-                                              .build();
-                return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder);
-            }
-        }
-
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(request.getPaymentId());
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = paymentAuthorisationSpi.requestAuthorisationCode(contextData, authenticationMethodId, payment, aspspConsentData);
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
@@ -103,18 +89,5 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisCommonPay
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(spiAuthenticationObject));
         response.setChallengeData(challengeData);
         return response;
-    }
-
-    private SpiResponse<List<SpiAuthenticationObject>> getAvailableScaMethods(String paymentId, SpiContextData contextData, SpiPayment payment) {
-        AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
-        SpiResponse<List<SpiAuthenticationObject>> availableScaMethodsResponse = paymentAuthorisationSpi.requestAvailableScaMethods(contextData, payment, aspspConsentData);
-        pisAspspDataService.updateAspspConsentData(availableScaMethodsResponse.getAspspConsentData());
-        return availableScaMethodsResponse;
-    }
-
-    private boolean isScaMethodUnknown(List<SpiAuthenticationObject> spiAuthenticationObjects, String authenticationMethodId) {
-        return spiAuthenticationObjects.stream()
-                   .map(SpiAuthenticationObject::getAuthenticationMethodId)
-                   .noneMatch(id -> id.equals(authenticationMethodId));
     }
 }

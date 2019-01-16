@@ -20,13 +20,18 @@ import de.adorsys.aspsp.aspspmockserver.domain.Confirmation;
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
+import de.adorsys.aspsp.aspspmockserver.service.PsuService;
 import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
@@ -36,17 +41,31 @@ public class PaymentConfirmationController {
 
     private final TanConfirmationService tanConfirmationService;
     private final PaymentService paymentService;
+    private final PsuService psuService;
 
     @PostMapping(path = "/{psu-id}/{sca-method-selected}")
     @ApiOperation(value = "Generates TAN for pis consent confirmation", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success"),
-        @ApiResponse(code = 400, message = "Bad request")
+        @ApiResponse(code = 400, message = "Bad request"),
+        @ApiResponse(code = 404, message = "Not Found")
     })
     public ResponseEntity<Void> generateAndSendTan(@PathVariable("psu-id") String psuId, @PathVariable("sca-method-selected") String authenticationMethodId) {
-        return tanConfirmationService.sendUserAuthRequestWithPreSelectedScaMethod(psuId, authenticationMethodId)
+        List<AspspAuthenticationObject> scaMethods = psuService.getScaMethods(psuId);
+        if (Objects.isNull(scaMethods)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        boolean isScaMethodUnknown = scaMethods.stream()
+                                         .noneMatch(m -> authenticationMethodId.equals(m.getAuthenticationMethodId()));
+
+        if (isScaMethodUnknown) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return tanConfirmationService.sendUserAuthRequestWithPreSelectedScaMethod(psuId)
                    ? ResponseEntity.ok().build()
-                   : ResponseEntity.badRequest().build();
+                   : ResponseEntity.notFound().build();
     }
 
     @PutMapping
