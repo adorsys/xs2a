@@ -27,8 +27,6 @@ import java.util.Set;
 public class AspspSettings {
     private int frequencyPerDay;
     private boolean combinedServiceIndicator;
-    private List<String> availablePaymentProducts;
-    private List<PaymentType> availablePaymentTypes;
     private boolean tppSignatureRequired;
     private String pisRedirectUrlToAspsp;
     private String aisRedirectUrlToAspsp;

@@ -34,8 +34,6 @@ public class AspspProfileServiceImpl implements AspspProfileService {
         return new AspspSettings(
             setting.getFrequencyPerDay(),
             setting.isCombinedServiceIndicator(),
-            setting.getAvailablePaymentProducts(),
-            setting.getAvailablePaymentTypes(),
             setting.isTppSignatureRequired(),
             setting.getPisRedirectUrlToAspsp(),
             setting.getAisRedirectUrlToAspsp(),

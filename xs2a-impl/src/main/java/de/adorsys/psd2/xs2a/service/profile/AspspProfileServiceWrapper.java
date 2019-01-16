@@ -24,9 +24,7 @@ import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,24 +33,12 @@ public class AspspProfileServiceWrapper {
     private final AspspProfileService aspspProfileService;
 
     /**
-     * Gets a list of payment products allowed by current ASPSP from ASPSP profile service
+     * Gets a map with payment types and products allowed by current ASPSP from ASPSP profile service
      *
-     * @return List of payment products supported by current ASPSP
+     * @return Map with payment types and  products supported by current ASPSP
      */
-    public List<String> getAvailablePaymentProducts() {
-        List<String> availablePaymentProducts = readAspspSettings().getAvailablePaymentProducts();
-        return Optional.ofNullable(availablePaymentProducts)
-                   .map(Collections::unmodifiableList)
-                   .orElse(Collections.emptyList());
-    }
-
-    /**
-     * Gets a list of payment types available at current ASPSP from ASPSP profile service
-     *
-     * @return List of payment types allowed by ASPSP
-     */
-    public List<PaymentType> getAvailablePaymentTypes() {
-        return readAspspSettings().getAvailablePaymentTypes();
+    public Map<PaymentType, Set<String>> getSupportedPaymentTypeAndProductMatrix() {
+        return readAspspSettings().getSupportedPaymentTypeAndProductMatrix();
     }
 
     /**

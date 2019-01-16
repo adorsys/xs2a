@@ -18,7 +18,6 @@ package de.adorsys.psd2.aspsp.profile.config;
 
 import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -32,7 +31,6 @@ public class ProfileConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        setDefaultPaymentType(PaymentType.SINGLE);
         setDefaultBookingStatus(BOOKED);
         setAvailableAccountReferenceField(SupportedAccountReferenceField.IBAN); //Sets default Account Reference Field
     }
@@ -41,13 +39,6 @@ public class ProfileConfiguration implements InitializingBean {
         List<SupportedAccountReferenceField> supportedAccountReferenceFields = setting.getSupportedAccountReferenceFields();
         if (!supportedAccountReferenceFields.contains(defaultSupportedAccountReferenceField)) {
             supportedAccountReferenceFields.add(defaultSupportedAccountReferenceField);
-        }
-    }
-
-    private void setDefaultPaymentType(PaymentType necessaryType) {
-        List<PaymentType> availablePaymentTypes = setting.getAvailablePaymentTypes();
-        if (!availablePaymentTypes.contains(necessaryType)) {
-            availablePaymentTypes.add(necessaryType);
         }
     }
 
