@@ -128,18 +128,13 @@ public class RequestValidatorService {
     private Map<String, String> getViolationMapForPaymentTypeAndPaymentProduct(HttpServletRequest request) {
         Map<String, String> pathVariableMap = getPathVariableMap(request);
         Optional<PaymentType> paymentType = getPaymentTypeFromRequest(pathVariableMap);
-
-        if (!paymentType.isPresent()) {
-            return Collections.singletonMap(MessageErrorCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type");
-        }
-
         Optional<String> paymentProduct = getPaymentProductFromRequest(pathVariableMap);
 
-        if (!paymentProduct.isPresent()) {
-            return Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product!");
+        if (paymentType.isPresent() && paymentProduct.isPresent()) {
+            return arePaymentTypeAndProductAvailable(paymentType.get(), paymentProduct.get());
         }
 
-        return arePaymentTypeAndProductAvailable(paymentType.get(), paymentProduct.get());
+        return Collections.emptyMap();
     }
 
     private Optional<String> getPaymentProductFromRequest(Map<String, String> pathVariableMap) {
