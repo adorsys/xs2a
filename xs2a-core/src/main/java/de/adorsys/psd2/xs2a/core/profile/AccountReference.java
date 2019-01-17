@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.core.profile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -31,9 +32,9 @@ import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceType.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(value = "aspspAccountId", allowSetters=true)
 @ApiModel(description = "Account Reference", value = "AccountReference")
 public class AccountReference {
-    @JsonIgnore
     private String aspspAccountId;
 
     @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
