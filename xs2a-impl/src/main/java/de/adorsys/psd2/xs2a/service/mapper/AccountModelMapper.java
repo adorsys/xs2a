@@ -170,7 +170,8 @@ public class AccountModelMapper {
         return target;
     }
 
-    public <T> T mapToAccountReference12(AccountReference reference) {
+    // TODO rename class to avoid putting full path https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/603
+    public de.adorsys.psd2.model.AccountReference mapToAccountReference12(AccountReference reference) {
         if (reference == null) {
             return null;
         }
@@ -182,7 +183,7 @@ public class AccountModelMapper {
         accountReference.setMsisdn(reference.getMsisdn());
         accountReference.setPan(reference.getPan());
 
-        return (T) accountReference;
+        return accountReference;
     }
 
     public Address mapToAddress12(Xs2aAddress address) {
