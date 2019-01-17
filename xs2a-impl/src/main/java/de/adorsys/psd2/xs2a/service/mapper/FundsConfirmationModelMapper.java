@@ -28,8 +28,8 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class FundsConfirmationModelMapper {
-
     private final ObjectMapper objectMapper;
+    private final AmountModelMapper amountModelMapper;
 
     public FundsConfirmationRequest mapToFundsConfirmationRequest(ConfirmationOfFunds confirmationOfFunds) {
         return Optional.ofNullable(confirmationOfFunds)
@@ -38,7 +38,7 @@ public class FundsConfirmationModelMapper {
                        fundsConfirmationRequest.setCardNumber(conf.getCardNumber());
                        fundsConfirmationRequest.setPayee(conf.getPayee());
                        fundsConfirmationRequest.setPsuAccount(mapToAccountReferenceInner(conf.getAccount()));
-                       fundsConfirmationRequest.setInstructedAmount(AmountModelMapper.mapToXs2aAmount(conf.getInstructedAmount()));
+                       fundsConfirmationRequest.setInstructedAmount(amountModelMapper.mapToXs2aAmount(conf.getInstructedAmount()));
                        return fundsConfirmationRequest;
                    })
                    .orElse(null);

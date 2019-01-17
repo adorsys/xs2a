@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
+import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,6 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper.mapToAmount;
 
 @Slf4j
 @Component
@@ -53,6 +53,7 @@ public class PaymentModelMapperPsd2 {
     private final MessageErrorMapper messageErrorMapper;
     private final AccountModelMapper accountModelMapper;
     private final TppRedirectUriMapper tppRedirectUriMapper;
+    private final AmountModelMapper amountModelMapper;
 
     public Object mapToGetPaymentResponse12(Object payment, PaymentType type, String product) {
         if (isRawPayment(payment)) {
@@ -72,7 +73,7 @@ public class PaymentModelMapperPsd2 {
             PaymentInitiationTarget2WithStatusResponse paymentResponse = new PaymentInitiationTarget2WithStatusResponse();
             paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
             paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getDebtorAccount()));
-            paymentResponse.setInstructedAmount(mapToAmount(xs2aPayment.getInstructedAmount()));
+            paymentResponse.setInstructedAmount(amountModelMapper.mapToAmount(xs2aPayment.getInstructedAmount()));
             paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getCreditorAccount()));
             paymentResponse.setCreditorAgent(xs2aPayment.getCreditorAgent());
             paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
@@ -86,7 +87,7 @@ public class PaymentModelMapperPsd2 {
 
             paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
             paymentResponse.setDebtorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getDebtorAccount()));
-            paymentResponse.setInstructedAmount(mapToAmount(xs2aPayment.getInstructedAmount()));
+            paymentResponse.setInstructedAmount(amountModelMapper.mapToAmount(xs2aPayment.getInstructedAmount()));
             paymentResponse.setCreditorAccount(accountModelMapper.mapToAccountReference12(xs2aPayment.getCreditorAccount()));
             paymentResponse.setCreditorAgent(xs2aPayment.getCreditorAgent());
             paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
@@ -140,7 +141,7 @@ public class PaymentModelMapperPsd2 {
         PaymentInitiationResponse specificResponse = (PaymentInitiationResponse) response;
         response201.setTransactionStatus(mapToTransactionStatus12(specificResponse.getTransactionStatus()));
         response201.setPaymentId(specificResponse.getPaymentId());
-        response201.setTransactionFees(mapToAmount(specificResponse.getTransactionFees()));
+        response201.setTransactionFees(amountModelMapper.mapToAmount(specificResponse.getTransactionFees()));
         response201.setTransactionFeeIndicator(specificResponse.isTransactionFeeIndicator());
         response201.setScaMethods(mapToScaMethods(specificResponse.getScaMethods()));
         response201.setChallengeData(coreObjectsMapper.mapToChallengeData(specificResponse.getChallengeData()));
@@ -184,7 +185,7 @@ public class PaymentModelMapperPsd2 {
     private PaymentInitiationTarget2Json mapToBulkPart12(SinglePayment payment) {
         PaymentInitiationTarget2Json bulkPart = new PaymentInitiationTarget2Json().endToEndIdentification(payment.getEndToEndIdentification());
         bulkPart.setDebtorAccount(accountModelMapper.mapToAccountReference12(payment.getDebtorAccount()));
-        bulkPart.setInstructedAmount(mapToAmount(payment.getInstructedAmount()));
+        bulkPart.setInstructedAmount(amountModelMapper.mapToAmount(payment.getInstructedAmount()));
         bulkPart.setCreditorAccount(accountModelMapper.mapToAccountReference12(payment.getCreditorAccount()));
         bulkPart.setCreditorAgent(payment.getCreditorAgent());
         bulkPart.setCreditorName(payment.getCreditorName());
