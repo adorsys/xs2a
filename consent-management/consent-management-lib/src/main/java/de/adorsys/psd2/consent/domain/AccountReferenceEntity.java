@@ -51,4 +51,8 @@ public class AccountReferenceEntity {
 
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
+
+    @Column(name = "aspsp_account_id", length = 100)
+    @ApiModelProperty(value = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
+    private String aspspAccountId;
 }
