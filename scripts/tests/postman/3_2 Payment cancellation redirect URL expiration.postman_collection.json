@@ -207,7 +207,7 @@
 			"response": []
 		},
 		{
-			"name": "3. Srart cancellation authorisation",
+			"name": "3. Start cancellation authorisation",
 			"event": [
 				{
 					"listen": "test",
