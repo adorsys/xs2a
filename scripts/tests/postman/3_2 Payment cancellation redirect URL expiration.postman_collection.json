@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "a5b8c1c0-6738-49c9-8874-741462cee654",
-		"name": "Payment cancellation redirect URL expiration",
+		"name": "3_2 Payment cancellation redirect URL expiration",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
