@@ -248,7 +248,7 @@ public class AccountModelMapper {
     }
 
     public List<de.adorsys.psd2.model.AccountReference> mapToAccountReferences(List<AccountReference> accountReferences) {
-        if(CollectionUtils.isNotEmpty(accountReferences)){
+        if (CollectionUtils.isEmpty(accountReferences)) {
             return Collections.emptyList();
         }
         return accountReferences.stream()
