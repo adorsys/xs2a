@@ -56,6 +56,7 @@
     <include relativeToChangelogFile="true"
              file="migration/0033-add-not-null-constraint-ais-aspsp-account-access.xml"/>
     <include relativeToChangelogFile="true" file="migration/0034-add-account-id-column-to-pis-common-payment.xml"/>
-	<include relativeToChangelogFile="true" 
+	<include relativeToChangelogFile="true"
 			 file="migration/0035-set-pis-consent-authorization-chosen_sca_method-type-to-varchar-40.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0036-add-aspsp-account-id-column-to-account-reference.xml"/>
 </databaseChangeLog>

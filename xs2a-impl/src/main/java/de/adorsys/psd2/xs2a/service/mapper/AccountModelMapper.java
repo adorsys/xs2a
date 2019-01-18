@@ -21,7 +21,6 @@ import de.adorsys.psd2.model.AccountStatus;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
 import de.adorsys.psd2.xs2a.domain.account.*;
@@ -44,6 +43,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountModelMapper {
     private final ObjectMapper objectMapper;
+    private final AmountModelMapper amountModelMapper;
 
     public AccountList mapToAccountList(Map<String, List<Xs2aAccountDetails>> accountDetailsList) {
         List<AccountDetails> details = accountDetailsList.values().stream()
@@ -109,7 +109,7 @@ public class AccountModelMapper {
         Balance target = new Balance();
         BeanUtils.copyProperties(balance, target);
 
-        target.setBalanceAmount(AmountModelMapper.mapToAmount(balance.getBalanceAmount()));
+        target.setBalanceAmount(amountModelMapper.mapToAmount(balance.getBalanceAmount()));
 
         Optional.ofNullable(balance.getBalanceType())
             .ifPresent(balanceType -> target.setBalanceType(BalanceType.fromValue(balanceType.getValue())));
@@ -158,7 +158,7 @@ public class AccountModelMapper {
             });
 
         Optional.ofNullable(transactions.getAmount())
-            .ifPresent(amount -> target.setTransactionAmount(AmountModelMapper.mapToAmount(amount)));
+            .ifPresent(amount -> target.setTransactionAmount(amountModelMapper.mapToAmount(amount)));
 
         target.setPurposeCode(PurposeCode.fromValue(Optional.ofNullable(transactions.getPurposeCode())
                                                         .map(Xs2aPurposeCode::getCode)
@@ -213,18 +213,6 @@ public class AccountModelMapper {
                    .orElseGet(Xs2aAddress::new);
     }
 
-    public Xs2aAmount mapToXs2aAmount(Amount amount) {
-        return Optional.ofNullable(amount)
-                   .map(a -> {
-                       Xs2aAmount targetAmount = new Xs2aAmount();
-                       targetAmount.setAmount(a.getAmount());
-                       targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
-                       return targetAmount;
-                   })
-                   .orElseGet(Xs2aAmount::new);
-
-    }
-
     public TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport) {
         TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
         transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));
@@ -248,7 +236,7 @@ public class AccountModelMapper {
     }
 
     public List<de.adorsys.psd2.model.AccountReference> mapToAccountReferences(List<AccountReference> accountReferences) {
-        if(CollectionUtils.isNotEmpty(accountReferences)){
+        if (CollectionUtils.isEmpty(accountReferences)) {
             return Collections.emptyList();
         }
         return accountReferences.stream()
