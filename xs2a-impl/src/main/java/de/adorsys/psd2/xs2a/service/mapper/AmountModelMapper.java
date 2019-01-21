@@ -18,25 +18,32 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
+import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.Currency;
 import java.util.Optional;
 
+@Component
+@RequiredArgsConstructor
 public class AmountModelMapper {
+    private final ValueValidatorService valueValidatorService;
 
-    public static Xs2aAmount mapToXs2aAmount(Amount amount) {
+    public Xs2aAmount mapToXs2aAmount(Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        Xs2aAmount amountTarget = new Xs2aAmount();
                        amountTarget.setAmount(a.getAmount());
                        amountTarget.setCurrency(getCurrencyByCode(a.getCurrency()));
+                       valueValidatorService.validate(amountTarget);
                        return amountTarget;
                    })
                    .orElse(null);
     }
 
-    public static Amount mapToAmount(Xs2aAmount amount) {
+    public Amount mapToAmount(Xs2aAmount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        Amount amountTarget = new Amount();
@@ -47,7 +54,7 @@ public class AmountModelMapper {
                    .orElse(null);
     }
 
-    private static Currency getCurrencyByCode(String code) {
+    private Currency getCurrencyByCode(String code) {
         return StringUtils.isNotBlank(code)
                    ? Currency.getInstance(code)
                    : null;

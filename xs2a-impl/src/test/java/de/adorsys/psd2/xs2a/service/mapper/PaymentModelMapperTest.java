@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -28,6 +29,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -69,14 +71,16 @@ public class PaymentModelMapperTest {
     @Mock
     MessageErrorMapper messageErrorMapper;
 
-    @Spy
-    AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
+    @Mock
+    private AmountModelMapper amountModelMapper;
 
-    private void testTransactionStatus12(de.adorsys.psd2.xs2a.core.pis.TransactionStatus status, de.adorsys.psd2.model.TransactionStatus expected) {
-        //When
-        de.adorsys.psd2.model.TransactionStatus result = PaymentModelMapperPsd2.mapToTransactionStatus12(status);
-        //Then
-        assertThat(result).isEqualTo(expected);
+    @Spy
+    AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper(), amountModelMapper);
+
+    @Before
+    public void setUp() {
+        when(amountModelMapper.mapToXs2aAmount(getAmount12(true, true))).thenReturn(buildXs2aAmount());
+        when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
     }
 
     @Test
@@ -286,5 +290,12 @@ public class PaymentModelMapperTest {
         requestParameters.setPaymentProduct("sepa-credit-transfers");
 
         return requestParameters;
+    }
+
+    private Xs2aAmount buildXs2aAmount() {
+        Xs2aAmount amount = new Xs2aAmount();
+        amount.setCurrency(Currency.getInstance("EUR"));
+        amount.setAmount("123456");
+        return amount;
     }
 }

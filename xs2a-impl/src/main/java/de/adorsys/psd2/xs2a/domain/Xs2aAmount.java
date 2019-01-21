@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Currency;
 
 @Data
@@ -37,5 +38,6 @@ public class Xs2aAmount {
 
 	@ApiModelProperty(value = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", required = true, example = "1000.00")
     @NotNull
+    @Pattern(regexp = "-?[0-9]{1,14}(.[0-9]{1,3})?")
     private String amount;
 }
