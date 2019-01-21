@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-01-21T16:00:26.732Z",
+	"__export_date": "2019-01-21T17:08:35.873Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
@@ -20,17 +20,27 @@
 			"data": {
 				"Digest": "",
 				"Signature": "",
+				"account_id": "11111-999999999",
+				"authorisation_id": "178fb5d2-753f-4a03-8352-ea64f619b7e6",
+				"basket_id": "",
+				"booking_status": "both",
 				"cancellation_id": "004fa9f8-ca3d-4196-a83a-85a4e998240c",
-				"consent_id": "0000",
+				"consent_id": "HzedvCO_WXeGdv81WQ3lEuBVj3WIzbL4fT9fRSOPG-bCIqigv4iSnSBLAtuSxXW6H7r0mv2FL7Lj2dlYCBj3hg==_=_bS6p6XvTWI",
 				"ip_address": "1.1.1.1",
-				"payment_id": "0",
+				"payment_id": "0vVLsykLymp8CqoM_PfwLHx_5bNsrgOY2sEG_igdvS_tfZX1b_UNeRbRt811mgb98YFvLRixnAsQhnkqjzCOVw==_=_bS6p6XvTWI",
+				"payment_product": "sepa-credit-transfers",
+				"payment_service": "payments",
+				"payment_service_bulk": "bulk-payments",
 				"psu_id_password": "zzz",
+				"resource_id": "0001",
+				"startAuthorisation": "http://localhost:8080/v1/bulk-payments/0vVLsykLymp8CqoM_PfwLHx_5bNsrgOY2sEG_igdvS_tfZX1b_UNeRbRt811mgb98YFvLRixnAsQhnkqjzCOVw==_=_bS6p6XvTWI/authorisations",
 				"transaction_id": "0001",
+				"with_balance": "true",
 				"x_request_id": "2f77a125-aa7a-45c0-b414-cea25a116035"
 			},
 			"isPrivate": false,
 			"metaSortKey": 1547733675414,
-			"modified": 1548086407564,
+			"modified": 1548090485032,
 			"name": "New Environment",
 			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
 			"_type": "environment"
