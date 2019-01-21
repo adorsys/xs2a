@@ -1,14 +1,14 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-01-21T17:14:42.998Z",
+	"__export_date": "2019-01-21T17:18:15.455Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
 			"_id": "wrk_3946d4185bb0463cabd5f8ddf9423977",
 			"created": 1525870429301,
-			"description": "",
-			"modified": 1525870429301,
+			"description": "Workspace for the Open Source NextGenPSD2 XS2A Implementation from adorsys",
+			"modified": 1548091072762,
 			"name": "PSD2",
 			"parentId": null,
 			"_type": "workspace"
