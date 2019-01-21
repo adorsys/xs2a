@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-01-21T17:08:35.873Z",
+	"__export_date": "2019-01-21T17:14:42.998Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
@@ -305,13 +305,11 @@
 			"color": null,
 			"created": 1526057308420,
 			"data": {
-				"Digest": "",
 				"PSU-IP-Address": "0.0.0.0",
-				"Signature": "",
 				"clientIdAM": "aspsp-mock",
-				"clientIdX2": "9fee4b6e-6216-4e48-8839-dec2de38ac22",
-				"clientSecretAM": "5dde4d44-ee0a-4178-acc4-cdacf825c797",
-				"clientSecretX2": "30b08c10-b5c8-48b1-be34-2ba32473c8b1",
+				"clientIdX2": "aspsp-mock2",
+				"clientSecretAM": "secret",
+				"clientSecretX2": "secret2",
 				"ip_address": "1.1.1.1",
 				"keycloakAuthUrl": "http://localhost:8081/auth",
 				"protocol": "http",
@@ -322,7 +320,7 @@
 			},
 			"isPrivate": false,
 			"metaSortKey": 1547733675259,
-			"modified": 1547748845787,
+			"modified": 1548090849083,
 			"name": "Local ENV",
 			"parentId": "env_9dc7ef7364ef4bb6ab79865b423f08e0",
 			"_type": "environment"
