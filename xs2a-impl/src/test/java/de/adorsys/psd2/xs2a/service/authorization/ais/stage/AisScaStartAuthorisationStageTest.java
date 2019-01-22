@@ -156,8 +156,8 @@ public class AisScaStartAuthorisationStageTest {
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         when(accountConsent.getAisConsentRequestType())
             .thenReturn(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
-        when(accountConsent.isRecurringIndicator())
-            .thenReturn(false);
+        when(accountConsent.isOneAccessType())
+            .thenReturn(true);
         when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired())
             .thenReturn(false);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))

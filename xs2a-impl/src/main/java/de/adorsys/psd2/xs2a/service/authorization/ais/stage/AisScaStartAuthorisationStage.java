@@ -92,7 +92,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         }
 
         if (accountConsent.getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS
-                && !accountConsent.isRecurringIndicator()
+                && accountConsent.isOneAccessType()
                 && !aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()) {
 
             aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.VALID);

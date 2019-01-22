@@ -80,4 +80,10 @@ public class AccountConsent {
     public boolean isExpired() {
         return consentStatus == ConsentStatus.EXPIRED;
     }
+
+    @JsonIgnore
+    public boolean isOneAccessType() {
+        return !recurringIndicator;
+    }
+
 }
