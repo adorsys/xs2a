@@ -173,6 +173,24 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().getPisPaymentCancellationRedirectUrlToAspsp();
     }
 
+    /**
+     * Reads if available accounts for a consent are supported from ASPSP profile service
+     *
+     * @return true if ASPSP supports available accounts for consent
+     */
+    public boolean isAvailableAccountsConsentSupported() {
+        return readAspspSettings().isAvailableAccountsConsentSupported();
+    }
+
+    /**
+     * Reads if ASPSP requires usage of SCA to validate a one-time available accounts consent
+     *
+     * @return true if ASPSP requires usage of SCA to validate a one-time available accounts consent
+     */
+    public boolean isScaByOneTimeAvailableAccountsConsentRequired() {
+        return readAspspSettings().isScaByOneTimeAvailableAccountsConsentRequired();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

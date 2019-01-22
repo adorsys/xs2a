@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
@@ -51,6 +52,9 @@ public class CreateConsentRequestValidator {
      *         and MessageError for invalid case
      */
     public ValidationResult validateRequest(CreateConsentReq request) {
+        if (isNotSupportedAvailableAccounts(request)) {
+            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SERVICE_INVALID_405)));
+        }
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
         }
@@ -99,5 +103,13 @@ public class CreateConsentRequestValidator {
 
     private boolean isValidConsentLifetime(int consentLifetime, LocalDate validUntil) {
         return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
+    }
+
+    private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {
+        if (Objects.isNull(request.getAccess().getAvailableAccounts())) {
+            return false;
+        }
+
+        return !aspspProfileService.isAvailableAccountsConsentSupported();
     }
 }
