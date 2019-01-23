@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.util.Collections;
 
 @EnableSwagger2
 public class SwaggerConfig {
-    private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api-1.3-Update-2019-01-11.yaml";
+    private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api-1.3-20181220.yaml";
 
     @Value("${xs2a.swagger.psd2.api.location:}")
     private String customPsd2ApiLocation;

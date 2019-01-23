@@ -27,7 +27,11 @@ You can check your readiness for PSD2 Compliance and other information via [our 
 
 ## Features of adorsys/XS2A
 
-* **XS2A-impl** is an implemetation of PSD2 XS2A Interface of Berlin Group. All mandatory API endpoints defined in Berlin Group specification V1.0 are implemented. The latest version of Berlin Group specification used in the project is V1.2.
+* **Current supported version of NextGenPSD2 XS2A API is 1.3**.
+You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/static/psd2-api-1.3-20181220.yaml).
+
+* **XS2A-impl** is an implemetation of NextGenPSD2 XS2A Interface of Berlin Group.
+All mandatory API endpoints defined in Berlin Group specification are implemented.
 
 * **Swagger documentation** is presented for all REST API modules: XS2A, ASPSP-Server, Consent Management System.
 
@@ -35,12 +39,13 @@ You can check your readiness for PSD2 Compliance and other information via [our 
 
 * **ASPSP-Profile** is REST API Module to store and read ASPSP-specific configurations for XS2A-features. The behavior of XS2A can change depending on the stored values, for example, using different SCA approaches.
 
-* **Logging System** is the system that allows ASPSP operators to track all logically related calls in XS2A, starting from the requests from TPP to the final responses to TPP. This module is not in the Berlin Group specification. *(Current state: planned)*.
+* **Logging System** is the system that allows ASPSP operators to track all logically related calls in XS2A, starting from the requests from TPP to the final responses to TPP. This module is not in the Berlin Group specification.
+
 ### Test services
 
 * **ASPSP-Mock** is a simple example of ASPSP implementation. Mock-implementation of ASPSP exists for the purposes of testing and introspection of XS2A functionality. This module is not in the Berlin Group specification.
 
-* **Prototype Online Banking** is a Web Demo application to show how the PSU - ASPSP Interface works. Through this Interface PSU passes SCA and provides the consents to TTP. This module is not in the Berlin Group specification. *(Current state: under construction)*.
+* **Prototype Online Banking** is a Web Demo application to show how the PSU - ASPSP Interface works. Through this Interface PSU passes SCA and provides the consents to TTP. This module is not in the Berlin Group specification.
 
 
 ## Getting Started
