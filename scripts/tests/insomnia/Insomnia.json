@@ -1,14 +1,14 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-01-17T14:16:55.696Z",
+	"__export_date": "2019-01-21T17:18:15.455Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
 			"_id": "wrk_3946d4185bb0463cabd5f8ddf9423977",
 			"created": 1525870429301,
-			"description": "",
-			"modified": 1525870429301,
+			"description": "Workspace for the Open Source NextGenPSD2 XS2A Implementation from adorsys",
+			"modified": 1548091072762,
 			"name": "PSD2",
 			"parentId": null,
 			"_type": "workspace"
@@ -17,10 +17,30 @@
 			"_id": "env_9dc7ef7364ef4bb6ab79865b423f08e0",
 			"color": null,
 			"created": 1525870429327,
-			"data": {},
+			"data": {
+				"Digest": "",
+				"Signature": "",
+				"account_id": "11111-999999999",
+				"authorisation_id": "178fb5d2-753f-4a03-8352-ea64f619b7e6",
+				"basket_id": "",
+				"booking_status": "both",
+				"cancellation_id": "004fa9f8-ca3d-4196-a83a-85a4e998240c",
+				"consent_id": "HzedvCO_WXeGdv81WQ3lEuBVj3WIzbL4fT9fRSOPG-bCIqigv4iSnSBLAtuSxXW6H7r0mv2FL7Lj2dlYCBj3hg==_=_bS6p6XvTWI",
+				"ip_address": "1.1.1.1",
+				"payment_id": "0vVLsykLymp8CqoM_PfwLHx_5bNsrgOY2sEG_igdvS_tfZX1b_UNeRbRt811mgb98YFvLRixnAsQhnkqjzCOVw==_=_bS6p6XvTWI",
+				"payment_product": "sepa-credit-transfers",
+				"payment_service": "payments",
+				"payment_service_bulk": "bulk-payments",
+				"psu_id_password": "zzz",
+				"resource_id": "0001",
+				"startAuthorisation": "http://localhost:8080/v1/bulk-payments/0vVLsykLymp8CqoM_PfwLHx_5bNsrgOY2sEG_igdvS_tfZX1b_UNeRbRt811mgb98YFvLRixnAsQhnkqjzCOVw==_=_bS6p6XvTWI/authorisations",
+				"transaction_id": "0001",
+				"with_balance": "true",
+				"x_request_id": "2f77a125-aa7a-45c0-b414-cea25a116035"
+			},
 			"isPrivate": false,
 			"metaSortKey": 1547733675414,
-			"modified": 1525870429326,
+			"modified": 1548090485032,
 			"name": "New Environment",
 			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
 			"_type": "environment"
@@ -145,17 +165,6 @@
 			"metaSortKey": -1547734057860,
 			"modified": 1547734057860,
 			"name": "2_6 Funds Confirmation",
-			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
-			"_type": "request_group"
-		},
-		{
-			"_id": "fld_96b4e5ba5aec412295569f3799694d78",
-			"created": 1547734068626,
-			"description": "",
-			"environment": {},
-			"metaSortKey": -1547734068626,
-			"modified": 1547734068626,
-			"name": "2_5 Payment Cancellation",
 			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
 			"_type": "request_group"
 		},
@@ -296,19 +305,23 @@
 			"color": null,
 			"created": 1526057308420,
 			"data": {
-				"PSU-ID": "",
-				"X-Request-ID": "",
+				"PSU-IP-Address": "0.0.0.0",
 				"clientIdAM": "aspsp-mock",
-				"clientIdX2": "9fee4b6e-6216-4e48-8839-dec2de38ac22",
-				"clientSecretAM": "5dde4d44-ee0a-4178-acc4-cdacf825c797",
-				"clientSecretX2": "30b08c10-b5c8-48b1-be34-2ba32473c8b1",
-				"consentId": "5af5c8c5ddf1fa34449d20e2",
-				"keycloakAuthUrl": "http://localhost:8081/auth"
+				"clientIdX2": "aspsp-mock2",
+				"clientSecretAM": "secret",
+				"clientSecretX2": "secret2",
+				"ip_address": "1.1.1.1",
+				"keycloakAuthUrl": "http://localhost:8081/auth",
+				"protocol": "http",
+				"psu_id_multiple": "aspsp2",
+				"psu_id_none": "aspsp",
+				"psu_id_single": "aspsp1",
+				"url_xs2a": "localhost:8080"
 			},
 			"isPrivate": false,
 			"metaSortKey": 1547733675259,
-			"modified": 1547734473159,
-			"name": "Test",
+			"modified": 1548090849083,
+			"name": "Local ENV",
 			"parentId": "env_9dc7ef7364ef4bb6ab79865b423f08e0",
 			"_type": "environment"
 		},
@@ -323,18 +336,22 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_9034f872d8fb4ddebfcde07dc57d8966",
 					"name": "Content-Type",
 					"value": "application/xml"
 				},
 				{
+					"id": "pair_1243ea20d9ff4870a12c50e235c63595",
 					"name": "X-Request-ID",
-					"value": "{{X-Request-ID}}"
+					"value": "{{ x_request_id  }}"
 				},
 				{
+					"id": "pair_cadaefd8e0684d5ea10c18e6d5b59664",
 					"name": "PSU-IP-Address",
 					"value": "{{ip_address}}"
 				},
 				{
+					"id": "pair_8e46f4a001334ff3992befea807fb6ff",
 					"name": "PSU-ID",
 					"value": "{{psu_id_none}}"
 				}
@@ -342,7 +359,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547733909762,
 			"method": "POST",
-			"modified": 1547733909762,
+			"modified": 1547742369304,
 			"name": "Initiate pain single payment",
 			"parameters": [],
 			"parentId": "fld_19a49146a74b4ed1b38a4226b3363958",
@@ -363,12 +380,14 @@
 				"params": [
 					{
 						"disabled": false,
+						"id": "pair_e06557ef6edd4db1a0e3a39ed9a9497a",
 						"name": "xml_sct",
 						"type": "text",
 						"value": "<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\">\n\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n<MsgId>MIPI-123456789RI-123456789</MsgId> <CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> <NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n\n<InitgPty>\n\n<Id><OrgId><Othr><Id>DE10000000012</Id>\n\n<SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>\n\n</GrpHdr>\n<PmtInf>\n<PmtInfId>BIPI-123456789RI-123456789</PmtInfId> <PmtMtd>TRF</PmtMtd>\n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n\n<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> <ReqdExctnDt>2017-02-15</ReqdExctnDt>\n<Dbtr><Nm>PSU Name</Nm></Dbtr> <DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct>\n\n<ChrgBr>SLEV</ChrgBr>\n<CdtTrfTxInf>\t\t\t\t\t\n<PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId>\n<Amt><InstdAmt Ccy=\"EUR\">123</InstdAmt></Amt>\n<Cdtr><Nm>Merchant123</Nm></Cdtr>\n<CdtrAcct><Id><IBAN>DE23100120020123456789</IBAN></Id></CdtrAcct>\n<RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf>\n\n      </CdtTrfTxInf>\n    </PmtInf>\t\t\t\t\t\n</CstmrCdtTrfInitn>\n</Document>"
 					},
 					{
 						"disabled": false,
+						"id": "pair_391cd732b0424f17afff80320eb48786",
 						"name": "json_standingordermanagement",
 						"type": "text",
 						"value": "{\"startDate\": \"2018-03-01\",\n \"frequency\": \"monthly\",\n \"executionRule\": \"latest\",\n \"dayOfExecution\": \"01\"\n}"
@@ -379,18 +398,22 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_a625704c382c451eb418ff6c1ca35ba3",
 					"name": "Content-Type",
 					"value": "multipart/form-data; boundary=--AaaBbbCcc"
 				},
 				{
+					"id": "pair_e08725faf74a48deb116f582f0fb9395",
 					"name": "X-Request-ID",
-					"value": "{{X-Request-ID}}"
+					"value": "{{ x_request_id  }}"
 				},
 				{
+					"id": "pair_8430e7310add4803ae749ae662e432a1",
 					"name": "PSU-IP-Address",
 					"value": "{{ip_address}}"
 				},
 				{
+					"id": "pair_165a9a90dbb84405a6bea772db519ffb",
 					"name": "PSU-ID",
 					"value": "{{psu_id_none}}"
 				}
@@ -398,7 +421,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547733909804,
 			"method": "POST",
-			"modified": 1547733909804,
+			"modified": 1547742358979,
 			"name": "Initiate pain periodic payment",
 			"parameters": [],
 			"parentId": "fld_19a49146a74b4ed1b38a4226b3363958",
@@ -422,18 +445,22 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_52b996eab9884adab5e2cfe483e04a7d",
 					"name": "Content-Type",
 					"value": "application/xml"
 				},
 				{
+					"id": "pair_774c1773cac34ba68cdf961570b1801f",
 					"name": "X-Request-ID",
-					"value": "{{X-Request-ID}}"
+					"value": "{{ x_request_id  }}"
 				},
 				{
+					"id": "pair_a72946444b184d37afa2a484919cb114",
 					"name": "PSU-IP-Address",
 					"value": "{{ip_address}}"
 				},
 				{
+					"id": "pair_bc43ca3c846c45a8948313b337dff11c",
 					"name": "PSU-ID",
 					"value": "{{psu_id_none}}"
 				}
@@ -441,7 +468,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547733909838,
 			"method": "POST",
-			"modified": 1547733909838,
+			"modified": 1547742352471,
 			"name": "Initiate pain bulk payment",
 			"parameters": [],
 			"parentId": "fld_19a49146a74b4ed1b38a4226b3363958",
@@ -518,22 +545,27 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_6afe1faeacee4f75b10b37efd34d79af",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_a2a94b2255c84eb897349a939b43a1d0",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_4c06dec0f7a74d4e9421d0b5699783e5",
 					"name": "PSU-ID",
 					"value": "{{psu_id_none}}"
 				},
 				{
+					"id": "pair_b1111367449f4d7185e1c4b87414df32",
 					"name": "PSU-IP-Address",
 					"value": "{{ip_address}}"
 				},
 				{
+					"id": "pair_8bfb76719b1b4a22aa46b09a0947b510",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -541,8 +573,8 @@
 			"isPrivate": false,
 			"metaSortKey": -1547733939659,
 			"method": "POST",
-			"modified": 1547733939659,
-			"name": "3. Srart cancellation authorisation",
+			"modified": 1547744793177,
+			"name": "3. Start cancellation authorisation",
 			"parameters": [],
 			"parentId": "fld_936c5beeaf5f4c50a3a5c1bc46e60f4e",
 			"settingDisableRenderRequestBody": false,
@@ -1424,39 +1456,6 @@
 			"modified": 1547734057841,
 			"name": "Local",
 			"parentId": "fld_40e2f89386e348cfa49edc5507542758",
-			"_type": "request_group"
-		},
-		{
-			"_id": "fld_da5832610e734f71b35cfcbe7d5acee4",
-			"created": 1547734068399,
-			"description": "",
-			"environment": {},
-			"metaSortKey": -1547734068399,
-			"modified": 1547734068399,
-			"name": "Multiple",
-			"parentId": "fld_96b4e5ba5aec412295569f3799694d78",
-			"_type": "request_group"
-		},
-		{
-			"_id": "fld_a98fcb045f974db6b5a7c0a70ab8f93b",
-			"created": 1547734068514,
-			"description": "",
-			"environment": {},
-			"metaSortKey": -1547734068514,
-			"modified": 1547734068514,
-			"name": "One",
-			"parentId": "fld_96b4e5ba5aec412295569f3799694d78",
-			"_type": "request_group"
-		},
-		{
-			"_id": "fld_f08b62214a204f94b8021cc1028d980b",
-			"created": 1547734068612,
-			"description": "",
-			"environment": {},
-			"metaSortKey": -1547734068612,
-			"modified": 1547734068612,
-			"name": "None",
-			"parentId": "fld_96b4e5ba5aec412295569f3799694d78",
 			"_type": "request_group"
 		},
 		{
@@ -7377,82 +7376,102 @@
 			"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. ",
 			"headers": [
 				{
+					"id": "pair_618b7b7e57fe496abfe11a6974904bef",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_222f96fb71a849479ebdfe465d99a3e8",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_2ef9456654824ce4a2bbca0ca3a5f926",
 					"name": "Digest",
 					"value": "{{Digest}}"
 				},
 				{
+					"id": "pair_f3d59a858a2b4ff69da7943d4cf10cc1",
 					"name": "PSU-Accept",
 					"value": "{{PSU-Accept}}"
 				},
 				{
+					"id": "pair_7b945590876849b492be0dbe6d4551b2",
 					"name": "PSU-Accept-Charset",
 					"value": "{{PSU-Accept-Charset}}"
 				},
 				{
+					"id": "pair_dc6d0986d4f3401ebdf07dabcdc9b5f9",
 					"name": "PSU-Accept-Encoding",
 					"value": "{{PSU-Accept-Encoding}}"
 				},
 				{
+					"id": "pair_51741d817f504b508ace07f05d9543e5",
 					"name": "PSU-Accept-Language",
 					"value": "{{PSU-Accept-Language}}"
 				},
 				{
+					"id": "pair_acce5bb15478455ca29fd110377573d2",
 					"name": "PSU-Corporate-ID",
 					"value": "{{PSU-Corporate-ID}}"
 				},
 				{
+					"id": "pair_3b409fbe93e64a47b0fcd8b1378e1096",
 					"name": "PSU-Corporate-ID-Type",
 					"value": "{{PSU-Corporate-ID-Type}}"
 				},
 				{
+					"id": "pair_fd35e862561a46ceb8c0018cc0f4054a",
 					"name": "PSU-Device-ID",
 					"value": "{{PSU-Device-ID}}"
 				},
 				{
+					"id": "pair_c9c932417b30478dbc60081dba0a6b47",
 					"name": "PSU-Geo-Location",
 					"value": "{{PSU-Geo-Location}}"
 				},
 				{
+					"id": "pair_7b66eb79062748b68cf7e10fc963bc80",
 					"name": "PSU-Http-Method",
 					"value": "{{PSU-Http-Method}}"
 				},
 				{
+					"id": "pair_86b5b8aff25b4d46b6884c25315f1ea5",
 					"name": "PSU-ID",
-					"value": "{{psu_id_single}}"
+					"value": "{{ psu_id_none  }}"
 				},
 				{
+					"id": "pair_88e400d2c6874970b973dce52a26b161",
 					"name": "PSU-ID-Type",
 					"value": "{{PSU-ID-Type}}"
 				},
 				{
+					"id": "pair_ec6dd0b457a44b8ba1c6352b1f3603cf",
 					"name": "PSU-IP-Address",
 					"value": "{{PSU-IP-Address}}"
 				},
 				{
+					"id": "pair_f7c3b688c1b64ed88c49d160d61c2a10",
 					"name": "PSU-IP-Port",
 					"value": "{{PSU-IP-Port}}"
 				},
 				{
+					"id": "pair_f3d1f74ace224c6595b86ddccca3ad21",
 					"name": "PSU-User-Agent",
 					"value": "{{PSU-User-Agent}}"
 				},
 				{
+					"id": "pair_d8850b65df6e4a778ee803a2ba88b2eb",
 					"name": "Signature",
 					"value": "{{Signature}}"
 				},
 				{
+					"id": "pair_c9df4982a6ad4f30a98ee6842c7f87c2",
 					"name": "TPP-Signature-Certificate",
 					"value": "{{TPP-Signature-Certificate}}"
 				},
 				{
+					"id": "pair_e05cb7434a98475c85f451a067d2917a",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -7460,7 +7479,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734238489,
 			"method": "PUT",
-			"modified": 1547734238489,
+			"modified": 1547742315917,
 			"name": "4 Update PSU Data for consents finalization av",
 			"parameters": [],
 			"parentId": "fld_37dd6a4d2d624161b57272a099721c05",
@@ -7484,82 +7503,102 @@
 			"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. ",
 			"headers": [
 				{
+					"id": "pair_811c407c1e7b492f95e3d6af3be7daac",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_a5ac9674ecff4172be86b4217bedf8f5",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_222f46563941483f8081e7a3f602deb0",
 					"name": "Digest",
 					"value": "{{Digest}}"
 				},
 				{
+					"id": "pair_80e725674eb041399b24b5396b155790",
 					"name": "PSU-Accept",
 					"value": "{{PSU-Accept}}"
 				},
 				{
+					"id": "pair_ce660a8eac1943df8eee8f99298a3693",
 					"name": "PSU-Accept-Charset",
 					"value": "{{PSU-Accept-Charset}}"
 				},
 				{
+					"id": "pair_d3524b932f3347779f263ea960c364e2",
 					"name": "PSU-Accept-Encoding",
 					"value": "{{PSU-Accept-Encoding}}"
 				},
 				{
+					"id": "pair_e7d9009b05c34b5cbf5f8ee40325698b",
 					"name": "PSU-Accept-Language",
 					"value": "{{PSU-Accept-Language}}"
 				},
 				{
+					"id": "pair_1971ba0a6b52421baa9b9114045be492",
 					"name": "PSU-Corporate-ID",
 					"value": "{{PSU-Corporate-ID}}"
 				},
 				{
+					"id": "pair_9bccf3bbb2fd4574989bbc3fbaa2f546",
 					"name": "PSU-Corporate-ID-Type",
 					"value": "{{PSU-Corporate-ID-Type}}"
 				},
 				{
+					"id": "pair_158bc4afcf4b4e31bbd7b930a24af8c6",
 					"name": "PSU-Device-ID",
 					"value": "{{PSU-Device-ID}}"
 				},
 				{
+					"id": "pair_f2b5017cb8da4392a0f2797fb00f85f1",
 					"name": "PSU-Geo-Location",
 					"value": "{{PSU-Geo-Location}}"
 				},
 				{
+					"id": "pair_6387375c40224bdeb8a2a69e19f7407e",
 					"name": "PSU-Http-Method",
 					"value": "{{PSU-Http-Method}}"
 				},
 				{
+					"id": "pair_dbf6c521391d4f6488621179d196858f",
 					"name": "PSU-ID",
-					"value": "{{psu_id_single}}"
+					"value": "{{ psu_id_none  }}"
 				},
 				{
+					"id": "pair_e57e986757654b958b1086b11c0dfe43",
 					"name": "PSU-ID-Type",
 					"value": "{{PSU-ID-Type}}"
 				},
 				{
+					"id": "pair_d667a61beac8450d9bd94feee1bed167",
 					"name": "PSU-IP-Address",
 					"value": "{{PSU-IP-Address}}"
 				},
 				{
+					"id": "pair_7090815006a344d38e8f6819b3d807f7",
 					"name": "PSU-IP-Port",
 					"value": "{{PSU-IP-Port}}"
 				},
 				{
+					"id": "pair_241883bff8d94aa399b6195a999b5412",
 					"name": "PSU-User-Agent",
 					"value": "{{PSU-User-Agent}}"
 				},
 				{
+					"id": "pair_9520dc0caff84ef88303610b3aacb9a8",
 					"name": "Signature",
 					"value": "{{Signature}}"
 				},
 				{
+					"id": "pair_75522c4c93b84b2fbb1a56e3d1001df5",
 					"name": "TPP-Signature-Certificate",
 					"value": "{{TPP-Signature-Certificate}}"
 				},
 				{
+					"id": "pair_c8e942ee8cfa4761a979371782c38b15",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -7567,7 +7606,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734238517,
 			"method": "PUT",
-			"modified": 1547734238517,
+			"modified": 1547742305259,
 			"name": "3 Update PSU Data for consent av",
 			"parameters": [],
 			"parentId": "fld_37dd6a4d2d624161b57272a099721c05",
@@ -7650,7 +7689,7 @@
 				{
 					"id": "pair_a2011913c25145108cc7129009e4ff6a",
 					"name": "PSU-ID",
-					"value": "{{ PSU-ID  }}"
+					"value": "{{ psu_id_none  }}"
 				},
 				{
 					"id": "pair_a10e9f72b0ee44b98ebeff0ad4eb5e61",
@@ -7685,13 +7724,13 @@
 				{
 					"id": "pair_c68601b130624334b681f508e6eda54c",
 					"name": "X-Request-ID",
-					"value": "{{ X-Request-ID  }}"
+					"value": "{{ x_request_id  }}"
 				}
 			],
 			"isPrivate": false,
 			"metaSortKey": -1547734238541,
 			"method": "POST",
-			"modified": 1547734496394,
+			"modified": 1547742295003,
 			"name": "2 Start the authorisation process for a consent av",
 			"parameters": [],
 			"parentId": "fld_37dd6a4d2d624161b57272a099721c05",
@@ -7722,12 +7761,12 @@
 				{
 					"id": "pair_449802ee857a4179903ea6ad0ba5a616",
 					"name": "PSU-ID",
-					"value": "{{psu_id_single}}"
+					"value": "{{ psu_id_none  }}"
 				},
 				{
 					"id": "pair_065332a7335848a2856ce73987b2b927",
 					"name": "X-Request-ID",
-					"value": "{{ X-Request-ID  }}"
+					"value": "{{ x_request_id  }}"
 				},
 				{
 					"id": "pair_d63413111dcb49c3804e52110488ec5f",
@@ -7738,7 +7777,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734238553,
 			"method": "POST",
-			"modified": 1547734436709,
+			"modified": 1547742275893,
 			"name": "1 create consent available accounts",
 			"parameters": [],
 			"parentId": "fld_37dd6a4d2d624161b57272a099721c05",
@@ -8309,18 +8348,22 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_f0f2a6a919bf4bd3b9b892e1a097628b",
 					"name": "accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_9b6ed714f6fe4ea39812582739526e05",
 					"name": "PSU-ID",
-					"value": "{{psu_id_none}}"
+					"value": "{{ PSU-ID  }}"
 				},
 				{
+					"id": "pair_e1c6e4961aef472b8f2b1ee86163502d",
 					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
+					"value": "{{ X-Request-ID  }}"
 				},
 				{
+					"id": "pair_5e823e86c53e448e9b051caaaaf6eda4",
 					"name": "Content-Type",
 					"value": "application/json"
 				}
@@ -8328,7 +8371,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734246624,
 			"method": "POST",
-			"modified": 1547734246624,
+			"modified": 1547739797278,
 			"name": "1 create consent available accounts",
 			"parameters": [],
 			"parentId": "fld_097e8eea19fe4ec7b63a91e166091589",
@@ -8381,22 +8424,25 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_6e4d6bbe3c9c4dbc80d5921b56233945",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_e7aeb4b277a549619e98331540716149",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_baca2a555c444c00a9053db148c49663",
 					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
+					"value": "{{ X-Request-ID  }}"
 				}
 			],
 			"isPrivate": false,
 			"metaSortKey": -1547733951013,
 			"method": "GET",
-			"modified": 1547733951013,
+			"modified": 1547734728505,
 			"name": "4. Get payment status",
 			"parameters": [],
 			"parentId": "fld_5d241c7d3fd24e26ab6e3ddc4801578c",
@@ -8464,26 +8510,30 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_6b02fa1736a54cfba83009271e6e1edc",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_44155456d76744f8a6cde340999fdecc",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_617dba28cebe4c42b216821b3341df63",
 					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
+					"value": "{{ X-Request-ID  }}"
 				},
 				{
+					"id": "pair_94b4554170064d72ae359f799ac21423",
 					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
+					"value": "{{ PSU-ID  }}"
 				}
 			],
 			"isPrivate": false,
 			"metaSortKey": -1547733951079,
 			"method": "POST",
-			"modified": 1547733951079,
+			"modified": 1547734698495,
 			"name": "2. Start authorisation",
 			"parameters": [],
 			"parentId": "fld_5d241c7d3fd24e26ab6e3ddc4801578c",
@@ -8555,18 +8605,20 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_3e75f3ebded94168ac18429216c10880",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_8c0f9706b044490d8667d51119c9f149",
 					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
+					"value": "{{ X-Request-ID  }}"
 				}
 			],
 			"isPrivate": false,
 			"metaSortKey": -1547733951128,
 			"method": "GET",
-			"modified": 1547733951128,
+			"modified": 1547734675337,
 			"name": "5. Get SCA status",
 			"parameters": [],
 			"parentId": "fld_98b3dada5e2841f4a54cf058c1d8f378",
@@ -8587,18 +8639,20 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_91580fa9ef5949d296c2386f9d0b85e5",
 					"name": "Accept",
 					"value": "*/*"
 				},
 				{
+					"id": "pair_d476133d9ce84910b8a0c71bcb4c4cf2",
 					"name": "x-request-id",
-					"value": "{{x_request_id}}"
+					"value": "{{ X-Request-ID  }}"
 				}
 			],
 			"isPrivate": false,
 			"metaSortKey": -1547733951140,
 			"method": "GET",
-			"modified": 1547733951140,
+			"modified": 1547734669700,
 			"name": "4. Get consent status",
 			"parameters": [],
 			"parentId": "fld_98b3dada5e2841f4a54cf058c1d8f378",
@@ -8622,26 +8676,30 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_11b96cb3cee64071b49950b2ca2f643d",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_a417447a133d40d5979339e9e669841d",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_7316266bc1f24694bd8aaa7f7adb8338",
 					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
+					"value": "{{ X-Request-ID  }}"
 				},
 				{
+					"id": "pair_5069762a825f41f6b23ac73cd78cca50",
 					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
+					"value": "{{ PSU-ID  }}"
 				}
 			],
 			"isPrivate": false,
 			"metaSortKey": -1547733951150,
 			"method": "PUT",
-			"modified": 1547733951150,
+			"modified": 1547734663646,
 			"name": "3. Update PSU data",
 			"parameters": [],
 			"parentId": "fld_98b3dada5e2841f4a54cf058c1d8f378",
@@ -8662,26 +8720,30 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_5bac7e4ecc7244d591bbf47bbcf8d51c",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_5469572adb2a481cb4f00a26e82c54e3",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_fe698c2a5b114fab86d423d035fac977",
 					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
+					"value": "{{ X-Request-ID  }}"
 				},
 				{
+					"id": "pair_4da9bf724d90429c91813527a5e2ca0e",
 					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
+					"value": "{{ PSU-ID  }}"
 				}
 			],
 			"isPrivate": false,
 			"metaSortKey": -1547733951174,
 			"method": "POST",
-			"modified": 1547733951174,
+			"modified": 1547734653091,
 			"name": "2. Start authorisation",
 			"parameters": [],
 			"parentId": "fld_98b3dada5e2841f4a54cf058c1d8f378",
@@ -8705,30 +8767,37 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_7f2774f0e84046e5846570708e34a06e",
 					"name": "Accept",
 					"value": "*/*"
 				},
 				{
+					"id": "pair_a68d1c6bee7f4b1a9e348c846bbc9144",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_a80aba3978554f5bbe5a9f0852c06d23",
 					"name": "date",
 					"value": "Sun, 11 Aug 2019 15:02:37 GMT"
 				},
 				{
+					"id": "pair_b8abb0ba0d774a37ae261908f7941632",
 					"name": "tpp-qwac-certificate",
 					"value": "qwac certificate"
 				},
 				{
+					"id": "pair_357557b7d4cd45589fb3a065c09e5473",
 					"name": "x-request-id",
-					"value": "{{x_request_id}}"
+					"value": "{{ X-Request-ID  }}"
 				},
 				{
+					"id": "pair_f10474994fb147e79b450e4d0c03f344",
 					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
+					"value": "{{ PSU-ID  }}"
 				},
 				{
+					"id": "pair_b8539e344cd74828a6a726e24d5a19df",
 					"name": "TPP-Explicit-Authorisation-Preferred",
 					"value": "true"
 				}
@@ -8736,7 +8805,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547733951193,
 			"method": "POST",
-			"modified": 1547733951193,
+			"modified": 1547734636612,
 			"name": "1. Create AIS Consent",
 			"parameters": [],
 			"parentId": "fld_98b3dada5e2841f4a54cf058c1d8f378",
@@ -9338,937 +9407,6 @@
 			"_type": "request"
 		},
 		{
-			"_id": "req_d0b8d52e841f4d38b8ae2ec1fc669b84",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068222,
-			"description": "Check the transaction status of a payment initiation.",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json, application/xml"
-				},
-				{
-					"name": "Digest",
-					"value": "{{Digest}}"
-				},
-				{
-					"name": "PSU-Accept",
-					"value": "{{PSU-Accept}}"
-				},
-				{
-					"name": "PSU-Accept-Charset",
-					"value": "{{PSU-Accept-Charset}}"
-				},
-				{
-					"name": "PSU-Accept-Encoding",
-					"value": "{{PSU-Accept-Encoding}}"
-				},
-				{
-					"name": "PSU-Accept-Language",
-					"value": "{{PSU-Accept-Language}}"
-				},
-				{
-					"name": "PSU-Device-ID",
-					"value": "{{PSU-Device-ID}}"
-				},
-				{
-					"name": "PSU-Geo-Location",
-					"value": "{{PSU-Geo-Location}}"
-				},
-				{
-					"name": "PSU-Http-Method",
-					"value": "{{PSU-Http-Method}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{PSU-IP-Address}}"
-				},
-				{
-					"name": "PSU-IP-Port",
-					"value": "{{PSU-IP-Port}}"
-				},
-				{
-					"name": "PSU-User-Agent",
-					"value": "{{PSU-User-Agent}}"
-				},
-				{
-					"name": "Signature",
-					"value": "{{Signature}}"
-				},
-				{
-					"name": "TPP-Signature-Certificate",
-					"value": "{{TPP-Signature-Certificate}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068222,
-			"method": "GET",
-			"modified": 1547734068222,
-			"name": "7. Payment initiation status request",
-			"parameters": [],
-			"parentId": "fld_da5832610e734f71b35cfcbe7d5acee4",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/status",
-			"_type": "request"
-		},
-		{
-			"_id": "req_7806d20f1d184aebabfc8685e40bc4d2",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\t\"scaAuthenticationData\": \"VJQIX7\"\n}"
-			},
-			"created": 1547734068247,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068247,
-			"method": "PUT",
-			"modified": 1547734068247,
-			"name": "6. Update PSU Data for cancellation (tan)",
-			"parameters": [],
-			"parentId": "fld_da5832610e734f71b35cfcbe7d5acee4",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_ca9876138b4642b888edb15e466888f9",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\t\"authenticationMethodId\": \"sms\"\n}"
-			},
-			"created": 1547734068282,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068282,
-			"method": "PUT",
-			"modified": 1547734068282,
-			"name": "5. Update PSU Data for cancellation (sca method)",
-			"parameters": [],
-			"parentId": "fld_da5832610e734f71b35cfcbe7d5acee4",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_d8429c9cc1114b1ca093cf3747608ac3",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
-			},
-			"created": 1547734068312,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068312,
-			"method": "PUT",
-			"modified": 1547734068312,
-			"name": "4. Update PSU Data for cancellation (password stage)",
-			"parameters": [],
-			"parentId": "fld_da5832610e734f71b35cfcbe7d5acee4",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_081e04be9ae843aca7969c3610ffc9f3",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068335,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068335,
-			"method": "POST",
-			"modified": 1547734068335,
-			"name": "3. Srart cancellation authorisation",
-			"parameters": [],
-			"parentId": "fld_da5832610e734f71b35cfcbe7d5acee4",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations",
-			"_type": "request"
-		},
-		{
-			"_id": "req_4efbf4f4f8ce4abeade991c4fd601101",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068367,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068367,
-			"method": "DELETE",
-			"modified": 1547734068367,
-			"name": "2. Cancel payment",
-			"parameters": [],
-			"parentId": "fld_da5832610e734f71b35cfcbe7d5acee4",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_03aa86c745c149499c6715ca1311a376",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"Some AGENT\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"49\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
-			},
-			"created": 1547734068382,
-			"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. ",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				},
-				{
-					"name": "TPP-Explicit-Authorisation-Preferred",
-					"value": "true"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_multiple}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068382,
-			"method": "POST",
-			"modified": 1547734068382,
-			"name": "1. Payment initiation request",
-			"parameters": [],
-			"parentId": "fld_da5832610e734f71b35cfcbe7d5acee4",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "{{protocol}}://{{url_xs2a}}/v1/payments/sepa-credit-transfers",
-			"_type": "request"
-		},
-		{
-			"_id": "req_9b092298aa1f45efa04f7b7ccd5bbe93",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068409,
-			"description": "Check the transaction status of a payment initiation.",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json, application/xml"
-				},
-				{
-					"name": "Digest",
-					"value": "{{Digest}}"
-				},
-				{
-					"name": "PSU-Accept",
-					"value": "{{PSU-Accept}}"
-				},
-				{
-					"name": "PSU-Accept-Charset",
-					"value": "{{PSU-Accept-Charset}}"
-				},
-				{
-					"name": "PSU-Accept-Encoding",
-					"value": "{{PSU-Accept-Encoding}}"
-				},
-				{
-					"name": "PSU-Accept-Language",
-					"value": "{{PSU-Accept-Language}}"
-				},
-				{
-					"name": "PSU-Device-ID",
-					"value": "{{PSU-Device-ID}}"
-				},
-				{
-					"name": "PSU-Geo-Location",
-					"value": "{{PSU-Geo-Location}}"
-				},
-				{
-					"name": "PSU-Http-Method",
-					"value": "{{PSU-Http-Method}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{PSU-IP-Address}}"
-				},
-				{
-					"name": "PSU-IP-Port",
-					"value": "{{PSU-IP-Port}}"
-				},
-				{
-					"name": "PSU-User-Agent",
-					"value": "{{PSU-User-Agent}}"
-				},
-				{
-					"name": "Signature",
-					"value": "{{Signature}}"
-				},
-				{
-					"name": "TPP-Signature-Certificate",
-					"value": "{{TPP-Signature-Certificate}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068409,
-			"method": "GET",
-			"modified": 1547734068409,
-			"name": "6. Payment initiation status request",
-			"parameters": [],
-			"parentId": "fld_a98fcb045f974db6b5a7c0a70ab8f93b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/status",
-			"_type": "request"
-		},
-		{
-			"_id": "req_e679384df84d4fb3a6e756c7fba60f69",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\t\"scaAuthenticationData\": \"yu9f8j\"\n}"
-			},
-			"created": 1547734068426,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_single}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068426,
-			"method": "PUT",
-			"modified": 1547734068426,
-			"name": "5. Update PSU Data for cancellation (tan)",
-			"parameters": [],
-			"parentId": "fld_a98fcb045f974db6b5a7c0a70ab8f93b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_cb5baaeb5fee4ced80d3907a95657446",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
-			},
-			"created": 1547734068448,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_single}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068448,
-			"method": "PUT",
-			"modified": 1547734068448,
-			"name": "4. Update PSU Data for cancellation (password stage)",
-			"parameters": [],
-			"parentId": "fld_a98fcb045f974db6b5a7c0a70ab8f93b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_a94a84f9189c4d278066a97e6d604e89",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068458,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_single}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068458,
-			"method": "POST",
-			"modified": 1547734068458,
-			"name": "3. Srart cancellation authorisation",
-			"parameters": [],
-			"parentId": "fld_a98fcb045f974db6b5a7c0a70ab8f93b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations",
-			"_type": "request"
-		},
-		{
-			"_id": "req_473b01ff00254901996e4f6420a09cad",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068474,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068474,
-			"method": "DELETE",
-			"modified": 1547734068474,
-			"name": "2. Cancel payment",
-			"parameters": [],
-			"parentId": "fld_a98fcb045f974db6b5a7c0a70ab8f93b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_6b8ae1805df74dc1ae89bf005a6a9fbf",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"Some AGENT\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"49\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
-			},
-			"created": 1547734068484,
-			"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. ",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				},
-				{
-					"name": "TPP-Explicit-Authorisation-Preferred",
-					"value": "true"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_single}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068484,
-			"method": "POST",
-			"modified": 1547734068484,
-			"name": "1. Payment initiation request",
-			"parameters": [],
-			"parentId": "fld_a98fcb045f974db6b5a7c0a70ab8f93b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "{{protocol}}://{{url_xs2a}}/v1/payments/sepa-credit-transfers",
-			"_type": "request"
-		},
-		{
-			"_id": "req_f21a219334a34c3d824eb1db7425d19f",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068525,
-			"description": "Check the transaction status of a payment initiation.",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json, application/xml"
-				},
-				{
-					"name": "Digest",
-					"value": "{{Digest}}"
-				},
-				{
-					"name": "PSU-Accept",
-					"value": "{{PSU-Accept}}"
-				},
-				{
-					"name": "PSU-Accept-Charset",
-					"value": "{{PSU-Accept-Charset}}"
-				},
-				{
-					"name": "PSU-Accept-Encoding",
-					"value": "{{PSU-Accept-Encoding}}"
-				},
-				{
-					"name": "PSU-Accept-Language",
-					"value": "{{PSU-Accept-Language}}"
-				},
-				{
-					"name": "PSU-Device-ID",
-					"value": "{{PSU-Device-ID}}"
-				},
-				{
-					"name": "PSU-Geo-Location",
-					"value": "{{PSU-Geo-Location}}"
-				},
-				{
-					"name": "PSU-Http-Method",
-					"value": "{{PSU-Http-Method}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{PSU-IP-Address}}"
-				},
-				{
-					"name": "PSU-IP-Port",
-					"value": "{{PSU-IP-Port}}"
-				},
-				{
-					"name": "PSU-User-Agent",
-					"value": "{{PSU-User-Agent}}"
-				},
-				{
-					"name": "Signature",
-					"value": "{{Signature}}"
-				},
-				{
-					"name": "TPP-Signature-Certificate",
-					"value": "{{TPP-Signature-Certificate}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068525,
-			"method": "GET",
-			"modified": 1547734068525,
-			"name": "5. Payment initiation status request",
-			"parameters": [],
-			"parentId": "fld_f08b62214a204f94b8021cc1028d980b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/status",
-			"_type": "request"
-		},
-		{
-			"_id": "req_5091e7b93a9444cda6ec03d17ae6bb1d",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
-			},
-			"created": 1547734068550,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_none}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068550,
-			"method": "PUT",
-			"modified": 1547734068550,
-			"name": "4. Update PSU Data for cancellation (password stage)",
-			"parameters": [],
-			"parentId": "fld_f08b62214a204f94b8021cc1028d980b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations/{{authorisation_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_2babd118ff5a4917b95cd87dd7a4f2c5",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068563,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_none}}"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068563,
-			"method": "POST",
-			"modified": 1547734068563,
-			"name": "3. Srart cancellation authorisation",
-			"parameters": [],
-			"parentId": "fld_f08b62214a204f94b8021cc1028d980b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}/cancellation-authorisations",
-			"_type": "request"
-		},
-		{
-			"_id": "req_20642843a70048fa9ec6490b8ba569c2",
-			"authentication": {},
-			"body": {},
-			"created": 1547734068577,
-			"description": "",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				},
-				{
-					"name": "TPP-Explicit-Authorisation-Preferred",
-					"value": "true"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068577,
-			"method": "DELETE",
-			"modified": 1547734068577,
-			"name": "2. Cancel payment",
-			"parameters": [],
-			"parentId": "fld_f08b62214a204f94b8021cc1028d980b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "http://localhost:8080/v1/payments/{{payment_id}}",
-			"_type": "request"
-		},
-		{
-			"_id": "req_64d66a0eb95a4774803227878a60dfbb",
-			"authentication": {},
-			"body": {
-				"mimeType": "",
-				"text": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"Some AGENT\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"49\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
-			},
-			"created": 1547734068599,
-			"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. ",
-			"headers": [
-				{
-					"name": "Accept",
-					"value": "application/json"
-				},
-				{
-					"name": "Content-Type",
-					"value": "application/json"
-				},
-				{
-					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
-				},
-				{
-					"name": "X-Request-ID",
-					"value": "{{x_request_id}}"
-				},
-				{
-					"name": "TPP-Explicit-Authorisation-Preferred",
-					"value": "true"
-				},
-				{
-					"name": "PSU-ID",
-					"value": "{{psu_id_none}}"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1547734068599,
-			"method": "POST",
-			"modified": 1547734068599,
-			"name": "1. Payment initiation request",
-			"parameters": [],
-			"parentId": "fld_f08b62214a204f94b8021cc1028d980b",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
-			"_type": "request"
-		},
-		{
 			"_id": "req_6b548cd5e11c44f3bd081b12136329cd",
 			"authentication": {},
 			"body": {},
@@ -10501,22 +9639,27 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_5fec69e0314c4955ba063679bbd03fca",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_c46389c644d4452bada2a5cbbd7f5ade",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_b56bacde7d0a411e8bbb29981afcc5c2",
 					"name": "PSU-ID",
 					"value": "{{psu_id_multiple}}"
 				},
 				{
+					"id": "pair_f8281850dbf949b6875c644dd97aedc2",
 					"name": "PSU-IP-Address",
 					"value": "{{ip_address}}"
 				},
 				{
+					"id": "pair_4ca9541a83764097b1523607b77823af",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -10524,8 +9667,8 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079378,
 			"method": "POST",
-			"modified": 1547734079378,
-			"name": "3. Srart cancellation authorisation",
+			"modified": 1547745018361,
+			"name": "3. Start cancellation authorisation",
 			"parameters": [],
 			"parentId": "fld_d2a7344de6fd455d852580a9cdc46ddf",
 			"settingDisableRenderRequestBody": false,
@@ -10545,14 +9688,17 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_7b0fbe5bdcdf4897bf976b61c72e9efa",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_dd2df2602a62461e977508179d70d9bc",
 					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
+					"value": "{{ ip_address  }}"
 				},
 				{
+					"id": "pair_3d7ca1aa217f4c109e16473ccc996056",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -10560,7 +9706,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079394,
 			"method": "DELETE",
-			"modified": 1547734079394,
+			"modified": 1547747718363,
 			"name": "2. Cancel payment",
 			"parameters": [],
 			"parentId": "fld_d2a7344de6fd455d852580a9cdc46ddf",
@@ -10584,26 +9730,32 @@
 			"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. ",
 			"headers": [
 				{
+					"id": "pair_c0b77b3d114549adb2a25c277639436e",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_62ec5ad5aafe440983605dfd0d3e6820",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_bf4955e7c76d4b56afa3a515b8af8b64",
 					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
+					"value": "{{ ip_address  }}"
 				},
 				{
+					"id": "pair_3bba9f88e7f44bb7b59729e468987015",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				},
 				{
+					"id": "pair_fd35307605de42cfa4352aae07d8c92d",
 					"name": "TPP-Explicit-Authorisation-Preferred",
 					"value": "true"
 				},
 				{
+					"id": "pair_2150da1ad0624c698dc0b72812e47a1b",
 					"name": "PSU-ID",
 					"value": "{{psu_id_multiple}}"
 				}
@@ -10611,7 +9763,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079403,
 			"method": "POST",
-			"modified": 1547734079403,
+			"modified": 1547747749840,
 			"name": "1. Payment initiation request",
 			"parameters": [],
 			"parentId": "fld_d2a7344de6fd455d852580a9cdc46ddf",
@@ -10719,22 +9871,27 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_85634d5cb89845908b85f4768e53632c",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_68dd706771064ebaa16e95ee6d6334d6",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_9e67749c981e497980168ec29e004b78",
 					"name": "PSU-ID",
 					"value": "{{psu_id_single}}"
 				},
 				{
+					"id": "pair_b00c2f70301349b3a7fe8e0075f3ee9d",
 					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
+					"value": "{{ ip_address  }}"
 				},
 				{
+					"id": "pair_895b7332c3ef4ced90294d4acbb5d295",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -10742,7 +9899,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079452,
 			"method": "PUT",
-			"modified": 1547734079452,
+			"modified": 1547747977789,
 			"name": "5. Update PSU Data for cancellation (tan)",
 			"parameters": [],
 			"parentId": "fld_89abc0ebe26445e7aeed4f48060bc687",
@@ -10766,22 +9923,27 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_113ce217ff924c2ea21d8814edeed794",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_c8ef01363e4f42298dc45e25a6ebea35",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_07c3344caa1f4d28aa036aa5179f322e",
 					"name": "PSU-ID",
 					"value": "{{psu_id_single}}"
 				},
 				{
+					"id": "pair_b29fa9fb9fb9479c90d46c578f05c6e8",
 					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
+					"value": "{{ ip_address  }}"
 				},
 				{
+					"id": "pair_80d217254528447dadc2087f15da1505",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -10789,7 +9951,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079467,
 			"method": "PUT",
-			"modified": 1547734079467,
+			"modified": 1547747959403,
 			"name": "4. Update PSU Data for cancellation (password stage)",
 			"parameters": [],
 			"parentId": "fld_89abc0ebe26445e7aeed4f48060bc687",
@@ -10810,22 +9972,27 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_7b2713fd107646859327fd178455b3a4",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_32c1bf97f6444d3fa86b392be04d49f8",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_c2cb4fc7d0cf4476a85e61249ae5c9db",
 					"name": "PSU-ID",
 					"value": "{{psu_id_single}}"
 				},
 				{
+					"id": "pair_bd61d11c51d74eb6978ede3629365f0f",
 					"name": "PSU-IP-Address",
 					"value": "{{ip_address}}"
 				},
 				{
+					"id": "pair_22314df035454ed4999ed83d88599b36",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -10833,8 +10000,8 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079481,
 			"method": "POST",
-			"modified": 1547734079481,
-			"name": "3. Srart cancellation authorisation",
+			"modified": 1547745007928,
+			"name": "3. Start cancellation authorisation",
 			"parameters": [],
 			"parentId": "fld_89abc0ebe26445e7aeed4f48060bc687",
 			"settingDisableRenderRequestBody": false,
@@ -10854,14 +10021,17 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_adcc8dd34b11441c8241ac59567a3bb5",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_4ab6dafda1684175bd9ccf882876197b",
 					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
+					"value": "{{ ip_address  }}"
 				},
 				{
+					"id": "pair_2804d413ae0840b1ac6b4ef928e73eb9",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -10869,7 +10039,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079496,
 			"method": "DELETE",
-			"modified": 1547734079496,
+			"modified": 1547747912257,
 			"name": "2. Cancel payment",
 			"parameters": [],
 			"parentId": "fld_89abc0ebe26445e7aeed4f48060bc687",
@@ -10893,26 +10063,32 @@
 			"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. ",
 			"headers": [
 				{
+					"id": "pair_5625e97d1632498fb03249ddbc3e2672",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_c9c81577240a4662ac6688049a55e53a",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_84ab1beaf3d2431294159a884e38fedb",
 					"name": "PSU-IP-Address",
-					"value": "{{ip_address}}"
+					"value": "{{ ip_address  }}"
 				},
 				{
+					"id": "pair_c7baba9615b646889fde69c469c15055",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				},
 				{
+					"id": "pair_b392873eb7504ff4b7da253f28d996b9",
 					"name": "TPP-Explicit-Authorisation-Preferred",
 					"value": "true"
 				},
 				{
+					"id": "pair_06d9cdea9f004445a0167792df77871d",
 					"name": "PSU-ID",
 					"value": "{{psu_id_single}}"
 				}
@@ -10920,7 +10096,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079511,
 			"method": "POST",
-			"modified": 1547734079511,
+			"modified": 1547747897871,
 			"name": "1. Payment initiation request",
 			"parameters": [],
 			"parentId": "fld_89abc0ebe26445e7aeed4f48060bc687",
@@ -11072,22 +10248,27 @@
 			"description": "",
 			"headers": [
 				{
+					"id": "pair_da79e36beb1648babec4b9622bb8f369",
 					"name": "Accept",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_b06bbe7c43194d5caae72a27d68aadef",
 					"name": "Content-Type",
 					"value": "application/json"
 				},
 				{
+					"id": "pair_658eac8c86c4468391f3a5f861ef96b5",
 					"name": "PSU-ID",
 					"value": "{{psu_id_none}}"
 				},
 				{
+					"id": "pair_1cf010cd41374a349a7a0e501607e7fc",
 					"name": "PSU-IP-Address",
 					"value": "{{ip_address}}"
 				},
 				{
+					"id": "pair_10b30a12c9b442c8b23a793094c7619f",
 					"name": "X-Request-ID",
 					"value": "{{x_request_id}}"
 				}
@@ -11095,8 +10276,8 @@
 			"isPrivate": false,
 			"metaSortKey": -1547734079581,
 			"method": "POST",
-			"modified": 1547734079581,
-			"name": "3. Srart cancellation authorisation",
+			"modified": 1547744880886,
+			"name": "3. Start cancellation authorisation",
 			"parameters": [],
 			"parentId": "fld_39f086c8b8494acc81c51bd1507907b0",
 			"settingDisableRenderRequestBody": false,
