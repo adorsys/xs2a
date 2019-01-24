@@ -96,6 +96,16 @@ public class Xs2aAisConsentService {
     }
 
     /**
+     * Requests CMS to find old consents for current TPP and PSU and terminate them.
+     *
+     * @param newConsentId id of new consent
+     * @return true if any consents have been terminated, false - if none
+     */
+    public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
+        return aisConsentService.findAndTerminateOldConsentsByNewConsentId(newConsentId);
+    }
+
+    /**
      * Requests CMS to update consent status into provided one
      *
      * @param consentId     String representation of identifier of stored consent

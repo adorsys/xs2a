@@ -74,6 +74,14 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
 
     @Override
     @Transactional
+    public boolean findAndTerminateOldConsentsByNewConsentId(String encryptedNewConsentId) {
+        return securityDataService.decryptId(encryptedNewConsentId)
+                   .map(aisConsentService::findAndTerminateOldConsentsByNewConsentId)
+                   .orElse(false);
+    }
+
+    @Override
+    @Transactional
     public void checkConsentAndSaveActionLog(AisConsentActionRequest encryptedRequest) {
         String consentId = encryptedRequest.getConsentId();
         Optional<String> decryptedConsentId = securityDataService.decryptId(consentId);

@@ -3949,8 +3949,7 @@ components:
       #  This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach,
       #  if the PSU is already identified e.g. with the first relevant factor or alternatively an access token,
       #  if SCA is required and if the authentication method is implicitly selected.
-      allOf:
-        - $ref: "#/components/schemas/authenticationObject"
+      $ref: "#/components/schemas/authenticationObject"
 
     authenticationType:
       description: |

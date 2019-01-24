@@ -61,6 +61,10 @@ public class CreateConsentRequestValidator {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID)));
         }
 
+        if (isNotValidFrequencyForRecurringIndicator(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
+            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)));
+        }
+
         return new ValidationResult(true, null);
     }
 
@@ -99,5 +103,13 @@ public class CreateConsentRequestValidator {
 
     private boolean isValidConsentLifetime(int consentLifetime, LocalDate validUntil) {
         return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
+    }
+
+    private boolean isNotValidFrequencyForRecurringIndicator(boolean recurringIndicator, int frequencyPerDay) {
+        if (!recurringIndicator) {
+            return frequencyPerDay > 1;
+        }
+
+        return false;
     }
 }
