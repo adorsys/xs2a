@@ -62,17 +62,19 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
     // TODO refactoring!!!
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
-        AccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
+        String consentId = request.getConsentId();
+        AccountConsent accountConsent = aisConsentService.getAccountConsentById(consentId);
         PsuIdData psuData = request.getPsuData();
 
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(spiContextDataProvider.provideWithPsuIdData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request), aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<SpiResponse.VoidResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(spiContextDataProvider.provideWithPsuIdData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request), aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
             return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()), spiResponse.getMessages());
         }
 
-        aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.VALID);
+        aisConsentService.updateConsentStatus(consentId, ConsentStatus.VALID);
+        aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setScaAuthenticationData(request.getScaAuthenticationData());

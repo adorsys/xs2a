@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
@@ -80,6 +81,8 @@ public class CmsPsuAisServiceTest {
     private AisConsentAuthorizationSpecification aisConsentAuthorizationSpecification;
     @Mock
     private AisConsentSpecification aisConsentSpecification;
+    @Mock
+    private AisConsentService aisConsentService;
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
@@ -249,6 +252,7 @@ public class CmsPsuAisServiceTest {
         // When
         //noinspection unchecked
         when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(aisConsent);
+        when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(anyString())).thenReturn(true);
 
         AisConsent aisConsentValid = buildConsentByStatus(ConsentStatus.VALID);
         when(aisConsentRepository.save(aisConsentValid)).thenReturn(aisConsentValid);

@@ -165,4 +165,8 @@ public class AisConsent extends InstanceDependableEntity {
     public void addAspspAccountAccess(Set<AspspAccountAccess> aspspAccesses) {
         aspspAccountAccesses = new ArrayList<>(aspspAccesses);
     }
+
+    public boolean isOneAccessType() {
+        return !recurringIndicator;
+    }
 }
