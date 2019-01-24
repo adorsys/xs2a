@@ -77,6 +77,12 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
     }
 
     @Override
+    public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
+        consentRestTemplate.delete(remoteAisConsentUrls.findAndTerminateOldConsentsByNewConsentId(), newConsentId);
+        return true;
+    }
+
+    @Override
     public void checkConsentAndSaveActionLog(AisConsentActionRequest request) {
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), request, Void.class);
     }

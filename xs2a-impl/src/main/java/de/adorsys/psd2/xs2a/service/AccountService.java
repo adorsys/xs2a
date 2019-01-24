@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
@@ -124,6 +125,7 @@ public class AccountService {
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance,
                                                                                                 TypeAccess.ACCOUNT, response));
+        checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
         return response;
     }
 
@@ -185,6 +187,7 @@ public class AccountService {
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance,
                                                                                                 TypeAccess.ACCOUNT, response));
+        checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
         return response;
     }
 
@@ -244,6 +247,7 @@ public class AccountService {
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(false,
                                                                                                 TypeAccess.BALANCE, response));
+        checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
         return response;
     }
 
@@ -344,6 +348,7 @@ public class AccountService {
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance,
                                                                                                 TypeAccess.TRANSACTION, response));
+        checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
         return response;
     }
 
@@ -397,6 +402,7 @@ public class AccountService {
         }
 
         Transactions transactions = spiToXs2aTransactionMapper.mapToXs2aTransaction(payload);
+        checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
         return ResponseObject.<Transactions>builder()
                    .body(transactions)
                    .build();
@@ -436,5 +442,11 @@ public class AccountService {
                    .filter(accountReference -> StringUtils.equals(accountReference.getResourceId(), resourceId))
                    .findFirst()
                    .map(xs2aToSpiAccountReferenceMapper::mapToSpiAccountReference);
+    }
+
+    private void checkAndExpireConsentIfOneAccessType(AccountConsent accountConsent, String encryptedConsentId) {
+        if (accountConsent.isOneAccessType()) {
+            aisConsentService.updateConsentStatus(encryptedConsentId, ConsentStatus.EXPIRED);
+        }
     }
 }
