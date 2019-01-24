@@ -411,7 +411,7 @@ public class CmsPsuPisServiceInternalTest {
         Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
-        assertThat(actualResult).isEqualTo(Optional.of(new CmsPaymentResponse()));
+        assertThat(actualResult).isEqualTo(Optional.of(new CmsPaymentResponse(TPP_NOK_REDIRECT_URI)));
         verify(pisAuthorisationSpecification, times(1))
             .byExternalIdAndInstanceId(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
