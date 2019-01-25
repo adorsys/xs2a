@@ -17,6 +17,12 @@ New conditions:
 * when PSU send a consent creation request with the following data: `recurringIndicator` property is `false` AND `frequencyPerDay` is more than `1`, 
 the response with `400 FORMAT_ERROR` is returned.
 
+## Added new options to ASPSP profile
+| Option                                       | Meaning                                                                                                | Default value | 
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
+| availableAccountsConsentSupported            | This field indicates if ASPSP supports available accounts for a consent                                | true          |
+| scaByOneTimeAvailableAccountsConsentRequired | This field indicates if ASPSP requires usage of SCA to validate a one-time available accounts consent  | true          |
+
 ## TPP-Nok-Redirect-URI returned when scaRedirect URI is expired (for Payment cancellation)
 Now for Payment cancellation if scaRedirect URI is expired we deliver TPP-Nok-Redirect-URI in the response from CMS to Online-banking. This response is returned with code 408.
 If TPP-Nok-Redirect-URI was not sent from TPP and in CMS is stored null, then CMS returns empty response with code 408. If payment is not found or psu data is incorrect, CMS returns 404. 

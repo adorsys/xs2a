@@ -559,6 +559,31 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void createAccountConsentWithResponse_Failure_NotSupportedAvailableAccounts() {
+        //Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
+        );
+
+        //When
+        when(createConsentRequestValidator.validateRequest(req))
+            .thenReturn(createValidationResult(false, createMessageError(MessageErrorCode.SERVICE_INVALID_405)));
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
+        MessageError messageError = responseObj.getError();
+
+        //Then
+        assertThat(messageError).isNotNull();
+        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+
+        TppMessageInformation tppMessage = messageError.getTppMessage();
+
+        assertThat(tppMessage).isNotNull();
+        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.SERVICE_INVALID_405);
+    }
+
+    @Test
     public void createConsentAuthorizationWithResponse_Success_ShouldRecordEvent() {
         when(aisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(new CreateConsentAuthorizationResponse()));

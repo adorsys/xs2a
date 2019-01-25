@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
@@ -65,6 +66,9 @@ public class CreateConsentRequestValidator {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)));
         }
 
+        if (isNotSupportedAvailableAccounts(request)) {
+            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SERVICE_INVALID_405)));
+        }
         return new ValidationResult(true, null);
     }
 
@@ -111,5 +115,13 @@ public class CreateConsentRequestValidator {
         }
 
         return false;
+    }
+
+    private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {
+        if (Objects.isNull(request.getAccess().getAvailableAccounts())) {
+            return false;
+        }
+
+        return !aspspProfileService.isAvailableAccountsConsentSupported();
     }
 }
