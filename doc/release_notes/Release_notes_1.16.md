@@ -22,3 +22,8 @@ the response with `400 FORMAT_ERROR` is returned.
 |----------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
 | availableAccountsConsentSupported            | This field indicates if ASPSP supports available accounts for a consent                                | true          |
 | scaByOneTimeAvailableAccountsConsentRequired | This field indicates if ASPSP requires usage of SCA to validate a one-time available accounts consent  | true          |
+
+## Fixed logic of deleting consent from Xs2a Interface
+If endpoint "Delete AIS consent" (DELETE /v1/consents/{consent-id}) is triggered by TPP, now Xs2a checks the status of the consent: if the consent status is RECEIVED, then 
+the status would be changed to REJECTED, because the consent is not yet authorized and is in the initiation phase. If the consent is in the 
+lifecycle phase (has status VALID), consent status is set to TERMINATED_BY_TPP. This affects only calls made to Xs2a interface, calls made from Online-Banking or to CMS directly are not affected.

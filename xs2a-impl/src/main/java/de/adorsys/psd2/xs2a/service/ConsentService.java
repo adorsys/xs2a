@@ -171,6 +171,7 @@ public class ConsentService {
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.DELETE_AIS_CONSENT_REQUEST_RECEIVED);
         AccountConsent accountConsent = getValidatedAccountConsent(consentId);
+        ConsentStatus newConsentStatus = ConsentStatus.TERMINATED_BY_TPP;
 
         if (accountConsent != null) {
             // TODO this is not correct. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
@@ -186,7 +187,11 @@ public class ConsentService {
                            .build();
             }
 
-            aisConsentService.updateConsentStatus(consentId, ConsentStatus.TERMINATED_BY_TPP);
+            if (accountConsent.getConsentStatus() == ConsentStatus.RECEIVED) {
+                newConsentStatus = ConsentStatus.REJECTED;
+            }
+
+            aisConsentService.updateConsentStatus(consentId, newConsentStatus);
             return ResponseObject.<Void>builder().build();
         }
 
