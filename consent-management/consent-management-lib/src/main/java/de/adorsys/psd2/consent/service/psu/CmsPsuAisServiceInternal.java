@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service.psu;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
@@ -59,6 +60,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
     private final AisConsentAuthorizationSpecification aisConsentAuthorizationSpecification;
     private final AisConsentSpecification aisConsentSpecification;
+    private final AisConsentService aisConsentService;
 
     @Override
     @Transactional
@@ -94,7 +96,12 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
-        return changeConsentStatus(consentId, VALID, instanceId);
+        if (changeConsentStatus(consentId, VALID, instanceId)) {
+            aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

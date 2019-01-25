@@ -75,6 +75,15 @@ interface AisConsentServiceBase {
     Optional<AisAccountConsent> getInitialAisAccountConsentById(String consentId);
 
     /**
+     * Finds old consents for current TPP and PSU and terminates them.
+     * This method should be invoked, when a new consent is authorised.
+     *
+     * @param newConsentId id of new consent
+     * @return true if any consents have been terminated, false - if none
+     */
+    boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId);
+
+    /**
      * Saves information about uses of consent
      *
      * @param request needed parameters for logging usage AIS consent

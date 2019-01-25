@@ -85,5 +85,4 @@ public class AccountConsent {
     public boolean isOneAccessType() {
         return !recurringIndicator;
     }
-
 }

@@ -52,9 +52,6 @@ public class CreateConsentRequestValidator {
      *         and MessageError for invalid case
      */
     public ValidationResult validateRequest(CreateConsentReq request) {
-        if (isNotSupportedAvailableAccounts(request)) {
-            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SERVICE_INVALID_405)));
-        }
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
         }
@@ -65,6 +62,13 @@ public class CreateConsentRequestValidator {
             return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID)));
         }
 
+        if (isNotValidFrequencyForRecurringIndicator(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
+            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)));
+        }
+
+        if (isNotSupportedAvailableAccounts(request)) {
+            return new ValidationResult(false, new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SERVICE_INVALID_405)));
+        }
         return new ValidationResult(true, null);
     }
 
@@ -103,6 +107,14 @@ public class CreateConsentRequestValidator {
 
     private boolean isValidConsentLifetime(int consentLifetime, LocalDate validUntil) {
         return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
+    }
+
+    private boolean isNotValidFrequencyForRecurringIndicator(boolean recurringIndicator, int frequencyPerDay) {
+        if (!recurringIndicator) {
+            return frequencyPerDay > 1;
+        }
+
+        return false;
     }
 
     private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {

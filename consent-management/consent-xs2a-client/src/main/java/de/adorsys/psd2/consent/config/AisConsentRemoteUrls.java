@@ -71,6 +71,15 @@ public class AisConsentRemoteUrls {
 
     /**
      * @return VOID
+     * Method: DELETE
+     * PathVariable: String consentId
+     */
+    public String findAndTerminateOldConsentsByNewConsentId() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/old-consents";
+    }
+
+    /**
+     * @return VOID
      * Method: POST
      * PathVariables: AisConsentActionRequest consentActionRequest
      */

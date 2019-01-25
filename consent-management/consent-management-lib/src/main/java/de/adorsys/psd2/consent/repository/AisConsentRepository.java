@@ -19,7 +19,9 @@ package de.adorsys.psd2.consent.repository;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +34,21 @@ public interface AisConsentRepository extends CrudRepository<AisConsent, Long>, 
 
     Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
 
-    List<AisConsent>findByPsuDataPsuId(String psuId);
+    List<AisConsent> findByPsuDataPsuId(String psuId);
+
+    @Query(
+        "select c from ais_consent c " +
+            "where c.psuData.psuId = :psuId " +
+            "and c.tppInfo.authorisationNumber = :authorisationNumber " +
+            "and c.tppInfo.authorityId = :authorityId " +
+            "and c.instanceId = :instanceId " +
+            "and c.consentStatus in :consentStatuses " +
+            "and c.externalId <> :newConsentId"
+    )
+    List<AisConsent> findOldConsentsByNewConsentParams(@Param("psuId") String psuId,
+                                                       @Param("authorisationNumber") String tppAuthorisationNumber,
+                                                       @Param("authorityId") String tppAuthorityId,
+                                                       @Param("instanceId") String instanceId,
+                                                       @Param("newConsentId") String newConsentId,
+                                                       @Param("consentStatuses") Set<ConsentStatus> consentStatuses);
 }
