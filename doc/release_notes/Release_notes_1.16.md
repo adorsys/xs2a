@@ -22,3 +22,13 @@ the response with `400 FORMAT_ERROR` is returned.
 |----------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
 | availableAccountsConsentSupported            | This field indicates if ASPSP supports available accounts for a consent                                | true          |
 | scaByOneTimeAvailableAccountsConsentRequired | This field indicates if ASPSP requires usage of SCA to validate a one-time available accounts consent  | true          |
+
+## Extend a list of Transaction Statuses for PIS
+New version of API Yaml file published by Berlin Group contains three new statuses for Transactions:
+| Code | Value                               | Provided description                                                                                                                                                   |
+|------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ACCC | AcceptedSettlementCompletedCreditor | Settlement on the creditor's account has been completed.                                                                                                               |
+| ACFC | AcceptedFundsChecked                | Preceeding check of technical validation and customer profile was successful and an automatic funds check was positive.                                                |
+| PATC | PartiallyAcceptedTechnicalCorrect   |  The payment initiation needs multiple authentications, where some but not yet all have been performed. Syntactical and semantical validations are successful.         |
+
+XS2A Classes were updated with these new values, so that they may be used in SPI level.
