@@ -153,4 +153,14 @@ public class BankProfileSetting {
      * This field contains the limit of an expiration time of redirect url for payment cancellation set in milliseconds
      */
     private long paymentCancellationRedirectUrlExpirationTimeMs;
+
+    /**
+     * If "true" indicates that an ASPSP supports available accounts for consent
+     */
+    private boolean availableAccountsConsentSupported;
+
+    /**
+     * If "true" indicates that an ASPSP requires usage of SCA to validate a one-time available accounts consent
+     */
+    private boolean scaByOneTimeAvailableAccountsConsentRequired;
 }

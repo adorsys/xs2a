@@ -16,3 +16,9 @@ New conditions:
 * if consent `recurringIndicator` property is `false`, the consent status is set to `EXPIRED` after consent has been used;
 * when PSU send a consent creation request with the following data: `recurringIndicator` property is `false` AND `frequencyPerDay` is more than `1`, 
 the response with `400 FORMAT_ERROR` is returned.
+
+## Added new options to ASPSP profile
+| Option                                       | Meaning                                                                                                | Default value | 
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------|
+| availableAccountsConsentSupported            | This field indicates if ASPSP supports available accounts for a consent                                | true          |
+| scaByOneTimeAvailableAccountsConsentRequired | This field indicates if ASPSP requires usage of SCA to validate a one-time available accounts consent  | true          |

@@ -48,4 +48,6 @@ public class AspspSettings {
     private long notConfirmedPaymentExpirationPeriodMs;
     private Map<PaymentType, Set<String>> supportedPaymentTypeAndProductMatrix;
     private long paymentCancellationRedirectUrlExpirationTimeMs;
+    private boolean availableAccountsConsentSupported;
+    private boolean scaByOneTimeAvailableAccountsConsentRequired;
 }
