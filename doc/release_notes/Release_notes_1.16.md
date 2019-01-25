@@ -23,6 +23,16 @@ the response with `400 FORMAT_ERROR` is returned.
 | availableAccountsConsentSupported            | This field indicates if ASPSP supports available accounts for a consent                                | true          |
 | scaByOneTimeAvailableAccountsConsentRequired | This field indicates if ASPSP requires usage of SCA to validate a one-time available accounts consent  | true          |
 
+## Extend a list of Transaction Statuses for PIS
+New version of API Yaml file published by Berlin Group contains three new statuses for Transactions:
+| Code | Value                               | Provided description                                                                                                                                                   |
+|------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ACCC | AcceptedSettlementCompletedCreditor | Settlement on the creditor's account has been completed.                                                                                                               |
+| ACFC | AcceptedFundsChecked                | Preceeding check of technical validation and customer profile was successful and an automatic funds check was positive.                                                |
+| PATC | PartiallyAcceptedTechnicalCorrect   |  The payment initiation needs multiple authentications, where some but not yet all have been performed. Syntactical and semantical validations are successful.         |
+
+XS2A Classes were updated with these new values, so that they may be used in SPI level.
+
 ## Fixed logic of deleting consent from Xs2a Interface
 If endpoint "Delete AIS consent" (DELETE /v1/consents/{consent-id}) is triggered by TPP, now Xs2a checks the status of the consent: if the consent status is RECEIVED, then 
 the status would be changed to REJECTED, because the consent is not yet authorized and is in the initiation phase. If the consent is in the 
