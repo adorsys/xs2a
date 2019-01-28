@@ -23,47 +23,45 @@ variables: &variables
 
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
   GITLAB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-
-  DOCKER_NAMESPACE: "adorsys"
-
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
   OPENSHIFT_NAMESPACE: "multibanking-xs2a"
 
   # XS2A Service
   GITLAB_IMAGE_NAME_XS2A: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}"
-  DOCKER_IMAGE_NAME_XS2A: "${DOCKER_NAMESPACE}/xs2a-service"
   OPENSHIFT_IMAGE_NAME_XS2A: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-xs2a"
 
   # Content management service
   GITLAB_IMAGE_NAME_CNT_MGMNT: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/cnt-mgmnt"
-  DOCKER_IMAGE_NAME_CNT_MGMNT: "${DOCKER_NAMESPACE}/xs2a-consent-management"
   OPENSHIFT_IMAGE_NAME_CNT_MGMNT: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-cnt-mgmnt"
 
   # ASPSP Mock Server
   GITLAB_IMAGE_NAME_MOCKSRV: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/aspsp-mock-server"
-  DOCKER_IMAGE_NAME_MOCKSRV: "${DOCKER_NAMESPACE}/xs2a-mock-server"
   OPENSHIFT_IMAGE_NAME_MOCKSRV: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-mock-server"
 
   # XS2A IDP Keycloak
   GITLAB_IMAGE_NAME_KEYCLOAK: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/keycloak-xs2a"
-  DOCKER_IMAGE_NAME_KEYCLOAK: "${DOCKER_NAMESPACE}/xs2a-idp"
   OPENSHIFT_IMAGE_NAME_KEYCLOAK: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/keycloak-xs2a"
 
   # XS2A IDP ASPSP Profile
   GITLAB_IMAGE_NAME_ASPSP_PROFILE: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-aspsp-profile"
-  DOCKER_IMAGE_NAME_ASPSP_PROFILE: "${DOCKER_NAMESPACE}/xs2a-aspsp-profile"
   OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-aspsp-profile"
 
   # Online banking demo
   GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-demo"
-  DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO: "${DOCKER_NAMESPACE}/xs2a-mock-online-banking-backend"
   OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-demo"
 
   # Online banking UIapp
   GITLAB_IMAGE_NAME_ONLINE_BANKING_UI: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-ui"
-  DOCKER_IMAGE_NAME_ONLINE_BANKING_UI: "${DOCKER_NAMESPACE}/xs2a-mock-online-banking-ui"
   OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-ui"
 
+
+  DOCKER_IMAGE_NAME_XS2A: "docker.io/adorsys/xs2a-service"
+  DOCKER_IMAGE_NAME_CNT_MGMNT: "docker.io/adorsys/xs2a-consent-management"
+  DOCKER_IMAGE_NAME_MOCKSRV: "docker.io/adorsys/xs2a-mock-server"
+  DOCKER_IMAGE_NAME_KEYCLOAK: "docker.io/adorsys/xs2a-idp"
+  DOCKER_IMAGE_NAME_ASPSP_PROFILE: "docker.io/adorsys/xs2a-aspsp-profile"
+  DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND: "docker.io/adorsys/xs2a-mock-online-banking-backend"
+  DOCKER_IMAGE_NAME_ONLINE_BANKING_UI: "docker.io/adorsys/xs2a-mock-online-banking-ui"
 
   ###########################
   # Build variables         #
@@ -172,7 +170,7 @@ variables: &variables
     - docker build -t "$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
     - docker build -t "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
     - docker build -t "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
-    - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
+    - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND:$DOCKER_TAG" online-banking-demo
     - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-demo-ui
 
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASS
@@ -182,7 +180,7 @@ variables: &variables
     - docker push "$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG"
     - docker push "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
     - docker push "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
-    - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND:$DOCKER_TAG"
     - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
 
     - docker logout
@@ -225,19 +223,50 @@ variables: &variables
 .helm_env_deploy: &helm_env_deploy
   image: adorsys/ci-helm:2.10
   script:
-    - cd devops/charts/xs2a
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.adorsys.de/adorsys/xs2a/xs2a-openshift.git .helm
+    - cd .helm/charts/xs2a
     - helm init --client-only
     - oc login openshift.adorsys.de --token=${HELM_TOKEN}
     - echo "${VAULT_PWD}" > $ANSIBLE_VAULT_PASSWORD_FILE
     - ansible-vault view env/${HELM_VALUE}.enc > env/${HELM_VALUE}
-    - >-
-      helm diff upgrade ${HELM_RELEASE} .
-      --allow-unreleased -q
-      -f env/${HELM_VALUE}
-    - >-
-      helm upgrade -i ${HELM_RELEASE} .
-      --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600
-      -f env/${HELM_VALUE}
+      # get docker image commit hashes
+    - SHA_XS2A=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG | jq -r .Digest)
+    - SHA_MOCKSRV=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_MOCKSRV:$DOCKER_TAG | jq -r .Digest)
+    - SHA_KEYCLOAK=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG | jq -r .Digest)
+    - SHA_CNT_MGMNT=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG | jq -r .Digest)
+    - SHA_ASPSP_PROFILE=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG | jq -r .Digest)
+    - SHA_ONLINE_BANKING_BACKEND=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND:$DOCKER_TAG | jq -r .Digest)
+    - SHA_ONLINE_BANKING_UI=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG | jq -r .Digest)
+      # assemble full docker image name
+    - IMAGE_WITH_SHA_XS2A="$DOCKER_IMAGE_NAME_XS2A@$SHA_XS2A"
+    - IMAGE_WITH_SHA_MOCKSRV="$DOCKER_IMAGE_NAME_MOCKSRV@$SHA_MOCKSRV"
+    - IMAGE_WITH_SHA_KEYCLOAK="$DOCKER_IMAGE_NAME_KEYCLOAK@$SHA_KEYCLOAK"
+    - IMAGE_WITH_SHA_CNT_MGMNT="$DOCKER_IMAGE_NAME_CNT_MGMNT@$SHA_CNT_MGMNT"
+    - IMAGE_WITH_SHA_ASPSP_PROFILE="$DOCKER_IMAGE_NAME_ASPSP_PROFILE@$SHA_ASPSP_PROFILE"
+    - IMAGE_WITH_SHA_ONLINE_BANKING_BACKEND="$DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND@$SHA_ONLINE_BANKING_BACKEND"
+    - IMAGE_WITH_SHA_ONLINE_BANKING_UI="$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI@$SHA_ONLINE_BANKING_UI"
+      # diff helm changes
+    - helm diff upgrade ${HELM_RELEASE} .
+        --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
+        --set dockerImageMocksrv="$IMAGE_WITH_SHA_MOCKSRV"
+        --set dockerImageKeycloak="$IMAGE_WITH_SHA_KEYCLOAK"
+        --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
+        --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
+        --set dockerImageOnlineBankingBackend="$IMAGE_WITH_SHA_ONLINE_BANKING_BACKEND"
+        --set dockerImageOnlineBankingUi="$IMAGE_WITH_SHA_ONLINE_BANKING_UI"
+        --allow-unreleased -q -f env/${HELM_VALUE}
+      # apply helm changes
+    - helm upgrade -i ${HELM_RELEASE} .
+        --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
+        --set dockerImageMocksrv="$IMAGE_WITH_SHA_MOCKSRV"
+        --set dockerImageKeycloak="$IMAGE_WITH_SHA_KEYCLOAK"
+        --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
+        --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
+        --set dockerImageOnlineBankingBackend="$IMAGE_WITH_SHA_ONLINE_BANKING_BACKEND"
+        --set dockerImageOnlineBankingUi="$IMAGE_WITH_SHA_ONLINE_BANKING_UI"
+        --namespace=${OPENSHIFT_NAMESPACE}
+        --wait --timeout=600
+        -f env/${HELM_VALUE}
 
 # ------------------------------------------------------------------
 # jobs
@@ -337,6 +366,7 @@ deploy_dockerhub_stage:
   stage: "build:image"
   only:
     - develop
+    - dgo_automatic_deployments
   variables:
     DOCKER_TAG: develop
   <<: *build_dockerhub_image
@@ -370,10 +400,11 @@ deploy_develop_stage:
   <<: *helm_env_deploy
   only:
     - develop
+    - dgo_automatic_deployments
   variables:
     <<: *variables
     OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
-    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
+    DOCKER_TAG: "develop"
     HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
     HELM_VALUE: develop.yaml
   environment:
