@@ -46,9 +46,10 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     /**
      * Creates authorisation for payment cancellation request if given psu data is valid
      *
-     * @param paymentId   String representation of payment identification
-     * @param psuData     Contains authorisation data about PSU
-     * @param paymentType Payment type supported by aspsp
+     * @param paymentId      String representation of payment identification
+     * @param psuData        Contains authorisation data about PSU
+     * @param paymentType    Payment type supported by aspsp
+     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
      * @return Xs2aCreatePisCancellationAuthorisationResponse that contains authorisationId, scaStatus, paymentType and related links
      */
     @Override
@@ -102,7 +103,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     /**
      * Gets list of cancellation identifiers
      *
-     * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
+     * @param paymentId ASPSP identifier of the payment, associated with the authorisation
      * @return Response containing list of cancellation identifiers in case of success or empty list in case of failure
      */
     @Override

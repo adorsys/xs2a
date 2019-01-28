@@ -48,9 +48,9 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
         Links links = new Links();
 
         if (startAuthorisationRequired) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentProduct}/{payment-id}/cancellation-authorisations", paymentType.getValue(), paymentProduct, paymentId));
-            links.setSelf(buildPath("/v1/{payment-service}/{paymentProduct}/{payment-id}", paymentType.getValue(), paymentProduct, paymentId));
-            links.setStatus(buildPath("/v1/{payment-service}/{paymentProduct}/{payment-id}/status", paymentType.getValue(), paymentProduct, paymentId));
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/cancellation-authorisations", paymentType.getValue(), paymentProduct, paymentId));
+            links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentType.getValue(), paymentProduct, paymentId));
+            links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentType.getValue(), paymentProduct, paymentId));
         }
         return links;
     }

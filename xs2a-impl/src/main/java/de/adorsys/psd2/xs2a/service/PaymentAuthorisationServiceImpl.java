@@ -47,9 +47,10 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     /**
      * Creates authorisation for payment request if given psu data is valid
      *
-     * @param paymentId   String representation of payment identification
-     * @param psuData     Contains authorisation data about PSU
-     * @param paymentType Payment type supported by aspsp
+     * @param paymentId      String representation of payment identification
+     * @param psuData        Contains authorisation data about PSU
+     * @param paymentType    Payment type supported by aspsp
+     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
      * @return Xs2aCreatePisAuthorisationResponse that contains authorisationId, scaStatus, paymentType and related links
      */
     @Override

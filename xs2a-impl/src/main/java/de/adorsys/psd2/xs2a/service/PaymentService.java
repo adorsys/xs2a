@@ -249,6 +249,7 @@ public class PaymentService {
      * Cancels payment by its ASPSP identifier and payment type
      *
      * @param paymentType        type of payment (payments, bulk-payments, periodic-payments)
+     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
      * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about cancelled payment or corresponding error
      */
