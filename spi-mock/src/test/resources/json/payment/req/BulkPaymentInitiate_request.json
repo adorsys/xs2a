@@ -1,0 +1,64 @@
+{
+  "batchBookingPreferred": false,
+  "requestedExecutionDate": "2019-10-10",
+  "debtorAccount": {
+    "bban": 280019400644750000,
+    "currency": "EUR",
+    "iban": "LU280019400644750000",
+    "maskedPan": "2356xxxxxx1234",
+    "msisdn": "+49(0)911 360698-0",
+    "pan": "2356 5746 3217 1234"
+  },
+  "payments": [
+    {
+      "endToEndIdentification": "WBG-123456789",
+      "instructedAmount": {
+        "amount": 666,
+        "currency": "EUR"
+      },
+      "creditorAccount": {
+        "bban": 89370400440532013000,
+        "currency": "EUR",
+        "iban": "DE21500105176194357737",
+        "maskedPan": "2356xxxxxx1234",
+        "msisdn": "+49(0)911 360698-0",
+        "pan": "2356 5746 3217 1234"
+      },
+      "creditorAgent" : "AAAADEBBXXX",
+      "creditorName": "Telekom",
+      "creditorAddress": {
+        "buildingNumber": "56",
+        "city": "Nürnberg",
+        "country": "DE",
+        "postalCode": "90543",
+        "street": "WBG Straße"
+      },
+      "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222"
+    },
+    {
+      "endToEndIdentification": "WBG-123456789",
+      "instructedAmount": {
+        "amount": 888,
+        "currency": "EUR"
+      },
+      "creditorAccount": {
+        "bban": 89370400440532013000,
+        "currency": "EUR",
+        "iban": "DE54500105173424724776",
+        "maskedPan": "2356xxxxxx1234",
+        "msisdn": "+49(0)911 360698-0",
+        "pan": "2356 5746 3217 1234"
+      },
+      "creditorAgent" : "AAAADEBBXXX",
+      "creditorName": "Telekom",
+      "creditorAddress": {
+        "buildingNumber": "56",
+        "city": "Nürnberg",
+        "country": "DE",
+        "postalCode": "90543",
+        "street": "WBG Straße"
+      },
+      "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222"
+    }
+  ]
+}
