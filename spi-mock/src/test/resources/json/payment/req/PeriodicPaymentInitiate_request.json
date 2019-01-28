@@ -1,0 +1,30 @@
+{
+  "endToEndIdentification": "RI-1234567890",
+  "debtorAccount": {
+    "currency": "EUR",
+    "iban": "LU280019400644750000"
+  },
+  "instructedAmount": {
+    "amount": 113,
+    "currency": "EUR"
+  },
+  "creditorAccount": {
+    "currency": "EUR",
+    "iban": "DE89370400440532013000"
+  },
+  "creditorAgent" : "AAAADEBBXXX",
+  "creditorName": "Telekom",
+  "creditorAddress": {
+    "buildingNumber": "56",
+    "city": "Nürnberg",
+    "country": "DE",
+    "postalCode": "90543",
+    "street": "WBG Straße"
+  },
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "startDate": "2020-01-01",
+  "endDate": "2020-02-01",
+  "executionRule": "preceeding",
+  "frequency": "Annual",
+  "dayOfExecution": "2"
+}
