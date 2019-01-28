@@ -149,7 +149,7 @@ public class PaymentController implements PaymentApi {
                                         String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
-                                                                    .map(type -> xs2aPaymentService.cancelPayment(type, paymentId))
+                                                                    .map(type -> xs2aPaymentService.cancelPayment(type, paymentProduct, paymentId))
                                                                     .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
                                                                                    .fail(new MessageError(FORMAT_ERROR))::build);
 
@@ -219,7 +219,7 @@ public class PaymentController implements PaymentApi {
 
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
-        return responseMapper.created(paymentAuthorisationService.createPisAuthorization(paymentId, PaymentType.getByValue(paymentService).get(), psuData), consentModelMapper::mapToStartScaProcessResponse);
+        return responseMapper.created(paymentAuthorisationService.createPisAuthorization(paymentId, PaymentType.getByValue(paymentService).get(), paymentProduct, psuData), consentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class PaymentController implements PaymentApi {
                                                                                                    String psUGeoLocation) {
 
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
-        return responseMapper.created(paymentCancellationAuthorisationService.createPisCancellationAuthorization(paymentId, psuData, PaymentType.getByValue(paymentService).get()), consentModelMapper::mapToStartScaProcessResponse);
+        return responseMapper.created(paymentCancellationAuthorisationService.createPisCancellationAuthorization(paymentId, psuData, PaymentType.getByValue(paymentService).get(), paymentProduct), consentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override
@@ -247,7 +247,7 @@ public class PaymentController implements PaymentApi {
                                                                    String psUGeoLocation) {
 
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
-        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> response = paymentCancellationAuthorisationService.updatePisCancellationPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, cancellationId, paymentService, (Map) body));
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> response = paymentCancellationAuthorisationService.updatePisCancellationPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, cancellationId, paymentService, paymentProduct, (Map) body));
         return responseMapper.ok(response, consentModelMapper::mapToUpdatePsuAuthenticationResponse);
     }
 
@@ -260,6 +260,6 @@ public class PaymentController implements PaymentApi {
                                                        UUID psUDeviceID, String psUGeoLocation) {
 
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
-        return responseMapper.ok(paymentAuthorisationService.updatePisCommonPaymentPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, paymentService, (Map) body)), consentModelMapper::mapToUpdatePsuAuthenticationResponse);
+        return responseMapper.ok(paymentAuthorisationService.updatePisCommonPaymentPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, paymentService, paymentProduct, (Map) body)), consentModelMapper::mapToUpdatePsuAuthenticationResponse);
     }
 }

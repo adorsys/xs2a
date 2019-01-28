@@ -48,6 +48,7 @@ import static org.mockito.Mockito.*;
 public class PaymentCancellationAuthorisationServiceTest {
     private static final String CORRECT_PSU_ID = "123456789";
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
+    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
     private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
@@ -82,7 +83,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentCancellationAuthorisationService.createPisCancellationAuthorization(PAYMENT_ID, PSU_ID_DATA, PaymentType.SINGLE);
+        paymentCancellationAuthorisationService.createPisCancellationAuthorization(PAYMENT_ID, PSU_ID_DATA, PaymentType.SINGLE, PAYMENT_PRODUCT);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());

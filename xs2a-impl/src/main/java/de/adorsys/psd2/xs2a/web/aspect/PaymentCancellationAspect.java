@@ -34,23 +34,23 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
         super(aspspProfileService, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args( paymentType, paymentId)", returning = "result", argNames = "result,paymentType,paymentId")
-    public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PaymentType paymentType, String paymentId) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args( paymentType, paymentProduct, paymentId)", returning = "result", argNames = "result,paymentType,paymentProduct,paymentId")
+    public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PaymentType paymentType, String paymentProduct, String paymentId) {
         if (!result.hasError()) {
             CancelPaymentResponse response = result.getBody();
-            response.setLinks(buildCancellationLinks(response.isStartAuthorisationRequired(), paymentType, paymentId));
+            response.setLinks(buildCancellationLinks(response.isStartAuthorisationRequired(), paymentType, paymentProduct, paymentId));
             return result;
         }
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildCancellationLinks(boolean startAuthorisationRequired, PaymentType paymentType, String paymentId) {
+    private Links buildCancellationLinks(boolean startAuthorisationRequired, PaymentType paymentType, String paymentProduct, String paymentId) {
         Links links = new Links();
 
         if (startAuthorisationRequired) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/cancellation-authorisations", paymentType.getValue(), paymentId));
-            links.setSelf(buildPath("/v1/{payment-service}/{payment-id}",  paymentType.getValue(), paymentId));
-            links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status",  paymentType.getValue(), paymentId));
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentProduct}/{payment-id}/cancellation-authorisations", paymentType.getValue(), paymentProduct, paymentId));
+            links.setSelf(buildPath("/v1/{payment-service}/{paymentProduct}/{payment-id}", paymentType.getValue(), paymentProduct, paymentId));
+            links.setStatus(buildPath("/v1/{payment-service}/{paymentProduct}/{payment-id}/status", paymentType.getValue(), paymentProduct, paymentId));
         }
         return links;
     }

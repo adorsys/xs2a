@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<PaymentController> {
-    private final static String PSU_CANCELLATION_AUTHORISATION_URL = "/v1/{paymentService}/{paymentId}/cancellation-authorisations/{authorisationId}";
+    private final static String PSU_CANCELLATION_AUTHORISATION_URL = "/v1/{paymentService}/{paymentProduct}/{paymentId}/cancellation-authorisations/{authorisationId}";
 
     public UpdatePisCancellationPsuDataAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService) {
         super(aspspProfileService, messageService);
@@ -46,14 +46,14 @@ public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<Payme
 
             if (isScaStatusMethodAuthenticated(body.getScaStatus())) {
 
-                links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorisationId()));
-                links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorisationId()));
+                links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
+                links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), body.getScaStatus())) {
 
-                links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorisationId()));
+                links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             } else if (isScaStatusFinalised(body.getScaStatus())) {
 
-                links.setScaStatus(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorisationId()));
+                links.setScaStatus(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             }
 
             body.setLinks(links);
@@ -65,13 +65,13 @@ public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<Payme
 
     private Links buildLink(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", request.getPaymentService(), request.getPaymentId()));
-        links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", request.getPaymentService(), request.getPaymentId()));
+        links.setSelf(buildPath("/v1/{paymentService}/{paymentProduct}/{paymentId}", request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
+        links.setStatus(buildPath("/v1/{paymentService}/{paymentProduct}/{paymentId}/status", request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
         return links;
     }
 
-    private String buildAuthorisationLink(String paymentService, String paymentId, String authorisationId) {
-        return buildPath(PSU_CANCELLATION_AUTHORISATION_URL, paymentService, paymentId, authorisationId);
+    private String buildAuthorisationLink(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
+        return buildPath(PSU_CANCELLATION_AUTHORISATION_URL, paymentService, paymentProduct, paymentId, authorisationId);
     }
 
     private boolean isScaStatusFinalised(ScaStatus scaStatus) {

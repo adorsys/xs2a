@@ -53,7 +53,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
      * @return Xs2aCreatePisAuthorisationResponse that contains authorisationId, scaStatus, paymentType and related links
      */
     @Override
-    public ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorization(String paymentId, PaymentType paymentType, PsuIdData psuData) {
+    public ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorization(String paymentId, PaymentType paymentType, String paymentProduct, PsuIdData psuData) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
         // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581

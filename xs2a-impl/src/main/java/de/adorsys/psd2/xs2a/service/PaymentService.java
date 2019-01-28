@@ -252,7 +252,7 @@ public class PaymentService {
      * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String encryptedPaymentId) {
+    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 

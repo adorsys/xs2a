@@ -42,40 +42,40 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
         this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService.createPisCancellationAuthorization(..)) && args( paymentId, psuData, paymentType)", returning = "result", argNames = "result,paymentId,psuData,paymentType")
-    public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> result, String paymentId, PsuIdData psuData, PaymentType paymentType) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService.createPisCancellationAuthorization(..)) && args( paymentId, psuData, paymentType, paymentProduct)", returning = "result", argNames = "result,paymentId,psuData,paymentType,paymentProduct")
+    public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> result, String paymentId, PsuIdData psuData, PaymentType paymentType, String paymentProduct) {
         if (!result.hasError()) {
             Xs2aCreatePisCancellationAuthorisationResponse body = result.getBody();
-            body.setLinks(buildLink(paymentType.getValue(), paymentId, body.getAuthorisationId()));
+            body.setLinks(buildLink(paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId()));
             return result;
         }
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLink(String paymentService, String paymentId, String authorizationId) {
+    private Links buildLink(String paymentService, String paymentProduct, String paymentId, String authorizationId) {
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{payment-service}/{payment-id}", paymentService, paymentId));
-        links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status", paymentService, paymentId));
+        links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentService, paymentProduct, paymentId));
+        links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentService, paymentProduct, paymentId));
 
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
-            return addEmbeddedRelatedLinks(links, paymentService, paymentId, authorizationId);
+            return addEmbeddedRelatedLinks(links, paymentService, paymentProduct, paymentId, authorizationId);
         } else if (aspspProfileService.getScaApproach() == ScaApproach.REDIRECT) {
-            return addRedirectRelatedLinks(links, paymentService, paymentId, authorizationId);
+            return addRedirectRelatedLinks(links, paymentService, paymentProduct, paymentId, authorizationId);
         } else if (aspspProfileService.getScaApproach() == ScaApproach.OAUTH) {
             links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
         return links;
     }
 
-    private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentId, String authorizationId) {
-        links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{paymentId}/cancellation-authorisations/{authorisationId}", paymentService, paymentId, authorizationId));
+    private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId) {
+        links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{payment-product}/{paymentId}/cancellation-authorisations/{authorisationId}", paymentService, paymentProduct, paymentId, authorizationId));
         return links;
     }
 
-    private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentId, String authorizationId) {
+    private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId) {
         String link = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorizationId);
         links.setScaRedirect(link);
-        links.setScaStatus(buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
+        links.setScaStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
 
         return links;
     }

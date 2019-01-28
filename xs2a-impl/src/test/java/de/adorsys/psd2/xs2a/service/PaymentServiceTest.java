@@ -79,6 +79,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
+    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String IBAN = "DE123456789";
     private static final String AMOUNT = "100";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
@@ -208,7 +209,7 @@ public class PaymentServiceTest {
             .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         assertThat(actual.getBody()).isNotNull();
@@ -228,7 +229,7 @@ public class PaymentServiceTest {
             .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         assertThat(actual.getBody()).isNotNull();
@@ -246,7 +247,7 @@ public class PaymentServiceTest {
             .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(getFinalisedPisPayment()), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         assertThat(actual.getError()).isNotNull();
@@ -263,7 +264,7 @@ public class PaymentServiceTest {
             .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(getFinalisedPisPayment()), eq("sepa-credit-transfers"), any(PaymentType.class));
 
         // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         assertThat(actual.getError()).isNotNull();
@@ -285,7 +286,7 @@ public class PaymentServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_ID);
+        paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());

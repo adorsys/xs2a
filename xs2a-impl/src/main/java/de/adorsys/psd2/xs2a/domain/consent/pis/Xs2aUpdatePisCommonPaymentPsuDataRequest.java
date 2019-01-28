@@ -30,4 +30,5 @@ public class Xs2aUpdatePisCommonPaymentPsuDataRequest {
     private ScaStatus scaStatus;
     private String paymentService;
     private String scaAuthenticationData;
+    private String paymentProduct;
 }
