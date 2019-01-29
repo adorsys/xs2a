@@ -90,11 +90,11 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
                 aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<AspspSinglePayment>>() {
                 }, payment.getPaymentType().getValue(), payment.getPaymentProduct(), payment.getPaymentId());
             AspspSinglePayment single = aspspResponse.getBody().get(0);
-            SpiSinglePayment spiPeriodicPayment = spiSinglePaymentMapper.mapToSpiSinglePayment(single, payment.getPaymentProduct());
+            SpiSinglePayment spiSinglePayment = spiSinglePaymentMapper.mapToSpiSinglePayment(single, payment.getPaymentProduct());
 
             return SpiResponse.<SpiSinglePayment>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                       .payload(spiPeriodicPayment)
+                       .payload(spiSinglePayment)
                        .success();
 
         } catch (RestException e) {

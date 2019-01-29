@@ -50,6 +50,11 @@ public class CmsToXs2aPaymentMapper {
                        periodic.setCreditorName(p.getCreditorName());
                        periodic.setCreditorAddress(mapToXs2aAddress(p.getCreditorAddress()));
                        periodic.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
+                       periodic.setStartDate(p.getStartDate());
+                       periodic.setDayOfExecution(p.getDayOfExecution());
+                       periodic.setEndDate(p.getEndDate());
+                       periodic.setExecutionRule(p.getExecutionRule());
+                       periodic.setTransactionStatus(p.getTransactionStatus());
                        String frequency = p.getFrequency();
                        if (StringUtils.isNotBlank(frequency)) {
                            periodic.setFrequency(Xs2aFrequencyCode.valueOf(frequency));
@@ -72,6 +77,9 @@ public class CmsToXs2aPaymentMapper {
                        single.setCreditorName(p.getCreditorName());
                        single.setCreditorAddress(mapToXs2aAddress(p.getCreditorAddress()));
                        single.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
+                       single.setRequestedExecutionDate(p.getRequestedExecutionDate());
+                       single.setRequestedExecutionTime(p.getRequestedExecutionTime());
+                       single.setTransactionStatus(p.getTransactionStatus());
                        return single;
                    }).orElse(null);
     }
