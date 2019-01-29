@@ -33,6 +33,14 @@ New version of API Yaml file published by Berlin Group contains three new status
 
 XS2A Classes were updated with these new values, so that they may be used in SPI level.
 
+## Inner integration tests
+Added integration tests in spi-mock service.
+12 tests check successes payments initiation:
+  - for payment types Single, Periodic and Bulk 
+  - for modes Explicit and Implicit 
+  - for sca approach Redirect and Embedded
+1 test checks payment sca status
+
 ## TPP-Nok-Redirect-URI returned when scaRedirect URI is expired (for Payment cancellation)
 Now for Payment cancellation if scaRedirect URI is expired we deliver TPP-Nok-Redirect-URI in the response from CMS to Online-banking. This response is returned with code 408.
 If TPP-Nok-Redirect-URI was not sent from TPP and in CMS is stored null, then CMS returns empty response with code 408. If payment is not found or psu data is incorrect, CMS returns 404. 
