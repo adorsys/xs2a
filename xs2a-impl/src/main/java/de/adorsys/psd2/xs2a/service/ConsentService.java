@@ -182,11 +182,10 @@ public class ConsentService {
                            .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCodeMapper.mapToMessageErrorCode(revokeAisConsentResponse.getResponseStatus()))))
                            .build();
             }
-            ConsentStatus newConsentStatus = ConsentStatus.TERMINATED_BY_TPP;
 
-            if (accountConsent.getConsentStatus() == ConsentStatus.RECEIVED) {
-                newConsentStatus = ConsentStatus.REJECTED;
-            }
+            ConsentStatus newConsentStatus = accountConsent.getConsentStatus() == ConsentStatus.RECEIVED
+                                                 ? ConsentStatus.REJECTED
+                                                 : ConsentStatus.TERMINATED_BY_TPP;
 
             aisConsentService.updateConsentStatus(consentId, newConsentStatus);
             return ResponseObject.<Void>builder().build();
