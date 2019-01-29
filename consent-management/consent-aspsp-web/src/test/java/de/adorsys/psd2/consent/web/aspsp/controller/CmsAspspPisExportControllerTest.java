@@ -49,6 +49,8 @@ public class CmsAspspPisExportControllerTest {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final String PSU_ID = "psu id";
     private static final String WRONG_PSU_ID = "wrong psu id";
+    private static final String ASPSP_ACCOUNT_ID = "account id";
+    private static final String WRONG_ASPSP_ACCOUNT_ID = "wrong account id";
 
     @Mock
     private CmsAspspPisExportService cmsAspspPisExportService;
@@ -68,6 +70,11 @@ public class CmsAspspPisExportControllerTest {
             .thenReturn(Collections.singletonList(buildCmsPayment()));
         PsuIdData wrongPsuIdData = buildPsuIdData(WRONG_PSU_ID);
         when(cmsAspspPisExportService.exportPaymentsByPsu(eq(wrongPsuIdData), any(), any(), any()))
+            .thenReturn(Collections.emptyList());
+
+        when(cmsAspspPisExportService.exportPaymentsByAccountId(eq(ASPSP_ACCOUNT_ID), eq(CREATION_DATE_FROM), eq(CREATION_DATE_TO), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+            .thenReturn(Collections.singletonList(buildCmsPayment()));
+        when(cmsAspspPisExportService.exportPaymentsByAccountId(eq(WRONG_ASPSP_ACCOUNT_ID), any(), any(), any()))
             .thenReturn(Collections.emptyList());
 
     }
@@ -122,6 +129,33 @@ public class CmsAspspPisExportControllerTest {
         ResponseEntity<Collection<CmsPayment>> actual =
             cmsAspspPisExportController.getPaymentsByPsu(CREATION_DATE_FROM, CREATION_DATE_TO, WRONG_PSU_ID, null,
                                                          null, null, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        assertEquals(Collections.emptyList(), actual.getBody());
+    }
+
+    @Test
+    public void getPaymentsByAccountId_success() {
+        // Given
+        Collection<CmsPayment> expected = Collections.singletonList(buildCmsPayment());
+
+        // When
+        ResponseEntity<Collection<CmsPayment>> actual =
+            cmsAspspPisExportController.getPaymentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO,
+                                                               DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        assertEquals(expected, actual.getBody());
+    }
+
+    @Test
+    public void getPaymentsByAccountId_failure_wrongAccountId() {
+        // When
+        ResponseEntity<Collection<CmsPayment>> actual =
+            cmsAspspPisExportController.getPaymentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO,
+                                                               DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertEquals(HttpStatus.OK, actual.getStatusCode());

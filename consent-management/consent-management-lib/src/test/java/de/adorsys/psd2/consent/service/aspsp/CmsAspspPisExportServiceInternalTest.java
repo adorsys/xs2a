@@ -59,6 +59,9 @@ public class CmsAspspPisExportServiceInternalTest {
     private static final String PSU_ID = "psu id";
     private static final String WRONG_PSU_ID = "wrong psu id";
 
+    private static final String ASPSP_ACCOUNT_ID = "aspsp account id";
+    private static final String WRONG_ASPSP_ACCOUNT_ID = "wrong aspsp account id";
+
     private static final String PAYMENT_ID = "payment id";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
 
@@ -202,6 +205,59 @@ public class CmsAspspPisExportServiceInternalTest {
         Collection<CmsPayment> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(emptyPsuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertTrue(payments.isEmpty());
+        verify(pisCommonPaymentDataSpecification, never())
+            .byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
+    }
+
+    @Test
+    public void exportPaymentsByAccountId_success() {
+        // Given
+        //noinspection unchecked
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
+            .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
+        CmsPayment expectedPayment = buildCmsPayment();
+
+        // When
+        Collection<CmsPayment> payments =
+            cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                                       CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertFalse(payments.isEmpty());
+        assertTrue(payments.contains(expectedPayment));
+        verify(pisCommonPaymentDataSpecification, times(1))
+            .byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                            CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+    }
+
+    @Test
+    public void exportPaymentsByAccountId_failure_wrongPsuIdData() {
+        // Given
+        //noinspection unchecked
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
+            .thenReturn(Collections.emptyList());
+
+        // When
+        Collection<CmsPayment> payments =
+            cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                                       CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertTrue(payments.isEmpty());
+        verify(pisCommonPaymentDataSpecification, times(1))
+            .byAspspAccountIdAndCreationPeriodAndInstanceId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                            CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+    }
+
+    @Test
+    public void exportPaymentsByAccountId_failure_blankAspspAccountId() {
+        // When
+        Collection<CmsPayment> payments =
+            cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(" ", CREATION_DATE_FROM,
+                                                                       CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(payments.isEmpty());

@@ -93,13 +93,11 @@ public class CmsAspspPisExportController {
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/tpp/{tpp-id}/accounts/{account-id}")
-    @ApiOperation(value = "Returns a list of payments by given mandatory aspsp account id, TPP ID, optional creation date and instance ID")
+    @GetMapping(path = "/accounts/{account-id}")
+    @ApiOperation(value = "Returns a list of payments by given mandatory aspsp account id, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
     public ResponseEntity<Collection<CmsPayment>> getPaymentsByAccountId(
-        @ApiParam(value = "TPP ID", required = true, example = "12345987")
-        @PathVariable("tpp-id") String tppId,
         @ApiParam(value = "Bank specific account identifier.", required = true, example = "11111-99999")
         @PathVariable("account-id") String aspspAccountId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
@@ -110,7 +108,7 @@ public class CmsAspspPisExportController {
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByAccountIdAndTpp(aspspAccountId, tppId, start, end, instanceId);
+        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByAccountId(aspspAccountId, start, end, instanceId);
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 }
