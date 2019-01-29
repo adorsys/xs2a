@@ -54,3 +54,7 @@ From now on default values for TPP-related fields are no longer provided in the 
 Due to various internal reasons integration tests on cucumber are removed from the project 
 and will be not part of Open Source solution anymore.
 Last version with this package in Open Source is 1.15.
+
+## Remove some not null constraints for TPP in the CMS database
+Not null constraints were removed from most of the columns in the `tpp_info` table.
+From now on only `tpp_info_id`, `authorisation_number`, `authority_id` and `instance_id` columns can't be null.
