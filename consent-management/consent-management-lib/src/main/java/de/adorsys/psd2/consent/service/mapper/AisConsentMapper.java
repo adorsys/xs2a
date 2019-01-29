@@ -21,10 +21,10 @@ import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
+import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -39,10 +39,22 @@ public class AisConsentMapper {
     private final PsuDataMapper psuDataMapper;
     private final TppInfoMapper tppInfoMapper;
 
+    /**
+     * Maps AisConsent to AisAccountConsent with accesses populated with account references, provided by ASPSP.
+     * <p>
+     * If no account references were provided by the ASPSP, TPP accesses will be used instead.
+     *
+     * @param consent AIS consent entity
+     * @return mapped AIS consent
+     */
     public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
+        AisAccountAccess aisAccountAccess = consent.getAspspAccountAccesses().isEmpty()
+                                                ? mapToAisAccountAccess(consent.getAccesses())
+                                                : mapToAspspAisAccountAccess(consent.getAspspAccountAccesses());
+
         return new AisAccountConsent(
             consent.getExternalId(),
-            mapToAspspAisAccountAccess(consent.getAspspAccountAccesses()),
+            aisAccountAccess,
             consent.isRecurringIndicator(),
             consent.getExpireDate(),
             consent.getTppFrequencyPerDay(),
@@ -55,6 +67,12 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()));
     }
 
+    /**
+     * Maps AisConsent to AisAccountConsent with accesses populated with account references, provided by TPP.
+     *
+     * @param consent AIS consent entity
+     * @return mapped AIS consent
+     */
     public AisAccountConsent mapToInitialAisAccountConsent(AisConsent consent) {
         return new AisAccountConsent(
             consent.getExternalId(),
@@ -91,8 +109,8 @@ public class AisConsentMapper {
 
     private AisAccountAccess mapToAisAccountAccess(List<TppAccountAccess> accountAccesses) {
         return new AisAccountAccess(mapToInitialAccountReferences(accountAccesses, TypeAccess.ACCOUNT),
-            mapToInitialAccountReferences(accountAccesses, TypeAccess.BALANCE),
-            mapToInitialAccountReferences(accountAccesses, TypeAccess.TRANSACTION));
+                                    mapToInitialAccountReferences(accountAccesses, TypeAccess.BALANCE),
+                                    mapToInitialAccountReferences(accountAccesses, TypeAccess.TRANSACTION));
     }
 
     private List<AccountReference> mapToInitialAccountReferences(List<TppAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -104,8 +122,8 @@ public class AisConsentMapper {
 
     private AisAccountAccess mapToAspspAisAccountAccess(List<AspspAccountAccess> accountAccesses) {
         return new AisAccountAccess(mapToAccountReferences(accountAccesses, TypeAccess.ACCOUNT),
-            mapToAccountReferences(accountAccesses, TypeAccess.BALANCE),
-            mapToAccountReferences(accountAccesses, TypeAccess.TRANSACTION));
+                                    mapToAccountReferences(accountAccesses, TypeAccess.BALANCE),
+                                    mapToAccountReferences(accountAccesses, TypeAccess.TRANSACTION));
     }
 
     private List<AccountReference> mapToAccountReferences(List<AspspAccountAccess> aisAccounts, TypeAccess typeAccess) {
