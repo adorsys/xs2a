@@ -36,7 +36,7 @@ public class TppInfoEntity extends InstanceDependableEntity {
     @Column(name = "authorisation_number", nullable = false)
     private String authorisationNumber;
 
-    @Column(name = "tpp_name", nullable = false)
+    @Column(name = "tpp_name")
     private String tppName;
 
     @ElementCollection
@@ -48,22 +48,22 @@ public class TppInfoEntity extends InstanceDependableEntity {
     @Column(name = "authority_id", nullable = false)
     private String authorityId;
 
-    @Column(name = "authority_name", nullable = false)
+    @Column(name = "authority_name")
     private String authorityName;
 
-    @Column(name = "country", nullable = false)
+    @Column(name = "country")
     private String country;
 
-    @Column(name = "organisation", nullable = false)
+    @Column(name = "organisation")
     private String organisation;
 
-    @Column(name = "organisation_unit", nullable = false)
+    @Column(name = "organisation_unit")
     private String organisationUnit;
 
-    @Column(name = "city", nullable = false)
+    @Column(name = "city")
     private String city;
 
-    @Column(name = "state", nullable = false)
+    @Column(name = "state")
     private String state;
 
     @Column(name = "redirect_uri")

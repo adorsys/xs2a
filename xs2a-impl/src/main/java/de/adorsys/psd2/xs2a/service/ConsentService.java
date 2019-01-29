@@ -59,9 +59,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
-
 @Service
 @RequiredArgsConstructor
 //TODO Refactor Service: split responsibilities https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
@@ -129,7 +126,7 @@ public class ConsentService {
         xs2aAccountAccess.ifPresent(accountAccess ->
                                         accountReferenceUpdater.rewriteAccountAccess(consentId, accountAccess));
 
-        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build();
+        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null)).build();
 
         if (isEmbeddedOrRedirectScaApproach()
                 && authorisationMethodDecider.isImplicitMethod(explicitPreferred)) {
@@ -186,7 +183,11 @@ public class ConsentService {
                            .build();
             }
 
-            aisConsentService.updateConsentStatus(consentId, ConsentStatus.TERMINATED_BY_TPP);
+            ConsentStatus newConsentStatus = accountConsent.getConsentStatus() == ConsentStatus.RECEIVED
+                                                 ? ConsentStatus.REJECTED
+                                                 : ConsentStatus.TERMINATED_BY_TPP;
+
+            aisConsentService.updateConsentStatus(consentId, newConsentStatus);
             return ResponseObject.<Void>builder().build();
         }
 
@@ -224,8 +225,8 @@ public class ConsentService {
         }
 
         ConsentStatus consentStatus = accountConsent.getConsentStatus();
-        if (consentStatus != VALID) {
-            MessageErrorCode messageErrorCode = consentStatus == RECEIVED
+        if (consentStatus != ConsentStatus.VALID) {
+            MessageErrorCode messageErrorCode = consentStatus == ConsentStatus.RECEIVED
                                                     ? MessageErrorCode.CONSENT_INVALID
                                                     : MessageErrorCode.CONSENT_EXPIRED;
             return ResponseObject.<AccountConsent>builder()
