@@ -60,4 +60,5 @@
 			 file="migration/0035-set-pis-consent-authorization-chosen_sca_method-type-to-varchar-40.xml"/>
     <include relativeToChangelogFile="true" file="migration/0036-add-aspsp-account-id-column-to-account-reference.xml"/>
     <include relativeToChangelogFile="true" file="migration/0037-remove-default-values-from-tpp-info.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0038-update-not-null-constraints-in-tpp-info.xml"/>
 </databaseChangeLog>
