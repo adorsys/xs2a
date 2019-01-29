@@ -123,9 +123,10 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
         if (authorisation.isExpired()) {
             changeAuthorisationStatusToFailed(authorisation);
-            String tppNokRedirectUri = authorisation.getPaymentData().getTppInfo().getNokRedirectUri();
-            return Optional.of(new CmsPaymentResponse(tppNokRedirectUri));
-        }
+            return Optional.ofNullable(authorisation.getPaymentData())
+                       .map(PisCommonPaymentData::getTppInfo)
+                       .map(TppInfoEntity::getNokRedirectUri)
+                       .map(CmsPaymentResponse::new);        }
 
         return Optional.of(buildCmsPaymentResponseForCancellation(authorisation));
     }
