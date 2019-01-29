@@ -33,6 +33,14 @@ New version of API Yaml file published by Berlin Group contains three new status
 
 XS2A Classes were updated with these new values, so that they may be used in SPI level.
 
+## Inner integration tests
+Added integration tests in spi-mock service.
+12 tests check successes payments initiation:
+  - for payment types Single, Periodic and Bulk 
+  - for modes Explicit and Implicit 
+  - for sca approach Redirect and Embedded
+1 test checks payment sca status
+
 ## Fixed logic of deleting consent from Xs2a Interface
 If endpoint "Delete AIS consent" (DELETE /v1/consents/{consent-id}) is triggered by TPP, now Xs2a checks the status of the consent: if the consent status is RECEIVED, then 
 the status would be changed to REJECTED, because the consent is not yet authorized and is in the initiation phase. If the consent is in the 
