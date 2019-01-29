@@ -40,3 +40,7 @@ Added integration tests in spi-mock service.
   - for modes Explicit and Implicit 
   - for sca approach Redirect and Embedded
 1 test checks payment sca status
+
+## TPP-Nok-Redirect-URI returned when scaRedirect URI is expired (for Payment cancellation)
+Now for Payment cancellation if scaRedirect URI is expired we deliver TPP-Nok-Redirect-URI in the response from CMS to Online-banking. This response is returned with code 408.
+If TPP-Nok-Redirect-URI was not sent from TPP and in CMS is stored null, then CMS returns empty response with code 408. If payment is not found or psu data is incorrect, CMS returns 404. 
