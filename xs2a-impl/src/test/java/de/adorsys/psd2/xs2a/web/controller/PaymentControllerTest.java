@@ -226,7 +226,7 @@ public class PaymentControllerTest {
     public void cancelPayment_WithoutAuthorisation_Success() {
         when(responseMapper.ok(any()))
             .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.CANC), HttpStatus.OK));
-        when(paymentService.cancelPayment(any(), any())).thenReturn(getCancelPaymentResponseObject(false));
+        when(paymentService.cancelPayment(any(), any(), any())).thenReturn(getCancelPaymentResponseObject(false));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
@@ -248,7 +248,7 @@ public class PaymentControllerTest {
     public void cancelPayment_WithAuthorisation_Success() {
         when(responseMapper.accepted(any()))
             .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED));
-        when(paymentService.cancelPayment(any(), any())).thenReturn(getCancelPaymentResponseObject(true));
+        when(paymentService.cancelPayment(any(), any(), any())).thenReturn(getCancelPaymentResponseObject(true));
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
@@ -270,7 +270,7 @@ public class PaymentControllerTest {
     public void cancelPayment_WithoutAuthorisation_Fail_FinalisedStatus() {
         when(responseMapper.ok(any()))
             .thenReturn(ResponseEntity.badRequest().build());
-        when(paymentService.cancelPayment(any(), any())).thenReturn(getErrorOnPaymentCancellation());
+        when(paymentService.cancelPayment(any(), any(), any())).thenReturn(getErrorOnPaymentCancellation());
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;
@@ -290,7 +290,7 @@ public class PaymentControllerTest {
     public void cancelPayment_WithAuthorisation_Fail_FinalisedStatus() {
         when(responseMapper.ok(any()))
             .thenReturn(ResponseEntity.badRequest().build());
-        when(paymentService.cancelPayment(any(), any())).thenReturn(getErrorOnPaymentCancellation());
+        when(paymentService.cancelPayment(any(), any(), any())).thenReturn(getErrorOnPaymentCancellation());
 
         // Given
         PaymentType paymentType = PaymentType.SINGLE;

@@ -56,11 +56,12 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
             return null;
         }
         String paymentService = paymentRequestParameters.getPaymentType().getValue();
+        String paymentProduct = paymentRequestParameters.getPaymentProduct();
         String paymentId = body.getPaymentId();
 
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{payment-service}/{payment-id}", paymentService, paymentId));
-        links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status", paymentService, paymentId));
+        links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentService, paymentProduct, paymentId));
+        links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentService, paymentProduct, paymentId));
 
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
             return addEmbeddedRelatedLinks(links, paymentRequestParameters, body);
@@ -74,16 +75,17 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
     private Links addEmbeddedRelatedLinks(Links links, PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
         String paymentService = paymentRequestParameters.getPaymentType().getValue();
+        String paymentProduct = paymentRequestParameters.getPaymentProduct();
         String paymentId = body.getPaymentId();
         String authorizationId = body.getAuthorizationId();
 
         if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations", paymentService, paymentProduct, paymentId));
         } else {
             links.setScaStatus(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
+                buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
             links.setStartAuthorisationWithPsuAuthentication(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
+                buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
         }
 
         return links;
@@ -91,16 +93,17 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
     private Links addRedirectRelatedLinks(Links links, PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
         String paymentService = paymentRequestParameters.getPaymentType().getValue();
+        String paymentProduct = paymentRequestParameters.getPaymentProduct();
         String paymentId = body.getPaymentId();
         String authorisationId = body.getAuthorizationId();
 
         if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations", paymentService, paymentProduct, paymentId));
         } else {
             String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(body.getPaymentId(), authorisationId);
             links.setScaRedirect(scaRedirectLink);
             links.setScaStatus(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorisationId));
+                buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorisationId));
         }
         return links;
     }

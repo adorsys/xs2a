@@ -52,6 +52,7 @@ import static org.mockito.Mockito.*;
 public class PaymentAuthorisationServiceTest {
     private static final String CORRECT_PSU_ID = "123456789";
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
+    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
@@ -86,7 +87,7 @@ public class PaymentAuthorisationServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentAuthorisationService.createPisAuthorization(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA);
+        paymentAuthorisationService.createPisAuthorization(PAYMENT_ID, PaymentType.SINGLE, PAYMENT_PRODUCT, PSU_ID_DATA);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -137,7 +138,7 @@ public class PaymentAuthorisationServiceTest {
     public void getPaymentInitiationAuthorisationScaStatus_success() {
         // When
         ResponseObject<ScaStatus> actual = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID,
-            AUTHORISATION_ID);
+                                                                                                                  AUTHORISATION_ID);
 
         // Then
         assertFalse(actual.hasError());
@@ -162,7 +163,7 @@ public class PaymentAuthorisationServiceTest {
     public void getPaymentInitiationAuthorisationScaStatus_failure_wrongIds() {
         // When
         ResponseObject<ScaStatus> actual = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(WRONG_PAYMENT_ID,
-            WRONG_AUTHORISATION_ID);
+                                                                                                                  WRONG_AUTHORISATION_ID);
 
         // Then
         assertTrue(actual.hasError());
