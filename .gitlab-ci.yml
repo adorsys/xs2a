@@ -26,6 +26,8 @@ variables: &variables
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
   OPENSHIFT_NAMESPACE: "multibanking-xs2a"
 
+  SONAR_HOST: "https://psd2-quality.cloud.adorsys.de"
+
   # XS2A Service
   GITLAB_IMAGE_NAME_XS2A: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}"
   OPENSHIFT_IMAGE_NAME_XS2A: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-xs2a"
@@ -410,6 +412,18 @@ deploy_develop_stage:
   environment:
     name: dev
     url: ~
+
+sonar_code_coverage:
+  stage: "build:qa"
+  image: "adorsys/ci-build"
+  script:
+    - jabba use system@1.8
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - mvn --fail-at-end clean install
+    - mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST -Dsonar.login=${SONAR_TOKEN}
+  only:
+    - develop
 
 # Master
 
