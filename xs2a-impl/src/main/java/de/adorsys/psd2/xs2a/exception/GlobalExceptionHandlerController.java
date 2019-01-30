@@ -17,9 +17,11 @@
 package de.adorsys.psd2.xs2a.exception;
 
 import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
-import de.adorsys.psd2.model.TppMessage2XX;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
-import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,86 +35,94 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.validation.ValidationException;
-import java.util.List;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CERTIFICATE_INVALID;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 @Slf4j
 @RestControllerAdvice(basePackages = "de.adorsys.psd2.xs2a.web.controller")
 @RequiredArgsConstructor
 public class GlobalExceptionHandlerController {
-    private final MessageErrorMapper messageErrorMapper;
+    private final ResponseErrorMapper responseErrorMapper;
+    private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
+    private final ServiceTypeToErrorTypeMapper errorTypeMapper;
 
     @ExceptionHandler(value = ValidationException.class)
     public ResponseEntity validationException(ValidationException ex, HandlerMethod handlerMethod) {
         log.warn("Validation exception handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+        return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
     @ExceptionHandler(value = ServletRequestBindingException.class)
     public ResponseEntity servletRequestBindingException(ServletRequestBindingException ex, HandlerMethod handlerMethod) {
         log.warn("Validation exception handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+        return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ResponseEntity illegalArgumentException(IllegalArgumentException ex, HandlerMethod handlerMethod) {
         log.warn("Illegal argument exception handled in: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
-        return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+        return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity httpMessageException(HttpMessageNotReadableException ex, HandlerMethod handlerMethod) {
         log.warn("Uncatched exception of HttpMessageNotReadableException class handled in Controller: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+        return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
     @ExceptionHandler(value = HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity mediaTypeNotSupportedException(HttpMediaTypeNotAcceptableException ex, HandlerMethod handlerMethod) {
         log.warn("Media type unsupported exception: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        return new ResponseEntity<>(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(), UNSUPPORTED_MEDIA_TYPE);
+        return responseErrorMapper.generateErrorResponse(createMessageError(UNSUPPORTED_MEDIA_TYPE, HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase()));
     }
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity exception(Exception ex, HandlerMethod handlerMethod) {
         log.warn("Uncatched exception handled in Controller: {}, message: {}, stackTrace: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage(), ex);
-        return new ResponseEntity<>(INTERNAL_SERVER_ERROR.getReasonPhrase(), INTERNAL_SERVER_ERROR);
+        return responseErrorMapper.generateErrorResponse(createMessageError(INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()));
     }
 
     @ExceptionHandler(value = RestException.class)
     public ResponseEntity restException(RestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
-        return new ResponseEntity<>(getTppMessages(ex.getMessageErrorCode()), ex.getHttpStatus());
+        return responseErrorMapper.generateErrorResponse(createMessageError(ex.getMessageErrorCode()));
     }
 
     @ExceptionHandler(value = AspspProfileRestException.class)
     public ResponseEntity aspspProfileRestException(AspspProfileRestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
-        return new ResponseEntity<>(getTppMessages(MessageErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.valueOf(ex.getHttpStatusCode()));
+        return responseErrorMapper.generateErrorResponse(createMessageError(INTERNAL_SERVER_ERROR));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity requestBodyValidationException(MethodArgumentNotValidException ex, HandlerMethod handlerMethod) {
         log.warn("RequestBodyValidationException handled in controller: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
-        return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+        return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
     @ExceptionHandler(value = CertificateException.class)
     public ResponseEntity getTppIdException(CertificateException ex, HandlerMethod handlerMethod) {
         log.warn("Can't find tpp id in SecurityContextHolder in: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
-        return new ResponseEntity<>(getTppMessages(CERTIFICATE_INVALID), HttpStatus.BAD_REQUEST);
+        return responseErrorMapper.generateErrorResponse(createMessageError(CERTIFICATE_INVALID));
     }
 
-    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
-    private List<TppMessage2XX> getTppMessages(MessageErrorCode errorCode) {
-        return messageErrorMapper.mapToTppMessages(errorCode);
+    private MessageError createMessageError(MessageErrorCode messageErrorCode) {
+        return new MessageError(
+            errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()),
+            new TppMessageInformation(ERROR, messageErrorCode)
+        );
+    }
+
+    private MessageError createMessageError(MessageErrorCode messageErrorCode, String message) {
+        return new MessageError(
+            errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()),
+            new TppMessageInformation(ERROR, messageErrorCode, message)
+        );
     }
 }

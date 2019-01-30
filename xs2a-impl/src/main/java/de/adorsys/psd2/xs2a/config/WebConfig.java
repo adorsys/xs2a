@@ -20,8 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.service.TppService;
-import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
-import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
@@ -30,11 +31,9 @@ import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -59,20 +58,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final CorsConfigurationProperties corsConfigurationProperties;
     private final TppService tppService;
     private final TppStopListService tppStopListService;
+    private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
+    private final ServiceTypeToErrorTypeMapper errorTypeMapper;
+    private final ErrorMapperContainer errorMapperContainer;
     private final ObjectMapper objectMapper;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.setUseSuffixPatternMatch(false);
-    }
-
-    @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:error_message");
-        messageSource.setCacheSeconds(3600); //reload messages every hour
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
     }
 
     @Bean
@@ -91,10 +84,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new PaymentLoggingInterceptor(tppService)).addPathPatterns(SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH);
         registry.addInterceptor(new SigningBasketLoggingInterceptor(tppService)).addPathPatterns(SIGNING_BASKETS_PATH);
 
-        registry.addInterceptor(new TppStopListInterceptor(tppService, tppStopListService, objectMapper))
+        registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, objectMapper))
             .addPathPatterns(getAllXs2aEndpointPaths());
 
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper, messageErrorMapper()))
+        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), serviceTypeDiscoveryService, errorTypeMapper, errorMapperContainer, objectMapper))
             .addPathPatterns(getAllXs2aEndpointPaths());
     }
 
@@ -126,11 +119,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @RequestScope
     public TppInfoHolder getTppInfoHolder() {
         return new TppInfoHolder();
-    }
-
-    @Bean
-    public MessageErrorMapper messageErrorMapper() {
-        return new MessageErrorMapper(new MessageService(messageSource()));
     }
 
     @Override

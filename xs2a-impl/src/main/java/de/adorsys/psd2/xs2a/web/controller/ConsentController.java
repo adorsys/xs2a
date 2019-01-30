@@ -20,15 +20,14 @@ import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
@@ -55,6 +54,7 @@ public class ConsentController implements ConsentApi {
     private final ConsentModelMapper consentModelMapper;
     private final AuthorisationMapper authorisationMapper;
     private final TppRedirectUriMapper tppRedirectUriMapper;
+    private final ResponseErrorMapper responseErrorMapper;
 
     @Override
     public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature,
@@ -84,7 +84,9 @@ public class ConsentController implements ConsentApi {
             createConsentResponse = consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppRedirectUri);
         }
 
-        return responseMapper.created(createConsentResponse, consentModelMapper::mapToConsentsResponse201);
+        return createConsentResponse.hasError()
+                   ? responseErrorMapper.generateErrorResponse(createConsentResponse.getError())
+                   : responseMapper.created(createConsentResponse, consentModelMapper::mapToConsentsResponse201);
     }
 
     @Override
@@ -94,7 +96,10 @@ public class ConsentController implements ConsentApi {
                                            String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
                                            UUID psUDeviceID, String psUGeoLocation) {
 
-        return responseMapper.ok(consentService.getAccountConsentsStatusById(consentId), consentModelMapper::mapToConsentStatusResponse200);
+        ResponseObject<ConsentStatusResponse> accountConsentsStatusByIdResponse = consentService.getAccountConsentsStatusById(consentId);
+        return accountConsentsStatusByIdResponse.hasError()
+                   ? responseErrorMapper.generateErrorResponse(accountConsentsStatusByIdResponse.getError())
+                   : responseMapper.ok(accountConsentsStatusByIdResponse, consentModelMapper::mapToConsentStatusResponse200);
     }
 
     @Override
@@ -108,7 +113,9 @@ public class ConsentController implements ConsentApi {
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         ResponseObject<CreateConsentAuthorizationResponse> consentAuthorizationWithResponse =
             consentService.createConsentAuthorizationWithResponse(psuData, consentId);
-        return responseMapper.created(consentAuthorizationWithResponse, authorisationMapper::mapToStartScaProcessResponse);
+        return consentAuthorizationWithResponse.hasError()
+                   ? responseErrorMapper.generateErrorResponse(consentAuthorizationWithResponse.getError())
+                   : responseMapper.created(consentAuthorizationWithResponse, authorisationMapper::mapToStartScaProcessResponse);
     }
 
     @Override
@@ -120,7 +127,10 @@ public class ConsentController implements ConsentApi {
 
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         UpdateConsentPsuDataReq updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(psuData, consentId, authorisationId, (Map) body);
-        return responseMapper.ok(consentService.updateConsentPsuData(updatePsuDataRequest), consentModelMapper::mapToUpdatePsuAuthenticationResponse);
+        ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataResponse = consentService.updateConsentPsuData(updatePsuDataRequest);
+        return updateConsentPsuDataResponse.hasError()
+                   ? responseErrorMapper.generateErrorResponse(updateConsentPsuDataResponse.getError())
+                   : responseMapper.ok(updateConsentPsuDataResponse, consentModelMapper::mapToUpdatePsuAuthenticationResponse);
     }
 
     @Override
@@ -130,7 +140,10 @@ public class ConsentController implements ConsentApi {
                                               String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                               String psUGeoLocation) {
 
-        return responseMapper.ok(consentService.getConsentAuthorisationScaStatus(consentId, authorisationId), authorisationMapper::mapToScaStatusResponse);
+        ResponseObject<ScaStatus> consentAuthorisationScaStatusResponse = consentService.getConsentAuthorisationScaStatus(consentId, authorisationId);
+        return consentAuthorisationScaStatusResponse.hasError()
+                   ? responseErrorMapper.generateErrorResponse(consentAuthorisationScaStatusResponse.getError())
+                   : responseMapper.ok(consentAuthorisationScaStatusResponse, authorisationMapper::mapToScaStatusResponse);
     }
 
     @Override
@@ -138,8 +151,10 @@ public class ConsentController implements ConsentApi {
                                                   String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                                   String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                                   String psUGeoLocation) {
-
-        return responseMapper.ok(consentService.getConsentInitiationAuthorisations(consentId), consentModelMapper::mapToAuthorisations);
+        ResponseObject<Xs2aAuthorisationSubResources> consentInitiationAuthorisationsResponse = consentService.getConsentInitiationAuthorisations(consentId);
+        return consentInitiationAuthorisationsResponse.hasError()
+                   ? responseErrorMapper.generateErrorResponse(consentInitiationAuthorisationsResponse.getError())
+                   : responseMapper.ok(consentInitiationAuthorisationsResponse, consentModelMapper::mapToAuthorisations);
     }
 
     @Override
@@ -148,8 +163,10 @@ public class ConsentController implements ConsentApi {
                                                 String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                                 String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
                                                 UUID psUDeviceID, String psUGeoLocation) {
-
-        return responseMapper.ok(consentService.getAccountConsentById(consentId), consentModelMapper::mapToConsentInformationResponse200Json);
+        ResponseObject<AccountConsent> accountConsentByIdResponse = consentService.getAccountConsentById(consentId);
+        return accountConsentByIdResponse.hasError()
+                   ? responseErrorMapper.generateErrorResponse(accountConsentByIdResponse.getError())
+                   : responseMapper.ok(accountConsentByIdResponse, consentModelMapper::mapToConsentInformationResponse200Json);
     }
 
     @Override
@@ -158,6 +175,8 @@ public class ConsentController implements ConsentApi {
                                         String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         ResponseObject<Void> response = consentService.deleteAccountConsentsById(consentId);
-        return responseMapper.delete(response);
+        return response.hasError()
+                   ? responseErrorMapper.generateErrorResponse(response.getError())
+                   : responseMapper.delete(response);
     }
 }

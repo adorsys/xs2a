@@ -18,60 +18,58 @@ package de.adorsys.psd2.xs2a.exception;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import io.swagger.annotations.ApiModelProperty;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import lombok.Data;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 
 @Data
 public class MessageError {
     @JsonUnwrapped
-    @ApiModelProperty(value = "Transaction status", example = "Rejected")
-    private TransactionStatus transactionStatus;
-
-    @ApiModelProperty(value = "Tpp messages information of the Berlin Group XS2A Interface")
     private Set<TppMessageInformation> tppMessages = new HashSet<>();
+    private ErrorType errorType;
 
-    public MessageError(TppMessageInformation tppMessage) {
-        this(TransactionStatus.RJCT, tppMessage);
-    }
-
-    public MessageError(List<TppMessageInformation> tppMessages) {
-        this(TransactionStatus.RJCT, tppMessages);
-    }
-
-    public MessageError(TransactionStatus status, TppMessageInformation tppMessage) {
-        this(status, singletonList(tppMessage));
+    public MessageError(ErrorType errorType, TppMessageInformation... tppMessageInformation) {
+        this.errorType = errorType;
+        fillTppMessage(tppMessageInformation);
     }
 
     public MessageError(ErrorHolder errorHolder) {
         this(errorHolder.getErrorCode(), errorHolder.getMessage());
+        this.errorType = errorHolder.getErrorType();
     }
 
-    public MessageError(TransactionStatus status, List<TppMessageInformation> tppMessages) {
-        this.transactionStatus = status;
+    private MessageError(MessageErrorCode errorCode, String message) {
+        this(singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode, message)));
+    }
+
+    private MessageError(List<TppMessageInformation> tppMessages) {
         this.tppMessages.addAll(tppMessages);
-    }
-
-    public MessageError(MessageErrorCode errorCode, String message) {
-        this(TransactionStatus.RJCT, singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode, message)));
-    }
-
-    public MessageError(MessageErrorCode errorCode) {
-        this(errorCode, null);
     }
 
     // TODO task: add logic to resolve resulting MessageError https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/211
     @JsonIgnore
     public TppMessageInformation getTppMessage() {
         return tppMessages.iterator().next();
+    }
+
+    private void fillTppMessage(TppMessageInformation... tppMessages) {
+        if (isNotEmpty(tppMessages)) {
+            this.tppMessages.addAll(Arrays.stream(tppMessages)
+                                        .collect(Collectors.toSet()));
+        }
+    }
+
+    private boolean isNotEmpty(TppMessageInformation... tppMessages) {
+        return tppMessages != null && tppMessages.length >= 1;
     }
 }

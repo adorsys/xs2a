@@ -25,7 +25,10 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.*;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType;
@@ -37,6 +40,8 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -85,7 +90,7 @@ public class AccountServiceTest {
     private static final MessageErrorCode FORMAT_ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final MessageErrorCode CONSENT_INVALID_MESSAGE_ERROR_CODE = MessageErrorCode.CONSENT_INVALID;
     private static final MessageErrorCode RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE = MessageErrorCode.RESOURCE_UNKNOWN_404;
-    private static final MessageError CONSENT_INVALID_MESSAGE_ERROR = new MessageError(new TppMessageInformation(MessageCategory.ERROR, CONSENT_INVALID_MESSAGE_ERROR_CODE));
+    private static final MessageError CONSENT_INVALID_MESSAGE_ERROR = new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, CONSENT_INVALID_MESSAGE_ERROR_CODE));
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("Test AspspConsentData".getBytes(), CONSENT_ID);
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
     private static final List<SpiAccountDetails> EMPTY_ACCOUNT_DETAILS_LIST = Collections.emptyList();
@@ -111,8 +116,6 @@ public class AccountServiceTest {
     private SpiToXs2aAccountReferenceMapper referenceMapper;
     @Mock
     private SpiTransactionListToXs2aAccountReportMapper transactionsToAccountReportMapper;
-    @Mock
-    private SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     @Mock
     private ValueValidatorService validatorService;
     @Mock
@@ -149,6 +152,8 @@ public class AccountServiceTest {
     private SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
     @Mock
     private Transactions transactions;
+    @Mock
+    private SpiErrorMapper spiErrorMapper;
 
     @Before
     public void setUp() {
@@ -188,8 +193,8 @@ public class AccountServiceTest {
         when(accountSpi.requestAccountList(SPI_CONTEXT_DATA, WITH_BALANCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(EMPTY_ACCOUNT_DETAILS_LIST));
 
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(FORMAT_ERROR_CODE);
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(EMPTY_ACCOUNT_DETAILS_LIST), ServiceType.AIS))
+            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
         ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
 
@@ -287,9 +292,6 @@ public class AccountServiceTest {
         when(accountSpi.requestAccountDetailForAccount(SPI_CONTEXT_DATA, WITH_BALANCE, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(spiAccountDetails));
 
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(FORMAT_ERROR_CODE);
-
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
 
@@ -298,6 +300,9 @@ public class AccountServiceTest {
 
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(spiAccountDetails), ServiceType.AIS))
+            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
         ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
 
@@ -406,11 +411,11 @@ public class AccountServiceTest {
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(Collections.EMPTY_LIST));
 
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(FORMAT_ERROR_CODE);
-
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(Collections.EMPTY_LIST), ServiceType.AIS))
+            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
 
@@ -433,9 +438,6 @@ public class AccountServiceTest {
 
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(Collections.EMPTY_LIST));
-
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
 
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
 
@@ -553,8 +555,8 @@ public class AccountServiceTest {
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(SPI_TRANSACTION_REPORT));
 
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(FORMAT_ERROR_CODE);
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(SPI_TRANSACTION_REPORT), ServiceType.AIS))
+            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
         ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
 
@@ -698,8 +700,8 @@ public class AccountServiceTest {
         when(accountSpi.requestTransactionForAccountByTransactionId(SPI_CONTEXT_DATA, TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(spiTransaction));
 
-        when(messageErrorCodeMapper.mapToMessageErrorCode(LOGICAL_FAILURE_RESPONSE_STATUS))
-            .thenReturn(FORMAT_ERROR_CODE);
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(spiTransaction), ServiceType.AIS))
+            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
         ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
 

@@ -21,10 +21,13 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -112,7 +115,7 @@ public class CancelPaymentServiceTest {
         //Than
         assertThat(response.hasError()).isTrue();
         assertThat(response.getBody()).isNull();
-        assertThat(response.getError()).isEqualTo(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403));
+        assertThat(response.getError()).isEqualTo(new MessageError(ErrorType.PIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_403)));
     }
 
     @Test
@@ -135,7 +138,7 @@ public class CancelPaymentServiceTest {
         //Than
         assertThat(response.hasError()).isTrue();
         assertThat(response.getBody()).isNull();
-        assertThat(response.getError()).isEqualTo(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403));
+        assertThat(response.getError()).isEqualTo(new MessageError(ErrorType.PIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_403)));
     }
 
     private SpiPaymentCancellationResponse getSpiCancelPaymentResponse(boolean authorisationRequired, SpiTransactionStatus transactionStatus) {

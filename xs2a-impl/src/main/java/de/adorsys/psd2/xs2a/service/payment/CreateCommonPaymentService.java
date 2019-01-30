@@ -20,8 +20,8 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
@@ -39,6 +39,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
+import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 
 @Service
 @RequiredArgsConstructor
@@ -71,7 +75,7 @@ public class CreateCommonPaymentService implements CreatePaymentService<CommonPa
 
         if (StringUtils.isBlank(externalPaymentId)) {
             return ResponseObject.<PaymentInitiationResponse>builder()
-                       .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
+                       .fail(new MessageError(PIS_400, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
                        .build();
         }
 
@@ -85,7 +89,7 @@ public class CreateCommonPaymentService implements CreatePaymentService<CommonPa
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, payment.getPaymentType(), paymentInitiationParameters.getPsuData());
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<PaymentInitiationResponse>builder()
-                           .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
+                           .fail(new MessageError(PIS_400, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
                            .build();
             }
 

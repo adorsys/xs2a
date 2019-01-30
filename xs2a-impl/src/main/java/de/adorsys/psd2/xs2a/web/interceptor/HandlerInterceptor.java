@@ -17,9 +17,13 @@
 package de.adorsys.psd2.xs2a.web.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.model.TppMessage2XX;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
-import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,16 +33,21 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class HandlerInterceptor extends HandlerInterceptorAdapter {
     private final RequestValidatorService requestValidatorService;
+    private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
+    private final ServiceTypeToErrorTypeMapper errorTypeMapper;
+    private final ErrorMapperContainer errorMapperContainer;
     private final ObjectMapper objectMapper;
-    private final MessageErrorMapper messageErrorMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
@@ -60,7 +69,7 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
             response.setStatus(messageCode.getCode());
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            response.getWriter().write(objectMapper.writeValueAsString(getTppMessages(messageCode)));
+            response.getWriter().write(objectMapper.writeValueAsString(createError(messageCode, violationsMap.values())));
             response.flushBuffer();
             return false;
         }
@@ -71,8 +80,20 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
                    .orElse(MessageErrorCode.FORMAT_ERROR);
     }
 
-    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
-    private List<TppMessage2XX> getTppMessages(MessageErrorCode errorCode) {
-        return messageErrorMapper.mapToTppMessages(errorCode);
+    private Object createError(MessageErrorCode errorCode, Collection<String> errorMessages) {
+        MessageError messageError = getMessageError(errorCode, errorMessages);
+        return Optional.ofNullable(errorMapperContainer.getErrorBody(messageError))
+                   .map(ErrorMapperContainer.ErrorBody::getBody)
+                   .orElse(null);
+    }
+
+    private MessageError getMessageError(MessageErrorCode errorCode, Collection<String> errorMessages) {
+        ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), errorCode.getCode());
+
+        TppMessageInformation[] tppMessages = errorMessages.stream()
+                                                  .map(e -> new TppMessageInformation(ERROR, errorCode, e))
+                                                  .toArray(TppMessageInformation[]::new);
+
+        return new MessageError(errorType, tppMessages);
     }
 }

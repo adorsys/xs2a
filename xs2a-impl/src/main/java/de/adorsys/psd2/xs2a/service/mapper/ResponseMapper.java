@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +27,13 @@ import java.util.function.Function;
 
 import static org.springframework.http.HttpStatus.*;
 
+/**
+ * ResponseMapper class should be used for success responses mapping only.
+ * In case of unsuccessful error mapping IllegalArgumentException would be thrown - ResponseErrorMapper should be used for such cases.
+ */
 @RequiredArgsConstructor
 @Component
 public class ResponseMapper {
-    private final MessageErrorMapper messageErrorMapper;
-
     public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
         return generateResponse(response, OK, mapper);
     }
@@ -67,32 +68,27 @@ public class ResponseMapper {
 
     private <T, R> ResponseEntity generateResponse(ResponseObject<T> response, HttpStatus positiveStatus, Function<T, R> mapper) {
         if (response.hasError()) {
-            return createErrorResponse(response.getError());
+            throw new IllegalArgumentException("Response includes an error: " + response.getError());
         }
 
         T body = response.getBody();
 
         ResponseEntity.BodyBuilder responseBuilder =
             ResponseEntity
-                 .status(positiveStatus);
+                .status(positiveStatus);
 
         if (body instanceof CustomContentTypeProvider) {
             responseBuilder = responseBuilder
-                                  .contentType( ((CustomContentTypeProvider) body).getCustomContentType() );
+                                  .contentType(((CustomContentTypeProvider) body).getCustomContentType());
         }
 
         return responseBuilder
-                 .body(getBody(body, mapper));
+                   .body(getBody(body, mapper));
     }
 
     private <T, R> Object getBody(T body, Function<T, R> mapper) {
         return mapper == null
                    ? body
                    : mapper.apply(body);
-    }
-
-    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
-    private ResponseEntity createErrorResponse(MessageError error) {
-        return new ResponseEntity<>(messageErrorMapper.mapToTppMessage(error), valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
     }
 }

@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -32,6 +33,9 @@ import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
@@ -113,6 +117,8 @@ public class AisScaStartAuthorisationStageTest {
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    @Mock
+    private SpiErrorMapper spiErrorMapper;
 
     @Before
     public void setUp() {
@@ -180,7 +186,7 @@ public class AisScaStartAuthorisationStageTest {
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
-        assertThat(actualResponse.getErrorCode()).isEqualTo(PSU_CREDENTIALS_INVALID_ERROR_CODE);
+        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_401);
     }
 
     @Test
@@ -238,13 +244,13 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(new SpiAuthorizationCodeResult()));
 
-        when(messageErrorCodeMapper.mapToMessageErrorCode(RESPONSE_STATUS))
-            .thenReturn(FORMAT_ERROR_CODE);
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(new SpiAuthorizationCodeResult()), ServiceType.AIS))
+            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
         UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getErrorCode()).isEqualTo(FORMAT_ERROR_CODE);
+        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     @Test
@@ -263,7 +269,7 @@ public class AisScaStartAuthorisationStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
-        assertThat(actualResponse.getErrorCode()).isEqualTo(SCA_METHOD_UNKNOWN_ERROR_CODE);
+        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     private static SpiAuthenticationObject buildSpiSmsAuthenticationObject() {

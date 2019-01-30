@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -48,7 +49,7 @@ public class RedirectAndEmbeddedCommonPaymentService implements ScaCommonPayment
         SpiResponse<SpiPaymentInitiationResponse> spiResponse = commonPaymentSpi.initiatePayment(spiContextData, mapToSpiPaymentRequest(payment, paymentProduct), AspspConsentData.emptyConsentData());
 
         if (spiResponse.hasError()) {
-            return new CommonPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
+            return new CommonPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
         return spiToXs2aPaymentMapper.mapToCommonPaymentInitiateResponse(spiResponse.getPayload(), payment.getPaymentType(), spiResponse.getAspspConsentData());

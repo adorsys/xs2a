@@ -69,9 +69,6 @@ public class PaymentModelMapperTest {
     ObjectMapper objectMapper;
 
     @Mock
-    MessageErrorMapper messageErrorMapper;
-
-    @Mock
     private AmountModelMapper amountModelMapper;
 
     @Spy

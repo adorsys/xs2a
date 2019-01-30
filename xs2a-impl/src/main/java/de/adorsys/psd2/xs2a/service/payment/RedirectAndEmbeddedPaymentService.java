@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
@@ -55,7 +56,7 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
         SpiResponse<SpiSinglePaymentInitiationResponse> spiResponse = singlePaymentSpi.initiatePayment(spiContextData, xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(payment, paymentProduct), AspspConsentData.emptyConsentData());
 
         if (spiResponse.hasError()) {
-            return new SinglePaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
+            return new SinglePaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
         return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), SinglePaymentInitiationResponse::new, spiResponse.getAspspConsentData());
@@ -68,7 +69,7 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
         SpiResponse<SpiPeriodicPaymentInitiationResponse> spiResponse = periodicPaymentSpi.initiatePayment(spiContextData, xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(payment, paymentProduct), AspspConsentData.emptyConsentData());
 
         if (spiResponse.hasError()) {
-            return new PeriodicPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
+            return new PeriodicPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
         return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), PeriodicPaymentInitiationResponse::new, spiResponse.getAspspConsentData());
@@ -81,7 +82,7 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
         SpiResponse<SpiBulkPaymentInitiationResponse> spiResponse = bulkPaymentSpi.initiatePayment(spiContextData, xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct), AspspConsentData.emptyConsentData());
 
         if (spiResponse.hasError()) {
-            return new BulkPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse));
+            return new BulkPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
         return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), BulkPaymentInitiationResponse::new, spiResponse.getAspspConsentData());

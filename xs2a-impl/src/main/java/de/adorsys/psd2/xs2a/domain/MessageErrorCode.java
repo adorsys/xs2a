@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Arrays;
@@ -27,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "MessageErrorCode", value = "Message error codes and related http response codes.")
 public enum MessageErrorCode {
     CERTIFICATE_INVALID(401),  // "The contents of the signature/corporate seal certificate are not matching PSD2 general PSD2 or attribute requirements
     CERTIFICATE_EXPIRED(401),  //Signature/corporate seal certificate is expired
@@ -132,6 +130,7 @@ public enum MessageErrorCode {
     INTERNAL_SERVER_ERROR(500),
     UNAUTHORIZED(401),
     CONTENT_TYPE_NOT_SUPPORTED(406),
+    UNSUPPORTED_MEDIA_TYPE(415)
     ;
 
     private static Map<String, MessageErrorCode> container = new HashMap<>();

@@ -31,6 +31,8 @@ import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -50,7 +52,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIIS_400;
 
 @Slf4j
 @Service
@@ -65,6 +67,7 @@ public class FundsConfirmationService {
     private final PiisConsentValidationService piisConsentValidationService;
     private final PiisConsentService piisConsentService;
     private final Xs2aEventService xs2aEventService;
+    private final SpiErrorMapper spiErrorMapper;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -111,7 +114,7 @@ public class FundsConfirmationService {
 
         if (selector == null) {
             log.warn("No account identifier in the request {}", accountReference);
-            return new PiisConsentValidationResult(ErrorHolder.builder(FORMAT_ERROR).build());
+            return new PiisConsentValidationResult(ErrorHolder.builder(FORMAT_ERROR).errorType(PIIS_400).build());
         }
 
         List<PiisConsent> response = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
@@ -140,7 +143,7 @@ public class FundsConfirmationService {
         }
 
         if (fundsSufficientCheck.hasError()) {
-            return new FundsConfirmationResponse(ErrorHolder.builder(RESOURCE_UNKNOWN_404).build());
+                return new FundsConfirmationResponse(spiErrorMapper.mapToErrorHolder(fundsSufficientCheck, ServiceType.PIIS));
         }
 
         return spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(fundsSufficientCheck.getPayload());

@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -66,7 +67,7 @@ public class ReadPeriodicPaymentService extends ReadPaymentService<PaymentInform
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
-            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse));
+            return new PaymentInformationResponse<>(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
         SpiPeriodicPayment spiResponsePayment = spiResponse.getPayload();

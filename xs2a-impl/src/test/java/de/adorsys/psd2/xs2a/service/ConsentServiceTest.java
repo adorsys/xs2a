@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -44,6 +43,7 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -297,7 +297,7 @@ public class ConsentServiceTest {
 
         //When:
         when(createConsentRequestValidator.validateRequest(req))
-            .thenReturn(createValidationResult(false, createMessageError(MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
+            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
 
         when(aspspProfileService.getAllPsd2Support())
             .thenReturn(false);
@@ -309,7 +309,6 @@ public class ConsentServiceTest {
 
         //Then:
         assertThat(messageError).isNotNull();
-        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
 
         TppMessageInformation tppMessage = messageError.getTppMessage();
 
@@ -403,7 +402,7 @@ public class ConsentServiceTest {
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         //Then:
-        assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(responseObj.getError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     @Test
@@ -432,7 +431,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID);
         //Then:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     @Test
@@ -462,7 +461,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.getAccountConsentById(WRONG_CONSENT_ID);
         //Than:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.AIS_403);
     }
 
     @Test
@@ -503,7 +502,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.deleteAccountConsentsById(WRONG_CONSENT_ID);
         //Than:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
     @Test
@@ -539,7 +538,7 @@ public class ConsentServiceTest {
 
         //When
         when(createConsentRequestValidator.validateRequest(req))
-            .thenReturn(createValidationResult(false, createMessageError(MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
+            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
 
         when(aspspProfileService.isBankOfferedConsentSupported())
             .thenReturn(false);
@@ -550,7 +549,7 @@ public class ConsentServiceTest {
 
         //Then
         assertThat(messageError).isNotNull();
-        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(messageError.getErrorType()).isEqualTo(ErrorType.AIS_400);
 
         TppMessageInformation tppMessage = messageError.getTppMessage();
 
@@ -567,7 +566,7 @@ public class ConsentServiceTest {
 
         //When
         when(createConsentRequestValidator.validateRequest(req))
-            .thenReturn(createValidationResult(false, createMessageError(MessageErrorCode.SERVICE_INVALID_405)));
+            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_405, MessageErrorCode.SERVICE_INVALID_405)));
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
@@ -575,7 +574,7 @@ public class ConsentServiceTest {
 
         //Then
         assertThat(messageError).isNotNull();
-        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(messageError.getErrorType()).isEqualTo(ErrorType.AIS_405);
 
         TppMessageInformation tppMessage = messageError.getTppMessage();
 
@@ -605,7 +604,7 @@ public class ConsentServiceTest {
         ResponseObject<AccountConsent> xs2aAccountAccessResponseObject = consentService.getValidatedConsent(CONSENT_ID_DATE_VALID_YESTERDAY);
         //Then
         assertThat(xs2aAccountAccessResponseObject.getBody()).isNull();
-        assertThat(xs2aAccountAccessResponseObject.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(xs2aAccountAccessResponseObject.getError().getErrorType()).isEqualTo(ErrorType.AIS_401);
     }
 
     @Test
@@ -761,8 +760,8 @@ public class ConsentServiceTest {
         return new ValidationResult(isValid, messageError);
     }
 
-    private MessageError createMessageError(MessageErrorCode errorCode) {
-        return new MessageError(new TppMessageInformation(MessageCategory.ERROR, errorCode));
+    private MessageError createMessageError(ErrorType errorType, MessageErrorCode errorCode) {
+        return new MessageError(errorType, new TppMessageInformation(MessageCategory.ERROR, errorCode));
     }
 
     private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {

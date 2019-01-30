@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Slf4j
 @Service
@@ -45,7 +46,7 @@ public class PiisConsentValidationService {
 
     public PiisConsentValidationResult validatePiisConsentData(List<PiisConsent> piisConsents) {
         if (CollectionUtils.isEmpty(piisConsents)) {
-            return new PiisConsentValidationResult(ErrorHolder.builder(NO_PIIS_ACTIVATION).build());
+            return new PiisConsentValidationResult(ErrorHolder.builder(NO_PIIS_ACTIVATION).errorType(PIIS_400).build());
         }
         List<PiisConsent> filteredResponse = piisConsents.stream()
                                                  .filter(e -> EnumSet.of(VALID, RECEIVED).contains(e.getConsentStatus()))
@@ -57,7 +58,7 @@ public class PiisConsentValidationService {
                                                  .collect(Collectors.toList());
 
         if (filteredResponse.isEmpty()) {
-            return new PiisConsentValidationResult(ErrorHolder.builder(CONSENT_INVALID).build());
+            return new PiisConsentValidationResult(ErrorHolder.builder(CONSENT_INVALID).errorType(PIIS_401).build());
         }
 
         Optional<PiisConsent> validResponse = filteredResponse.stream()
@@ -65,7 +66,7 @@ public class PiisConsentValidationService {
                                                   .findAny();
 
         return validResponse.map(PiisConsentValidationResult::new)
-                   .orElseGet(() -> new PiisConsentValidationResult(ErrorHolder.builder(ACCESS_EXCEEDED)
+                   .orElseGet(() -> new PiisConsentValidationResult(ErrorHolder.builder(ACCESS_EXCEEDED).errorType(PIIS_429)
                                                                         .build()));
     }
 

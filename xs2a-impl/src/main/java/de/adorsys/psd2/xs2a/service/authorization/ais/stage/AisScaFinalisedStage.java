@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
@@ -37,8 +38,9 @@ public class AisScaFinalisedStage extends AisScaStage<UpdateConsentPsuDataReq, U
                                 Xs2aAisConsentMapper aisConsentMapper,
                                 SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper,
                                 Xs2aToSpiPsuDataMapper psuDataMapper,
-                                SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper) {
-        super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper);
+                                SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
+                                SpiErrorMapper spiErrorMapper) {
+        super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
     }
 
     // Needed to prevent error in case of trying to update consent PSU data, that already has FINALISED Sca status.
