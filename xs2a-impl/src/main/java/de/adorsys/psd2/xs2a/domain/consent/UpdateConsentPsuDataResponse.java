@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.domain.consent;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.exception.MessageError;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -45,18 +45,13 @@ public class UpdateConsentPsuDataResponse {
     private ConsentAuthorizationResponseLinkType responseLinkType;
     private String psuMessage;
 
-    private MessageErrorCode errorCode;
+    private MessageError messageError;
 
     public UpdateConsentPsuDataResponse(ScaStatus scaStatus) {
         this.scaStatus = scaStatus;
     }
 
-    public UpdateConsentPsuDataResponse(MessageErrorCode errorCode) {
-        this.scaStatus = ScaStatus.FAILED;
-        this.errorCode = errorCode;
-    }
-
     public boolean hasError() {
-        return errorCode != null;
+        return messageError != null;
     }
 }

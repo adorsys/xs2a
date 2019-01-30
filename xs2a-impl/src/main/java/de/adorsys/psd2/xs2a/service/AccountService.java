@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
@@ -35,6 +36,8 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -52,9 +55,6 @@ import org.springframework.validation.annotation.Validated;
 import java.time.LocalDate;
 import java.util.*;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
-
 @Slf4j
 @Service
 @Validated
@@ -68,7 +68,6 @@ public class AccountService {
     private final SpiToXs2aBalanceReportMapper balanceReportMapper;
     private final SpiToXs2aAccountReferenceMapper referenceMapper;
     private final SpiTransactionListToXs2aAccountReportMapper transactionsToAccountReportMapper;
-    private final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     private final SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
 
     private final ValueValidatorService validatorService;
@@ -81,6 +80,7 @@ public class AccountService {
     private final Xs2aEventService xs2aEventService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
+    private final SpiErrorMapper spiErrorMapper;
 
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
@@ -111,7 +111,7 @@ public class AccountService {
 
         if (spiResponse.hasError()) {
             return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
-                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())))
+                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
                        .build();
         }
 
@@ -154,7 +154,7 @@ public class AccountService {
 
         if (isNotPermittedAccountReference(requestedAccountReference, accountConsent.getAccess(), withBalance)) {
             return ResponseObject.<Xs2aAccountDetails>builder()
-                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                        .build();
         }
 
@@ -168,7 +168,7 @@ public class AccountService {
 
         if (spiResponse.hasError()) {
             return ResponseObject.<Xs2aAccountDetails>builder()
-                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())))
+                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
                        .build();
         }
 
@@ -176,7 +176,7 @@ public class AccountService {
 
         if (spiAccountDetails == null) {
             return ResponseObject.<Xs2aAccountDetails>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)))
+                       .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                        .build();
         }
 
@@ -216,7 +216,7 @@ public class AccountService {
 
         if (!requestedAccountReference.isPresent()) {
             return ResponseObject.<Xs2aBalancesReport>builder()
-                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                        .build();
         }
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(accountConsent.getPsuData());
@@ -229,13 +229,13 @@ public class AccountService {
 
         if (spiResponse.hasError()) {
             return ResponseObject.<Xs2aBalancesReport>builder()
-                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())))
+                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
                        .build();
         }
 
         if (spiResponse.getPayload() == null) {
             return ResponseObject.<Xs2aBalancesReport>builder()
-                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                        .build();
         }
 
@@ -289,7 +289,7 @@ public class AccountService {
 
         if (isNotPermittedAccountReference(requestedAccountReference, accountConsent.getAccess(), withBalance)) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                        .build();
         }
 
@@ -316,11 +316,11 @@ public class AccountService {
             // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
             if (spiResponse.getResponseStatus() == SpiResponseStatus.NOT_SUPPORTED) {
                 return ResponseObject.<Xs2aTransactionsReport>builder()
-                    .fail(new MessageError(MessageErrorCode.CONTENT_TYPE_NOT_SUPPORTED, messageErrorCodeMapper.mapToTppMessage(spiResponse.getMessages())))
+                    .fail(new MessageError(ErrorType.AIS_406, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.REQUESTED_FORMATS_INVALID)))
                     .build();
             }
             return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()), messageErrorCodeMapper.mapToTppMessage(spiResponse.getMessages())))
+                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
                        .build();
         }
 
@@ -328,7 +328,7 @@ public class AccountService {
 
         if (spiTransactionReport == null) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                        .build();
         }
 
@@ -375,7 +375,7 @@ public class AccountService {
 
         if (!requestedAccountReference.isPresent()) {
             return ResponseObject.<Transactions>builder()
-                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                        .build();
         }
 
@@ -389,7 +389,7 @@ public class AccountService {
 
         if (spiResponse.hasError()) {
             return ResponseObject.<Transactions>builder()
-                       .fail(new MessageError(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())))
+                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
                        .build();
         }
 
@@ -397,7 +397,7 @@ public class AccountService {
 
         if (payload == null) {
             return ResponseObject.<Transactions>builder()
-                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                        .build();
         }
 

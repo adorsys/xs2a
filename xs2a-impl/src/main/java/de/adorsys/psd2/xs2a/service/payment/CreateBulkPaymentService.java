@@ -21,8 +21,8 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -43,6 +43,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
+import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +81,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
 
         if (StringUtils.isBlank(externalPaymentId)) {
             return ResponseObject.<BulkPaymentInitiationResponse>builder()
-                       .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
+                       .fail(new MessageError(PIS_400, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
                        .build();
         }
 
@@ -97,7 +101,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, PaymentType.BULK, paymentInitiationParameters.getPsuData());
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<BulkPaymentInitiationResponse>builder()
-                           .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
+                           .fail(new MessageError(PIS_400, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
                            .build();
             }
             Xs2aCreatePisAuthorisationResponse authorisationResponse = consentAuthorisation.get();

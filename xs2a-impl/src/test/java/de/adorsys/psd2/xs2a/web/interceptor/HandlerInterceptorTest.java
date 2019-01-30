@@ -17,13 +17,23 @@
 package de.adorsys.psd2.xs2a.web.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
+import de.adorsys.psd2.model.Error400NGPIS;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.exception.MessageCategory;
+import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -39,6 +49,11 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HandlerInterceptorTest {
+    private static final ServiceType SERVICE_TYPE = ServiceType.PIS;
+    private static final MessageErrorCode MESSAGE_ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
+    private static final HttpStatus HTTP_STATUS = HttpStatus.BAD_REQUEST;
+    private static final ErrorType ERROR_TYPE = ErrorType.PIS_400;
+    private static final String ERROR_MESSAGE_TEXT = "errorMgs1";
 
     @InjectMocks
     private HandlerInterceptor handlerInterceptor;
@@ -47,7 +62,11 @@ public class HandlerInterceptorTest {
     @Mock
     private ObjectMapper objectMapper;
     @Mock
-    private MessageErrorMapper messageErrorMapper;
+    private ServiceTypeDiscoveryService serviceTypeDiscoveryService;
+    @Mock
+    private ServiceTypeToErrorTypeMapper errorTypeMapper;
+    @Mock
+    private ErrorMapperContainer errorMapperHolder;
 
     @Test
     public void preHandle() throws Exception {
@@ -67,6 +86,10 @@ public class HandlerInterceptorTest {
     @Test
     public void shouldFail_preHandle_wrongRequest() throws Exception {
         when(requestValidatorService.getRequestViolationMap(any(), any())).thenReturn(getErrorMap());
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
+        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, MESSAGE_ERROR_CODE.getCode())).thenReturn(ERROR_TYPE);
+        when(errorMapperHolder.getErrorBody(getMessageError())).thenReturn(getErrorBody());
+
         when(objectMapper.writeValueAsString(any())).thenReturn("400");
         //Given:
         HttpServletRequest wrongRequest = getWrongRequest();
@@ -148,7 +171,23 @@ public class HandlerInterceptorTest {
 
     private Map<String, String> getErrorMap() {
         Map<String, String> errors = new HashMap<>();
-        errors.put("error1", "errorMgs1");
+        errors.put("error1", ERROR_MESSAGE_TEXT);
         return errors;
+    }
+
+    private ErrorMapperContainer.ErrorBody getErrorBody() {
+        return new ErrorMapperContainer.ErrorBody(getError(), HTTP_STATUS);
+    }
+
+    private Error400NGPIS getError() {
+        return new Error400NGPIS();
+    }
+
+    private MessageError getMessageError() {
+        return new MessageError(ERROR_TYPE, getTppMessageInformationArray());
+    }
+
+    private TppMessageInformation[] getTppMessageInformationArray() {
+        return new TppMessageInformation[]{new TppMessageInformation(MessageCategory.ERROR, MESSAGE_ERROR_CODE, ERROR_MESSAGE_TEXT)};
     }
 }

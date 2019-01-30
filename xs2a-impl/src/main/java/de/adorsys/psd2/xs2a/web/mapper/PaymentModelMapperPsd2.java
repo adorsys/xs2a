@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
-import de.adorsys.psd2.xs2a.service.mapper.MessageErrorMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -50,7 +49,6 @@ import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 public class PaymentModelMapperPsd2 {
     private final ObjectMapper mapper;
     private final CoreObjectsMapper coreObjectsMapper;
-    private final MessageErrorMapper messageErrorMapper;
     private final AccountModelMapper accountModelMapper;
     private final TppRedirectUriMapper tppRedirectUriMapper;
     private final AmountModelMapper amountModelMapper;
@@ -135,7 +133,6 @@ public class PaymentModelMapperPsd2 {
                    .orElse(null);
     }
 
-    // TODO create error mapper according to new version of specification 1.3 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/592
     public Object mapToPaymentInitiationResponse12(Object response) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
         PaymentInitiationResponse specificResponse = (PaymentInitiationResponse) response;
@@ -147,7 +144,6 @@ public class PaymentModelMapperPsd2 {
         response201.setChallengeData(coreObjectsMapper.mapToChallengeData(specificResponse.getChallengeData()));
         response201.setLinks(mapper.convertValue(((PaymentInitiationResponse) response).getLinks(), Map.class));
         response201.setPsuMessage(specificResponse.getPsuMessage());
-        response201.setTppMessages(messageErrorMapper.mapToTppMessages(specificResponse.getTppMessages()));
         return response201;
     }
 

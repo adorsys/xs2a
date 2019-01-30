@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.service.FundsConfirmationService;
 import de.adorsys.psd2.xs2a.service.mapper.FundsConfirmationModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,12 +38,15 @@ import java.util.UUID;
 @Api(value = "v1", description = "Provides access to the funds confirmation", tags = {"Confirmation of Funds Service"})
 public class FundsConfirmationController implements FundsConfirmationApi {
     private final ResponseMapper responseMapper;
+    private final ResponseErrorMapper responseErrorMapper;
     private final FundsConfirmationService fundsConfirmationService;
     private final FundsConfirmationModelMapper fundsConfirmationModelMapper;
 
     @Override
     public ResponseEntity checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
         ResponseObject responseObject = fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body));
-        return responseMapper.ok(responseObject);
+        return responseObject.hasError()
+                   ? responseErrorMapper.generateErrorResponse(responseObject.getError())
+                   : responseMapper.ok(responseObject);
     }
 }

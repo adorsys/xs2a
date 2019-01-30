@@ -22,13 +22,19 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.exception.MessageCategory;
+import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
@@ -60,8 +66,9 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
                                          Xs2aToSpiPsuDataMapper psuDataMapper,
                                          SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
                                          SpiContextDataProvider spiContextDataProvider,
-                                         AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper);
+                                         AspspProfileServiceWrapper aspspProfileServiceWrapper,
+                                         SpiErrorMapper spiErrorMapper) {
+        super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
         this.spiContextDataProvider = spiContextDataProvider;
         this.aspspProfileServiceWrapper = aspspProfileServiceWrapper;
     }
@@ -85,10 +92,12 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
 
         if (authorisationStatusSpiResponse.hasError()) {
             if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
-                return createFailedResponse(MessageErrorCode.PSU_CREDENTIALS_INVALID, authorisationStatusSpiResponse.getMessages());
+                MessageError messageError = new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PSU_CREDENTIALS_INVALID));
+                return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages());
             }
 
-            return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(authorisationStatusSpiResponse.getResponseStatus()), authorisationStatusSpiResponse.getMessages());
+            MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
+            return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages());
         }
 
         if (accountConsent.getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS
@@ -107,7 +116,8 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
-            return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()), spiResponse.getMessages());
+            MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
+            return createFailedResponse(messageError, spiResponse.getMessages());
         }
 
         List<SpiAuthenticationObject> availableScaMethods = spiResponse.getPayload();
@@ -140,7 +150,8 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
-            return createFailedResponse(messageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus()), spiResponse.getMessages());
+            MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
+            return createFailedResponse(messageError, spiResponse.getMessages());
         }
 
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
@@ -159,7 +170,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setPsuId(psuData.getPsuId());
         response.setScaStatus(ScaStatus.FAILED);
-        response.setErrorCode(MessageErrorCode.SCA_METHOD_UNKNOWN);
+        response.setMessageError(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SCA_METHOD_UNKNOWN)));
         return response;
     }
 }

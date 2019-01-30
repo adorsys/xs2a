@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -23,10 +24,12 @@ import java.util.List;
 public class ErrorHolder {
     private final List<String> messages;
     private final MessageErrorCode errorCode;
+    private final ErrorType errorType;
 
     private ErrorHolder(ErrorHolderBuilder builder) {
         this.messages = builder.messages;
         this.errorCode = builder.errorCode;
+        this.errorType = builder.errorType;
     }
 
     public String getMessage() {
@@ -40,6 +43,10 @@ public class ErrorHolder {
         return errorCode;
     }
 
+    public ErrorType getErrorType() {
+        return errorType;
+    }
+
     public static ErrorHolderBuilder builder(MessageErrorCode errorCode) {
         return new ErrorHolderBuilder(errorCode);
     }
@@ -47,6 +54,7 @@ public class ErrorHolder {
     public static class ErrorHolderBuilder {
         private List<String> messages;
         private MessageErrorCode errorCode;
+        private ErrorType errorType;
 
         private ErrorHolderBuilder(MessageErrorCode errorCode) {
             this.errorCode = errorCode;
@@ -54,6 +62,11 @@ public class ErrorHolder {
 
         public ErrorHolderBuilder messages(List<String> messages) {
             this.messages = messages;
+            return this;
+        }
+
+        public ErrorHolderBuilder errorType(ErrorType errorType) {
+            this.errorType = errorType;
             return this;
         }
 

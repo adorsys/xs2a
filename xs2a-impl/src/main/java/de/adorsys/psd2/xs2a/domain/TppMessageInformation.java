@@ -16,31 +16,18 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Size;
 
 @Data
-@ApiModel(description = "Tpp Message Information", value = "TppMessageInformation")
 @EqualsAndHashCode(exclude = "text")
 public class TppMessageInformation {
-
-    @ApiModelProperty(value = "Category of the error, Only ”ERROR” or \"WARNING\" permitted", required = true, example = "Error")
     private MessageCategory category;
-
-    @ApiModelProperty(value = "Code", required = true)
-    @JsonProperty(value = "code")
     private MessageErrorCode messageErrorCode;
-
-    @ApiModelProperty(value = "Path")
     private String path;
-
-    @ApiModelProperty(value = "Additional explanation text", example = "Additional text information of the ASPSP up to 512 characters")
     @Size(max = 512)
     private String text;
 

@@ -38,7 +38,9 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.CreateConsentRequestValidator;
@@ -65,7 +67,6 @@ import java.util.Optional;
 public class ConsentService {
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;
-    private final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     private final Xs2aAisConsentService aisConsentService;
     private final AisConsentDataService aisConsentDataService;
     private final AisAuthorizationService aisAuthorizationService;
@@ -77,6 +78,7 @@ public class ConsentService {
     private final CreateConsentRequestValidator createConsentRequestValidator;
     private final Xs2aEventService xs2aEventService;
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
+    private final SpiErrorMapper spiErrorMapper;
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -105,7 +107,9 @@ public class ConsentService {
         String consentId = aisConsentService.createConsent(request, psuData, tppInfo);
 
         if (StringUtils.isBlank(consentId)) {
-            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
+            return ResponseObject.<CreateConsentResponse>builder()
+                       .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400)))
+                       .build();
         }
 
         AccountConsent accountConsent = getInitialAccountConsent(consentId);
@@ -118,7 +122,7 @@ public class ConsentService {
         if (initiateAisConsentSpiResponse.hasError()) {
             aisConsentService.updateConsentStatus(consentId, ConsentStatus.REJECTED);
             return ResponseObject.<CreateConsentResponse>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCodeMapper.mapToMessageErrorCode(initiateAisConsentSpiResponse.getResponseStatus()))))
+                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(initiateAisConsentSpiResponse, ServiceType.AIS)))
                        .build();
         }
 
@@ -154,7 +158,7 @@ public class ConsentService {
         if (consentStatus.isPresent()) {
             responseBuilder = responseBuilder.body(new ConsentStatusResponse(consentStatus.get()));
         } else {
-            responseBuilder = responseBuilder.fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)));
+            responseBuilder = responseBuilder.fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)));
         }
         return responseBuilder.build();
     }
@@ -179,7 +183,7 @@ public class ConsentService {
 
             if (revokeAisConsentResponse.hasError()) {
                 return ResponseObject.<Void>builder()
-                           .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCodeMapper.mapToMessageErrorCode(revokeAisConsentResponse.getResponseStatus()))))
+                           .fail(new MessageError(spiErrorMapper.mapToErrorHolder(revokeAisConsentResponse, ServiceType.AIS)))
                            .build();
             }
 
@@ -192,7 +196,7 @@ public class ConsentService {
         }
 
         return ResponseObject.<Void>builder()
-                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
+                   .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
     }
 
     /**
@@ -206,7 +210,7 @@ public class ConsentService {
 
         AccountConsent consent = getInitialAccountConsent(consentId);
         return consent == null
-                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build()
+                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(ErrorType.AIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
@@ -216,12 +220,12 @@ public class ConsentService {
 
         if (accountConsent == null) {
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
+                       .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
         }
 
         if (LocalDate.now().compareTo(accountConsent.getValidUntil()) >= 0) {
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
+                       .fail(new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
         }
 
         ConsentStatus consentStatus = accountConsent.getConsentStatus();
@@ -230,11 +234,11 @@ public class ConsentService {
                                                     ? MessageErrorCode.CONSENT_INVALID
                                                     : MessageErrorCode.CONSENT_EXPIRED;
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCode))).build();
+                       .fail(new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, messageErrorCode))).build();
         }
         if (!accountConsent.isValidFrequency()) {
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.ACCESS_EXCEEDED))).build();
+                       .fail(new MessageError(ErrorType.AIS_429, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.ACCESS_EXCEEDED))).build();
         }
         return ResponseObject.<AccountConsent>builder().body(accountConsent).build();
     }
@@ -251,13 +255,15 @@ public class ConsentService {
         AccountConsent accountConsent = getValidatedAccountConsent(consentId);
         if (accountConsent != null && accountConsent.isExpired()) {
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                       .fail(new MessageError(MessageErrorCode.CONSENT_EXPIRED))
+                       .fail(new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED)))
                        .build();
         }
 
         return aisAuthorizationService.createConsentAuthorization(psuData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
-                   .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder().fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400))::build);
+                   .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder()
+                                  .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
+                                  ::build);
     }
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
@@ -267,14 +273,14 @@ public class ConsentService {
         AccountConsent accountConsent = getValidatedAccountConsent(updatePsuData.getConsentId());
         if (accountConsent != null && accountConsent.isExpired()) {
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(new MessageError(MessageErrorCode.CONSENT_EXPIRED))
+                       .fail(new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED)))
                        .build();
         }
 
         return Optional.ofNullable(aisAuthorizationService.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId()))
                    .map(conAuth -> getUpdateConsentPsuDataResponse(updatePsuData, conAuth))
                    .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                  .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                                   ::build);
     }
 
@@ -282,13 +288,13 @@ public class ConsentService {
         UpdateConsentPsuDataResponse response = aisAuthorizationService.updateConsentPsuData(updatePsuData, consentAuthorization);
 
         return Optional.ofNullable(response)
-                   .map(s -> Optional.ofNullable(s.getErrorCode())
+                   .map(s -> Optional.ofNullable(s.getMessageError())
                                  .map(e -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                               .fail(new MessageError(e))
+                                               .fail(e)
                                                .build())
                                  .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response)::build))
                    .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                  .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
+                                  .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)))
                                   ::build);
     }
 
@@ -298,7 +304,7 @@ public class ConsentService {
         return aisAuthorizationService.getAuthorisationSubResources(consentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                                  .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                  .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
                                   ::build);
     }
 
@@ -316,7 +322,7 @@ public class ConsentService {
 
         if (!scaStatus.isPresent()) {
             return ResponseObject.<ScaStatus>builder()
-                       .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_403))
+                       .fail(new MessageError(ErrorType.AIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_403)))
                        .build();
         }
 
