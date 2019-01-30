@@ -64,6 +64,11 @@ If endpoint "Delete AIS consent" (DELETE /v1/consents/{consent-id}) is triggered
 the status would be changed to REJECTED, because the consent is not yet authorized and is in the initiation phase. If the consent is in the 
 lifecycle phase (has status VALID), consent status is set to TERMINATED_BY_TPP. This affects only calls made to Xs2a interface, calls made from Online-Banking or to CMS directly are not affected.
 
+## Provide new Java interface and Endpoint to export AIS Consents by ASPSP Account ID
+By accessing `/aspsp-api/v1/ais/consents/account/{account-id}`
+(or corresponding method in `CmsAspspAisExportService.java`)
+one can export AIS Consents that contain certain account id.
+
 ## Provide new Java interface and Endpoint to export PIIS Consents by PSU, TPP and ASPSP Account ID
 By accessing `/aspsp-api/v1/piis/consents/*` endpoints
 (or corresponding methods in `CmsAspspPiisFundsExportService.java`)

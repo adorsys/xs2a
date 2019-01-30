@@ -32,7 +32,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-api/v1/pis/payments")
-@Api(value = "aspsp-api/v1/pis/payments", tags = "ASPSP Export, PIS", description = "Provides access to the consent management system for exporting PIS payments by ASPSP")
+@Api(value = "aspsp-api/v1/pis/payments", tags = "ASPSP Export Payments", description = "Provides access to the consent management system for exporting PIS payments by ASPSP")
 public class CmsAspspPisExportController {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
@@ -93,7 +93,7 @@ public class CmsAspspPisExportController {
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/accounts/{account-id}")
+    @GetMapping(path = "/account/{account-id}")
     @ApiOperation(value = "Returns a list of payments by given mandatory aspsp account id, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
