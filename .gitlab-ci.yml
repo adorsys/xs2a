@@ -104,14 +104,16 @@ variables: &variables
 
 .build_java: &build_java
   stage: "build:src"
+  image: "adorsys/ci-build"
   script:
+    - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -DskipTests clean install
 
 .build_angular: &build_angular
   stage: "build:src"
-  image: "alexsuch/angular-cli:6.0.1"
+  image: "adorsys/ci-build"
   script:
     - cd online-banking-demo-ui
     - npm install
@@ -119,7 +121,9 @@ variables: &variables
 
 .java_tests: &java_tests
   stage: "build:qa"
+  image: "adorsys/ci-build"
   script:
+    - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn --fail-at-end clean install
@@ -275,18 +279,18 @@ variables: &variables
 # ------------------------------------------------------------------
 
 build_package_java8:
-  image: "adorsys/openjdk-build-base:8"
+  variables:
+    JAVA_VERSION: "system@1.8"
+  <<: *build_java
+
+build_package_java11:
+  variables:
+    JAVA_VERSION: "system@1.11"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *build_java
   artifacts:
     <<: *java_artifacts
     expire_in: "1 day"
-
-build_package_java11:
-  image: "maven:3.6-jdk-11"
-  variables:
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-  <<: *build_java
-
 
 build_frontend:
   <<: *build_angular
@@ -296,11 +300,14 @@ build_frontend:
 
 pmd_report:
   stage: "build:src"
-  image: "adorsys/openjdk-build-base:8"
+  image: "adorsys/ci-build"
   script:
+    - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:pmd
+  variables:
+    JAVA_VERSION: "system@1.8"
   artifacts:
     paths:
     - "qa/pmd/pmd-ruleset.xml"
@@ -309,21 +316,41 @@ pmd_report:
     name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
 
-check_pmd:
+check_pmd_java8:
   stage: "build:qa"
-  image: "adorsys/openjdk-build-base:8"
+  image: "adorsys/ci-build"
+  variables:
+    JAVA_VERSION: "system@1.8"
   script:
+    - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:check
 
-check_javadoc:
+check_pmd_java11:
   stage: "build:qa"
-  image: "adorsys/openjdk-build-base:8"
+  image: "adorsys/ci-build"
+  variables:
+    JAVA_VERSION: "system@1.11"
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   script:
+    - jabba use $JAVA_VERSION
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - mvn -Dmaven.test.skip=true package pmd:check
+
+check_javadoc_java8:
+  stage: "build:qa"
+  image: "adorsys/ci-build"
+  variables:
+    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+    JAVA_VERSION: "system@1.8"
+  script:
+    - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package javadoc:javadoc
+    - mvn clean verify javadoc:javadoc
   artifacts:
     paths:
     - "**/target/site/*"
@@ -332,17 +359,20 @@ check_javadoc:
 
 check_javadoc_java11:
   stage: "build:qa"
-  image: "maven:3.6-jdk-11"
+  image: "adorsys/ci-build"
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+    JAVA_VERSION: "system@1.11"
   script:
+    - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -Dmaven.test.skip=true package javadoc:javadoc
+    - mvn -Dmaven.test.skip=true verify javadoc:javadoc
 
 unit_tests_java8:
   <<: *java_tests
-  image: "adorsys/openjdk-build-base:8"
+  variables:
+    JAVA_VERSION: "system@1.8"
   artifacts:
     paths:
     - "**/target/surefire-reports/*"
@@ -351,8 +381,8 @@ unit_tests_java8:
 
 unit_tests_java11:
   <<: *java_tests
-  image: "maven:3.6-jdk-11"
   variables:
+    JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
 test_build_docker:
