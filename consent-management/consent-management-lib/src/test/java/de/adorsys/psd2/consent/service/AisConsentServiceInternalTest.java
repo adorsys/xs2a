@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
-import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
+import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -94,7 +94,7 @@ public class AisConsentServiceInternalTest {
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
-    private AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
+    private AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
 
     @Mock
     private AisConsent aisConsentMocked;
@@ -244,7 +244,7 @@ public class AisConsentServiceInternalTest {
         ArgumentCaptor<List<AisConsentAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
 
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
-        when(aisConsentAuthorizationRepository.save(any(AisConsentAuthorization.class))).thenReturn(aisConsentAuthorisation);
+        when(aisConsentAuthorisationRepository.save(any(AisConsentAuthorization.class))).thenReturn(aisConsentAuthorisation);
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
         when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
 
@@ -257,10 +257,10 @@ public class AisConsentServiceInternalTest {
 
         // Then
         assertTrue(actual.isPresent());
-        verify(aisConsentAuthorizationRepository).save(argument.capture());
+        verify(aisConsentAuthorisationRepository).save(argument.capture());
         assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
 
-        verify(aisConsentAuthorizationRepository).save(failedAuthorisationsArgument.capture());
+        verify(aisConsentAuthorisationRepository).save(failedAuthorisationsArgument.capture());
         List<AisConsentAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
         Set<ScaStatus> scaStatuses = failedAuthorisations.stream()
                                          .map(AisConsentAuthorization::getScaStatus)
