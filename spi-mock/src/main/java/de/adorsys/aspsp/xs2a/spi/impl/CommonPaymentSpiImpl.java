@@ -175,16 +175,15 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
                        .success();
 
         } catch (RestException e) {
+            SpiResponseStatus spiResponseStatus = SpiResponseStatus.LOGICAL_FAILURE;
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-
-                return SpiResponse.<SpiPaymentExecutionResponse>builder()
-                           .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                spiResponseStatus = SpiResponseStatus.TECHNICAL_FAILURE;
+            } else if (e.getHttpStatus() == HttpStatus.UNAUTHORIZED) {
+                spiResponseStatus = SpiResponseStatus.UNAUTHORIZED_FAILURE;
             }
-
             return SpiResponse.<SpiPaymentExecutionResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                       .fail(spiResponseStatus);
         }
     }
 }
