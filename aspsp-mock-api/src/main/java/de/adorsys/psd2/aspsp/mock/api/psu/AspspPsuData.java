@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.aspsp.mock.api.payment;
+package de.adorsys.psd2.aspsp.mock.api.psu;
 
-import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
-import lombok.Data;
+import lombok.Value;
 
-@Data
-public class AspspPaymentInfo {
-    private String paymentId;
-    private AspspTransactionStatus paymentStatus;
-    private String paymentProduct;
-    private String pisPaymentType;
-    private byte[] paymentData;
-    private String aspspAccountId;
+@Value
+public class AspspPsuData {
+    private String psuId;
+    private String psuIdType;
+    private String psuCorporateId;
+    private String psuCorporateIdType;
 }

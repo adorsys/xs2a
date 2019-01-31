@@ -33,13 +33,13 @@ public class SpiPaymentInfoMapper {
     private final SpiPaymentMapper spiPaymentMapper;
 
     public AspspPaymentInfo mapToAspspPayment(@NotNull SpiPaymentInfo payment, SpiTransactionStatus transactionStatus) {
-        return new AspspPaymentInfo(payment.getPaymentId(),
-                                    spiPaymentMapper.mapToAspspTransactionStatus(transactionStatus),
-                                    payment.getPaymentProduct(),
-                                    payment.getPaymentType().name(),
-                                    payment.getPaymentData(),
-                                    null
-        );
+        AspspPaymentInfo info = new AspspPaymentInfo();
+        info.setPaymentId(payment.getPaymentId());
+        info.setPaymentStatus(spiPaymentMapper.mapToAspspTransactionStatus(transactionStatus));
+        info.setPaymentProduct(payment.getPaymentProduct());
+        info.setPisPaymentType(payment.getPaymentType().name());
+        info.setPaymentData(payment.getPaymentData());
+        return info;
     }
 
     public SpiPaymentInfo mapToSpiPaymentInfo(@NotNull AspspPaymentInfo payment) {
@@ -54,6 +54,7 @@ public class SpiPaymentInfoMapper {
     public SpiPaymentInitiationResponse mapToSpiPaymentInitiationResponse(@NotNull AspspPaymentInfo payment) {
         SpiCommonPaymentInitiationResponse spi = new SpiCommonPaymentInitiationResponse();
         spi.setPaymentId(payment.getPaymentId());
+        spi.setMultilevelScaRequired(false);
         spi.setAspspAccountId(payment.getAspspAccountId());
         if (payment.getPaymentId() == null) {
             spi.setTransactionStatus(SpiTransactionStatus.RJCT);

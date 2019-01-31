@@ -20,8 +20,8 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import org.jetbrains.annotations.NotNull;
 
 public interface PaymentSpi<T extends SpiPayment, R> {
@@ -65,10 +65,10 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @param contextData      holder of call's context data (e.g. about PSU and TPP)
      * @param payment          T payment, that extends SpiPayment
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request
-     * @return Returns a positive or negative response as part of SpiResponse
+     * @return Returns a response object, which contains the transaction status. For multilevel SCA, PATC status should be returned for all successful authorisation but the last
      */
     @NotNull
-    SpiResponse<VoidResponse> executePaymentWithoutSca(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutSca(@NotNull SpiContextData contextData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation executes payment at ASPSP. Used only with embedded SCA Approach.
@@ -78,8 +78,8 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @param payment            payment object
      * @param aspspConsentData   Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                           May be null if consent does not contain such data, or request isn't done from a workflow with a consent
-     * @return Returns a positive or negative response as part of SpiResponse
+     * @return Returns a response object, which contains the transaction status. For multilevel SCA, PATC status should be returned for all successful authorisations but the last
      */
     @NotNull
-    SpiResponse<VoidResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
 }

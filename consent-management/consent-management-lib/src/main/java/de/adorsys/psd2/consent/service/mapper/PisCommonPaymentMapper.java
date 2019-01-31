@@ -59,6 +59,7 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setPayment(paymentInfo.getPaymentData());
         commonPaymentData.setTppInfo(tppInfoMapper.mapToTppInfoEntity(paymentInfo.getTppInfo()));
         commonPaymentData.setPsuData(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList()));
+        commonPaymentData.setMultilevelScaRequired(paymentInfo.isMultilevelScaRequired());
         commonPaymentData.setAspspAccountId(paymentInfo.getAspspAccountId());
         return commonPaymentData;
     }

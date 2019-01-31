@@ -96,7 +96,7 @@ public class CreateBulkPaymentService implements CreatePaymentService<BulkPaymen
 
         response.setPaymentId(externalPaymentId);
 
-        boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
+        boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred(), response.isMultilevelScaRequired());
         if (implicitMethod) {
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, PaymentType.BULK, paymentInitiationParameters.getPsuData());
             if (!consentAuthorisation.isPresent()) {

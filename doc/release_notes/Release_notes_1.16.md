@@ -76,3 +76,9 @@ Corresponding endpoint in the CMS controller was changed as well:
 ## Bugfix: Fix empty SpiAccountAccess being provided in SpiAccountConsent in some cases
 Now `SpiAccountConsent` argument contains proper `SpiAccountAccess` in `de.adorsys.psd2.xs2a.spi.service.AccountSpi#requestAccountList`
 method when no accesses were previously provided by the connector in a response to AIS consent initiation.
+
+## Multilevel SCA for payment initiation in embedded approach
+ 
+For accounts with multiple PSUs, now it is possible to execute multilevel SCA for each PSU in embedded approach. Now payment initiation response from SPI
+contains new boolean field `multilevelScaRequired` to inform XS2A that this payment requires multilevel SCA and there should be always explicit authorisation approach used.
+All successful authorisations(except the last one) will set payment status to `PATC` in CMS, and the final authorisation - will set it to `ACCP`.

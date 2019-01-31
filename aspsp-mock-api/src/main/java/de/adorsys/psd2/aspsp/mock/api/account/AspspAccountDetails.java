@@ -17,6 +17,7 @@
 package de.adorsys.psd2.aspsp.mock.api.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspPsuData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
@@ -72,6 +73,7 @@ public class AspspAccountDetails {
     private String product;
     private AspspAccountType cashSpiAccountType;
     private AspspAccountStatus spiAccountStatus;
+    private List<AspspPsuData> psuDataList;
 
     /**
      * SWIFT

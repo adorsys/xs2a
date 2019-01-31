@@ -18,6 +18,7 @@ package de.adorsys.psd2.aspsp.mock.api.payment;
 
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspPsuData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -49,4 +50,7 @@ public class AspspBulkPayment {
 
     @ApiModelProperty(value = "Transaction status", example = "Pending")
     private AspspTransactionStatus paymentStatus;
+
+    @ApiModelProperty(value = "List of PSU data")
+    private List<AspspPsuData> psuDataList;
 }

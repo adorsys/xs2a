@@ -18,15 +18,13 @@ package de.adorsys.aspsp.aspspmockserver.data.test;
 
 import de.adorsys.aspsp.aspspmockserver.domain.pis.AspspPayment;
 import de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType;
-import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
-import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
-import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
+import de.adorsys.aspsp.aspspmockserver.repository.*;
 import de.adorsys.psd2.aspsp.mock.api.account.*;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspDayOfExecution;
 import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspPsuData;
 import de.adorsys.psd2.aspsp.mock.api.psu.Psu;
 import de.adorsys.psd2.aspsp.mock.api.psu.Tan;
 import org.springframework.context.annotation.Profile;
@@ -62,7 +60,7 @@ public class AccountMockServerData {
     // Allowed Payments for Cucumber Test User
     private final List<String> ALLOWED_PAYMENTS_CUCUMBER_TESTUSER = Arrays.asList("sepa-credit-transfers");
 
-    public AccountMockServerData(PsuRepository psuRepository, TransactionRepository transactionRepository, TanRepository tanRepository, PaymentRepository paymentRepository) {
+    public AccountMockServerData(PsuRepository psuRepository, TransactionRepository transactionRepository, TanRepository tanRepository, PaymentRepository paymentRepository, AccountDetailsRepository accountDetailsRepository) {
         this.psuRepository = psuRepository;
         this.transactionRepository = transactionRepository;
         this.tanRepository = tanRepository;
@@ -72,16 +70,17 @@ public class AccountMockServerData {
         fillTransactions();
         fillTanRepository();
         fillPayments();
+        accountDetailsRepository.save(accountDetails);
     }
 
     private void fillPayments() {
         // Payment data for Cucumber Test
         paymentRepository.save(getPayment("a9115f14-4f72-4e4e-8798-202808e85238", psus.get(3), EUR, BigDecimal.valueOf(150), psus.get(7),
-            "Online-Shoppping Amazon", LocalDate.parse("2018-07-15"), LocalDateTime.parse("2018-07-15T18:30:35.035"), AspspTransactionStatus.RCVD, PisPaymentType.SINGLE, AspspDayOfExecution._15));
+                                          "Online-Shoppping Amazon", LocalDate.parse("2018-07-15"), LocalDateTime.parse("2018-07-15T18:30:35.035"), AspspTransactionStatus.RCVD, PisPaymentType.SINGLE, AspspDayOfExecution._15));
         paymentRepository.save(getPayment("68147b90-e4ef-41c6-9c8b-c848c1e93700", psus.get(3), EUR, BigDecimal.valueOf(1030), psus.get(8),
-            "Holidays", LocalDate.parse("2018-07-31"), LocalDateTime.parse("2018-07-31T18:30:35.035"), AspspTransactionStatus.PDNG, PisPaymentType.SINGLE, AspspDayOfExecution._31));
+                                          "Holidays", LocalDate.parse("2018-07-31"), LocalDateTime.parse("2018-07-31T18:30:35.035"), AspspTransactionStatus.PDNG, PisPaymentType.SINGLE, AspspDayOfExecution._31));
         paymentRepository.save(getPayment("97694f0d-32e2-43a4-9e8d-261f2fc28236", psus.get(3), EUR, BigDecimal.valueOf(70), psus.get(9),
-            "Concert Tickets", LocalDate.parse("2018-07-08"), LocalDateTime.parse("2018-07-08T18:30:35.035"), AspspTransactionStatus.RJCT, PisPaymentType.SINGLE, AspspDayOfExecution._08));
+                                          "Concert Tickets", LocalDate.parse("2018-07-08"), LocalDateTime.parse("2018-07-08T18:30:35.035"), AspspTransactionStatus.RJCT, PisPaymentType.SINGLE, AspspDayOfExecution._08));
 
     }
 
@@ -143,7 +142,7 @@ public class AccountMockServerData {
 
     private List<Psu> fillPsu() {
         return Arrays.asList(
-            psuRepository.save(new Psu("PSU_001", "johndoutestemail@gmail.com", "aspsp", "zzz", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)), ALLOWED_PAYMENTS,Collections.emptyList())),
+            psuRepository.save(new Psu("PSU_001", "johndoutestemail@gmail.com", "aspsp", "zzz", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)), ALLOWED_PAYMENTS, Collections.emptyList())),
             psuRepository.save(new Psu("PSU_002", "johndoutestemail@gmail.com", "aspsp1", "zzz", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)), ALLOWED_PAYMENTS, Arrays.asList(new AspspAuthenticationObject("SMS_OTP", "sms")))),
             psuRepository.save(new Psu("PSU_003", "johndoutestemail@gmail.com", "aspsp2", "zzz", Arrays.asList(accountDetails.get(3), accountDetails.get(4)), ALLOWED_PAYMENTS, Arrays.asList(new AspspAuthenticationObject("SMS_OTP", "sms"), new AspspAuthenticationObject("PUSH_OTP", "push")))),
             psuRepository.save(new Psu("PSU_004", "johndoutestemail@gmail.com", "aspsp3", "zzz", Arrays.asList(accountDetails.get(5), accountDetails.get(6)), ALLOWED_PAYMENTS, Arrays.asList(new AspspAuthenticationObject("PUSH_OTP", "push"), new AspspAuthenticationObject("CHIP_OTP", "chip")))),
@@ -163,28 +162,29 @@ public class AccountMockServerData {
 
     private List<AspspAccountDetails> fillAccounts() {
 
-        return Arrays.asList(getNewAccount("11111-11111", "11111-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(1000)), "DE89370400440532013000", "AEYPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("11111-11111", "77777-999999999", getNewBalanceList(USD, BigDecimal.valueOf(350)),  "DE89370400440532013000", "FFGHPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("22222-22222", "22222-999999999", getNewBalanceList(USD, BigDecimal.valueOf(2500)), "DE89370400440532013001", "QWEPM6427U", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("33333-33333", "33333-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(3000)), "LU280019400644750000", "EWQPS8534R", "DEUTDE8EXXX", "Schmidt", "SCT"),
-            getNewAccount("44444-44444", "44444-999999999", getNewBalanceList(USD, BigDecimal.valueOf(3500)), "DE89370400440532013003", "ASDPS9547Z", "DEUTDE8EXXX", "Schmidt", "SCT"),
-            getNewAccount("55555-55555", "55555-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(4000)), "DE89370400440532013004", "DSACC1876N", "DEUTDE8EXXX", "Company AG", "SCT"),
-            getNewAccount("66666-66666", "66666-999999999", getNewBalanceList(USD, BigDecimal.valueOf(1400)), "DE89370400440532013005", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT"),
-            getNewAccount("11111-11111", "66666-999999999", getNewBalanceList(USD, BigDecimal.valueOf(1400)), "DE52500105173911841934", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT"),
+        return Arrays.asList(getNewAccount("11111-11111", "11111-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(1000)), "DE89370400440532013000", "AEYPM5403H", "DEUTDE8EXXX", "Müller", "SCT", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccount("11111-11111", "77777-999999999", getNewBalanceList(USD, BigDecimal.valueOf(350)), "DE89370400440532013000", "FFGHPM5403H", "DEUTDE8EXXX", "Müller", "SCT", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccount("22222-22222", "22222-999999999", getNewBalanceList(USD, BigDecimal.valueOf(2500)), "DE89370400440532013001", "QWEPM6427U", "DEUTDE8EXXX", "Müller", "SCT", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccount("33333-33333", "33333-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(3000)), "LU280019400644750000", "EWQPS8534R", "DEUTDE8EXXX", "Schmidt", "SCT", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccount("44444-44444", "44444-999999999", getNewBalanceList(USD, BigDecimal.valueOf(3500)), "DE89370400440532013003", "ASDPS9547Z", "DEUTDE8EXXX", "Schmidt", "SCT", Arrays.asList(new AspspPsuData("aspsp", "psu-type", "123456", "corp-type"), new AspspPsuData("aspsp1", "psu-type", "123456", "corp-type"), new AspspPsuData("aspsp2", "psu-type", "123456", "corp-type"))),
+                             getNewAccount("55555-55555", "55555-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(4000)), "DE89370400440532013004", "DSACC1876N", "DEUTDE8EXXX", "Company AG", "SCT", Arrays.asList(new AspspPsuData("aspsp1", "psu-type", "123456", "corp-type"), new AspspPsuData("aspsp2", "psu-type", "123456", "corp-type"))),
+                             getNewAccount("66666-66666", "66666-999999999", getNewBalanceList(USD, BigDecimal.valueOf(1400)), "DE89370400440532013005", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccount("11111-11111", "66666-999999999", getNewBalanceList(USD, BigDecimal.valueOf(1400)), "DE52500105173911841934", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
 
-            // account Test User for Cucumber
-            getNewAccountCucumberTest("11111-11112", "42fb4cc3-91cb-45ba-9159-b87acf6d8add", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE52500105173911841934", null, null, "Alexander Mueller", "GIRO"),
-            getNewAccountCucumberTest("11111-11113", "88888-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(1000000)), "DE24500105172916349286", null, null, "Greenpeace", "GIRO"),
-            getNewAccountCucumberTest("11111-11114", "99999-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(500000)), "DE68500105174416628385", null, null, "Telekom", "GIRO"),
-            getNewAccountCucumberTest("11111-11115", "12345-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(20000)), "DE06500105171657611553", null, null, "Jochen Mueller", "GIRO"),
-            getNewAccountCucumberTest("11111-11116", "23236-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(6500000)), "DE49500105175378548627", null, null, "Amazon", "GIRO"),
-            getNewAccountCucumberTest("11111-11117", "37289-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(9500000)), "DE21500105176194357737", null, null, "Holidaycheck.com", "GIRO"),
-            getNewAccountCucumberTest("11111-11118", "10023-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(2500000)), "DE54500105173424724776", null, null, "Eventim", "GIRO"),
-            getNewAccountCucumberTest("11111-11119", "868beafc-ef87-4fdb-ac0a-dd6c52b77ee6", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE15086016167627403587", null, null, "Alexander Mueller", "GIRO")
+                             // account Test User for Cucumber
+                             getNewAccountCucumberTest("11111-11112", "42fb4cc3-91cb-45ba-9159-b87acf6d8add", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE52500105173911841934", null, null, "Alexander Mueller", "GIRO", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccountCucumberTest("11111-11113", "88888-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(1000000)), "DE24500105172916349286", null, null, "Greenpeace", "GIRO", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccountCucumberTest("11111-11114", "99999-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(500000)), "DE68500105174416628385", null, null, "Telekom", "GIRO", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccountCucumberTest("11111-11115", "12345-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(20000)), "DE06500105171657611553", null, null, "Jochen Mueller", "GIRO", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccountCucumberTest("11111-11116", "23236-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(6500000)), "DE49500105175378548627", null, null, "Amazon", "GIRO", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccountCucumberTest("11111-11117", "37289-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(9500000)), "DE21500105176194357737", null, null, "Holidaycheck.com", "GIRO", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccountCucumberTest("11111-11118", "10023-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(2500000)), "DE54500105173424724776", null, null, "Eventim", "GIRO", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type"))),
+                             getNewAccountCucumberTest("11111-11119", "868beafc-ef87-4fdb-ac0a-dd6c52b77ee6", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE15086016167627403587", null, null, "Alexander Mueller", "GIRO", Collections.singletonList(new AspspPsuData("PSU_001", "psu-type", "123456", "corp-type")))
         );
+
     }
 
-    private AspspAccountDetails getNewAccount(String aspspAccountId, String resourceId, List<AspspAccountBalance> balance, String iban, String pan, String bic, String name, String accountType) {
+    private AspspAccountDetails getNewAccount(String aspspAccountId, String resourceId, List<AspspAccountBalance> balance, String iban, String pan, String bic, String name, String accountType, List<AspspPsuData> psuDataList) {
         return new AspspAccountDetails(
             aspspAccountId,
             resourceId,
@@ -198,6 +198,7 @@ public class AccountMockServerData {
             accountType,
             null,
             null,
+            psuDataList,
             bic,
             null,
             null,
@@ -221,7 +222,7 @@ public class AccountMockServerData {
     }
 
     // Custom Methods to create Test account for Cucumber tests
-    private AspspAccountDetails getNewAccountCucumberTest(String aspspAccountId, String resourceId, List<AspspAccountBalance> balance, String iban, String pan, String bic, String name, String accountType) {
+    private AspspAccountDetails getNewAccountCucumberTest(String aspspAccountId, String resourceId, List<AspspAccountBalance> balance, String iban, String pan, String bic, String name, String accountType, List<AspspPsuData> psuDataList) {
         return new AspspAccountDetails(
             aspspAccountId,
             resourceId,
@@ -235,6 +236,7 @@ public class AccountMockServerData {
             accountType,
             null,
             null,
+            psuDataList,
             bic,
             null,
             null,

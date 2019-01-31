@@ -30,10 +30,12 @@ import java.util.function.Supplier;
 @Component
 @RequiredArgsConstructor
 public class SpiToXs2aPaymentMapper {
+    private final SpiToXs2aTransactionalStatusMapper spiToXs2aTransactionalStatusMapper;
 
     public <T extends SpiPaymentInitiationResponse, R extends PaymentInitiationResponse> R mapToPaymentInitiateResponse(T spi, Supplier<R> xs2a, AspspConsentData aspspConsentData) {
         R response = xs2a.get();
         response.setPaymentId(spi.getPaymentId());
+        response.setMultilevelScaRequired(spi.isMultilevelScaRequired());
         response.setTransactionStatus(TransactionStatus.getByValue(spi.getTransactionStatus().getName()));
         response.setAspspConsentData(aspspConsentData);
         response.setAspspAccountId(spi.getAspspAccountId());
@@ -41,13 +43,13 @@ public class SpiToXs2aPaymentMapper {
     }
 
     public CommonPaymentInitiationResponse mapToCommonPaymentInitiateResponse(SpiPaymentInitiationResponse spiResponse, PaymentType type, AspspConsentData aspspConsentData) {
-        CommonPaymentInitiationResponse commonPaymentInitiationResponse = new CommonPaymentInitiationResponse();
-        commonPaymentInitiationResponse.setPaymentType(type);
-        commonPaymentInitiationResponse.setPaymentId(spiResponse.getPaymentId());
-        commonPaymentInitiationResponse.setTransactionStatus(TransactionStatus.getByValue(spiResponse.getTransactionStatus().getName()));
-        commonPaymentInitiationResponse.setAspspConsentData(aspspConsentData);
-        commonPaymentInitiationResponse.setAspspAccountId(spiResponse.getAspspAccountId());
-
-        return commonPaymentInitiationResponse;
+        CommonPaymentInitiationResponse response = new CommonPaymentInitiationResponse();
+        response.setPaymentType(type);
+        response.setPaymentId(spiResponse.getPaymentId());
+        response.setMultilevelScaRequired(spiResponse.isMultilevelScaRequired());
+        response.setTransactionStatus(spiToXs2aTransactionalStatusMapper.mapToTransactionStatus(spiResponse.getTransactionStatus()));
+        response.setAspspConsentData(aspspConsentData);
+        response.setAspspAccountId(spiResponse.getAspspAccountId());
+        return response;
     }
 }

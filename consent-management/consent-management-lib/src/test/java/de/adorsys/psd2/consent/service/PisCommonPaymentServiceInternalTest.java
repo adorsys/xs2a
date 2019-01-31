@@ -32,7 +32,6 @@ import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +47,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.PATC;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -82,6 +83,7 @@ public class PisCommonPaymentServiceInternalTest {
     private static final String EXTERNAL_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String PAYMENT_ID = "5bbde955ca10e8e4035a10c2";
     private static final String PAYMENT_ID_WRONG = "5bbdcb28ca10e8e14a41b12f";
+    private static final String PAYMENT_ID_WRONG_TRANSACTION_STATUS = "6bbdcb28ca10e8e14a41b12f";
     private static final String FINALISED_AUTHORISATION_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String FINALISED_CANCELLATION_AUTHORISATION_ID = "2a112130-6a96-4941-a220-2da8a4af2c65";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
@@ -137,7 +139,7 @@ public class PisCommonPaymentServiceInternalTest {
     public void getAuthorisationByPaymentIdSuccess() {
         //When
         when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID));
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatus(PAYMENT_ID, TransactionStatus.RCVD)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
         //Then
         Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID, CmsAuthorisationType.CANCELLED);
@@ -151,10 +153,22 @@ public class PisCommonPaymentServiceInternalTest {
     public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
         when(securityDataService.decryptId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatus(PAYMENT_ID_WRONG, TransactionStatus.RCVD)).thenReturn(Optional.empty());
-        when(pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatus(PAYMENT_ID_WRONG, TransactionStatus.RCVD)).thenReturn(Optional.empty());
+        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID_WRONG, Arrays.asList(RCVD, PATC))).thenReturn(Optional.empty());
+        when(pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatusIn(PAYMENT_ID_WRONG, Arrays.asList(RCVD, PATC))).thenReturn(Optional.empty());
         //Then
         Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID_WRONG, CmsAuthorisationType.CANCELLED);
+        //Assert
+        assertFalse(authorizationByPaymentId.isPresent());
+    }
+
+    @Test
+    public void getAuthorisationByPaymentIdWrongTransactionStatus() {
+        //When
+        when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID_WRONG_TRANSACTION_STATUS));
+        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID_WRONG_TRANSACTION_STATUS, Arrays.asList(RCVD, PATC))).thenReturn(Optional.empty());
+        when(pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatusIn(PAYMENT_ID_WRONG_TRANSACTION_STATUS, Arrays.asList(RCVD, PATC))).thenReturn(Optional.empty());
+        //Then
+        Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS, CmsAuthorisationType.CREATED);
         //Assert
         assertFalse(authorizationByPaymentId.isPresent());
     }
@@ -209,7 +223,7 @@ public class PisCommonPaymentServiceInternalTest {
         PsuIdData psuIdData = buildPsuIdData();
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         when(pisAuthorizationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatus(PAYMENT_ID, TransactionStatus.RCVD)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
 
         // When
@@ -223,8 +237,8 @@ public class PisCommonPaymentServiceInternalTest {
         verify(pisAuthorizationRepository).save(failedAuthorisationsArgument.capture());
         List<PisAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
         Set<ScaStatus> scaStatuses = failedAuthorisations.stream()
-                                          .map(PisAuthorization::getScaStatus)
-                                          .collect(Collectors.toSet());
+                                         .map(PisAuthorization::getScaStatus)
+                                         .collect(Collectors.toSet());
         assertEquals(scaStatuses.size(), 1);
         assertTrue(scaStatuses.contains(ScaStatus.FAILED));
     }
@@ -232,9 +246,9 @@ public class PisCommonPaymentServiceInternalTest {
     @NotNull
     private AspspSettings getAspspSettings() {
         return new AspspSettings(1, false, false, null, null,
-            null, false, null, null, 1, 1, false,
-            false, false, false, false, false, 1, null,
-            1, 1, null, 1, false, false);
+                                 null, false, null, null, 1, 1, false,
+                                 false, false, false, false, false, 1, null,
+                                 1, 1, null, 1, false, false);
     }
 
     private PsuIdData buildPsuIdData() {
@@ -259,7 +273,7 @@ public class PisCommonPaymentServiceInternalTest {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setId(PIS_PAYMENT_DATA_ID);
         pisCommonPaymentData.setPaymentId(PAYMENT_ID);
-        pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
+        pisCommonPaymentData.setTransactionStatus(RCVD);
         pisCommonPaymentData.setAuthorizations(pisAuthorizationList);
         return pisCommonPaymentData;
     }

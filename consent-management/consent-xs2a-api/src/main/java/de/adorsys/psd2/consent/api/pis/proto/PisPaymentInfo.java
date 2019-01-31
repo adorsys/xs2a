@@ -48,6 +48,9 @@ public class PisPaymentInfo {
     @ApiModelProperty(value = "Corresponding PSU list", required = true)
     private List<PsuIdData> psuDataList;
 
+    @ApiModelProperty(value = "Defines whether the payment requires multilevel SCA", example = "true")
+    private boolean multilevelScaRequired;
+
     @ApiModelProperty(value = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
     private String aspspAccountId;
 }
