@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
-import de.adorsys.psd2.consent.repository.PisAuthorizationRepository;
+import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
@@ -63,7 +63,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 public class PisCommonPaymentServiceInternal implements PisCommonPaymentService {
     private final PisCommonPaymentMapper pisCommonPaymentMapper;
     private final PsuDataMapper psuDataMapper;
-    private final PisAuthorizationRepository pisAuthorizationRepository;
+    private final PisAuthorisationRepository pisAuthorisationRepository;
     private final PisPaymentDataRepository pisPaymentDataRepository;
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
     private final AspspProfileService aspspProfileService;
@@ -161,15 +161,15 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     /**
      * Update common payment authorisation
      *
-     * @param authorizationId id of the authorisation to be updated
+     * @param authorisationId id of the authorisation to be updated
      * @param request         contains data for updating authorisation
      * @return response contains updated data
      */
     @Override
     @Transactional
-    public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorizationId, UpdatePisCommonPaymentPsuDataRequest request) {
-        Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorizationRepository.findByExternalIdAndAuthorizationType(
-            authorizationId, CmsAuthorisationType.CREATED);
+    public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisAuthorisation(String authorisationId, UpdatePisCommonPaymentPsuDataRequest request) {
+        Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(
+            authorisationId, CmsAuthorisationType.CREATED);
 
         if (pisAuthorisationOptional.isPresent()) {
             ScaStatus scaStatus = doUpdateConsentAuthorisation(request, pisAuthorisationOptional.get());
@@ -189,7 +189,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Override
     @Transactional
     public Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorisation(String cancellationId, UpdatePisCommonPaymentPsuDataRequest request) {
-        Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorizationRepository.findByExternalIdAndAuthorizationType(
+        Optional<PisAuthorization> pisAuthorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(
             cancellationId, CmsAuthorisationType.CANCELLED);
 
         if (pisAuthorisationOptional.isPresent()) {
@@ -223,7 +223,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     public Optional<GetPisAuthorisationResponse> getPisAuthorisationById(String authorisationId) {
-        return pisAuthorizationRepository.findByExternalIdAndAuthorizationType(authorisationId, CmsAuthorisationType.CREATED)
+        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, CmsAuthorisationType.CREATED)
                    .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
     }
 
@@ -235,7 +235,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     public Optional<GetPisAuthorisationResponse> getPisCancellationAuthorisationById(String cancellationId) {
-        return pisAuthorizationRepository.findByExternalIdAndAuthorizationType(cancellationId, CmsAuthorisationType.CANCELLED)
+        return pisAuthorisationRepository.findByExternalIdAndAuthorizationType(cancellationId, CmsAuthorisationType.CANCELLED)
                    .map(pisCommonPaymentMapper::mapToGetPisAuthorizationResponse);
     }
 
@@ -255,19 +255,19 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Override
     @Transactional
     public Optional<ScaStatus> getAuthorisationScaStatus(@NotNull String paymentId, @NotNull String authorisationId, CmsAuthorisationType authorisationType) {
-        Optional<PisAuthorization> authorizationOptional = pisAuthorizationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType);
+        Optional<PisAuthorization> authorisationOptional = pisAuthorisationRepository.findByExternalIdAndAuthorizationType(authorisationId, authorisationType);
 
-        if (!authorizationOptional.isPresent()) {
+        if (!authorisationOptional.isPresent()) {
             return Optional.empty();
         }
 
-        PisCommonPaymentData paymentData = authorizationOptional.get().getPaymentData();
+        PisCommonPaymentData paymentData = authorisationOptional.get().getPaymentData();
         if (pisCommonPaymentConfirmationExpirationService.isPaymentDataOnConfirmationExpired(paymentData)) {
             pisCommonPaymentConfirmationExpirationService.updatePaymentDataOnConfirmationExpiration(paymentData);
             return Optional.of(ScaStatus.FAILED);
         }
 
-        return authorizationOptional
+        return authorisationOptional
                    .filter(auth -> paymentId.equals(auth.getPaymentData().getPaymentId()))
                    .map(PisAuthorization::getScaStatus);
     }
@@ -348,7 +348,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
         consentAuthorisation.setPsuData(handlePsuForAuthorisation(psuData, paymentData.getPsuData()));
         consentAuthorisation.setPaymentData(enrichPsuData(psuData, paymentData));
-        return pisAuthorizationRepository.save(consentAuthorisation);
+        return pisAuthorisationRepository.save(consentAuthorisation);
     }
 
     private OffsetDateTime countRedirectUrlExpirationTimestampForAuthorisationType(CmsAuthorisationType authorisationType) {
@@ -377,7 +377,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                                                           .map(this::makeAuthorisationFailedAndExpired)
                                                           .collect(Collectors.toList());
 
-        pisAuthorizationRepository.save(pisAuthorisationList);
+        pisAuthorisationRepository.save(pisAuthorisationList);
     }
 
     private PisAuthorization makeAuthorisationFailedAndExpired(PisAuthorization auth) {
@@ -444,7 +444,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
             }
         }
         pisAuthorisation.setScaStatus(request.getScaStatus());
-        PisAuthorization saved = pisAuthorizationRepository.save(pisAuthorisation);
+        PisAuthorization saved = pisAuthorisationRepository.save(pisAuthorisation);
         return saved.getScaStatus();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
-import de.adorsys.psd2.consent.repository.PisAuthorizationRepository;
+import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.repository.specification.PisAuthorisationSpecification;
@@ -52,7 +52,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final PisPaymentDataRepository pisPaymentDataRepository;
-    private final PisAuthorizationRepository pisAuthorizationRepository;
+    private final PisAuthorisationRepository pisAuthorisationRepository;
     private final CmsPsuPisMapper cmsPsuPisMapper;
     private final PisCommonPaymentService pisCommonPaymentService;
     private final CommonPaymentDataService commonPaymentDataService;
@@ -63,8 +63,12 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     @Transactional
-    public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        return Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+    public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) {
+        PisAuthorization authorisation =
+            pisAuthorisationRepository.findOne(
+                pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)
+                                              );
+        return Optional.ofNullable(authorisation)
                    .map(PisAuthorization::getPsuData)
                    .map(psuData -> updatePsuData(psuData, psuIdData))
                    .orElse(false);
@@ -90,7 +94,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
                                                                .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
 
         if (optionalAuthorisation.isPresent()) {
@@ -112,7 +116,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
                                                                .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
 
         if (!optionalAuthorisation.isPresent()) {
@@ -135,7 +139,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Transactional
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) {
-        Optional<PisAuthorization> pisAuthorisation = Optional.ofNullable(pisAuthorizationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)));
+        Optional<PisAuthorization> pisAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)));
 
         boolean isValid = pisAuthorisation
                               .map(auth -> auth.getPaymentData().getPaymentId())
@@ -185,7 +189,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             return false;
         }
         pisAuthorisation.setScaStatus(status);
-        return Optional.ofNullable(pisAuthorizationRepository.save(pisAuthorisation))
+        return Optional.ofNullable(pisAuthorisationRepository.save(pisAuthorisation))
                    .isPresent();
     }
 
@@ -245,6 +249,6 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private void changeAuthorisationStatusToFailed(PisAuthorization authorisation) {
         authorisation.setScaStatus(ScaStatus.FAILED);
-        pisAuthorizationRepository.save(authorisation);
+        pisAuthorisationRepository.save(authorisation);
     }
 }

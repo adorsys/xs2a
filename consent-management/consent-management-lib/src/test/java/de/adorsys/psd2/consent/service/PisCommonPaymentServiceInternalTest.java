@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDa
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
-import de.adorsys.psd2.consent.repository.PisAuthorizationRepository;
+import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -62,7 +62,7 @@ public class PisCommonPaymentServiceInternalTest {
     @Mock
     private PisPaymentDataRepository pisPaymentDataRepository;
     @Mock
-    private PisAuthorizationRepository pisAuthorizationRepository;
+    private PisAuthorisationRepository pisAuthorisationRepository;
     @Mock
     SecurityDataService securityDataService;
     @Mock
@@ -103,7 +103,7 @@ public class PisCommonPaymentServiceInternalTest {
 
     @Test
     public void getAuthorisationScaStatus_success() {
-        when(pisAuthorizationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, CmsAuthorisationType.CREATED)).thenReturn(Optional.of(pisAuthorization));
+        when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, CmsAuthorisationType.CREATED)).thenReturn(Optional.of(pisAuthorization));
 
         // When
         Optional<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED);
@@ -115,7 +115,7 @@ public class PisCommonPaymentServiceInternalTest {
 
     @Test
     public void getAuthorisationScaStatus_failure_wrongPaymentId() {
-        when(pisAuthorizationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, CmsAuthorisationType.CREATED)).thenReturn(Optional.empty());
+        when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, CmsAuthorisationType.CREATED)).thenReturn(Optional.empty());
 
         // When
         Optional<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID_WRONG, AUTHORISATION_ID, CmsAuthorisationType.CREATED);
@@ -126,7 +126,7 @@ public class PisCommonPaymentServiceInternalTest {
 
     @Test
     public void getAuthorisationScaStatus_failure_wrongAuthorisationId() {
-        when(pisAuthorizationRepository.findByExternalIdAndAuthorizationType(WRONG_AUTHORISATION_ID, CmsAuthorisationType.CREATED)).thenReturn(Optional.empty());
+        when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(WRONG_AUTHORISATION_ID, CmsAuthorisationType.CREATED)).thenReturn(Optional.empty());
 
         // When
         Optional<ScaStatus> actual = pisCommonPaymentService.getAuthorisationScaStatus(PAYMENT_ID, WRONG_AUTHORISATION_ID, CmsAuthorisationType.CREATED);
@@ -182,7 +182,7 @@ public class PisCommonPaymentServiceInternalTest {
         UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(expectedScaStatus);
         PisAuthorization finalisedConsentAuthorization = buildFinalisedConsentAuthorisation(actualScaStatus);
 
-        when(pisAuthorizationRepository.findByExternalIdAndAuthorizationType(FINALISED_AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+        when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(FINALISED_AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .thenReturn(Optional.of(finalisedConsentAuthorization));
 
         //When
@@ -202,7 +202,7 @@ public class PisCommonPaymentServiceInternalTest {
         PisAuthorization finalisedCancellationAuthorization = buildFinalisedConsentAuthorisation(actualScaStatus);
         UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(expectedScaStatus);
 
-        when(pisAuthorizationRepository.findByExternalIdAndAuthorizationType(FINALISED_CANCELLATION_AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
+        when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(FINALISED_CANCELLATION_AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
             .thenReturn(Optional.of(finalisedCancellationAuthorization));
 
         //When
@@ -222,7 +222,7 @@ public class PisCommonPaymentServiceInternalTest {
         ArgumentCaptor<List<PisAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
         PsuIdData psuIdData = buildPsuIdData();
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
-        when(pisAuthorizationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
+        when(pisAuthorisationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
         when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
 
@@ -231,10 +231,10 @@ public class PisCommonPaymentServiceInternalTest {
 
         // Then
         assertTrue(actual.isPresent());
-        verify(pisAuthorizationRepository).save(argument.capture());
+        verify(pisAuthorisationRepository).save(argument.capture());
         assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
 
-        verify(pisAuthorizationRepository).save(failedAuthorisationsArgument.capture());
+        verify(pisAuthorisationRepository).save(failedAuthorisationsArgument.capture());
         List<PisAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
         Set<ScaStatus> scaStatuses = failedAuthorisations.stream()
                                          .map(PisAuthorization::getScaStatus)
