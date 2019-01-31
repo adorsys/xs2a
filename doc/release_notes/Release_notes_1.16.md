@@ -83,6 +83,14 @@ Corresponding endpoint in the CMS controller was changed as well:
 Now `SpiAccountConsent` argument contains proper `SpiAccountAccess` in `de.adorsys.psd2.xs2a.spi.service.AccountSpi#requestAccountList`
 method when no accesses were previously provided by the connector in a response to AIS consent initiation.
 
+## Change the paths of some PIS and AIS enpoints in CMS-PSU-API
+Some paths were confusing, so that was not clear which endpoint should be used to validate redirectUrl.
+Now "Update PSU Data" call is done using authorisationId, not redirectId.
+Also PsuData is provided by request's body, not in the header (normal behaviour for PUT).
+Please note as well that the word `/pis/consent` in the path was changed to `/payment`,
+so it's much more clear that it is about PIS enpoints.
+
+
 ## Multilevel SCA for payment initiation in embedded approach
  
 For accounts with multiple PSUs, now it is possible to execute multilevel SCA for each PSU in embedded approach. Now payment initiation response from SPI
