@@ -48,12 +48,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.PATC;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 
@@ -293,16 +292,16 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
 
     private Optional<PisCommonPaymentData> readReceivedCommonPaymentDataByPaymentId(String paymentId) {
         // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
-        Optional<PisCommonPaymentData> commonPaymentData = pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatus(paymentId, TransactionStatus.RCVD)
+        Optional<PisCommonPaymentData> commonPaymentData = pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(paymentId, Arrays.asList(RCVD, PATC))
                                                                .filter(CollectionUtils::isNotEmpty)
                                                                .map(list -> list.get(0).getPaymentData())
                                                                .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
-                                                               .filter(p -> p.getTransactionStatus() == TransactionStatus.RCVD);
+                                                               .filter(p -> EnumSet.of(RCVD, PATC).contains(p.getTransactionStatus()));
 
         if (!commonPaymentData.isPresent()) {
-            commonPaymentData = pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatus(paymentId, TransactionStatus.RCVD)
+            commonPaymentData = pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatusIn(paymentId, Arrays.asList(RCVD, PATC))
                                     .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
-                                    .filter(p -> p.getTransactionStatus() == TransactionStatus.RCVD);
+                                    .filter(p -> EnumSet.of(RCVD, PATC).contains(p.getTransactionStatus()));
         }
 
         return commonPaymentData;
@@ -311,8 +310,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private Optional<PisCommonPaymentData> readPisCommonPaymentDataByPaymentId(String paymentId) {
         // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
         Optional<PisCommonPaymentData> commonPaymentData = pisPaymentDataRepository.findByPaymentId(paymentId)
-                                                             .filter(CollectionUtils::isNotEmpty)
-                                                             .map(list -> list.get(0).getPaymentData());
+                                                               .filter(CollectionUtils::isNotEmpty)
+                                                               .map(list -> list.get(0).getPaymentData());
         if (!commonPaymentData.isPresent()) {
             commonPaymentData = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         }

@@ -27,24 +27,25 @@ public class AuthorisationMethodDecider {
 
     /**
      * Decides whether explicit authorisation method will be used based on tppExplicitAuthorisationPreferred and signingBasketSupported values.
-     * Explicit authorisation will be used only in case if tppExplicitAuthorisationPreferred = true and signingBasketSupported = true
+     * Explicit authorisation will be used in case if tppExplicitAuthorisationPreferred = true and signingBasketSupported = true or in case of multilevel SCA
      *
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
      * @return is explicit method of authorisation will be used
      */
-    public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred) {
-        return tppExplicitAuthorisationPreferred &&
-                   aspspProfileService.isSigningBasketSupported();
+    public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {
+        return multilevelScaRequired
+                   || tppExplicitAuthorisationPreferred && aspspProfileService.isSigningBasketSupported();
     }
 
     /**
      * Decides whether implicit authorisation method will be used based on tppExplicitAuthorisationPreferred and signingBasketSupported values.
      * Implicit authorisation will be used in all the cases where tppExplicitAuthorisationPreferred or signingBasketSupported not equals true
+     * Implicit approach is impossible in case of multilevel SCA
      *
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
      * @return is implicit method of authorisation will be used
      */
-    public boolean isImplicitMethod(boolean tppExplicitAuthorisationPreferred) {
-        return !isExplicitMethod(tppExplicitAuthorisationPreferred);
+    public boolean isImplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {
+        return !isExplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
     }
 }

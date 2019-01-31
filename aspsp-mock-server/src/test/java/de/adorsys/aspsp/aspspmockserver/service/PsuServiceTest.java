@@ -211,7 +211,7 @@ public class PsuServiceTest {
     private List<AspspAccountDetails> getDetails(boolean isEmpty) {
         return isEmpty
                    ? Collections.emptyList()
-                   : Collections.singletonList(new AspspAccountDetails(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, Collections.emptyList()));
+                   : Collections.singletonList(new AspspAccountDetails(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, null, Collections.emptyList()));
 
     }
 }

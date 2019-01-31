@@ -89,7 +89,7 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
 
         response.setPaymentId(externalPaymentId);
 
-        boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
+        boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred(), response.isMultilevelScaRequired());
         if (implicitMethod) {
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, PaymentType.SINGLE, psuData);
             if (!consentAuthorisation.isPresent()) {

@@ -38,40 +38,10 @@ import java.util.stream.Collectors;
 @Component
 public class Xs2aToCmsPisCommonPaymentRequestMapper {
 
-    public PisCommonPaymentRequest mapToCmsPisCommonPaymentRequest(CommonPayment paymentInitRequest) {
-        PisCommonPaymentRequest request = new PisCommonPaymentRequest();
-        request.setPayments(Collections.emptyList());
-        request.setPaymentInfo(mapToPisPaymentInfo(paymentInitRequest));
-        request.setPaymentId(paymentInitRequest.getPaymentId());
-        request.setPaymentType(paymentInitRequest.getPaymentType());
-        request.setPaymentProduct(paymentInitRequest.getPaymentProduct());
-        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
-        request.setTppInfo(new TppInfo());
-        request.setPsuData(paymentInitRequest.getPsuDataList());
-        return request;
-    }
-
     public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData) {
         PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response);
         paymentInfo.setPaymentData(paymentData);
         return paymentInfo;
-    }
-
-    private PisPaymentInfo mapToPisPaymentInfo(CommonPayment paymentInitRequest) {
-        return Optional.ofNullable(paymentInitRequest)
-                   .map(dta -> {
-                            PisPaymentInfo paymentInfo = new PisPaymentInfo();
-                            paymentInfo.setPaymentId(dta.getPaymentId());
-                            paymentInfo.setPaymentProduct(dta.getPaymentProduct());
-                            paymentInfo.setPaymentType(dta.getPaymentType());
-                            paymentInfo.setTransactionStatus(dta.getTransactionStatus());
-                            paymentInfo.setPaymentData(dta.getPaymentData());
-                            paymentInfo.setPsuDataList(dta.getPsuDataList());
-                            paymentInfo.setTppInfo(dta.getTppInfo());
-                            return paymentInfo;
-                        }
-                   )
-                   .orElse(null);
     }
 
     public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response) {
@@ -82,6 +52,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         paymentInfo.setTppInfo(tppInfo);
         paymentInfo.setPaymentId(response.getPaymentId());
         paymentInfo.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
+        paymentInfo.setMultilevelScaRequired(response.isMultilevelScaRequired());
         paymentInfo.setAspspAccountId(response.getAspspAccountId());
         return paymentInfo;
     }

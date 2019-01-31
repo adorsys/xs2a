@@ -70,11 +70,6 @@ public class Xs2aPisCommonPaymentService {
         return pisCommonPaymentServiceEncrypted.getCommonPaymentById(paymentId);
     }
 
-    public void updateCommonPayment(CommonPayment payment, String paymentId) {
-        PisCommonPaymentRequest pisCommonPaymentRequest = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsPisCommonPaymentRequest(payment);
-        pisCommonPaymentServiceEncrypted.updateCommonPayment(pisCommonPaymentRequest, paymentId);
-    }
-
     public void updateSinglePaymentInCommonPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, String paymentId) {
         PisCommonPaymentRequest pisCommonPaymentRequest = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsSinglePisCommonPaymentRequest(singlePayment, paymentInitiationParameters.getPaymentProduct());
         pisCommonPaymentServiceEncrypted.updateCommonPayment(pisCommonPaymentRequest, paymentId);

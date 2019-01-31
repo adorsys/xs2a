@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,15 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import lombok.Data;
+import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-@Data
-public abstract class SpiPaymentInitiationResponse {
+/**
+ * A response object that is returned by the ASPSP after the successful execution of payment
+ */
+@Value
+public class SpiPaymentExecutionResponse {
+    @NotNull
     private SpiTransactionStatus transactionStatus;
-    private String paymentId;
-    private SpiAmount spiTransactionFees;
-    private boolean spiTransactionFeeIndicator;
-    private boolean multilevelScaRequired;
-    private List<String> scaMethods;
-    // TODO Make extendable list of scaMethods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/411
-    private String chosenScaMethod;
-    private ChallengeData challengeData;
-    private String psuMessage;
-    private List<String> tppMessages;
-    private String aspspAccountId;
 }

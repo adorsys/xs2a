@@ -240,13 +240,13 @@ public class AccountControllerTest {
     private AspspAccountDetails getAspspAccountDetails_1() {
         return new AspspAccountDetails(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, null, "1111222233334444",
                                        "111122xxxxxx44", null, CURRENCY, "Jack", "GIRO",
-                                       null, null, "XE3DDD", null, null, null, getNewBalanceList());
+                                       null, null, null, "XE3DDD", null, null, null, getNewBalanceList());
     }
 
     private AspspAccountDetails getAspspAccountDetails_2() {
         return new AspspAccountDetails(ASPSP_ACCOUNT_ID, "qwertyuiop12345678", IBAN, null, "4444333322221111",
                                        "444433xxxxxx1111", null, null, "Emily", "GIRO",
-                                       null, null, "ACVB222", null, null, null, getNewBalanceList());
+                                       null, null, null, "ACVB222", null, null, null, getNewBalanceList());
     }
 
     private List<AspspAccountBalance> getNewBalanceList() {

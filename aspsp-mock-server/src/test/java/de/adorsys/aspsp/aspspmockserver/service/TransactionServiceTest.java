@@ -134,7 +134,7 @@ public class TransactionServiceTest {
     }
 
     private AspspAccountDetails getDetails() {
-        return new AspspAccountDetails(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null, null, null, null, null);
+        return new AspspAccountDetails(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null, null, null, null, null, null);
     }
 
 }

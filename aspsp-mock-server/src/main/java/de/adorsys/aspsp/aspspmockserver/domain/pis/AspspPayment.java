@@ -23,11 +23,13 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspAddress;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspDayOfExecution;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspExecutionRule;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspRemittance;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspPsuData;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class AspspPayment {
@@ -37,6 +39,7 @@ public class AspspPayment {
     private String paymentProduct;
     private byte[] paymentData;
     private PisPaymentType pisPaymentType;
+    private List<AspspPsuData> psuDataList;
 
     private String endToEndIdentification;
     private AspspAccountReference debtorAccount;

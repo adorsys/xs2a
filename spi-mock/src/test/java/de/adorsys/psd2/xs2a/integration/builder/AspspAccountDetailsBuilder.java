@@ -30,7 +30,7 @@ public class AspspAccountDetailsBuilder {
     private static final BigDecimal BALANCE_AMOUNT = new BigDecimal("1000");
 
     public static AspspAccountDetails buildAccountDetails(String iban, Currency currency) {
-        return new AspspAccountDetails(null, null, iban, null, null, null, null, currency, "account name", null, null, null, null, null, null, null, getBalances(currency));
+        return new AspspAccountDetails(null, null, iban, null, null, null, null, currency, "account name", null, null, null, null, null, null, null, null, getBalances(currency));
     }
 
     private static List<AspspAccountBalance> getBalances(Currency currency) {

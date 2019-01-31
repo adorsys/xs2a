@@ -63,6 +63,8 @@ public class PaymentServiceTest {
     private AccountService accountService;
     @Mock
     private PaymentMapper paymentMapper;
+    @Mock
+    private AccountDetailsService accountDetailsService;
 
     @Before
     public void setUp() {
@@ -182,7 +184,7 @@ public class PaymentServiceTest {
         //Given
         AspspBulkPayment spiBulkPayment = new AspspBulkPayment();
         List<AspspSinglePayment> payments = Arrays.asList(getAspspSinglePayment(AMOUNT_TO_TRANSFER),
-            getAspspSinglePayment(EXCEEDING_AMOUNT_TO_TRANSFER));
+                                                          getAspspSinglePayment(EXCEEDING_AMOUNT_TO_TRANSFER));
         spiBulkPayment.setPayments(payments);
 
         //When
@@ -285,14 +287,14 @@ public class PaymentServiceTest {
     }
 
     private AspspPaymentInfo getAspspPaymentInfo(AspspTransactionStatus transactionStatus) {
-        return new AspspPaymentInfo(
-            PAYMENT_ID,
-            transactionStatus,
-            "sepa-credit-transfers",
-            "SINGLE",
-            new byte[16],
-            ASPSP_ACCOUNT_ID
-        );
+        AspspPaymentInfo info = new AspspPaymentInfo();
+        info.setPaymentStatus(transactionStatus);
+        info.setPaymentId(PAYMENT_ID);
+        info.setPaymentProduct("sepa-credit-transfers");
+        info.setPisPaymentType("SINGLE");
+        info.setPaymentData(new byte[16]);
+        info.setAspspAccountId(ASPSP_ACCOUNT_ID);
+        return info;
     }
 
     private AspspPayment getAspspPayment(AspspTransactionStatus transactionStatus, long amountToTransfer) {
@@ -319,7 +321,7 @@ public class PaymentServiceTest {
 
     private List<AspspAccountDetails> getAccountDetails() {
         return Collections.singletonList(
-            new AspspAccountDetails(ASPSP_ACCOUNT_ID, "12345", IBAN, null, null, null, null, CURRENCY, "Peter", null, null, null, null, null, null, null, getBalances())
+            new AspspAccountDetails(ASPSP_ACCOUNT_ID, "12345", IBAN, null, null, null, null, CURRENCY, "Peter", null, null, null, null, null, null, null, null, getBalances())
         );
     }
 

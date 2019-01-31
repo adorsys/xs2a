@@ -19,11 +19,13 @@ package de.adorsys.psd2.aspsp.mock.api.payment;
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
+import de.adorsys.psd2.aspsp.mock.api.psu.AspspPsuData;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class AspspSinglePayment {
@@ -51,4 +53,5 @@ public class AspspSinglePayment {
     @Deprecated // Since 1.2
     private LocalDateTime requestedExecutionTime;
     private AspspTransactionStatus paymentStatus;
+    private List<AspspPsuData> psuDataList;
 }

@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -89,6 +90,7 @@ public class SpiPeriodicPaymentMapper {
                                   .map(AspspAccountReference::getAccountId)
                                   .orElse(null));
         spi.setPaymentId(payment.getPaymentId());
+        spi.setMultilevelScaRequired(CollectionUtils.size(payment.getPsuDataList()) > 1);
         if (payment.getPaymentId() == null) {
             spi.setTransactionStatus(SpiTransactionStatus.RJCT);
         } else {

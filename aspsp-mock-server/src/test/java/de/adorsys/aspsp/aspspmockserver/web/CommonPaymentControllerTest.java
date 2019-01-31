@@ -118,13 +118,13 @@ public class CommonPaymentControllerTest {
     }
 
     private AspspPaymentInfo getAspspPaymentInfo(AspspTransactionStatus transactionStatus) {
-        return new AspspPaymentInfo(
-            PAYMENT_ID,
-            transactionStatus,
-            "sepa-credit-transfers",
-            "SINGLE",
-            new byte[16],
-            ASPSP_ACCOUNT_ID
-        );
+        AspspPaymentInfo info = new AspspPaymentInfo();
+        info.setPaymentId(PAYMENT_ID);
+        info.setPaymentStatus(transactionStatus);
+        info.setPaymentProduct("sepa-credit-transfers");
+        info.setPaymentData(new byte[16]);
+        info.setPisPaymentType("SINGLE");
+        info.setAspspAccountId(ASPSP_ACCOUNT_ID);
+        return info;
     }
 }

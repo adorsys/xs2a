@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface PisCommonPaymentDataRepository extends CrudRepository<PisCommonPaymentData, Long>, JpaSpecificationExecutor<PisCommonPaymentData> {
-    Optional<PisCommonPaymentData> findByPaymentIdAndTransactionStatus(String paymentId, TransactionStatus status);// todo method should be changed to  findByPaymentIdAndTransactionStatus https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
+    Optional<PisCommonPaymentData> findByPaymentIdAndTransactionStatusIn(String paymentId, List<TransactionStatus> status);// todo method should be changed to  findByPaymentIdAndTransactionStatus https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
 
     Optional<PisCommonPaymentData> findByPaymentId(String paymentId);
 

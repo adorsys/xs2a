@@ -91,7 +91,7 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
 
         response.setPaymentId(externalPaymentId);
 
-        boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
+        boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred(), response.isMultilevelScaRequired());
         if (implicitMethod) {
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, PaymentType.PERIODIC, paymentInitiationParameters.getPsuData());
             if (!consentAuthorisation.isPresent()) {

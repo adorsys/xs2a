@@ -21,8 +21,6 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -33,7 +31,6 @@ import java.util.List;
 
 @Data
 @Entity(name = "pis_common_payment")
-@ApiModel(description = "pis common payment entity", value = "PisCommonPaymentData")
 public class PisCommonPaymentData extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_common_payment_generator")
@@ -45,50 +42,43 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
 
     @Column(name = "payment_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PaymentType paymentType;
 
     @Column(name = "payment_product", nullable = false)
-    @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
     private String paymentProduct;
 
     @Column(name = "transaction_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(name = "transactionStatus", example = "ACCP", required = true)
     private TransactionStatus transactionStatus;
 
     @Lob
     @Column(name = "payment", nullable = false)
-    @ApiModelProperty(value = "All data about the payment", required = true)
     private byte[] payment;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @ApiModelProperty(value = "List of PSU", required = true)
     private List<PsuData> psuData = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id", nullable = false)
-    @ApiModelProperty(value = "Information about TPP", required = true)
     private TppInfoEntity tppInfo;
 
     @OneToMany(mappedBy = "paymentData",
         cascade = CascadeType.ALL,
         orphanRemoval = true)
-    @ApiModelProperty(value = "List of authorizations", required = true)
     private List<PisAuthorization> authorizations = new ArrayList<>();
 
     @OneToMany(mappedBy = "paymentData",
         cascade = CascadeType.ALL,
         orphanRemoval = true)
-    @ApiModelProperty(value = "List of single payments ", required = true)
     private List<PisPaymentData> payments = new ArrayList<>();
 
     @Column(name = "creation_timestamp")
-    @ApiModelProperty(value = "Creation timestamp of the consent.", required = true, example = "2018-12-28T00:00:00Z")
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
 
+    @Column(name = "multilevel_sca_required", nullable = false)
+    private boolean multilevelScaRequired;
+
     @Column(name = "aspsp_account_id", length = 100)
-    @ApiModelProperty(value = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
     private String aspspAccountId;
 
     public boolean isConfirmationExpired(long expirationPeriodMs) {

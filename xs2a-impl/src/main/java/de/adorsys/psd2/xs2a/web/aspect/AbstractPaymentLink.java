@@ -79,7 +79,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String paymentId = body.getPaymentId();
         String authorizationId = body.getAuthorizationId();
 
-        if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
+        if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred(), body.isMultilevelScaRequired())) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations", paymentService, paymentProduct, paymentId));
         } else {
             links.setScaStatus(
@@ -97,7 +97,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String paymentId = body.getPaymentId();
         String authorisationId = body.getAuthorizationId();
 
-        if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
+        if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred(), body.isMultilevelScaRequired())) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations", paymentService, paymentProduct, paymentId));
         } else {
             String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(body.getPaymentId(), authorisationId);
