@@ -17,7 +17,8 @@
 package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
@@ -103,5 +104,13 @@ public interface CmsPsuAisService {
      */
     @NotNull
     Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
+
+    /**
+     * Stores account access to Consent in CMS. Any existing account accesses will be removed and overwritten.
+     * @param consentId ID of Consent, in which AccountAccess shall be saved
+     * @param accountAccessRequest AccountAccess object with lists of AccountReferences. If empty, corresponding accesses to be removed.
+     * @return false if Consent with this ID not found or in wrong state (Rejected, Revoked, Expired, Terminated by TPP or Terminated by ASPSP). True if consent was found.
+     */
+    boolean saveAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest);
 
 }

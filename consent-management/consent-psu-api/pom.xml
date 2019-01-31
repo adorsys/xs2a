@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -37,6 +37,11 @@
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-core-api</artifactId>
             <version>1.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 </project>

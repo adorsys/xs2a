@@ -17,8 +17,9 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
@@ -220,6 +221,24 @@ public class CmsPsuAisController {
         }
 
         return new ResponseEntity<>(consentResponse, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{consent-id}/save-access")
+    @ApiOperation(value = "Stores list of accounts with their identifiers in AIS Consent object by its ID. Consent should not be revoked, cancelled or expired.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", reference = "Access saved"),
+        @ApiResponse(code = 404, message = "Not Found", reference = "Consent not found or not active")})
+    public ResponseEntity<Void> putAccountAccessInConsent(
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId,
+        @RequestBody CmsAisConsentAccessRequest accountAccessRequest) {
+
+        boolean accessSaved = cmsPsuAisService.saveAccountAccessInConsent(consentId, accountAccessRequest);
+
+        if (accessSaved) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     private PsuIdData getPsuIdData(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
