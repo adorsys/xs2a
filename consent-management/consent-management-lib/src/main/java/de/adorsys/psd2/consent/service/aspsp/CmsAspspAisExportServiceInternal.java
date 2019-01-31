@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
+import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
@@ -32,6 +33,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -41,25 +43,57 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     private final AisConsentMapper aisConsentMapper;
 
     @Override
-    public Collection<AisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber, @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData, @NotNull String instanceId) {
+    public Collection<AisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber,
+                                                             @Nullable LocalDate createDateFrom,
+                                                             @Nullable LocalDate createDateTo,
+                                                             @Nullable PsuIdData psuIdData, @NotNull String instanceId
+                                                            ) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
             return Collections.emptyList();
         }
 
-        return aisConsentRepository.findAll(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId))
+        return aisConsentRepository.findAll(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(
+            tppAuthorisationNumber,
+            createDateFrom,
+            createDateTo,
+            psuIdData,
+            instanceId
+                                                                                                                     ))
                    .stream()
                    .map(aisConsentMapper::mapToAisAccountConsent)
                    .collect(Collectors.toList());
     }
 
     @Override
-    public Collection<AisAccountConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo, @NotNull String instanceId) {
+    public Collection<AisAccountConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
+                                                             @Nullable LocalDate createDateTo,
+                                                             @NotNull String instanceId
+                                                            ) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
             return Collections.emptyList();
         }
 
-        return aisConsentRepository.findAll(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, instanceId))
+        return aisConsentRepository.findAll(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
+                                                                                                              createDateFrom,
+                                                                                                              createDateTo,
+                                                                                                              instanceId
+                                                                                                             ))
                    .stream()
+                   .map(aisConsentMapper::mapToAisAccountConsent)
+                   .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<AisAccountConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
+                                                                   @Nullable LocalDate createDateFrom,
+                                                                   @Nullable LocalDate createDateTo,
+                                                                   @NotNull String instanceId
+                                                                  ) {
+        // TODO implement method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/579
+        Iterable<AisConsent> all = aisConsentRepository.findAll();
+
+        return StreamSupport
+                   .stream(all.spliterator(), false)
                    .map(aisConsentMapper::mapToAisAccountConsent)
                    .collect(Collectors.toList());
     }
