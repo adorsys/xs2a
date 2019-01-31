@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.aspsp.api.ais;
+package de.adorsys.psd2.consent.aspsp.api.piis;
 
 
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.TooManyResultsException;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.Collection;
 
 
 @NotNull
-public interface CmsAspspAisExportService {
+public interface CmsAspspPiisFundsExportService {
     /**
      * Returns list of consents by given criteria.
      *
@@ -42,9 +42,11 @@ public interface CmsAspspAisExportService {
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<AisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber,
-                                                      @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                      @Nullable PsuIdData psuIdData, @NotNull String instanceId);
+    Collection<PiisConsent> exportConsentsByTpp(String tppAuthorisationNumber,
+                                                @Nullable LocalDate createDateFrom,
+                                                @Nullable LocalDate createDateTo,
+                                                @Nullable PsuIdData psuIdData, @NotNull String instanceId
+                                               );
 
     /**
      * Returns list of consents by given criteria.
@@ -58,7 +60,26 @@ public interface CmsAspspAisExportService {
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<AisAccountConsent> exportConsentsByPsu(PsuIdData psuIdData,
-                                                      @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                      @NotNull String instanceId);
+    Collection<PiisConsent> exportConsentsByPsu(PsuIdData psuIdData,
+                                                      @Nullable LocalDate createDateFrom,
+                                                      @Nullable LocalDate createDateTo,
+                                                      @NotNull String instanceId
+                                                     );
+
+    /**
+     * Returns list of consents by given criteria.
+     *
+     * @param aspspAccountId         Bank specific account identifier
+     * @param createDateFrom         Optional starting creation date criteria
+     * @param createDateTo           Optional ending creation date criteria
+     * @param instanceId             Mandatory id of particular service instance
+     * @return Collection of consents by given criteria.
+     * By inconsistent criteria an empty list will be returned
+     * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
+     *                                 developer shall limit his/her request, making pagination by dates.
+     */
+    Collection<PiisConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
+                                                     @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
+                                                     @NotNull String instanceId);
+
 }
