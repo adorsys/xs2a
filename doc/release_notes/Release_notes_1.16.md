@@ -107,4 +107,4 @@ Error response body example:
 ```
 
 ## Bugfix: validate PSU TAN during update PSU data requests for payments
-From now on when PSU sends wrong TAN `during the authorisation process,` he will receive response with PSU_CREDENTIALS_INVALID error(response code HTTP 401).
+From now on when PSU sends wrong TAN during the authorisation process, he will receive response with PSU_CREDENTIALS_INVALID error(response code HTTP 401).
