@@ -82,3 +82,20 @@ method when no accesses were previously provided by the connector in a response 
 For accounts with multiple PSUs, now it is possible to execute multilevel SCA for each PSU in embedded approach. Now payment initiation response from SPI
 contains new boolean field `multilevelScaRequired` to inform XS2A that this payment requires multilevel SCA and there should be always explicit authorisation approach used.
 All successful authorisations(except the last one) will set payment status to `PATC` in CMS, and the final authorisation - will set it to `ACCP`.
+
+## Updated error response mapping to be compliant with specification 1.3
+In the previous release notes it was mentioned: `Please note that in this release some problems with errors responses appear`.
+The fix was created. So now error responses are compliant with specification 1.3.
+
+Error response body example: 
+```json
+{
+    "tppMessages": [
+        {
+            "category": "ERROR",
+            "code": "FORMAT_ERROR",
+            "text": "Format of certain request fields are not matching the XS2A requirements."
+        }
+    ]
+}
+```
