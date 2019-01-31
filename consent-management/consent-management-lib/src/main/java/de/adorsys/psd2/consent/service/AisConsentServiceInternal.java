@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
-import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
+import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -55,7 +55,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
-    private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
+    private final AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
     private final AisConsentMapper consentMapper;
     private final PsuDataMapper psuDataMapper;
     private final AspspProfileService aspspProfileService;
@@ -238,7 +238,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                      .isPresent();
 
         return consentPresent
-                   ? aisConsentAuthorizationRepository.findByExternalId(authorizationId)
+                   ? aisConsentAuthorisationRepository.findByExternalId(authorizationId)
                          .map(consentMapper::mapToAisConsentAuthorizationResponse)
                    : Optional.empty();
     }
@@ -285,7 +285,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
-        Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorizationRepository.findByExternalId(authorizationId);
+        Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorisationRepository.findByExternalId(authorizationId);
 
         if (!aisConsentAuthorizationOptional.isPresent()) {
             return false;
@@ -307,7 +307,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         aisConsentAuthorization.setScaStatus(request.getScaStatus());
-        aisConsentAuthorization = aisConsentAuthorizationRepository.save(aisConsentAuthorization);
+        aisConsentAuthorization = aisConsentAuthorisationRepository.save(aisConsentAuthorization);
 
         return aisConsentAuthorization.getExternalId() != null;
     }
@@ -413,7 +413,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
-        return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
+        return aisConsentAuthorisationRepository.save(consentAuthorization).getExternalId();
     }
 
     private Optional<AisConsentAuthorization> findAuthorisationInConsent(String authorisationId, AisConsent consent) {
@@ -436,7 +436,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                      .map(this::makeAuthorisationFailedAndExpired)
                                                                      .collect(Collectors.toList());
 
-        aisConsentAuthorizationRepository.save(aisConsentAuthorisations);
+        aisConsentAuthorisationRepository.save(aisConsentAuthorisations);
     }
 
     private boolean isPsuDataCorrect(PsuData psuData) {

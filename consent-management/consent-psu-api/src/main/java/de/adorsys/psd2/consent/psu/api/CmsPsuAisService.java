@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ public interface CmsPsuAisService {
      * Updates PSU Data in consent, based on the trusted information about PSU known to ASPSP (i.e. after authorisation)
      *
      * @param psuIdData PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
-     * @param redirectId ID of redirect
+     * @param authorisationId ID of authorisation
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
-    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
+    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId);
 
     /**
      * Returns AIS Consent object by its ID

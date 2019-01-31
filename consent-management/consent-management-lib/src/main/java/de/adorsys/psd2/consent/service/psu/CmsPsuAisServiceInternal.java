@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
-import de.adorsys.psd2.consent.repository.AisConsentAuthorizationRepository;
+import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
@@ -57,15 +57,17 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentMapper consentMapper;
     private final PsuDataRepository psuDataRepository;
     private final PsuDataMapper psuDataMapper;
-    private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
+    private final AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
     private final AisConsentAuthorizationSpecification aisConsentAuthorizationSpecification;
     private final AisConsentSpecification aisConsentSpecification;
     private final AisConsentService aisConsentService;
 
     @Override
     @Transactional
-    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        return Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) {
+        AisConsentAuthorization authorisation = aisConsentAuthorisationRepository.findOne(
+                aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
+        return Optional.ofNullable(authorisation)
                    .map(AisConsentAuthorization::getConsent)
                    .map(con -> updatePsuData(con, psuIdData))
                    .orElse(false);
@@ -88,7 +90,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return false;
         }
 
-        return Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)))
+        return Optional.ofNullable(aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)))
                    .map(auth -> updateScaStatus(status, auth))
                    .orElse(false);
     }
@@ -126,7 +128,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<AisConsentAuthorization> optionalAuthorisation = Optional.ofNullable(aisConsentAuthorizationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+        Optional<AisConsentAuthorization> optionalAuthorisation = Optional.ofNullable(aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
                                                                       .filter(a -> isConsentAuthorisationValidForPsuAndStatus(psuIdData, a));
 
         if (optionalAuthorisation.isPresent()) {
@@ -201,12 +203,12 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return false;
         }
         authorization.setScaStatus(status);
-        return aisConsentAuthorizationRepository.save(authorization) != null;
+        return aisConsentAuthorisationRepository.save(authorization) != null;
     }
 
     private void updateAuthorisationOnExpiration(AisConsentAuthorization authorisation) {
         authorisation.setScaStatus(ScaStatus.FAILED);
-        aisConsentAuthorizationRepository.save(authorisation);
+        aisConsentAuthorisationRepository.save(authorisation);
     }
 
     private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String
