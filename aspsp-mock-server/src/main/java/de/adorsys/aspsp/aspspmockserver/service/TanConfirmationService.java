@@ -90,7 +90,7 @@ public class TanConfirmationService {
         if (isTanNumberValid(psuId, tanNumber)) {
             return new ResponseEntity(HttpStatus.OK);
         } else if (getTanNumberOfAttempts(psuId) < maximumNumberOfTanAttempts) {
-            ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "WRONG_TAN", "Bad request");
+            ApiError error = new ApiError(HttpStatus.UNAUTHORIZED, "WRONG_TAN", "Unauthorized");
             return new ResponseEntity<>(error, error.getStatus());
         }
 
