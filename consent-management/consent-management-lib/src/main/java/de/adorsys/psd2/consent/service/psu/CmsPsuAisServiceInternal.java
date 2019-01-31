@@ -16,13 +16,15 @@
 
 package de.adorsys.psd2.consent.service.psu;
 
+
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
@@ -145,6 +147,14 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public boolean saveAccountAccessInConsent(@NotNull String consentId,
+                                              @NotNull CmsAisConsentAccessRequest accountAccessRequest
+                                             ) {
+        // TODO implement method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/596
+        return false;
     }
 
     private boolean isConsentAuthorisationValidForPsuAndStatus(PsuIdData givenPsuIdData, AisConsentAuthorization

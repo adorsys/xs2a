@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.ais;
+package de.adorsys.psd2.consent.psu.api.ais;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
-@Data
-@AllArgsConstructor
+@Value
+@RequiredArgsConstructor
 public class CmsAisConsentResponse {
     private AisAccountConsent accountConsent;
     private String authorisationId;
@@ -28,6 +29,6 @@ public class CmsAisConsentResponse {
     private String tppNokRedirectUri;
 
     public CmsAisConsentResponse(String tppNokRedirectUri) {
-        this.tppNokRedirectUri = tppNokRedirectUri;
+        this(null, null, null, tppNokRedirectUri);
     }
 }

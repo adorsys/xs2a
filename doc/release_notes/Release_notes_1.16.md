@@ -74,6 +74,11 @@ By accessing `/aspsp-api/v1/piis/consents/*` endpoints
 (or corresponding methods in `CmsAspspPiisFundsExportService.java`)
 one can export PIIS Consents by the same criterias as for AIS Consents or PIS Payments.
 
+## Provide new Java interface and Endpoint to export PIIS Consents by PSU, TPP and ASPSP Account ID
+By accessing `/psu-api/v1/ais/consent/{consent-id}/save-access` endpoint
+(or corresponding method in `CmsPsuAisService.java`)
+one can save AccountAccess (along with `aspspAccountId` and `resourceId` if necessary) in consent from the online-banking side.
+
 
 ## Bugfix: Remove TPP-ID from get payments by aspspAccountId endpoint in CMS
 TPP-ID was removed as a parameter from `exportPaymentsByAccountIdAndTpp` method in `de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService`, 
