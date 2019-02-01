@@ -27,6 +27,7 @@ the response with `400 FORMAT_ERROR` is returned.
 
 ## Extend a list of Transaction Statuses for PIS
 New version of API Yaml file published by Berlin Group contains three new statuses for Transactions:
+
 | Code | Value                               | Provided description                                                                                                                                                   |
 |------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ACCC | AcceptedSettlementCompletedCreditor | Settlement on the creditor's account has been completed.                                                                                                               |
