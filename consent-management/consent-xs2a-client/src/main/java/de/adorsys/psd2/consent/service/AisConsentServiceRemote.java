@@ -57,11 +57,15 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
         return Optional.ofNullable(response.getConsentStatus());
     }
 
-    // TODO check response result
     @Override
     public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
-        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, status);
-        return true;
+        try {
+            consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, status);
+            return true;
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Cannot update consent status, the consent is already deleted");
+        }
+        return false;
     }
 
     @Override
