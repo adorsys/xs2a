@@ -343,7 +343,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(expectedAuthorisation);
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -360,7 +360,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(expectedAuthorisation);
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.of(new CmsPaymentResponse(TPP_NOK_REDIRECT_URI)));
@@ -375,7 +375,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(null);
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(PSU_ID_DATA, WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.empty());
@@ -391,7 +391,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(expectedAuthorisation);
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(PSU_ID_DATA, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -408,7 +408,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(expectedAuthorisation);
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(PSU_ID_DATA, EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.of(new CmsPaymentResponse(TPP_NOK_REDIRECT_URI)));
@@ -423,7 +423,7 @@ public class CmsPsuPisServiceInternalTest {
         when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(null);
 
         // When
-        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(PSU_ID_DATA, WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.empty());

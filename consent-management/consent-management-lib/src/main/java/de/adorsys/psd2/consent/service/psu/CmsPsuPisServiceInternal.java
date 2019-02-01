@@ -93,9 +93,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     @Transactional
-    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
-                                                               .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
+    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull String redirectId, @NotNull String instanceId) {
+        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)));
 
         if (optionalAuthorisation.isPresent()) {
             PisAuthorization authorisation = optionalAuthorisation.get();
@@ -115,9 +114,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     @Override
     @Transactional
-    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
-                                                               .filter(a -> isAuthorisationValidForPsuAndStatus(psuIdData, a));
+    public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull String redirectId, @NotNull String instanceId) {
+        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)));
 
         if (!optionalAuthorisation.isPresent()) {
             return Optional.empty();
