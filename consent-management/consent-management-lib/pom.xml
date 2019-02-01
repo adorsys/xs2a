@@ -21,7 +21,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.16-SNAPSHOT</version>
+        <version>1.17-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -38,25 +38,25 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-api</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-aspsp-api</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-api</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-psu-api</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <!-- spring dependencies -->

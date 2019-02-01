@@ -21,7 +21,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.16-SNAPSHOT</version>
+        <version>1.17-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -48,32 +48,32 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>spi-api</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-remote</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <!-- CMS remote mode -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-client</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-impl</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-mock-api</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>
