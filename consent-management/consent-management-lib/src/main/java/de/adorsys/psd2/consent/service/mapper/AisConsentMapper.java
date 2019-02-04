@@ -26,12 +26,14 @@ import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -107,6 +109,17 @@ public class AisConsentMapper {
                    .orElse(null);
     }
 
+    public Set<AspspAccountAccess> mapAspspAccountAccesses(AisAccountAccess aisAccountAccess) {
+        Map<TypeAccess, List<AccountReference>> accessesMap = new HashMap<>();
+        accessesMap.put(TypeAccess.ACCOUNT, aisAccountAccess.getAccounts());
+        accessesMap.put(TypeAccess.BALANCE, aisAccountAccess.getBalances());
+        accessesMap.put(TypeAccess.TRANSACTION, aisAccountAccess.getTransactions());
+
+        return accessesMap.entrySet().stream()
+                   .flatMap(entry -> mapToAspspAccountAccessStream(entry.getKey(), entry.getValue()))
+                   .collect(Collectors.toSet());
+    }
+
     private AisAccountAccess mapToAisAccountAccess(List<TppAccountAccess> accountAccesses) {
         return new AisAccountAccess(mapToInitialAccountReferences(accountAccesses, TypeAccess.ACCOUNT),
                                     mapToInitialAccountReferences(accountAccesses, TypeAccess.BALANCE),
@@ -131,5 +144,24 @@ public class AisConsentMapper {
                    .filter(a -> a.getTypeAccess() == typeAccess)
                    .map(access -> new AccountReference(access.getAccountReferenceType(), access.getAccountIdentifier(), access.getCurrency(), access.getResourceId(), access.getAspspAccountId()))
                    .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private Stream<AspspAccountAccess> mapToAspspAccountAccessStream(TypeAccess typeAccess, List<AccountReference> accountReferences) {
+        return Optional.ofNullable(accountReferences)
+                   .orElseGet(Collections::emptyList)
+                   .stream()
+                   .map(ar -> mapToAspspAccountAccess(typeAccess, ar));
+    }
+
+    private AspspAccountAccess mapToAspspAccountAccess(TypeAccess typeAccess, AccountReference accountReference) {
+        AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
+
+        return new AspspAccountAccess(selector.getAccountValue(),
+                                      typeAccess,
+                                      selector.getAccountReferenceType(),
+                                      accountReference.getCurrency(),
+                                      accountReference.getResourceId(),
+                                      accountReference.getAspspAccountId());
     }
 }
