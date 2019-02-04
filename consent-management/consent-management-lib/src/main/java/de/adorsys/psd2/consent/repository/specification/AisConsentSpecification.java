@@ -82,4 +82,22 @@ public class AisConsentSpecification extends GenericSpecification {
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }
+
+    /**
+     * Returns specification for AisConsent entity for filtering data by ASPSP account ID, creation date and instance ID.
+     *
+     * @param aspspAccountId Bank specific account identifier
+     * @param createDateFrom optional creation date that limits resulting data to AIS consents created after this date(inclusive)
+     * @param createDateTo   optional creation date that limits resulting data to AIS consents created before this date(inclusive)
+     * @param instanceId     optional instance ID
+     * @return specification for AisConsent entity
+     */
+    public Specification<AisConsent> byAspspAccountIdAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
+                                                                                    @Nullable LocalDate createDateFrom,
+                                                                                    @Nullable LocalDate createDateTo,
+                                                                                    @Nullable String instanceId) {
+        return Specifications.<AisConsent>where(byAspspAccountId(aspspAccountId))
+                   .and(byCreationTimestamp(createDateFrom, createDateTo))
+                   .and(byInstanceId(instanceId));
+    }
 }

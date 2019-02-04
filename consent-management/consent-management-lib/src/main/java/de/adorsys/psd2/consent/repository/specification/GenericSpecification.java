@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.repository.specification;
 
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
@@ -109,7 +110,11 @@ public abstract class GenericSpecification {
      * @return resulting specification
      */
     protected <T> Specification<T> byAspspAccountId(@Nullable String aspspAccountId) {
-            return provideSpecificationForEntityAttribute(ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId);
+        return (root, query, cb) -> {
+            Join<T, List<AspspAccountAccess>> aspspAccountAccessJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
+            return provideSpecificationForJoinedEntityAttribute(aspspAccountAccessJoin, ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId)
+                       .toPredicate(root, query, cb);
+        };
     }
 
     /**
