@@ -129,9 +129,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
-    public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) {
+    public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull String redirectId, @NotNull String instanceId) {
         Optional<AisConsentAuthorization> optionalAuthorisation = Optional.ofNullable(aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
-                                                                      .filter(a -> isConsentAuthorisationValidForPsuAndStatus(psuIdData, a));
+                                                                      .filter(a -> a.getScaStatus().isNotFinalisedStatus());
 
         if (optionalAuthorisation.isPresent()) {
             AisConsentAuthorization authorisation = optionalAuthorisation.get();
@@ -155,17 +155,6 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                                              ) {
         // TODO implement method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/596
         return false;
-    }
-
-    private boolean isConsentAuthorisationValidForPsuAndStatus(PsuIdData givenPsuIdData, AisConsentAuthorization
-                                                                                             authorisation) {
-        if (authorisation.getScaStatus().isFinalisedStatus()) {
-            return false;
-        }
-        PsuIdData actualPsuIdData = psuDataMapper.mapToPsuIdData(authorisation.getPsuData());
-        return Optional.ofNullable(actualPsuIdData)
-                   .map(givenPsuIdData::contentEquals)
-                   .orElse(false);
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {

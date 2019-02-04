@@ -98,12 +98,11 @@ public interface CmsPsuAisService {
     /**
      * Returns CMS AIS consent response object by redirect id if redirect id has not expired
      *
-     * @param psuIdData  PSU credentials data
      * @param redirectId ID of redirect
-     * @return CMS AIS consent response object if it has been found and it corresponds to the user data given in parameter
+     * @return CMS AIS consent response object if it has been found
      */
     @NotNull
-    Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId);
+    Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull String redirectId, @NotNull String instanceId);
 
     /**
      * Stores account access to Consent in CMS. Any existing account accesses will be removed and overwritten.
