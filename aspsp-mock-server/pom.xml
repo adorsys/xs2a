@@ -24,12 +24,12 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.16-SNAPSHOT</version>
+        <version>1.17-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>aspsp-mock-server</artifactId>
-    <version>1.16-SNAPSHOT</version>
+    <version>1.17-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <description>Mock server that simulates ASPSP system for XS2A Library</description>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-mock-api</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <!-- spring dependencies -->

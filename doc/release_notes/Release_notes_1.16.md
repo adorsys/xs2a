@@ -1,5 +1,31 @@
 # Release notes v. 1.16
 
+Main points of new Release:
+* Support of multilevel SCA for Payments (Embedded approach)
+* Interfaces to export Consents from CMS
+* Provide correct error mapping according to Berlin Group's Open API 1.3
+
+## Table of contents
+
+- [Security Fix:  webpack-dev-server](#security-fix-webpack-dev-server)
+- [Expire AIS consent for TPP made by PSU when new AIS consent is created and authorised](#expire-ais-consent-for-tpp-made-by-psu-when-new-ais-consent-is-created-and-authorised)
+- [Added new options to ASPSP profile](#added-new-options-to-aspsp-profile)
+- [Extend a list of Transaction Statuses for PIS](#extend-a-list-of-transaction-statuses-for-pis)
+- [Inner integration tests](#inner-integration-tests)
+- [TPP-Nok-Redirect-URI returned when scaRedirect URI is expired (for Payment cancellation)](#tpp-nok-redirect-uri-returned-when-scaredirect-uri-is-expired-for-payment-cancellation)
+- [Bugfix: Remove default values for TPP in the database](#bugfix-remove-default-values-for-tpp-in-the-database)
+- [Integration-tests package is removed](#integration-tests-package-is-removed)
+- [Remove some not null constraints for TPP in the CMS database](#remove-some-not-null-constraints-for-tpp-in-the-cms-database)
+- [Fixed logic of deleting consent from Xs2a Interface](#fixed-logic-of-deleting-consent-from-xs2a-interface)
+- [Provide new Java interface and Endpoint to export AIS Consents by ASPSP Account ID](#provide-new-java-interface-and-endpoint-to-export-ais-consents-by-aspsp-account-id)
+- [Provide new Java interface and Endpoint to export PIIS Consents by PSU, TPP and ASPSP Account ID](#provide-new-java-interface-and-endpoint-to-export-piis-consents-by-psu-tpp-and-aspsp-account-id)
+- [Define new Java interface and Endpoint to save Account Access object in Consent by Online banking](#provide-new-java-interface-and-endpoint-to-export-piis-consents-by-psu-tpp-and-aspsp-account-id)
+- [Bugfix: Remove TPP-ID from get payments by aspspAccountId endpoint in CMS](#bugfix-remove-tpp-id-from-get-payments-by-aspspaccountid-endpoint-in-cms)
+- [Bugfix: Fix empty SpiAccountAccess being provided in SpiAccountConsent in some cases](#bugfix-fix-empty-spiaccountaccess-being-provided-in-spiaccountconsent-in-some-cases)
+- [Change the paths of some PIS and AIS enpoints in CMS-PSU-API](#change-the-paths-of-some-pis-and-ais-enpoints-in-cms-psu-api)
+- [Multilevel SCA for payment initiation in embedded approach](#multilevel-sca-for-payment-initiation-in-embedded-approach)
+- [Updated error response mapping to be compliant with specification 1.3](#updated-error-response-mapping-to-be-compliant-with-specification-13)
+- [Bugfix: validate PSU TAN during update PSU data requests for payments](#bugfix-validate-psu-tan-during-update-psu-data-requests-for-payments)
 
 ## Security Fix:  webpack-dev-server
 webpack-dev-server and corresponding dependencies were updated.
@@ -75,7 +101,7 @@ By accessing `/aspsp-api/v1/piis/consents/*` endpoints
 (or corresponding methods in `CmsAspspPiisFundsExportService.java`)
 one can export PIIS Consents by the same criterias as for AIS Consents or PIS Payments.
 
-## Provide new Java interface and Endpoint to export PIIS Consents by PSU, TPP and ASPSP Account ID
+## Define new Java interface and Endpoint to save Account Access object in Consent by Online banking
 By accessing `/psu-api/v1/ais/consent/{consent-id}/save-access` endpoint
 (or corresponding method in `CmsPsuAisService.java`)
 one can save AccountAccess (along with `aspspAccountId` and `resourceId` if necessary) in consent from the online-banking side.

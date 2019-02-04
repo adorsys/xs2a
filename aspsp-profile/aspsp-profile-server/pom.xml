@@ -22,12 +22,12 @@
     <parent>
         <artifactId>aspsp-profile</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.16-SNAPSHOT</version>
+        <version>1.17-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>aspsp-profile-server</artifactId>
-    <version>1.16-SNAPSHOT</version>
+    <version>1.17-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>aspsp-profile-server</name>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-lib</artifactId>
-            <version>1.16-SNAPSHOT</version>
+            <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <dependency>

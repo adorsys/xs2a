@@ -23,14 +23,14 @@
 	<parent>
 		<groupId>de.adorsys.keycloak</groupId>
 		<artifactId>keycloak-provider-extension</artifactId>
-		<version>1.16-SNAPSHOT</version>
+		<version>1.17-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<packaging>jar</packaging>
 
 	<artifactId>keycloak-clientregistration-provider</artifactId>
-	<version>1.16-SNAPSHOT</version>
+	<version>1.17-SNAPSHOT</version>
 
     <properties>
         <ruleset.basedir>../../..</ruleset.basedir>

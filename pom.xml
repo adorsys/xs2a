@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.16-SNAPSHOT</version>
+    <version>1.17-SNAPSHOT</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
