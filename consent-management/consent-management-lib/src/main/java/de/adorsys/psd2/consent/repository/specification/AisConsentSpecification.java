@@ -96,7 +96,7 @@ public class AisConsentSpecification extends GenericSpecification {
                                                                                     @Nullable LocalDate createDateFrom,
                                                                                     @Nullable LocalDate createDateTo,
                                                                                     @Nullable String instanceId) {
-        return Specifications.<AisConsent>where(byAspspAccountId(aspspAccountId))
+        return Specifications.<AisConsent>where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }

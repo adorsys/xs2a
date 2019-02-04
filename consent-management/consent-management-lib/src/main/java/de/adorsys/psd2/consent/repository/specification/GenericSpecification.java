@@ -100,6 +100,24 @@ public abstract class GenericSpecification {
     }
 
     /**
+     * Returns specification for some entity for filtering data by aspsp account id in aspsp account access list
+     *
+     * <p>
+     * If optional parameter is not provided, this specification will not affect resulting data.
+     *
+     * @param aspspAccountId Bank specific account identifier
+     * @param <T>            type of the entity, for which this specification will be created
+     * @return resulting specification
+     */
+    protected <T> Specification<T> byAspspAccountIdInAspspAccountAccess(@Nullable String aspspAccountId) {
+        return (root, query, cb) -> {
+            Join<T, List<AspspAccountAccess>> aspspAccountAccessJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
+            return provideSpecificationForJoinedEntityAttribute(aspspAccountAccessJoin, ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId)
+                       .toPredicate(root, query, cb);
+        };
+    }
+
+    /**
      * Returns specification for some entity for filtering data by aspsp account id.
      *
      * <p>
@@ -110,11 +128,7 @@ public abstract class GenericSpecification {
      * @return resulting specification
      */
     protected <T> Specification<T> byAspspAccountId(@Nullable String aspspAccountId) {
-        return (root, query, cb) -> {
-            Join<T, List<AspspAccountAccess>> aspspAccountAccessJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
-            return provideSpecificationForJoinedEntityAttribute(aspspAccountAccessJoin, ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId)
-                       .toPredicate(root, query, cb);
-        };
+        return provideSpecificationForEntityAttribute(ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId);
     }
 
     /**
