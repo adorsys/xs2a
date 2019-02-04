@@ -47,7 +47,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 @Service
 @RequiredArgsConstructor
 public class CreateCommonPaymentService implements CreatePaymentService<CommonPayment, PaymentInitiationResponse> {
-    private final ScaCommonPaymentService scaPaymentService;
+    private final ScaPaymentService scaPaymentService;
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PisScaAuthorisationService pisScaAuthorisationService;
@@ -66,7 +66,7 @@ public class CreateCommonPaymentService implements CreatePaymentService<CommonPa
     @Override
     public ResponseObject<PaymentInitiationResponse> createPayment(CommonPayment payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
         PsuIdData psuData = paymentInitiationParameters.getPsuData();
-        PaymentInitiationResponse response = scaPaymentService.createPayment(payment, tppInfo, paymentInitiationParameters.getPaymentProduct(), psuData);
+        PaymentInitiationResponse response = scaPaymentService.createCommonPayment(payment, tppInfo, paymentInitiationParameters.getPaymentProduct(), psuData);
 
         PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, payment.getPaymentData());
         Xs2aPisCommonPayment pisCommonPayment = xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(pisCommonPaymentService.createCommonPayment(pisPaymentInfo), psuData);

@@ -34,21 +34,20 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 // TODO refactor to AbstractFactory https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/298
 @Configuration
 @RequiredArgsConstructor
-public class ScaAuthorizationConfig {
+public class ScaAuthorisationConfig {
     private final AspspProfileServiceWrapper aspspProfileService;
 
     @Bean
-    public ScaPaymentService scaPaymentService(
-                                               OauthScaPaymentService oauthScaPaymentService,
+    public ScaPaymentService scaPaymentService(OauthScaPaymentService oauthScaPaymentService,
                                                RedirectScaPaymentService redirectScaPaymentService,
                                                EmbeddedScaPaymentService embeddedScaPaymentService,
-                                               DecoupedScaPaymentService decoupedScaPaymentService) {
+                                               DecoupledScaPaymentService decoupledScaPaymentService) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
             return oauthScaPaymentService;
         }
         if (DECOUPLED == scaApproach) {
-            return decoupedScaPaymentService;
+            return decoupledScaPaymentService;
         }
         if (EMBEDDED == scaApproach) {
             return embeddedScaPaymentService;
@@ -73,8 +72,8 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public PisScaAuthorisationService pisAuthorizationService(PisAuthorisationService authorisationService,
-                                                              Xs2aPisCommonPaymentMapper pisCommonPaymentMapper) {
+    public PisScaAuthorisationService pisScaAuthorisationService(PisAuthorisationService authorisationService,
+                                                                 Xs2aPisCommonPaymentMapper pisCommonPaymentMapper) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthPisScaAuthorisationService();

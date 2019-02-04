@@ -67,7 +67,7 @@ public class CreateCommonPaymentServiceTest {
     @InjectMocks
     private CreateCommonPaymentService createCommonPaymentService;
     @Mock
-    private ScaCommonPaymentService scaCommonPaymentService;
+    private ScaPaymentService scaPaymentService;
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
     @Mock
@@ -84,7 +84,7 @@ public class CreateCommonPaymentServiceTest {
 
     @Before
     public void init() {
-        when(scaCommonPaymentService.createPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA)).thenReturn(RESPONSE);
+        when(scaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA)).thenReturn(RESPONSE);
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
