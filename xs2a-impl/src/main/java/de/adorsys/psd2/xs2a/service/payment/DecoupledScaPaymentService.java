@@ -25,8 +25,8 @@ import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmbeddedScaPaymentService extends ScaPaymentService {
-    public EmbeddedScaPaymentService(SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, BulkPaymentSpi bulkPaymentSpi, CommonPaymentSpi commonPaymentSpi, Xs2aToSpiSinglePaymentMapper xs2AToSpiSinglePaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper) {
+public class DecoupledScaPaymentService extends ScaPaymentService {
+    public DecoupledScaPaymentService(SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, BulkPaymentSpi bulkPaymentSpi, CommonPaymentSpi commonPaymentSpi, Xs2aToSpiSinglePaymentMapper xs2AToSpiSinglePaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper) {
         super(singlePaymentSpi, periodicPaymentSpi, bulkPaymentSpi, commonPaymentSpi, xs2AToSpiSinglePaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiBulkPaymentMapper, xs2aToSpiPaymentInfo, spiToXs2aPaymentMapper, spiContextDataProvider, spiErrorMapper);
     }
 }
