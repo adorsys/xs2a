@@ -77,8 +77,8 @@ public class AspspProfileControllerTest {
     public void setUpAccountServiceMock() {
         when(aspspProfileService.getAspspSettings())
             .thenReturn(buildAspspSettings());
-        when(aspspProfileService.getScaApproach())
-            .thenReturn(ScaApproach.REDIRECT);
+        when(aspspProfileService.getScaApproaches())
+            .thenReturn(Collections.singletonList(ScaApproach.REDIRECT));
     }
 
     @Test
@@ -100,11 +100,11 @@ public class AspspProfileControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<ScaApproach> actualResponse = aspspProfileController.getScaApproach();
+        ResponseEntity<List<ScaApproach>> actualResponse = aspspProfileController.getScaApproaches();
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(ScaApproach.REDIRECT);
+        assertThat(actualResponse.getBody()).isEqualTo(Collections.singletonList(ScaApproach.REDIRECT));
     }
 
     private static AspspSettings buildAspspSettings() {

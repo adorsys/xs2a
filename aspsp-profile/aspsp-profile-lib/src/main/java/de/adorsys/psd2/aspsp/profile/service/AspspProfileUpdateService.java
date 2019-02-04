@@ -19,9 +19,11 @@ package de.adorsys.psd2.aspsp.profile.service;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 
+import java.util.List;
+
 public interface AspspProfileUpdateService {
 
-    void updateScaApproach(ScaApproach scaApproach);
+    void updateScaApproaches(List<ScaApproach> scaApproaches);
 
     void updateAspspSettings(AspspSettings aspspSettings);
 }

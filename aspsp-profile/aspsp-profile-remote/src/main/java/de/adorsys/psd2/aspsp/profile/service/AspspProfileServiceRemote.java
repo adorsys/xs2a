@@ -21,9 +21,12 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +42,9 @@ public class AspspProfileServiceRemote implements AspspProfileService {
     }
 
     @Override
-    public ScaApproach getScaApproach() {
+    public List<ScaApproach> getScaApproaches() {
         return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
+            aspspProfileRemoteUrls.getScaApproaches(), HttpMethod.GET, null, new ParameterizedTypeReference<List<ScaApproach>>() {
+            }).getBody();
     }
 }

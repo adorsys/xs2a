@@ -23,6 +23,8 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AspspProfileServiceImpl implements AspspProfileService {
@@ -60,8 +62,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
     }
 
     @Override
-    public ScaApproach getScaApproach() {
+    public List<ScaApproach> getScaApproaches() {
         return profileConfiguration.getSetting()
-                   .getScaApproach();
+                   .getScaApproaches();
     }
 }
