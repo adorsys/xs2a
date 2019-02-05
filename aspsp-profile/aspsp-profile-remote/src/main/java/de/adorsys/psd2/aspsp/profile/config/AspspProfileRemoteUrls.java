@@ -30,8 +30,8 @@ public class AspspProfileRemoteUrls {
      *
      * @return String
      */
-    public String getScaApproach() {
-        return aspspProfileBaseUrl + "/aspsp-profile/sca-approach";
+    public String getScaApproaches() {
+        return aspspProfileBaseUrl + "/aspsp-profile/sca-approaches";
     }
 
     /**

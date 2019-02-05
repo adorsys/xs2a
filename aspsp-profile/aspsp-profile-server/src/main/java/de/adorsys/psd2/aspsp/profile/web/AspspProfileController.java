@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-profile")
@@ -44,10 +46,10 @@ public class AspspProfileController {
         return new ResponseEntity<>(aspspProfileService.getAspspSettings(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/sca-approach")
-    @ApiOperation(value = "Reads sca approach value")
+    @GetMapping(path = "/sca-approaches")
+    @ApiOperation(value = "Reads list of sca approaches")
     @ApiResponse(code = 200, message = "Ok", response = ScaApproach.class)
-    public ResponseEntity<ScaApproach> getScaApproach() {
-        return new ResponseEntity<>(aspspProfileService.getScaApproach(), HttpStatus.OK);
+    public ResponseEntity<List<ScaApproach>> getScaApproaches() {
+        return new ResponseEntity<>(aspspProfileService.getScaApproaches(), HttpStatus.OK);
     }
 }
