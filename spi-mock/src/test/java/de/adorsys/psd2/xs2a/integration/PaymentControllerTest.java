@@ -66,17 +66,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
     ObjectMapperConfig.class,
-    ScaAuthorisationConfig.class,
+    ScaAuthorisationConfigRedirectTest.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
 public class PaymentControllerTest {
-    private final static PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
-    private final static String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private final static String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private final static String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
-    private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+    private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
+    private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
+    private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
+    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     @Autowired
