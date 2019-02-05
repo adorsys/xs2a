@@ -49,6 +49,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
@@ -95,7 +96,7 @@ public class PaymentControllerTest {
     @Before
     public void init() {
         // common actions for all tests
-        given(aspspProfileService.getScaApproach()).willReturn(ScaApproach.REDIRECT);
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.REDIRECT));
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppService.getTppInfo())

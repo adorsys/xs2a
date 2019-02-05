@@ -19,6 +19,8 @@ package de.adorsys.psd2.aspsp.profile.service;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 
+import java.util.List;
+
 public interface AspspProfileService {
     /**
      * Reads all aspsp settings (frequency per day, combined service indicator, available payment products, available payment types,
@@ -32,9 +34,9 @@ public interface AspspProfileService {
     AspspSettings getAspspSettings();
 
     /**
-     * Reads sca approach method
+     * Reads list of sca approaches
      *
-     * @return sca approach method which is stored in profile
+     * @return list of sca approaches ordered by priority which is stored in profile
      */
-    ScaApproach getScaApproach();
+    List<ScaApproach> getScaApproaches();
 }

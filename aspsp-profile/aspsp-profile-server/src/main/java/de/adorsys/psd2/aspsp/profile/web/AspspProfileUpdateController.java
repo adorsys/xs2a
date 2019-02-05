@@ -32,6 +32,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Profile("debug_mode")
 @RestController
 @RequiredArgsConstructor
@@ -41,13 +44,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class AspspProfileUpdateController {
     private final AspspProfileUpdateService aspspProfileService;
 
-    @PutMapping(path = "/sca-approach")
-    @ApiOperation(value = "Updates sca approach. Only for DEBUG!")
+    @PutMapping(path = "/sca-approaches")
+    @ApiOperation(value = "Updates list of sca approaches. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok"),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<Void> updateScaApproach(@RequestBody String scaApproach) {
-        aspspProfileService.updateScaApproach(ScaApproach.valueOf(scaApproach.trim().toUpperCase()));
+    public ResponseEntity<Void> updateScaApproach(@RequestBody List<String> newScaApproaches) {
+        List<ScaApproach> scaApproaches = newScaApproaches.stream()
+            .map(s -> ScaApproach.valueOf(s.trim().toUpperCase()))
+            .collect(Collectors.toList());
+
+        aspspProfileService.updateScaApproaches(scaApproaches);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
