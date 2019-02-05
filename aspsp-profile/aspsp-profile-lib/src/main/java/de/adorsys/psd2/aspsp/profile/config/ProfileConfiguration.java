@@ -18,9 +18,12 @@ package de.adorsys.psd2.aspsp.profile.config;
 
 import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.Collections;
 import java.util.List;
 
 import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
@@ -31,8 +34,15 @@ public class ProfileConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+        setDefaultScaApproach(ScaApproach.REDIRECT);
         setDefaultBookingStatus(BOOKED);
         setAvailableAccountReferenceField(SupportedAccountReferenceField.IBAN); //Sets default Account Reference Field
+    }
+
+    private void setDefaultScaApproach(ScaApproach scaApproach) {
+        if (CollectionUtils.isEmpty(setting.getScaApproaches())) {
+            setting.setScaApproaches(Collections.singletonList(scaApproach));
+        }
     }
 
     private void setAvailableAccountReferenceField(SupportedAccountReferenceField defaultSupportedAccountReferenceField) {

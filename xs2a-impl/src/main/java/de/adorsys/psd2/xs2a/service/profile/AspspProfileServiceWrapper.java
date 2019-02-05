@@ -22,10 +22,11 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,10 +49,7 @@ public class AspspProfileServiceWrapper {
      * @return Available SCA approach for tpp
      */
     public ScaApproach getScaApproach() {
-        List<ScaApproach> scaApproaches = aspspProfileService.getScaApproaches();
-        return CollectionUtils.isEmpty(scaApproaches)
-                   ? ScaApproach.REDIRECT //default
-                   : scaApproaches.get(0); //TODO remove hardcode and change this method into returning List of ScaApproach accoring to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/597
+        return aspspProfileService.getScaApproaches().get(0);//TODO remove hardcode and change this method into returning List of ScaApproach accoring to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/597
     }
 
     /**
