@@ -64,6 +64,7 @@ public class ConsentModelMapper {
         return Optional.ofNullable(response)
                    .map(r -> new StartScaprocessResponse()
                                  .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
+                                 .authorisationId(r.getAuthorisationId())
                                  ._links(objectMapper.convertValue(r.getLinks(), Map.class)))
                    .orElse(null);
     }
