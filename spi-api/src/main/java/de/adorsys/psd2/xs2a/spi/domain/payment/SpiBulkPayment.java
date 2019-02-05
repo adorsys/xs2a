@@ -44,4 +44,9 @@ public class SpiBulkPayment implements SpiPayment {
     public String getPaymentProduct() {
         return paymentProduct;
     }
+
+    @Override
+    public SpiTransactionStatus getPaymentStatus() {
+        return paymentStatus;
+    }
 }

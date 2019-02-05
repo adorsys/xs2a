@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 
 public interface SpiPayment {
     String getPaymentId();
@@ -24,4 +25,6 @@ public interface SpiPayment {
     PaymentType getPaymentType();
 
     String getPaymentProduct();
+
+    SpiTransactionStatus getPaymentStatus();
 }

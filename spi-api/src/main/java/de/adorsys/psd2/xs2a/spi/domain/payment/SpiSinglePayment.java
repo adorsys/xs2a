@@ -55,4 +55,9 @@ public class SpiSinglePayment implements SpiPayment {
     public String getPaymentProduct() {
         return paymentProduct;
     }
+
+    @Override
+    public SpiTransactionStatus getPaymentStatus() {
+        return paymentStatus;
+    }
 }
