@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.repository.specification;
 
 import de.adorsys.psd2.consent.domain.account.AisConsent;
+import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,10 +25,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Join;
 import java.time.LocalDate;
+import java.util.List;
 
-import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.CONSENT_EXTERNAL_ID_ATTRIBUTE;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttribute;
 
 @Service
 public class AisConsentSpecification extends GenericSpecification {
@@ -99,5 +103,24 @@ public class AisConsentSpecification extends GenericSpecification {
         return Specifications.<AisConsent>where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
+    }
+
+    /**
+     * Returns specification for some entity for filtering data by aspsp account id in aspsp account access list
+     *
+     * <p>
+     * If optional parameter is not provided, this specification will not affect resulting data.
+     *
+     * @param aspspAccountId Bank specific account identifier
+     * @param <T>            type of the entity, for which this specification will be created
+     * @return resulting specification
+     */
+    private <T> Specification<T> byAspspAccountIdInAspspAccountAccess(@Nullable String aspspAccountId) {
+        return (root, query, cb) -> {
+            Join<T, List<AspspAccountAccess>> aspspAccountAccessJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
+            query.distinct(true);
+            return provideSpecificationForJoinedEntityAttribute(aspspAccountAccessJoin, ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId)
+                       .toPredicate(root, query, cb);
+        };
     }
 }
