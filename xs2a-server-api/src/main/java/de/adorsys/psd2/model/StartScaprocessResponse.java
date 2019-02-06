@@ -38,6 +38,9 @@ public class StartScaprocessResponse   {
   @JsonProperty("scaStatus")
   private ScaStatus scaStatus = null;
 
+  @JsonProperty("authorisationId")
+  private String authorisationId = null;
+
   @JsonProperty("scaMethods")
   private ScaMethods scaMethods = null;
 
@@ -77,6 +80,26 @@ public class StartScaprocessResponse   {
     this.scaMethods = scaMethods;
     return this;
   }
+
+    /**
+     * Get authorisationId
+     * @return authorisationId
+     **/
+    @ApiModelProperty(required = true, value = "")
+    @NotNull
+    @Valid
+    public String getAuthorisationId() {
+        return authorisationId;
+    }
+
+    public void setAuthorisationId(String authorisationId) {
+        this.authorisationId = authorisationId;
+    }
+
+    public StartScaprocessResponse authorisationId(String authorisationId) {
+        this.authorisationId = authorisationId;
+        return this;
+    }
 
   /**
    * Get scaMethods
