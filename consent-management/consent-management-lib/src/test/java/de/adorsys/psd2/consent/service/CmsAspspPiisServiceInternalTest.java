@@ -40,6 +40,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,7 @@ public class CmsAspspPiisServiceInternalTest {
     private static final LocalDate EXPIRE_DATE = LocalDate.now().plusDays(100);
     private static final int FREQUENCY_PER_DAY = 4;
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
+    private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
 
     @Mock
     private PiisConsentRepository piisConsentRepository;
@@ -238,12 +240,14 @@ public class CmsAspspPiisServiceInternalTest {
     private PiisConsentEntity buildPiisConsentEntity() {
         PiisConsentEntity consentEntity = new PiisConsentEntity();
         consentEntity.setExternalId(CONSENT_EXTERNAL_ID);
+        consentEntity.setCreationTimestamp(CREATION_TIMESTAMP);
         return consentEntity;
     }
 
     private PiisConsent buildPiisConsent() {
         PiisConsent consent = new PiisConsent();
         consent.setId(CONSENT_EXTERNAL_ID);
+        consent.setCreationTimestamp(CREATION_TIMESTAMP);
         return consent;
     }
 }
