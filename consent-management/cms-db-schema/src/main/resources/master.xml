@@ -62,4 +62,5 @@
     <include relativeToChangelogFile="true" file="migration/0037-remove-default-values-from-tpp-info.xml"/>
     <include relativeToChangelogFile="true" file="migration/0038-update-not-null-constraints-in-tpp-info.xml"/>
     <include relativeToChangelogFile="true" file="migration/0039-add-multiple-sca-required-column-to-pis-commom-payment.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0041-add-creation-timestamp-to-piis-consent.xml"/>
 </databaseChangeLog>

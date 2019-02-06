@@ -32,6 +32,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
@@ -48,6 +50,7 @@ public class PiisConsentServiceInternalTest {
     private static final String PSU_ID_TYPE = "Some type";
     private static final String PSU_CORPORATE_ID = "Some corporate id";
     private static final String PSU_CORPORATE_ID_TYPE = "Some corporate id type";
+    private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
 
     @Mock
     private PiisConsentRepository piisConsentRepository;
@@ -94,6 +97,7 @@ public class PiisConsentServiceInternalTest {
         PiisConsentEntity piisConsentEntity = new PiisConsentEntity();
         piisConsentEntity.setConsentStatus(ConsentStatus.VALID);
         piisConsentEntity.setPsuData(buildPsuData());
+        piisConsentEntity.setCreationTimestamp(CREATION_TIMESTAMP);
         return piisConsentEntity;
     }
 
@@ -109,6 +113,7 @@ public class PiisConsentServiceInternalTest {
         PiisConsent piisConsent = new PiisConsent();
         piisConsent.setPsuData(buildPsuIdData());
         piisConsent.setConsentStatus(ConsentStatus.VALID);
+        piisConsent.setCreationTimestamp(CREATION_TIMESTAMP);
         return piisConsent;
     }
 }
