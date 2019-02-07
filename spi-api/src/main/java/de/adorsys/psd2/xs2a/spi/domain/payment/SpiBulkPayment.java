@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
 
@@ -31,7 +31,7 @@ public class SpiBulkPayment implements SpiPayment {
     private Boolean batchBookingPreferred;
     private SpiAccountReference debtorAccount;
     private LocalDate requestedExecutionDate;
-    private SpiTransactionStatus paymentStatus;
+    private TransactionStatus paymentStatus;
     private List<SpiSinglePayment> payments;
     private String paymentProduct;
 
@@ -43,5 +43,10 @@ public class SpiBulkPayment implements SpiPayment {
     @Override
     public String getPaymentProduct() {
         return paymentProduct;
+    }
+
+    @Override
+    public TransactionStatus getPaymentStatus() {
+        return paymentStatus;
     }
 }

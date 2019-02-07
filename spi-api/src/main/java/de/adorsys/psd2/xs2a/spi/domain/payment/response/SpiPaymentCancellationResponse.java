@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
 
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.Data;
 
 /**
@@ -26,5 +26,5 @@ import lombok.Data;
 @Data
 public class SpiPaymentCancellationResponse {
     private boolean cancellationAuthorisationMandated;
-    private SpiTransactionStatus transactionStatus;
+    private TransactionStatus transactionStatus;
 }

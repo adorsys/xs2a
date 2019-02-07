@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.spi.mapper;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPaymentInfo;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiCommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
@@ -32,7 +31,7 @@ import org.springframework.stereotype.Service;
 public class SpiPaymentInfoMapper {
     private final SpiPaymentMapper spiPaymentMapper;
 
-    public AspspPaymentInfo mapToAspspPayment(@NotNull SpiPaymentInfo payment, SpiTransactionStatus transactionStatus) {
+    public AspspPaymentInfo mapToAspspPayment(@NotNull SpiPaymentInfo payment, TransactionStatus transactionStatus) {
         AspspPaymentInfo info = new AspspPaymentInfo();
         info.setPaymentId(payment.getPaymentId());
         info.setPaymentStatus(spiPaymentMapper.mapToAspspTransactionStatus(transactionStatus));
@@ -57,9 +56,9 @@ public class SpiPaymentInfoMapper {
         spi.setMultilevelScaRequired(false);
         spi.setAspspAccountId(payment.getAspspAccountId());
         if (payment.getPaymentId() == null) {
-            spi.setTransactionStatus(SpiTransactionStatus.RJCT);
+            spi.setTransactionStatus(TransactionStatus.RJCT);
         } else {
-            spi.setTransactionStatus(SpiTransactionStatus.RCVD);
+            spi.setTransactionStatus(TransactionStatus.RCVD);
         }
         return spi;
     }

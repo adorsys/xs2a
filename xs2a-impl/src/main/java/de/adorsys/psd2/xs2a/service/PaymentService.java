@@ -40,12 +40,10 @@ import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTransactionalStatusMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
@@ -81,7 +79,6 @@ public class PaymentService {
     private final CreatePeriodicPaymentService createPeriodicPaymentService;
     private final CreateBulkPaymentService createBulkPaymentService;
     private final CommonPaymentSpi commonPaymentSpi;
-    private final SpiToXs2aTransactionalStatusMapper spiToXs2aTransactionalStatus;
     private final AspspProfileServiceWrapper profileService;
     private final CancelPaymentService cancelPaymentService;
     private final SpiErrorMapper spiErrorMapper;
@@ -204,7 +201,7 @@ public class PaymentService {
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
         List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(paymentId);
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(readPsuIdDataFromList(psuData));
-        SpiResponse<SpiTransactionStatus> spiResponse;
+        SpiResponse<TransactionStatus> spiResponse;
 
         // TODO should be refactored https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
         if (pisCommonPaymentResponse.getPaymentData() != null) {
@@ -232,7 +229,7 @@ public class PaymentService {
                        .build();
         }
 
-        TransactionStatus transactionStatus = spiToXs2aTransactionalStatus.mapToTransactionStatus(spiResponse.getPayload());
+        TransactionStatus transactionStatus = spiResponse.getPayload();
 
         if (transactionStatus == null) {
             return ResponseObject.<TransactionStatus>builder()

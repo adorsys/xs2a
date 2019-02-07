@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -39,5 +39,5 @@ public class SpiBulkPayment {
 
     List<SpiSinglePayment> payments;
 
-    private SpiTransactionStatus paymentStatus;
+    private TransactionStatus paymentStatus;
 }
