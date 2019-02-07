@@ -16,12 +16,16 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
@@ -32,6 +36,8 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuAisServiceInternal;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -39,6 +45,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -48,10 +55,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -489,6 +493,75 @@ public class CmsPsuAisServiceTest {
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
+    @Test
+    public void updateAccountAccessInConsent_Success() {
+        //Given
+        int frequencyPerDay = 777;
+        String iban = "DE67597874259856475273";
+        Currency currency = Currency.getInstance("EUR");
+        LocalDate validUntil = LocalDate.now();
+        AccountReference accountReference = getAccountReference(iban, currency);
+        AisAccountAccess aisAccountAccess = getAisAccountAccess(accountReference);
+        Set<AspspAccountAccess> aspspAccountAccesses = getAspspAccountAccesses(aisAccountAccess);
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, validUntil, frequencyPerDay);
+        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
+        when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(aisConsent);
+        when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
+        //When
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, "");
+        //Then
+        verify(aisConsentRepository).save(argument.capture());
+        List<AspspAccountAccess> aspspAccountAccessesChecked= argument.getValue().getAspspAccountAccesses();
+        assertSame(aspspAccountAccessesChecked.size(), aspspAccountAccesses.size());
+        assertSame(aspspAccountAccessesChecked.get(0).getAccountIdentifier(), iban);
+        assertSame(aspspAccountAccessesChecked.get(0).getCurrency(), currency);
+        assertSame(argument.getValue().getExpireDate(), validUntil);
+        assertEquals(argument.getValue().getAllowedFrequencyPerDay(), frequencyPerDay);
+        assertEquals(argument.getValue().getUsageCounter(), frequencyPerDay);
+        assertTrue(saved);
+    }
+
+    @Test
+    public void saveAccountAccessInConsent_Consent_Finalised_Failed() {
+        //Given
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1);
+        when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(buildFinalisedConsent());
+        //When
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, "");
+        //Then
+        assertFalse(saved);
+    }
+
+    @Test
+    public void saveAccountAccessInConsent_Consent_Unknown_Failed() {
+        //Given
+        CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1);
+        when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(buildFinalisedConsent());
+        //When
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, accountAccessRequest, "");
+        //Then
+        assertFalse(saved);
+    }
+
+    private Set<AspspAccountAccess> getAspspAccountAccesses(AisAccountAccess aisAccountAccess) {
+        Set<AspspAccountAccess> aspspAccountAccesses = new HashSet<>();
+        aspspAccountAccesses.add(mapToAccountInfo(aisAccountAccess.getAccounts().get(0), TypeAccess.ACCOUNT));
+        aspspAccountAccesses.add(mapToAccountInfo(aisAccountAccess.getBalances().get(0), TypeAccess.BALANCE));
+        aspspAccountAccesses.add(mapToAccountInfo(aisAccountAccess.getTransactions().get(0), TypeAccess.TRANSACTION));
+        return aspspAccountAccesses;
+    }
+
+    private AspspAccountAccess mapToAccountInfo(AccountReference accountReference, TypeAccess typeAccess) {
+        AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
+
+        return new AspspAccountAccess(selector.getAccountValue(),
+                                      typeAccess,
+                                      selector.getAccountReferenceType(),
+                                      accountReference.getCurrency(),
+                                      accountReference.getResourceId(),
+                                      accountReference.getAspspAccountId());
+    }
+
     private AisConsent buildFinalisedConsent() {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
@@ -564,5 +637,19 @@ public class CmsPsuAisServiceTest {
 
     private TppRedirectUri buildTppRedirectUri() {
         return new TppRedirectUri(TPP_OK_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+    }
+
+    private AisAccountAccess getAisAccountAccess(AccountReference accountReference) {
+        return new AisAccountAccess(
+            Collections.singletonList(accountReference),
+            Collections.singletonList(accountReference),
+            Collections.singletonList(accountReference));
+    }
+
+    private AccountReference getAccountReference(String iban, Currency currency) {
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(iban);
+        accountReference.setCurrency(currency);
+        return accountReference;
     }
 }

@@ -37,3 +37,7 @@ column set to `null` directly, you'll have to assign some value to this column b
 ## Provide endpoint to export AIS consents by aspspAccountId from CMS to ASPSP
 By accessing endpoint GET `/aspsp-api/v1/ais/consents/account/{account-id}` (or corresponding method in `CmsAspspAisExportService.java`) 
 one can export AIS Consents that contain certain account id. Method `exportConsentsByAccountId` now implemented and working.
+
+## Implemented java interface and endpoint to save Account Access object in Consent by Online banking
+Now by accessing `/psu-api/v1/ais/consent/{consent-id}/save-access` endpoint(or corresponding method in `CmsPsuAisService.java`)
+online banking can update AccountAccess (along with `aspspAccountId` and `resourceId` if necessary), frequency per day and expiration date in consent.

@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
@@ -45,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
@@ -150,11 +152,21 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    public boolean saveAccountAccessInConsent(@NotNull String consentId,
-                                              @NotNull CmsAisConsentAccessRequest accountAccessRequest
-                                             ) {
-        // TODO implement method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/596
-        return false;
+    @Transactional
+    public boolean updateAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId) {
+        return getActualAisConsent(consentId, instanceId)
+                   .map(con -> updateAccountAccessInConsent(con, accountAccessRequest))
+                   .orElse(false);
+    }
+
+    private boolean updateAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {
+        Set<AspspAccountAccess> aspspAccountAccesses = consentMapper.mapAspspAccountAccesses(request.getAccountAccess());
+        consent.addAspspAccountAccess(aspspAccountAccesses);
+        consent.setExpireDate(request.getValidUntil());
+        consent.setAllowedFrequencyPerDay(request.getFrequencyPerDay());
+        consent.setUsageCounter(request.getFrequencyPerDay());
+        aisConsentRepository.save(consent);
+        return true;
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {
