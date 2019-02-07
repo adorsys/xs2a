@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
@@ -110,7 +109,7 @@ public class ConsentControllerTest {
         //When:
         ResponseEntity responseEntity = consentController.createConsent(null, consents,
                                                                         null, null, null, CORRECT_PSU_ID, null, null,
-                                                                        null, null, null, null,
+                                                                        null, false, null, null,
                                                                         EXPLICIT_PREFERRED, null, null, null, null,
                                                                         null, null, null, null, null,
                                                                         null);
@@ -129,7 +128,7 @@ public class ConsentControllerTest {
         //When:
         ResponseEntity responseEntity = consentController.createConsent(null, consents,
                                                                         null, null, null, WRONG_PSU_ID, null, null,
-                                                                        null, null, null, null,
+                                                                        null, false, null, null,
                                                                         EXPLICIT_PREFERRED, null, null, null, null,
                                                                         null, null, null, null, null,
                                                                         null);

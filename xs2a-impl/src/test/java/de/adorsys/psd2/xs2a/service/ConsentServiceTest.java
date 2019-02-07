@@ -35,7 +35,8 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
+import de.adorsys.psd2.xs2a.service.authorization.ais.RedirectAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
@@ -129,7 +130,7 @@ public class ConsentServiceTest {
     @Mock
     private Xs2aEventService xs2aEventService;
     @Mock
-    private AisAuthorizationService aisAuthorizationService;
+    private AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
     @Mock
     private PisAuthorisationService pisAuthorisationService;
     @Mock
@@ -142,7 +143,8 @@ public class ConsentServiceTest {
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private AccountReferenceInConsentUpdater accountReferenceUpdater;
-
+    @Mock
+    private RedirectAisAuthorizationService redirectAisAuthorizationService;
 
     @Before
     public void setUp() {
@@ -593,7 +595,8 @@ public class ConsentServiceTest {
 
     @Test
     public void createConsentAuthorizationWithResponse_Success_ShouldRecordEvent() {
-        when(aisAuthorizationService.createConsentAuthorization(any(), anyString()))
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(new CreateConsentAuthorizationResponse()));
 
         // Given:
@@ -618,7 +621,8 @@ public class ConsentServiceTest {
 
     @Test
     public void updateConsentPsuData_Success_ShouldRecordEvent() {
-        when(aisAuthorizationService.createConsentAuthorization(any(), anyString()))
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(new CreateConsentAuthorizationResponse()));
 
         // Given:
@@ -635,7 +639,8 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentInitiationAuthorisation() {
-        when(aisAuthorizationService.getAuthorisationSubResources(anyString()))
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(redirectAisAuthorizationService.getAuthorisationSubResources(anyString()))
             .thenReturn(Optional.of(new Xs2aAuthorisationSubResources(Collections.singletonList(CONSENT_ID))));
 
         // Given:
@@ -656,7 +661,8 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentAuthorisationScaStatus_success() {
-        when(aisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(redirectAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
 
         // When
@@ -669,7 +675,8 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentAuthorisationScaStatus_success_shouldRecordEvent() {
-        when(aisAuthorizationService.getAuthorisationScaStatus(any(), any()))
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(redirectAisAuthorizationService.getAuthorisationScaStatus(any(), any()))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
 
         // Given:
@@ -685,7 +692,8 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentAuthorisationScaStatus_failure() {
-        when(aisAuthorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID))
+        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(redirectAisAuthorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         // When
