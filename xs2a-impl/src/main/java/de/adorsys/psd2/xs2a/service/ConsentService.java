@@ -42,7 +42,6 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -70,7 +69,6 @@ public class ConsentService {
     private final Xs2aAisConsentService aisConsentService;
     private final AisConsentDataService aisConsentDataService;
     private final AisAuthorizationService aisAuthorizationService;
-    private final AspspProfileServiceWrapper aspspProfileService;
     private final TppService tppService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final AuthorisationMethodDecider authorisationMethodDecider;
@@ -79,6 +77,7 @@ public class ConsentService {
     private final Xs2aEventService xs2aEventService;
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiErrorMapper spiErrorMapper;
+    private final ScaApproachResolver scaApproachResolver;
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -371,6 +370,6 @@ public class ConsentService {
 
     private boolean isEmbeddedOrRedirectScaApproach() {
         return EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.REDIRECT)
-                   .contains(aspspProfileService.getScaApproach());
+                   .contains(scaApproachResolver.resolveScaApproach());
     }
 }

@@ -44,12 +44,12 @@ public class AspspProfileServiceWrapper {
     }
 
     /**
-     * Reads sca approach from ASPSP profile service
+     * Reads list of sca approaches from ASPSP profile service
      *
-     * @return Available SCA approach for tpp
+     * @return List of Available SCA approaches for tpp
      */
-    public ScaApproach getScaApproach() {
-        return aspspProfileService.getScaApproaches().get(0);//TODO remove hardcode and change this method into returning List of ScaApproach accoring to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/597
+    public List<ScaApproach> getScaApproaches() {
+        return aspspProfileService.getScaApproaches();
     }
 
     /**

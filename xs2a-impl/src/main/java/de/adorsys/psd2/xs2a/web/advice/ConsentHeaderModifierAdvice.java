@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.advice;
 
 import de.adorsys.psd2.model.ConsentsResponse201;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -31,8 +31,8 @@ import java.util.Optional;
 @ControllerAdvice(assignableTypes = {ConsentController.class})
 public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
 
-    public ConsentHeaderModifierAdvice(AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(aspspProfileServiceWrapper);
+    public ConsentHeaderModifierAdvice(ScaApproachResolver scaApproachResolver) {
+        super(scaApproachResolver);
     }
 
     @Override
@@ -43,9 +43,8 @@ public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         String methodName = returnType.getMethod().getName();
-
         if ("_createConsent".equals(methodName)) {
-            response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
+            response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
             if (!hasError(body, ConsentsResponse201.class)) {
                 ConsentsResponse201 consentResponse = (ConsentsResponse201) body;
                 response.getHeaders().add("Location", Optional.ofNullable(consentResponse.getLinks().get("self"))
@@ -54,7 +53,7 @@ public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
             }
         } else if ("_startConsentAuthorisation".equals(methodName)
                        || "_updateConsentsPsuData".equals(methodName)) {
-            response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
+            response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
         }
 
         return body;

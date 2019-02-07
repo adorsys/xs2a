@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import org.junit.Before;
@@ -64,6 +65,8 @@ public class PaymentAuthorisationServiceTest {
     @Mock
     private Xs2aEventService xs2aEventService;
     @Mock
+    private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
+    @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
@@ -74,6 +77,8 @@ public class PaymentAuthorisationServiceTest {
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
         when(pisScaAuthorisationService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
+        when(pisScaAuthorisationServiceResolver.getService())
+            .thenReturn(pisScaAuthorisationService);
     }
 
     @Test
