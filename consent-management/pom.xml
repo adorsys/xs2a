@@ -51,6 +51,9 @@
         <module>consent-psu-web</module>
         <module>consent-aspsp-web</module>
 
+        <module>spring-boot-1.5.x-support</module>
+        <module>spring-boot-2.x-support</module>
+
         <!-- Standalone service -->
         <module>cms-standalone-service</module>
     </modules>

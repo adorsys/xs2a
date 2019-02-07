@@ -19,14 +19,13 @@ package de.adorsys.psd2.consent.repository;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface PiisConsentRepository extends CrudRepository<PiisConsentEntity, Long>, JpaSpecificationExecutor<PiisConsentEntity> {
+public interface PiisConsentRepository extends Xs2aCrudRepository<PiisConsentEntity, Long>, JpaSpecificationExecutor<PiisConsentEntity> {
     Optional<PiisConsentEntity> findByExternalId(String externalId);
 
     Optional<PiisConsentEntity> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);

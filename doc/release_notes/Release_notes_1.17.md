@@ -59,3 +59,15 @@ Support of content type `text/plain` is planned.
 
 ## Bugfix: added missing ais_consent fields
 Now while sending POST request to the `/v1/consents` endpoint the fields "availableAccounts" and "allPsd2" are persisted to the ais_consent table. Also they are available while calling the connector.
+
+## Added support of Spring Data 2.x
+In order to use Spring Data 2.x in CMS developer now shall use a dependency to help-module `spring-boot-2.x-support`
+```xml
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>spring-boot-2.x-support</artifactId>
+            <version>1.17-SNAPSHOT</version>
+        </dependency>
+
+```
+By default `spring-boot-1.5.x-support` is used.

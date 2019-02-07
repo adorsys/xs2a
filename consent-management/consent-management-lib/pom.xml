@@ -59,6 +59,12 @@
             <version>1.17-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>spring-boot-1.5.x-support</artifactId>
+            <version>1.17-SNAPSHOT</version>
+        </dependency>
+
         <!-- spring dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -119,6 +125,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit</artifactId>
             <scope>test</scope>
         </dependency>
 

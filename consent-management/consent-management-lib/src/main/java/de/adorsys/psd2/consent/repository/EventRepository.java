@@ -20,12 +20,11 @@ import de.adorsys.psd2.consent.domain.event.EventEntity;
 import de.adorsys.psd2.xs2a.core.event.EventOrigin;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public interface EventRepository extends CrudRepository<EventEntity, Long>, JpaSpecificationExecutor<EventEntity> {
+public interface EventRepository extends Xs2aCrudRepository<EventEntity, Long>, JpaSpecificationExecutor<EventEntity> {
     List<EventEntity> findByTimestampBetweenOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to);
 
     List<EventEntity> findByTimestampBetweenAndEventTypeOrderByTimestampAsc(OffsetDateTime from, OffsetDateTime to, EventType eventType);
