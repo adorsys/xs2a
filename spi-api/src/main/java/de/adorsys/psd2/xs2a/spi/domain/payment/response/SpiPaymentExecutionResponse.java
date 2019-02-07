@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,5 +26,5 @@ import org.jetbrains.annotations.NotNull;
 @Value
 public class SpiPaymentExecutionResponse {
     @NotNull
-    private SpiTransactionStatus transactionStatus;
+    private TransactionStatus transactionStatus;
 }

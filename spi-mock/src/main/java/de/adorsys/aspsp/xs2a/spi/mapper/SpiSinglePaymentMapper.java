@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.spi.mapper;
 
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ import java.util.Optional;
 public class SpiSinglePaymentMapper {
     private final SpiPaymentMapper spiPaymentMapper;
 
-    public AspspSinglePayment mapToAspspSinglePayment(@NotNull SpiSinglePayment payment, SpiTransactionStatus transactionStatus) {
+    public AspspSinglePayment mapToAspspSinglePayment(@NotNull SpiSinglePayment payment, TransactionStatus transactionStatus) {
         AspspSinglePayment single = new AspspSinglePayment();
         single.setPaymentId(payment.getPaymentId());
         single.setEndToEndIdentification(payment.getEndToEndIdentification());
@@ -63,7 +63,7 @@ public class SpiSinglePaymentMapper {
         single.setCreditorName(payment.getCreditorName());
         single.setCreditorAddress(spiPaymentMapper.mapToSpiAddress(payment.getCreditorAddress()));
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        single.setPaymentStatus(spiPaymentMapper.mapToSpiTransactionStatus(payment.getPaymentStatus()));
+        single.setPaymentStatus(spiPaymentMapper.mapToTransactionStatus(payment.getPaymentStatus()));
         single.setRequestedExecutionTime(Optional.ofNullable(payment.getRequestedExecutionTime()).map(t -> t.atOffset(ZoneOffset.UTC)).orElse(null));
         single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         return single;
@@ -77,9 +77,9 @@ public class SpiSinglePaymentMapper {
         spi.setPaymentId(payment.getPaymentId());
         spi.setMultilevelScaRequired(CollectionUtils.size(payment.getPsuDataList()) > 1);
         if (payment.getPaymentId() == null) {
-            spi.setTransactionStatus(SpiTransactionStatus.RJCT);
+            spi.setTransactionStatus(TransactionStatus.RJCT);
         } else {
-            spi.setTransactionStatus(SpiTransactionStatus.RCVD);
+            spi.setTransactionStatus(TransactionStatus.RCVD);
         }
         return spi;
     }

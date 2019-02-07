@@ -20,9 +20,9 @@ import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspAmount;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspAddress;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,15 +33,15 @@ import java.util.Optional;
 @Component
 public class SpiPaymentMapper {
 
-    @Nullable AspspTransactionStatus mapToAspspTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
-        return Optional.ofNullable(spiTransactionStatus)
+    @Nullable AspspTransactionStatus mapToAspspTransactionStatus(TransactionStatus transactionStatus) {
+        return Optional.ofNullable(transactionStatus)
             .map(t -> AspspTransactionStatus.valueOf(t.name()))
             .orElse(null);
     }
 
-    public @Nullable SpiTransactionStatus mapToSpiTransactionStatus(AspspTransactionStatus aspspTransactionStatus) {
+    public @Nullable TransactionStatus mapToTransactionStatus(AspspTransactionStatus aspspTransactionStatus) {
         return Optional.ofNullable(aspspTransactionStatus)
-            .map(t -> SpiTransactionStatus.valueOf(t.name()))
+            .map(t -> TransactionStatus.valueOf(t.name()))
             .orElse(null);
     }
 

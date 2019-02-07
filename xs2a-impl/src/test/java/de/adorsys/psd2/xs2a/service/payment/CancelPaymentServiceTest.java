@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -64,9 +63,9 @@ public class CancelPaymentServiceTest {
     @Mock
     private SpiToXs2aCancelPaymentMapper spiToXs2aCancelPaymentMapper;
     @Mock
-    private PisAspspDataService pisAspspDataService;
-    @Mock
     private SpiContextDataProvider spiContextDataProvider;
+    @Mock
+    private PisAspspDataService pisAspspDataService;
 
     @Before
     public void setUp() {
@@ -81,7 +80,7 @@ public class CancelPaymentServiceTest {
                             .fail(SpiResponseStatus.LOGICAL_FAILURE));
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
             .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
-                            .payload(getSpiCancelPaymentResponse(true, SpiTransactionStatus.ACTC))
+                            .payload(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC))
                             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
                             .success());
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(WRONG_PAYMENT_ID)), any()))
@@ -89,9 +88,9 @@ public class CancelPaymentServiceTest {
                             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
                             .fail(SpiResponseStatus.LOGICAL_FAILURE));
 
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, SpiTransactionStatus.CANC))))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.CANC))))
             .thenReturn(getCancelPaymentResponse(false, CANC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, SpiTransactionStatus.ACTC))))
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC))))
             .thenReturn(getCancelPaymentResponse(true, ACTC));
     }
 
@@ -141,7 +140,7 @@ public class CancelPaymentServiceTest {
         assertThat(response.getError()).isEqualTo(new MessageError(ErrorType.PIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_403)));
     }
 
-    private SpiPaymentCancellationResponse getSpiCancelPaymentResponse(boolean authorisationRequired, SpiTransactionStatus transactionStatus) {
+    private SpiPaymentCancellationResponse getSpiCancelPaymentResponse(boolean authorisationRequired, TransactionStatus transactionStatus) {
         SpiPaymentCancellationResponse response = new SpiPaymentCancellationResponse();
         response.setCancellationAuthorisationMandated(authorisationRequired);
         response.setTransactionStatus(transactionStatus);

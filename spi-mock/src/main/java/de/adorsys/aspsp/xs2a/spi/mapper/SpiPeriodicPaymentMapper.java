@@ -22,8 +22,8 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspExecutionRule;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import lombok.AllArgsConstructor;
@@ -40,7 +40,7 @@ import java.util.Optional;
 public class SpiPeriodicPaymentMapper {
     private final SpiPaymentMapper spiPaymentMapper;
 
-    public AspspPeriodicPayment mapToAspspPeriodicPayment(@NotNull SpiPeriodicPayment payment, SpiTransactionStatus transactionStatus) {
+    public AspspPeriodicPayment mapToAspspPeriodicPayment(@NotNull SpiPeriodicPayment payment, TransactionStatus transactionStatus) {
         AspspPeriodicPayment periodic = new AspspPeriodicPayment();
         periodic.setPaymentId(payment.getPaymentId());
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
@@ -73,7 +73,7 @@ public class SpiPeriodicPaymentMapper {
         periodic.setCreditorName(payment.getCreditorName());
         periodic.setCreditorAddress(spiPaymentMapper.mapToSpiAddress(payment.getCreditorAddress()));
         periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        periodic.setPaymentStatus(spiPaymentMapper.mapToSpiTransactionStatus(payment.getPaymentStatus()));
+        periodic.setPaymentStatus(spiPaymentMapper.mapToTransactionStatus(payment.getPaymentStatus()));
         periodic.setStartDate(payment.getStartDate());
         periodic.setEndDate(payment.getEndDate());
         periodic.setExecutionRule(mapToPisExecutionRule(payment.getExecutionRule()).orElse(null));
@@ -92,9 +92,9 @@ public class SpiPeriodicPaymentMapper {
         spi.setPaymentId(payment.getPaymentId());
         spi.setMultilevelScaRequired(CollectionUtils.size(payment.getPsuDataList()) > 1);
         if (payment.getPaymentId() == null) {
-            spi.setTransactionStatus(SpiTransactionStatus.RJCT);
+            spi.setTransactionStatus(TransactionStatus.RJCT);
         } else {
-            spi.setTransactionStatus(SpiTransactionStatus.RCVD);
+            spi.setTransactionStatus(TransactionStatus.RCVD);
         }
         return spi;
     }

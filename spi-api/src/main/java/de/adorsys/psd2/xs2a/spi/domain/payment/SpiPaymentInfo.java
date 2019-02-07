@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.spi.domain.payment;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
 
@@ -38,7 +37,7 @@ public class SpiPaymentInfo implements SpiPayment {
     }
 
     @Override
-    public SpiTransactionStatus getPaymentStatus() {
-        return SpiTransactionStatus.valueOf(String.valueOf(status));
+    public TransactionStatus getPaymentStatus() {
+        return status;
     }
 }

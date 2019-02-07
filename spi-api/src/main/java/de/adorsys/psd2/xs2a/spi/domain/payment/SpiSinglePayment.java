@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
 
@@ -37,7 +37,7 @@ public class SpiSinglePayment implements SpiPayment {
     private String creditorName;
     private SpiAddress creditorAddress;
     private String remittanceInformationUnstructured;
-    private SpiTransactionStatus paymentStatus;
+    private TransactionStatus paymentStatus;
     protected String paymentProduct;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
@@ -57,7 +57,7 @@ public class SpiSinglePayment implements SpiPayment {
     }
 
     @Override
-    public SpiTransactionStatus getPaymentStatus() {
+    public TransactionStatus getPaymentStatus() {
         return paymentStatus;
     }
 }
