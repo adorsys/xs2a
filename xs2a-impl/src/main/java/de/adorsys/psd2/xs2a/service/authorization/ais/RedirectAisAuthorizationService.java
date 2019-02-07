@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -91,5 +92,10 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
     @Override
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
         return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
+    }
+
+    @Override
+    public ScaApproach getScaApproachServiceType() {
+        return ScaApproach.REDIRECT;
     }
 }

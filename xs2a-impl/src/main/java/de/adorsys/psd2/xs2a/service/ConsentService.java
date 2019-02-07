@@ -31,7 +31,7 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -68,7 +68,7 @@ public class ConsentService {
     private final SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;
     private final Xs2aAisConsentService aisConsentService;
     private final AisConsentDataService aisConsentDataService;
-    private final AisAuthorizationService aisAuthorizationService;
+    private final AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
     private final TppService tppService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final AuthorisationMethodDecider authorisationMethodDecider;
@@ -259,7 +259,7 @@ public class ConsentService {
                        .build();
         }
 
-        return aisAuthorizationService.createConsentAuthorization(psuData, consentId)
+        return aisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
                    .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder()
                                   .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
@@ -277,7 +277,7 @@ public class ConsentService {
                        .build();
         }
 
-        return Optional.ofNullable(aisAuthorizationService.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId()))
+        return Optional.ofNullable(aisScaAuthorisationServiceResolver.getService().getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId()))
                    .map(conAuth -> getUpdateConsentPsuDataResponse(updatePsuData, conAuth))
                    .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                   .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
@@ -285,7 +285,7 @@ public class ConsentService {
     }
 
     private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
-        UpdateConsentPsuDataResponse response = aisAuthorizationService.updateConsentPsuData(updatePsuData, consentAuthorization);
+        UpdateConsentPsuDataResponse response = aisScaAuthorisationServiceResolver.getService().updateConsentPsuData(updatePsuData, consentAuthorization);
 
         return Optional.ofNullable(response)
                    .map(s -> Optional.ofNullable(s.getMessageError())
@@ -301,7 +301,7 @@ public class ConsentService {
     public ResponseObject<Xs2aAuthorisationSubResources> getConsentInitiationAuthorisations(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
-        return aisAuthorizationService.getAuthorisationSubResources(consentId)
+        return aisScaAuthorisationServiceResolver.getService().getAuthorisationSubResources(consentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                   .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
@@ -318,7 +318,7 @@ public class ConsentService {
     public ResponseObject<ScaStatus> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
 
-        Optional<ScaStatus> scaStatus = aisAuthorizationService.getAuthorisationScaStatus(consentId, authorisationId);
+        Optional<ScaStatus> scaStatus = aisScaAuthorisationServiceResolver.getService().getAuthorisationScaStatus(consentId, authorisationId);
 
         if (!scaStatus.isPresent()) {
             return ResponseObject.<ScaStatus>builder()
@@ -364,7 +364,7 @@ public class ConsentService {
     }
 
     private void proceedImplicitCaseForCreateConsent(CreateConsentResponse response, PsuIdData psuData, String consentId) {
-        aisAuthorizationService.createConsentAuthorization(psuData, consentId)
+        aisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
             .ifPresent(a -> response.setAuthorizationId(a.getAuthorizationId()));
     }
 

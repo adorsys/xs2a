@@ -59,7 +59,7 @@ public class ConsentController implements ConsentApi {
     @Override
     public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature,
                                         byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID,
-                                        String psUCorporateIDType, String tpPRedirectPreferred, String tpPRedirectURI,
+                                        String psUCorporateIDType, boolean tpPRedirectPreferred, String tpPRedirectURI,
                                         String tpPNokRedirectURI, boolean tpPExplicitAuthorisationPreferred, String psUIPAddress,
                                         String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                         String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
