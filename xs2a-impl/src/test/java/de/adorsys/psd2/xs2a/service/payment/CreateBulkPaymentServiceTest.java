@@ -29,13 +29,17 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
-import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
+import de.adorsys.psd2.xs2a.domain.pis.BulkPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentService;
+import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentServiceResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,11 +75,11 @@ public class CreateBulkPaymentServiceTest<resp> {
     @Mock
     private ScaPaymentService scaPaymentService;
     @Mock
+    private ScaPaymentServiceResolver scaPaymentServiceResolver;
+    @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
     @Mock
     private AuthorisationMethodDecider authorisationMethodDecider;
-    @Mock
-    private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
     private PisAspspDataService pisAspspDataService;
     @Mock
@@ -92,6 +96,8 @@ public class CreateBulkPaymentServiceTest<resp> {
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
         when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, RESPONSE ))
             .thenReturn(PAYMENT_INFO);
+        when(scaPaymentServiceResolver.getService())
+            .thenReturn(scaPaymentService);
     }
 
     @Test
@@ -138,10 +144,6 @@ public class CreateBulkPaymentServiceTest<resp> {
         reference.setIban(IBAN);
         reference.setCurrency(EUR_CURRENCY);
         return reference;
-    }
-
-    private Xs2aPisCommonPayment buildXs2aPisCommonPayment() {
-        return new Xs2aPisCommonPayment(PAYMENT_ID, PSU_DATA);
     }
 
     private PaymentInitiationParameters buildPaymentInitiationParameters() {

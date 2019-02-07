@@ -35,6 +35,8 @@ import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentService;
+import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentServiceResolver;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -48,7 +50,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 @Service
 @RequiredArgsConstructor
 public class CreateCommonPaymentService implements CreatePaymentService<CommonPayment, PaymentInitiationResponse> {
-    private final ScaPaymentService scaPaymentService;
+    private final ScaPaymentServiceResolver scaPaymentServiceResolver;
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
@@ -67,6 +69,8 @@ public class CreateCommonPaymentService implements CreatePaymentService<CommonPa
     @Override
     public ResponseObject<PaymentInitiationResponse> createPayment(CommonPayment payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
         PsuIdData psuData = paymentInitiationParameters.getPsuData();
+
+        ScaPaymentService scaPaymentService = scaPaymentServiceResolver.getService();
         PaymentInitiationResponse response = scaPaymentService.createCommonPayment(payment, tppInfo, paymentInitiationParameters.getPaymentProduct(), psuData);
 
         PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, payment.getPaymentData());

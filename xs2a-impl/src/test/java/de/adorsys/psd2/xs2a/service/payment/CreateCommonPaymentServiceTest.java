@@ -32,11 +32,12 @@ import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentService;
+import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentServiceResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,8 +72,6 @@ public class CreateCommonPaymentServiceTest {
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
     @Mock
-    private PisScaAuthorisationService pisScaAuthorisationService;
-    @Mock
     private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private PisAspspDataService pisAspspDataService;
@@ -80,6 +79,8 @@ public class CreateCommonPaymentServiceTest {
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     @Mock
     private Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
+    @Mock
+    private ScaPaymentServiceResolver scaPaymentServiceResolver;
 
 
     @Before
@@ -90,6 +91,8 @@ public class CreateCommonPaymentServiceTest {
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
         when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, RESPONSE, COMMON_PAYMENT.getPaymentData()))
             .thenReturn(PAYMENT_INFO);
+        when(scaPaymentServiceResolver.getService())
+            .thenReturn(scaPaymentService);
     }
 
     @Test

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.pis;
+package de.adorsys.psd2.xs2a.service.payment.sca;
 
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ScaServiceResolver;
@@ -23,9 +23,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PisScaAuthorisationServiceResolver extends ScaServiceResolver<PisScaAuthorisationService> {
+public class ScaPaymentServiceResolver extends ScaServiceResolver<ScaPaymentService> {
 
-    public PisScaAuthorisationServiceResolver(List<PisScaAuthorisationService> services, ScaApproachResolver scaApproachResolver) {
+    public ScaPaymentServiceResolver(List<ScaPaymentService> services, ScaApproachResolver scaApproachResolver) {
         super(services, scaApproachResolver);
     }
 }
