@@ -28,7 +28,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class ScaAuthorisationServiceResolver<T extends ScaApproachServiceTypeProvider> implements InitializingBean {
+public class ScaServiceResolver<T extends ScaApproachServiceTypeProvider> implements InitializingBean {
     private final List<T> services;
     private final ScaApproachResolver scaApproachResolver;
     private final Map<ScaApproach, T> SERVICE_CONTAINER = new HashMap<>();
@@ -39,9 +39,9 @@ public class ScaAuthorisationServiceResolver<T extends ScaApproachServiceTypePro
     }
 
     /**
-     * Get authorisation service for sca approach that was chosen in resolver
+     * Get particular service for sca approach that was chosen in resolver
      *
-     * @return authorisation service for chosen sca approach
+     * @return particular service for chosen sca approach
      */
     public T getService() {
         return SERVICE_CONTAINER.get(scaApproachResolver.resolveScaApproach());

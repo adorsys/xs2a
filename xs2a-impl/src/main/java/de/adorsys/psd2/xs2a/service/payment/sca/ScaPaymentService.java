@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.payment;
+package de.adorsys.psd2.xs2a.service.payment.sca;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.service.authorization.ScaApproachServiceTypeProvider;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
@@ -38,7 +39,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public abstract class ScaPaymentService {
+public abstract class ScaPaymentService implements ScaApproachServiceTypeProvider {
     private final SinglePaymentSpi singlePaymentSpi;
     private final PeriodicPaymentSpi periodicPaymentSpi;
     private final BulkPaymentSpi bulkPaymentSpi;

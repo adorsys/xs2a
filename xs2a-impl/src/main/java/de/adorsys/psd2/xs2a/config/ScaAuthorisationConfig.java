@@ -21,34 +21,15 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.service.authorization.ais.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.payment.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 
 @Configuration
 @RequiredArgsConstructor
 public class ScaAuthorisationConfig {
-
-    @Bean
-    public ScaPaymentService scaPaymentService(OauthScaPaymentService oauthScaPaymentService,
-                                               RedirectScaPaymentService redirectScaPaymentService,
-                                               EmbeddedScaPaymentService embeddedScaPaymentService,
-                                               DecoupledScaPaymentService decoupledScaPaymentService) {
-        ScaApproach scaApproach = getScaApproach();
-        if (OAUTH == scaApproach) {
-            return oauthScaPaymentService;
-        }
-        if (DECOUPLED == scaApproach) {
-            return decoupledScaPaymentService;
-        }
-        if (EMBEDDED == scaApproach) {
-            return embeddedScaPaymentService;
-        }
-        return redirectScaPaymentService;
-    }
 
     @Bean
     public AisAuthorizationService aisAuthorizationService(Xs2aAisConsentService aisConsentService,

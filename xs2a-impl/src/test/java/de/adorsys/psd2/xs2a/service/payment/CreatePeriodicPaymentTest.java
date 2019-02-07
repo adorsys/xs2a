@@ -34,11 +34,12 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentService;
+import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentServiceResolver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -75,8 +76,6 @@ public class CreatePeriodicPaymentTest {
     @Mock
     private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
-    private PisScaAuthorisationService pisScaAuthorisationService;
-    @Mock
     private PisAspspDataService pisAspspDataService;
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
@@ -84,6 +83,8 @@ public class CreatePeriodicPaymentTest {
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     @Mock
     private Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
+    @Mock
+    private ScaPaymentServiceResolver scaPaymentServiceResolver;
 
     @Test
     public void success_initiate_periodic_payment() {
@@ -94,6 +95,8 @@ public class CreatePeriodicPaymentTest {
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
         when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, RESPONSE))
             .thenReturn(PAYMENT_INFO);
+        when(scaPaymentServiceResolver.getService())
+            .thenReturn(scaPaymentService);
 
         ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo());
 
