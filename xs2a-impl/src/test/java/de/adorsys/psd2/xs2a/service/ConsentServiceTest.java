@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -33,6 +34,7 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
@@ -112,6 +114,10 @@ public class ConsentServiceTest {
     SpiToXs2aAccountAccessMapper spiToXs2aAccountAccessMapper;
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
+    @Mock
+    private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private TppService tppService;
     @Mock
@@ -215,6 +221,9 @@ public class ConsentServiceTest {
 
         when(psuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
             .thenReturn(SPI_PSU_DATA);
+
+        when(scaApproachResolver.resolveScaApproach())
+            .thenReturn(ScaApproach.EMBEDDED);
     }
 
     @Test

@@ -26,10 +26,10 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import de.adorsys.psd2.aspsp.mock.api.psu.AspspPsuData;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
@@ -70,7 +70,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
     @NotNull
     public SpiResponse<SpiBulkPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData spiContextData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
-            AspspBulkPayment request = spiBulkPaymentMapper.mapToAspspBulkPayment(payment, SpiTransactionStatus.RCVD);
+            AspspBulkPayment request = spiBulkPaymentMapper.mapToAspspBulkPayment(payment, TransactionStatus.RCVD);
             ResponseEntity<AspspBulkPayment> aspspResponse = aspspRestTemplate.postForEntity(aspspRemoteUrls.createBulkPayment(), request, AspspBulkPayment.class);
             SpiBulkPaymentInitiationResponse response = spiBulkPaymentMapper.mapToSpiBulkPaymentResponse(aspspResponse.getBody(), payment.getPaymentProduct());
 
@@ -137,23 +137,23 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiContextData spiContextData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData spiContextData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
         try {
             ResponseEntity<AspspTransactionStatus> aspspResponse = aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), AspspTransactionStatus.class, payment.getPaymentId());
-            SpiTransactionStatus status = spiPaymentMapper.mapToSpiTransactionStatus(aspspResponse.getBody());
+            TransactionStatus status = spiPaymentMapper.mapToTransactionStatus(aspspResponse.getBody());
 
-            return SpiResponse.<SpiTransactionStatus>builder()
+            return SpiResponse.<TransactionStatus>builder()
                        .aspspConsentData(aspspConsentData)
                        .payload(status)
                        .success();
 
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                return SpiResponse.<SpiTransactionStatus>builder()
+                return SpiResponse.<TransactionStatus>builder()
                            .aspspConsentData(aspspConsentData)
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
-            return SpiResponse.<SpiTransactionStatus>builder()
+            return SpiResponse.<TransactionStatus>builder()
                        .aspspConsentData(aspspConsentData)
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
@@ -162,7 +162,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
     @Override
     @NotNull
     public SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutSca(@NotNull SpiContextData spiContextData, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        SpiTransactionStatus responseStatus = SpiTransactionStatus.ACCP;
+        TransactionStatus responseStatus = TransactionStatus.ACCP;
         AspspConsentData responseData = aspspConsentData;
 
         if (aspspConsentData.getAspspConsentData() != null) {
@@ -181,9 +181,9 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
                 authMap.put(psuId, true);
 
                 if (authMap.values().contains(false)) {
-                    responseStatus = SpiTransactionStatus.PATC;
+                    responseStatus = TransactionStatus.PATC;
                 } else {
-                    responseStatus = SpiTransactionStatus.ACTC;
+                    responseStatus = TransactionStatus.ACTC;
                 }
 
                 byte[] bytes = jsonConverter.toJson(authMap)
@@ -218,7 +218,7 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
     @Override
     @NotNull
     public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiContextData spiContextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        SpiTransactionStatus responseStatus = SpiTransactionStatus.ACCP;
+        TransactionStatus responseStatus = TransactionStatus.ACCP;
         AspspConsentData responseData = aspspConsentData;
 
         try {
@@ -240,9 +240,9 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
                     authMap.put(psuId, true);
 
                     if (authMap.values().contains(false)) {
-                        responseStatus = SpiTransactionStatus.PATC;
+                        responseStatus = TransactionStatus.PATC;
                     } else {
-                        responseStatus = SpiTransactionStatus.ACTC;
+                        responseStatus = TransactionStatus.ACTC;
                     }
 
                     byte[] bytes = jsonConverter.toJson(authMap)

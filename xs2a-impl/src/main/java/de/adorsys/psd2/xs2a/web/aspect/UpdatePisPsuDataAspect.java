@@ -22,8 +22,8 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -32,10 +32,10 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class UpdatePisPsuDataAspect extends AbstractLinkAspect<PaymentController> {
-    private final static String PSU_AUTHORISATION_URL = "/v1/{paymentService}/{paymentProduct}/{paymentId}/authorisations/{authorisationId}";
+    private static final String PSU_AUTHORISATION_URL = "/v1/{paymentService}/{paymentProduct}/{paymentId}/authorisations/{authorisationId}";
 
-    public UpdatePisPsuDataAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService) {
-        super(aspspProfileService, messageService);
+    public UpdatePisPsuDataAspect(ScaApproachResolver scaApproachResolver, MessageService messageService) {
+        super(scaApproachResolver, messageService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.updatePisCommonPaymentPsuData(..)) && args( request)", returning = "result", argNames = "result,request")

@@ -22,10 +22,10 @@ import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspPaymentInfo;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
@@ -57,7 +57,7 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
     @NotNull
     public SpiResponse<SpiPaymentInitiationResponse> initiatePayment(@NotNull SpiContextData spiContextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
-            AspspPaymentInfo request = spiPaymentInfoMapper.mapToAspspPayment(payment, SpiTransactionStatus.RCVD);
+            AspspPaymentInfo request = spiPaymentInfoMapper.mapToAspspPayment(payment, TransactionStatus.RCVD);
 
             ResponseEntity<AspspPaymentInfo> responseEntity =
                 aspspRestTemplate.postForEntity(aspspRemoteUrls.createCommonPayment(), request, AspspPaymentInfo.class);
@@ -112,23 +112,23 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiContextData spiContextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData spiContextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
         try {
             ResponseEntity<AspspTransactionStatus> aspspResponse = aspspRestTemplate.getForEntity(aspspRemoteUrls.getCommonPaymentStatus(), AspspTransactionStatus.class, payment.getPaymentId());
-            SpiTransactionStatus status = spiPaymentMapper.mapToSpiTransactionStatus(aspspResponse.getBody());
+            TransactionStatus status = spiPaymentMapper.mapToTransactionStatus(aspspResponse.getBody());
 
-            return SpiResponse.<SpiTransactionStatus>builder()
+            return SpiResponse.<TransactionStatus>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .payload(status)
                        .success();
 
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                return SpiResponse.<SpiTransactionStatus>builder()
+                return SpiResponse.<TransactionStatus>builder()
                            .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
-            return SpiResponse.<SpiTransactionStatus>builder()
+            return SpiResponse.<TransactionStatus>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
@@ -137,14 +137,14 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
     @Override
     @NotNull
     public SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutSca(@NotNull SpiContextData spiContextData, @NotNull SpiPaymentInfo payment, @NotNull AspspConsentData aspspConsentData) {
-        AspspPaymentInfo request = spiPaymentInfoMapper.mapToAspspPayment(payment, SpiTransactionStatus.ACCP);
+        AspspPaymentInfo request = spiPaymentInfoMapper.mapToAspspPayment(payment, TransactionStatus.ACCP);
 
         try {
             aspspRestTemplate.postForEntity(aspspRemoteUrls.createCommonPayment(), request, AspspPaymentInfo.class);
 
             return SpiResponse.<SpiPaymentExecutionResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                       .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
+                       .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
                        .success();
 
         } catch (RestException e) {
@@ -165,13 +165,13 @@ public class CommonPaymentSpiImpl implements CommonPaymentSpi {
         try {
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
 
-            AspspPaymentInfo request = spiPaymentInfoMapper.mapToAspspPayment(payment, SpiTransactionStatus.ACCP);
+            AspspPaymentInfo request = spiPaymentInfoMapper.mapToAspspPayment(payment, TransactionStatus.ACCP);
             aspspRestTemplate.postForEntity(aspspRemoteUrls.createCommonPayment(), request, AspspPaymentInfo.class);
 
 
             return SpiResponse.<SpiPaymentExecutionResponse>builder()
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                       .payload(new SpiPaymentExecutionResponse(SpiTransactionStatus.ACCP))
+                       .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
                        .success();
 
         } catch (RestException e) {

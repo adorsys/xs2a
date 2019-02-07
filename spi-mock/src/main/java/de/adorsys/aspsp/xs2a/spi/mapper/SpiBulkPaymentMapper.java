@@ -20,7 +20,7 @@ package de.adorsys.aspsp.xs2a.spi.mapper;
 import de.adorsys.psd2.aspsp.mock.api.account.AspspAccountReference;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
 import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
@@ -39,7 +39,7 @@ public class SpiBulkPaymentMapper {
     private final SpiSinglePaymentMapper spiSinglePaymentMapper;
     private final SpiPaymentMapper spiPaymentMapper;
 
-    public AspspBulkPayment mapToAspspBulkPayment(@NotNull SpiBulkPayment payment, SpiTransactionStatus transactionStatus) {
+    public AspspBulkPayment mapToAspspBulkPayment(@NotNull SpiBulkPayment payment, TransactionStatus transactionStatus) {
         AspspBulkPayment bulk = new AspspBulkPayment();
         bulk.setPaymentId(payment.getPaymentId());
         bulk.setDebtorAccount(spiPaymentMapper.mapToAspspAccountReference(payment.getDebtorAccount()));
@@ -61,9 +61,9 @@ public class SpiBulkPaymentMapper {
         spi.setMultilevelScaRequired(CollectionUtils.size(payment.getPsuDataList()) > 1);
 
         if (payment.getPaymentId() == null) {
-            spi.setTransactionStatus(SpiTransactionStatus.RJCT);
+            spi.setTransactionStatus(TransactionStatus.RJCT);
         } else {
-            spi.setTransactionStatus(SpiTransactionStatus.RCVD);
+            spi.setTransactionStatus(TransactionStatus.RCVD);
         }
 
         return spi;
@@ -72,11 +72,11 @@ public class SpiBulkPaymentMapper {
     public SpiBulkPayment mapToSpiBulkPayment(@NotNull List<AspspSinglePayment> payments, String paymentProduct) {
         SpiBulkPayment bulk = new SpiBulkPayment();
         bulk.setPayments(mapToListSpiSinglePayments(payments, paymentProduct));
-        bulk.setPaymentStatus(spiPaymentMapper.mapToSpiTransactionStatus(payments.get(0).getPaymentStatus()));
+        bulk.setPaymentStatus(spiPaymentMapper.mapToTransactionStatus(payments.get(0).getPaymentStatus()));
         return bulk;
     }
 
-    private List<AspspSinglePayment> mapToListAspspSinglePayment(@NotNull SpiBulkPayment payment, SpiTransactionStatus transactionStatus) {
+    private List<AspspSinglePayment> mapToListAspspSinglePayment(@NotNull SpiBulkPayment payment, TransactionStatus transactionStatus) {
         return payment.getPayments().stream()
                    .map(p -> spiSinglePaymentMapper.mapToAspspSinglePayment(p, transactionStatus))
                    .collect(Collectors.toList());

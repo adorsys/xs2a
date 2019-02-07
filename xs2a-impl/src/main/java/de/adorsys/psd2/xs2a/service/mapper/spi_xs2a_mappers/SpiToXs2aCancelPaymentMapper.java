@@ -26,14 +26,13 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class SpiToXs2aCancelPaymentMapper {
-    private final SpiToXs2aTransactionalStatusMapper spiToXs2aTransactionalStatusMapper;
 
     public CancelPaymentResponse mapToCancelPaymentResponse(SpiPaymentCancellationResponse spiCancelPayment) {
         return Optional.ofNullable(spiCancelPayment)
                    .map(c -> {
                        CancelPaymentResponse response = new CancelPaymentResponse();
                        response.setStartAuthorisationRequired(c.isCancellationAuthorisationMandated());
-                       response.setTransactionStatus(spiToXs2aTransactionalStatusMapper.mapToTransactionStatus(c.getTransactionStatus()));
+                       response.setTransactionStatus(c.getTransactionStatus());
                        return response;
                    }).orElse(null);
     }

@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.web.advice;
 
 import de.adorsys.psd2.model.LinksSigningBasket;
 import de.adorsys.psd2.model.SigningBasketResponse201;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.controller.SigningBasketController;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -32,8 +32,8 @@ import java.util.Optional;
 @ControllerAdvice(assignableTypes = {SigningBasketController.class})
 public class SigningBasketHeaderModifierAdvice extends CommonHeaderModifierAdvice {
 
-    public SigningBasketHeaderModifierAdvice(AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(aspspProfileServiceWrapper);
+    public SigningBasketHeaderModifierAdvice(ScaApproachResolver scaApproachResolver) {
+        super(scaApproachResolver);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class SigningBasketHeaderModifierAdvice extends CommonHeaderModifierAdvic
         String methodName = returnType.getMethod().getName();
 
         if ("_createSigningBasket".equals(methodName)) {
-            response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
+            response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
             if (!hasError(body, SigningBasketResponse201.class)) {
                 SigningBasketResponse201 signingBasketResponse = (SigningBasketResponse201) body;
                 response.getHeaders().add("Location", Optional.ofNullable(signingBasketResponse.getLinks())
@@ -54,7 +54,7 @@ public class SigningBasketHeaderModifierAdvice extends CommonHeaderModifierAdvic
                                                           .orElse(null));
             }
         } else if ("_startSigningBasketAuthorisation".equals(methodName) || "_updateSigningBasketPsuData".equals(methodName)) {
-            response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
+            response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
         }
 
         return body;

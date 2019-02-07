@@ -25,10 +25,10 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import de.adorsys.psd2.aspsp.mock.api.psu.AspspPsuData;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
@@ -69,7 +69,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     @NotNull
     public SpiResponse<SpiSinglePaymentInitiationResponse> initiatePayment(@NotNull SpiContextData spiContextData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
-            AspspSinglePayment request = spiSinglePaymentMapper.mapToAspspSinglePayment(payment, SpiTransactionStatus.RCVD);
+            AspspSinglePayment request = spiSinglePaymentMapper.mapToAspspSinglePayment(payment, TransactionStatus.RCVD);
 
             ResponseEntity<AspspSinglePayment> aspspResponse =
                 aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, AspspSinglePayment.class);
@@ -135,23 +135,23 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiContextData spiContextData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<TransactionStatus> getPaymentStatusById(@NotNull SpiContextData spiContextData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
         try {
             ResponseEntity<AspspTransactionStatus> aspspResponse = aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), AspspTransactionStatus.class, payment.getPaymentId());
-            SpiTransactionStatus status = spiPaymentMapper.mapToSpiTransactionStatus(aspspResponse.getBody());
+            TransactionStatus status = spiPaymentMapper.mapToTransactionStatus(aspspResponse.getBody());
 
-            return SpiResponse.<SpiTransactionStatus>builder()
+            return SpiResponse.<TransactionStatus>builder()
                        .aspspConsentData(aspspConsentData)
                        .payload(status)
                        .success();
 
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                return SpiResponse.<SpiTransactionStatus>builder()
+                return SpiResponse.<TransactionStatus>builder()
                            .aspspConsentData(aspspConsentData)
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
-            return SpiResponse.<SpiTransactionStatus>builder()
+            return SpiResponse.<TransactionStatus>builder()
                        .aspspConsentData(aspspConsentData)
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
@@ -160,7 +160,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     @Override
     @NotNull
     public SpiResponse<SpiPaymentExecutionResponse> executePaymentWithoutSca(@NotNull SpiContextData spiContextData, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
-        SpiTransactionStatus responseStatus = SpiTransactionStatus.ACCP;
+        TransactionStatus responseStatus = TransactionStatus.ACCP;
         AspspConsentData responseData = aspspConsentData;
 
         if (aspspConsentData.getAspspConsentData() != null) {
@@ -179,9 +179,9 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
                 authMap.put(psuId, true);
 
                 if (authMap.values().contains(false)) {
-                    responseStatus = SpiTransactionStatus.PATC;
+                    responseStatus = TransactionStatus.PATC;
                 } else {
-                    responseStatus = SpiTransactionStatus.ACTC;
+                    responseStatus = TransactionStatus.ACTC;
                 }
 
                 byte[] bytes = jsonConverter.toJson(authMap)
@@ -216,7 +216,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     @Override
     @NotNull
     public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiContextData spiContextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
-        SpiTransactionStatus responseStatus = SpiTransactionStatus.ACCP;
+        TransactionStatus responseStatus = TransactionStatus.ACCP;
         AspspConsentData responseData = aspspConsentData;
 
         try {
@@ -238,9 +238,9 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
                     authMap.put(psuId, true);
 
                     if (authMap.values().contains(false)) {
-                        responseStatus = SpiTransactionStatus.PATC;
+                        responseStatus = TransactionStatus.PATC;
                     } else {
-                        responseStatus = SpiTransactionStatus.ACTC;
+                        responseStatus = TransactionStatus.ACTC;
                     }
 
                     byte[] bytes = jsonConverter.toJson(authMap)

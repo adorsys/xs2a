@@ -16,16 +16,16 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public abstract class SpiPaymentInitiationResponse {
-    private SpiTransactionStatus transactionStatus;
+    private TransactionStatus transactionStatus;
     private String paymentId;
     private SpiAmount spiTransactionFees;
     private boolean spiTransactionFeeIndicator;

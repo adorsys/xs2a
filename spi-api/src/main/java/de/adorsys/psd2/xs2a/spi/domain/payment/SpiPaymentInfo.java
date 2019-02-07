@@ -35,4 +35,9 @@ public class SpiPaymentInfo implements SpiPayment {
     public SpiPaymentInfo(String paymentProduct) {
         this.paymentProduct = paymentProduct;
     }
+
+    @Override
+    public TransactionStatus getPaymentStatus() {
+        return status;
+    }
 }

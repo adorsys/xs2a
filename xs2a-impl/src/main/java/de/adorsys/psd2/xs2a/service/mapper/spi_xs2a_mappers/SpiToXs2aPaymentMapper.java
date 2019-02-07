@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
@@ -30,13 +29,12 @@ import java.util.function.Supplier;
 @Component
 @RequiredArgsConstructor
 public class SpiToXs2aPaymentMapper {
-    private final SpiToXs2aTransactionalStatusMapper spiToXs2aTransactionalStatusMapper;
 
     public <T extends SpiPaymentInitiationResponse, R extends PaymentInitiationResponse> R mapToPaymentInitiateResponse(T spi, Supplier<R> xs2a, AspspConsentData aspspConsentData) {
         R response = xs2a.get();
         response.setPaymentId(spi.getPaymentId());
         response.setMultilevelScaRequired(spi.isMultilevelScaRequired());
-        response.setTransactionStatus(TransactionStatus.getByValue(spi.getTransactionStatus().getName()));
+        response.setTransactionStatus(spi.getTransactionStatus());
         response.setAspspConsentData(aspspConsentData);
         response.setAspspAccountId(spi.getAspspAccountId());
         return response;
@@ -47,7 +45,7 @@ public class SpiToXs2aPaymentMapper {
         response.setPaymentType(type);
         response.setPaymentId(spiResponse.getPaymentId());
         response.setMultilevelScaRequired(spiResponse.isMultilevelScaRequired());
-        response.setTransactionStatus(spiToXs2aTransactionalStatusMapper.mapToTransactionStatus(spiResponse.getTransactionStatus()));
+        response.setTransactionStatus(spiResponse.getTransactionStatus());
         response.setAspspConsentData(aspspConsentData);
         response.setAspspAccountId(spiResponse.getAspspAccountId());
         return response;

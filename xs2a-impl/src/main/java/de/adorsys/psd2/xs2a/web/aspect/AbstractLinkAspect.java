@@ -19,8 +19,8 @@ package de.adorsys.psd2.xs2a.web.aspect;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +36,7 @@ import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 @Component
 @RequiredArgsConstructor
 public abstract class AbstractLinkAspect<T> {
-    protected final AspspProfileServiceWrapper aspspProfileService;
+    protected final ScaApproachResolver scaApproachResolver;
     private final MessageService messageService;
 
     protected <B> boolean hasError(ResponseEntity<B> target) {

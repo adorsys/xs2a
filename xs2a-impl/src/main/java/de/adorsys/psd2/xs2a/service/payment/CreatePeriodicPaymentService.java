@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
@@ -51,10 +52,10 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
     private final ScaPaymentService scaPaymentService;
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
     private final AuthorisationMethodDecider authorisationMethodDecider;
-    private final PisScaAuthorisationService pisScaAuthorisationService;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
     private final PisAspspDataService pisAspspDataService;
+    private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
 
     /**
      * Initiates periodic payment
@@ -93,6 +94,7 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
 
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred(), response.isMultilevelScaRequired());
         if (implicitMethod) {
+            PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, PaymentType.PERIODIC, paymentInitiationParameters.getPsuData());
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<PeriodicPaymentInitiationResponse>builder()

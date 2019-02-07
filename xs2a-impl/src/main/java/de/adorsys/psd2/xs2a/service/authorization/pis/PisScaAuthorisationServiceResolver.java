@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
+package de.adorsys.psd2.xs2a.service.authorization.pis;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.authorization.ScaAuthorisationServiceResolver;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
-public class SpiToXs2aTransactionalStatusMapper {
+public class PisScaAuthorisationServiceResolver extends ScaAuthorisationServiceResolver<PisScaAuthorisationService> {
 
-    public TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
-        return Optional.ofNullable(spiTransactionStatus)
-                   .map(ts -> TransactionStatus.valueOf(ts.name()))
-                   .orElse(null);
+    public PisScaAuthorisationServiceResolver(List<PisScaAuthorisationService> services, ScaApproachResolver scaApproachResolver) {
+        super(services, scaApproachResolver);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.payment.response;
+package de.adorsys.psd2.xs2a.service.authorization;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import lombok.Data;
-
-/**
- *  TODO clarify content for this class https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/435
- */
-@Data
-public class SpiPaymentCancellationResponse {
-    private boolean cancellationAuthorisationMandated;
-    private TransactionStatus transactionStatus;
+public interface ScaApproachServiceTypeProvider {
+    ScaApproach getScaApproachServiceType();
 }

@@ -16,13 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +32,14 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
 
 @Component
 @RequiredArgsConstructor
 public class CreateConsentRequestValidator {
     private final AspspProfileServiceWrapper aspspProfileService;
+    private final ScaApproachResolver scaApproachResolver;
 
     /**
      * Validates Create consent request according to:
@@ -83,7 +85,7 @@ public class CreateConsentRequestValidator {
             return false;
         }
 
-        if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
+        if (scaApproachResolver.resolveScaApproach() == EMBEDDED) {
             return true;
         }
 
