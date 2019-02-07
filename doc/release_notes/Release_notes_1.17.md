@@ -13,3 +13,7 @@ PsuIdData was also removed as an argument from `de.adorsys.psd2.consent.psu.api.
 
 ## Delete old 'tpp demo' 
 Deleted extra functional in 'tpp-demo' package
+
+## Implemented java interface and endpoint to save Account Access object in Consent by Online banking
+Now by accessing `/psu-api/v1/ais/consent/{consent-id}/save-access` endpoint(or corresponding method in `CmsPsuAisService.java`)
+online banking can save AccountAccess (along with `aspspAccountId` and `resourceId` if necessary), frequency per day and expiration date in consent.
