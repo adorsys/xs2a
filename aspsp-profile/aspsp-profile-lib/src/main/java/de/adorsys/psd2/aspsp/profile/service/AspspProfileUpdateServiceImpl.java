@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService {
@@ -33,12 +35,12 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     /**
      * Update sca approach
      *
-     * @param scaApproach the new value of scaApproach
+     * @param scaApproaches the new value of scaApproach list
      */
     @Override
-    public void updateScaApproach(ScaApproach scaApproach) {
+    public void updateScaApproaches(List<ScaApproach> scaApproaches) {
         profileConfiguration.getSetting()
-            .setScaApproach(scaApproach);
+            .setScaApproaches(scaApproaches);
     }
 
     /**

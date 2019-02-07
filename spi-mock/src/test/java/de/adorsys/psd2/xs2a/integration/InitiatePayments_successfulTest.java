@@ -61,6 +61,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Optional;
@@ -79,7 +80,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
     ObjectMapperConfig.class,
-    ScaAuthorizationConfig.class,
+    ScaAuthorisationConfigRedirectTest.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
@@ -252,7 +253,7 @@ public class InitiatePayments_successfulTest {
 
     private void initiateSinglePayment_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
         // Given
-        given(aspspProfileService.getScaApproach()).willReturn(scaApproach);
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         AspspSinglePayment testPayment = AspspSinglePaymentBuilder.buildAspspSinglePayment(PAYMENT_ID, DEB_IBAN, CRED_IBAN, CURRENCY, AMOUNT_OPERATION_113);
 
         given(aspspRestTemplate.postForEntity(any(String.class), any(AspspSinglePayment.class), any(Class.class)))
@@ -275,7 +276,7 @@ public class InitiatePayments_successfulTest {
 
     private void initiatePeriodicPayment_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
         // Given
-        given(aspspProfileService.getScaApproach()).willReturn(scaApproach);
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         AspspPeriodicPayment testPayment = AspspPeriodicPaymentBuilder.buildAspspPeriodicPayment(PAYMENT_ID, DEB_IBAN, CRED_IBAN, CURRENCY, AMOUNT_OPERATION_113);
 
         given(aspspRestTemplate.postForEntity(any(String.class), any(AspspPeriodicPayment.class), any(Class.class)))
@@ -302,7 +303,7 @@ public class InitiatePayments_successfulTest {
         amountMap.put("DE21500105176194357737", new BigDecimal("666"));
         amountMap.put("DE54500105173424724776", new BigDecimal("888"));
 
-        given(aspspProfileService.getScaApproach()).willReturn(scaApproach);
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         AspspBulkPayment testPayment = AspspBulkPaymentBuilder.buildAspspBulkPayment(PAYMENT_ID, DEB_IBAN, CURRENCY, amountMap);
 
         given(aspspRestTemplate.postForEntity(any(String.class), any(AspspBulkPayment.class), any(Class.class)))

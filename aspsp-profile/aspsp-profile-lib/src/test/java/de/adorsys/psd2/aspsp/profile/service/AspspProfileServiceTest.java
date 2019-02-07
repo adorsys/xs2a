@@ -105,10 +105,10 @@ public class AspspProfileServiceTest {
     @Test
     public void getScaApproach_success() {
         //When:
-        ScaApproach actualResponse = aspspProfileService.getScaApproach();
+        List<ScaApproach> actualResponse = aspspProfileService.getScaApproaches();
 
         //Then:
-        Assertions.assertThat(actualResponse).isEqualTo(REDIRECT_APPROACH);
+        Assertions.assertThat(actualResponse).isEqualTo(Collections.singletonList(REDIRECT_APPROACH));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class AspspProfileServiceTest {
         setting.setPiisConsentSupported(PIIS_CONSENT_SUPPORTED);
         setting.setDeltaReportSupported(DELTA_REPORT_SUPPORTED);
         setting.setRedirectUrlExpirationTimeMs(REDIRECT_URL_EXPIRATION_TIME_MS);
-        setting.setScaApproach(REDIRECT_APPROACH);
+        setting.setScaApproaches(Collections.singletonList(REDIRECT_APPROACH));
         setting.setNotConfirmedConsentExpirationPeriodMs(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
         setting.setNotConfirmedPaymentExpirationPeriodMs(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
         setting.setSupportedPaymentTypeAndProductMatrix(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX);

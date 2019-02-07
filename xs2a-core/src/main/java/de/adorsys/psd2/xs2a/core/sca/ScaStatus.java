@@ -76,10 +76,6 @@ public enum ScaStatus {
     private String value;
     private final boolean finalisedStatus;
 
-    public boolean isFinalisedStatus() {
-        return finalisedStatus;
-    }
-
     ScaStatus(String value, boolean finalisedStatus) {
         this.value = value;
         this.finalisedStatus = finalisedStatus;
@@ -95,6 +91,14 @@ public enum ScaStatus {
     @JsonCreator
     public static ScaStatus fromValue(String text) {
         return HOLDER.get(text.trim().toLowerCase());
+    }
+
+    public boolean isFinalisedStatus() {
+        return finalisedStatus;
+    }
+
+    public boolean isNotFinalisedStatus() {
+        return !isFinalisedStatus();
     }
 
     /**

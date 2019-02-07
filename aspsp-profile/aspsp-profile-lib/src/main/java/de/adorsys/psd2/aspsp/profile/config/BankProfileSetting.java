@@ -43,9 +43,9 @@ public class BankProfileSetting {
     private boolean combinedServiceIndicator;
 
     /**
-     * SCA Approach supported by ASPSP
+     * List of SCA Approach supported by ASPSP ordered by priority
      */
-    private ScaApproach scaApproach;
+    private List<ScaApproach> scaApproaches = new ArrayList<>();
 
     /**
      * A signature of the request by the TPP on application level.

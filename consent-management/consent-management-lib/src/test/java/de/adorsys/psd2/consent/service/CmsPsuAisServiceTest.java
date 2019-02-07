@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
@@ -431,7 +432,7 @@ public class CmsPsuAisServiceTest {
         //noinspection unchecked
         when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(null);
 
-        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         assertFalse(consentResponseOptional.isPresent());
         verify(aisConsentAuthorizationSpecification, times(1))
@@ -445,10 +446,12 @@ public class CmsPsuAisServiceTest {
         when(mockAisConsentAuthorization.isNotExpired()).thenReturn(false);
         when(mockAisConsentAuthorization.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         doReturn(mockAisConsentAuthorization).when(aisConsentAuthorisationRepository).save(mockAisConsentAuthorization);
+        when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
 
-        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
-        assertFalse(consentResponseOptional.isPresent());
+        assertTrue(consentResponseOptional.isPresent());
+        assertEquals(consentResponseOptional.get(), new CmsAisConsentResponse(TPP_NOK_REDIRECT_URI));
     }
 
     @Test
@@ -459,7 +462,7 @@ public class CmsPsuAisServiceTest {
         when(mockAisConsentAuthorization.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(null);
 
-        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         assertFalse(consentResponseOptional.isPresent());
         verify(aisConsentAuthorizationSpecification, times(1))
@@ -479,7 +482,7 @@ public class CmsPsuAisServiceTest {
         when(tppInfo.getTppRedirectUri()).thenReturn(buildTppRedirectUri());
         when(psuDataMapper.mapToPsuIdData(psuData)).thenReturn(psuIdData);
 
-        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsAisConsentResponse> consentResponseOptional = cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         assertTrue(consentResponseOptional.isPresent());
         CmsAisConsentResponse cmsAisConsentResponse = consentResponseOptional.get();
@@ -610,6 +613,7 @@ public class CmsPsuAisServiceTest {
         aisConsent.setPsuData(psuData);
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
+        aisConsent.setTppInfo(buildTppInfoEntity());
         return aisConsent;
     }
 
@@ -636,6 +640,13 @@ public class CmsPsuAisServiceTest {
                                      null, 0,
                                      null, null,
                                      false, false, null, null, null);
+    }
+
+    private TppInfoEntity buildTppInfoEntity() {
+        TppInfoEntity tppInfoEntity = new TppInfoEntity();
+        tppInfoEntity.setRedirectUri(TPP_OK_REDIRECT_URI);
+        tppInfoEntity.setNokRedirectUri(TPP_NOK_REDIRECT_URI);
+        return tppInfoEntity;
     }
 
     private TppRedirectUri buildTppRedirectUri() {
