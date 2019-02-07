@@ -153,13 +153,13 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     @Transactional
-    public boolean saveAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId) {
+    public boolean updateAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId) {
         return getActualAisConsent(consentId, instanceId)
-                   .map(con -> saveAccountAccessInConsent(con, accountAccessRequest))
+                   .map(con -> updateAccountAccessInConsent(con, accountAccessRequest))
                    .orElse(false);
     }
 
-    private boolean saveAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {
+    private boolean updateAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {
         Set<AspspAccountAccess> aspspAccountAccesses = consentMapper.mapAspspAccountAccesses(request.getAccountAccess());
         consent.addAspspAccountAccess(aspspAccountAccesses);
         consent.setExpireDate(request.getValidUntil());

@@ -494,39 +494,27 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void saveAccountAccessInConsent_Success() {
+    public void updateAccountAccessInConsent_Success() {
         //Given
         int frequencyPerDay = 777;
         String iban = "DE67597874259856475273";
         Currency currency = Currency.getInstance("EUR");
         LocalDate validUntil = LocalDate.now();
-
-        AccountReference accountReference = new AccountReference();
-        accountReference.setIban(iban);
-        accountReference.setCurrency(currency);
-
-        AisAccountAccess aisAccountAccess = new AisAccountAccess(
-            Collections.singletonList(accountReference),
-            Collections.singletonList(accountReference),
-            Collections.singletonList(accountReference));
-
+        AccountReference accountReference = getAccountReference(iban, currency);
+        AisAccountAccess aisAccountAccess = getAisAccountAccess(accountReference);
         Set<AspspAccountAccess> aspspAccountAccesses = getAspspAccountAccesses(aisAccountAccess);
-
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, validUntil, frequencyPerDay);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
-
         when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(aisConsent);
         when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
-
         //When
-        boolean saved = cmsPsuAisService.saveAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, "");
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, "");
         //Then
         verify(aisConsentRepository).save(argument.capture());
         List<AspspAccountAccess> aspspAccountAccessesChecked= argument.getValue().getAspspAccountAccesses();
-        AspspAccountAccess aspspAccountAccessChecked = aspspAccountAccessesChecked.get(0);
         assertSame(aspspAccountAccessesChecked.size(), aspspAccountAccesses.size());
-        assertSame(aspspAccountAccessChecked.getAccountIdentifier(), iban);
-        assertSame(aspspAccountAccessChecked.getCurrency(), currency);
+        assertSame(aspspAccountAccessesChecked.get(0).getAccountIdentifier(), iban);
+        assertSame(aspspAccountAccessesChecked.get(0).getCurrency(), currency);
         assertSame(argument.getValue().getExpireDate(), validUntil);
         assertEquals(argument.getValue().getAllowedFrequencyPerDay(), frequencyPerDay);
         assertEquals(argument.getValue().getUsageCounter(), frequencyPerDay);
@@ -539,7 +527,7 @@ public class CmsPsuAisServiceTest {
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1);
         when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(buildFinalisedConsent());
         //When
-        boolean saved = cmsPsuAisService.saveAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, "");
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, "");
         //Then
         assertFalse(saved);
     }
@@ -550,7 +538,7 @@ public class CmsPsuAisServiceTest {
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1);
         when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(buildFinalisedConsent());
         //When
-        boolean saved = cmsPsuAisService.saveAccountAccessInConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, accountAccessRequest, "");
+        boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, accountAccessRequest, "");
         //Then
         assertFalse(saved);
     }
@@ -649,5 +637,19 @@ public class CmsPsuAisServiceTest {
 
     private TppRedirectUri buildTppRedirectUri() {
         return new TppRedirectUri(TPP_OK_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+    }
+
+    private AisAccountAccess getAisAccountAccess(AccountReference accountReference) {
+        return new AisAccountAccess(
+            Collections.singletonList(accountReference),
+            Collections.singletonList(accountReference),
+            Collections.singletonList(accountReference));
+    }
+
+    private AccountReference getAccountReference(String iban, Currency currency) {
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(iban);
+        accountReference.setCurrency(currency);
+        return accountReference;
     }
 }

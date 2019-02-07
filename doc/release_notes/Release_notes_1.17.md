@@ -40,4 +40,4 @@ one can export AIS Consents that contain certain account id. Method `exportConse
 
 ## Implemented java interface and endpoint to save Account Access object in Consent by Online banking
 Now by accessing `/psu-api/v1/ais/consent/{consent-id}/save-access` endpoint(or corresponding method in `CmsPsuAisService.java`)
-online banking can save AccountAccess (along with `aspspAccountId` and `resourceId` if necessary), frequency per day and expiration date in consent.
+online banking can update AccountAccess (along with `aspspAccountId` and `resourceId` if necessary), frequency per day and expiration date in consent.

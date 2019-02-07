@@ -224,7 +224,7 @@ public class CmsPsuAisController {
         @RequestBody CmsAisConsentAccessRequest accountAccessRequest,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
-        boolean accessSaved = cmsPsuAisService.saveAccountAccessInConsent(consentId, accountAccessRequest, instanceId);
+        boolean accessSaved = cmsPsuAisService.updateAccountAccessInConsent(consentId, accountAccessRequest, instanceId);
 
         if (accessSaved) {
             return ResponseEntity.ok().build();
