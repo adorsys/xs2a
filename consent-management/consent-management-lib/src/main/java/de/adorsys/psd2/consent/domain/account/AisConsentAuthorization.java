@@ -41,7 +41,7 @@ public class AisConsentAuthorization extends InstanceDependableEntity {
     private PsuData psuData;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "consent_id")
+    @JoinColumn(name = "consent_id", nullable = false)
     private AisConsent consent;
 
     @Column(name = "sca_status", nullable = false)

@@ -17,10 +17,10 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ConsentType;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -125,7 +125,7 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Type of the consent request: GLOBAL, BANK_OFFERED or DEDICATED_ACCOUNTS.", required = true, example = "GLOBAL")
     private AisConsentRequestType aisConsentRequestType;
 
-    @Column(name = "creation_timestamp")
+    @Column(name = "creation_timestamp", nullable = false)
     @ApiModelProperty(value = "Creation timestamp of the consent.", required = true, example = "2018-12-28T00:00:00Z")
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
 
