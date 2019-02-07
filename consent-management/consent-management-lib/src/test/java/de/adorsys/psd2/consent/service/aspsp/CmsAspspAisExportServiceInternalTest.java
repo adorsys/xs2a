@@ -53,6 +53,8 @@ public class CmsAspspAisExportServiceInternalTest {
     private static final String PSU_ID = "psu id";
     private static final String WRONG_PSU_ID = "wrong psu id";
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final String ASPSP_ACCOUNT_ID = "aspsp account id";
+    private static final String WRONG_ASPSP_ACCOUNT_ID = "wrong aspsp account id";
 
     private PsuIdData psuIdData;
     private PsuIdData wrongPsuIdData;
@@ -193,6 +195,44 @@ public class CmsAspspAisExportServiceInternalTest {
         // Then
         assertTrue(aisConsents.isEmpty());
         verify(aisConsentSpecification, never()).byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
+    }
+
+    @Test
+    public void exportConsentsByAccountId_success() {
+        // Given
+        //noinspection unchecked
+        when(aisConsentRepository.findAll(any(Specification.class)))
+            .thenReturn(Collections.singletonList(buildAisConsent()));
+        AisAccountConsent expectedConsent = buildAisAccountConsent();
+
+        // When
+        Collection<AisAccountConsent> aisConsents =
+            cmsAspspAisExportServiceInternal.exportConsentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertFalse(aisConsents.isEmpty());
+        assertTrue(aisConsents.contains(expectedConsent));
+        verify(aisConsentSpecification, times(1))
+            .byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+    }
+
+    @Test
+    public void exportConsentsByAccountId_failure_wrongAspspAccountId() {
+        // Given
+        //noinspection unchecked
+        when(aisConsentRepository.findAll(any(Specification.class)))
+            .thenReturn(Collections.emptyList());
+
+        // When
+        Collection<AisAccountConsent> aisConsents =
+            cmsAspspAisExportServiceInternal.exportConsentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertTrue(aisConsents.isEmpty());
+        verify(aisConsentSpecification, times(1))
+            .byAspspAccountIdAndCreationPeriodAndInstanceId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     private PsuIdData buildPsuIdData(String psuId) {

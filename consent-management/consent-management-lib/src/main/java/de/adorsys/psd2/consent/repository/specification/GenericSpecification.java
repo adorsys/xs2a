@@ -109,7 +109,7 @@ public abstract class GenericSpecification {
      * @return resulting specification
      */
     protected <T> Specification<T> byAspspAccountId(@Nullable String aspspAccountId) {
-            return provideSpecificationForEntityAttribute(ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId);
+        return provideSpecificationForEntityAttribute(ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId);
     }
 
     /**

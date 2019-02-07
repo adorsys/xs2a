@@ -33,3 +33,7 @@ Now tables created via generated DDL should have the same constraints as the tab
 
 Attention: if you've bypassed the CMS and inserted some records into `pis_payment_data` table with `common_payment_id` 
 column set to `null` directly, you'll have to assign some value to this column before updating the database.
+
+## Provide endpoint to export AIS consents by aspspAccountId from CMS to ASPSP
+By accessing endpoint GET `/aspsp-api/v1/ais/consents/account/{account-id}` (or corresponding method in `CmsAspspAisExportService.java`) 
+one can export AIS Consents that contain certain account id. Method `exportConsentsByAccountId` now implemented and working.
