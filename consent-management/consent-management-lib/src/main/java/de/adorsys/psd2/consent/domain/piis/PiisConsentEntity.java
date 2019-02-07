@@ -89,4 +89,7 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @Column(name = "allowed_frequency_per_day", nullable = false)
     @ApiModelProperty(value = "Maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int allowedFrequencyPerDay;
+
+    @Column(name = "creation_timestamp", nullable = false)
+    private OffsetDateTime creationTimestamp = OffsetDateTime.now();
 }

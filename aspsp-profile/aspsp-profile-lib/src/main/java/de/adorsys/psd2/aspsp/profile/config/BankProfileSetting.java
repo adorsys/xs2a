@@ -45,7 +45,7 @@ public class BankProfileSetting {
     /**
      * List of SCA Approach supported by ASPSP ordered by priority
      */
-    private List<ScaApproach> scaApproaches;
+    private List<ScaApproach> scaApproaches = new ArrayList<>();
 
     /**
      * A signature of the request by the TPP on application level.
