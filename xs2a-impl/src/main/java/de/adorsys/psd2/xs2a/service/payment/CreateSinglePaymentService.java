@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
@@ -50,7 +51,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 public class CreateSinglePaymentService implements CreatePaymentService<SinglePayment, SinglePaymentInitiationResponse> {
     private final ScaPaymentService scaPaymentService;
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
-    private final PisScaAuthorisationService pisScaAuthorisationService;
+    private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
@@ -91,6 +92,8 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
 
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred(), response.isMultilevelScaRequired());
         if (implicitMethod) {
+            PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
+
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, PaymentType.SINGLE, psuData);
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<SinglePaymentInitiationResponse>builder()

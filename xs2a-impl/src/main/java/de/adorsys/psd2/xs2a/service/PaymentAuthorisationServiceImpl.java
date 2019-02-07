@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -44,7 +45,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationService {
     private final Xs2aEventService xs2aEventService;
-    private final PisScaAuthorisationService pisScaAuthorisationService;
+    private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
 
     /**
@@ -68,6 +69,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
+        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
         return pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, paymentType, psuData)
                    .map(resp -> ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                                     .body(resp)
@@ -95,6 +97,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
                        .build();
         }
 
+        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthorisationService.updateCommonPaymentPsuData(request);
 
         if (response.hasError()) {
@@ -117,6 +120,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     public ResponseObject<Xs2aAuthorisationSubResources> getPaymentInitiationAuthorisations(String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
+        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
         return pisScaAuthorisationService.getAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
@@ -135,6 +139,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     public ResponseObject<ScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_SCA_STATUS_REQUEST_RECEIVED);
 
+        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
         Optional<ScaStatus> scaStatus = pisScaAuthorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
 
         if (!scaStatus.isPresent()) {

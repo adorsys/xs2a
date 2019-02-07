@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.advice;
 
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.MethodParameter;
@@ -33,8 +33,8 @@ import java.util.Optional;
 @ControllerAdvice(assignableTypes = {PaymentController.class})
 public class PaymentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
 
-    public PaymentHeaderModifierAdvice(AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(aspspProfileServiceWrapper);
+    public PaymentHeaderModifierAdvice(ScaApproachResolver scaApproachResolver) {
+        super(scaApproachResolver);
     }
 
     @Override
@@ -50,9 +50,9 @@ public class PaymentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
                 || "_startPaymentInitiationCancellationAuthorisation".equals(methodName)
                 || "_updatePaymentCancellationPsuData".equals(methodName)
                 || "_updatePaymentPsuData".equals(methodName)) {
-            response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
+            response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
         } else if ("_initiatePayment".equals(methodName)) {
-            response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
+            response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
             response.getHeaders().add("Location", getLocationHeaderForInitiatePayment(body));
         }
 

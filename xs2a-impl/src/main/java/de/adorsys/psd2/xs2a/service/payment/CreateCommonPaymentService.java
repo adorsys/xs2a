@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
@@ -50,7 +51,7 @@ public class CreateCommonPaymentService implements CreatePaymentService<CommonPa
     private final ScaPaymentService scaPaymentService;
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
     private final AuthorisationMethodDecider authorisationMethodDecider;
-    private final PisScaAuthorisationService pisScaAuthorisationService;
+    private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     private final PisAspspDataService pisAspspDataService;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
@@ -86,6 +87,7 @@ public class CreateCommonPaymentService implements CreatePaymentService<CommonPa
 
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred(), response.isMultilevelScaRequired());
         if (implicitMethod) {
+            PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, payment.getPaymentType(), paymentInitiationParameters.getPsuData());
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<PaymentInitiationResponse>builder()

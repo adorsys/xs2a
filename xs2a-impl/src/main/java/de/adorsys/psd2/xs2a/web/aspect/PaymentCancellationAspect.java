@@ -20,8 +20,8 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,8 +30,9 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentController> {
-    public PaymentCancellationAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService) {
-        super(aspspProfileService, messageService);
+
+    public PaymentCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService) {
+        super(scaApproachResolver, messageService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args( paymentType, paymentProduct, paymentId)", returning = "result", argNames = "result,paymentType,paymentProduct,paymentId")

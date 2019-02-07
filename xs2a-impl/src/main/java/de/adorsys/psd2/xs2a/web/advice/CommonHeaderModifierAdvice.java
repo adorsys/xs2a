@@ -16,8 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.advice;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -32,7 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @ControllerAdvice(basePackages = "de.adorsys.psd2.xs2a.web.controller")
 public class CommonHeaderModifierAdvice implements ResponseBodyAdvice<Object> {
-    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    protected final ScaApproachResolver scaApproachResolver;
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -43,14 +42,6 @@ public class CommonHeaderModifierAdvice implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         response.getHeaders().add("X-Request-Id", request.getHeaders().getFirst("X-Request-Id"));
         return body;
-    }
-
-    protected ScaApproach getScaApproach() {
-        ScaApproach scaApproach = aspspProfileServiceWrapper.getScaApproach();
-        if (scaApproach == ScaApproach.OAUTH) {
-            scaApproach = ScaApproach.REDIRECT;
-        }
-        return scaApproach;
     }
 
     protected boolean hasError(Object body, Class expectedClass) {

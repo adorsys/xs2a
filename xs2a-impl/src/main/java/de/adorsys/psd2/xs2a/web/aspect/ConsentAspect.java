@@ -26,9 +26,9 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
 import lombok.extern.slf4j.Slf4j;
@@ -45,8 +45,8 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final RedirectLinkBuilder redirectLinkBuilder;
 
-    public ConsentAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder) {
-        super(aspspProfileService, messageService);
+    public ConsentAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder) {
+        super(scaApproachResolver, messageService);
         this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectLinkBuilder = redirectLinkBuilder;
     }
@@ -75,9 +75,9 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private Links buildLinksForConsentResponse(CreateConsentResponse response, boolean explicitPreferred) {
         Links links = new Links();
 
-        if (ScaApproach.EMBEDDED == aspspProfileService.getScaApproach()) {
+        if (ScaApproach.EMBEDDED == scaApproachResolver.resolveScaApproach()) {
             buildLinkForEmbeddedScaApproach(response, links, explicitPreferred);
-        } else if (ScaApproach.REDIRECT == aspspProfileService.getScaApproach()) {
+        } else if (ScaApproach.REDIRECT == scaApproachResolver.resolveScaApproach()) {
             // TODO add actual value during imlementation of multilevel sca https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/515
             if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, false)) {
                 links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
