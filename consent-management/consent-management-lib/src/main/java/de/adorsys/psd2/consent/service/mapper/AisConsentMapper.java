@@ -28,12 +28,10 @@ import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -110,14 +108,11 @@ public class AisConsentMapper {
     }
 
     public Set<AspspAccountAccess> mapAspspAccountAccesses(AisAccountAccess aisAccountAccess) {
-        Map<TypeAccess, List<AccountReference>> accessesMap = new HashMap<>();
-        accessesMap.put(TypeAccess.ACCOUNT, aisAccountAccess.getAccounts());
-        accessesMap.put(TypeAccess.BALANCE, aisAccountAccess.getBalances());
-        accessesMap.put(TypeAccess.TRANSACTION, aisAccountAccess.getTransactions());
-
-        return accessesMap.entrySet().stream()
-                   .flatMap(entry -> mapToAspspAccountAccessStream(entry.getKey(), entry.getValue()))
-                   .collect(Collectors.toSet());
+        Set<AspspAccountAccess> accesses = new HashSet<>();
+        accesses.addAll(getAspspAccountAccesses(TypeAccess.ACCOUNT, aisAccountAccess.getAccounts()));
+        accesses.addAll(getAspspAccountAccesses(TypeAccess.BALANCE, aisAccountAccess.getBalances()));
+        accesses.addAll(getAspspAccountAccesses(TypeAccess.TRANSACTION, aisAccountAccess.getTransactions()));
+        return accesses;
     }
 
     private AisAccountAccess mapToAisAccountAccess(List<TppAccountAccess> accountAccesses) {
@@ -146,12 +141,12 @@ public class AisConsentMapper {
                    .collect(Collectors.toList());
     }
 
-    @NotNull
-    private Stream<AspspAccountAccess> mapToAspspAccountAccessStream(TypeAccess typeAccess, List<AccountReference> accountReferences) {
+    private Set<AspspAccountAccess> getAspspAccountAccesses(TypeAccess typeAccess, List<AccountReference> accountReferences) {
         return Optional.ofNullable(accountReferences)
-                   .orElseGet(Collections::emptyList)
-                   .stream()
-                   .map(ar -> mapToAspspAccountAccess(typeAccess, ar));
+                   .map(lst -> lst.stream()
+                                   .map(acc -> mapToAspspAccountAccess(typeAccess, acc))
+                                   .collect(Collectors.toSet()))
+                   .orElse(Collections.emptySet());
     }
 
     private AspspAccountAccess mapToAspspAccountAccess(TypeAccess typeAccess, AccountReference accountReference) {

@@ -106,8 +106,10 @@ public interface CmsPsuAisService {
 
     /**
      * Stores account access to Consent in CMS. Any existing account accesses will be removed and overwritten.
+     *
      * @param consentId ID of Consent, in which AccountAccess shall be saved
      * @param accountAccessRequest AccountAccess object with lists of AccountReferences. If empty, corresponding accesses to be removed.
+     * @param instanceId Bank instance ID
      * @return false if Consent with this ID not found or in wrong state (Rejected, Revoked, Expired, Terminated by TPP or Terminated by ASPSP). True if consent was found.
      */
     boolean saveAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId);
