@@ -19,23 +19,18 @@ package de.adorsys.psd2.xs2a.config;
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.service.authorization.ais.*;
-import de.adorsys.psd2.xs2a.service.authorization.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
-// TODO refactor to AbstractFactory https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/298
 @Configuration
 @RequiredArgsConstructor
 public class ScaAuthorisationConfig {
-    private final AspspProfileServiceWrapper aspspProfileService;
 
     @Bean
     public ScaPaymentService scaPaymentService(OauthScaPaymentService oauthScaPaymentService,
@@ -71,23 +66,8 @@ public class ScaAuthorisationConfig {
         }
     }
 
-    @Bean
-    public PisScaAuthorisationService pisScaAuthorisationService(PisAuthorisationService authorisationService,
-                                                                 Xs2aPisCommonPaymentMapper pisCommonPaymentMapper) {
-        ScaApproach scaApproach = getScaApproach();
-        if (OAUTH == scaApproach) {
-            return new OauthPisScaAuthorisationService();
-        }
-        if (DECOUPLED == scaApproach) {
-            return new DecoupledPisScaAuthorisationService();
-        }
-        if (EMBEDDED == scaApproach) {
-            return new EmbeddedPisScaAuthorisationService(authorisationService, pisCommonPaymentMapper);
-        }
-        return new RedirectPisScaAuthorisationService(authorisationService, pisCommonPaymentMapper);
-    }
-
+    // TODO will be implemented in https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/597
     private ScaApproach getScaApproach() {
-        return aspspProfileService.getScaApproach();
+        return REDIRECT;
     }
 }

@@ -109,7 +109,7 @@ public class PaymentController implements PaymentApi {
     @Override
     public ResponseEntity initiatePayment(Object body, UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct,
                                           String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType,
-                                          String psUCorporateID, String psUCorporateIDType, String consentID, String tpPRedirectPreferred,
+                                          String psUCorporateID, String psUCorporateIDType, String consentID, boolean tppRedirectPreferred,
                                           String tpPRedirectURI, String tpPNokRedirectURI, boolean tpPExplicitAuthorisationPreferred,
                                           String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                           String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,

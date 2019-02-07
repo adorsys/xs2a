@@ -80,7 +80,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {
     CorsConfigurationProperties.class,
     ObjectMapperConfig.class,
-    ScaAuthorisationConfigRedirectTest.class,
+    ScaAuthorisationConfig.class,
     WebConfig.class,
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class

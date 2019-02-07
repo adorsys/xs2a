@@ -18,9 +18,9 @@ package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -30,8 +30,9 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController> {
-    public PaymentInitiationAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder) {
-        super(aspspProfileService, messageService, authorisationMethodDecider, redirectLinkBuilder);
+
+    public PaymentInitiationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder) {
+        super(scaApproachResolver, messageService, authorisationMethodDecider, redirectLinkBuilder);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters, ..)", returning = "result", argNames = "result,payment,requestParameters")
