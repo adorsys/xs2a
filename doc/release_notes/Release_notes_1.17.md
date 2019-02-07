@@ -26,3 +26,10 @@ ASPSP profile was extended with list of approaches (in order of priority - first
 
 Choice of SCA approaches depends on header parameter in payment,consent or signing basket initiation request - `TPP-Redirect-Preferred`. For Payment Cancellation parameter "TPP-Redirect-Preferred" is not used.
 If `TPP-Redirect-Preferred` is true and ASPSP supports REDIRECT approach, then `REDIRECT` approach is used. Otherwise first approach in ASPSP-profile option `scaApproaches` is used.
+
+## Bugfix: remove discrepancies between not null constraints in migration files and constraints in Java classes
+There were some discrepancies between not null constraints specified in liquibase migration files and constraints specified in Java classes that were removed.
+Now tables created via generated DDL should have the same constraints as the tables created via liquibase.
+
+Attention: if you've bypassed the CMS and inserted some records into `pis_payment_data` table with `common_payment_id` 
+column set to `null` directly, you'll have to assign some value to this column before updating the database.

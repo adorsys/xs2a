@@ -52,7 +52,7 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
     private TransactionStatus transactionStatus;
 
     @Lob
-    @Column(name = "payment", nullable = false)
+    @Column(name = "payment")
     private byte[] payment;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -72,7 +72,7 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
         orphanRemoval = true)
     private List<PisPaymentData> payments = new ArrayList<>();
 
-    @Column(name = "creation_timestamp")
+    @Column(name = "creation_timestamp", nullable = false)
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
 
     @Column(name = "multilevel_sca_required", nullable = false)

@@ -41,7 +41,7 @@ public class TppInfoEntity extends InstanceDependableEntity {
 
     @ElementCollection
     @CollectionTable(name = "tpp_info_role", joinColumns = @JoinColumn(name = "tpp_info_id"))
-    @Column(name = "tpp_role")
+    @Column(name = "tpp_role", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private List<TppRole> tppRoles;
 
