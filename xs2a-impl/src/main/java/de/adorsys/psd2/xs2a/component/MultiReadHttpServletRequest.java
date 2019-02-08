@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.component;
 
 import org.apache.commons.io.IOUtils;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -52,7 +53,7 @@ public class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
         IOUtils.copy(super.getInputStream(), cachedBytes);
     }
 
-    public class CachedServletInputStream extends ServletInputStream {
+    private class CachedServletInputStream extends ServletInputStream {
         private ByteArrayInputStream input;
 
         public CachedServletInputStream() {
@@ -63,5 +64,22 @@ public class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
         public int read() {
             return input.read();
         }
+
+		@Override
+		public boolean isFinished() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean isReady() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void setReadListener(ReadListener readListener) {
+			// TODO Auto-generated method stub
+		}
     }
 }
