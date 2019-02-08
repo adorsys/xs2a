@@ -198,7 +198,7 @@ public class Xs2aAisConsentMapper {
             ais.getAccounts(),
             ais.getBalances(),
             ais.getTransactions(),
-            null,
-            null);
+            null != ais.getAvailableAccounts() ? Xs2aAccountAccessType.valueOf(ais.getAvailableAccounts()) : null,
+            null != ais.getAllPsd2() ? Xs2aAccountAccessType.valueOf(ais.getAllPsd2()) : null);
     }
 }

@@ -26,4 +26,8 @@ public class AisAccountAccess {
     private List<AccountReference> accounts;
     private List<AccountReference> balances;
     private List<AccountReference> transactions;
+
+    private String availableAccounts;
+    private String allPsd2;
+
 }

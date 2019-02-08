@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ConsentType;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -128,6 +129,17 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "creation_timestamp", nullable = false)
     @ApiModelProperty(value = "Creation timestamp of the consent.", required = true, example = "2018-12-28T00:00:00Z")
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
+
+    @Column(name = "available_accounts")
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the available accounts access type: ALL_ACCOUNTS, ALL_ACCOUNTS_WITH_BALANCES.", required = true, example = "ALL_ACCOUNTS")
+    private AisAccountAccessType availableAccounts;
+
+    @Column(name = "all_psd2")
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the account access types.", required = true, example = "ALL_ACCOUNTS")
+    private AisAccountAccessType allPsd2;
+
 
     public List<TppAccountAccess> getAccesses() {
         return new ArrayList<>(accesses);

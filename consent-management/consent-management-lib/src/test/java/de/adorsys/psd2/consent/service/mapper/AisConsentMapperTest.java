@@ -104,13 +104,13 @@ public class AisConsentMapperTest {
     private AisAccountAccess buildAisAccountAccessAccounts() {
         AccountReference accountReference = new AccountReference(AccountReferenceType.IBAN, ACCOUNT_IBAN, CURRENCY);
         List<AccountReference> accountReferences = Collections.singletonList(accountReference);
-        return new AisAccountAccess(accountReferences, Collections.emptyList(), Collections.emptyList());
+        return new AisAccountAccess(accountReferences, Collections.emptyList(), Collections.emptyList(), null, null);
     }
 
     private AisAccountAccess buildAisAccountAccessAccountsWithResourceId() {
         AccountReference accountReference = new AccountReference(AccountReferenceType.IBAN, ACCOUNT_IBAN, CURRENCY,
                                                                  RESOURCE_ID, ASPSP_ACCOUNT_ID);
         List<AccountReference> accountReferences = Collections.singletonList(accountReference);
-        return new AisAccountAccess(accountReferences, Collections.emptyList(), Collections.emptyList());
+        return new AisAccountAccess(accountReferences, Collections.emptyList(), Collections.emptyList(), null, null);
     }
 }

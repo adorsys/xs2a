@@ -335,7 +335,8 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
         consent.setAisConsentRequestType(getRequestTypeFromAccess(request.getAccess()));
-
+        consent.setAvailableAccounts(request.getAccess().getAvailableAccounts());
+        consent.setAllPsd2(request.getAccess().getAllPsd2());
         return consent;
     }
 
