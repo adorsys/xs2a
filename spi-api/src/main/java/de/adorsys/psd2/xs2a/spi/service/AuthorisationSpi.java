@@ -21,8 +21,10 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -71,4 +73,20 @@ interface AuthorisationSpi<T> {
      */
     @NotNull
     SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData);
+
+    /**
+     * Notifies a decoupled app about starting SCA. AuthorisationId is provided to allow the app to access CMS(the same way like redirectId is used in Redirect Approach). Used only with decoupled SCA Approach.
+     *
+     * @param contextData            holder of call's context data (e.g. about PSU and TPP)
+     * @param authorisationId        a unique identifier of authorisation process
+     * @param authenticationMethodId Id of a chosen sca method(for a decoupled SCA method within embedded approach)
+     * @param businessObject         generic consent/payment object
+     * @param aspspConsentData       Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                               May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return Return a response object, containing a message from ASPSP to PSU, giving him instructions regarding decoupled SCA starting.
+     */
+    @NotNull
+    default SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @NotNull String authenticationMethodId, @NotNull T businessObject, @NotNull AspspConsentData aspspConsentData) {
+        return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    }
 }
