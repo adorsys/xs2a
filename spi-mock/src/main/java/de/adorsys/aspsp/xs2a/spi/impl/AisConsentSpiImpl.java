@@ -27,10 +27,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -206,7 +203,8 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     }
 
     @Override
-    public @NotNull SpiResponse<VoidResponse> verifyScaAuthorisation(@NotNull SpiContextData spiContextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+    @NotNull
+    public SpiResponse<VoidResponse> verifyScaAuthorisation(@NotNull SpiContextData spiContextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
             aspspRestTemplate.exchange(remoteSpiUrls.applyStrongUserAuthorisationForAis(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), Void.class);
             return SpiResponse.<VoidResponse>builder()
@@ -292,5 +290,11 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         return accountDetails.stream()
                    .filter(acc -> acc.getCurrency() == reference.getCurrency())
                    .findFirst();
+    }
+
+    @Override
+    @NotNull
+    public SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @NotNull String authenticationMethodId, @NotNull SpiAccountConsent businessObject, @NotNull AspspConsentData aspspConsentData) {
+        return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }
