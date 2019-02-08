@@ -279,7 +279,7 @@ variables: &variables
         --set dockerImageOnlineBankingBackend="$IMAGE_WITH_SHA_ONLINE_BANKING_BACKEND"
         --set dockerImageOnlineBankingUi="$IMAGE_WITH_SHA_ONLINE_BANKING_UI"
         --namespace=${OPENSHIFT_NAMESPACE}
-        --wait --timeout=600
+        --wait --timeout=1800
         -f env/${HELM_VALUE}
 
 # ------------------------------------------------------------------
