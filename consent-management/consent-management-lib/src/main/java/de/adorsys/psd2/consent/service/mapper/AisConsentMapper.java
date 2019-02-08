@@ -120,8 +120,8 @@ public class AisConsentMapper {
         return new AisAccountAccess(mapToInitialAccountReferences(accesses, TypeAccess.ACCOUNT),
                                     mapToInitialAccountReferences(accesses, TypeAccess.BALANCE),
                                     mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
-            Optional.ofNullable(consent.getAvailableAccounts()).isPresent() ? consent.getAvailableAccounts().name() : null,
-            Optional.ofNullable(consent.getAllPsd2()).isPresent() ? consent.getAllPsd2().name() : null);
+                                    null != consent.getAvailableAccounts() ? consent.getAvailableAccounts().name() : null,
+                                    null != consent.getAllPsd2() ? consent.getAllPsd2().name() : null);
     }
 
     private List<AccountReference> mapToInitialAccountReferences(List<TppAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -136,8 +136,8 @@ public class AisConsentMapper {
         return new AisAccountAccess(mapToAccountReferences(accesses, TypeAccess.ACCOUNT),
                                     mapToAccountReferences(accesses, TypeAccess.BALANCE),
                                     mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
-            Optional.ofNullable(consent.getAvailableAccounts()).isPresent() ? consent.getAvailableAccounts().name() : null,
-            Optional.ofNullable(consent.getAllPsd2()).isPresent() ? consent.getAllPsd2().name() : null);
+                                    null != consent.getAvailableAccounts() ? consent.getAvailableAccounts().name() : null,
+                                    null != consent.getAllPsd2() ? consent.getAllPsd2().name() : null);
     }
 
     private List<AccountReference> mapToAccountReferences(List<AspspAccountAccess> aisAccounts, TypeAccess typeAccess) {

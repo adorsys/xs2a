@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.api.ais;
 
 import io.swagger.annotations.ApiModel;
 
+// TODO to be removed in future: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/671
 @ApiModel(description = "AccountAccess type", value = "AisAccountAccessType")
 public enum AisAccountAccessType {
     ALL_ACCOUNTS,
