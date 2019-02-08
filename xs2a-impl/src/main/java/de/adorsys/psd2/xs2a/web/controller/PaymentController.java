@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,7 +135,7 @@ public class PaymentController implements PaymentApi {
                                                 .build());
     }
 
-    //Method for pain.001 payments
+    //Method for pain.001 and other ray payment products
     @Override
     public ResponseEntity<Object> initiatePayment(UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct,
                                                   String xmlSct, String jsonStandingorderType, String digest, String signature,
