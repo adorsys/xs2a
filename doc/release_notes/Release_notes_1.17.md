@@ -42,5 +42,20 @@ one can export AIS Consents that contain certain account id. Method `exportConse
 Now by accessing `/psu-api/v1/ais/consent/{consent-id}/save-access` endpoint(or corresponding method in `CmsPsuAisService.java`)
 online banking can update AccountAccess (along with `aspspAccountId` and `resourceId` if necessary), frequency per day and expiration date in consent.
 
+## Bugfix: Additional payment products work only with "pain-" prefix
+
+From now on SPI Developer may define any payment product they would like to support.
+Only four payment products are considered as "standard" and processed in XS2A with the standard flow:
+* sepa-credit-transfers
+* instant-sepa-credit-transfers
+* target-2-payments
+* cross-border-credit-transfers
+
+Any other payment product will be processed as byte-array to SPI level. SPI Developer needs to handle the payload
+in SPI Connector.
+Right now only content types `application/json` and `application/xml` are supported (support of `multipart/form-data`
+is provided additionally to setup PAIN periodic payments).
+Support of content type `text/plain` is planned.
+
 ## Bugfix: added missing ais_consent fields
 Now while sending POST request to the `/v1/consents` endpoint the fields "availableAccounts" and "allPsd2" are persisted to the ais_consent table. Also they are available while calling the connector.

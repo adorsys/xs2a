@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,17 @@ package de.adorsys.psd2.xs2a.core.profile;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "PaymentType", value = "Payment types of ASPSP")
 public enum PaymentType {
     SINGLE("payments"),
     BULK("bulk-payments"),
     PERIODIC("periodic-payments");
 
-    private final static Map<String, PaymentType> container = new HashMap<>();
+    private static final Map<String, PaymentType> container = new HashMap<>();
 
     private String value;
 
