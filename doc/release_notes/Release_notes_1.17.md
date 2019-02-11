@@ -42,5 +42,5 @@ one can export AIS Consents that contain certain account id. Method `exportConse
 Now by accessing `/psu-api/v1/ais/consent/{consent-id}/save-access` endpoint(or corresponding method in `CmsPsuAisService.java`)
 online banking can update AccountAccess (along with `aspspAccountId` and `resourceId` if necessary), frequency per day and expiration date in consent.
 
-## Bugfix: fixed consent fields lost
+## Bugfix: added missing ais_consent fields
 Now while sending POST request to the `/v1/consents` endpoint the fields "availableAccounts" and "allPsd2" are persisted to the ais_consent table. Also they are available while calling the connector.

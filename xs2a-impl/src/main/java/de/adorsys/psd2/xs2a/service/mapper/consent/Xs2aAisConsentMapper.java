@@ -198,7 +198,20 @@ public class Xs2aAisConsentMapper {
             ais.getAccounts(),
             ais.getBalances(),
             ais.getTransactions(),
-            null != ais.getAvailableAccounts() ? Xs2aAccountAccessType.valueOf(ais.getAvailableAccounts()) : null,
-            null != ais.getAllPsd2() ? Xs2aAccountAccessType.valueOf(ais.getAllPsd2()) : null);
+            getAllAvailableAccounts(ais),
+            getAllPsd2(ais));
     }
+
+    private Xs2aAccountAccessType getAllAvailableAccounts(AisAccountAccess ais) {
+        return Optional.ofNullable(ais.getAvailableAccounts())
+            .map(a -> Xs2aAccountAccessType.valueOf(ais.getAvailableAccounts()))
+            .orElse(null);
+    }
+
+    private Xs2aAccountAccessType getAllPsd2(AisAccountAccess ais) {
+        return Optional.ofNullable(ais.getAllPsd2())
+            .map(a -> Xs2aAccountAccessType.valueOf(ais.getAllPsd2()))
+            .orElse(null);
+    }
+
 }
