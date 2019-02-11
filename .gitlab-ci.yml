@@ -236,10 +236,12 @@ variables: &variables
 
 .helm_env_deploy: &helm_env_deploy
   image: adorsys/ci-helm:2.10
+  before_script:
+    - eval $(gpg-agent --daemon --quiet --allow-preset-passphrase)
+    - echo -n "${GPG_KEY}" | gpg --quiet --batch --import -
   script:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.adorsys.de/adorsys/xs2a/xs2a-openshift.git .helm
     - cd .helm/charts/xs2a
-    - helm init --client-only
     - oc login openshift.adorsys.de --token=${HELM_TOKEN}
       # get docker image commit hashes
     - SHA_XS2A=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG | jq -r .Digest)
@@ -250,19 +252,19 @@ variables: &variables
     - IMAGE_WITH_SHA_CNT_MGMNT="$DOCKER_IMAGE_NAME_CNT_MGMNT@$SHA_CNT_MGMNT"
     - IMAGE_WITH_SHA_ASPSP_PROFILE="$DOCKER_IMAGE_NAME_ASPSP_PROFILE@$SHA_ASPSP_PROFILE"
       # diff helm changes
-    - helm diff upgrade ${HELM_RELEASE} .
+    - helm-wrapper diff upgrade ${HELM_RELEASE} .
         --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
         --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
         --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
-        --allow-unreleased -q -f env/${HELM_VALUE}
+        --allow-unreleased -q -f env/${HELM_STAGE}/env.yaml -f env/${HELM_STAGE}/secrets.yaml || true
       # apply helm changes
-    - helm upgrade -i ${HELM_RELEASE} .
+    - helm-wrapper upgrade -i ${HELM_RELEASE} .
         --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
         --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
         --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
         --namespace=${OPENSHIFT_NAMESPACE}
-        --wait --timeout=600
-        -f env/${HELM_VALUE}
+        --wait --timeout=600 --force
+        -f env/${HELM_STAGE}/env.yaml -f env/${HELM_STAGE}/secrets.yaml
 
 # ------------------------------------------------------------------
 # jobs
@@ -427,7 +429,7 @@ deploy_develop_stage:
     OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
     DOCKER_TAG: "develop"
     HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
-    HELM_VALUE: develop.yaml
+    HELM_STAGE: "develop"
   environment:
     name: dev
     url: ~
