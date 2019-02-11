@@ -59,8 +59,8 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SERVICE_INVALID_405;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Slf4j
 @Service
@@ -151,6 +151,13 @@ public class PaymentService {
         }
 
         PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.get();
+
+        if(commonPaymentResponse.getPaymentType() != paymentType) {
+            return ResponseObject.builder()
+                       .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for adressed payment")))
+                       .build();
+        }
+
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(commonPaymentResponse);
 
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
@@ -194,12 +201,19 @@ public class PaymentService {
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<TransactionStatus>builder()
-                       .fail(new MessageError(PIS_400, new TppMessageInformation(MessageCategory.ERROR, FORMAT_ERROR, "Payment not found")))
+                       .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_403, "Payment not found")))
                        .build();
         }
 
         // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
+
+        if(pisCommonPaymentResponse.getPaymentType() != paymentType) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for adressed payment")))
+                       .build();
+        }
+
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             return ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build();
         }
@@ -268,6 +282,13 @@ public class PaymentService {
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
+
+        if(pisCommonPaymentResponse.getPaymentType() != paymentType) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for adressed payment")))
+                       .build();
+        }
+
         SpiPayment spiPayment = null;
 
         if (pisCommonPaymentResponse.getPaymentData() != null) {
