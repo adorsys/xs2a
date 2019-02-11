@@ -254,7 +254,7 @@ variables: &variables
         --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
         --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
         --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
-        --allow-unreleased -q
+        --allow-unreleased -q -f env/${HELM_VALUE}
       # apply helm changes
     - helm upgrade -i ${HELM_RELEASE} .
         --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
@@ -262,6 +262,7 @@ variables: &variables
         --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
         --namespace=${OPENSHIFT_NAMESPACE}
         --wait --timeout=600
+        -f env/${HELM_VALUE}
 
 # ------------------------------------------------------------------
 # jobs
