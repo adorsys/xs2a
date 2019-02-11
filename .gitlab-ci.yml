@@ -241,45 +241,27 @@ variables: &variables
     - cd .helm/charts/xs2a
     - helm init --client-only
     - oc login openshift.adorsys.de --token=${HELM_TOKEN}
-    - echo "${VAULT_PWD}" > $ANSIBLE_VAULT_PASSWORD_FILE
-    - ansible-vault view env/${HELM_VALUE}.enc > env/${HELM_VALUE}
       # get docker image commit hashes
     - SHA_XS2A=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG | jq -r .Digest)
-    - SHA_MOCKSRV=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_MOCKSRV:$DOCKER_TAG | jq -r .Digest)
-    - SHA_KEYCLOAK=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG | jq -r .Digest)
     - SHA_CNT_MGMNT=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG | jq -r .Digest)
     - SHA_ASPSP_PROFILE=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG | jq -r .Digest)
-    - SHA_ONLINE_BANKING_BACKEND=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND:$DOCKER_TAG | jq -r .Digest)
-    - SHA_ONLINE_BANKING_UI=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG | jq -r .Digest)
       # assemble full docker image name
     - IMAGE_WITH_SHA_XS2A="$DOCKER_IMAGE_NAME_XS2A@$SHA_XS2A"
-    - IMAGE_WITH_SHA_MOCKSRV="$DOCKER_IMAGE_NAME_MOCKSRV@$SHA_MOCKSRV"
-    - IMAGE_WITH_SHA_KEYCLOAK="$DOCKER_IMAGE_NAME_KEYCLOAK@$SHA_KEYCLOAK"
     - IMAGE_WITH_SHA_CNT_MGMNT="$DOCKER_IMAGE_NAME_CNT_MGMNT@$SHA_CNT_MGMNT"
     - IMAGE_WITH_SHA_ASPSP_PROFILE="$DOCKER_IMAGE_NAME_ASPSP_PROFILE@$SHA_ASPSP_PROFILE"
-    - IMAGE_WITH_SHA_ONLINE_BANKING_BACKEND="$DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND@$SHA_ONLINE_BANKING_BACKEND"
-    - IMAGE_WITH_SHA_ONLINE_BANKING_UI="$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI@$SHA_ONLINE_BANKING_UI"
       # diff helm changes
     - helm diff upgrade ${HELM_RELEASE} .
         --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
-        --set dockerImageMocksrv="$IMAGE_WITH_SHA_MOCKSRV"
-        --set dockerImageKeycloak="$IMAGE_WITH_SHA_KEYCLOAK"
         --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
         --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
-        --set dockerImageOnlineBankingBackend="$IMAGE_WITH_SHA_ONLINE_BANKING_BACKEND"
-        --set dockerImageOnlineBankingUi="$IMAGE_WITH_SHA_ONLINE_BANKING_UI"
         --allow-unreleased -q -f env/${HELM_VALUE}
       # apply helm changes
     - helm upgrade -i ${HELM_RELEASE} .
         --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
-        --set dockerImageMocksrv="$IMAGE_WITH_SHA_MOCKSRV"
-        --set dockerImageKeycloak="$IMAGE_WITH_SHA_KEYCLOAK"
         --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
         --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
-        --set dockerImageOnlineBankingBackend="$IMAGE_WITH_SHA_ONLINE_BANKING_BACKEND"
-        --set dockerImageOnlineBankingUi="$IMAGE_WITH_SHA_ONLINE_BANKING_UI"
         --namespace=${OPENSHIFT_NAMESPACE}
-        --wait --timeout=1800
+        --wait --timeout=600
         -f env/${HELM_VALUE}
 
 # ------------------------------------------------------------------
