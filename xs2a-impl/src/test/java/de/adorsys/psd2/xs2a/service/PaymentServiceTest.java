@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -145,6 +146,8 @@ public class PaymentServiceTest {
     private SpiSinglePayment spiSinglePayment;
     @Mock
     private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    @Mock
+    private StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     @Before
     public void setUp() {
@@ -174,6 +177,8 @@ public class PaymentServiceTest {
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(getPisCommonPayment());
         when(readPaymentFactory.getService(anyString())).thenReturn(readPaymentService);
+        when(standardPaymentProductsResolver.isRawPaymentProduct(anyString()))
+            .thenReturn(false);
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
