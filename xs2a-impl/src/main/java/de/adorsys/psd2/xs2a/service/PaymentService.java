@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -88,6 +89,7 @@ public class PaymentService {
     private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     private final SpiContextDataProvider spiContextDataProvider;
+    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -102,7 +104,7 @@ public class PaymentService {
         TppInfo tppInfo = tppService.getTppInfo();
         tppInfo.setTppRedirectUri(paymentInitiationParameters.getTppRedirectUri());
 
-        if (isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())) {
+        if (standardPaymentProductsResolver.isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())) {
             CommonPayment request = new CommonPayment();
             request.setPaymentType(paymentInitiationParameters.getPaymentType());
             request.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
@@ -120,11 +122,6 @@ public class PaymentService {
         } else {
             return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo);
         }
-    }
-
-    private boolean isRawPaymentProduct(String paymentProduct) {
-        // TODO make correct value of method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/533
-        return paymentProduct.contains("pain.");
     }
 
     /**
