@@ -201,6 +201,7 @@ public class PaymentServiceTest {
         when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
             .thenReturn(Collections.singletonList(PSU_ID_DATA));
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
         when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
         when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
@@ -222,6 +223,7 @@ public class PaymentServiceTest {
             .thenReturn(Collections.singletonList(PSU_ID_DATA));
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
         when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
         doReturn(Optional.of(spiPayment))

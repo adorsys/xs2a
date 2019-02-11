@@ -57,9 +57,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SERVICE_INVALID_405;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Slf4j
@@ -201,7 +199,7 @@ public class PaymentService {
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<TransactionStatus>builder()
-                       .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_403, "Payment not found")))
+                       .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404, "Payment not found")))
                        .build();
         }
 
@@ -277,7 +275,7 @@ public class PaymentService {
 
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(new MessageError(PIS_400, new TppMessageInformation(MessageCategory.ERROR, FORMAT_ERROR, "Payment not found")))
+                       .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404, "Payment not found")))
                        .build();
         }
 
@@ -298,7 +296,7 @@ public class PaymentService {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
                 return ResponseObject.<CancelPaymentResponse>builder()
-                           .fail(new MessageError(PIS_400, new TppMessageInformation(MessageCategory.ERROR, FORMAT_ERROR, "Payment not found")))
+                           .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404, "Payment not found")))
                            .build();
             }
 
