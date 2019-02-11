@@ -152,6 +152,7 @@ public interface AccountApi {
         @ApiResponse(code = 429, message = "Too Many Requests", response = Error429NGAIS.class),
         @ApiResponse(code = 500, message = "Internal Server Error"),
         @ApiResponse(code = 503, message = "Service Unavailable") })
+    //TODO create a patch file for providing it to Berlin Group https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/674
     @RequestMapping(value = "/v1/accounts/{account-id}/transactions",
         produces = { "application/json", "application/xml", "application/text", "application/problem+json" },
         method = RequestMethod.GET)
