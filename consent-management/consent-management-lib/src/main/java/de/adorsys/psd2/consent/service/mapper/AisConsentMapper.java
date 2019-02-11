@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -120,8 +121,8 @@ public class AisConsentMapper {
         return new AisAccountAccess(mapToInitialAccountReferences(accesses, TypeAccess.ACCOUNT),
                                     mapToInitialAccountReferences(accesses, TypeAccess.BALANCE),
                                     mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
-                                    null != consent.getAvailableAccounts() ? consent.getAvailableAccounts().name() : null,
-                                    null != consent.getAllPsd2() ? consent.getAllPsd2().name() : null);
+                                    getAccessType(consent.getAvailableAccounts()),
+                                    getAccessType(consent.getAllPsd2()));
     }
 
     private List<AccountReference> mapToInitialAccountReferences(List<TppAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -136,8 +137,8 @@ public class AisConsentMapper {
         return new AisAccountAccess(mapToAccountReferences(accesses, TypeAccess.ACCOUNT),
                                     mapToAccountReferences(accesses, TypeAccess.BALANCE),
                                     mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
-                                    null != consent.getAvailableAccounts() ? consent.getAvailableAccounts().name() : null,
-                                    null != consent.getAllPsd2() ? consent.getAllPsd2().name() : null);
+                                    getAccessType(consent.getAvailableAccounts()),
+                                    getAccessType(consent.getAllPsd2()));
     }
 
     private List<AccountReference> mapToAccountReferences(List<AspspAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -165,4 +166,11 @@ public class AisConsentMapper {
                                       accountReference.getResourceId(),
                                       accountReference.getAspspAccountId());
     }
+
+    private String getAccessType(AisAccountAccessType type) {
+        return Optional.ofNullable(type)
+            .map(Enum::name)
+            .orElse(null);
+    }
+
 }
