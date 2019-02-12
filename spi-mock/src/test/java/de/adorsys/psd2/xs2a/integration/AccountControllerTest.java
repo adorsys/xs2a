@@ -67,7 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AccountControllerTest {
     private final static String ACCOUNT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private HttpHeaders httpHeaders = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;
@@ -97,22 +97,22 @@ public class AccountControllerTest {
         given(eventServiceEncrypted.recordEvent(any(Event.class)))
             .willReturn(true);
 
-        httpHeadersExplicit.add("Content-Type", "application/json");
-        httpHeadersExplicit.add("tpp-qwac-certificate", "qwac certificate");
-        httpHeadersExplicit.add("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
-        httpHeadersExplicit.add("consent-id", "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc");
-        httpHeadersExplicit.add("PSU-ID", "PSU-123");
-        httpHeadersExplicit.add("PSU-ID-Type", "Some type");
-        httpHeadersExplicit.add("PSU-Corporate-ID", "Some corporate id");
-        httpHeadersExplicit.add("PSU-Corporate-ID-Type", "Some corporate id type");
-        httpHeadersExplicit.add("PSU-IP-Address", "1.1.1.1");
-        httpHeadersExplicit.add("accept", "application/json, application/xml");
+        httpHeaders.add("Content-Type", "application/json");
+        httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
+        httpHeaders.add("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
+        httpHeaders.add("consent-id", "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc");
+        httpHeaders.add("PSU-ID", "PSU-123");
+        httpHeaders.add("PSU-ID-Type", "Some type");
+        httpHeaders.add("PSU-Corporate-ID", "Some corporate id");
+        httpHeaders.add("PSU-Corporate-ID-Type", "Some corporate id type");
+        httpHeaders.add("PSU-IP-Address", "1.1.1.1");
+        httpHeaders.add("accept", "application/json, application/xml");
     }
 
     @Test
     public void getTransactions_ShouldFail_WithoutEndSlash() throws Exception {
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionsUrlWithoutSlash(ACCOUNT_ID));
-        requestBuilder.headers(httpHeadersExplicit);
+        requestBuilder.headers(httpHeaders);
 
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -126,7 +126,7 @@ public class AccountControllerTest {
     public void getTransactions_ShouldFail_WithEndSlash() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionsUrlWithSlash(ACCOUNT_ID));
-        requestBuilder.headers(httpHeadersExplicit);
+        requestBuilder.headers(httpHeaders);
 
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
