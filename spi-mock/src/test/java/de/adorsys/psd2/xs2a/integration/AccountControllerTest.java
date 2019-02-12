@@ -19,8 +19,10 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.aspsp.xs2a.spi.ASPSPXs2aApplication;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.consent.service.AisConsentServiceRemote;
 import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -29,21 +31,27 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -66,6 +74,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 public class AccountControllerTest {
     private final static String ACCOUNT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
+    private final static String CONSENT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -81,6 +90,13 @@ public class AccountControllerTest {
     private TppStopListService tppStopListService;
     @MockBean
     private EventServiceEncrypted eventServiceEncrypted;
+    @MockBean
+    private AisConsentServiceRemote aisConsentServiceRemote;
+    @MockBean
+    private Xs2aAisConsentMapper xs2aAisConsentMapper;
+    @MockBean
+    @Qualifier("consentRestTemplate")
+    private RestTemplate consentRestTemplate;
 
     @Before
     public void init() {
@@ -96,6 +112,8 @@ public class AccountControllerTest {
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(Event.class)))
             .willReturn(true);
+        given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(new AisAccountConsent()));
+        given(consentRestTemplate.getForEntity(any(String.class), any(Class.class))).willReturn(ResponseEntity.ok(Void.class));
 
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("tpp-qwac-certificate", "qwac certificate");
