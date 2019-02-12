@@ -26,10 +26,10 @@ public class UrlBuilder {
     }
 
     public static String buildGetTransactionsUrlWithoutSlash(String accountId) {
-        return "/v1/accounts/" + accountId + "/transactions";
+        return "/v1/accounts/" + accountId + "/transactions" + "?bookingStatus=booked";
     }
 
     public static String buildGetTransactionsUrlWithSlash(String accountId) {
-        return "/v1/accounts/" + accountId + "/transactions/";
+        return "/v1/accounts/" + accountId + "/transactions/" + "?bookingStatus=booked";
     }
 }
