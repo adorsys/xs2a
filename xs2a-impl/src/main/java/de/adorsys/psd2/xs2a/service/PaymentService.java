@@ -138,7 +138,7 @@ public class PaymentService {
      * @param paymentId   ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
+    public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
 
@@ -150,9 +150,15 @@ public class PaymentService {
 
         PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.get();
 
-        if(commonPaymentResponse.getPaymentType() != paymentType) {
+        if(isPaymentTypeIncorrect(paymentType, commonPaymentResponse)) {
             return ResponseObject.builder()
                        .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for adressed payment")))
+                       .build();
+        }
+
+        if(isPaymentProductIncorrect(paymentProduct, commonPaymentResponse)) {
+            return ResponseObject.<TransactionStatus> builder()
+                       .fail(new MessageError(PIS_403, new TppMessageInformation(MessageCategory.ERROR, PRODUCT_INVALID, "Payment product invalid for addressed payment")))
                        .build();
         }
 
@@ -194,7 +200,7 @@ public class PaymentService {
      * @param paymentId   String representation of payment primary ASPSP identifier
      * @return Information about the status of a payment
      */
-    public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
+    public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentOptional.isPresent()) {
@@ -206,9 +212,15 @@ public class PaymentService {
         // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
 
-        if(pisCommonPaymentResponse.getPaymentType() != paymentType) {
+        if(isPaymentTypeIncorrect(paymentType, pisCommonPaymentResponse)) {
             return ResponseObject.<TransactionStatus>builder()
                        .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for adressed payment")))
+                       .build();
+        }
+
+        if(isPaymentProductIncorrect(paymentProduct, pisCommonPaymentResponse)) {
+            return ResponseObject.<TransactionStatus> builder()
+                       .fail(new MessageError(PIS_403, new TppMessageInformation(MessageCategory.ERROR, PRODUCT_INVALID, "Payment product invalid for addressed payment")))
                        .build();
         }
 
@@ -281,9 +293,15 @@ public class PaymentService {
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
 
-        if(pisCommonPaymentResponse.getPaymentType() != paymentType) {
+        if(isPaymentTypeIncorrect(paymentType, pisCommonPaymentResponse)) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for adressed payment")))
+                       .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for addressed payment")))
+                       .build();
+        }
+
+        if(isPaymentProductIncorrect(paymentProduct, pisCommonPaymentResponse)) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(PIS_403, new TppMessageInformation(MessageCategory.ERROR, PRODUCT_INVALID, "Payment product invalid for addressed payment")))
                        .build();
         }
 
@@ -327,6 +345,14 @@ public class PaymentService {
         } else {
             return cancelPaymentService.cancelPaymentWithoutAuthorisation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId);
         }
+    }
+
+    private boolean isPaymentTypeIncorrect(PaymentType paymentType, PisCommonPaymentResponse commonPaymentResponse) {
+        return commonPaymentResponse.getPaymentType() != paymentType;
+    }
+
+    private boolean isPaymentProductIncorrect(String paymentProduct, PisCommonPaymentResponse commonPaymentResponse) {
+        return !commonPaymentResponse.getPaymentProduct().equalsIgnoreCase(paymentProduct);
     }
 
     private boolean isFinalisedPayment(PisCommonPaymentResponse response) {
