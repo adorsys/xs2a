@@ -143,8 +143,8 @@ public class PaymentService {
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
 
         if (!pisCommonPaymentOptional.isPresent()) {
-            return ResponseObject.builder()
-                       .fail(new MessageError(PIS_403, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_403)))
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404, "Payment not found")))
                        .build();
         }
 
