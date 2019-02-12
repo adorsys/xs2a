@@ -56,3 +56,6 @@ in SPI Connector.
 Right now only content types `application/json` and `application/xml` are supported (support of `multipart/form-data`
 is provided additionally to setup PAIN periodic payments).
 Support of content type `text/plain` is planned.
+
+## Bugfix: added missing ais_consent fields
+Now while sending POST request to the `/v1/consents` endpoint the fields "availableAccounts" and "allPsd2" are persisted to the ais_consent table. Also they are available while calling the connector.

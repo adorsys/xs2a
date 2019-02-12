@@ -26,4 +26,9 @@ public class AisAccountAccess {
     private List<AccountReference> accounts;
     private List<AccountReference> balances;
     private List<AccountReference> transactions;
+
+    // TODO: connected with the ticket for removing duplicated enums: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/671
+    private String availableAccounts;
+    private String allPsd2;
+
 }
