@@ -11340,7 +11340,7 @@ components:
               - $ref: "#/components/schemas/camt.053"
               - $ref: "#/components/schemas/camt.054"
         
-        application/text:
+        text/plain:
           schema:
             description:
               Body of the Text response for a successful read transaction list request.
