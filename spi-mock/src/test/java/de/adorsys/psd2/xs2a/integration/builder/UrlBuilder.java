@@ -24,4 +24,12 @@ public class UrlBuilder {
     public static String buildGetPaymentInitiationScaStatusUrl(String paymentType, String paymentProduct, String encrPaymentId, String authorisationId) {
         return "/v1/" + paymentType + "/" + paymentProduct + "/" + encrPaymentId + "/authorisations/" + authorisationId;
     }
+
+    public static String buildGetTransactionsUrlWithoutSlash(String accountId) {
+        return "/v1/accounts/" + accountId + "/transactions";
+    }
+
+    public static String buildGetTransactionsUrlWithSlash(String accountId) {
+        return "/v1/accounts/" + accountId + "/transactions/";
+    }
 }
