@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.repository;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
 
@@ -26,4 +27,5 @@ import java.io.Serializable;
  * Method {@link org.springframework.data.repository.CrudRepository#save(java.lang.Iterable)} was deleted spring-data version starting 2.x
  *
  */
+@NoRepositoryBean
 public interface Xs2aCrudRepository<T, ID extends Serializable> extends CrudRepository<T, ID> {}
