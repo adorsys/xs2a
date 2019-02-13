@@ -34,8 +34,6 @@ import java.util.Collection;
 @RequestMapping(path = "aspsp-api/v1/piis/consents")
 @Api(value = "aspsp-api/v1/piis/consents", tags = "ASPSP PIIS Consents Export", description = "Provides access to the consent management system for exporting PIIS consents by ASPSP")
 public class CmsAspspPiisExportController {
-    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-
     private final CmsAspspPiisFundsExportService cmsAspspPiisExportService;
 
     @GetMapping(path = "/tpp/{tpp-id}")
@@ -61,7 +59,7 @@ public class CmsAspspPiisExportController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @RequestHeader(value = "instance-id", required = false) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         Collection<PiisConsent> consents = cmsAspspPiisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
@@ -87,7 +85,7 @@ public class CmsAspspPiisExportController {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @RequestHeader(value = "instance-id", required = false) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
         Collection<PiisConsent> consents = cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
@@ -107,7 +105,7 @@ public class CmsAspspPiisExportController {
         @RequestHeader(value = "end-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
         @ApiParam(value = "ID of the particular service instance")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        @RequestHeader(value = "instance-id", required = false) String instanceId) {
         Collection<PiisConsent> consents = cmsAspspPiisExportService.exportConsentsByAccountId(aspspAccountId, start, end, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
