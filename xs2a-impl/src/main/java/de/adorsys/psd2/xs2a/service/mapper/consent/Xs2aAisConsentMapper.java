@@ -123,10 +123,10 @@ public class Xs2aAisConsentMapper {
                    .orElse(null);
     }
 
-    public SpiScaConfirmation mapToSpiScaConfirmation(UpdateConsentPsuDataReq request) {
+    public SpiScaConfirmation mapToSpiScaConfirmation(UpdateConsentPsuDataReq request, PsuIdData psuData) {
         SpiScaConfirmation accountConfirmation = new SpiScaConfirmation();
         accountConfirmation.setConsentId(request.getConsentId());
-        accountConfirmation.setPsuId(Optional.ofNullable(request.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
+        accountConfirmation.setPsuId(Optional.ofNullable(psuData).map(PsuIdData::getPsuId).orElse(null));
         accountConfirmation.setTanNumber(request.getScaAuthenticationData());
         return accountConfirmation;
     }
