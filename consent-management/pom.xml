@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@
         <module>consent-psu-web</module>
         <module>consent-aspsp-web</module>
 
+        <!-- support modules -->
         <module>spring-boot-1.5.x-support</module>
         <module>spring-boot-2.x-support</module>
 

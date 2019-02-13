@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -36,11 +36,16 @@
         <!-- project dependencies -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
-            <artifactId>consent-management-lib</artifactId>
+            <artifactId>consent-core-api</artifactId>
             <version>1.17-SNAPSHOT</version>
         </dependency>
 
         <!-- other dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -84,5 +89,52 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>de.adorsys.psd2:consent-management</exclude>
+                                        <exclude>de.adorsys.psd2:cms-db-schema</exclude>
+                                        <exclude>de.adorsys.psd2:cms-standalone-service</exclude>
+                                        <exclude>de.adorsys.psd2:consent-aspsp-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-aspsp-web</exclude>
+                                        <exclude>de.adorsys.psd2:consent-xs2a-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-xs2a-web</exclude>
+                                        <exclude>de.adorsys.psd2:consent-psu-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-psu-web</exclude>
+                                        <exclude>de.adorsys.psd2:consent-psu-client</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-lib</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-remote</exclude>
+                                        <exclude>de.adorsys.psd2:consent-api</exclude>
+                                        <exclude>de.adorsys.psd2:consent-management-system</exclude>
+                                        <exclude>de.adorsys.psd2:cms-client</exclude>
+                                        <exclude>de.adorsys.psd2:spring-boot-1.5.x-support</exclude>
+                                        <exclude>de.adorsys.psd2:spring-boot-2.x-support</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-server-api</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-impl</exclude>
+                                        <exclude>de.adorsys.psd2:spi-api</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
