@@ -19,7 +19,10 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
@@ -31,10 +34,12 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.service.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 @RequiredArgsConstructor
@@ -43,6 +48,7 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     private final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
     private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
+    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -93,5 +99,30 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
         spiPaymentInfo.setPaymentData(paymentInfo.getPaymentData());
 
         return spiPaymentInfo;
+    }
+
+    protected PsuIdData extractPsuIdData(Xs2aUpdatePisCommonPaymentPsuDataRequest request, boolean paymentCancellation) {
+        PsuIdData psuDataInRequest = request.getPsuData();
+        if (isPsuExist(psuDataInRequest)) {
+            return psuDataInRequest;
+        }
+
+        return getGetPisAuthorisationResponse(request.getAuthorisationId(), paymentCancellation)
+                   .map(GetPisAuthorisationResponse::getPsuId)
+                   .filter(StringUtils::isNotBlank)
+                   .map(id -> new PsuIdData(id, null, null, null))
+                   .orElse(psuDataInRequest);
+    }
+
+    protected boolean isPsuExist(PsuIdData psuIdData) {
+        return Optional.ofNullable(psuIdData)
+                   .map(PsuIdData::isNotEmpty)
+                   .orElse(false);
+    }
+
+    private Optional<GetPisAuthorisationResponse> getGetPisAuthorisationResponse(String authorisationId, boolean paymentCancellation) {
+        return paymentCancellation
+                   ? pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(authorisationId)
+                   : pisCommonPaymentServiceEncrypted.getPisAuthorisationById(authorisationId);
     }
 }

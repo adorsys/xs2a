@@ -68,9 +68,9 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         String consentId = request.getConsentId();
         AccountConsent accountConsent = aisConsentService.getAccountConsentById(consentId);
-        PsuIdData psuData = request.getPsuData();
+        PsuIdData psuData = extractPsuIdData(request);
 
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(spiContextDataProvider.provideWithPsuIdData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request), aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        SpiResponse<SpiResponse.VoidResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(spiContextDataProvider.provideWithPsuIdData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request, psuData), aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {

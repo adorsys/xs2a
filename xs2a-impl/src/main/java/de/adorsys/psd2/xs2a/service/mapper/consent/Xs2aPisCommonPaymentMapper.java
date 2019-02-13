@@ -69,12 +69,12 @@ public class Xs2aPisCommonPaymentMapper {
                    .orElse(null);
     }
 
-    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, String consentId, String paymentId) {
+    public SpiScaConfirmation buildSpiScaConfirmation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, String consentId, String paymentId, PsuIdData psuData) {
         SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
         paymentConfirmation.setPaymentId(paymentId);
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
         paymentConfirmation.setConsentId(consentId);
-        paymentConfirmation.setPsuId(Optional.ofNullable(request.getPsuData()).map(PsuIdData::getPsuId).orElse(null));
+        paymentConfirmation.setPsuId(Optional.ofNullable(psuData).map(PsuIdData::getPsuId).orElse(null));
         return paymentConfirmation;
     }
 

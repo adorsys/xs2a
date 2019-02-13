@@ -308,7 +308,7 @@ public class PaymentService {
         List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(encryptedPaymentId);
 
         if (profileService.isPaymentCancellationAuthorizationMandated()) {
-            return cancelPaymentService.initiatePaymentCancellation(psuData.get(0), spiPayment, encryptedPaymentId);
+            return cancelPaymentService.initiatePaymentCancellation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId);
         } else {
             return cancelPaymentService.cancelPaymentWithoutAuthorisation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId);
         }

@@ -83,8 +83,14 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         } else {
             links.setScaStatus(
                 buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
-            links.setStartAuthorisationWithPsuAuthentication(
-                buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
+            if (paymentRequestParameters.getPsuData().isEmpty()) {
+                links.setStartAuthorisationWithPsuIdentification(
+                    buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
+            } else {
+                links.setStartAuthorisationWithPsuAuthentication(
+                    buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
+            }
+
         }
 
         return links;

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
@@ -67,11 +68,12 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
      */
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
+        PsuIdData psuData = extractPsuIdData(request);
         AccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
         String authenticationMethodId = request.getAuthenticationMethodId();
 
-        SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(spiContextDataProvider.provideWithPsuIdData(request.getPsuData()), authenticationMethodId, spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<SpiAuthorizationCodeResult> spiResponse = aisConsentSpi.requestAuthorisationCode(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationMethodId, spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {

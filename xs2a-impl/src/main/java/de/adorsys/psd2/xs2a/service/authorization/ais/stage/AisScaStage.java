@@ -16,7 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
@@ -28,8 +31,10 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticat
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -56,5 +61,24 @@ public abstract class AisScaStage<T, R> implements Function<T, R> {
 
     private String buildPsuMessage(List<String> messages) {
         return String.join(", ", messages);
+    }
+
+    protected PsuIdData extractPsuIdData(UpdateConsentPsuDataReq request) {
+        PsuIdData psuDataInRequest = request.getPsuData();
+        if (isPsuExist(psuDataInRequest)) {
+            return psuDataInRequest;
+        }
+
+        return Optional.ofNullable(aisConsentService.getAccountConsentAuthorizationById(request.getAuthorizationId(), request.getConsentId()))
+                   .map(AccountConsentAuthorization::getPsuId)
+                   .filter(StringUtils::isNotBlank)
+                   .map(id -> new PsuIdData(id, null, null, null))
+                   .orElse(psuDataInRequest);
+    }
+
+    protected boolean isPsuExist(PsuIdData psuIdData) {
+        return Optional.ofNullable(psuIdData)
+                   .map(PsuIdData::isNotEmpty)
+                   .orElse(false);
     }
 }
