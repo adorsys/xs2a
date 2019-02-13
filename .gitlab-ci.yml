@@ -72,6 +72,8 @@ variables: &variables
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "docker.io/adorsys/xs2a-aspsp-profile"
   DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND: "docker.io/adorsys/xs2a-mock-online-banking-backend"
   DOCKER_IMAGE_NAME_ONLINE_BANKING_UI: "docker.io/adorsys/xs2a-mock-online-banking-ui"
+  DOCKER_IMAGE_NAME_LEDGERS: "docker.io/adorsys/ledgers"
+  DOCKER_IMAGE_NAME_CONNECTOR_EXAMPLES: "docker.io/adorsys/xs2a-connector-examples"
 
   ###########################
   # Build variables         #
@@ -247,24 +249,30 @@ variables: &variables
     - SHA_XS2A=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG | jq -r .Digest)
     - SHA_CNT_MGMNT=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG | jq -r .Digest)
     - SHA_ASPSP_PROFILE=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG | jq -r .Digest)
-      # assemble full docker image name
+    - SHA_LEDGERS=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_LEDGERS:$DOCKER_TAG | jq -r .Digest)
+    - SHA_CONNECTOR_EXAMPLES=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_CONNECTOR_EXAMPLES:$DOCKER_TAG | jq -r .Digest)
+          # assemble full docker image name
     - IMAGE_WITH_SHA_XS2A="$DOCKER_IMAGE_NAME_XS2A@$SHA_XS2A"
     - IMAGE_WITH_SHA_CNT_MGMNT="$DOCKER_IMAGE_NAME_CNT_MGMNT@$SHA_CNT_MGMNT"
     - IMAGE_WITH_SHA_ASPSP_PROFILE="$DOCKER_IMAGE_NAME_ASPSP_PROFILE@$SHA_ASPSP_PROFILE"
+    - IMAGE_WITH_SHA_LEDGERS="$DOCKER_IMAGE_NAME_LEDGERS@$SHA_LEDGERS"
+    - IMAGE_WITH_SHA_CONNECTOR_EXAMPLES="$DOCKER_IMAGE_NAME_CONNECTOR_EXAMPLES@$SHA_CONNECTOR_EXAMPLES"
+    - | -
+      HELM_ARGS=(
+        "--set dockerImageXs2a=$IMAGE_WITH_SHA_XS2A"
+        "--set dockerImageCntMgmnt=$IMAGE_WITH_SHA_CNT_MGMNT"
+        "--set dockerImageAspspProfile=$IMAGE_WITH_SHA_ASPSP_PROFILE"
+        "--set dockerImageLedgers=$IMAGE_WITH_SHA_LEDGERS"
+        "--set dockerImageConnectorExamples=$IMAGE_WITH_SHA_CONNECTOR_EXAMPLES"
+        "-f env/${HELM_STAGE}/env.yaml" 
+        "-f env/${HELM_STAGE}/secrets.yaml"
+      )
       # diff helm changes
-    - helm-wrapper diff upgrade ${HELM_RELEASE} .
-        --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
-        --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
-        --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
-        --allow-unreleased -q -f env/${HELM_STAGE}/env.yaml -f env/${HELM_STAGE}/secrets.yaml || true
+    - helm-wrapper diff upgrade ${HELM_RELEASE} . --allow-unreleased -q ${HELM_ARGS}"  || true
       # apply helm changes
-    - helm-wrapper upgrade -i ${HELM_RELEASE} .
-        --set dockerImageXs2a="$IMAGE_WITH_SHA_XS2A"
-        --set dockerImageCntMgmnt="$IMAGE_WITH_SHA_CNT_MGMNT"
-        --set dockerImageAspspProfile="$IMAGE_WITH_SHA_ASPSP_PROFILE"
-        --namespace=${OPENSHIFT_NAMESPACE}
-        --wait --timeout=600 --force
-        -f env/${HELM_STAGE}/env.yaml -f env/${HELM_STAGE}/secrets.yaml
+    - helm-wrapper upgrade -i ${HELM_RELEASE} . --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600 --force ${HELM_ARGS}" 
+  after_script:
+    - pkill gpg-agent
 
 # ------------------------------------------------------------------
 # jobs
