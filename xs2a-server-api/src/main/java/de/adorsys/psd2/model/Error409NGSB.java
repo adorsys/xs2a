@@ -85,7 +85,7 @@ public class Error409NGSB   {
   @ApiModelProperty(value = "")
 
   @Valid
-
+  @JsonProperty("_links")
   public Map getLinks() {
     return _links;
   }

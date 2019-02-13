@@ -85,7 +85,7 @@ public class Error403NGAIS   {
   @ApiModelProperty(value = "")
 
   @Valid
-
+  @JsonProperty("_links")
   public Map getLinks() {
     return _links;
   }
