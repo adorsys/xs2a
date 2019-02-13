@@ -88,7 +88,7 @@ public class PisCommonPaymentServiceInternalTest {
     private static final String FINALISED_CANCELLATION_AUTHORISATION_ID = "2a112130-6a96-4941-a220-2da8a4af2c65";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
-    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+    private static final ScaStatus SCA_STATUS = ScaStatus.STARTED;
     private static final CmsAuthorisationType AUTHORISATION_TYPE = CmsAuthorisationType.CREATED;
 
     @Before
@@ -194,6 +194,24 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
+    public void updateConsentAuthorisation_Success() {
+        //Given
+        PsuIdData psuIdData = new PsuIdData("new id", "new type", "new corporate ID", "new corporate type");
+        ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
+        UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus.STARTED);
+        updatePisCommonPaymentPsuDataRequest.setPsuData(psuIdData);
+        when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(PAYMENT_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.of(pisAuthorization));
+        when(pisAuthorisationRepository.save(pisAuthorization)).thenReturn(pisAuthorization);
+        //When
+        Optional<UpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuDataResponse = pisCommonPaymentService.updatePisAuthorisation(PAYMENT_ID, updatePisCommonPaymentPsuDataRequest);
+        verify(pisAuthorisationRepository).save(argument.capture());
+        //Then
+        assertTrue(updatePisCommonPaymentPsuDataResponse.isPresent());
+        assertTrue(argument.getValue().getPsuData().contentEquals(psuDataMapper.mapToPsuData(psuIdData)));
+    }
+
+    @Test
     public void updateConsentCancellationAuthorisation_FinalisedStatus_Fail() {
         //Given
         ScaStatus expectedScaStatus = ScaStatus.STARTED;
@@ -248,7 +266,7 @@ public class PisCommonPaymentServiceInternalTest {
         return new AspspSettings(1, false, false, null, null,
                                  null, false, null, null, 1, 1, false,
                                  false, false, false, false, false, 1, null,
-                                 1, 1, null, 1, false, false);
+                                 1, 1, null, 1, false, false, false);
     }
 
     private PsuIdData buildPsuIdData() {

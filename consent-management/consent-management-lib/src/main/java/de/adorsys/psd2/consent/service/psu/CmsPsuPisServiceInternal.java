@@ -27,7 +27,6 @@ import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
-import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.repository.specification.PisAuthorisationSpecification;
 import de.adorsys.psd2.consent.repository.specification.PisPaymentDataSpecification;
 import de.adorsys.psd2.consent.service.CommonPaymentDataService;
@@ -57,7 +56,6 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final PisCommonPaymentService pisCommonPaymentService;
     private final CommonPaymentDataService commonPaymentDataService;
     private final PsuDataMapper psuDataMapper;
-    private final PsuDataRepository psuDataRepository;
     private final PisAuthorisationSpecification pisAuthorisationSpecification;
     private final PisPaymentDataSpecification pisPaymentDataSpecification;
 
@@ -69,8 +67,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                 pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)
             );
         return Optional.ofNullable(authorisation)
-                   .map(PisAuthorization::getPsuData)
-                   .map(psuData -> updatePsuData(psuData, psuIdData))
+                   .map(auth -> updatePsuData(auth, psuIdData))
                    .orElse(false);
     }
 
@@ -166,15 +163,17 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         }
     }
 
-    private boolean updatePsuData(PsuData psuData, PsuIdData psuIdData) {
+    private boolean updatePsuData(PisAuthorization authorisation, PsuIdData psuIdData) {
         PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData);
         if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
             return false;
         }
 
-        newPsuData.setId(psuData.getId());
-        psuDataRepository.save(newPsuData);
+        Optional.ofNullable(authorisation.getPsuData())
+            .ifPresent(psu -> newPsuData.setId(psu.getId()));
 
+        authorisation.setPsuData(newPsuData);
+        pisAuthorisationRepository.save(authorisation);
         return true;
     }
 

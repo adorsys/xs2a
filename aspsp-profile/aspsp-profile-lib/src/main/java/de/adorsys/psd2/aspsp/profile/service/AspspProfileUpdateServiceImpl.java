@@ -80,5 +80,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setPaymentCancellationRedirectUrlExpirationTimeMs(aspspSettings.getPaymentCancellationRedirectUrlExpirationTimeMs());
         setting.setAvailableAccountsConsentSupported(aspspSettings.isAvailableAccountsConsentSupported());
         setting.setScaByOneTimeAvailableAccountsConsentRequired(aspspSettings.isScaByOneTimeAvailableAccountsConsentRequired());
+        setting.setPsuInInitialRequestMandated(aspspSettings.isPsuInInitialRequestMandated());
     }
 }

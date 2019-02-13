@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -42,17 +43,25 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
     public ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xs2aCreatePisAuthorisationResponse> result, String paymentId, PaymentType paymentType, String paymentProduct, PsuIdData psuData) {
         if (!result.hasError()) {
             Xs2aCreatePisAuthorisationResponse body = result.getBody();
-            body.setLinks(buildLink(paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId()));
+            body.setLinks(buildLink(paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId(), psuData));
             return result;
         }
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLink(String paymentService, String paymentProduct, String paymentId, String authorizationId) {
+    private Links buildLink(String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
         Links links = new Links();
         links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentService, paymentProduct, paymentId));
         links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentService, paymentProduct, paymentId));
-        links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/{paymentService}/{paymentProduct}/{paymentId}/authorisations/{authorisationId}", paymentService, paymentProduct, paymentId, authorizationId));
+        if (ScaApproach.EMBEDDED == scaApproachResolver.resolveScaApproach()) {
+            String path = "/v1/{paymentService}/{paymentProduct}/{paymentId}/authorisations/{authorisationId}";
+            if (psuData.isEmpty()) {
+                links.setStartAuthorisationWithPsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
+            } else {
+                links.setStartAuthorisationWithPsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
+            }
+        }
+
         return links;
     }
 }

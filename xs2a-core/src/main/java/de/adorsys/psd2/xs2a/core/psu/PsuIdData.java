@@ -48,9 +48,11 @@ public class PsuIdData {
 
     @JsonIgnore
     public boolean isEmpty() {
-        return StringUtils.isBlank(this.getPsuId())
-                   && StringUtils.isBlank(this.getPsuIdType())
-                   && StringUtils.isBlank(this.getPsuCorporateId())
-                   && StringUtils.isBlank(this.getPsuCorporateIdType());
+        return StringUtils.isBlank(this.getPsuId());
+    }
+
+    @JsonIgnore
+    public boolean isNotEmpty() {
+        return !isEmpty();
     }
 }

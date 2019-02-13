@@ -163,4 +163,9 @@ public class BankProfileSetting {
      * If "true" indicates that an ASPSP requires usage of SCA to validate a one-time available accounts consent
      */
     private boolean scaByOneTimeAvailableAccountsConsentRequired;
+
+    /**
+     * If "true" indicates that an ASPSP requires PSU in initial request for payment initiation or establishing consent
+     */
+    private boolean psuInInitialRequestMandated;
 }

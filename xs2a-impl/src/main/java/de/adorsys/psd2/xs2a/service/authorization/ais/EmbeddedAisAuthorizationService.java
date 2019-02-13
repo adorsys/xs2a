@@ -27,10 +27,12 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
+import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
 
 /**
  * AisAuthorizationService implementation to be used in case of embedded approach
@@ -52,14 +54,23 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
-        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.valueOf(ScaStatus.STARTED.name()), psuData)
+        AccountConsent consent = aisConsentService.getAccountConsentById(consentId);
+        if (Objects.isNull(consent)) {
+            return Optional.empty();
+        }
+
+        PsuIdData psuDataAuthorization = isPsuExist(psuData)
+                                             ? psuData
+                                             : consent.getPsuData();
+
+        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.STARTED, psuDataAuthorization)
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
                        resp.setConsentId(consentId);
                        resp.setAuthorizationId(authId);
                        resp.setScaStatus(ScaStatus.STARTED);
-                       resp.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+                       resp.setResponseLinkType(getResponseLinkType(consent.getPsuData(), psuData));
 
                        return resp;
                    });
@@ -130,5 +141,17 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     @Override
     public ScaApproach getScaApproachServiceType() {
         return ScaApproach.EMBEDDED;
+    }
+
+    private ConsentAuthorizationResponseLinkType getResponseLinkType(PsuIdData psuIdDataConsent, PsuIdData psuIdDataAuthorisation) {
+        return isPsuExist(psuIdDataConsent) || isPsuExist(psuIdDataAuthorisation)
+                   ? START_AUTHORISATION_WITH_PSU_AUTHENTICATION
+                   : START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
+    }
+
+    private boolean isPsuExist(PsuIdData psuIdData) {
+        return Optional.ofNullable(psuIdData)
+                   .map(PsuIdData::isNotEmpty)
+                   .orElse(false);
     }
 }

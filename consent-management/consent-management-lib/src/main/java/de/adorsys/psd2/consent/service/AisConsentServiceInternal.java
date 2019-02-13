@@ -298,7 +298,13 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         if (ScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
-            aisConsentAuthorization.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
+            PsuData psuData = psuDataMapper.mapToPsuData(request.getPsuData());
+            aisConsentAuthorization.setPsuData(psuData);
+            AisConsent consent = aisConsentAuthorization.getConsent();
+            if (Objects.isNull(consent.getPsuData())) {
+                consent.setPsuData(psuData);
+                aisConsentRepository.save(consent);
+            }
         }
 
         if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {

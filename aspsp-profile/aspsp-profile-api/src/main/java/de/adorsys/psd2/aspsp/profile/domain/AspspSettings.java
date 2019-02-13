@@ -50,4 +50,5 @@ public class AspspSettings {
     private long paymentCancellationRedirectUrlExpirationTimeMs;
     private boolean availableAccountsConsentSupported;
     private boolean scaByOneTimeAvailableAccountsConsentRequired;
+    private boolean psuInInitialRequestMandated;
 }

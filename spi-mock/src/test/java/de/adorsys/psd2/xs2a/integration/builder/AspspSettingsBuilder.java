@@ -53,6 +53,8 @@ public class AspspSettingsBuilder {
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = false;
     private static final boolean SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED = false;
+    private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
+
 
     public static AspspSettings buildAspspSettings() {
         return new AspspSettings(
@@ -80,7 +82,8 @@ public class AspspSettingsBuilder {
             SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX,
             PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS,
             AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
-            SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED);
+            SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED,
+            PSU_IN_INITIAL_REQUEST_MANDATED);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

@@ -60,7 +60,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisCancellationAuthorization(String paymentId, PsuIdData psuData, PaymentType paymentType, String paymentProduct) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_CANCELLATION_AUTHORISATION_REQUEST_RECEIVED);
 
-        if (!isPsuDataCorrect(paymentId, psuData)) {
+        if (psuData.isNotEmpty() && !isPsuDataCorrect(paymentId, psuData)) {
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(new MessageError(ErrorType.PIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PSU_CREDENTIALS_INVALID)))
                        .build();

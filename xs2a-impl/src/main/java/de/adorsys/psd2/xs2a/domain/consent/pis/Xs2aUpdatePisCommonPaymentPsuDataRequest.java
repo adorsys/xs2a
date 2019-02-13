@@ -31,4 +31,5 @@ public class Xs2aUpdatePisCommonPaymentPsuDataRequest {
     private String paymentService;
     private String scaAuthenticationData;
     private String paymentProduct;
+    private boolean updatePsuIdentification;
 }

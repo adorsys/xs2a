@@ -705,6 +705,20 @@ public class ConsentServiceTest {
         assertNull(actual.getBody());
     }
 
+    @Test
+    public void createAccountConsentsWithResponse_Failure_No_PSU() {
+        //Given:
+        when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
+        //When:
+        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(null, psuIdData, EXPLICIT_PREFERRED, buildTppRedirectUri());
+        //Then:
+        MessageError error = responseObj.getError();
+        assertThat(error).isNotNull();
+        assertThat(error.getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(error.getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+    }
+
     /**
      * Basic test AccountDetails used in all cases
      */
