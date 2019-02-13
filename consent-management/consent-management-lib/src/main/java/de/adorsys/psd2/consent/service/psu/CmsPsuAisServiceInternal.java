@@ -28,7 +28,6 @@ import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
-import de.adorsys.psd2.consent.repository.PsuDataRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
@@ -39,6 +38,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,18 +59,17 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentMapper consentMapper;
-    private final PsuDataRepository psuDataRepository;
-    private final PsuDataMapper psuDataMapper;
     private final AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
     private final AisConsentAuthorizationSpecification aisConsentAuthorizationSpecification;
     private final AisConsentSpecification aisConsentSpecification;
     private final AisConsentService aisConsentService;
+    private final PsuDataMapper psuDataMapper;
 
     @Override
     @Transactional
     public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) {
         AisConsentAuthorization authorisation = aisConsentAuthorisationRepository.findOne(
-                aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
+            aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
         return Optional.ofNullable(authorisation)
                    .map(AisConsentAuthorization::getConsent)
                    .map(con -> updatePsuData(con, psuIdData))
@@ -200,13 +199,17 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private boolean updatePsuData(AisConsent consent, PsuIdData psuIdData) {
-        PsuData psuData = consent.getPsuData();
-        psuData.setPsuId(psuIdData.getPsuId());
-        psuData.setPsuIdType(psuIdData.getPsuIdType());
-        psuData.setPsuCorporateId(psuIdData.getPsuCorporateId());
-        psuData.setPsuCorporateIdType(psuIdData.getPsuCorporateIdType());
+        PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData);
+        if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
+            return false;
+        }
 
-        return psuDataRepository.save(psuData) != null;
+        Optional.ofNullable(consent.getPsuData())
+            .ifPresent(psu -> newPsuData.setId(psu.getId()));
+
+        consent.setPsuData(newPsuData);
+        aisConsentRepository.save(consent);
+        return true;
     }
 
     private boolean updateScaStatus(@NotNull ScaStatus status, AisConsentAuthorization authorization) {

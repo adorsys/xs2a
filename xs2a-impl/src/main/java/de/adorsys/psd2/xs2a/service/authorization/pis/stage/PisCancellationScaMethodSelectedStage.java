@@ -79,8 +79,8 @@ public class PisCancellationScaMethodSelectedStage extends PisScaStage<Xs2aUpdat
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
-        // TODO check the paymentSpi result first https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/338
-        pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(request.getPaymentId(), TransactionStatus.RJCT);
+        // TODO update payment with status that comes from SPI https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/676
+        pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(request.getPaymentId(), TransactionStatus.CANC);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse xs2aResponse = new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
         xs2aResponse.setPsuId(psuData.getPsuId());

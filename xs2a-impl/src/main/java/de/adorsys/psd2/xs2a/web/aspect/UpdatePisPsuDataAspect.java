@@ -54,6 +54,8 @@ public class UpdatePisPsuDataAspect extends AbstractLinkAspect<PaymentController
             } else if (isScaStatusFinalised(body.getScaStatus())) {
 
                 links.setScaStatus(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
+            } else if (isScaStatusMethodIdentified(body.getScaStatus())) {
+                links.setStartAuthorisationWithPsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             }
 
             body.setLinks(links);
@@ -85,5 +87,9 @@ public class UpdatePisPsuDataAspect extends AbstractLinkAspect<PaymentController
 
     private boolean isScaStatusMethodAuthenticated(ScaStatus scaStatus) {
         return scaStatus == ScaStatus.PSUAUTHENTICATED;
+    }
+
+    private boolean isScaStatusMethodIdentified(ScaStatus scaStatus) {
+        return scaStatus == ScaStatus.PSUIDENTIFIED;
     }
 }

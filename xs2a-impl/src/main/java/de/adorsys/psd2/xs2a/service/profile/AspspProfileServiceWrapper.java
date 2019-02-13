@@ -190,6 +190,15 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().isScaByOneTimeAvailableAccountsConsentRequired();
     }
 
+    /**
+     * Reads if ASPSP requires PSU in initial request for payment initiation or establishing consent
+     *
+     * @return true if ASPSP requires PSU in initial request for payment initiation or establishing consent
+     */
+    public boolean isPsuInInitialRequestMandated() {
+        return readAspspSettings().isPsuInInitialRequestMandated();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

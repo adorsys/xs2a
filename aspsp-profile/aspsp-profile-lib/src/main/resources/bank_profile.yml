@@ -44,3 +44,4 @@ setting:
  paymentCancellationRedirectUrlExpirationTimeMs: 600000
  availableAccountsConsentSupported: true
  scaByOneTimeAvailableAccountsConsentRequired: true
+ psuInInitialRequestMandated: false

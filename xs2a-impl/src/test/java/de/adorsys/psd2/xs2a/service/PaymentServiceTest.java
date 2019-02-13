@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -43,6 +44,7 @@ import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -72,7 +74,9 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -354,6 +358,19 @@ public class PaymentServiceTest {
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
     }
 
+    @Test
+    public void createPayment_Failure_No_PSU() {
+        when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
+        //When
+        PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(SINGLE_PAYMENT_OK, parameters);
+        //Then
+        MessageError error = actualResponse.getError();
+        assertThat(error).isNotNull();
+        assertThat(error.getErrorType()).isEqualTo(ErrorType.PIS_400);
+        assertThat(error.getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+    }
+
     private SpiResponse<TransactionStatus> buildSpiResponseTransactionStatus() {
         return new SpiResponse<>(TransactionStatus.ACCP, ASPSP_CONSENT_DATA);
     }
@@ -441,7 +458,7 @@ public class PaymentServiceTest {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(type);
         requestParameters.setPaymentProduct("sepa-credit-transfers");
-
+        requestParameters.setPsuData(PSU_ID_DATA);
         return requestParameters;
     }
 

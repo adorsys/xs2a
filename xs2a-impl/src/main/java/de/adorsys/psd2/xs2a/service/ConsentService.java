@@ -42,6 +42,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -78,6 +79,9 @@ public class ConsentService {
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiErrorMapper spiErrorMapper;
     private final ScaApproachResolver scaApproachResolver;
+    private final AspspProfileServiceWrapper aspspProfileService;
+
+    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -90,6 +94,13 @@ public class ConsentService {
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred, TppRedirectUri tppRedirectUri) {
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
+        if (aspspProfileService.isPsuInInitialRequestMandated()
+                && psuData.isEmpty()) {
+            return ResponseObject.<CreateConsentResponse>builder()
+                       .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR, MESSAGE_ERROR_NO_PSU)))
+                       .build();
+        }
+
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(request);
 
         if (validationResult.isNotValid()) {

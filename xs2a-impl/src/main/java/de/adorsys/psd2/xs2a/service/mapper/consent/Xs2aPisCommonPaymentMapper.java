@@ -53,7 +53,7 @@ public class Xs2aPisCommonPaymentMapper {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        UpdatePisCommonPaymentPsuDataRequest request = new UpdatePisCommonPaymentPsuDataRequest();
-                       request.setPsuData(request.getPsuData());
+                       request.setPsuData(new PsuIdData(data.getPsuId(), null, null, null));
                        request.setPaymentId(updatePsuDataRequest.getPaymentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorisationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));

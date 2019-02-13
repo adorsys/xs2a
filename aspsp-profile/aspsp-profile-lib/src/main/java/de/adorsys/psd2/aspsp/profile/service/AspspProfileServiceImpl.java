@@ -58,7 +58,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.getSupportedPaymentTypeAndProductMatrix(),
             setting.getPaymentCancellationRedirectUrlExpirationTimeMs(),
             setting.isAvailableAccountsConsentSupported(),
-            setting.isScaByOneTimeAvailableAccountsConsentRequired());
+            setting.isScaByOneTimeAvailableAccountsConsentRequired(),
+            setting.isPsuInInitialRequestMandated());
     }
 
     @Override

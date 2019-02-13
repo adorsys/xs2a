@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -91,6 +92,8 @@ public class PaymentService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
+    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
+
     /**
      * Initiates a payment though "payment service" corresponding service method
      *
@@ -100,6 +103,13 @@ public class PaymentService {
      */
     public ResponseObject createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters) {
         xs2aEventService.recordTppRequest(EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, payment);
+
+        if (profileService.isPsuInInitialRequestMandated()
+                && paymentInitiationParameters.getPsuData().isEmpty()) {
+            return ResponseObject.<CreateConsentResponse>builder()
+                       .fail(new MessageError(PIS_400, new TppMessageInformation(MessageCategory.ERROR, FORMAT_ERROR, MESSAGE_ERROR_NO_PSU)))
+                       .build();
+        }
 
         TppInfo tppInfo = tppService.getTppInfo();
         tppInfo.setTppRedirectUri(paymentInitiationParameters.getTppRedirectUri());

@@ -25,10 +25,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -270,6 +267,31 @@ public class AisScaStartAuthorisationStageTest {
         assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+    }
+
+    @Test
+    public void apply_Identification_Success() {
+        //Given
+        when(request.isUpdatePsuIdentification()).thenReturn(true);
+        when(request.getPsuData()).thenReturn(PSU_ID_DATA);
+        //When
+        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        //Then
+        assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
+        assertThat(actualResponse.getResponseLinkType()).isEqualTo(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+    }
+
+    @Test
+    public void apply_Identification_Failure() {
+        //Given
+        when(request.isUpdatePsuIdentification()).thenReturn(true);
+        when(request.getPsuData()).thenReturn(null);
+        //When
+        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        //Then
+        assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);
+        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(actualResponse.getMessageError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
     }
 
     private static SpiAuthenticationObject buildSpiSmsAuthenticationObject() {
