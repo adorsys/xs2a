@@ -87,3 +87,6 @@ From now on these endpoints are fully functional:
 | GET    | /aspsp-api/v1/piis/consents/account/{account-id} | Returns a list of consents by given mandatory aspsp account id, optional creation date and instance ID    |
 | GET    | /aspsp-api/v1/piis/consents/psu                  | Returns a list of consents by given mandatory PSU ID Data, optional creation date and instance ID         |
 | GET    | /aspsp-api/v1/piis/consents/tpp/{tpp-id}         | Returns a list of consents by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID |
+
+## Bugfix: fix instanceId not being set in the CMS that doesn't have any pre-insert listeners
+From now on `instanceId` property will be correctly set to its default value(`UNDEFINED`) when the CMS doesn't have any pre-insert listeners to override this property. 
