@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,14 @@
 
 package de.adorsys.psd2.consent.repository;
 
-import de.adorsys.psd2.consent.domain.PsuData;
+import org.springframework.data.repository.CrudRepository;
 
-public interface PsuDataRepository extends Xs2aCrudRepository<PsuData, Long> {
+import java.io.Serializable;
 
-}
+/**
+ * This is proxy CRUD repository that provides compatibility between spring-data 1.x and spring-data 2.x
+ *
+ * Method {@link org.springframework.data.repository.CrudRepository#save(java.lang.Iterable)} was deleted spring-data version starting 2.x
+ *
+ */
+public interface Xs2aCrudRepository<T, ID extends Serializable> extends CrudRepository<T, ID> {}

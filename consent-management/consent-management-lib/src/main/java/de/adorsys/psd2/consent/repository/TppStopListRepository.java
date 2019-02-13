@@ -19,13 +19,12 @@ package de.adorsys.psd2.consent.repository;
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.repository.CrudRepository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface TppStopListRepository extends CrudRepository<TppStopListEntity, Long> {
+public interface TppStopListRepository extends Xs2aCrudRepository<TppStopListEntity, Long> {
 
     Optional<TppStopListEntity> findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
 

@@ -20,14 +20,13 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface AisConsentRepository extends CrudRepository<AisConsent, Long>, JpaSpecificationExecutor<AisConsent> {
+public interface AisConsentRepository extends Xs2aCrudRepository<AisConsent, Long>, JpaSpecificationExecutor<AisConsent> {
     List<AisConsent> findByConsentStatusIn(Set<ConsentStatus> statuses);
 
     Optional<AisConsent> findByExternalId(String externalId);
