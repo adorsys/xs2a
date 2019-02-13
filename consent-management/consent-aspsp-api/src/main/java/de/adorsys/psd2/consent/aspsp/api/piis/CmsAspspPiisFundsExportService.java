@@ -36,7 +36,8 @@ public interface CmsAspspPiisFundsExportService {
      * @param createDateFrom         Optional starting creation date criteria
      * @param createDateTo           Optional ending creation date criteria
      * @param psuIdData              Optional Psu information criteria
-     * @param instanceId             Mandatory id of particular service instance
+     * @param instanceId             Optional id of particular service instance.
+     *                               If it's not provided, default value will be used instead.
      * @return Collection of consents for TPP by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
@@ -45,8 +46,8 @@ public interface CmsAspspPiisFundsExportService {
     Collection<PiisConsent> exportConsentsByTpp(String tppAuthorisationNumber,
                                                 @Nullable LocalDate createDateFrom,
                                                 @Nullable LocalDate createDateTo,
-                                                @Nullable PsuIdData psuIdData, @NotNull String instanceId
-                                               );
+                                                @Nullable PsuIdData psuIdData, @Nullable String instanceId
+    );
 
     /**
      * Returns list of consents by given criteria.
@@ -54,32 +55,34 @@ public interface CmsAspspPiisFundsExportService {
      * @param psuIdData      Mandatory Psu information criteria
      * @param createDateFrom Optional starting creation date criteria
      * @param createDateTo   Optional ending creation date criteria
-     * @param instanceId     Mandatory id of particular service instance
+     * @param instanceId     Optional id of particular service instance.
+     *                       If it's not provided, default value will be used instead.
      * @return Collection of consents for PSU by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
     Collection<PiisConsent> exportConsentsByPsu(PsuIdData psuIdData,
-                                                      @Nullable LocalDate createDateFrom,
-                                                      @Nullable LocalDate createDateTo,
-                                                      @NotNull String instanceId
-                                                     );
+                                                @Nullable LocalDate createDateFrom,
+                                                @Nullable LocalDate createDateTo,
+                                                @Nullable String instanceId
+    );
 
     /**
      * Returns list of consents by given criteria.
      *
-     * @param aspspAccountId         Bank specific account identifier
-     * @param createDateFrom         Optional starting creation date criteria
-     * @param createDateTo           Optional ending creation date criteria
-     * @param instanceId             Mandatory id of particular service instance
+     * @param aspspAccountId Bank specific account identifier
+     * @param createDateFrom Optional starting creation date criteria
+     * @param createDateTo   Optional ending creation date criteria
+     * @param instanceId     Optional id of particular service instance.
+     *                       If it's not provided, default value will be used instead.
      * @return Collection of consents by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
     Collection<PiisConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
-                                                     @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                     @NotNull String instanceId);
+                                                      @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
+                                                      @Nullable String instanceId);
 
 }

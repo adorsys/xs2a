@@ -234,7 +234,7 @@ public class CmsAspspPisExportServiceInternalTest {
     }
 
     @Test
-    public void exportPaymentsByAccountId_failure_wrongPsuIdData() {
+    public void exportPaymentsByAccountId_failure_wrongAspspAccountId() {
         // Given
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
