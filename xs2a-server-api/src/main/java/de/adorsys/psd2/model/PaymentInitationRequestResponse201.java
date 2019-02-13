@@ -213,6 +213,7 @@ public class PaymentInitationRequestResponse201   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
   @Valid
+  @JsonProperty("_links")
   public Map getLinks() {
     return _links;
   }

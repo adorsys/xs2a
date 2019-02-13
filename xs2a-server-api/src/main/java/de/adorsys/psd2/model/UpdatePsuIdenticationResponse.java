@@ -57,7 +57,7 @@ public class UpdatePsuIdenticationResponse   {
   @NotNull
 
   @Valid
-
+  @JsonProperty("_links")
   public Map getLinks() {
     return _links;
   }

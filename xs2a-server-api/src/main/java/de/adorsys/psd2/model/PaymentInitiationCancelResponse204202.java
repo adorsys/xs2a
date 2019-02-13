@@ -16,19 +16,15 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ChallengeData;
-import de.adorsys.psd2.model.ChosenScaMethod;
-import de.adorsys.psd2.model.ScaMethods;
-import de.adorsys.psd2.model.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Body of the response for a successful cancel payment request.
@@ -150,7 +146,7 @@ public class PaymentInitiationCancelResponse204202   {
   @ApiModelProperty(value = "")
 
   @Valid
-
+  @JsonProperty("_links")
   public Map getLinks() {
     return _links;
   }

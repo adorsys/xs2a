@@ -82,6 +82,7 @@ public class Error429NGPIIS {
      **/
     @ApiModelProperty(value = "")
     @Valid
+    @JsonProperty("_links")
     public Map getLinks() {
         return _links;
     }

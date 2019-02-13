@@ -181,7 +181,7 @@ public class Error405PIS   {
   @ApiModelProperty(value = "")
 
   @Valid
-
+  @JsonProperty("_links")
   public Map getLinks() {
     return _links;
   }

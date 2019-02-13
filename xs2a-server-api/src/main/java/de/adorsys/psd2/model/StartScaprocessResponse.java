@@ -168,7 +168,7 @@ public class StartScaprocessResponse   {
   @NotNull
 
   @Valid
-
+  @JsonProperty("_links")
   public Map getLinks() {
     return _links;
   }
