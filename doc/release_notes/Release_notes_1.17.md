@@ -126,7 +126,7 @@ If PSU-ID was sent, authorisation status will be changed to `PSUIDENTIFIED` and 
 `startAuthorisationWithPsuAuthentication` using which PSU authentication data should be uploaded.
 After PSU identified itself, there is no need to send PSU-ID in next requests to make authorisation finalised.
 
-## Bugfix: Incorrect behaviour when entering wrong payment service or payment product for Get payment status request, Get payment information request and Cancel payment
+## Bugfix: Fixed problem with wrong payment service (payment product) for Get payment status, Get payment information and Cancel payment
 
 When using GET `/v1/{payment-service}/{payment-product}/{paymentId}/status`, GET `/v1/{payment-service}/{payment-product}/{paymentId}` or DELETE `/v1/{payment-service}/{payment-product}/{paymentId}/` 
 with incorrect payment service(e.g `periodic-payments` instead of `payments` with payment id of single payment, not periodic, or `instant-sepa-credit-transfers` instead of `sepa-credit-transfers`),
