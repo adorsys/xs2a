@@ -75,6 +75,7 @@ public class ReadPeriodicPaymentServiceTest {
                 .aspspConsentData(SOME_ASPSP_CONSENT_DATA.respondWith("some data".getBytes()))
                 .payload(SPI_PERIODIC_PAYMENT)
                 .success());
+        when(spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(SPI_PERIODIC_PAYMENT)).thenReturn(PERIODIC_PAYMENT);
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), PERIODIC_PAYMENT.getTransactionStatus()))
             .thenReturn(true);
     }
