@@ -93,3 +93,6 @@ From now on these endpoints are fully functional:
 
 ## Bugfix: fix instanceId not being set in the CMS that doesn't have any pre-insert listeners
 From now on `instanceId` property will be correctly set to its default value(`UNDEFINED`) when the CMS doesn't have any pre-insert listeners to override this property. 
+
+## Bugfix: Error messages from spi-api should be returned to the tpp in response
+Now messages that are provided in spi-api in case of the error will be returned to the tpp in response

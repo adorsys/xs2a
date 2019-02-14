@@ -17,9 +17,17 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.psd2.xs2a.exception.MessageError;
 
 public interface CreatePaymentService<T, R> {
     ResponseObject<R> createPayment(T payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo);
+
+    default ResponseObject<R> buildErrorResponse(ErrorHolder errorHolder) {
+        return ResponseObject.<R>builder()
+                   .fail(new MessageError(errorHolder))
+                   .build();
+    }
 }

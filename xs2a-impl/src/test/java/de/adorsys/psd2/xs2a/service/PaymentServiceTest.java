@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
@@ -44,6 +45,7 @@ import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
@@ -53,10 +55,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
-import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
-import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
-import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import de.adorsys.psd2.xs2a.spi.service.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,10 +66,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +83,7 @@ public class PaymentServiceTest {
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], PAYMENT_ID);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
-
+    private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private final SinglePayment SINGLE_PAYMENT_OK = getSinglePayment(IBAN, AMOUNT);
 
     private final BulkPayment BULK_PAYMENT_OK = getBulkPayment(SINGLE_PAYMENT_OK, IBAN);
@@ -150,6 +146,10 @@ public class PaymentServiceTest {
     private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     @Mock
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
+    @Mock
+    private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
+    @Mock
+    private CommonPaymentSpi commonPaymentSpi;
 
     @Before
     public void setUp() {
@@ -159,7 +159,7 @@ public class PaymentServiceTest {
             .thenReturn(SPI_PSU_DATA);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(new CreatePisCommonPaymentResponse("TEST"), PSU_ID_DATA)).thenReturn(getXs2aPisCommonPayment());
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString("TEST")).thenReturn("TEST");
-
+        when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
         //Status by ID
         when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK), getTppInfoServiceModified()))
             .thenReturn(getValidResponse());
@@ -327,6 +327,58 @@ public class PaymentServiceTest {
     }
 
     @Test
+    public void getPaymentById_spi_fail() {
+        // Given:
+        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
+        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = getPisCommonPayment();
+
+        PaymentInformationResponse<SinglePayment> errorResponse = new PaymentInformationResponse<>(
+            ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
+                .messages(ERROR_MESSAGE_TEXT)
+                .build());
+
+        when(readPaymentService.getPayment(any(), any(), any(), any()))
+            .thenReturn(errorResponse);
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
+            .thenReturn(pisCommonPaymentOptional);
+        when(cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentOptional.get()))
+            .thenReturn(new CommonPayment());
+
+        // When
+        ResponseObject actualResponse = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_ID);
+
+        //Then
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_404);
+        assertThat(actualResponse.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
+    }
+
+    @Test
+    public void getPaymentStatusById_spi_fail() {
+        // Given:
+        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
+        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = getPisCommonPayment();
+
+        ReadPaymentStatusResponse errorResponse = new ReadPaymentStatusResponse(
+            ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
+                .messages(ERROR_MESSAGE_TEXT)
+                .build());
+
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
+            .thenReturn(pisCommonPaymentOptional);
+        when(readPaymentStatusService.readPaymentStatus(any(), any(), any(), any())).thenReturn(errorResponse);
+
+        // When
+        ResponseObject actualResponse = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_ID);
+
+        // Then
+        //Then
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_404);
+        assertThat(actualResponse.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
+    }
+
+    @Test
     public void getPaymentStatusById_Success_ShouldRecordEvent() {
         SpiResponse<TransactionStatus> spiResponse = buildSpiResponseTransactionStatus();
         when(singlePaymentSpi.getPaymentStatusById(any(), any(), any())).thenReturn(spiResponse);
@@ -335,12 +387,7 @@ public class PaymentServiceTest {
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
         when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
         when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(SpiContextData.class), eq(ASPSP_CONSENT_DATA)))
-            .thenReturn(
-                SpiResponse.<TransactionStatus>builder()
-                    .payload(TransactionStatus.RCVD)
-                    .aspspConsentData(ASPSP_CONSENT_DATA)
-                    .success()
-            );
+            .thenReturn(new ReadPaymentStatusResponse(RCVD));
         doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
             .thenReturn(true);
@@ -474,6 +521,7 @@ public class PaymentServiceTest {
     private Optional<PisCommonPaymentResponse> getPisCommonPayment() {
         PisCommonPaymentResponse response = new PisCommonPaymentResponse();
         response.setPayments(Collections.singletonList(getPisPayment()));
+        response.setPaymentProduct(PAYMENT_PRODUCT);
         return Optional.of(response);
     }
 
@@ -495,5 +543,4 @@ public class PaymentServiceTest {
         pisPayment.setTransactionStatus(TransactionStatus.RJCT);
         return Collections.singletonList(pisPayment);
     }
-
 }
