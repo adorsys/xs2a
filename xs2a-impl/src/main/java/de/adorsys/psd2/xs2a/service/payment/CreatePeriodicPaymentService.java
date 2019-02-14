@@ -75,6 +75,10 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
         ScaPaymentService scaPaymentService = scaPaymentServiceResolver.getService();
         PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), psuData);
 
+        if (response.hasError()) {
+            return buildErrorResponse(response.getErrorHolder());
+        }
+
         PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response);
         Xs2aPisCommonPayment pisCommonPayment = xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(pisCommonPaymentService.createCommonPayment(pisPaymentInfo), psuData);
 

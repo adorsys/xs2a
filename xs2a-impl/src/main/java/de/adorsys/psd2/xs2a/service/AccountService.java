@@ -201,7 +201,6 @@ public class AccountService {
     public ResponseObject<Xs2aBalancesReport> getBalancesReport(String consentId, String accountId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_BALANCE_REQUEST_RECEIVED);
 
-
         ResponseObject<AccountConsent> accountConsentResponse = consentService.getValidatedConsent(consentId);
 
         if (accountConsentResponse.hasError()) {
