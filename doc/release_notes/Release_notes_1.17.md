@@ -112,7 +112,7 @@ An SPI Developer now shall consider also Flag `decoupled` in `de.adorsys.psd2.xs
 method `requestAvailableScaMethods`.
 If it is set to `true` and PSU chooses this authentication method, the SCA approach will be switched to `DECOUPLED`
 ## Added a possibility to require PSU-ID in initial request for payment initiation or establishing consent
-Now ASPSP can forbid initiating payment or establishing AIS consent without PSU-ID by setting option `psuInInitialRequestMandated` to true in ASPSP Profile.
+Now ASPSP can forbid initiating payment or establishing AIS consent without PSU-ID by setting option `psuInInitialRequestMandated` to `true` in ASPSP Profile.
 
 | Option                      | Meaning                                                                                                      | Default value |
 |-----------------------------|--------------------------------------------------------------------------------------------------------------|---------------|
