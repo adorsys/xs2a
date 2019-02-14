@@ -431,7 +431,6 @@ deploy_develop_stage:
   <<: *helm_env_deploy
   only:
     - develop
-    - dgo_automatic_deployments
   variables:
     <<: *variables
     OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
@@ -452,7 +451,8 @@ sonar_code_coverage:
     - mvn --fail-at-end clean install
     - mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST -Dsonar.login=${SONAR_TOKEN}
   only:
-    - develop
+    - /^.*-sonar-.*$/
+    - /^.*_sonar_.*$/
 
 # Master
 
