@@ -18,11 +18,13 @@ package de.adorsys.psd2.xs2a.service.authorization;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -30,10 +32,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScaApproachResolverTest {
@@ -44,6 +45,8 @@ public class ScaApproachResolverTest {
     private AspspProfileService aspspProfileService;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private ScaApproachHolder scaApproachHolder;
 
     @Before
     public void setUp() {
@@ -52,7 +55,7 @@ public class ScaApproachResolverTest {
     }
 
     @Test
-    public void shouldReturn_Redirect() {
+    public void resolveScaApproach_shouldReturn_Redirect() {
         //When
         when(requestProviderService.resolveTppRedirectPreferred())
             .thenReturn(true);
@@ -64,7 +67,7 @@ public class ScaApproachResolverTest {
     }
 
     @Test
-    public void shouldReturn_Embedded() {
+    public void resolveScaApproach_shouldReturn_Embedded() {
         //When
         when(requestProviderService.resolveTppRedirectPreferred())
             .thenReturn(false);
@@ -73,6 +76,33 @@ public class ScaApproachResolverTest {
 
         //Then
         assertThat(actualResult).isEqualTo(EMBEDDED);
+    }
+
+    @Test
+    public void resolveScaApproach_withForcedApproach_shouldReturnForced() {
+        // Given
+        when(scaApproachHolder.getScaApproach()).thenReturn(DECOUPLED);
+        when(scaApproachHolder.isNotEmpty()).thenReturn(true);
+
+        // When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        // Then
+        assertThat(actualResult).isEqualTo(DECOUPLED);
+
+    }
+
+    @Test
+    public void forceDecoupledScaApproach_shouldSetDecoupled() {
+        // Given
+        ArgumentCaptor<ScaApproach> scaApproachArgumentCaptor = ArgumentCaptor.forClass(ScaApproach.class);
+
+        // When
+        scaApproachResolver.forceDecoupledScaApproach();
+
+        // Then
+        verify(scaApproachHolder, times(1)).setScaApproach(scaApproachArgumentCaptor.capture());
+        assertThat(scaApproachArgumentCaptor.getValue()).isEqualTo(DECOUPLED);
     }
 
     private List<ScaApproach> buildScaApproaches(ScaApproach... scaApproaches) {

@@ -65,4 +65,5 @@
     <include relativeToChangelogFile="true" file="migration/0040-add-not-null-constraint-to-common-payment-id.xml"/>
     <include relativeToChangelogFile="true" file="migration/0041-add-creation-timestamp-to-piis-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0044-add-columns-to-ais-consent.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0045-create-ais-available-sca-method.xml"/>
 </databaseChangeLog>

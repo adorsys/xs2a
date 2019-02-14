@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais.stage;
+package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
 
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
@@ -25,6 +25,12 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -88,6 +94,9 @@ public class AisScaStartAuthorisationStageTest {
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo());
     private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
 
+    private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
+    private static final String DECOUPLED_AUTHENTICATION_METHOD_ID = "decoupled method";
+
     @InjectMocks
     private AisScaStartAuthorisationStage scaStartAuthorisationStage;
 
@@ -117,6 +126,10 @@ public class AisScaStartAuthorisationStageTest {
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
     @Mock
     private SpiErrorMapper spiErrorMapper;
+    @Mock
+    private CommonDecoupledAisService commonDecoupledAisService;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
 
     @Before
     public void setUp() {
@@ -246,6 +259,48 @@ public class AisScaStartAuthorisationStageTest {
     }
 
     @Test
+    public void apply_OneAvailableScaMethod_DecoupledApproach() {
+        when(request.getPsuData())
+            .thenReturn(PSU_ID_DATA);
+
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+
+        List<SpiAuthenticationObject> availableScaMethods = Collections.singletonList(buildDecoupledAuthenticationObject(DECOUPLED_AUTHENTICATION_METHOD_ID));
+        when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(availableScaMethods));
+
+        when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, DECOUPLED_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(new SpiAuthorizationCodeResult()));
+
+        when(commonDecoupledAisService.proceedDecoupledApproach(any(), any(), eq(DECOUPLED_AUTHENTICATION_METHOD_ID), any()))
+            .thenReturn(buildUpdateConsentPsuDataResponse());
+
+        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getPsuMessage()).isEqualTo(PSU_SUCCESS_MESSAGE);
+        assertThat(actualResponse.getScaStatus()).isEqualTo(METHOD_SELECTED_SCA_STATUS);
+        verify(commonDecoupledAisService).proceedDecoupledApproach(eq(request), eq(spiAccountConsent), eq(DECOUPLED_AUTHENTICATION_METHOD_ID), any());
+    }
+
+    @Test
+    public void apply_DecoupledApproach_ShouldChangeScaApproach() {
+        when(request.getPsuData())
+            .thenReturn(PSU_ID_DATA);
+
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+        List<SpiAuthenticationObject> availableScaMethods = Collections.singletonList(buildDecoupledAuthenticationObject(DECOUPLED_AUTHENTICATION_METHOD_ID));
+        when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(availableScaMethods));
+
+        scaStartAuthorisationStage.apply(request);
+
+        verify(scaApproachResolver).forceDecoupledScaApproach();
+    }
+
+    @Test
     public void apply_OneAvailableScaMethod_Failure_ResponseWithError() {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
@@ -354,6 +409,20 @@ public class AisScaStartAuthorisationStageTest {
                    .aspspConsentData(ASPSP_CONSENT_DATA)
                    .message(ERROR_MESSAGE_TEXT)
                    .fail(RESPONSE_STATUS);
+    }
+
+    private UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+        response.setPsuMessage(PSU_SUCCESS_MESSAGE);
+        response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
+        return response;
+    }
+
+    private static SpiAuthenticationObject buildDecoupledAuthenticationObject(String methodId) {
+        SpiAuthenticationObject spiAuthenticationObject = new SpiAuthenticationObject();
+        spiAuthenticationObject.setAuthenticationMethodId(methodId);
+        spiAuthenticationObject.setDecoupled(true);
+        return spiAuthenticationObject;
     }
 }
 

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -144,4 +145,22 @@ interface AisConsentServiceBase {
      * @return SCA status of the authorisation
      */
     Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
+
+    /**
+     * Checks if requested authentication method is decoupled.
+     *
+     * @param authorisationId        String representation of the authorisation identifier
+     * @param authenticationMethodId String representation of the available authentication method identifier
+     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
+     */
+    boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId);
+
+    /**
+     * Saves authentication methods in provided authorisation
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param methods         List of authentication methods to be saved
+     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
+     */
+    boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods);
 }

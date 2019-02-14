@@ -18,11 +18,14 @@ package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity(name = "ais_consent_authorization")
@@ -56,6 +59,10 @@ public class AisConsentAuthorization extends InstanceDependableEntity {
 
     @Column(name = "expiration_timestamp")
     private OffsetDateTime redirectUrlExpirationTimestamp;
+
+    @ElementCollection
+    @CollectionTable(name = "ais_available_sca_method", joinColumns = @JoinColumn(name = "authorisation_id"))
+    private List<ScaMethod> availableScaMethods = new ArrayList<>();
 
     public boolean isExpired() {
         return redirectUrlExpirationTimestamp.isBefore(OffsetDateTime.now());

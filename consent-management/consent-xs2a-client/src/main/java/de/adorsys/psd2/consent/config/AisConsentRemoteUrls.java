@@ -151,4 +151,22 @@ public class AisConsentRemoteUrls {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorisations/{authorisation-id}/status";
     }
 
+    /**
+     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
+     * Method: GET
+     * PathVariables: String authorisationId
+     * PathVariables: String authenticationMethodId
+     */
+    public String isAuthenticationMethodDecoupled() {
+        return consentServiceBaseUrl + "/ais/consent/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}";
+    }
+
+    /**
+     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
+     * Method: POST
+     * PathVariables: String authorisationId
+     */
+    public String saveAuthenticationMethods() {
+        return consentServiceBaseUrl + "/ais/consent/authorisations/{authorisation-id}/authentication-methods";
+    }
 }
