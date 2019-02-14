@@ -234,6 +234,15 @@ public class ConsentModelMapper {
         return updatePsuData;
     }
 
+    public CancellationList mapToCancellationList(Xs2aPaymentCancellationAuthorisationSubResource idsContainer) {
+        CancellationList list = new CancellationList();
+
+        list.addAll(Optional.ofNullable(idsContainer.getCancellationIds())
+            .map(ArrayList::new)
+            .orElseGet(ArrayList::new));
+        return list;
+    }
+
     public Xs2aUpdatePisCommonPaymentPsuDataRequest mapToPisUpdatePsuData(PsuIdData psuData, String paymentId, String authorisationId, String paymentService, String paymentProduct, Map body) {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setPsuData(psuData);
