@@ -224,11 +224,10 @@ public class PaymentController implements PaymentApi {
                                                                                    String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                                                                    String psUGeoLocation) {
 
-        //Todo map response to CancellationList, when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/402
         ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> serviceResponse = paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(paymentId);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.ok(serviceResponse);
+                   : responseMapper.ok(serviceResponse, consentModelMapper::mapToCancellationList);
     }
 
     @Override

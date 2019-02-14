@@ -16,13 +16,11 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import io.swagger.annotations.ApiModel;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * An array of all cancellationIds connected to this resource.

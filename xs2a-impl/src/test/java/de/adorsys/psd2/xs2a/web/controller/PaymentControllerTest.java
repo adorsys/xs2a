@@ -19,9 +19,11 @@ package de.adorsys.psd2.xs2a.web.controller;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
@@ -35,6 +37,7 @@ import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +47,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
@@ -51,8 +57,8 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.*;
@@ -60,6 +66,7 @@ import static org.springframework.http.HttpStatus.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentControllerTest {
     private static final String CORRECT_PAYMENT_ID = "33333-444444-55555-55555";
+    private static final String CORRECT_PAYMENT_ID_2 = "33333-444444-55555-66666";
     private static final String WRONG_PAYMENT_ID = "wrong_payment_id";
     private static final String REDIRECT_LINK = "http://localhost:4200/consent/confirmation/pis";
     private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
@@ -397,6 +404,131 @@ public class PaymentControllerTest {
         assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
     }
 
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformationClassCheck_success() {
+        when(consentModelMapper.mapToCancellationList(any()))
+            .thenCallRealMethod();
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID))
+            .thenReturn(getCancellationResponseList(Collections.singletonList(CORRECT_PAYMENT_ID)));
+
+        when(responseMapper.ok(any(), any()))
+            .thenCallRealMethod();
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(OK);
+        assertTrue(actual.getBody() instanceof CancellationList);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformation_success() {
+        when(consentModelMapper.mapToCancellationList(any()))
+            .thenCallRealMethod();
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID))
+            .thenReturn(getCancellationResponseList(Collections.singletonList(CORRECT_PAYMENT_ID)));
+
+        when(responseMapper.ok(any(), any()))
+            .thenCallRealMethod();
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(OK);
+        assertThat(((CancellationList) actual.getBody()).size()).isEqualTo(1);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformationManyIds_success() {
+        when(consentModelMapper.mapToCancellationList(any()))
+            .thenCallRealMethod();
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID))
+            .thenReturn(getCancellationResponseList(Arrays.asList(CORRECT_PAYMENT_ID, CORRECT_PAYMENT_ID_2)));
+
+        when(responseMapper.ok(any(), any()))
+            .thenCallRealMethod();
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null);
+
+        // Then
+        assertThat(((CancellationList) actual.getBody()).size()).isEqualTo(2);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformationWithNull_success() {
+        when(consentModelMapper.mapToCancellationList(any()))
+            .thenCallRealMethod();
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(anyString()))
+            .thenReturn(getCancellationResponseNullList());
+
+        when(responseMapper.ok(any(), any()))
+            .thenCallRealMethod();
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null,CORRECT_PAYMENT_ID,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(OK);
+        assertTrue(CollectionUtils.isEmpty((CancellationList) actual.getBody()));
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformation_error() {
+        when(responseErrorMapper.generateErrorResponse(any()))
+            .thenReturn(ResponseEntity.status(FORBIDDEN).build());
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(anyString()))
+            .thenReturn(getCancellationResponseWithError());
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null,
+                                                                                                           null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
+    }
+
     private ResponseObject<CancelPaymentResponse> getCancelPaymentResponseObject(boolean startAuthorisationRequired) {
         CancelPaymentResponse response = new CancelPaymentResponse();
         response.setStartAuthorisationRequired(startAuthorisationRequired);
@@ -428,5 +560,24 @@ public class PaymentControllerTest {
     private MessageError createMessageError(ErrorType errorType, MessageErrorCode errorCode) {
         return new MessageError(errorType, new TppMessageInformation(MessageCategory.ERROR, errorCode));
     }
+
+    private ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationResponseList(List<String> paymentIds) {
+        return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
+            .body(new Xs2aPaymentCancellationAuthorisationSubResource(paymentIds))
+            .build();
+    }
+
+    private ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationResponseNullList() {
+        return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
+            .body(new Xs2aPaymentCancellationAuthorisationSubResource(null))
+            .build();
+    }
+
+    private ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationResponseWithError() {
+        return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
+            .fail(new MessageError(ErrorHolder.builder(MessageErrorCode.PAYMENT_FAILED).errorType(ErrorType.PIS_403).build()))
+            .build();
+    }
+
 
 }
