@@ -22,5 +22,6 @@ package de.adorsys.psd2.xs2a.config.factory;
  * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
  */
 public interface AisScaStageAuthorisationFactory extends ServiceFactory {
-    String SERVICE_PREFIX = "AIS_";
+    String SEPARATOR = "_";
+    String SERVICE_PREFIX = "AIS";
 }

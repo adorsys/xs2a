@@ -18,11 +18,13 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.DECOUPLED;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 
 @Service
@@ -30,9 +32,11 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 public class ScaApproachResolver {
     private final AspspProfileService aspspProfileService;
     private final RequestProviderService requestProviderService;
+    private final ScaApproachHolder scaApproachHolder;
 
     /**
      * Resolve which sca approach from sca approaches list in ASPSP-profile should be used for authorisation.
+     * If SCA approach was forced beforehand, it will be returned instead.
      * If header "tpp-redirect-preferred" is provided with value "true", Redirect approach will be used,
      * otherwise the first approach from the list will be chosen. If ASPSP has only one SCA approach in profile, header "tpp-redirect-preferred" will be ignored
      * and only approach from profile will be used
@@ -40,6 +44,10 @@ public class ScaApproachResolver {
      * @return chosen ScaApproach to be used for authorisation
      */
     public ScaApproach resolveScaApproach() {
+        if (scaApproachHolder.isNotEmpty()) {
+            return scaApproachHolder.getScaApproach();
+        }
+
         boolean tppRedirectPreferred = requestProviderService.resolveTppRedirectPreferred();
         List<ScaApproach> scaApproaches = aspspProfileService.getScaApproaches();
 
@@ -47,6 +55,14 @@ public class ScaApproachResolver {
             return REDIRECT;
         }
         return getFirst(scaApproaches);
+    }
+
+    /**
+     * Forcefully sets current SCA approach to <code>DECOUPLED</code>.
+     * Should ONLY be used for switching from Embedded to Decoupled approach during SCA method selection
+     */
+    public void forceDecoupledScaApproach() {
+        scaApproachHolder.setScaApproach(DECOUPLED);
     }
 
     private ScaApproach getFirst(List<ScaApproach> scaApproaches) {

@@ -19,11 +19,13 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
@@ -31,6 +33,7 @@ import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -60,9 +63,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AisConsentServiceInternalTest {
-    private AisConsent aisConsent;
-    private AisConsentAuthorization aisConsentAuthorisation;
-    private List<AisConsentAuthorization> aisConsentAuthorisationList = new ArrayList<>();
     private static final long CONSENT_ID = 1;
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
@@ -76,6 +76,13 @@ public class AisConsentServiceInternalTest {
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final String INSTANCE_ID = "UNDEFINED";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+
+    private static final String AUTHENTICATION_METHOD_ID = "Method id";
+    private static final String WRONG_AUTHENTICATION_METHOD_ID = "Wrong method id";
+
+    private AisConsent aisConsent;
+    private AisConsentAuthorization aisConsentAuthorisation;
+    private List<AisConsentAuthorization> aisConsentAuthorisationList = new ArrayList<>();
 
     @InjectMocks
     private AisConsentServiceInternal aisConsentService;
@@ -103,9 +110,12 @@ public class AisConsentServiceInternalTest {
     @Mock
     private PsuData psuDataMocked;
 
+    @Mock
+    private ScaMethodMapper scaMethodMapper;
+
     @Before
     public void setUp() {
-        aisConsentAuthorisation = buildAisConsentAuthorization();
+        aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.STARTED);
         aisConsentAuthorisationList.add(aisConsentAuthorisation);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
@@ -197,7 +207,7 @@ public class AisConsentServiceInternalTest {
 
     @Test
     public void getAuthorisationScaStatus_success() {
-        List<AisConsentAuthorization> authorisations = Collections.singletonList(buildConsentAuthorisation(AUTHORISATION_ID));
+        List<AisConsentAuthorization> authorisations = Collections.singletonList(buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS));
         AisConsent consent = buildConsentWithAuthorisations(EXTERNAL_CONSENT_ID, authorisations);
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(consent));
@@ -224,7 +234,7 @@ public class AisConsentServiceInternalTest {
 
     @Test
     public void getAuthorisationScaStatus_failure_wrongAuthorisationId() {
-        List<AisConsentAuthorization> authorisations = Collections.singletonList(buildConsentAuthorisation(WRONG_AUTHORISATION_ID));
+        List<AisConsentAuthorization> authorisations = Collections.singletonList(buildAisConsentAuthorisation(WRONG_AUTHORISATION_ID, SCA_STATUS));
         AisConsent consent = buildConsentWithAuthorisations(EXTERNAL_CONSENT_ID, authorisations);
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(consent));
@@ -388,21 +398,124 @@ public class AisConsentServiceInternalTest {
         verify(aisConsentRepository).save(oldConsents);
     }
 
-    private AisConsentAuthorization buildAisConsentAuthorization() {
+    @Test
+    public void isAuthenticationMethodDecoupled_success_decoupled() {
+        // Given
+        List<ScaMethod> methods = Collections.singletonList(buildScaMethod(true));
+        when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
+            .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(methods)));
+
+        // When
+        boolean actualResult = aisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+
+        // Then
+        assertTrue(actualResult);
+    }
+
+    @Test
+    public void isAuthenticationMethodDecoupled_success_notDecoupled() {
+        // Given
+        List<ScaMethod> methods = Collections.singletonList(buildScaMethod(false));
+        when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
+            .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(methods)));
+
+        // When
+        boolean actualResult = aisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+
+        // Then
+        assertFalse(actualResult);
+    }
+
+    @Test
+    public void isAuthenticationMethodDecoupled_failure_wrongMethodId() {
+        // Given
+        List<ScaMethod> methods = Collections.singletonList(buildScaMethod(true));
+        when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
+            .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(methods)));
+
+        // When
+        boolean actualResult = aisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, WRONG_AUTHENTICATION_METHOD_ID);
+
+        // Then
+        assertFalse(actualResult);
+    }
+
+    @Test
+    public void isAuthenticationMethodDecoupled_failure_wrongAuthorisationId() {
+        // Given
+        when(aisConsentAuthorisationRepository.findByExternalId(WRONG_AUTHORISATION_ID)).thenReturn(Optional.empty());
+
+        // When
+        boolean actualResult = aisConsentService.isAuthenticationMethodDecoupled(WRONG_AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+
+        // Then
+        assertFalse(actualResult);
+    }
+
+    @Test
+    public void isAuthenticationMethodDecoupled_failure_noMethodsPresent() {
+        // Given
+        when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
+            .thenReturn(Optional.of(buildAisConsentAuthorisationWithMethods(Collections.emptyList())));
+
+        // When
+        boolean actualResult = aisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+
+        // Then
+        assertFalse(actualResult);
+    }
+
+    @Test
+    public void saveAuthenticationMethods_success() {
+        // Given
+        List<CmsScaMethod> cmsScaMethods = Collections.singletonList(buildCmsScaMethod(true));
+        List<ScaMethod> scaMethods = Collections.singletonList(buildScaMethod(true));
+        when(scaMethodMapper.mapToScaMethods(cmsScaMethods)).thenReturn(scaMethods);
+
+        ArgumentCaptor<AisConsentAuthorization> authorisationArgumentCaptor = ArgumentCaptor.forClass(AisConsentAuthorization.class);
+        when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
+            .thenReturn(Optional.of(buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS)));
+
+        // When
+        boolean actualResult = aisConsentService.saveAuthenticationMethods(AUTHORISATION_ID, cmsScaMethods);
+
+        // Then
+        assertTrue(actualResult);
+        verify(aisConsentAuthorisationRepository, times(1)).save(authorisationArgumentCaptor.capture());
+        assertEquals(authorisationArgumentCaptor.getValue().getAvailableScaMethods(), scaMethods);
+    }
+
+    @Test
+    public void saveAuthenticationMethods_failure_wrongAuthorisationId() {
+        // Given
+        List<CmsScaMethod> cmsScaMethods = Collections.singletonList(buildCmsScaMethod(true));
+
+        when(aisConsentAuthorisationRepository.findByExternalId(WRONG_AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        boolean actualResult = aisConsentService.saveAuthenticationMethods(WRONG_AUTHORISATION_ID, cmsScaMethods);
+
+        // Then
+        assertFalse(actualResult);
+        verify(aisConsentAuthorisationRepository, never()).save(any(AisConsentAuthorization.class));
+    }
+
+    private AisConsentAuthorization buildAisConsentAuthorisation(String externalId, ScaStatus scaStatus) {
         AisConsentAuthorization aisConsentAuthorization = new AisConsentAuthorization();
         aisConsentAuthorization.setConsent(aisConsent);
-        aisConsentAuthorization.setExternalId(AUTHORISATION_ID);
+        aisConsentAuthorization.setExternalId(externalId);
         aisConsentAuthorization.setPsuData(PSU_DATA);
-        aisConsentAuthorization.setScaStatus(ScaStatus.STARTED);
+        aisConsentAuthorization.setScaStatus(scaStatus);
         return aisConsentAuthorization;
     }
 
     @NotNull
     private AspspSettings getAspspSettings() {
         return new AspspSettings(1, false, false, null, null,
-            null, false, null, null, 1, 1, false,
-            false, false, false, false, false, 1,
-            null, 1, 1, null, 1, false, false, false);
+                                 null, false, null, null, 1, 1, false,
+                                 false, false, false, false, false, 1,
+                                 null, 1, 1, null, 1, false, false, false);
     }
 
     private AisConsent buildConsent(String externalId) {
@@ -451,10 +564,10 @@ public class AisConsentServiceInternalTest {
 
     private AisAccountConsent buildSpiAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
-            null, false,
-            null, 0,
-            null, null,
-            false, false, null, null, null);
+                                     null, false,
+                                     null, 0,
+                                     null, null,
+                                     false, false, null, null, null);
     }
 
     private AisConsent buildFinalisedConsent() {
@@ -478,10 +591,20 @@ public class AisConsentServiceInternalTest {
         return tppInfoEntity;
     }
 
-    private AisConsentAuthorization buildConsentAuthorisation(String externalId) {
-        AisConsentAuthorization authorisation = new AisConsentAuthorization();
-        authorisation.setExternalId(externalId);
-        authorisation.setScaStatus(SCA_STATUS);
+    private AisConsentAuthorization buildAisConsentAuthorisationWithMethods(List<ScaMethod> scaMethods) {
+        AisConsentAuthorization authorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS);
+        authorisation.setAvailableScaMethods(scaMethods);
         return authorisation;
+    }
+
+    private ScaMethod buildScaMethod(boolean decoupled) {
+        ScaMethod scaMethod = new ScaMethod();
+        scaMethod.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
+        scaMethod.setDecoupled(decoupled);
+        return scaMethod;
+    }
+
+    private CmsScaMethod buildCmsScaMethod(boolean decoupled) {
+        return new CmsScaMethod(AUTHENTICATION_METHOD_ID, decoupled);
     }
 }

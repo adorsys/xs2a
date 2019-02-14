@@ -18,15 +18,18 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
@@ -61,6 +64,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final AspspProfileService aspspProfileService;
     private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final TppInfoMapper tppInfoMapper;
+    private final ScaMethodMapper scaMethodMapper;
 
     /**
      * Create AIS consent
@@ -273,6 +277,33 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         Optional<AisConsentAuthorization> authorisation = findAuthorisationInConsent(authorisationId, consent);
         return authorisation.map(AisConsentAuthorization::getScaStatus);
+    }
+
+    @Override
+    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
+
+        return authorisationOptional.map(a -> a.getAvailableScaMethods()
+                                                  .stream()
+                                                  .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
+                                                  .anyMatch(ScaMethod::isDecoupled))
+                   .orElse(false);
+    }
+
+    @Override
+    @Transactional
+    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+        Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
+
+        if (!authorisationOptional.isPresent()) {
+            return false;
+        }
+
+        AisConsentAuthorization authorisation = authorisationOptional.get();
+
+        authorisation.setAvailableScaMethods(scaMethodMapper.mapToScaMethods(methods));
+        aisConsentAuthorisationRepository.save(authorisation);
+        return true;
     }
 
     /**

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
+import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
@@ -119,6 +120,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @RequestScope
     public TppInfoHolder getTppInfoHolder() {
         return new TppInfoHolder();
+    }
+
+    @Bean
+    @RequestScope
+    public ScaApproachHolder getScaApproachHolder() {
+        return new ScaApproachHolder();
     }
 
     @Override

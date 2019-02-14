@@ -16,43 +16,141 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
+import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaMethodSelectedStage;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
+import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
+import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
+import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
+
 @Service
+@RequiredArgsConstructor
 public class DecoupledAisAuthorizationService implements AisAuthorizationService {
+    private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aAisConsentMapper aisConsentMapper;
+    private final AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
+
+    /**
+     * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
+     * See {@link Xs2aAisConsentService#createAisConsentAuthorization(String, ScaStatus, PsuIdData)} for details
+     *
+     * @param psuData   PsuIdData container of authorisation data about PSU
+     * @param consentId String identification of consent
+     * @return Optional of CreateConsentAuthorizationResponse with consent creating data
+     */
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
-        return null;
+        AccountConsent consent = aisConsentService.getAccountConsentById(consentId);
+        if (Objects.isNull(consent)) {
+            return Optional.empty();
+        }
+
+        PsuIdData psuDataAuthorisation = isPsuExist(psuData)
+                                             ? psuData
+                                             : consent.getPsuData();
+
+        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.STARTED, psuDataAuthorisation)
+                   .map(authId -> {
+                       CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
+
+                       resp.setConsentId(consentId);
+                       resp.setAuthorizationId(authId);
+                       resp.setScaStatus(ScaStatus.STARTED);
+                       resp.setResponseLinkType(getResponseLinkType(consent.getPsuData(), psuData));
+
+                       return resp;
+                   });
     }
 
+    /**
+     * Updates consent PSU data.
+     * {@link AisScaStageAuthorisationFactory} is used there to provide the actual service for current stage.
+     * Service returns UpdateConsentPsuDataResponse on invoking its apply() method
+     * (e.g. see {@link AisScaMethodSelectedStage#apply}).
+     * If response has no errors, consent authorisation is updated by invoking CMS through AisConsentService
+     * See {@link Xs2aAisConsentService#updateConsentAuthorization(UpdateConsentPsuDataReq)} for details.
+     *
+     * @param updatePsuData        UpdateConsentPsuDataReq request to update PSU data
+     * @param consentAuthorization AccountConsentAuthorization instance with authorisation data
+     * @return UpdateConsentPsuDataResponse update consent PSU data response
+     */
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
-        return null;
+        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + getScaApproachServiceType().name() + SEPARATOR + consentAuthorization.getScaStatus().name());
+        UpdateConsentPsuDataResponse response = service.apply(updatePsuData);
+
+        if (!response.hasError()) {
+            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, updatePsuData));
+        }
+
+        return response;
     }
 
+    /**
+     * Gets AccountConsentAuthorization using provided authorisation id and consent id by invoking CMS through AisConsentService.
+     * See {@link Xs2aAisConsentService#getAccountConsentAuthorizationById(String, String)} for details
+     *
+     * @param authorisationId String identification of AccountConsentAuthorization
+     * @param consentId       String identification of consent
+     * @return AccountConsentAuthorization instance
+     */
     @Override
-    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return null;
+    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorisationId, String consentId) {
+        return aisConsentService.getAccountConsentAuthorizationById(authorisationId, consentId);
     }
 
+    /**
+     * Gets list of consent authorisation IDs by invoking CMS through AisConsentService
+     * See {@link Xs2aAisConsentService#getAuthorisationSubResources(String)} for details
+     *
+     * @param consentId String identification of consent
+     * @return Optional of Xs2aAuthorisationSubResources with list of authorisation IDs
+     */
     @Override
     public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {
-        return Optional.empty();
+        return aisConsentService.getAuthorisationSubResources(consentId)
+                   .map(Xs2aAuthorisationSubResources::new);
     }
 
+    /**
+     * Gets SCA status of the authorisation from CMS
+     *
+     * @param consentId       String representation of consent identifier
+     * @param authorisationId String representation of authorisation identifier
+     * @return SCA status of the authorisation
+     */
     @Override
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return Optional.empty();
+        return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
     }
 
     @Override
     public ScaApproach getScaApproachServiceType() {
         return ScaApproach.DECOUPLED;
+    }
+
+    private ConsentAuthorizationResponseLinkType getResponseLinkType(PsuIdData psuIdDataConsent, PsuIdData psuIdDataAuthorisation) {
+        return isPsuExist(psuIdDataConsent) || isPsuExist(psuIdDataAuthorisation)
+                   ? START_AUTHORISATION_WITH_PSU_AUTHENTICATION
+                   : START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
+    }
+
+    private boolean isPsuExist(PsuIdData psuIdData) {
+        return Optional.ofNullable(psuIdData)
+                   .map(PsuIdData::isNotEmpty)
+                   .orElse(false);
     }
 }

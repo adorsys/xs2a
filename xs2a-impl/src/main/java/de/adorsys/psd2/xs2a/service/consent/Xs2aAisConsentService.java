@@ -23,12 +23,10 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,6 +40,7 @@ public class Xs2aAisConsentService {
     private final AisConsentServiceEncrypted aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
+    private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
 
     /**
@@ -194,5 +193,27 @@ public class Xs2aAisConsentService {
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
         return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
+    }
+
+    /**
+     * Requests CMS to retrieve authentication method and checks if requested authentication method is decoupled.
+     *
+     * @param authorisationId        String representation of the authorisation identifier
+     * @param authenticationMethodId String representation of the available authentication method identifier
+     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
+     */
+    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        return aisConsentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+    }
+
+    /**
+     * Saves authentication methods in provided authorisation
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param methods         List of authentication methods to be saved
+     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
+     */
+    public boolean saveAuthenticationMethods(String authorisationId, List<Xs2aAuthenticationObject> methods) {
+        return aisConsentService.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
     }
 }
