@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -204,5 +205,31 @@ public class AisConsentController {
         return aisConsentService.getAuthorisationsByConsentId(consentId)
                    .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}")
+    @ApiOperation(value = "Checks if requested authentication method is decoupled")
+    @ApiResponse(code = 200, message = "OK")
+    public ResponseEntity<Boolean> isAuthenticationMethodDecoupled(
+        @ApiParam(name = "authorisation-id", value = "Consent authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @ApiParam(name = "authentication-method-id", value = "Authentication method identification", example = "sms")
+        @PathVariable("authentication-method-id") String authenticationMethodId) {
+        boolean isMethodDecoupled = aisConsentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        return new ResponseEntity<>(isMethodDecoupled, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/authorisations/{authorisation-id}/authentication-methods")
+    @ApiOperation(value = "Saves authentication methods in authorisation")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "No Content"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<Void> saveAuthenticationMethods(
+        @ApiParam(name = "authorisation-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @RequestBody List<CmsScaMethod> methods) {
+        return aisConsentService.saveAuthenticationMethods(authorisationId, methods)
+                   ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

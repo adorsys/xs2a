@@ -51,7 +51,7 @@ public abstract class AisScaStage<T, R> implements Function<T, R> {
     protected final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     protected final SpiErrorMapper spiErrorMapper;
 
-    UpdateConsentPsuDataResponse createFailedResponse(MessageError messageError, List<String> messages) {
+    protected UpdateConsentPsuDataResponse createFailedResponse(MessageError messageError, List<String> messages) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setMessageError(messageError);
         response.setScaStatus(ScaStatus.FAILED);

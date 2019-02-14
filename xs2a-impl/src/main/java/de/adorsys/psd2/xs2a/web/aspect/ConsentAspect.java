@@ -36,6 +36,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumSet;
 import java.util.Optional;
 
 @Slf4j
@@ -75,8 +76,8 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private Links buildLinksForConsentResponse(CreateConsentResponse response, boolean explicitPreferred, PsuIdData psuData) {
         Links links = new Links();
 
-        if (ScaApproach.EMBEDDED == scaApproachResolver.resolveScaApproach()) {
-            buildLinkForEmbeddedScaApproach(response, links, explicitPreferred, psuData);
+        if (EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
+            buildLinkForEmbeddedAndDecoupledScaApproach(response, links, explicitPreferred, psuData);
         } else if (ScaApproach.REDIRECT == scaApproachResolver.resolveScaApproach()) {
             // TODO add actual value during imlementation of multilevel sca https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/515
             if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, false)) {
@@ -86,15 +87,13 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
                 links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", response.getConsentId(), response.getAuthorizationId()));
             }
             links.setStatus(buildPath("/v1/consents/{consentId}/status", response.getConsentId()));
-        } else {
-            links.setScaRedirect(redirectLinkBuilder.buildConsentScaRedirectLink(response.getConsentId(), response.getAuthorizationId()));
         }
 
         return links;
     }
 
 
-    private void buildLinkForEmbeddedScaApproach(CreateConsentResponse response, Links links, boolean explicitPreferred, PsuIdData psuData) {
+    private void buildLinkForEmbeddedAndDecoupledScaApproach(CreateConsentResponse response, Links links, boolean explicitPreferred, PsuIdData psuData) {
         // TODO add actual value during imlementation of multilevel sca https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/515
         if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, false)) {
             links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
@@ -137,7 +136,12 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
 
     private Links buildLinksForScaMethodSelectedConsentResponse(UpdateConsentPsuDataReq request) {
         Links links = new Links();
-        links.setAuthoriseTransaction(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", request.getConsentId(), request.getAuthorizationId()));
+
+        if (scaApproachResolver.resolveScaApproach() == ScaApproach.DECOUPLED) {
+            links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", request.getConsentId(), request.getAuthorizationId()));
+        } else {
+            links.setAuthoriseTransaction(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", request.getConsentId(), request.getAuthorizationId()));
+        }
 
         return links;
     }

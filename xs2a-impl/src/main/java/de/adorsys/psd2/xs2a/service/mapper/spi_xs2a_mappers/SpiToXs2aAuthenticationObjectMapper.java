@@ -32,6 +32,7 @@ public class SpiToXs2aAuthenticationObjectMapper {
         object.setAuthenticationVersion(authenticationObject.getAuthenticationVersion());
         object.setName(authenticationObject.getName());
         object.setExplanation(authenticationObject.getExplanation());
+        object.setDecoupled(authenticationObject.isDecoupled());
         return object;
     }
 

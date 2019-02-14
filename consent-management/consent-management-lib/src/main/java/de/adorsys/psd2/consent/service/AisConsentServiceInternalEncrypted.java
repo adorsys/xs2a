@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -140,5 +141,16 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(consentId -> aisConsentService.getAuthorisationScaStatus(consentId, authorisationId));
+    }
+
+    @Override
+    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        return aisConsentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+    }
+
+    @Override
+    @Transactional
+    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+        return aisConsentService.saveAuthenticationMethods(authorisationId, methods);
     }
 }

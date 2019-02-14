@@ -19,6 +19,7 @@ package de.adorsys.psd2.aspsp.mock.api.psu;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 @Data
 public class AspspAuthenticationObject {
@@ -27,11 +28,18 @@ public class AspspAuthenticationObject {
     private String authenticationVersion;
     private String name;
     private String explanation;
+    private boolean decoupled;
+
+    public AspspAuthenticationObject(String authenticationType, String authenticationMethodId) {
+        this(authenticationType, authenticationMethodId, false);
+    }
 
     @JsonCreator
-    public AspspAuthenticationObject(@JsonProperty("authenticationType") String authenticationType, @JsonProperty("authenticationMethodId") String authenticationMethodId) {
+    @PersistenceConstructor
+    public AspspAuthenticationObject(@JsonProperty("authenticationType") String authenticationType, @JsonProperty("authenticationMethodId") String authenticationMethodId, @JsonProperty("decoupled") boolean decoupled) {
         this.authenticationType = authenticationType;
         this.authenticationMethodId = authenticationMethodId;
+        this.decoupled = decoupled;
     }
 }
 
