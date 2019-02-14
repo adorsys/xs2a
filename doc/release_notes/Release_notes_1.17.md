@@ -96,3 +96,21 @@ From now on `instanceId` property will be correctly set to its default value(`UN
 
 ## Bugfix: Error messages from spi-api should be returned to the tpp in response
 Now messages that are provided in spi-api in case of the error will be returned to the tpp in response
+
+## Added a possibility to require PSU-ID in initial request for payment initiation or establishing consent
+Now ASPSP can forbid initiating payment or establishing AIS consent without PSU-ID by setting option `psuInInitialRequestMandated` to true in ASPSP Profile.
+
+| Option                      | Meaning                                                                                                      | Default value |
+|-----------------------------|--------------------------------------------------------------------------------------------------------------|---------------|
+| psuInInitialRequestMandated | This field indicates if ASPSP requires PSU in initial request for payment initiation or establishing consent | false         | 
+
+## Added additional step to identify PSU if TPP doesn’t send PSU-ID in authorisation
+When TPP creates authorisation for AIS consent, payment or payment cancellation without PSU-ID, 
+`startAuthorisationWithPsuIdentification` link will be returned, using which TPP should upload the PSU identification data.
+At  this stage if TPP doesn’t send PSU-ID, there will be FORMAT_ERROR with http status 400. 
+If PSU-ID was sent, authorisation status will be changed to `PSUIDENTIFIED` and TPP will get link 
+`startAuthorisationWithPsuAuthentication` using which PSU authentication data should be uploaded.
+After PSU identified itself, there is no need to send PSU-ID in next requests to make authorisation finalised.
+
+## Bugfix: Error messages from spi-api should be returned to the tpp in response
+Now messages that are provided in spi-api in case of the error will be returned to the tpp in response
