@@ -111,6 +111,3 @@ At  this stage if TPP doesn’t send PSU-ID, there will be FORMAT_ERROR with htt
 If PSU-ID was sent, authorisation status will be changed to `PSUIDENTIFIED` and TPP will get link 
 `startAuthorisationWithPsuAuthentication` using which PSU authentication data should be uploaded.
 After PSU identified itself, there is no need to send PSU-ID in next requests to make authorisation finalised.
-
-## Bugfix: Error messages from spi-api should be returned to the tpp in response
-Now messages that are provided in spi-api in case of the error will be returned to the tpp in response
