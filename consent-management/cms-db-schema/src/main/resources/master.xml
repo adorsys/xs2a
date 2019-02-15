@@ -68,4 +68,5 @@
     <include relativeToChangelogFile="true" file="migration/0043-create-pis-authorization-sca-approach.xml"/>
     <include relativeToChangelogFile="true" file="migration/0044-add-columns-to-ais-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0045-create-ais-available-sca-method.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0046-change-authority-id-type-to-varchar.xml"/>
 </databaseChangeLog>
