@@ -23,6 +23,5 @@ public enum AspspBalanceType {
     OPENING_BOOKED,
     INTERIM_AVAILABLE,
     FORWARD_AVAILABLE,
-    NONINVOICED,
-    AVAILABLE
+    NONINVOICED
 }
