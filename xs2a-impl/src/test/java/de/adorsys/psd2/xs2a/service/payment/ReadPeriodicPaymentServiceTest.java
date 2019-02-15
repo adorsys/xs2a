@@ -94,11 +94,12 @@ public class ReadPeriodicPaymentServiceTest {
     @Test
     public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_Failed() {
         //given
-        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), PERIODIC_PAYMENT.getTransactionStatus()))
-            .thenReturn(false);
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
             .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
             .build();
+
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), PERIODIC_PAYMENT.getTransactionStatus()))
+            .thenReturn(false);
 
         //when
         PaymentInformationResponse<PeriodicPayment> actualResponse = readPeriodicPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
@@ -113,10 +114,11 @@ public class ReadPeriodicPaymentServiceTest {
     @Test
     public void getPayment_spiPaymentFactory_createSpiPeriodicPayment_Failed() {
         //given
-        when(spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.empty());
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
             .build();
+
+        when(spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.empty());
 
         //when
         PaymentInformationResponse<PeriodicPayment> actualResponse = readPeriodicPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
@@ -134,9 +136,11 @@ public class ReadPeriodicPaymentServiceTest {
         SpiResponse<SpiPeriodicPayment> spiResponseError = SpiResponse.<SpiPeriodicPayment>builder()
             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
+
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
             .build();
+
         when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, SOME_ASPSP_CONSENT_DATA))
             .thenReturn(spiResponseError);
         when(spiErrorMapper.mapToErrorHolder(spiResponseError, ServiceType.PIS)).thenReturn(expectedError);
