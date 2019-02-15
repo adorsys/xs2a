@@ -79,7 +79,7 @@ public class PaymentController implements PaymentApi {
                                                      String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         ResponseObject<TransactionStatus> serviceResponse = PaymentType.getByValue(paymentService)
-                                                                .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentId))
+                                                                .map(pt -> xs2aPaymentService.getPaymentStatusById(pt, paymentProduct, paymentId))
                                                                 .orElseGet(ResponseObject.<TransactionStatus>builder()
                                                                                .fail(new MessageError(ErrorType.PIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)))::build);
         return serviceResponse.hasError()
@@ -94,7 +94,7 @@ public class PaymentController implements PaymentApi {
                                                 String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         ResponseObject serviceResponse = PaymentType.getByValue(paymentService)
-                                             .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentId))
+                                             .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentProduct, paymentId))
                                              .orElseGet(ResponseObject.builder()
                                                             .fail(new MessageError(ErrorType.PIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)))::build);
 

@@ -125,3 +125,12 @@ At  this stage if TPP doesn’t send PSU-ID, there will be FORMAT_ERROR with htt
 If PSU-ID was sent, authorisation status will be changed to `PSUIDENTIFIED` and TPP will get link 
 `startAuthorisationWithPsuAuthentication` using which PSU authentication data should be uploaded.
 After PSU identified itself, there is no need to send PSU-ID in next requests to make authorisation finalised.
+
+## Bugfix: Fixed problem with wrong payment service (payment product) for Get payment status, Get payment information and Cancel payment
+
+When using GET `/v1/{payment-service}/{payment-product}/{paymentId}/status`, GET `/v1/{payment-service}/{payment-product}/{paymentId}` or DELETE `/v1/{payment-service}/{payment-product}/{paymentId}/` 
+with incorrect payment service(e.g `periodic-payments` instead of `payments` with payment id of single payment, not periodic, or `instant-sepa-credit-transfers` instead of `sepa-credit-transfers`),
+there were no correct errors provided (`405 SERVICE_INVALID` for incorrect payment service and `403 PRODUCT_INVALID` for incorrect payment product).
+
+Now when you enter incorrect payment service, the request will not be executed and the error `405 SERVICE_INVALID` will be returned.
+If you enter incorrect payment product, the request also will not be executed and the error `403 PRODUCT_INVALID` will be returned.

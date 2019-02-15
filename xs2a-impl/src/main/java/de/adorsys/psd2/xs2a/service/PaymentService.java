@@ -57,10 +57,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Slf4j
 @Service
@@ -136,21 +134,35 @@ public class PaymentService {
     /**
      * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
      *
-     * @param paymentType type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentId   ASPSP identifier of the payment
+     * @param paymentType    type of payment (payments, bulk-payments, periodic-payments)
+     * @param paymentProduct     payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param paymentId      ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject getPaymentById(PaymentType paymentType, String paymentId) {
+    public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
 
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.builder()
-                       .fail(new MessageError(PIS_403, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_403)))
+                       .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404, "Payment not found")))
                        .build();
         }
 
         PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.get();
+
+        if (isPaymentTypeIncorrect(paymentType, commonPaymentResponse)) {
+            return ResponseObject.builder()
+                       .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for adressed payment")))
+                       .build();
+        }
+
+        if (isPaymentProductIncorrect(paymentProduct, commonPaymentResponse)) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(PIS_403, new TppMessageInformation(MessageCategory.ERROR, PRODUCT_INVALID, "Payment product invalid for addressed payment")))
+                       .build();
+        }
+
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(commonPaymentResponse);
 
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
@@ -185,21 +197,35 @@ public class PaymentService {
     /**
      * Retrieves payment status from ASPSP
      *
-     * @param paymentType The addressed payment category Single, Periodic or Bulk
-     * @param paymentId   String representation of payment primary ASPSP identifier
+     * @param paymentType    The addressed payment category Single, Periodic or Bulk
+     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param paymentId      String representation of payment primary ASPSP identifier
      * @return Information about the status of a payment
      */
-    public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentId) {
+    public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String paymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<TransactionStatus>builder()
-                       .fail(new MessageError(PIS_400, new TppMessageInformation(MessageCategory.ERROR, FORMAT_ERROR, "Payment not found")))
+                       .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404, "Payment not found")))
                        .build();
         }
 
         // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
+
+        if (isPaymentTypeIncorrect(paymentType, pisCommonPaymentResponse)) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for adressed payment")))
+                       .build();
+        }
+
+        if (isPaymentProductIncorrect(paymentProduct, pisCommonPaymentResponse)) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(new MessageError(PIS_403, new TppMessageInformation(MessageCategory.ERROR, PRODUCT_INVALID, "Payment product invalid for addressed payment")))
+                       .build();
+        }
+
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             return ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build();
         }
@@ -257,17 +283,30 @@ public class PaymentService {
      * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
+    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) { //NOPMD //TODO refactor method  and remove NOPMD check https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(new MessageError(PIS_400, new TppMessageInformation(MessageCategory.ERROR, FORMAT_ERROR, "Payment not found")))
+                       .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404, "Payment not found")))
                        .build();
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
+
+        if (isPaymentTypeIncorrect(paymentType, pisCommonPaymentResponse)) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(PIS_405, new TppMessageInformation(MessageCategory.ERROR, SERVICE_INVALID_405, "Service invalid for addressed payment")))
+                       .build();
+        }
+
+        if (isPaymentProductIncorrect(paymentProduct, pisCommonPaymentResponse)) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(new MessageError(PIS_403, new TppMessageInformation(MessageCategory.ERROR, PRODUCT_INVALID, "Payment product invalid for addressed payment")))
+                       .build();
+        }
+
         SpiPayment spiPayment = null;
 
         if (pisCommonPaymentResponse.getPaymentData() != null) {
@@ -277,7 +316,7 @@ public class PaymentService {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
                 return ResponseObject.<CancelPaymentResponse>builder()
-                           .fail(new MessageError(PIS_400, new TppMessageInformation(MessageCategory.ERROR, FORMAT_ERROR, "Payment not found")))
+                           .fail(new MessageError(PIS_404, new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404, "Payment not found")))
                            .build();
             }
 
@@ -308,6 +347,14 @@ public class PaymentService {
         } else {
             return cancelPaymentService.cancelPaymentWithoutAuthorisation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId);
         }
+    }
+
+    private boolean isPaymentTypeIncorrect(PaymentType paymentType, PisCommonPaymentResponse commonPaymentResponse) {
+        return commonPaymentResponse.getPaymentType() != paymentType;
+    }
+
+    private boolean isPaymentProductIncorrect(String paymentProduct, PisCommonPaymentResponse commonPaymentResponse) {
+        return !commonPaymentResponse.getPaymentProduct().equalsIgnoreCase(paymentProduct);
     }
 
     private boolean isFinalisedPayment(PisCommonPaymentResponse response) {
