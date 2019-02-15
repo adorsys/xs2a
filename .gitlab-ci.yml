@@ -270,7 +270,7 @@ variables: &variables
       # diff helm changes
     - helm-wrapper diff upgrade ${HELM_RELEASE} . --allow-unreleased -q ${HELM_ARGS}  || true
       # apply helm changes
-    - helm-wrapper upgrade -i ${HELM_RELEASE} . --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600 --force ${HELM_ARGS}" 
+    - helm-wrapper upgrade -i ${HELM_RELEASE} . --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600 --force ${HELM_ARGS}
   after_script:
     - pkill gpg-agent
 
