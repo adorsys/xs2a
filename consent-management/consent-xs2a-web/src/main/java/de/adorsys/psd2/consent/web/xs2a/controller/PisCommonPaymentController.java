@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentDataStatusResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
@@ -243,4 +244,31 @@ public class PisCommonPaymentController {
         pisCommonPaymentServiceEncrypted.updateCommonPayment(request, paymentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping(path = "/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}")
+    @ApiOperation(value = "Checks if requested authentication method is decoupled")
+    @ApiResponse(code = 200, message = "OK")
+    public ResponseEntity<Boolean> isAuthenticationMethodDecoupled(
+        @ApiParam(name = "authorisation-id", value = "Common payment authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @ApiParam(name = "authentication-method-id", value = "Authentication method identification", example = "sms")
+        @PathVariable("authentication-method-id") String authenticationMethodId) {
+        boolean isMethodDecoupled = pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        return new ResponseEntity<>(isMethodDecoupled, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/authorisations/{authorisation-id}/authentication-methods")
+    @ApiOperation(value = "Saves authentication methods in authorisation")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "No Content"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<Void> saveAuthenticationMethods(
+        @ApiParam(name = "authorisation-id", value = "The common payment authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @RequestBody List<CmsScaMethod> methods) {
+        return pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(authorisationId, methods)
+                   ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 }

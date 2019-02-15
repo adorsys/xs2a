@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
@@ -147,5 +148,16 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     public Optional<List<PsuIdData>> getPsuDataListByPaymentId(String encryptedPaymentId) {
         return securityDataService.decryptId(encryptedPaymentId)
                    .flatMap(pisCommonPaymentService::getPsuDataListByPaymentId);
+    }
+
+    @Override
+    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        return pisCommonPaymentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+    }
+
+    @Override
+    @Transactional
+    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+        return pisCommonPaymentService.saveAuthenticationMethods(authorisationId, methods);
     }
 }

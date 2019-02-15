@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -45,14 +46,11 @@ public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<Payme
             Links links = buildLink(request);
 
             if (isScaStatusMethodAuthenticated(body.getScaStatus())) {
-
                 links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
                 links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
-            } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), body.getScaStatus())) {
-
+            } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), body.getScaStatus()) || scaApproachResolver.resolveScaApproach() == ScaApproach.DECOUPLED) {
                 links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             } else if (isScaStatusFinalised(body.getScaStatus())) {
-
                 links.setScaStatus(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             }
 

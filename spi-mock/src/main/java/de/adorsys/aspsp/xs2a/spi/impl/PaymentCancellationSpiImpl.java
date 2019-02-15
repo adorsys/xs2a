@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -59,6 +60,7 @@ public class PaymentCancellationSpiImpl implements PaymentCancellationSpi {
     private final AspspRemoteUrls aspspRemoteUrls;
     private final KeycloakInvokerService keycloakInvokerService;
     private final JsonConverter jsonConverter;
+    private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
 
     @NotNull
     @Override
@@ -215,7 +217,12 @@ public class PaymentCancellationSpiImpl implements PaymentCancellationSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @NotNull String authenticationMethodId, @NotNull SpiPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    public SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull SpiPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
+        SpiAuthorisationDecoupledScaResponse response = new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE);
+
+        return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
+                   .payload(response)
+                   .aspspConsentData(aspspConsentData)
+                   .success();
     }
 }
