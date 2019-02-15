@@ -71,24 +71,32 @@ public class ReadPeriodicPaymentServiceTest {
 
     @Test
     public void getPayment_Success() {
-        //when
+        //given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), PERIODIC_PAYMENT.getTransactionStatus()))
             .thenReturn(true);
+
+        //when
         PaymentInformationResponse<PeriodicPayment> actualResponse = readPeriodicPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
         //then
         assertThat(actualResponse.hasError()).isFalse();
+        assertThat(actualResponse.getPayment()).isNotNull();
+        assertThat(actualResponse.getPayment()).isEqualTo(PERIODIC_PAYMENT);
+        assertThat(actualResponse.getErrorHolder()).isNull();
     }
 
     @Test
     public void getPayment_Failed() {
-        //when
+        //given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), PERIODIC_PAYMENT.getTransactionStatus()))
             .thenReturn(false);
+
+        //when
         PaymentInformationResponse<PeriodicPayment> actualResponse = readPeriodicPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
         //then
         assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getPayment()).isNull();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
     }
 
