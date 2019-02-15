@@ -93,7 +93,7 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_Failed() {
+    public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_Failed() {
         //given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), PERIODIC_PAYMENT.getTransactionStatus()))
             .thenReturn(false);
