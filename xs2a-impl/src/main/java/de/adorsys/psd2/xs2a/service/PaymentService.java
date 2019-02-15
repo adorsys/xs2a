@@ -134,8 +134,9 @@ public class PaymentService {
     /**
      * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
      *
-     * @param paymentType type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentId   ASPSP identifier of the payment
+     * @param paymentType    type of payment (payments, bulk-payments, periodic-payments)
+     * @param paymentProduct     payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param paymentId      ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String paymentId) {
@@ -196,8 +197,9 @@ public class PaymentService {
     /**
      * Retrieves payment status from ASPSP
      *
-     * @param paymentType The addressed payment category Single, Periodic or Bulk
-     * @param paymentId   String representation of payment primary ASPSP identifier
+     * @param paymentType    The addressed payment category Single, Periodic or Bulk
+     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param paymentId      String representation of payment primary ASPSP identifier
      * @return Information about the status of a payment
      */
     public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String paymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
