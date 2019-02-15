@@ -26,7 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -160,9 +159,6 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     private List<PisPayment> getListPisPayment() {
-        List<PisPayment> list = new ArrayList<PisPayment>();
-        PisPayment pisPayment = new PisPayment();
-        list.add(pisPayment);
-        return list;
+        return Collections.singletonList(new PisPayment());
     }
 }
