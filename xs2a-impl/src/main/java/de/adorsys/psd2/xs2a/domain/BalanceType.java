@@ -29,8 +29,7 @@ public enum BalanceType {
     OPENING_BOOKED("openingBooked"),
     INTERIM_AVAILABLE("interimAvailable"),
     FORWARD_AVAILABLE("forwardAvailable"),
-    NONINVOICED("nonInvoiced"),
-    AVAILABLE("available");
+    NONINVOICED("nonInvoiced");
 
 
     private final static Map<String, BalanceType> container = new HashMap<>();

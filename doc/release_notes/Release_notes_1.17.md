@@ -134,3 +134,6 @@ there were no correct errors provided (`405 SERVICE_INVALID` for incorrect payme
 
 Now when you enter incorrect payment service, the request will not be executed and the error `405 SERVICE_INVALID` will be returned.
 If you enter incorrect payment product, the request also will not be executed and the error `403 PRODUCT_INVALID` will be returned.
+
+## Removed unused enumerator value
+According to the Implementation Guidelines version 1.3 the value `AVAILABLE` of the Balance type doesn't exist. It is removed from SpiBalanceType and AspspBalanceType.
