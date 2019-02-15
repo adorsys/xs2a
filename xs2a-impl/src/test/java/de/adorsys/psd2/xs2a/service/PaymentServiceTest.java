@@ -325,7 +325,7 @@ public class PaymentServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentService.getPaymentById(PaymentType.SINGLE, "sepa-credit-transfers",PAYMENT_ID);
+        paymentService.getPaymentById(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -335,7 +335,7 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentById_spi_fail() {
         // Given:
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
+        TppMessageInformation errorMessages = new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = getPisCommonPayment();
 
         PaymentInformationResponse<SinglePayment> errorResponse = new PaymentInformationResponse<>(
@@ -346,24 +346,23 @@ public class PaymentServiceTest {
         when(readPaymentService.getPayment(any(), any(), any(), any()))
             .thenReturn(errorResponse);
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
-            .thenReturn(pisCommonPaymentOptional);
+            .thenReturn(Optional.empty());
         when(cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentOptional.get()))
             .thenReturn(new CommonPayment());
 
         // When
-        ResponseObject actualResponse = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_ID);
+        ResponseObject actualResponse = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_404);
-        assertThat(actualResponse.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
+        assertThat(actualResponse.getError().getTppMessages()).containsOnly(errorMessages);
     }
 
     @Test
     public void getPaymentStatusById_spi_fail() {
         // Given:
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
-        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = getPisCommonPayment();
+        TppMessageInformation errorMessages = new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404);
 
         ReadPaymentStatusResponse errorResponse = new ReadPaymentStatusResponse(
             ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
@@ -371,17 +370,17 @@ public class PaymentServiceTest {
                 .build());
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
-            .thenReturn(pisCommonPaymentOptional);
+            .thenReturn(Optional.empty());
         when(readPaymentStatusService.readPaymentStatus(any(), any(), any(), any())).thenReturn(errorResponse);
 
         // When
-        ResponseObject actualResponse = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_ID);
+        ResponseObject actualResponse = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_404);
-        assertThat(actualResponse.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
+        assertThat(actualResponse.getError().getTppMessages()).containsOnly(errorMessages);
     }
 
     @Test
