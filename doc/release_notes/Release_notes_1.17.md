@@ -111,6 +111,7 @@ The response of this method should contain the message, shown to the PSU, contai
 An SPI Developer now shall consider also Flag `decoupled` in `de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject` (defaults to `false`) returend by
 method `requestAvailableScaMethods`.
 If it is set to `true` and PSU chooses this authentication method, the SCA approach will be switched to `DECOUPLED`
+
 ## Added a possibility to require PSU-ID in initial request for payment initiation or establishing consent
 Now ASPSP can forbid initiating payment or establishing AIS consent without PSU-ID by setting option `psuInInitialRequestMandated` to `true` in ASPSP Profile.
 
@@ -137,3 +138,10 @@ If you enter incorrect payment product, the request also will not be executed an
 
 ## Removed unused enumerator value
 According to the Implementation Guidelines version 1.3 the value `AVAILABLE` of the Balance type doesn't exist. It is removed from SpiBalanceType and AspspBalanceType.
+
+## Bugfix: fix error on AIS consent confirmation when using OracleDB
+Trying to confirm AIS consent in CMS that uses OracleDB will no longer fail.
+In order to fix this error the type of `authority_id` column in `tpp_info` table was changed to `VARCHAR(255)`.
+
+Beware: during migration of existing records in `tpp_info` table only the first `255` characters of `authority_id` 
+will be retained, all exceeding characters will be lost.
