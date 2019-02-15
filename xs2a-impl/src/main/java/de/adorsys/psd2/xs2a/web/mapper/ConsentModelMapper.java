@@ -272,8 +272,9 @@ public class ConsentModelMapper {
         return new UpdatePsuAuthenticationResponse()
                    ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                    .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
-                   .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
+                   .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethodForPsd2Response()))
                    .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
+                   .psuMessage(response.getPsuMessage())
                    .scaStatus(Optional.ofNullable(response.getScaStatus())
                                   .map(s -> ScaStatus.fromValue(s.getValue()))
                                   .orElse(ScaStatus.FAILED));

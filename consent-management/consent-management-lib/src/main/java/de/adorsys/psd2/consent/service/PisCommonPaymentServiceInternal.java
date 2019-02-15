@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
@@ -28,6 +29,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
@@ -35,6 +37,7 @@ import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -68,6 +71,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
     private final AspspProfileService aspspProfileService;
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
+    private final ScaMethodMapper scaMethodMapper;
 
     /**
      * Creates new pis common payment with full information about payment
@@ -284,6 +288,34 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         return readPisCommonPaymentDataByPaymentId(paymentId)
                    .map(pc -> psuDataMapper.mapToPsuIdDataList(pc.getPsuData()));
     }
+
+    @Override
+    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        Optional<PisAuthorization> authorisationOptional = pisAuthorisationRepository.findByExternalId(authorisationId);
+
+        return authorisationOptional.map(a -> a.getAvailableScaMethods()
+                                                  .stream()
+                                                  .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
+                                                  .anyMatch(ScaMethod::isDecoupled))
+                   .orElse(false);
+    }
+
+    @Override
+    @Transactional
+    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+        Optional<PisAuthorization> authorisationOptional = pisAuthorisationRepository.findByExternalId(authorisationId);
+
+        if (!authorisationOptional.isPresent()) {
+            return false;
+        }
+
+        PisAuthorization authorisation = authorisationOptional.get();
+
+        authorisation.setAvailableScaMethods(scaMethodMapper.mapToScaMethods(methods));
+        pisAuthorisationRepository.save(authorisation);
+        return true;
+    }
+
 
     private PisCommonPaymentData setStatusAndSaveCommonPaymentData(PisCommonPaymentData commonPaymentData, TransactionStatus status) {
         commonPaymentData.setTransactionStatus(status);

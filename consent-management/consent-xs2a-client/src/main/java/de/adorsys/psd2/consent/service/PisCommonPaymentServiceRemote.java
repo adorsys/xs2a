@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
@@ -160,6 +161,27 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
             log.warn("Couldn't get authorisation SCA Status by paymentId {} and authorisationId {}", paymentId, authorisationId);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        return consentRestTemplate.getForEntity(remotePisCommonPaymentUrls.isAuthenticationMethodDecoupled(), Boolean.class, authorisationId, authenticationMethodId)
+                   .getBody();
+    }
+
+    @Override
+    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
+        try {
+            ResponseEntity<Void> responseEntity = consentRestTemplate.exchange(remotePisCommonPaymentUrls.saveAuthenticationMethods(), HttpMethod.POST, new HttpEntity<>(methods), Void.class, authorisationId);
+
+            if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
+                return true;
+            }
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Couldn't save authentication methods {} by authorisationId {}", methods, authorisationId);
+        }
+
+        return false;
     }
 
     private String getAuthorisationSubResourcesUrl(CmsAuthorisationType authorisationType) {

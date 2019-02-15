@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package de.adorsys.psd2.xs2a.service.authorization;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;

@@ -19,12 +19,15 @@ package de.adorsys.psd2.consent.domain.payment;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
+import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @ToString(exclude = "paymentData")
@@ -60,6 +63,13 @@ public class PisAuthorization extends InstanceDependableEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id", nullable = false)
     private PisCommonPaymentData paymentData;
+
+    @Column(name = "tan")
+    private String tan;
+
+    @ElementCollection
+    @CollectionTable(name = "pis_available_sca_method", joinColumns = @JoinColumn(name = "authorisation_id"))
+    private List<ScaMethod> availableScaMethods = new ArrayList<>();
 
     public boolean isExpired() {
         return !isNotExpired();
