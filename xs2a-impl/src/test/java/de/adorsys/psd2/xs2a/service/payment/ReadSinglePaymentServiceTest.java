@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReadSinglePaymentServiceTest {
+
     private final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
@@ -42,7 +43,6 @@ public class ReadSinglePaymentServiceTest {
     private final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
     private final SinglePayment SINGLE_PAYMENT = new SinglePayment();
-
 
     @InjectMocks
     private ReadSinglePaymentService readSinglePaymentService;
@@ -116,6 +116,7 @@ public class ReadSinglePaymentServiceTest {
         SpiResponse<SpiSinglePayment> spiResponseError = SpiResponse.<SpiSinglePayment>builder()
             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
+
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
             .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
             .build();
@@ -139,6 +140,7 @@ public class ReadSinglePaymentServiceTest {
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
             .build();
+
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.empty());
 
         //when
