@@ -126,8 +126,7 @@ public class ScaPaymentServiceTest {
         //then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
-        assertThat(actualResponse.equals(SINGLE_PAYMENT_RESPONSE)).isTrue();
-        assertThat(actualResponse).isEqualToComparingFieldByField(SINGLE_PAYMENT_RESPONSE);
+        assertThat(actualResponse).isEqualTo(SINGLE_PAYMENT_RESPONSE);
     }
 
     @Test
@@ -172,8 +171,7 @@ public class ScaPaymentServiceTest {
         //then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
-        assertThat(actualResponse.equals(PERIODIC_PAYMENT_RESPONSE)).isTrue();
-        assertThat(actualResponse).isEqualToComparingFieldByField(PERIODIC_PAYMENT_RESPONSE);
+        assertThat(actualResponse).isEqualTo(PERIODIC_PAYMENT_RESPONSE);
     }
 
     @Test
@@ -218,8 +216,7 @@ public class ScaPaymentServiceTest {
         //then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
-        assertThat(actualResponse.equals(BULK_PAYMENT_RESPONSE)).isTrue();
-        assertThat(actualResponse).isEqualToComparingFieldByField(BULK_PAYMENT_RESPONSE);
+        assertThat(actualResponse).isEqualTo(BULK_PAYMENT_RESPONSE);
     }
 
     @Test
@@ -265,8 +262,7 @@ public class ScaPaymentServiceTest {
         //then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
-        assertThat(actualResponse.equals(COMMON_PAYMENT_RESPONSE)).isTrue();
-        assertThat(actualResponse).isEqualToComparingFieldByField(COMMON_PAYMENT_RESPONSE);
+        assertThat(actualResponse).isEqualTo(COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
