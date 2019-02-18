@@ -90,6 +90,8 @@ public class ConsentService {
      *
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
      * @param psuData PsuIdData container of authorisation data about PSU
+     * @param explicitPreferred is TPP explicit authorisation preferred
+     * @param tppRedirectUri URI for redirect SCA approach
      * @return CreateConsentResponse representing the complete response to create consent request
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred, TppRedirectUri tppRedirectUri) {

@@ -35,6 +35,7 @@ public interface Xs2aCrudRepository<T, ID extends Serializable> extends CrudRepo
      * This method was added to support x2sa code depended on spring-data 1.x with spring boot 2.x
      * Starting with spring data v2.x save(Iterable) was replaced by {@link org.springframework.data.repository.CrudRepository#saveAll}
      *
+     * @param <S> entity class
      * @param entities must not be null
      * @return saved entities
      * @throws IllegalArgumentException in case the given entity is {@literal null}.

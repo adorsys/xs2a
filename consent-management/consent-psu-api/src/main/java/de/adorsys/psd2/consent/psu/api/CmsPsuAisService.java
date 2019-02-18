@@ -33,6 +33,7 @@ public interface CmsPsuAisService {
      *
      * @param psuIdData PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
      * @param authorisationId ID of authorisation
+     * @param instanceId Bank instance ID
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
     boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId);
@@ -42,6 +43,7 @@ public interface CmsPsuAisService {
      *
      * @param psuIdData PSU credentials data
      * @param consentId ID of Consent
+     * @param instanceId Bank instance ID
      * @return Consent object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
@@ -54,6 +56,7 @@ public interface CmsPsuAisService {
      * @param consentId       ID of Consent
      * @param authorisationId ID of Authorisation process
      * @param status          Status of Authorisation to be set
+     * @param instanceId      Bank instance ID
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
     boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId);
@@ -64,6 +67,7 @@ public interface CmsPsuAisService {
      *
      * @param psuIdData PSU credentials data
      * @param consentId ID of Consent
+     * @param instanceId "instance-id" header value
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
     boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
@@ -73,6 +77,7 @@ public interface CmsPsuAisService {
      *
      * @param psuIdData PSU credentials data
      * @param consentId ID of Consent
+     * @param instanceId Bank instance ID
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
     boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
@@ -81,6 +86,7 @@ public interface CmsPsuAisService {
      * Returns a list of AIS Consent objects by PSU ID
      *
      * @param psuIdData PSU credentials data
+     * @param instanceId Bank instance ID
      * @return List of AIS Consent objects corresponding to the given PSU
      */
     @NotNull
@@ -91,6 +97,7 @@ public interface CmsPsuAisService {
      *
      * @param psuIdData PSU credentials data
      * @param consentId ID of Consent
+     * @param instanceId Bank instance ID
      * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
      */
     boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
@@ -99,6 +106,7 @@ public interface CmsPsuAisService {
      * Returns CMS AIS consent response object by redirect id if redirect id has not expired
      *
      * @param redirectId ID of redirect
+     * @param instanceId Bank instance ID
      * @return CMS AIS consent response object if it has been found
      */
     @NotNull

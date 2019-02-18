@@ -30,6 +30,7 @@ public interface AccountSpi {
     /**
      * Requests a list of account details
      *
+     * @param contextData      known Context of this call
      * @param withBalance      boolean representing if the responded AccountDetails should contain balance
      * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
@@ -40,8 +41,9 @@ public interface AccountSpi {
     /**
      * Requests an account detail for account
      *
+     * @param contextData      known Context of this call
      * @param withBalance      Boolean representing if the responded AccountDetails should contain balance
-     * @param accountReference   SpiAccountReference
+     * @param accountReference SpiAccountReference
      * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return Account detail
@@ -51,6 +53,7 @@ public interface AccountSpi {
     /**
      * Requests a list of transactions
      *
+     * @param contextData      known Context of this call
      * @param acceptMediaType  requested by TPP response media type e.g. text/plain. Shall be propagated to response. This string may contain several content-types according to HTTP "Accept"-Header format.
      *                         If desired media type is not possible to provide, NOT_SUPPORTED error to be returned. To provide formats other than JSON, use {@link SpiTransactionReport#transactionsRaw}
      * @param withBalance      boolean representing if the responded AccountDetails should contain balance
@@ -58,7 +61,7 @@ public interface AccountSpi {
      *                         If null, transactions will not be limited by start date
      * @param dateTo           Date representing the ending of the search period. <br>
      *                         If null, transactions will not be limited by end date
-     * @param accountReference   SpiAccountReference
+     * @param accountReference SpiAccountReference
      * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of transactions
@@ -68,7 +71,9 @@ public interface AccountSpi {
     /**
      * Requests an transaction by transactionId
      *
+     * @param contextData      known Context of this call
      * @param transactionId    String representation of ASPSP transaction primary identifier
+     * @param accountReference SpiAccountReference
      * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return Transaction
@@ -78,7 +83,8 @@ public interface AccountSpi {
     /**
      * Requests a list of account balances
      *
-     * @param accountReference   SpiAccountReference
+     * @param contextData      known Context of this call
+     * @param accountReference SpiAccountReference
      * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of account balances

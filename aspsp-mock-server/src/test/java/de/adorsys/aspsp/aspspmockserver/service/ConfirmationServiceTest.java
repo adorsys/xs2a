@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.psd2.aspsp.mock.api.psu.AspspAuthenticationObject;
@@ -108,7 +107,7 @@ public class ConfirmationServiceTest {
     @Test
     public void isTanNumberValidByPsuId_Failure() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(PSU_ID_1, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(PSU_ID_1, WRONG_TAN_NUMBER);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -117,7 +116,7 @@ public class ConfirmationServiceTest {
     @Test
     public void isTanNumberValidByIban_TanStatusValid() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(PSU_ID_1, TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(PSU_ID_1, TAN_NUMBER);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -126,7 +125,7 @@ public class ConfirmationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusInvalid() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(PSU_ID_1, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(PSU_ID_1, WRONG_TAN_NUMBER);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

@@ -51,7 +51,7 @@ public class SecurityDataService {
     /**
      * Encrypts external consent ID with secret consent key via configuration server key
      *
-     * @param originalId
+     * @param originalId external consent ID to encrypt
      * @return String encrypted external consent ID
      */
     public Optional<String> encryptId(String originalId) {
@@ -75,7 +75,7 @@ public class SecurityDataService {
     /**
      * Decrypts encrypted external ID
      *
-     * @param encryptedId
+     * @param encryptedId ncrypted ID for the input
      * @return String original ID
      */
     public Optional<String> decryptId(String encryptedId) {
