@@ -296,7 +296,7 @@ public class AisConsentControllerTest {
         AisConsentAuthorizationResponse authorizationResponse = new AisConsentAuthorizationResponse();
         authorizationResponse.setAuthorizationId(AUTHORIZATION_ID);
         authorizationResponse.setConsentId(CONSENT_ID);
-        authorizationResponse.setPsuId(PSU_ID);
+        authorizationResponse.setPsuIdData(new PsuIdData(PSU_ID, null, null, null));
 
         return authorizationResponse;
     }

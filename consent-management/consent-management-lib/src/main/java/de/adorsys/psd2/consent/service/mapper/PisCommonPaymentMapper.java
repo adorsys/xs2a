@@ -22,7 +22,6 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.*;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
@@ -104,10 +103,9 @@ public class PisCommonPaymentMapper {
         response.setScaStatus(pis.getScaStatus());
         response.setPaymentId(pis.getPaymentData().getPaymentId());
         response.setPaymentInfo(mapToPisPaymentInfo(pis.getPaymentData()));
-        response.setPsuId(Optional.ofNullable(pis.getPsuData())
-                              .map(PsuData::getPsuId)
-                              .orElse(null));
-
+        response.setPsuIdData(Optional.ofNullable(pis.getPsuData())
+                                  .map(psuDataMapper::mapToPsuIdData)
+                                  .orElse(null));
         return response;
     }
 

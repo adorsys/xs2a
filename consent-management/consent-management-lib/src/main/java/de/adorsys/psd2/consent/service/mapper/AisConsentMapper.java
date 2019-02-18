@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
@@ -95,8 +94,8 @@ public class AisConsentMapper {
                    .map(conAuth -> {
                        AisConsentAuthorizationResponse resp = new AisConsentAuthorizationResponse();
                        resp.setAuthorizationId(conAuth.getExternalId());
-                       resp.setPsuId(Optional.ofNullable(conAuth.getPsuData())
-                                         .map(PsuData::getPsuId)
+                       resp.setPsuIdData(Optional.ofNullable(conAuth.getPsuData())
+                                         .map(psuDataMapper::mapToPsuIdData)
                                          .orElse(null));
                        resp.setConsentId(conAuth.getConsent().getExternalId());
                        resp.setScaStatus(conAuth.getScaStatus());
