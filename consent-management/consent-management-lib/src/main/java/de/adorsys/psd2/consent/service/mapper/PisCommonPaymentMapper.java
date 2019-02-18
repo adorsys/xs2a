@@ -103,9 +103,7 @@ public class PisCommonPaymentMapper {
         response.setScaStatus(pis.getScaStatus());
         response.setPaymentId(pis.getPaymentData().getPaymentId());
         response.setPaymentInfo(mapToPisPaymentInfo(pis.getPaymentData()));
-        response.setPsuIdData(Optional.ofNullable(pis.getPsuData())
-                                  .map(psuDataMapper::mapToPsuIdData)
-                                  .orElse(null));
+        response.setPsuIdData(psuDataMapper.mapToPsuIdData(pis.getPsuData()));
         return response;
     }
 

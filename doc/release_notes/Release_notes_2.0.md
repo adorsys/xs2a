@@ -1,4 +1,4 @@
-# Release notes v. 1.18
+# Release notes v. 2.0
 
 ## String field `psuId` changed to object `PsuIdData` for `GetPisAuthorisationResponse` and `AisConsentAuthorizationResponse`      
 

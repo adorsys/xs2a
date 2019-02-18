@@ -1,5 +1,5 @@
 # Release notes
-* [Version 1.18 (release date: ?)](release_notes/Release_notes_1.18.md)
+* [Version 1.18 (release date: ?)](release_notes/Release_notes_2.0.md)
 * [Version 1.17 (release date: 15.02.2019)](release_notes/Release_notes_1.17.md)
 * [Version 1.16 (release date: 01.02.2019)](release_notes/Release_notes_1.16.md)
 * [Version 1.15 (release date: 18.01.2019)](release_notes/Release_notes_1.15.md)

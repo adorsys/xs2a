@@ -94,9 +94,7 @@ public class AisConsentMapper {
                    .map(conAuth -> {
                        AisConsentAuthorizationResponse resp = new AisConsentAuthorizationResponse();
                        resp.setAuthorizationId(conAuth.getExternalId());
-                       resp.setPsuIdData(Optional.ofNullable(conAuth.getPsuData())
-                                         .map(psuDataMapper::mapToPsuIdData)
-                                         .orElse(null));
+                       resp.setPsuIdData(psuDataMapper.mapToPsuIdData(conAuth.getPsuData()));
                        resp.setConsentId(conAuth.getConsent().getExternalId());
                        resp.setScaStatus(conAuth.getScaStatus());
                        resp.setAuthenticationMethodId(conAuth.getAuthenticationMethodId());
