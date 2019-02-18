@@ -47,7 +47,7 @@ public class CreateConsentRequestValidator {
      * <li>supporting of global consent for All Psd2</li>
      * <li>supporting of bank offered consent</li>
      * <li>expiration date of consent</li>
-     * </ul></p>
+     * </ul><p>
      * If there is new consent requirements, this method has to be updated.
      *
      * @param request CreateConsentReq request for consent creating
