@@ -302,23 +302,12 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void findAndTerminateOldConsentsByNewConsentId_failure_psuDataNull() {
+    public void findAndTerminateOldConsentsByNewConsentId_failure_wrongConsentData() {
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(aisConsentMocked));
 
-        when(aisConsentMocked.getPsuData())
-            .thenReturn(null);
-
-        aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void findAndTerminateOldConsentsByNewConsentId_failure_tppInfoNull() {
-        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsentMocked));
-
-        when(aisConsentMocked.getTppInfo())
-            .thenReturn(null);
+        when(aisConsentMocked.isWrongConsentData())
+            .thenReturn(true);
 
         aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
     }
@@ -331,7 +320,7 @@ public class AisConsentServiceInternalTest {
         when(aisConsentMocked.getTppInfo())
             .thenReturn(tppInfoMocked);
 
-        when(aisConsentMocked.getPsuData())
+        when(aisConsentMocked.getFirstPsuData())
             .thenReturn(psuDataMocked);
 
         when(psuDataMocked.getPsuId())
@@ -365,7 +354,7 @@ public class AisConsentServiceInternalTest {
         when(aisConsentMocked.getTppInfo())
             .thenReturn(tppInfoMocked);
 
-        when(aisConsentMocked.getPsuData())
+        when(aisConsentMocked.getFirstPsuData())
             .thenReturn(psuDataMocked);
 
         when(psuDataMocked.getPsuId())

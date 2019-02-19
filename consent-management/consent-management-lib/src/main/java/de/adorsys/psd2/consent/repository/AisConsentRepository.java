@@ -33,11 +33,10 @@ public interface AisConsentRepository extends Xs2aCrudRepository<AisConsent, Lon
 
     Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
 
-    List<AisConsent> findByPsuDataPsuId(String psuId);
-
     @Query(
         "select c from ais_consent c " +
-            "where c.psuData.psuId = :psuId " +
+            "join c.psuData psuList " +
+            "where psuList.psuId = :psuId " +
             "and c.tppInfo.authorisationNumber = :authorisationNumber " +
             "and c.tppInfo.authorityId = :authorityId " +
             "and c.instanceId = :instanceId " +
