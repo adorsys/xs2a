@@ -38,6 +38,7 @@
             INSERT INTO ais_consent_psu_data (psu_data_id, ais_consent_id)
             SELECT psu_id, id
             FROM ais_consent
+            WHERE psu_id IS NOT NULL
         </sql>
     </changeSet>
 
