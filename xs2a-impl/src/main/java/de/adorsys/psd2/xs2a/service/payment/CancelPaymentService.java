@@ -20,9 +20,7 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -39,7 +37,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
 
 @Service
@@ -68,7 +66,7 @@ public class CancelPaymentService {
 
         if (spiResponse.hasError()) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS)))
+                       .fail(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS))
                        .build();
         }
 
@@ -97,7 +95,7 @@ public class CancelPaymentService {
 
         if (spiResponse.hasError()) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS)))
+                       .fail(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS))
                        .build();
         }
 
@@ -108,6 +106,6 @@ public class CancelPaymentService {
                                  .body(p)
                                  .build())
                    .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
-                                  .fail(new MessageError(PIS_403, new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403)))::build);
+                                  .fail(PIS_403, of(RESOURCE_UNKNOWN_403))::build);
     }
 }

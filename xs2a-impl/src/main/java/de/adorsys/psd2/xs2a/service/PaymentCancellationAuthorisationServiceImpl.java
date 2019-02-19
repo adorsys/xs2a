@@ -20,25 +20,25 @@ import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +62,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         if (psuData.isNotEmpty() && !isPsuDataCorrect(paymentId, psuData)) {
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                       .fail(new MessageError(ErrorType.PIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PSU_CREDENTIALS_INVALID)))
+                       .fail(PIS_401, of(PSU_CREDENTIALS_INVALID))
                        .build();
         }
 
@@ -72,7 +72,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                                     .body(resp)
                                     .build())
                    .orElseGet(ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                                  .fail(new MessageError(ErrorType.PIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)))
+                                  .fail(PIS_400, of(FORMAT_ERROR))
                                   ::build);
     }
 
@@ -120,7 +120,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
         return pisScaAuthorisationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
-                                  .fail(new MessageError(ErrorType.PIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
+                                  .fail(PIS_404, of(RESOURCE_UNKNOWN_404))
                                   ::build);
     }
 
@@ -140,7 +140,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         if (!scaStatus.isPresent()) {
             return ResponseObject.<ScaStatus>builder()
-                       .fail(new MessageError(ErrorType.PIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_403)))
+                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 

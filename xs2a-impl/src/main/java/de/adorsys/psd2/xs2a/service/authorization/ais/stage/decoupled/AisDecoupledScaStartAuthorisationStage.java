@@ -20,12 +20,9 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
@@ -33,7 +30,6 @@ import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
@@ -50,7 +46,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PSU_CREDENTIALS_INVALID;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 
 @Service("AIS_DECOUPLED_STARTED")
 public class AisDecoupledScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
@@ -101,7 +102,7 @@ public class AisDecoupledScaStartAuthorisationStage extends AisScaStage<UpdateCo
 
         if (authorisationStatusSpiResponse.hasError()) {
             if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
-                MessageError messageError = new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PSU_CREDENTIALS_INVALID));
+                MessageError messageError = new MessageError(AIS_401, of(PSU_CREDENTIALS_INVALID));
                 return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages());
             }
 
@@ -128,7 +129,7 @@ public class AisDecoupledScaStartAuthorisationStage extends AisScaStage<UpdateCo
 
     private UpdateConsentPsuDataResponse applyIdentification(UpdateConsentPsuDataReq request) {
         if (!isPsuExist(request.getPsuData())) {
-            MessageError messageError = new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
+            MessageError messageError = new MessageError(AIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
             return createFailedResponse(messageError, Collections.singletonList(MESSAGE_ERROR_NO_PSU));
         }
 
