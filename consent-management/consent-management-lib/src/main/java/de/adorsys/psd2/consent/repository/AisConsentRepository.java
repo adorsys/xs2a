@@ -35,7 +35,7 @@ public interface AisConsentRepository extends Xs2aCrudRepository<AisConsent, Lon
 
     @Query(
         "select c from ais_consent c " +
-            "join c.psuData psuList " +
+            "join c.psuDataList psuList " +
             "where psuList.psuId = :psuId " +
             "and c.tppInfo.authorisationNumber = :authorisationNumber " +
             "and c.tppInfo.authorityId = :authorityId " +
