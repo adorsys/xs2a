@@ -62,8 +62,8 @@ public class AccountReference {
     /**
      * This constructor should be used for storing initial accounts data (as it was requested by TPP)
      *
-     * @param accountReferenceType  Enum for type of the account: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN
-     * @param accountReferenceValue Account identifier
+     * @param accountReferenceType  Account identifier type
+     * @param accountReferenceValue Account identifier value
      * @param currency              Currency Type
      */
     public AccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency) {
@@ -73,8 +73,8 @@ public class AccountReference {
     /**
      * This constructor should be used for storing accounts data received from aspsp
      *
-     * @param accountReferenceType  Enum for type of the account: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN
-     * @param accountReferenceValue Account identifier
+     * @param accountReferenceType  Account identifier type
+     * @param accountReferenceValue Account identifier value
      * @param currency              Currency Type
      * @param resourceId            The identification that denotes the addressed account
      * @param aspspAccountId        Bank specific account ID

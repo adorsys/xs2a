@@ -40,7 +40,7 @@ public class TppSignatureValidator {
      * addition signature should be verifiable by the entry certificate
      *
      * @param signature         Signature to verify
-     * @param tppEncodedCert    "tpp-signature-certificate" request header
+     * @param tppEncodedCert    TPP Certificate Data
      * @param headers           headers from the request
      * @return                  true if signature is correct, false otherwise
      * @throws IOException      if signature process fails
