@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -72,6 +73,7 @@ public class ConsentService {
     private final AisConsentDataService aisConsentDataService;
     private final AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
     private final TppService tppService;
+    private final AisEndpointAccessCheckerService endpointAccessCheckerService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final AisConsentSpi aisConsentSpi;
@@ -280,6 +282,12 @@ public class ConsentService {
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
         xs2aEventService.recordAisTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
+
+        if (!endpointAccessCheckerService.isEndpointAccessible(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId())) {
+            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                .fail(AIS_403, of(SERVICE_BLOCKED))
+                .build();
+        }
 
         // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
         AccountConsent accountConsent = getValidatedAccountConsent(updatePsuData.getConsentId());

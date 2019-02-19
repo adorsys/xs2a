@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 import lombok.ToString;
@@ -70,6 +71,10 @@ public class PisAuthorization extends InstanceDependableEntity {
     @ElementCollection
     @CollectionTable(name = "pis_available_sca_method", joinColumns = @JoinColumn(name = "authorisation_id"))
     private List<ScaMethod> availableScaMethods = new ArrayList<>();
+
+    @Column(name = "sca_approach", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private ScaApproach scaApproach;
 
     public boolean isExpired() {
         return !isNotExpired();

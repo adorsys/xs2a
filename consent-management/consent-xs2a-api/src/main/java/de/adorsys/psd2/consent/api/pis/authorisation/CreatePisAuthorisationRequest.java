@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.ais;
+package de.adorsys.psd2.consent.api.pis.authorisation;
 
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "AIS consent authorization", value = "AisConsentAuthorization")
-public class AisConsentAuthorizationRequest {
+@AllArgsConstructor
+@ApiModel(description = "Create PIS Authorisation Request", value = "CreatePisAuthorisationRequest")
+public class CreatePisAuthorisationRequest {
+    @ApiModelProperty(value = "Cms authorisation type", required = true)
+    private CmsAuthorisationType authorizationType;
 
     @ApiModelProperty(value = "Corresponding PSU", required = true)
     private PsuIdData psuData;
-
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
-    private ScaStatus scaStatus;
-
-    @ApiModelProperty(value = "An identification provided by the ASPSP for the later identification of the authentication method selection.")
-    private String authenticationMethodId;
-
-    @ApiModelProperty(value = "Password")
-    private String password;
-
-    @ApiModelProperty(value = "SCA authentication data")
-    private String scaAuthenticationData;
 
     @ApiModelProperty(value = "SCA approach")
     private ScaApproach scaApproach;

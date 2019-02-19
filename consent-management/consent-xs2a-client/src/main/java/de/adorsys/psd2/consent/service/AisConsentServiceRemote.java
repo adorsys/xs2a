@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
@@ -96,14 +97,14 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
     @Override
     public Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
         CreateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
-                                                                         new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
+            new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
         return Optional.ofNullable(response.getConsentId());
     }
 
     @Override
     public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
         CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
-                                                                                           request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
+            request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
 
         return Optional.ofNullable(response)
                    .map(CreateAisConsentAuthorizationResponse::getAuthorizationId);
@@ -171,5 +172,11 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
+        return consentRestTemplate.exchange(remoteAisConsentUrls.updateScaApproach(), HttpMethod.PUT, null, Boolean.class, authorisationId, scaApproach)
+                   .getBody();
     }
 }

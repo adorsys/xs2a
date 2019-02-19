@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -183,6 +184,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
     private UpdateConsentPsuDataResponse createResponseForOneAvailableMethod(UpdateConsentPsuDataReq request, SpiAccountConsent spiAccountConsent, SpiAuthenticationObject scaMethod, PsuIdData psuData) {
         if (scaMethod.isDecoupled()) {
             scaApproachResolver.forceDecoupledScaApproach();
+            aisConsentService.updateScaApproach(request.getAuthorizationId(), ScaApproach.DECOUPLED);
             return commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, scaMethod.getAuthenticationMethodId(), psuData);
         }
 

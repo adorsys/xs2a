@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
@@ -42,17 +43,19 @@ public class Xs2aAisConsentAuthorisationMapper {
                        consentAuthorization.setAuthenticationMethodId(conAuth.getAuthenticationMethodId());
                        consentAuthorization.setScaAuthenticationData(conAuth.getScaAuthenticationData());
                        consentAuthorization.setPassword(conAuth.getPassword());
+                       consentAuthorization.setChosenScaApproach(conAuth.getChosenScaApproach());
                        return consentAuthorization;
                    })
                    .orElse(null);
     }
 
-    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(ScaStatus scaStatus, PsuIdData psuData) {
+    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach) {
         return Optional.ofNullable(scaStatus)
                    .map(st -> {
                        AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
                        consentAuthorization.setPsuData(psuData);
                        consentAuthorization.setScaStatus(scaStatus);
+                       consentAuthorization.setScaApproach(scaApproach);
                        return consentAuthorization;
                    })
                    .orElse(null);

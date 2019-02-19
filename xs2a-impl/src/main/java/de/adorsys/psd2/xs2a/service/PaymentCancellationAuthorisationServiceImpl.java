@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     private final PisPsuDataService pisPsuDataService;
     private final Xs2aEventService xs2aEventService;
+    private final PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
 
     /**
      * Creates authorisation for payment cancellation request if given psu data is valid
@@ -85,6 +87,12 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     @Override
     public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED, request);
+
+        if (!pisEndpointAccessCheckerService.isEndpointAccessible(request.getAuthorisationId())) {
+            return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                       .fail(PIS_403, of(SERVICE_BLOCKED))
+                       .build();
+        }
 
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(request);

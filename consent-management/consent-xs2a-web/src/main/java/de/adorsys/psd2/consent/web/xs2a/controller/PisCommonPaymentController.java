@@ -20,16 +20,13 @@ import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentDataStatusResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -105,8 +102,8 @@ public class PisCommonPaymentController {
     public ResponseEntity<CreatePisAuthorisationResponse> createAuthorization(
         @ApiParam(name = "payment-id", value = "The payment identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId,
-        @RequestBody PsuIdData psuData) {
-        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, CmsAuthorisationType.CREATED, psuData)
+        @RequestBody CreatePisAuthorisationRequest request) {
+        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, request)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -119,8 +116,8 @@ public class PisCommonPaymentController {
     public ResponseEntity<CreatePisAuthorisationResponse> createAuthorizationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId,
-        @RequestBody PsuIdData psuData) {
-        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED, psuData)
+        @RequestBody CreatePisAuthorisationRequest request) {
+        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, request)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -271,4 +268,18 @@ public class PisCommonPaymentController {
                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @PutMapping(path = "/authorisations/{authorisation-id}/sca-approach/{sca-approach}")
+    @ApiOperation(value = "Updates pis sca approach.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<Boolean> updateScaApproach(
+        @ApiParam(name = "authorisation-id", value = "The authorisation identification assigned to the created authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @ApiParam(name = "sca-approach", value = "Chosen SCA approach.", example = "REDIRECT")
+        @PathVariable("sca-approach") ScaApproach scaApproach) {
+        return pisCommonPaymentServiceEncrypted.updateScaApproach(authorisationId, scaApproach)
+                   ? new ResponseEntity<>(true, HttpStatus.OK)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }

@@ -21,6 +21,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
@@ -32,6 +33,7 @@ import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +91,8 @@ public class PisCommonPaymentServiceInternalTest {
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.STARTED;
-    private static final CmsAuthorisationType AUTHORISATION_TYPE = CmsAuthorisationType.CREATED;
+    private static final PsuIdData PSU_DATA = new PsuIdData("id", "type", "corporate ID", "corporate type");
+    private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(CmsAuthorisationType.CREATED, PSU_DATA, ScaApproach.REDIRECT);
 
     @Before
     public void setUp() {
@@ -238,14 +241,13 @@ public class PisCommonPaymentServiceInternalTest {
         ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
         //noinspection unchecked
         ArgumentCaptor<List<PisAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
-        PsuIdData psuIdData = buildPsuIdData();
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         when(pisAuthorisationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
         when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
 
         // When
-        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, AUTHORISATION_TYPE, psuIdData);
+        Optional<CreatePisAuthorisationResponse> actual = pisCommonPaymentService.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST);
 
         // Then
         assertTrue(actual.isPresent());
@@ -267,10 +269,6 @@ public class PisCommonPaymentServiceInternalTest {
                                  null, false, null, null, 1, 1, false,
                                  false, false, false, false, false, 1, null,
                                  1, 1, null, 1, false, false, false);
-    }
-
-    private PsuIdData buildPsuIdData() {
-        return new PsuIdData("id", "type", "corporate ID", "corporate type");
     }
 
     private UpdatePisCommonPaymentPsuDataRequest buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus status) {
@@ -302,7 +300,7 @@ public class PisCommonPaymentServiceInternalTest {
         pisAuthorization.setAuthorizationType(authorisationType);
         pisAuthorization.setScaStatus(SCA_STATUS);
         pisAuthorization.setPaymentData(buildPisCommonPaymentData());
-        pisAuthorization.setPsuData(psuDataMapper.mapToPsuData(buildPsuIdData()));
+        pisAuthorization.setPsuData(psuDataMapper.mapToPsuData(PSU_DATA));
         return pisAuthorization;
     }
 

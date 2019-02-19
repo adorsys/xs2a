@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     private final Xs2aEventService xs2aEventService;
     private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
+    private final PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
 
     /**
      * Creates authorisation for payment request if given psu data is valid
@@ -88,6 +90,12 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     @Override
     public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
+
+        if (!pisEndpointAccessCheckerService.isEndpointAccessible(request.getAuthorisationId())) {
+            return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                       .fail(PIS_403, of(SERVICE_BLOCKED))
+                       .build();
+        }
 
         // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(request.getPaymentId());
