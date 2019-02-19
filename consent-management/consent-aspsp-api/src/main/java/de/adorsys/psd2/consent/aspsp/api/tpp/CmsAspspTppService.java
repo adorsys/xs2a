@@ -29,8 +29,8 @@ public interface CmsAspspTppService {
      * Loads TPP stop list record by TPP ID and National competent authority ID
      *
      * @param tppAuthorisationNumber ID of TPP to load
-     * @param nationalAuthorityId    National competent authority id
-     * @param instanceId             "instance-id" header
+     * @param nationalAuthorityId    National competent authority ID
+     * @param instanceId             Tpp stop list service instance ID
      * @return TPP Stop list object object if found in DB
      */
     @NotNull
@@ -43,8 +43,8 @@ public interface CmsAspspTppService {
      * If Record with given ID doesn't exist in DB, creates an empty one with given ID
      *
      * @param tppAuthorisationNumber ID of TPP to lock
-     * @param nationalAuthorityId    National competent authority id
-     * @param instanceId             "instance-id" header
+     * @param nationalAuthorityId    National competent authority ID
+     * @param instanceId             Tpp stop list service instance ID
      * @param lockPeriod             Time period of locking. May be omitted.
      * @return <code>true</code> if lock was done. <code>false</code> otherwise.
      */
@@ -55,8 +55,8 @@ public interface CmsAspspTppService {
      * If Record with given ID doesn't exist in DB, does nothing.
      *
      * @param tppAuthorisationNumber ID of TPP to lock
-     * @param nationalAuthorityId    National competent authority id
-     * @param instanceId             "instance-id" header
+     * @param nationalAuthorityId    National competent authority ID
+     * @param instanceId             Tpp stop list service instance ID
      * @return <code>true</code> if TPP was found and unlock was done. <code>false</code> otherwise.
      */
     boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);

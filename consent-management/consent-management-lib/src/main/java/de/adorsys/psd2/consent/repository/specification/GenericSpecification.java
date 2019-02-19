@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public abstract class GenericSpecification {
     }
 
     /**
-     * Returns specification for some entity for filtering data by PSU ID data.<p>
+     * Returns specification for some entity for filtering data by PSU ID data.
      * <p>
      * If all fields in the given PsuIdData are null, this specification will not affect resulting data.
      *

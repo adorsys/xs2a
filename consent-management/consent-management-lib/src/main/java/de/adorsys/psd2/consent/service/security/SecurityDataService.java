@@ -75,7 +75,7 @@ public class SecurityDataService {
     /**
      * Decrypts encrypted external ID
      *
-     * @param encryptedId ncrypted ID for the input
+     * @param encryptedId encrypted ID for the input
      * @return String original ID
      */
     public Optional<String> decryptId(String encryptedId) {
@@ -97,8 +97,8 @@ public class SecurityDataService {
     /**
      * Encrypts ASPSP consent data
      *
-     * @param encryptedId
-     * @param aspspConsentData original data to be encrypted
+     * @param encryptedId       encrypted consent ID
+     * @param aspspConsentData  original data to be encrypted
      * @return response contains encrypted data
      */
     public Optional<EncryptedData> encryptConsentData(String encryptedId, byte[] aspspConsentData) {
@@ -109,8 +109,8 @@ public class SecurityDataService {
     /**
      * Decrypt ASPSP consent data
      *
-     * @param encryptedId
-     * @param aspspConsentData encrypted data to be decrypted
+     * @param encryptedId       encrypted consent ID
+     * @param aspspConsentData  encrypted data to be decrypted
      * @return response contains decrypted data
      */
     public Optional<DecryptedData> decryptConsentData(String encryptedId, byte[] aspspConsentData) {
