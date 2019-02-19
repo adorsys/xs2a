@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.exception;
 
 import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
@@ -37,7 +36,7 @@ import org.springframework.web.method.HandlerMethod;
 import javax.validation.ValidationException;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
 @Slf4j
 @RestControllerAdvice(basePackages = "de.adorsys.psd2.xs2a.web.controller")
@@ -114,15 +113,13 @@ public class GlobalExceptionHandlerController {
 
     private MessageError createMessageError(MessageErrorCode messageErrorCode) {
         return new MessageError(
-            errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()),
-            new TppMessageInformation(ERROR, messageErrorCode)
+            errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()), of(messageErrorCode)
         );
     }
 
     private MessageError createMessageError(MessageErrorCode messageErrorCode, String message) {
         return new MessageError(
-            errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()),
-            new TppMessageInformation(ERROR, messageErrorCode, message)
+            errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()), of(messageErrorCode, message)
         );
     }
 }

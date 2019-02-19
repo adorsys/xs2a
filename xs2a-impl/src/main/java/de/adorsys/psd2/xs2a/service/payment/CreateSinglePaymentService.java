@@ -22,13 +22,11 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
@@ -45,7 +43,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 
 @Service
@@ -85,7 +83,7 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
 
         if (StringUtils.isBlank(externalPaymentId)) {
             return ResponseObject.<SinglePaymentInitiationResponse>builder()
-                       .fail(new MessageError(PIS_400, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
+                       .fail(PIS_400, of(PAYMENT_FAILED))
                        .build();
         }
 
@@ -105,7 +103,7 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, PaymentType.SINGLE, psuData);
             if (!consentAuthorisation.isPresent()) {
                 return ResponseObject.<SinglePaymentInitiationResponse>builder()
-                           .fail(new MessageError(PIS_400, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
+                           .fail(PIS_400, of(PAYMENT_FAILED))
                            .build();
             }
             Xs2aCreatePisAuthorisationResponse authorisationResponse = consentAuthorisation.get();

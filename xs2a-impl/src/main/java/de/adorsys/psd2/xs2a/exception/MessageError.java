@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static java.util.Collections.singletonList;
 
 @Data
@@ -49,7 +50,7 @@ public class MessageError {
     }
 
     private MessageError(MessageErrorCode errorCode, String message) {
-        this(singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode, message)));
+        this(singletonList(of(errorCode, message)));
     }
 
     private MessageError(List<TppMessageInformation> tppMessages) {

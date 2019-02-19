@@ -17,7 +17,10 @@
 package de.adorsys.psd2.xs2a.domain;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import lombok.Getter;
+
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
 /**
  * Response Object passing the information about performed operation
@@ -52,6 +55,16 @@ public class ResponseObject<T> {
 
         public ResponseBuilder<T> fail(MessageError error) {
             this.error = error;
+            return this;
+        }
+
+        public ResponseBuilder<T> fail(ErrorType errorType, TppMessageInformation... tppMessageInformation) {
+            this.error = new MessageError(errorType,  tppMessageInformation);
+            return this;
+        }
+
+        public ResponseBuilder<T> fail(ErrorHolder errorHolder) {
+            this.error = new MessageError(errorHolder.getErrorType(), of(errorHolder.getErrorCode(), errorHolder.getMessage()));
             return this;
         }
 

@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
 @Slf4j
 @Component
@@ -91,7 +91,7 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), errorCode.getCode());
 
         TppMessageInformation[] tppMessages = errorMessages.stream()
-                                                  .map(e -> new TppMessageInformation(ERROR, errorCode, e))
+                                                  .map(e -> of(errorCode, e))
                                                   .toArray(TppMessageInformation[]::new);
 
         return new MessageError(errorType, tppMessages);
