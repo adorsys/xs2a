@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api.pis.authorisation;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
@@ -26,7 +27,7 @@ import java.util.List;
 
 @Data
 public class GetPisAuthorisationResponse {
-    private String psuId;
+    private PsuIdData psuIdData;
     private ScaStatus scaStatus;
     private String paymentId;
     private String password;

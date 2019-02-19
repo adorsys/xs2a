@@ -15,7 +15,6 @@
  */
 
 
-
 package de.adorsys.psd2.consent.web.xs2a;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
@@ -318,7 +317,7 @@ public class PisCommonPaymentControllerTest {
 
     private GetPisAuthorisationResponse getGetPisAuthorisationResponse() {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
-        response.setPsuId(PSU_ID);
+        response.setPsuIdData(new PsuIdData(PSU_ID, null, null, null));
         response.setScaStatus(ScaStatus.STARTED);
         response.setPaymentId(PAYMENT_ID);
         response.setPassword(PASSWORD);

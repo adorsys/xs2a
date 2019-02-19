@@ -55,15 +55,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.swing.plaf.metal.OceanTheme;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.FINALISED;
-import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUAUTHENTICATED;
-import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
@@ -285,7 +282,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
 
     private static GetPisAuthorisationResponse buildGetPisAuthorisationResponse() {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
-        response.setPsuId(PSU_ID);
+        response.setPsuIdData(new PsuIdData(PSU_ID, null, null, null));
         return response;
     }
 }

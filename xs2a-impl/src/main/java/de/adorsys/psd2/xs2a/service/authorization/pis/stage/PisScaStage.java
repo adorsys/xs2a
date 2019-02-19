@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.service.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
@@ -105,9 +104,7 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
         }
 
         return getGetPisAuthorisationResponse(request.getAuthorisationId(), paymentCancellation)
-                   .map(GetPisAuthorisationResponse::getPsuId)
-                   .filter(StringUtils::isNotBlank)
-                   .map(id -> new PsuIdData(id, null, null, null))
+                   .map(GetPisAuthorisationResponse::getPsuIdData)
                    .orElse(psuDataInRequest);
     }
 
