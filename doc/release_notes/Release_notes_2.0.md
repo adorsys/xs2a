@@ -19,3 +19,15 @@ In case of switching from Embedded to Decoupled SCA approaches endpoints become 
 ## Changed response class for funds confirmation request.
 
 Fixed wrong response to POST request `/v1/funds-confirmations`, now returns the `InlineResponse200` response.
+
+## Booking status is provided as parameter of AccountSpi.requestTransactionsForAccount
+
+The bank service can filter the transactions using the bookingStatus (received as query parameter in `GET transaction list` request),
+so Xs2a doesn't need to get all transactions from bank and filter them - ASPSP filters transactions itself (or SPI-connector developer can
+choose a way of implementing the filtering on SPI level if ASPSP does not support filtering).
+
+From now Xs2a does not filter transactions by given booking status. Booking status is provided to SPI level as a parameter of 
+`AccountSpi.requestTransactionsForAccount`. There it could be either provided to ASPSP or used to filter transactions on SPI level.
+
+In Xs2a - ASPSP-mock connector filtering is done on SPI level (in private methods `getFilteredTransactions` and
+`filterByBookingStatus` in `AccountSpiImpl`).
