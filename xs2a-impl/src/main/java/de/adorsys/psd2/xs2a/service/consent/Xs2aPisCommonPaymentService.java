@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -112,5 +113,15 @@ public class Xs2aPisCommonPaymentService {
      */
     public boolean saveAuthenticationMethods(String authorisationId, List<Xs2aAuthenticationObject> methods) {
         return pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+    }
+
+    /**
+     * Updates PIS SCA approach in authorisation
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param scaApproach     sca approach
+     */
+    public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
+        pisCommonPaymentServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
     }
 }

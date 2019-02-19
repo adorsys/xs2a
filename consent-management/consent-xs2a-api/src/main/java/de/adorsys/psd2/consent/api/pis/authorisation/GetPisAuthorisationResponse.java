@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api.pis.authorisation;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
@@ -35,4 +36,5 @@ public class GetPisAuthorisationResponse {
     private PaymentType paymentType;
     private String paymentProduct;
     private PisPaymentInfo paymentInfo;
+    private ScaApproach chosenScaApproach;
 }

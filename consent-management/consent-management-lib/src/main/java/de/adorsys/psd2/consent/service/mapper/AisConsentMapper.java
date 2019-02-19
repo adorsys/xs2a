@@ -112,6 +112,7 @@ public class AisConsentMapper {
                        resp.setScaStatus(conAuth.getScaStatus());
                        resp.setAuthenticationMethodId(conAuth.getAuthenticationMethodId());
                        resp.setScaAuthenticationData(conAuth.getScaAuthenticationData());
+                       resp.setChosenScaApproach(conAuth.getScaApproach());
 
                        return resp;
                    })

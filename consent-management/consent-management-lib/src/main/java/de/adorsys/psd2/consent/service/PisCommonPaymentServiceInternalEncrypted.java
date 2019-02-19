@@ -19,10 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
@@ -30,6 +27,7 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
@@ -83,20 +81,17 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
 
     @Override
     @Transactional
-    public Optional<CreatePisAuthorisationResponse> createAuthorization(String encryptedPaymentId,
-                                                                        CmsAuthorisationType authorisationType,
-                                                                        PsuIdData psuData) {
+    public Optional<CreatePisAuthorisationResponse> createAuthorization(String encryptedPaymentId, CreatePisAuthorisationRequest request) {
         return securityDataService.decryptId(encryptedPaymentId)
-                   .flatMap(id -> pisCommonPaymentService.createAuthorization(id, authorisationType, psuData));
+                   .flatMap(id -> pisCommonPaymentService.createAuthorization(id, request));
     }
 
     @Override
     @Transactional
     public Optional<CreatePisAuthorisationResponse> createAuthorizationCancellation(String encryptedPaymentId,
-                                                                                    CmsAuthorisationType authorisationType,
-                                                                                    PsuIdData psuData) {
+                                                                                    CreatePisAuthorisationRequest request) {
         return securityDataService.decryptId(encryptedPaymentId)
-                   .flatMap(id -> pisCommonPaymentService.createAuthorizationCancellation(id, authorisationType, psuData));
+                   .flatMap(id -> pisCommonPaymentService.createAuthorizationCancellation(id, request));
     }
 
     @Override
@@ -159,5 +154,11 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     @Transactional
     public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
         return pisCommonPaymentService.saveAuthenticationMethods(authorisationId, methods);
+    }
+
+    @Override
+    @Transactional
+    public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
+        return pisCommonPaymentService.updateScaApproach(authorisationId, scaApproach);
     }
 }

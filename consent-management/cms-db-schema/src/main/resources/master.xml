@@ -70,4 +70,6 @@
     <include relativeToChangelogFile="true" file="migration/0045-create-ais-available-sca-method.xml"/>
     <include relativeToChangelogFile="true" file="migration/0046-change-authority-id-type-to-varchar.xml"/>
     <include relativeToChangelogFile="true" file="migration/0047-add-ais-consent-psu-data-table.xml"/>
+    <include relativeToChangelogFile="true"
+             file="migration/0048-add-column-sca-approach-for-ais-consent-authorisation-and-pis-authorisation.xml"/>
 </databaseChangeLog>
