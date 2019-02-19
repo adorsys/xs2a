@@ -108,7 +108,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, SpiBookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
             SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
 
@@ -120,15 +120,7 @@ public class AccountSpiImpl implements AccountSpi {
                                               .queryParam("dateTo", dateTo)
                                               .buildAndExpand(uriParams);
 
-            Optional<List<SpiTransaction>> transactionsOptional = Optional.ofNullable(aspspRestTemplate.exchange(
-                uriComponents.toUriString(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<SpiTransaction>>() {
-                }
-            ).getBody());
-
-            List<SpiTransaction> transactions = transactionsOptional.orElseGet(ArrayList::new);
+            List<SpiTransaction> transactions = getFilteredTransactions(uriComponents, bookingStatus);
             List<SpiAccountBalance> balances = null;
 
             if (withBalance) {
@@ -229,6 +221,38 @@ public class AccountSpiImpl implements AccountSpi {
 
             return SpiResponse.<List<SpiAccountBalance>>builder()
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    private List<SpiTransaction> getFilteredTransactions(UriComponents uriComponents, SpiBookingStatus bookingStatus) {
+        return Optional.ofNullable(getTransactionsFromAspsp(uriComponents))
+                   .map(t -> filterByBookingStatus(t, bookingStatus))
+                   .orElse(Collections.emptyList());
+    }
+
+    private List<SpiTransaction> getTransactionsFromAspsp(UriComponents uriComponents) {
+        return aspspRestTemplate.exchange(
+            uriComponents.toUriString(),
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<SpiTransaction>>() {
+            }
+        ).getBody();
+    }
+
+    private List<SpiTransaction> filterByBookingStatus(List<SpiTransaction> transactionList, SpiBookingStatus bookingStatus) {
+        switch (bookingStatus) {
+            case BOOKED:
+                return transactionList.stream()
+                           .filter(SpiTransaction::isBookedTransaction)
+                           .collect(Collectors.toList());
+            case PENDING:
+                return transactionList.stream()
+                           .filter(SpiTransaction::isPendingTransaction)
+                           .collect(Collectors.toList());
+            case BOTH:
+            default:
+                return transactionList;
         }
     }
 
