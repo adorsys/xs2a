@@ -132,6 +132,8 @@ public class Xs2aAisConsentService {
      * Sends a POST request to CMS to store created consent authorization
      *
      * @param consentId String representation of identifier of stored consent
+     * @param scaStatus Enum for status of the SCA method applied
+     * @param psuData authorisation data about PSU
      * @return long representation of identifier of stored consent authorization
      */
     public Optional<String> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
@@ -143,6 +145,7 @@ public class Xs2aAisConsentService {
      * Requests CMS to retrieve AIS consent authorization by its identifier
      *
      * @param authorizationId String representation of identifier of stored consent authorization
+     * @param consentId ID of the consent
      * @return Response containing AIS Consent Authorization
      */
 

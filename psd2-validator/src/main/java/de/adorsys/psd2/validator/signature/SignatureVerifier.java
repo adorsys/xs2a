@@ -23,7 +23,9 @@ import org.tomitribe.auth.signatures.UnsupportedAlgorithmException;
 
 import javax.crypto.Mac;
 import java.io.IOException;
-import java.security.*;
+import java.security.Key;
+import java.security.Provider;
+import java.security.PublicKey;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -75,7 +77,7 @@ public class SignatureVerifier {
 	}
 
 	public boolean verify(final String method, final String uri, final Map<String, String> headers)
-			throws IOException, NoSuchAlgorithmException, SignatureException {
+			throws IOException {
 
 		final String signingString = createSigningString(method, uri, headers);
 

@@ -43,11 +43,11 @@ public class CreateConsentRequestValidator {
 
     /**
      * Validates Create consent request according to:
-     * <p><ul>
+     * <ul>
      * <li>supporting of global consent for All Psd2</li>
      * <li>supporting of bank offered consent</li>
      * <li>expiration date of consent</li>
-     * </ul><p>
+     * </ul>
      * If there is new consent requirements, this method has to be updated.
      *
      * @param request CreateConsentReq request for consent creating

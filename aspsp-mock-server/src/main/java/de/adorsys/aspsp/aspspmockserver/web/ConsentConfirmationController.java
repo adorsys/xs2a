@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.domain.Confirmation;
-import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.service.ConsentService;
 import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
 import de.adorsys.psd2.aspsp.mock.api.consent.AspspConsentStatus;
@@ -54,7 +53,7 @@ public class ConsentConfirmationController {
         @ApiResponse(code = 400, message = "Bad request")
     })
     public ResponseEntity confirmTan(@RequestBody Confirmation confirmation) {
-        return tanConfirmationService.confirmTan(confirmation.getPsuId(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.CONSENT);
+        return tanConfirmationService.confirmTan(confirmation.getPsuId(), confirmation.getTanNumber());
     }
 
     @PutMapping(path = "/{consent-id}/{status}")
