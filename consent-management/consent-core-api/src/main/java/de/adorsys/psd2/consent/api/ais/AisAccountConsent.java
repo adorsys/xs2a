@@ -25,6 +25,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -40,6 +41,6 @@ public class AisAccountConsent {
     private boolean withBalance;
     private boolean tppRedirectPreferred;
     private AisConsentRequestType aisConsentRequestType;
-    private PsuIdData psuData;
+    private List<PsuIdData> psuIdDataList;
     private TppInfo tppInfo;
 }

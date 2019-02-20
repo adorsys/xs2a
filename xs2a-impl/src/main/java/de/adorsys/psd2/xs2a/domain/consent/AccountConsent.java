@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @ApiModel(description = "Response for the get account information consent request by consent Id")
@@ -52,19 +53,15 @@ public class AccountConsent {
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private final ConsentStatus consentStatus;
 
-    @ApiModelProperty(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @JsonIgnore
     private final boolean withBalance;
 
-    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @JsonIgnore
     private final boolean tppRedirectPreferred;
 
-    @ApiModelProperty(value = "Corresponding PSU", name = "psuData")
     @JsonIgnore
-    private final PsuIdData psuData;
+    private final List<PsuIdData> psuIdDataList;
 
-    @ApiModelProperty(value = "TPP information", required = true)
     @JsonIgnore
     private final TppInfo tppInfo;
 

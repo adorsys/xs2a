@@ -35,6 +35,7 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
+import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -109,6 +110,8 @@ public class AisConsentServiceInternalTest {
     private TppInfoEntity tppInfoMocked;
     @Mock
     private PsuData psuDataMocked;
+    @Mock
+    private CmsPsuService cmsPsuService;
 
     @Mock
     private ScaMethodMapper scaMethodMapper;
@@ -257,6 +260,8 @@ public class AisConsentServiceInternalTest {
         when(aisConsentAuthorisationRepository.save(any(AisConsentAuthorization.class))).thenReturn(aisConsentAuthorisation);
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
         when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(PSU_DATA);
+        when(cmsPsuService.enrichPsuData(any(), any())).thenReturn(Collections.singletonList(PSU_DATA));
 
         AisConsentAuthorizationRequest aisConsentAuthorisationRequest = new AisConsentAuthorizationRequest();
         aisConsentAuthorisationRequest.setPsuData(PSU_ID_DATA);
@@ -277,6 +282,7 @@ public class AisConsentServiceInternalTest {
                                          .collect(Collectors.toSet());
         assertEquals(scaStatuses.size(), 1);
         assertTrue(scaStatuses.contains(ScaStatus.FAILED));
+
     }
 
     @Test(expected = IllegalArgumentException.class)

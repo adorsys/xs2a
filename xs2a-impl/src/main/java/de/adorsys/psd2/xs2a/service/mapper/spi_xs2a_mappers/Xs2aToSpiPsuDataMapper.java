@@ -20,8 +20,17 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class Xs2aToSpiPsuDataMapper {
+
+    public List<SpiPsuData> mapToSpiPsuDataList(List<PsuIdData> psuIdDataList) {
+        return psuIdDataList.stream()
+                   .map(this::mapToSpiPsuData)
+                   .collect(Collectors.toList());
+    }
 
     public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData) {
         if (psuIdData == null) {

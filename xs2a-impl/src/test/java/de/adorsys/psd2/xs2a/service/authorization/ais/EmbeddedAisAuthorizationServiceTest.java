@@ -30,6 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
@@ -114,9 +115,8 @@ public class EmbeddedAisAuthorizationServiceTest {
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(AUTHORISATION_ID));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(consent);
-        when(consent.getPsuData()).thenReturn(PSU_DATA);
-        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
-        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(psuIdData, CONSENT_ID);
+
+        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
         assertThat(actualResponseOptional.isPresent()).isTrue();
 
@@ -134,7 +134,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, psuIdData))
             .thenReturn(Optional.of(AUTHORISATION_ID));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(consent);
-        when(consent.getPsuData()).thenReturn(psuIdData);
+        when(consent.getPsuIdDataList()).thenReturn(Collections.singletonList(psuIdData));
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(psuIdData, CONSENT_ID);
 
         assertThat(actualResponseOptional.isPresent()).isTrue();

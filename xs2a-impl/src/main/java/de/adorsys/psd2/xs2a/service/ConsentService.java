@@ -192,7 +192,8 @@ public class ConsentService {
         if (accountConsent != null) {
             // TODO this is not correct. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
             // PSU Data here should be provided from actual request headers. Data in consent is provided in consent
-            SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(accountConsent.getPsuData());
+            //TODO correct spi level https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
+            SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
             SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
             aisConsentDataService.updateAspspConsentData(revokeAisConsentResponse.getAspspConsentData());
@@ -393,5 +394,12 @@ public class ConsentService {
     private boolean isEmbeddedOrRedirectScaApproach() {
         return EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.REDIRECT)
                    .contains(scaApproachResolver.resolveScaApproach());
+    }
+
+    private SpiContextData getSpiContextData(List<PsuIdData> psuIdDataList) {
+        //TODO correct spi level https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
+        return spiContextDataProvider.provideWithPsuIdData(CollectionUtils.isNotEmpty(psuIdDataList)
+                                                               ? psuIdDataList.get(0)
+                                                               : null);
     }
 }
