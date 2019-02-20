@@ -98,7 +98,9 @@ public class PisCommonPaymentMapper {
 
     public GetPisAuthorisationResponse mapToGetPisAuthorizationResponse(PisAuthorization pis) {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
-        response.setPayments(mapToPisPaymentList(pis.getPaymentData().getPayments()));
+        List<PisPayment> pisPayments = mapToPisPaymentList(pis.getPaymentData().getPayments());
+        pisPayments.forEach(pisPayment -> pisPayment.setPsuDataList(psuDataMapper.mapToPsuIdDataList(pis.getPaymentData().getPsuData())));
+        response.setPayments(pisPayments);
         response.setPaymentType(pis.getPaymentData().getPaymentType());
         response.setScaStatus(pis.getScaStatus());
         response.setPaymentId(pis.getPaymentData().getPaymentId());
@@ -117,7 +119,7 @@ public class PisCommonPaymentMapper {
                        response.setPaymentType(cmd.getPaymentType());
                        response.setPaymentProduct(cmd.getPaymentProduct());
                        response.setTppInfo(tppInfoMapper.mapToTppInfo(cmd.getTppInfo()));
-                       response.setPsuData(psuDataMapper.mapToPsuIdDataList(commonPaymentData.getPsuData()));
+                       response.setPsuData(psuDataMapper.mapToPsuIdDataList(cmd.getPsuData()));
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
                        return response;

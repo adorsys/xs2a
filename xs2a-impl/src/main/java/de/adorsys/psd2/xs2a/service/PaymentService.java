@@ -363,7 +363,10 @@ public class PaymentService {
                                            .map(PisCommonPaymentResponse::getPayments)
                                            .orElse(Collections.emptyList());
 
-        pisPayments.forEach(pmt -> pmt.setPaymentId(pisCommonPaymentResponse.getExternalId()));
+        pisPayments.forEach(pmt -> {
+            pmt.setPaymentId(pisCommonPaymentResponse.getExternalId());
+            pmt.setPsuDataList(pisCommonPaymentResponse.getPsuData());
+        });
 
         return pisPayments;
     }
