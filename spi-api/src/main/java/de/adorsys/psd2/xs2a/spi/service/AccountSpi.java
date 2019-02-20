@@ -61,12 +61,13 @@ public interface AccountSpi {
      *                         If null, transactions will not be limited by start date
      * @param dateTo           Date representing the ending of the search period. <br>
      *                         If null, transactions will not be limited by end date
+     * @param bookingStatus    booking status of the requested transations, e.g. PENDING
      * @param accountReference SpiAccountReference
      * @param accountConsent   SpiAccountConsent
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of transactions
      */
-    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, SpiBookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests an transaction by transactionId

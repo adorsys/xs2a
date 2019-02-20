@@ -77,6 +77,7 @@ public class AccountService {
     private final SpiToXs2aAccountReferenceMapper referenceMapper;
     private final SpiTransactionListToXs2aAccountReportMapper transactionsToAccountReportMapper;
     private final SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
+    private final Xs2aToSpiBookingStatusMapper xs2aToSpiBookingStatusMapper;
 
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
@@ -314,6 +315,7 @@ public class AccountService {
             contextData,
             acceptHeader,
             isTransactionsShouldContainBalances, dateFrom, dateToChecked,
+            xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(bookingStatus),
             requestedAccountReference.get(),
             consentMapper.mapToSpiAccountConsent(accountConsent),
             aisConsentDataService.getAspspConsentDataByConsentId(consentId));
@@ -340,9 +342,7 @@ public class AccountService {
                        .build();
         }
 
-        Optional<Xs2aAccountReport> report =
-            transactionsToAccountReportMapper.mapToXs2aAccountReport(spiTransactionReport.getTransactions(), spiTransactionReport.getTransactionsRaw())
-                .map(r -> filterByBookingStatus(r, bookingStatus));
+        Optional<Xs2aAccountReport> report = transactionsToAccountReportMapper.mapToXs2aAccountReport(spiTransactionReport.getTransactions(), spiTransactionReport.getTransactionsRaw());
 
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(report.orElseGet(() -> new Xs2aAccountReport(Collections.emptyList(),
@@ -421,16 +421,6 @@ public class AccountService {
                    ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(),
                                                         withBalance, access)
                    : ActionStatus.SUCCESS;
-    }
-
-    private Xs2aAccountReport filterByBookingStatus(Xs2aAccountReport report, Xs2aBookingStatus bookingStatus) {
-        return new Xs2aAccountReport(
-            EnumSet.of(Xs2aBookingStatus.BOOKED, Xs2aBookingStatus.BOTH).contains(bookingStatus)
-                ? report.getBooked() : Collections.emptyList(),
-            EnumSet.of(Xs2aBookingStatus.PENDING, Xs2aBookingStatus.BOTH).contains(bookingStatus)
-                ? report.getPending() : Collections.emptyList(),
-            report.getTransactionsRaw()
-        );
     }
 
     private boolean isNotPermittedAccountReference(Optional<SpiAccountReference> requestedAccountReference, Xs2aAccountAccess consentAccountAccess, boolean withBalance) {
