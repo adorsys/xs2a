@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,7 +42,7 @@ public class SpiAccountConsent {
     private ConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
-    private SpiPsuData psuData;
+    private List<SpiPsuData> psuData;
     private TppInfo tppInfo;
     private AisConsentRequestType aisConsentRequestType;
 }

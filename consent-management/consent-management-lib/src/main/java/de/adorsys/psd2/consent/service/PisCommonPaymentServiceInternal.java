@@ -35,6 +35,7 @@ import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
+import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -70,6 +71,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private final AspspProfileService aspspProfileService;
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
     private final ScaMethodMapper scaMethodMapper;
+    private final CmsPsuService cmsPsuService;
 
     /**
      * Creates new pis common payment with full information about payment
@@ -138,8 +140,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     /**
      * Create common payment authorization
      *
-     * @param paymentId               id of the payment
-     * @param request needed parameters for creating PIS authorisation
+     * @param paymentId id of the payment
+     * @param request   needed parameters for creating PIS authorisation
      * @return response contains authorisation id
      */
     @Override
@@ -381,18 +383,18 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return PisAuthorization
      */
     private PisAuthorization saveNewAuthorisation(PisCommonPaymentData paymentData, CreatePisAuthorisationRequest request) {
-        PsuData psuData = psuDataMapper.mapToPsuData(request.getPsuData());
+        PsuData psuData = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), paymentData.getPsuData());
+        paymentData.setPsuData(cmsPsuService.enrichPsuData(psuData, paymentData.getPsuData()));
 
         PisAuthorization consentAuthorisation = new PisAuthorization();
         consentAuthorisation.setExternalId(UUID.randomUUID().toString());
-        consentAuthorisation.setPaymentData(paymentData);
         consentAuthorisation.setScaStatus(STARTED);
         consentAuthorisation.setAuthorizationType(request.getAuthorizationType());
         consentAuthorisation.setRedirectUrlExpirationTimestamp(countRedirectUrlExpirationTimestampForAuthorisationType(request.getAuthorizationType()));
-
-        consentAuthorisation.setPsuData(handlePsuForAuthorisation(psuData, paymentData.getPsuData()));
-        consentAuthorisation.setPaymentData(enrichPsuData(psuData, paymentData));
+        consentAuthorisation.setPsuData(psuData);
         consentAuthorisation.setScaApproach(request.getScaApproach());
+        consentAuthorisation.setPaymentData(paymentData);
+
         return pisAuthorisationRepository.save(consentAuthorisation);
     }
 
@@ -411,7 +413,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {
         PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
 
-        if (!isPsuDataCorrect(psuData)) {
+        if (Objects.isNull(psuData)
+                || psuData.isEmpty()) {
             return;
         }
 
@@ -429,44 +432,6 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         auth.setScaStatus(ScaStatus.FAILED);
         auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
         return auth;
-    }
-
-    private PsuData handlePsuForAuthorisation(PsuData psuData, List<PsuData> psuDataList) {
-        if (isPsuDataNew(psuData, psuDataList)) {
-            return psuData;
-        } else if (isPsuDataInList(psuData, psuDataList)) {
-            for (PsuData psu : psuDataList) {
-                if (psu.contentEquals(psuData)) {
-                    return psu;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private PisCommonPaymentData enrichPsuData(PsuData psuData, PisCommonPaymentData paymentData) {
-        List<PsuData> psuDataList = paymentData.getPsuData();
-        if (isPsuDataNew(psuData, psuDataList)) {
-            psuDataList.add(psuData);
-            paymentData.setPsuData(psuDataList);
-        }
-        return paymentData;
-    }
-
-    private boolean isPsuDataNew(PsuData psuData, List<PsuData> psuDataList) {
-        return !isPsuDataInList(psuData, psuDataList);
-    }
-
-    private boolean isPsuDataInList(PsuData psuData, List<PsuData> psuDataList) {
-        return isPsuDataCorrect(psuData)
-                   && psuDataList.stream()
-                          .anyMatch(psuData::contentEquals);
-    }
-
-    private boolean isPsuDataCorrect(PsuData psuData) {
-        return Objects.nonNull(psuData)
-                   && StringUtils.isNotBlank(psuData.getPsuId());
     }
 
     private List<String> readAuthorisationsFromPaymentCommonData(PisCommonPaymentData paymentData, CmsAuthorisationType authorisationType) {

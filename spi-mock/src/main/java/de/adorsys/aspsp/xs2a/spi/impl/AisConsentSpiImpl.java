@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -254,13 +255,18 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     }
 
     private List<SpiAccountDetails> getAccountDetailsByPsuId(SpiAccountConsent accountConsent) {
+        //TODO correct spi level https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
+        String psuId = CollectionUtils.isNotEmpty(accountConsent.getPsuData())
+                           ? accountConsent.getPsuData().get(0).getPsuId()
+                           : null;
+
         return Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getAccountDetailsByPsuId(),
             HttpMethod.GET,
             null,
             new ParameterizedTypeReference<List<SpiAccountDetails>>() {
             },
-            Optional.ofNullable(accountConsent.getPsuData()).map(SpiPsuData::getPsuId).orElse(null)
+            psuId
         ).getBody())
                    .orElseGet(Collections::emptyList);
     }

@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
@@ -53,12 +52,6 @@ public class AisConsentMapper {
                                                 ? mapToAisAccountAccess(consent)
                                                 : mapToAspspAisAccountAccess(consent);
 
-        // TODO refactor after changes to AisAccountConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
-        PsuData psuData = null;
-        if (consent.isNotEmptyPsuDataList()) {
-            psuData = consent.getFirstPsuData();
-        }
-
         return new AisAccountConsent(
             consent.getExternalId(),
             aisAccountAccess,
@@ -70,7 +63,7 @@ public class AisConsentMapper {
             consent.getAccesses().stream().anyMatch(a -> a.getTypeAccess() == TypeAccess.BALANCE),
             consent.isTppRedirectPreferred(),
             consent.getAisConsentRequestType(),
-            psuDataMapper.mapToPsuIdData(psuData),
+            psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()));
     }
 
@@ -81,12 +74,6 @@ public class AisConsentMapper {
      * @return mapped AIS consent
      */
     public AisAccountConsent mapToInitialAisAccountConsent(AisConsent consent) {
-        // TODO refactor after changes to AisAccountConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
-        PsuData psuData = null;
-        if (consent.isNotEmptyPsuDataList()) {
-            psuData = consent.getFirstPsuData();
-        }
-
         return new AisAccountConsent(
             consent.getExternalId(),
             mapToAisAccountAccess(consent),
@@ -98,7 +85,7 @@ public class AisConsentMapper {
             consent.getAccesses().stream().anyMatch(a -> a.getTypeAccess() == TypeAccess.BALANCE),
             consent.isTppRedirectPreferred(),
             consent.getAisConsentRequestType(),
-            psuDataMapper.mapToPsuIdData(psuData),
+            psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()));
     }
 
