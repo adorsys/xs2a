@@ -150,17 +150,12 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status, @NotNull String instanceId) {
-        List<PisPaymentData> list = pisPaymentDataRepository.findAll(pisPaymentDataSpecification.byPaymentIdAndInstanceId(paymentId, instanceId));
+        Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId);
 
-        // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
-        if (!list.isEmpty()) {
-            return updateStatusInPaymentDataList(list, status);
-        } else {
-            Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId);
-
-            return paymentDataOptional.isPresent()
-                       && commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);
-        }
+        return paymentDataOptional
+                   .filter(p -> p.getTransactionStatus().isNotFinalisedStatus())
+                   .map(pd -> commonPaymentDataService.updateStatusInPaymentData(pd, status))
+                   .orElse(false);
     }
 
     private boolean updatePsuData(PisAuthorization authorisation, PsuIdData psuIdData) {
@@ -198,17 +193,6 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .map(lst -> lst.stream()
                                    .anyMatch(psu -> psu.contentEquals(psuIdData)))
                    .orElse(false);
-    }
-
-    private boolean updateStatusInPaymentDataList(List<PisPaymentData> dataList, TransactionStatus givenStatus) {
-        for (PisPaymentData pisPaymentData : dataList) {
-            if (pisPaymentData.getTransactionStatus().isFinalisedStatus()) {
-                return false;
-            }
-            pisPaymentData.setTransactionStatus(givenStatus);
-            pisPaymentDataRepository.save(pisPaymentData);
-        }
-        return true;
     }
 
     private CmsPaymentResponse buildCmsPaymentResponse(PisAuthorization authorisation) {

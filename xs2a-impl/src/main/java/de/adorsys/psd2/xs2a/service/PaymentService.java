@@ -50,7 +50,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -129,7 +128,7 @@ public class PaymentService {
      * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
      *
      * @param paymentType    type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentProduct     payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
+     * @param paymentProduct payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
      * @param paymentId      ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
@@ -351,11 +350,7 @@ public class PaymentService {
     }
 
     private boolean isFinalisedPayment(PisCommonPaymentResponse response) {
-        List<PisPayment> finalisedPayments = response.getPayments().stream()
-                                                 .filter(p -> p.getTransactionStatus().isFinalisedStatus())
-                                                 .collect(Collectors.toList());
-
-        return CollectionUtils.isNotEmpty(finalisedPayments);
+        return response.getTransactionStatus().isFinalisedStatus();
     }
 
     private List<PisPayment> getPisPaymentFromCommonPaymentResponse(PisCommonPaymentResponse pisCommonPaymentResponse) {

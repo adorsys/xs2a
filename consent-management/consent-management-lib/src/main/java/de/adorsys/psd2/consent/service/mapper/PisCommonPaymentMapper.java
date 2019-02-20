@@ -23,7 +23,6 @@ import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.domain.payment.*;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -90,7 +89,6 @@ public class PisCommonPaymentMapper {
                        pisPaymentData.setFrequency(pm.getFrequency());
                        pisPaymentData.setDayOfExecution(pm.getDayOfExecution());
                        pisPaymentData.setPaymentData(pisCommonPayment);
-                       pisPaymentData.setTransactionStatus(TransactionStatus.RCVD);
 
                        return pisPaymentData;
                    }).orElse(null);
@@ -176,7 +174,6 @@ public class PisCommonPaymentMapper {
                        pisPayment.setExecutionRule(pm.getExecutionRule());
                        pisPayment.setFrequency(pm.getFrequency());
                        pisPayment.setDayOfExecution(pm.getDayOfExecution());
-                       pisPayment.setTransactionStatus(pm.getTransactionStatus());
                        pisPayment.setPsuDataList(psuDataMapper.mapToPsuIdDataList(pm.getPaymentData().getPsuData()));
 
                        return pisPayment;

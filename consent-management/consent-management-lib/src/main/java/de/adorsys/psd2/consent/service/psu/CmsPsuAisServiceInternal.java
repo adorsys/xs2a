@@ -44,7 +44,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -72,8 +71,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         AisConsentAuthorization authorisation = aisConsentAuthorisationRepository.findOne(
             aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
         return Optional.ofNullable(authorisation)
-                   .map(AisConsentAuthorization::getConsent)
-                   .map(con -> updatePsuData(con, psuIdData))
+                   .map(auth -> updatePsuData(auth, psuIdData))
                    .orElse(false);
     }
 
@@ -199,21 +197,17 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return aisConsentRepository.save(consent) != null;
     }
 
-    private boolean updatePsuData(AisConsent consent, PsuIdData psuIdData) {
+    private boolean updatePsuData(AisConsentAuthorization authorisation, PsuIdData psuIdData) {
         PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData);
         if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
             return false;
         }
 
-        // TODO refactor after changes to endpoints https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
-        if (consent.isNotEmptyPsuDataList()) {
-            Optional.ofNullable(consent.getFirstPsuData())
-                .ifPresent(psu -> newPsuData.setId(psu.getId()));
-        }
+        Optional.ofNullable(authorisation.getPsuData())
+            .ifPresent(psu -> newPsuData.setId(psu.getId()));
 
-        // TODO refactor after changes to endpoints https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
-        consent.setPsuDataList(Collections.singletonList(newPsuData));
-        aisConsentRepository.save(consent);
+        authorisation.setPsuData(newPsuData);
+        aisConsentAuthorisationRepository.save(authorisation);
         return true;
     }
 

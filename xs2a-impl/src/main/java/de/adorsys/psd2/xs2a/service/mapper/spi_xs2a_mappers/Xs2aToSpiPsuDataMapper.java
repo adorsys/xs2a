@@ -25,8 +25,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class Xs2aToSpiPsuDataMapper {
+
+    public List<SpiPsuData> mapToSpiPsuDataList(List<PsuIdData> psuIdDataList) {
+        return psuIdDataList.stream()
+                   .map(this::mapToSpiPsuData)
+                   .collect(Collectors.toList());
+    }
 
     public SpiPsuData mapToSpiPsuData(PsuIdData psuIdData) {
         if (psuIdData == null) {
@@ -41,11 +50,5 @@ public class Xs2aToSpiPsuDataMapper {
         );
     }
 
-    public List<SpiPsuData> mapToSpiPsuDataList(List<PsuIdData> psuIdDataList) {
-        return Optional.ofNullable(psuIdDataList)
-                   .map(psu -> psu.stream()
-                                   .map(this::mapToSpiPsuData)
-                                   .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
-    }
+
 }

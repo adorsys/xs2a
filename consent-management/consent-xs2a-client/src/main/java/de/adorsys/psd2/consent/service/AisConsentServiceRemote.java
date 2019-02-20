@@ -123,8 +123,13 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
     }
 
     @Override
-    public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getPsuDataByConsentId(), PsuIdData.class, consentId)
+    public Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId) {
+        return Optional.ofNullable(consentRestTemplate.exchange(remoteAisConsentUrls.getPsuDataByConsentId(),
+                                                                HttpMethod.GET,
+                                                                null,
+                                                                new ParameterizedTypeReference<List<PsuIdData>>() {
+                                                                },
+                                                                consentId)
                                        .getBody());
     }
 

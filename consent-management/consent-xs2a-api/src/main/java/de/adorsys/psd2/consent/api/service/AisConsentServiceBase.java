@@ -128,7 +128,7 @@ interface AisConsentServiceBase {
      */
     boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
 
-    Optional<PsuIdData> getPsuDataByConsentId(String consentId);
+    Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId);
 
     /**
      * Gets list of consent authorisation IDs by consent ID

@@ -82,7 +82,7 @@ public class AisConsentServiceInternalEncryptedTest {
         when(aisConsentService.updateConsentAuthorization(AUTHORISATION_ID, buildAisConsentAuthorisationRequest()))
             .thenReturn(true);
         when(aisConsentService.getPsuDataByConsentId(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(buildPsuIdData()));
+            .thenReturn(Optional.of(Collections.singletonList(buildPsuIdData())));
         when(aisConsentService.getAuthorisationsByConsentId(DECRYPTED_CONSENT_ID))
             .thenReturn(Optional.of(buildAuthorisations()));
 
@@ -416,10 +416,11 @@ public class AisConsentServiceInternalEncryptedTest {
     @Test
     public void getPsuDataByConsentId_success() {
         // Given
-        PsuIdData expected = buildPsuIdData();
+
+        List<PsuIdData> expected = Collections.singletonList(buildPsuIdData());
 
         // When
-        Optional<PsuIdData> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
+        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
 
         // Then
         assertTrue(actual.isPresent());
@@ -433,7 +434,7 @@ public class AisConsentServiceInternalEncryptedTest {
         when(aisConsentService.getPsuDataByConsentId(any())).thenReturn(Optional.empty());
 
         // When
-        Optional<PsuIdData> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
+        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
 
         // Then
         assertFalse(actual.isPresent());
@@ -443,7 +444,7 @@ public class AisConsentServiceInternalEncryptedTest {
     @Test
     public void getPsuDataByConsentId_decryptionFailed() {
         // When
-        Optional<PsuIdData> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(UNDECRYPTABLE_CONSENT_ID);
+        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(UNDECRYPTABLE_CONSENT_ID);
 
         // Then
         assertFalse(actual.isPresent());

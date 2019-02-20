@@ -61,18 +61,14 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             return Optional.empty();
         }
 
-        PsuIdData psuDataAuthorization = isPsuExist(psuData)
-                                             ? psuData
-                                             : consent.getPsuData();
-
-        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.STARTED, psuDataAuthorization)
+        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.STARTED, psuData)
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
                        resp.setConsentId(consentId);
                        resp.setAuthorizationId(authId);
                        resp.setScaStatus(ScaStatus.STARTED);
-                       resp.setResponseLinkType(getResponseLinkType(consent.getPsuData(), psuData));
+                       resp.setResponseLinkType(getResponseLinkType(psuData, psuData));
 
                        return resp;
                    });

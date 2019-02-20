@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.Xs2aBookingStatus;
@@ -48,6 +49,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -75,6 +77,7 @@ public class AccountService {
     private final SpiToXs2aAccountReferenceMapper referenceMapper;
     private final SpiTransactionListToXs2aAccountReportMapper transactionsToAccountReportMapper;
     private final SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
+    private final Xs2aToSpiBookingStatusMapper xs2aToSpiBookingStatusMapper;
 
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
@@ -107,7 +110,8 @@ public class AccountService {
         }
 
         AccountConsent accountConsent = accountConsentResponse.getBody();
-        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(accountConsent.getPsuData());
+
+        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
         SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.requestAccountList(contextData, withBalance,
                                                                                          consentMapper.mapToSpiAccountConsent(accountConsent),
@@ -164,7 +168,7 @@ public class AccountService {
                        .build();
         }
 
-        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(accountConsent.getPsuData());
+        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
         SpiResponse<SpiAccountDetails> spiResponse = accountSpi.requestAccountDetailForAccount(contextData, withBalance, requestedAccountReference.get(),
                                                                                                consentMapper.mapToSpiAccountConsent(accountConsent),
@@ -224,8 +228,8 @@ public class AccountService {
                        .fail(AIS_404, of(RESOURCE_UNKNOWN_404))
                        .build();
         }
-        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(accountConsent.getPsuData());
 
+        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
         SpiResponse<List<SpiAccountBalance>> spiResponse = accountSpi.requestBalancesForAccount(contextData, requestedAccountReference.get(),
                                                                                                 consentMapper.mapToSpiAccountConsent(accountConsent),
@@ -305,12 +309,13 @@ public class AccountService {
         boolean isTransactionsShouldContainBalances =
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || withBalance;
 
-        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(accountConsent.getPsuData());
+        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
         SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(
             contextData,
             acceptHeader,
             isTransactionsShouldContainBalances, dateFrom, dateToChecked,
+            xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(bookingStatus),
             requestedAccountReference.get(),
             consentMapper.mapToSpiAccountConsent(accountConsent),
             aisConsentDataService.getAspspConsentDataByConsentId(consentId));
@@ -321,8 +326,8 @@ public class AccountService {
             // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
             if (spiResponse.getResponseStatus() == SpiResponseStatus.NOT_SUPPORTED) {
                 return ResponseObject.<Xs2aTransactionsReport>builder()
-                    .fail(AIS_406, of(REQUESTED_FORMATS_INVALID))
-                    .build();
+                           .fail(AIS_406, of(REQUESTED_FORMATS_INVALID))
+                           .build();
             }
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS))
@@ -337,13 +342,11 @@ public class AccountService {
                        .build();
         }
 
-        Optional<Xs2aAccountReport> report =
-            transactionsToAccountReportMapper.mapToXs2aAccountReport(spiTransactionReport.getTransactions(), spiTransactionReport.getTransactionsRaw())
-                .map(r -> filterByBookingStatus(r, bookingStatus));
+        Optional<Xs2aAccountReport> report = transactionsToAccountReportMapper.mapToXs2aAccountReport(spiTransactionReport.getTransactions(), spiTransactionReport.getTransactionsRaw());
 
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(report.orElseGet(() -> new Xs2aAccountReport(Collections.emptyList(),
-            Collections.emptyList(), null)));
+                                                                                         Collections.emptyList(), null)));
         transactionsReport.setAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference.get()).orElse(null));
         transactionsReport.setBalances(balanceMapper.mapToXs2aBalanceList(spiTransactionReport.getBalances()));
         transactionsReport.setResponseContentType(spiTransactionReport.getResponseContentType());
@@ -386,7 +389,7 @@ public class AccountService {
 
         validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
-        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(accountConsent.getPsuData());
+        SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
         SpiResponse<SpiTransaction> spiResponse = accountSpi.requestTransactionForAccountByTransactionId(contextData, transactionId, requestedAccountReference.get(), consentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
 
@@ -420,16 +423,6 @@ public class AccountService {
                    : ActionStatus.SUCCESS;
     }
 
-    private Xs2aAccountReport filterByBookingStatus(Xs2aAccountReport report, Xs2aBookingStatus bookingStatus) {
-        return new Xs2aAccountReport(
-            EnumSet.of(Xs2aBookingStatus.BOOKED, Xs2aBookingStatus.BOTH).contains(bookingStatus)
-                ? report.getBooked() : Collections.emptyList(),
-            EnumSet.of(Xs2aBookingStatus.PENDING, Xs2aBookingStatus.BOTH).contains(bookingStatus)
-                ? report.getPending() : Collections.emptyList(),
-            report.getTransactionsRaw()
-        );
-    }
-
     private boolean isNotPermittedAccountReference(Optional<SpiAccountReference> requestedAccountReference, Xs2aAccountAccess consentAccountAccess, boolean withBalance) {
         return requestedAccountReference.map(accountReference -> {
             List<AccountReference> accountReferences;
@@ -453,5 +446,12 @@ public class AccountService {
         if (accountConsent.isOneAccessType()) {
             aisConsentService.updateConsentStatus(encryptedConsentId, ConsentStatus.EXPIRED);
         }
+    }
+
+    private SpiContextData getSpiContextData(List<PsuIdData> psuIdDataList) {
+        //TODO correct spi level https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
+        return spiContextDataProvider.provideWithPsuIdData(CollectionUtils.isNotEmpty(psuIdDataList)
+                                                               ? psuIdDataList.get(0)
+                                                               : null);
     }
 }

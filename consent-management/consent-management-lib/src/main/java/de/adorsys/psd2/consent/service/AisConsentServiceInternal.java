@@ -29,9 +29,10 @@ import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
-import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
+import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -39,7 +40,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +66,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final TppInfoMapper tppInfoMapper;
     private final ScaMethodMapper scaMethodMapper;
+    private final CmsPsuService cmsPsuService;
 
     /**
      * Create AIS consent
@@ -331,21 +332,14 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         if (ScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
-            PsuData psuData = psuDataMapper.mapToPsuData(request.getPsuData());
-            aisConsentAuthorization.setPsuData(psuData);
             AisConsent consent = aisConsentAuthorization.getConsent();
+            PsuData psuData = psuDataMapper.mapToPsuData(request.getPsuData());
 
-            // TODO refactor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
-            PsuData existingPsuData = null;
-            if (consent.isNotEmptyPsuDataList()) {
-                existingPsuData = consent.getFirstPsuData();
+            if (CollectionUtils.isEmpty(consent.getPsuDataList())) {
+                consent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, consent.getPsuDataList()));
+                aisConsentAuthorization.setConsent(consent);
             }
-
-            if (Objects.isNull(existingPsuData)) {
-                // TODO refactor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
-                consent.setPsuDataList(Collections.singletonList(psuData));
-                aisConsentRepository.save(consent);
-            }
+            aisConsentAuthorization.setPsuData(psuData);
         }
 
         if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
@@ -360,12 +354,9 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     @Override
-    public Optional<PsuIdData> getPsuDataByConsentId(String consentId) {
-        // TODO refactor after changes to endpoints https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
+    public Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId) {
         return getActualAisConsent(consentId)
-                   .filter(AisConsent::isNotEmptyPsuDataList)
-                   .map(AisConsent::getFirstPsuData)
-                   .map(psuDataMapper::mapToPsuIdData);
+                   .map(ac -> psuDataMapper.mapToPsuIdDataList(ac.getPsuDataList()));
     }
 
     @Override
@@ -393,11 +384,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setUsageCounter(request.getAllowedFrequencyPerDay()); // Initially we set maximum and then decrement it by usage
         consent.setRequestDateTime(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
-
-        // TODO refactor after changes to endpoints https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
-        PsuData psuData = psuDataMapper.mapToPsuData(request.getPsuData());
-        consent.setPsuDataList(Collections.singletonList(psuData));
-
+        consent.setPsuDataList(psuDataMapper.mapToPsuDataList(Collections.singletonList(request.getPsuData())));
         consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
         consent.addAccountAccess(new TppAccountAccessHolder(request.getAccess())
                                      .getAccountAccesses());
@@ -478,9 +465,12 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
+        PsuData psuData = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), aisConsent.getPsuDataList());
+        aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
+
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPsuData(psuDataMapper.mapToPsuData(request.getPsuData()));
+        consentAuthorization.setPsuData(psuData);
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
@@ -498,7 +488,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     private void closePreviousAuthorisationsByPsu(List<AisConsentAuthorization> authorisations, PsuIdData psuIdData) {
         PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
 
-        if (!isPsuDataCorrect(psuData)) {
+        if (Objects.isNull(psuData)
+                || psuData.isEmpty()) {
             return;
         }
 
@@ -509,11 +500,6 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                      .collect(Collectors.toList());
 
         aisConsentAuthorisationRepository.save(aisConsentAuthorisations);
-    }
-
-    private boolean isPsuDataCorrect(PsuData psuData) {
-        return Objects.nonNull(psuData)
-                   && StringUtils.isNotBlank(psuData.getPsuId());
     }
 
     private AisConsentAuthorization makeAuthorisationFailedAndExpired(AisConsentAuthorization auth) {

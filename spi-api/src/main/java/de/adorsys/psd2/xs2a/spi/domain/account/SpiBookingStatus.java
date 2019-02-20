@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.pis;
+package de.adorsys.psd2.xs2a.spi.domain.account;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-
-public interface CmsPayment {
-    String getPaymentId();
-    PaymentType getPaymentType();
-    String getPaymentProduct();
+public enum SpiBookingStatus {
+    PENDING,
+    BOOKED,
+    BOTH
 }

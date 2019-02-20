@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/ais")
@@ -35,11 +37,11 @@ public class AisPsuDataController {
     private final AisConsentServiceEncrypted aisConsentService;
 
     @GetMapping(path = "/consent/{consent-id}/psu-data")
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
+    @ApiOperation(value = "Get psu data list by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PsuIdData> getPsuDataByConsentId(
+    public ResponseEntity<List<PsuIdData>> getPsuDataByConsentId(
         @ApiParam(name = "consent-id", value = "The consent identification.", example = "32454656712432")
         @PathVariable("consent-id") String consentId) {
         return aisConsentService.getPsuDataByConsentId(consentId)
