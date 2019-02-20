@@ -22,16 +22,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class Xs2aToSpiPsuDataMapper {
 
     public List<SpiPsuData> mapToSpiPsuDataList(List<PsuIdData> psuIdDataList) {
+        if (psuIdDataList == null) {
+            return Collections.emptyList();
+        }
+
         return psuIdDataList.stream()
                    .map(this::mapToSpiPsuData)
                    .collect(Collectors.toList());
