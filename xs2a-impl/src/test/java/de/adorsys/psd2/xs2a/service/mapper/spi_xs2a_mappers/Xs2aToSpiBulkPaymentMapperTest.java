@@ -16,8 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import org.jetbrains.annotations.NotNull;
@@ -28,18 +33,27 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aToSpiBulkPaymentMapperTest {
+    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
+    private static final String RESOURCE_ID = "5c2d20da-f20a-4a5e-bf6d-be5b239e3561";
+    private static final String IBAN = "DE123456789";
+    private static final String DEB_ACCOUNT_ID = "11111_debtorAccount";
+    private static final String CRED_ACCOUNT_ID = "2222_creditorAccount";
+    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PSU_ID_1 = "First";
     private static final String PSU_ID_2 = "Second";
+    private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
+    private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
+    private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
 
@@ -56,7 +70,10 @@ public class Xs2aToSpiBulkPaymentMapperTest {
     public void setUp() {
         psuDataList.addAll(Arrays.asList(buildPsu(PSU_ID_1), buildPsu(PSU_ID_2)));
         spiPsuDataList.addAll(Arrays.asList(buildSpiPsu(PSU_ID_1), buildSpiPsu(PSU_ID_2)));
-        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList)).thenReturn(spiPsuDataList);
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList))
+            .thenReturn(spiPsuDataList);
+        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(buildAccountReference(DEB_ACCOUNT_ID)))
+            .thenReturn(buildSpiAccountReference());
     }
 
     @Test
@@ -64,17 +81,60 @@ public class Xs2aToSpiBulkPaymentMapperTest {
         //Given
         BulkPayment payment = buildBulkPayment();
         //When
-        SpiBulkPayment spiBulkPayment = xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(payment, "");
+        SpiBulkPayment spiBulkPayment = xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(payment, PAYMENT_PRODUCT);
         //Then
+        assertEquals(spiBulkPayment.getPaymentId(), PAYMENT_ID);
+        assertTrue(spiBulkPayment.getBatchBookingPreferred());
+        assertEquals(spiBulkPayment.getDebtorAccount(), buildSpiAccountReference());
+        assertEquals(spiBulkPayment.getRequestedExecutionDate(), REQUESTED_EXECUTION_DATE);
+        assertEquals(spiBulkPayment.getPaymentStatus(), TRANSACTION_STATUS);
+        assertFalse(spiBulkPayment.getPayments().isEmpty());
+        assertEquals(spiBulkPayment.getPaymentProduct(), PAYMENT_PRODUCT);
         assertEquals(spiBulkPayment.getPsuDataList(), spiPsuDataList);
     }
 
     @NotNull
     private BulkPayment buildBulkPayment() {
         BulkPayment payment = new BulkPayment();
-        payment.setPayments(Collections.emptyList());
+        payment.setPaymentId(PAYMENT_ID);
+        payment.setPayments(Collections.singletonList(buildSinglePayment()));
         payment.setPsuDataList(psuDataList);
+        payment.setBatchBookingPreferred(true);
+        payment.setDebtorAccount(buildAccountReference(DEB_ACCOUNT_ID));
+        payment.setTransactionStatus(TRANSACTION_STATUS);
+        payment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         return payment;
+    }
+
+    private SinglePayment buildSinglePayment() {
+        SinglePayment payment = new SinglePayment();
+        Xs2aAmount amount = buildXs2aAmount();
+        payment.setPaymentId(PAYMENT_ID);
+        payment.setInstructedAmount(amount);
+        payment.setDebtorAccount(buildAccountReference(DEB_ACCOUNT_ID));
+        payment.setCreditorAccount(buildAccountReference(CRED_ACCOUNT_ID));
+        payment.setTransactionStatus(TRANSACTION_STATUS);
+        return payment;
+    }
+
+    private Xs2aAmount buildXs2aAmount() {
+        Xs2aAmount amount = new Xs2aAmount();
+        amount.setCurrency(EUR_CURRENCY);
+        amount.setAmount("100");
+        return amount;
+    }
+
+    private AccountReference buildAccountReference(String accountId) {
+        AccountReference reference = new AccountReference();
+        reference.setIban(IBAN);
+        reference.setCurrency(EUR_CURRENCY);
+        reference.setAspspAccountId(accountId);
+        reference.setResourceId(RESOURCE_ID);
+        return reference;
+    }
+
+    private SpiAccountReference buildSpiAccountReference() {
+        return new SpiAccountReference(RESOURCE_ID, IBAN, null, null, null, null, EUR_CURRENCY);
     }
 
     private PsuIdData buildPsu(String psuId) {

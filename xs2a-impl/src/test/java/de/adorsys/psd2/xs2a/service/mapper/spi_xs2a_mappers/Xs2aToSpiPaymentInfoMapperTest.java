@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
@@ -36,8 +38,12 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aToSpiPaymentInfoMapperTest {
+    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
+    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PSU_ID_1 = "First";
     private static final String PSU_ID_2 = "Second";
+    private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
+    private static final byte [] PAYMENT_DATA = PAYMENT_ID.getBytes();
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
 
@@ -50,7 +56,8 @@ public class Xs2aToSpiPaymentInfoMapperTest {
     public void setUp() {
         psuDataList.addAll(Arrays.asList(buildPsu(PSU_ID_1), buildPsu(PSU_ID_2)));
         spiPsuDataList.addAll(Arrays.asList(buildSpiPsu(PSU_ID_1), buildSpiPsu(PSU_ID_2)));
-        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList)).thenReturn(spiPsuDataList);
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList))
+            .thenReturn(spiPsuDataList);
     }
 
     @Test
@@ -60,11 +67,21 @@ public class Xs2aToSpiPaymentInfoMapperTest {
         //When
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
         //Then
+        assertEquals(spiPaymentInfo.getPaymentId(), PAYMENT_ID);
+        assertEquals(spiPaymentInfo.getPaymentProduct(), PAYMENT_PRODUCT);
+        assertEquals(spiPaymentInfo.getPaymentType(), PaymentType.SINGLE);
+        assertEquals(spiPaymentInfo.getStatus(), TRANSACTION_STATUS);
+        assertEquals(spiPaymentInfo.getPaymentData(), PAYMENT_DATA);
         assertEquals(spiPaymentInfo.getPsuDataList(), spiPsuDataList);
     }
 
     private CommonPayment buildCommonPayment() {
         CommonPayment commonPayment = new CommonPayment();
+        commonPayment.setPaymentId(PAYMENT_ID);
+        commonPayment.setPaymentProduct(PAYMENT_PRODUCT);
+        commonPayment.setPaymentType(PaymentType.SINGLE);
+        commonPayment.setTransactionStatus(TRANSACTION_STATUS);
+        commonPayment.setPaymentData(PAYMENT_DATA);
         commonPayment.setPsuDataList(psuDataList);
         return commonPayment;
     }

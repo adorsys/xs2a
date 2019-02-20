@@ -105,6 +105,5 @@ public class PisPayment {
     @ApiModelProperty(name = "Day of execution", example = "14")
     private PisDayOfExecution dayOfExecution; //Day here max 31
 
-    @ApiModelProperty(name = "List of corresponding PSU")
     private List<PsuIdData> psuDataList;
 }

@@ -15,3 +15,11 @@ SCA approach value is saved during the authorisation creation and could be updat
 From now, embedded authorisation endpoints are accessible during the embedded SCA approach only.
 If such endpoints are called in case of, for example, REDIRECT SCA approach, 403 error response will be returned.
 In case of switching from Embedded to Decoupled SCA approaches endpoints become to be non-accessible also.
+
+## List of PSU provided in payment through all SPI methods
+
+From now on, these SPI payment objects contain list of PSU Data:
+ - SinglePaymentSpi
+ - PeriodicPaymentSpi
+ - BulkPaymentSpi
+ - SpiPaymentInfo

@@ -105,7 +105,6 @@ public class SinglePayment implements AccountReferenceCollector {
     @ApiModelProperty(value = "Transaction status", example = "Pending")
     private TransactionStatus transactionStatus;
 
-    @ApiModelProperty(name = "List of corresponding PSU")
     private List<PsuIdData> psuDataList;
 
     @JsonIgnore
