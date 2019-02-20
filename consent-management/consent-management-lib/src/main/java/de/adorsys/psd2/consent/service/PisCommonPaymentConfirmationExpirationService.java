@@ -55,10 +55,6 @@ public class PisCommonPaymentConfirmationExpirationService {
     public PisCommonPaymentData updatePaymentDataOnConfirmationExpiration(PisCommonPaymentData pisCommonPaymentData) {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
         pisCommonPaymentData.getAuthorizations().forEach(this::failAuthorisation);
-        pisCommonPaymentData.getPayments().stream()
-            .filter(p -> !p.getTransactionStatus().isFinalisedStatus())
-            .forEach(p -> p.setTransactionStatus(TransactionStatus.RJCT));
-
         return pisCommonPaymentDataRepository.save(pisCommonPaymentData);
     }
 

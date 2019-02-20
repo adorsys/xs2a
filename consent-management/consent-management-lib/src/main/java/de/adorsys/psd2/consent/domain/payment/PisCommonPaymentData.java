@@ -93,5 +93,9 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
     public boolean isNotConfirmed() {
         return transactionStatus == TransactionStatus.RCVD;
     }
+
+    public boolean isFinalised() {
+        return transactionStatus.isFinalisedStatus();
+    }
 }
 
