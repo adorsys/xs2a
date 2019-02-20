@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,10 +32,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_405;
 
 @Component
 @RequiredArgsConstructor
@@ -56,21 +55,21 @@ public class CreateConsentRequestValidator {
      */
     public ValidationResult validateRequest(CreateConsentReq request) {
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return new ValidationResult(false, new MessageError(AIS_400, of(PARAMETER_NOT_SUPPORTED)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED)));
         }
         if (isNotSupportedBankOfferedConsent(request)) {
-            return new ValidationResult(false, new MessageError(AIS_405, of(SERVICE_INVALID_405)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405)));
         }
         if (!isValidExpirationDate(request.getValidUntil())) {
-            return new ValidationResult(false, new MessageError(AIS_400, of(PERIOD_INVALID)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PERIOD_INVALID)));
         }
 
         if (isNotValidFrequencyForRecurringIndicator(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
-            return new ValidationResult(false, new MessageError(AIS_400, of(FORMAT_ERROR)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)));
         }
 
         if (isNotSupportedAvailableAccounts(request)) {
-            return new ValidationResult(false, new MessageError(AIS_405, of(SERVICE_INVALID_405)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405)));
         }
         return new ValidationResult(true, null);
     }
