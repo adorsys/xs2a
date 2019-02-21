@@ -35,14 +35,13 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReadPeriodicPaymentServiceTest {
-
     private static final String PRODUCT = "sepa-credit-transfers";
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private final SpiPeriodicPayment SPI_PERIODIC_PAYMENT = new SpiPeriodicPayment(PRODUCT);
     private final PeriodicPayment PERIODIC_PAYMENT = new PeriodicPayment();
-    private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "some consent id");
+    private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
 
     @InjectMocks
     private ReadPeriodicPaymentService readPeriodicPaymentService;
@@ -64,18 +63,21 @@ public class ReadPeriodicPaymentServiceTest {
 
     @Before
     public void init() {
-        when(spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
-        when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENTS.get(0), PRODUCT))
+            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
         when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, SOME_ASPSP_CONSENT_DATA))
             .thenReturn(SpiResponse.<SpiPeriodicPayment>builder()
                 .aspspConsentData(SOME_ASPSP_CONSENT_DATA.respondWith("some data".getBytes()))
                 .payload(SPI_PERIODIC_PAYMENT)
                 .success());
-        when(spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(SPI_PERIODIC_PAYMENT)).thenReturn(PERIODIC_PAYMENT);
+        when(spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(SPI_PERIODIC_PAYMENT))
+            .thenReturn(PERIODIC_PAYMENT);
     }
 
     @Test
-    public void getPayment_Success() {
+    public void getPayment_success() {
         //given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), PERIODIC_PAYMENT.getTransactionStatus()))
             .thenReturn(true);
@@ -91,7 +93,7 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_Failed() {
+    public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
         //given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
             .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
@@ -111,13 +113,14 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_spiPaymentFactory_createSpiPeriodicPayment_Failed() {
+    public void getPayment_spiPaymentFactory_createSpiPeriodicPayment_failed() {
         //given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
             .build();
 
-        when(spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.empty());
+        when(spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENTS.get(0), PRODUCT))
+            .thenReturn(Optional.empty());
 
         //when
         PaymentInformationResponse<PeriodicPayment> actualResponse = readPeriodicPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
@@ -130,7 +133,7 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_periodicPaymentSpi_getPaymentById_Failed() {
+    public void getPayment_periodicPaymentSpi_getPaymentById_failed() {
         //given
         SpiResponse<SpiPeriodicPayment> spiResponseError = SpiResponse.<SpiPeriodicPayment>builder()
             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
@@ -142,7 +145,8 @@ public class ReadPeriodicPaymentServiceTest {
 
         when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, SOME_ASPSP_CONSENT_DATA))
             .thenReturn(spiResponseError);
-        when(spiErrorMapper.mapToErrorHolder(spiResponseError, ServiceType.PIS)).thenReturn(expectedError);
+        when(spiErrorMapper.mapToErrorHolder(spiResponseError, ServiceType.PIS))
+            .thenReturn(expectedError);
 
         //when
         PaymentInformationResponse<PeriodicPayment> actualResponse = readPeriodicPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);

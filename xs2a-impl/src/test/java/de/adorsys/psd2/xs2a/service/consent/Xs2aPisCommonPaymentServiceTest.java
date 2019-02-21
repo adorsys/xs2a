@@ -1,6 +1,7 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -24,24 +25,22 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aPisCommonPaymentServiceTest {
-
     private final TppInfo TPP_INFO = buildTppInfo();
     private final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = buildPaymentInitiationParameters();
     private final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo(PAYMENT_DATA);
     private final PisPaymentInfo PIS_PAYMENT_INFO_NULL = buildPisPaymentInfo(null);
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final String PRODUCT = "sepa-credit-transfers";
+    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final byte[] PAYMENT_DATA = new byte[16];
-    private final CreatePisCommonPaymentResponse CREATE_PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse("");
+    private static final CreatePisCommonPaymentResponse CREATE_PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
+    private static final PisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new PisCommonPaymentResponse();
 
     @InjectMocks
     private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
 
     @Mock
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-    @Mock
-    private Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
-
 
     @Test
     public void createCommonPayment_by_parameters_tppInfo_success() {
@@ -109,19 +108,30 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void getPisCommonPaymentById() {
+    public void getPisCommonPaymentById_success() {
+        //given
+        when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(PIS_COMMON_PAYMENT_RESPONSE));
+
+        //when
+        Optional<PisCommonPaymentResponse> actualResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID);
+
+        //then
+        assertThat(actualResponse.isPresent()).isTrue();
+        assertThat(actualResponse.get()).isEqualTo(PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
-    public void updateSinglePaymentInCommonPayment() {
-    }
+    public void getPisCommonPaymentById_failed() {
+        //given
+        when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.empty());
 
-    @Test
-    public void updatePeriodicPaymentInCommonPayment() {
-    }
+        //when
+        Optional<PisCommonPaymentResponse> actualResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID);
 
-    @Test
-    public void updateBulkPaymentInCommonPayment() {
+        //then
+        assertThat(actualResponse.isPresent()).isFalse();
     }
 
     private TppInfo buildTppInfo() {

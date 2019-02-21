@@ -46,13 +46,12 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScaPaymentServiceTest {
-
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "some consent id");
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private final TppInfo TPP_INFO = buildTppInfo();
     //SinglePayment
@@ -111,7 +110,7 @@ public class ScaPaymentServiceTest {
     }
 
     @Test
-    public void createSinglePayment_Success() {
+    public void createSinglePayment_success() {
         //given
         when(xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
@@ -130,7 +129,7 @@ public class ScaPaymentServiceTest {
     }
 
     @Test
-    public void createSinglePayment_singlePaymentSpi_initiatePayment_Failed() {
+    public void createSinglePayment_singlePaymentSpi_initiatePayment_failed() {
         //given
         SpiResponse<SpiSinglePaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
             .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
@@ -156,7 +155,7 @@ public class ScaPaymentServiceTest {
     }
 
     @Test
-    public void createPeriodicPayment_Success() {
+    public void createPeriodicPayment_success() {
         //given
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
@@ -175,7 +174,7 @@ public class ScaPaymentServiceTest {
     }
 
     @Test
-    public void createPeriodicPayment_periodicPaymentSpi_initiatePayment_Failed() {
+    public void createPeriodicPayment_periodicPaymentSpi_initiatePayment_failed() {
         //given
         SpiResponse<SpiPeriodicPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
             .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
@@ -201,7 +200,7 @@ public class ScaPaymentServiceTest {
     }
 
     @Test
-    public void createBulkPayment_Success() {
+    public void createBulkPayment_success() {
         //given
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
@@ -220,7 +219,7 @@ public class ScaPaymentServiceTest {
     }
 
     @Test
-    public void createBulkPayment_bulkPaymentSpi_initiatePayment_Failed() {
+    public void createBulkPayment_bulkPaymentSpi_initiatePayment_failed() {
         //given
         SpiResponse<SpiBulkPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
             .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
@@ -246,7 +245,7 @@ public class ScaPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_Success() {
+    public void createCommonPayment_success() {
         when(spiContextDataProvider.provide(PSU_DATA, TPP_INFO))
             .thenReturn(SPI_CONTEXT_DATA);
         when(xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(COMMON_PAYMENT, PRODUCT))
@@ -266,7 +265,7 @@ public class ScaPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_commonPaymentSpi_initiatePayment_Failed() {
+    public void createCommonPayment_commonPaymentSpi_initiatePayment_failed() {
         //given
         SpiResponse<SpiPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPaymentInitiationResponse>builder()
             .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
@@ -295,7 +294,7 @@ public class ScaPaymentServiceTest {
 
     private SpiContextData getSpiContextData() {
         return new SpiContextData(
-            new SpiPsuData("", "", "", ""),
+            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo()
         );
     }

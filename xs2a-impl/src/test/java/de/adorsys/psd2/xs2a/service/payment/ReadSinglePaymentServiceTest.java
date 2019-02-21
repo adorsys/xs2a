@@ -35,11 +35,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReadSinglePaymentServiceTest {
-
     private final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private static final String PRODUCT = "sepa-credit-transfers";
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
-    private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "some consent id");
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
+    private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
     private final SinglePayment SINGLE_PAYMENT = new SinglePayment();
@@ -91,7 +90,7 @@ public class ReadSinglePaymentServiceTest {
     }
 
     @Test
-    public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_Failed() {
+    public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
         //given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
             .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
@@ -111,7 +110,7 @@ public class ReadSinglePaymentServiceTest {
     }
 
     @Test
-    public void getPayment_singlePaymentSpi_getPaymentById_Failed() {
+    public void getPayment_singlePaymentSpi_getPaymentById_failed() {
         //given
         SpiResponse<SpiSinglePayment> spiResponseError = SpiResponse.<SpiSinglePayment>builder()
             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
@@ -135,7 +134,7 @@ public class ReadSinglePaymentServiceTest {
     }
 
     @Test
-    public void getPayment_spiPaymentFactory_createSpiSinglePayment_Failed() {
+    public void getPayment_spiPaymentFactory_createSpiSinglePayment_failed() {
         //given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
@@ -155,7 +154,7 @@ public class ReadSinglePaymentServiceTest {
 
     private SpiContextData getSpiContextData() {
         return new SpiContextData(
-            new SpiPsuData("", "", "", ""),
+            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo()
         );
     }
