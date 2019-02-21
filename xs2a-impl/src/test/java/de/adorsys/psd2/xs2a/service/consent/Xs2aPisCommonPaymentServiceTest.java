@@ -13,7 +13,6 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequ
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -26,12 +25,12 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aPisCommonPaymentServiceTest {
 
-    private final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo();
-    private final PisPaymentInfo PIS_PAYMENT_INFO_NULL = buildPisPaymentInfoPaymentDataNull();
+    private final TppInfo TPP_INFO = buildTppInfo();
+    private final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = buildPaymentInitiationParameters();
+    private final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo(PAYMENT_DATA);
+    private final PisPaymentInfo PIS_PAYMENT_INFO_NULL = buildPisPaymentInfo(null);
     private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
     private static final String PRODUCT = "sepa-credit-transfers";
-    private final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = new PaymentInitiationParameters();
-    private final TppInfo TPP_INFO = buildTppInfo();
     private static final byte[] PAYMENT_DATA = new byte[16];
     private final CreatePisCommonPaymentResponse CREATE_PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse("");
 
@@ -134,25 +133,22 @@ public class Xs2aPisCommonPaymentServiceTest {
         return tppInfo;
     }
 
-    private PisPaymentInfo buildPisPaymentInfo() {
+    private PisPaymentInfo buildPisPaymentInfo(byte[] paymentData) {
         PisPaymentInfo request = new PisPaymentInfo();
-        request.setPaymentProduct(PRODUCT);
-        request.setPaymentType(PaymentType.SINGLE);
+        request.setPaymentProduct(PAYMENT_INITIATION_PARAMETERS.getPaymentProduct());
+        request.setPaymentType(PAYMENT_INITIATION_PARAMETERS.getPaymentType());
         request.setTransactionStatus(TransactionStatus.RCVD);
-        request.setPaymentData(PAYMENT_DATA);
+        request.setPaymentData(paymentData);
         request.setTppInfo(TPP_INFO);
-        request.setPsuDataList(Collections.singletonList(PSU_DATA));
+        request.setPsuDataList(Collections.singletonList(PAYMENT_INITIATION_PARAMETERS.getPsuData()));
         return request;
     }
 
-    private PisPaymentInfo buildPisPaymentInfoPaymentDataNull() {
-        PisPaymentInfo request = new PisPaymentInfo();
-        request.setPaymentProduct(PRODUCT);
-        request.setPaymentType(PaymentType.SINGLE);
-        request.setTransactionStatus(TransactionStatus.RCVD);
-        request.setPaymentData(null);
-        request.setTppInfo(TPP_INFO);
-        request.setPsuDataList(Collections.singletonList(PSU_DATA));
-        return request;
+    private PaymentInitiationParameters buildPaymentInitiationParameters() {
+        PaymentInitiationParameters parameters = new PaymentInitiationParameters();
+        parameters.setPaymentProduct(PRODUCT);
+        parameters.setPaymentType(PaymentType.SINGLE);
+        parameters.setPsuData(PSU_DATA);
+        return parameters;
     }
 }
