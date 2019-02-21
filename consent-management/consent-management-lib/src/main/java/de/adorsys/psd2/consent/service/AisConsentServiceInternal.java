@@ -160,19 +160,30 @@ public class AisConsentServiceInternal implements AisConsentService {
             throw new IllegalArgumentException("Wrong consent data");
         }
 
-        PsuData firstPsuData = newConsent.getFirstPsuData();
+        List<PsuData> psuDataList = newConsent.getPsuDataList();
+        Set<String> psuIds = psuDataList.stream()
+                                 .filter(Objects::nonNull)
+                                 .map(PsuData::getPsuId)
+                                 .collect(Collectors.toSet());
         TppInfoEntity tppInfo = newConsent.getTppInfo();
 
-        // TODO refactor after changes to endpoints https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
-        List<AisConsent> oldConsents = aisConsentRepository.findOldConsentsByNewConsentParams(firstPsuData.getPsuId(), tppInfo.getAuthorisationNumber(), tppInfo.getAuthorityId(),
-                                                                                              newConsent.getInstanceId(), newConsent.getExternalId(), EnumSet.of(RECEIVED, VALID));
+        List<AisConsent> oldConsents = aisConsentRepository.findOldConsentsByNewConsentParams(psuIds,
+                                                                                              tppInfo.getAuthorisationNumber(),
+                                                                                              tppInfo.getAuthorityId(),
+                                                                                              newConsent.getInstanceId(),
+                                                                                              newConsent.getExternalId(),
+                                                                                              EnumSet.of(RECEIVED, VALID));
 
-        if (oldConsents.isEmpty()) {
+        List<AisConsent> oldConsentsWithExactPsuDataLists = oldConsents.stream()
+                                                                .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
+                                                                .collect(Collectors.toList());
+
+        if (oldConsentsWithExactPsuDataLists.isEmpty()) {
             return false;
         }
 
-        oldConsents.forEach(c -> c.setConsentStatus(TERMINATED_BY_TPP));
-        aisConsentRepository.save(oldConsents);
+        oldConsentsWithExactPsuDataLists.forEach(c -> c.setConsentStatus(TERMINATED_BY_TPP));
+        aisConsentRepository.save(oldConsentsWithExactPsuDataLists);
         return true;
     }
 
@@ -332,13 +343,17 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         if (ScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
-            AisConsent consent = aisConsentAuthorization.getConsent();
-            PsuData psuData = psuDataMapper.mapToPsuData(request.getPsuData());
+            PsuData psuRequest = psuDataMapper.mapToPsuData(request.getPsuData());
 
-            if (CollectionUtils.isEmpty(consent.getPsuDataList())) {
-                consent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, consent.getPsuDataList()));
-                aisConsentAuthorization.setConsent(consent);
+            if (!isPsuDataRequestCorrect(psuRequest, aisConsentAuthorization.getPsuData())) {
+                return false;
             }
+
+            AisConsent aisConsent = aisConsentAuthorization.getConsent();
+            PsuData psuData = cmsPsuService.definePsuDataForAuthorisation(psuRequest, aisConsent.getPsuDataList());
+            aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
+
+            aisConsentAuthorization.setConsent(aisConsent);
             aisConsentAuthorization.setPsuData(psuData);
         }
 
@@ -506,5 +521,11 @@ public class AisConsentServiceInternal implements AisConsentService {
         auth.setScaStatus(ScaStatus.FAILED);
         auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
         return auth;
+    }
+
+    private boolean isPsuDataRequestCorrect(PsuData psuRequest, PsuData psuAuth) {
+        return psuRequest != null
+                   || psuAuth == null
+                   || psuRequest.contentEquals(psuAuth);
     }
 }

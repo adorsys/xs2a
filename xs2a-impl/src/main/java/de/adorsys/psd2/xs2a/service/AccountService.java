@@ -451,7 +451,7 @@ public class AccountService {
     }
 
     private SpiContextData getSpiContextData(List<PsuIdData> psuIdDataList) {
-        //TODO correct spi level https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
+        //TODO provide correct PSU Data to the SPI https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/701
         return spiContextDataProvider.provideWithPsuIdData(CollectionUtils.isNotEmpty(psuIdDataList)
                                                                ? psuIdDataList.get(0)
                                                                : null);
