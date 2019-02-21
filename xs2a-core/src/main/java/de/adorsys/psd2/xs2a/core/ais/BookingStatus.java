@@ -26,7 +26,6 @@ public enum BookingStatus {
 
     private String value;
 
-    @JsonCreator
     BookingStatus(String value) {
         this.value = value;
     }
@@ -36,6 +35,7 @@ public enum BookingStatus {
         return value;
     }
 
+    @JsonCreator
     public static BookingStatus forValue(String value) {
         for (BookingStatus status : values()) {
             if (status.value.equals(value)) {
