@@ -30,9 +30,9 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
 
 @Component
 @RequiredArgsConstructor

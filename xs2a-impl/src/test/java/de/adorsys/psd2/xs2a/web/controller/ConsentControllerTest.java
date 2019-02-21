@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -340,7 +341,7 @@ public class ConsentControllerTest {
     private CreateConsentReq getCreateConsentReq() {
         CreateConsentReq req = new CreateConsentReq();
         Xs2aAccountAccess access = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(),
-                                                         Collections.emptyList(), Xs2aAccountAccessType.ALL_ACCOUNTS, Xs2aAccountAccessType.ALL_ACCOUNTS);
+                                                         Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS);
         req.setAccess(access);
         return req;
     }

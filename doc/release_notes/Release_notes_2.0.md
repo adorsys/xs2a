@@ -32,7 +32,7 @@ From now Xs2a does not filter transactions by given booking status. Booking stat
 In Xs2a - ASPSP-mock connector filtering is done on SPI level (in private methods `getFilteredTransactions` and
 `filterByBookingStatus` in `AccountSpiImpl`).
 
-## BookingStatus entity moved to xs2a-core, Xs2aBookingStatus and SpiBookingStatus deleted
+## BookingStatus entity is moved to xs2a-core, Xs2aBookingStatus and SpiBookingStatus are deleted
 
 From now on only one enum that represents booking status exists. `BookingStatus` is moved to `xs2a-core` package, duplicates 
 `Xs2aBookingStatus` and `SpiBookingStatus` are deleted.
@@ -76,3 +76,7 @@ Now instead one annotation `@EnableCmsSwagger` there are three annotations:
 
 They may be used independently or all together to provide 3 Swagger specifications (may be selected in top right corner of Swagger UI).
 
+## AccountAccessType entity is moved to xs2a-core, AisAccountAccessType, SpiAccountAccessType and Xs2aAccountAccessType are deleted
+
+From now on only one enum that represents account access type exists in xs2a. `AccountAccessType` is moved to `xs2a-core` package, duplicates 
+`AisAccountAccessType`, `SpiAccountAccessType` and `Xs2aAccountAccessType` are deleted.

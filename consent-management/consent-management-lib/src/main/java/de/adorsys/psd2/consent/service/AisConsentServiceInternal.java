@@ -33,6 +33,7 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -427,9 +428,9 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
-        if (accessInfo.getAllPsd2() == AisAccountAccessType.ALL_ACCOUNTS) {
+        if (accessInfo.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
             return AisConsentRequestType.GLOBAL;
-        } else if (EnumSet.of(AisAccountAccessType.ALL_ACCOUNTS, AisAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
+        } else if (EnumSet.of(AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
         } else if (isEmptyAccess(accessInfo)) {
             return AisConsentRequestType.BANK_OFFERED;
