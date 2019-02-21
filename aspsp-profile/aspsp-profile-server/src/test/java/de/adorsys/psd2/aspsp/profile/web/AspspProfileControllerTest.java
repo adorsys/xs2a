@@ -17,10 +17,10 @@
 package de.adorsys.psd2.aspsp.profile.web;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import org.junit.Before;
@@ -34,8 +34,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
-import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
+import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 

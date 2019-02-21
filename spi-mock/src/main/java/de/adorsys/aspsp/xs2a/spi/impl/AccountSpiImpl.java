@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -108,7 +109,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, SpiBookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
             SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
 
@@ -224,7 +225,7 @@ public class AccountSpiImpl implements AccountSpi {
         }
     }
 
-    private List<SpiTransaction> getFilteredTransactions(UriComponents uriComponents, SpiBookingStatus bookingStatus) {
+    private List<SpiTransaction> getFilteredTransactions(UriComponents uriComponents, BookingStatus bookingStatus) {
         return Optional.ofNullable(getTransactionsFromAspsp(uriComponents))
                    .map(t -> filterByBookingStatus(t, bookingStatus))
                    .orElse(Collections.emptyList());
@@ -240,7 +241,7 @@ public class AccountSpiImpl implements AccountSpi {
         ).getBody();
     }
 
-    private List<SpiTransaction> filterByBookingStatus(List<SpiTransaction> transactionList, SpiBookingStatus bookingStatus) {
+    private List<SpiTransaction> filterByBookingStatus(List<SpiTransaction> transactionList, BookingStatus bookingStatus) {
         switch (bookingStatus) {
             case BOOKED:
                 return transactionList.stream()

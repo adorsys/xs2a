@@ -17,9 +17,9 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.AccountApi;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
@@ -79,7 +79,7 @@ public class AccountController implements AccountApi {
     @Override
     public ResponseEntity getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<Xs2aTransactionsReport> transactionsReport =
-            accountService.getTransactionsReportByPeriod(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
+            accountService.getTransactionsReportByPeriod(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, BookingStatus.forValue(bookingStatus));
 
         if (transactionsReport.hasError()) {
             return responseErrorMapper.generateErrorResponse(transactionsReport.getError());

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -26,7 +27,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
@@ -80,7 +80,6 @@ public class AccountService {
     private final SpiToXs2aAccountReferenceMapper referenceMapper;
     private final SpiTransactionListToXs2aAccountReportMapper transactionsToAccountReportMapper;
     private final SpiToXs2aTransactionMapper spiToXs2aTransactionMapper;
-    private final Xs2aToSpiBookingStatusMapper xs2aToSpiBookingStatusMapper;
 
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
@@ -285,7 +284,7 @@ public class AccountService {
                                                                                 String acceptHeader,
                                                                                 boolean withBalance, LocalDate dateFrom,
                                                                                 LocalDate dateTo,
-                                                                                Xs2aBookingStatus bookingStatus) {
+                                                                                BookingStatus bookingStatus) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRANSACTION_LIST_REQUEST_RECEIVED);
 
         ResponseObject<AccountConsent> accountConsentResponse = consentService.getValidatedConsent(consentId,
@@ -318,7 +317,7 @@ public class AccountService {
             contextData,
             acceptHeader,
             isTransactionsShouldContainBalances, dateFrom, dateToChecked,
-            xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(bookingStatus),
+            bookingStatus,
             requestedAccountReference.get(),
             consentMapper.mapToSpiAccountConsent(accountConsent),
             aisConsentDataService.getAspspConsentDataByConsentId(consentId));

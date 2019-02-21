@@ -17,15 +17,15 @@
 package de.adorsys.psd2.xs2a.integration.builder;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 
 import java.util.*;
 
-import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
+import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.*;
 
 public class AspspSettingsBuilder {
     private static final int FREQUENCY_PER_DAY = 5;
