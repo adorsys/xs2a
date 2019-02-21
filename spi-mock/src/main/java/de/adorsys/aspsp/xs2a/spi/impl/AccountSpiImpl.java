@@ -258,7 +258,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     private List<SpiAccountDetails> getAccountDetailsByPsuId(SpiAccountConsent accountConsent) {
-        //TODO correct spi level https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/546
+        // TODO correctly handle multiple PSUs for multilevel SCA https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/516
         String psuId = CollectionUtils.isNotEmpty(accountConsent.getPsuData())
                            ? accountConsent.getPsuData().get(0).getPsuId()
                            : null;

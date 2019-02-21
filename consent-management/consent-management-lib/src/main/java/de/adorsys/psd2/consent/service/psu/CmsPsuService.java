@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service.psu;
 import de.adorsys.psd2.consent.domain.PsuData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,6 +68,23 @@ public class CmsPsuService {
         return Optional.ofNullable(psuData)
                    .map(psu -> !isPsuDataInList(psu, psuDataList))
                    .orElse(false);
+    }
+
+    /**
+     * Checks whether two specified lists of PSU Data are equals
+     * <p>
+     * This method ignores internal entity identifier of PsuData when comparing lists.
+     *
+     * @param psuDataList        the first list to be compared, must not be null
+     * @param anotherPsuDataList the second list to be compared, must not be null
+     * @return <code>true</code> if two lists are equal, <code>false</code> otherwise
+     */
+    public boolean isPsuDataListEqual(@NotNull List<PsuData> psuDataList, @NotNull List<PsuData> anotherPsuDataList) {
+        if (psuDataList.size() != anotherPsuDataList.size()) {
+            return false;
+        }
+        return psuDataList.stream()
+                   .allMatch(psuData -> isPsuDataInList(psuData, anotherPsuDataList));
     }
 
     /**

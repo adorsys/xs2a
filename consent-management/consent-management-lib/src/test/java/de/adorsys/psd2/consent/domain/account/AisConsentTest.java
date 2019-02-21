@@ -46,18 +46,6 @@ public class AisConsentTest {
     }
 
     @Test
-    public void isWrongConsentData_shouldReturnTrue_firstPsuIsNull() {
-        // Given
-        AisConsent aisConsent = buildAisConsent(Collections.singletonList(null), TPP_INFO);
-
-        // When
-        boolean actual = aisConsent.isWrongConsentData();
-
-        // Then
-        assertTrue(actual);
-    }
-
-    @Test
     public void isWrongConsentData_shouldReturnTrue_tppInfoNull() {
         // Given
         AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), null);
