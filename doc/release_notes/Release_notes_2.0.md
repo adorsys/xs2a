@@ -36,3 +36,11 @@ In Xs2a - ASPSP-mock connector filtering is done on SPI level (in private method
 
 From now on only one enum that represents booking status exists. `BookingStatus` is moved to `xs2a-core` package, duplicates 
 `Xs2aBookingStatus` and `SpiBookingStatus` are deleted.
+
+## List of PSU Data is provided in payment objects to all SPI methods
+
+From now on, these SPI payment objects contain list of PSU Data:
+ - SinglePaymentSpi
+ - PeriodicPaymentSpi
+ - BulkPaymentSpi
+ - SpiPaymentInfo

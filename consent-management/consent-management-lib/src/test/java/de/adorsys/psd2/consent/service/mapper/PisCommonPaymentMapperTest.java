@@ -70,6 +70,7 @@ public class PisCommonPaymentMapperTest {
         PisAuthorization pisAuthorization = new PisAuthorization();
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         PisPaymentData pisPaymentData = new PisPaymentData();
+        pisPaymentData.setPaymentData(pisCommonPaymentData);
         pisPaymentData.setDebtorAccount(null);
         pisCommonPaymentData.setPayments(Collections.singletonList(pisPaymentData));
         pisAuthorization.setPaymentData(pisCommonPaymentData);

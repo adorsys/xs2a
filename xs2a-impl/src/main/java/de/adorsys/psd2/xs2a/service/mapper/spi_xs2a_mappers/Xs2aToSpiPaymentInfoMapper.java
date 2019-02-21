@@ -18,10 +18,13 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class Xs2aToSpiPaymentInfoMapper {
+    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     public SpiPaymentInfo mapToSpiPaymentInfo(CommonPayment commonPayment) {
         SpiPaymentInfo info = new SpiPaymentInfo(commonPayment.getPaymentProduct());
@@ -29,6 +32,7 @@ public class Xs2aToSpiPaymentInfoMapper {
         info.setPaymentType(commonPayment.getPaymentType());
         info.setStatus(commonPayment.getTransactionStatus());
         info.setPaymentData(commonPayment.getPaymentData());
+        info.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(commonPayment.getPsuDataList()));
         return info;
     }
 }

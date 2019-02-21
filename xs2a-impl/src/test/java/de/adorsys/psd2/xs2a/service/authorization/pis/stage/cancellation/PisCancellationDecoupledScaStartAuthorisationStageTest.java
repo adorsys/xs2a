@@ -134,6 +134,9 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
 
         doNothing()
             .when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
+
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(Collections.singletonList(PSU_ID_DATA)))
+            .thenReturn(Collections.singletonList(SPI_PSU_DATA));
     }
 
     @Test
@@ -176,6 +179,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
         paymentInfo.setPaymentProduct(PAYMENT_PRODUCT);
         paymentInfo.setPaymentType(SINGLE_PAYMENT_TYPE);
         paymentInfo.setTransactionStatus(ACCP_TRANSACTION_STATUS);
+        paymentInfo.setPsuDataList(Collections.singletonList(PSU_ID_DATA));
         return paymentInfo;
     }
 
@@ -185,6 +189,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
         paymentInfo.setPaymentId(PAYMENT_ID);
         paymentInfo.setPaymentType(SINGLE_PAYMENT_TYPE);
         paymentInfo.setStatus(ACCP_TRANSACTION_STATUS);
+        paymentInfo.setPsuDataList(Collections.singletonList(SPI_PSU_DATA));
         return paymentInfo;
     }
 

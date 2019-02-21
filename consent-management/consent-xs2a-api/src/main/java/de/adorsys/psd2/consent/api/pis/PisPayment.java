@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Currency;
+import java.util.List;
 
 @Data
 public class PisPayment {
@@ -102,4 +104,6 @@ public class PisPayment {
 
     @ApiModelProperty(name = "Day of execution", example = "14")
     private PisDayOfExecution dayOfExecution; //Day here max 31
+
+    private List<PsuIdData> psuDataList;
 }

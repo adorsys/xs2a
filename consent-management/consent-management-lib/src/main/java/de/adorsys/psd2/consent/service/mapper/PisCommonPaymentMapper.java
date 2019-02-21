@@ -96,11 +96,14 @@ public class PisCommonPaymentMapper {
 
     public GetPisAuthorisationResponse mapToGetPisAuthorizationResponse(PisAuthorization pis) {
         GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
-        response.setPayments(mapToPisPaymentList(pis.getPaymentData().getPayments()));
-        response.setPaymentType(pis.getPaymentData().getPaymentType());
+        Optional.ofNullable(pis.getPaymentData())
+            .ifPresent(paymentData -> {
+                response.setPayments(mapToPisPaymentList(paymentData.getPayments()));
+                response.setPaymentId(paymentData.getPaymentId());
+                response.setPaymentType(paymentData.getPaymentType());
+                response.setPaymentInfo(mapToPisPaymentInfo(paymentData));
+            });
         response.setScaStatus(pis.getScaStatus());
-        response.setPaymentId(pis.getPaymentData().getPaymentId());
-        response.setPaymentInfo(mapToPisPaymentInfo(pis.getPaymentData()));
         response.setPsuIdData(psuDataMapper.mapToPsuIdData(pis.getPsuData()));
         response.setChosenScaApproach(pis.getScaApproach());
         return response;
@@ -115,7 +118,7 @@ public class PisCommonPaymentMapper {
                        response.setPaymentType(cmd.getPaymentType());
                        response.setPaymentProduct(cmd.getPaymentProduct());
                        response.setTppInfo(tppInfoMapper.mapToTppInfo(cmd.getTppInfo()));
-                       response.setPsuData(psuDataMapper.mapToPsuIdDataList(commonPaymentData.getPsuData()));
+                       response.setPsuData(psuDataMapper.mapToPsuIdDataList(cmd.getPsuData()));
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
                        return response;
@@ -171,6 +174,7 @@ public class PisCommonPaymentMapper {
                        pisPayment.setExecutionRule(pm.getExecutionRule());
                        pisPayment.setFrequency(pm.getFrequency());
                        pisPayment.setDayOfExecution(pm.getDayOfExecution());
+                       pisPayment.setPsuDataList(psuDataMapper.mapToPsuIdDataList(pm.getPaymentData().getPsuData()));
 
                        return pisPayment;
                    }).orElse(null);

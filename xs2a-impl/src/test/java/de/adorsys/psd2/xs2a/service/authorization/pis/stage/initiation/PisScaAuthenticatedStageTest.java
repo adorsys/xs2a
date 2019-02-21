@@ -39,6 +39,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
@@ -116,6 +117,8 @@ public class PisScaAuthenticatedStageTest {
     private ChallengeData challengeData;
     @Mock
     private Xs2aAuthenticationObject xs2aAuthenticationObject;
+    @Mock
+    private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     @Before
     public void setUp() {
@@ -136,6 +139,9 @@ public class PisScaAuthenticatedStageTest {
 
         when(request.getAuthenticationMethodId())
             .thenReturn(AUTHENTICATION_METHOD_ID);
+
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(Collections.singletonList(PSU_ID_DATA)))
+            .thenReturn(Collections.singletonList(SPI_PSU_DATA));
     }
 
     @Test
@@ -282,6 +288,7 @@ public class PisScaAuthenticatedStageTest {
         paymentInfo.setPaymentProduct(PAYMENT_PRODUCT);
         paymentInfo.setPaymentType(SINGLE_PAYMENT_TYPE);
         paymentInfo.setTransactionStatus(ACCP_TRANSACTION_STATUS);
+        paymentInfo.setPsuDataList(Collections.singletonList(PSU_ID_DATA));
         return paymentInfo;
     }
 
@@ -291,6 +298,7 @@ public class PisScaAuthenticatedStageTest {
         paymentInfo.setPaymentId(PAYMENT_ID);
         paymentInfo.setPaymentType(SINGLE_PAYMENT_TYPE);
         paymentInfo.setStatus(ACCP_TRANSACTION_STATUS);
+        paymentInfo.setPsuDataList(Collections.singletonList(SPI_PSU_DATA));
         return paymentInfo;
     }
 

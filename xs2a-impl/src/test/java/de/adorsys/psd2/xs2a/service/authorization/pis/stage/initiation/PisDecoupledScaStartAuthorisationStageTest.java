@@ -99,7 +99,6 @@ public class PisDecoupledScaStartAuthorisationStageTest {
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataResponse mockedExpectedResponse;
 
-
     @Before
     public void setUp() {
         when(response.getPaymentType())
@@ -134,6 +133,9 @@ public class PisDecoupledScaStartAuthorisationStageTest {
 
         doNothing()
             .when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
+
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(Collections.singletonList(PSU_ID_DATA)))
+            .thenReturn(Collections.singletonList(SPI_PSU_DATA));
     }
 
     @Test
@@ -176,6 +178,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
         paymentInfo.setPaymentProduct(PAYMENT_PRODUCT);
         paymentInfo.setPaymentType(SINGLE_PAYMENT_TYPE);
         paymentInfo.setTransactionStatus(ACCP_TRANSACTION_STATUS);
+        paymentInfo.setPsuDataList(Collections.singletonList(PSU_ID_DATA));
         return paymentInfo;
     }
 
@@ -185,6 +188,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
         paymentInfo.setPaymentId(PAYMENT_ID);
         paymentInfo.setPaymentType(SINGLE_PAYMENT_TYPE);
         paymentInfo.setStatus(ACCP_TRANSACTION_STATUS);
+        paymentInfo.setPsuDataList(Collections.singletonList(SPI_PSU_DATA));
         return paymentInfo;
     }
 

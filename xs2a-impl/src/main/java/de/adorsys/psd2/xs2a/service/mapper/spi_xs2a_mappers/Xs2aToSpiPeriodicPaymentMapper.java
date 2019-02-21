@@ -30,6 +30,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
     private final Xs2aToSpiAmountMapper xs2aToSpiAmountMapper;
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     public SpiPeriodicPayment mapToSpiPeriodicPayment(PeriodicPayment payment, String paymentProduct) {
         SpiPeriodicPayment periodic = new SpiPeriodicPayment(paymentProduct);
@@ -55,6 +56,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setDayOfExecution(payment.getDayOfExecution());
         periodic.setRequestedExecutionTime(payment.getRequestedExecutionTime());
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
+        periodic.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
         return periodic;
     }
 }
