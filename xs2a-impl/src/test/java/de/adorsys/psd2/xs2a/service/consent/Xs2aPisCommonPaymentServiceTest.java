@@ -96,8 +96,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     @Test
     public void createCommonPayment_by_parameters_tppInfo_paymentData_Success() {
         //given
-        PisPaymentInfo request = new PisPaymentInfo();
-        when(pisCommonPaymentServiceEncrypted.createCommonPayment(request))
+        when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
 
         //when
