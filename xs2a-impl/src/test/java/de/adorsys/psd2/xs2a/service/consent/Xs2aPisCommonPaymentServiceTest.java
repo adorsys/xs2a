@@ -3,6 +3,9 @@ package de.adorsys.psd2.xs2a.service.consent;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
@@ -23,9 +26,12 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aPisCommonPaymentServiceTest {
 
-    private final PisPaymentInfo PIS_PAYMENT_INFO = new PisPaymentInfo();
+    private final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo();
+    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final String PRODUCT = "sepa-credit-transfers";
     private final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = new PaymentInitiationParameters();
     private final TppInfo TPP_INFO = buildTppInfo();
+    private static final byte[] PAYMENT_DATA = new byte[16];
     private final CreatePisCommonPaymentResponse CREATE_PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse("");
 
     @InjectMocks
@@ -42,8 +48,6 @@ public class Xs2aPisCommonPaymentServiceTest {
         //given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
-        when(xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO, null))
-            .thenReturn(CREATE_PIS_COMMON_PAYMENT_RESPONSE);
 
         //when
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO);
@@ -57,8 +61,6 @@ public class Xs2aPisCommonPaymentServiceTest {
         //given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.empty());
-        when(xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO, new byte[16]))
-            .thenReturn(CREATE_PIS_COMMON_PAYMENT_RESPONSE);
 
         //when
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO);
@@ -100,7 +102,7 @@ public class Xs2aPisCommonPaymentServiceTest {
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
 
         //when
-        CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO, new byte[0]);
+        CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO, PAYMENT_DATA);
 
         //then
         assertThat(actualResponse).isEqualTo(CREATE_PIS_COMMON_PAYMENT_RESPONSE);
@@ -129,5 +131,16 @@ public class Xs2aPisCommonPaymentServiceTest {
         tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfo.setAuthorityId("authorityId");
         return tppInfo;
+    }
+
+    private PisPaymentInfo buildPisPaymentInfo() {
+        PisPaymentInfo request = new PisPaymentInfo();
+        request.setPaymentProduct(PRODUCT);
+        request.setPaymentType(PaymentType.SINGLE);
+        request.setTransactionStatus(TransactionStatus.RCVD);
+        request.setPaymentData(PAYMENT_DATA);
+        request.setTppInfo(TPP_INFO);
+        request.setPsuDataList(Collections.singletonList(PSU_DATA));
+        return request;
     }
 }
