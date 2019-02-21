@@ -32,7 +32,7 @@ From now Xs2a does not filter transactions by given booking status. Booking stat
 In Xs2a - ASPSP-mock connector filtering is done on SPI level (in private methods `getFilteredTransactions` and
 `filterByBookingStatus` in `AccountSpiImpl`).
 
-## List of PSU provided in payment through all SPI methods
+## List of PSU Data is provided in payment objects to all SPI methods
 
 From now on, these SPI payment objects contain list of PSU Data:
  - SinglePaymentSpi
