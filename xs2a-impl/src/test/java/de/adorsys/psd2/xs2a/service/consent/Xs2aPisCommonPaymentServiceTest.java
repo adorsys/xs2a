@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 public class Xs2aPisCommonPaymentServiceTest {
 
     private final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo();
+    private final PisPaymentInfo PIS_PAYMENT_INFO_NULL = buildPisPaymentInfoPaymentDataNull();
     private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
     private static final String PRODUCT = "sepa-credit-transfers";
     private final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = new PaymentInitiationParameters();
@@ -44,9 +45,9 @@ public class Xs2aPisCommonPaymentServiceTest {
 
 
     @Test
-    public void createCommonPayment_by_parameters_tppInfo_Success() {
+    public void createCommonPayment_by_parameters_tppInfo_success() {
         //given
-        when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
+        when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO_NULL))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
 
         //when
@@ -57,9 +58,9 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_by_parameters_tppInfo_Failed() {
+    public void createCommonPayment_by_parameters_tppInfo_failed() {
         //given
-        when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
+        when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO_NULL))
             .thenReturn(Optional.empty());
 
         //when
@@ -70,7 +71,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_by_request_Success() {
+    public void createCommonPayment_by_request_success() {
         //given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
@@ -83,7 +84,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_by_request_Failed() {
+    public void createCommonPayment_by_request_failed() {
         //given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.empty());
@@ -96,7 +97,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_by_parameters_tppInfo_paymentData_Success() {
+    public void createCommonPayment_by_parameters_tppInfo_paymentData_success() {
         //given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
@@ -139,6 +140,17 @@ public class Xs2aPisCommonPaymentServiceTest {
         request.setPaymentType(PaymentType.SINGLE);
         request.setTransactionStatus(TransactionStatus.RCVD);
         request.setPaymentData(PAYMENT_DATA);
+        request.setTppInfo(TPP_INFO);
+        request.setPsuDataList(Collections.singletonList(PSU_DATA));
+        return request;
+    }
+
+    private PisPaymentInfo buildPisPaymentInfoPaymentDataNull() {
+        PisPaymentInfo request = new PisPaymentInfo();
+        request.setPaymentProduct(PRODUCT);
+        request.setPaymentType(PaymentType.SINGLE);
+        request.setTransactionStatus(TransactionStatus.RCVD);
+        request.setPaymentData(null);
         request.setTppInfo(TPP_INFO);
         request.setPsuDataList(Collections.singletonList(PSU_DATA));
         return request;
