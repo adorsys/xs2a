@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain;
+package de.adorsys.psd2.xs2a.core.ais;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModelProperty;
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum Xs2aBookingStatus {
-
+public enum BookingStatus {
     PENDING("pending"),
     BOOKED("booked"),
     BOTH("both");
 
-    @ApiModelProperty(value = "value", example = "both")
     private String value;
 
     @JsonCreator
-    Xs2aBookingStatus(String value) {
+    BookingStatus(String value) {
         this.value = value;
     }
 
@@ -41,8 +36,8 @@ public enum Xs2aBookingStatus {
         return value;
     }
 
-    public static Xs2aBookingStatus forValue(String value) {
-        for (Xs2aBookingStatus status : values()) {
+    public static BookingStatus forValue(String value) {
+        for (BookingStatus status : values()) {
             if (status.value.equals(value)) {
                 return status;
             }

@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
-import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.Getter;
