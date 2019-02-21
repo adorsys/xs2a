@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
@@ -67,7 +68,7 @@ public interface AccountSpi {
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request
      * @return List of transactions
      */
-    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, SpiBookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData);
 
     /**
      * Requests an transaction by transactionId

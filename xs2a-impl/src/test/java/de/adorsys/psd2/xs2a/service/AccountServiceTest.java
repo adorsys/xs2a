@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -85,7 +86,6 @@ public class AccountServiceTest {
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final LocalDate DATE_FROM = LocalDate.of(2018, 1, 1);
     private static final LocalDate DATE_TO = LocalDate.now();
-    private static final Xs2aBookingStatus BOTH_XS2A_BOOKING_STATUS = Xs2aBookingStatus.BOTH;
     private static final SpiResponseStatus LOGICAL_FAILURE_RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final MessageErrorCode FORMAT_ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final MessageErrorCode CONSENT_INVALID_MESSAGE_ERROR_CODE = MessageErrorCode.CONSENT_INVALID;
@@ -100,7 +100,7 @@ public class AccountServiceTest {
     private static final ResponseObject<AccountConsent> ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE = buildErrorAllowedAccountDataResponse();
     private static final ResponseObject<AccountConsent> SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE = buildSuccessAllowedAccountDataResponse();
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo());
-    private static final SpiBookingStatus SPI_BOOKING_STATUS = SpiBookingStatus.BOTH;
+    private static final BookingStatus BOOKING_STATUS = BookingStatus.BOTH;
 
     @InjectMocks
     private AccountService accountService;
@@ -155,8 +155,6 @@ public class AccountServiceTest {
     private Transactions transactions;
     @Mock
     private SpiErrorMapper spiErrorMapper;
-    @Mock
-    private Xs2aToSpiBookingStatusMapper xs2aToSpiBookingStatusMapper;
 
     @Before
     public void setUp() {
@@ -168,9 +166,6 @@ public class AccountServiceTest {
 
         when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class)))
             .thenReturn(SPI_CONTEXT_DATA);
-
-        when(xs2aToSpiBookingStatusMapper.mapToSpiBookingStatus(any(Xs2aBookingStatus.class)))
-            .thenReturn(SPI_BOOKING_STATUS);
     }
 
     @Test
@@ -528,7 +523,7 @@ public class AccountServiceTest {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -558,13 +553,13 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_BOOKING_STATUS, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(SPI_TRANSACTION_REPORT));
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(SPI_TRANSACTION_REPORT), ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -593,7 +588,7 @@ public class AccountServiceTest {
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_BOOKING_STATUS, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
 
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
@@ -616,7 +611,7 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
@@ -644,7 +639,7 @@ public class AccountServiceTest {
             .thenReturn(true);
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
-        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, SPI_BOOKING_STATUS, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SPI_TRANSACTION_REPORT));
         Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null);
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
@@ -664,7 +659,7 @@ public class AccountServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOTH_XS2A_BOOKING_STATUS);
+        accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS);
 
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
