@@ -73,4 +73,5 @@
     <include relativeToChangelogFile="true"
              file="migration/0048-add-column-sca-approach-for-ais-consent-authorisation-and-pis-authorisation.xml"/>
     <include relativeToChangelogFile="true" file="migration/0049-remove-transaction-status-column-from-pis-payment-data-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0050-add-multiple-sca-required-column-to-ais-consent.xml"/>
 </databaseChangeLog>

@@ -143,6 +143,8 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Type of the account access types.", example = "ALL_ACCOUNTS")
     private AisAccountAccessType allPsd2;
 
+    @Column(name = "multilevel_sca_required", nullable = false)
+    private boolean multilevelScaRequired;
 
     public List<TppAccountAccess> getAccesses() {
         return new ArrayList<>(accesses);

@@ -133,7 +133,7 @@ public class Xs2aAisConsentService {
      *
      * @param consentId String representation of identifier of stored consent
      * @param scaStatus Enum for status of the SCA method applied
-     * @param psuData authorisation data about PSU
+     * @param psuData   authorisation data about PSU
      * @return long representation of identifier of stored consent authorization
      */
     public Optional<String> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
@@ -145,7 +145,7 @@ public class Xs2aAisConsentService {
      * Requests CMS to retrieve AIS consent authorization by its identifier
      *
      * @param authorizationId String representation of identifier of stored consent authorization
-     * @param consentId ID of the consent
+     * @param consentId       ID of the consent
      * @return Response containing AIS Consent Authorization
      */
 
@@ -231,5 +231,15 @@ public class Xs2aAisConsentService {
      */
     public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
         aisConsentService.updateScaApproach(authorisationId, scaApproach);
+    }
+
+    /**
+     * Updates multilevel SCA required field
+     *
+     * @param consentId             String representation of the consent identifier
+     * @param multilevelScaRequired multilevel SCA required indicator
+     */
+    public void updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
+        aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
     }
 }

@@ -92,8 +92,8 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
         }
 
         AisConsentActionRequest decryptedRequest = new AisConsentActionRequest(encryptedRequest.getTppId(),
-                                                                               decryptedConsentId.get(),
-                                                                               encryptedRequest.getActionStatus());
+            decryptedConsentId.get(),
+            encryptedRequest.getActionStatus());
         aisConsentService.checkConsentAndSaveActionLog(decryptedRequest);
     }
 
@@ -159,5 +159,13 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     @Transactional
     public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
         return aisConsentService.updateScaApproach(authorisationId, scaApproach);
+    }
+
+    @Override
+    @Transactional
+    public boolean updateMultilevelScaRequired(String encryptedConsentId, boolean multilevelScaRequired) {
+        return securityDataService.decryptId(encryptedConsentId)
+                   .map(consentId -> aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired))
+                   .orElse(false);
     }
 }
