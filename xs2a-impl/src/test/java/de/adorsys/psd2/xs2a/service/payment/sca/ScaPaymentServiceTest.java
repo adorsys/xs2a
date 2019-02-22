@@ -52,31 +52,31 @@ public class ScaPaymentServiceTest {
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
-    private final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
-    private final TppInfo TPP_INFO = buildTppInfo();
+    private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
+    private static final TppInfo TPP_INFO = buildTppInfo();
     //SinglePayment
-    private final SinglePayment SINGLE_PAYMENT = new SinglePayment();
-    private final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
-    private final SpiSinglePaymentInitiationResponse SPI_SINGLE_PAYMENT_RESPONSE = buildSpiSinglePaymentInitiationResponse();
-    private final SpiResponse<SpiSinglePaymentInitiationResponse> SPI_SINGLE_RESPONSE = buildSpiResponse(SPI_SINGLE_PAYMENT_RESPONSE);
-    private final SinglePaymentInitiationResponse SINGLE_PAYMENT_RESPONSE = new SinglePaymentInitiationResponse();
+    private static final SinglePayment SINGLE_PAYMENT = new SinglePayment();
+    private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
+    private static final SpiSinglePaymentInitiationResponse SPI_SINGLE_PAYMENT_RESPONSE = buildSpiSinglePaymentInitiationResponse();
+    private static final SpiResponse<SpiSinglePaymentInitiationResponse> SPI_SINGLE_RESPONSE = buildSpiResponse(SPI_SINGLE_PAYMENT_RESPONSE);
+    private static final SinglePaymentInitiationResponse SINGLE_PAYMENT_RESPONSE = new SinglePaymentInitiationResponse();
     //PeriodicPayment
-    private final PeriodicPayment PERIODIC_PAYMENT = new PeriodicPayment();
-    private final SpiPeriodicPayment SPI_PERIODIC_PAYMENT = new SpiPeriodicPayment(PRODUCT);
-    private final SpiPeriodicPaymentInitiationResponse SPI_PERIODIC_PAYMENT_RESPONSE = buildSpiPeriodicPaymentInitiationResponse();
-    private final SpiResponse<SpiPeriodicPaymentInitiationResponse> SPI_PERIODIC_RESPONSE = buildSpiResponse(SPI_PERIODIC_PAYMENT_RESPONSE);
-    private final PeriodicPaymentInitiationResponse PERIODIC_PAYMENT_RESPONSE = new PeriodicPaymentInitiationResponse();
+    private static final PeriodicPayment PERIODIC_PAYMENT = new PeriodicPayment();
+    private static final SpiPeriodicPayment SPI_PERIODIC_PAYMENT = new SpiPeriodicPayment(PRODUCT);
+    private static final SpiPeriodicPaymentInitiationResponse SPI_PERIODIC_PAYMENT_RESPONSE = buildSpiPeriodicPaymentInitiationResponse();
+    private static final SpiResponse<SpiPeriodicPaymentInitiationResponse> SPI_PERIODIC_RESPONSE = buildSpiResponse(SPI_PERIODIC_PAYMENT_RESPONSE);
+    private static final PeriodicPaymentInitiationResponse PERIODIC_PAYMENT_RESPONSE = new PeriodicPaymentInitiationResponse();
     //BulkPayment
-    private final BulkPayment BULK_PAYMENT = buildBulkPayment(SINGLE_PAYMENT);
-    private final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
-    private final SpiBulkPaymentInitiationResponse SPI_BULK_PAYMENT_RESPONSE = buildSpiBulkPaymentInitiationResponse();
-    private final SpiResponse<SpiBulkPaymentInitiationResponse> SPI_BULK_RESPONSE = buildSpiResponse(SPI_BULK_PAYMENT_RESPONSE);
-    private final BulkPaymentInitiationResponse BULK_PAYMENT_RESPONSE = new BulkPaymentInitiationResponse();
+    private static final BulkPayment BULK_PAYMENT = buildBulkPayment(SINGLE_PAYMENT);
+    private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
+    private static final SpiBulkPaymentInitiationResponse SPI_BULK_PAYMENT_RESPONSE = buildSpiBulkPaymentInitiationResponse();
+    private static final SpiResponse<SpiBulkPaymentInitiationResponse> SPI_BULK_RESPONSE = buildSpiResponse(SPI_BULK_PAYMENT_RESPONSE);
+    private static final BulkPaymentInitiationResponse BULK_PAYMENT_RESPONSE = new BulkPaymentInitiationResponse();
     //CommonPayment
-    private final CommonPayment COMMON_PAYMENT = buildCommonPayment();
-    private final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
-    private final SpiResponse<SpiPaymentInitiationResponse> SPI_COMMON_RESPONSE = buildSpiResponse(SPI_SINGLE_PAYMENT_RESPONSE);
-    private final CommonPaymentInitiationResponse COMMON_PAYMENT_RESPONSE = new CommonPaymentInitiationResponse();
+    private static final CommonPayment COMMON_PAYMENT = buildCommonPayment();
+    private static final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
+    private static final SpiResponse<SpiPaymentInitiationResponse> SPI_COMMON_RESPONSE = buildSpiResponse(SPI_SINGLE_PAYMENT_RESPONSE);
+    private static final CommonPaymentInitiationResponse COMMON_PAYMENT_RESPONSE = new CommonPaymentInitiationResponse();
 
     @InjectMocks
     private RedirectScaPaymentService scaPaymentService;
@@ -292,14 +292,14 @@ public class ScaPaymentServiceTest {
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
     }
 
-    private SpiContextData getSpiContextData() {
+    private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo()
         );
     }
 
-    private TppInfo buildTppInfo() {
+    private static TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("registrationNumber");
         tppInfo.setTppName("tppName");
@@ -308,7 +308,7 @@ public class ScaPaymentServiceTest {
         return tppInfo;
     }
 
-    private BulkPayment buildBulkPayment(SinglePayment singlePayment) {
+    private static BulkPayment buildBulkPayment(SinglePayment singlePayment) {
         BulkPayment bulkPayment = new BulkPayment();
         bulkPayment.setPayments(Collections.singletonList(singlePayment));
         bulkPayment.setRequestedExecutionDate(LocalDate.now());
@@ -316,7 +316,7 @@ public class ScaPaymentServiceTest {
         return bulkPayment;
     }
 
-    private CommonPayment buildCommonPayment() {
+    private static CommonPayment buildCommonPayment() {
         CommonPayment request = new CommonPayment();
         request.setPaymentType(PaymentType.SINGLE);
         request.setPaymentProduct("sepa-credit-transfers");
@@ -325,7 +325,7 @@ public class ScaPaymentServiceTest {
         return request;
     }
 
-    private SpiSinglePaymentInitiationResponse buildSpiSinglePaymentInitiationResponse() {
+    private static SpiSinglePaymentInitiationResponse buildSpiSinglePaymentInitiationResponse() {
         SpiSinglePaymentInitiationResponse response = new SpiSinglePaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
@@ -333,7 +333,7 @@ public class ScaPaymentServiceTest {
         return response;
     }
 
-    private SpiPeriodicPaymentInitiationResponse buildSpiPeriodicPaymentInitiationResponse() {
+    private static SpiPeriodicPaymentInitiationResponse buildSpiPeriodicPaymentInitiationResponse() {
         SpiPeriodicPaymentInitiationResponse response = new SpiPeriodicPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
@@ -341,7 +341,7 @@ public class ScaPaymentServiceTest {
         return response;
     }
 
-    private SpiBulkPaymentInitiationResponse buildSpiBulkPaymentInitiationResponse() {
+    private static SpiBulkPaymentInitiationResponse buildSpiBulkPaymentInitiationResponse() {
         SpiBulkPaymentInitiationResponse response = new SpiBulkPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
@@ -349,7 +349,7 @@ public class ScaPaymentServiceTest {
         return response;
     }
 
-    private <T> SpiResponse<T> buildSpiResponse(T payload) {
+    private static <T> SpiResponse<T> buildSpiResponse(T payload) {
         return SpiResponse.<T>builder()
             .payload(payload)
             .aspspConsentData(ASPSP_CONSENT_DATA)

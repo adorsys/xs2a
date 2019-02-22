@@ -35,13 +35,13 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReadSinglePaymentServiceTest {
-    private final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
-    private final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
-    private final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
-    private final SinglePayment SINGLE_PAYMENT = new SinglePayment();
+    private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
+    private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
+    private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
+    private static final SinglePayment SINGLE_PAYMENT = new SinglePayment();
 
     @InjectMocks
     private ReadSinglePaymentService readSinglePaymentService;
@@ -152,14 +152,14 @@ public class ReadSinglePaymentServiceTest {
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
     }
 
-    private SpiContextData getSpiContextData() {
+    private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo()
         );
     }
 
-    private List<PisPayment> getListPisPayment() {
+    private static List<PisPayment> getListPisPayment() {
         return Collections.singletonList(new PisPayment());
     }
 }

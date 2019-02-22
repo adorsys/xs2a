@@ -37,10 +37,10 @@ import static org.mockito.Mockito.when;
 public class ReadPeriodicPaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
-    private final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
-    private final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
-    private final SpiPeriodicPayment SPI_PERIODIC_PAYMENT = new SpiPeriodicPayment(PRODUCT);
-    private final PeriodicPayment PERIODIC_PAYMENT = new PeriodicPayment();
+    private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
+    private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
+    private static final SpiPeriodicPayment SPI_PERIODIC_PAYMENT = new SpiPeriodicPayment(PRODUCT);
+    private static final PeriodicPayment PERIODIC_PAYMENT = new PeriodicPayment();
     private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
 
     @InjectMocks
@@ -158,14 +158,14 @@ public class ReadPeriodicPaymentServiceTest {
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
     }
 
-    private SpiContextData getSpiContextData() {
+    private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("", "", "", ""),
             new TppInfo()
         );
     }
 
-    private List<PisPayment> getListPisPayment() {
+    private static List<PisPayment> getListPisPayment() {
         return Collections.singletonList(new PisPayment());
     }
 }

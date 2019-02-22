@@ -25,14 +25,14 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aPisCommonPaymentServiceTest {
-    private final TppInfo TPP_INFO = buildTppInfo();
-    private final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = buildPaymentInitiationParameters();
-    private final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo(PAYMENT_DATA);
-    private final PisPaymentInfo PIS_PAYMENT_INFO_NULL = buildPisPaymentInfo(null);
-    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final byte[] PAYMENT_DATA = new byte[16];
+    private static final TppInfo TPP_INFO = buildTppInfo();
+    private static final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = buildPaymentInitiationParameters();
+    private static final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo(PAYMENT_DATA);
+    private static final PisPaymentInfo PIS_PAYMENT_INFO_NULL = buildPisPaymentInfo(null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final CreatePisCommonPaymentResponse CREATE_PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
     private static final PisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new PisCommonPaymentResponse();
 
@@ -134,7 +134,7 @@ public class Xs2aPisCommonPaymentServiceTest {
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
-    private TppInfo buildTppInfo() {
+    private static TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("registrationNumber");
         tppInfo.setTppName("tppName");
@@ -143,7 +143,7 @@ public class Xs2aPisCommonPaymentServiceTest {
         return tppInfo;
     }
 
-    private PisPaymentInfo buildPisPaymentInfo(byte[] paymentData) {
+    private static PisPaymentInfo buildPisPaymentInfo(byte[] paymentData) {
         PisPaymentInfo request = new PisPaymentInfo();
         request.setPaymentProduct(PAYMENT_INITIATION_PARAMETERS.getPaymentProduct());
         request.setPaymentType(PAYMENT_INITIATION_PARAMETERS.getPaymentType());
@@ -154,7 +154,7 @@ public class Xs2aPisCommonPaymentServiceTest {
         return request;
     }
 
-    private PaymentInitiationParameters buildPaymentInitiationParameters() {
+    private static PaymentInitiationParameters buildPaymentInitiationParameters() {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentProduct(PRODUCT);
         parameters.setPaymentType(PaymentType.SINGLE);
