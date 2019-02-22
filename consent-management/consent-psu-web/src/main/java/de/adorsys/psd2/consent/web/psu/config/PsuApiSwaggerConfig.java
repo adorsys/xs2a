@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.config;
+package de.adorsys.psd2.consent.web.psu.config;
 
 import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,18 +29,19 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
-public class SwaggerConfig {
+public class PsuApiSwaggerConfig {
     @Value("${license.url}")
     private String licenseUrl;
 
     @SuppressWarnings("Guava")  // Intellij IDEA claims that Guava predicates could be replaced with Java API,
                                 // but actually it is not possible
-    @Bean(name = "api")
+    @Bean(name = "psu-api")
     public Docket apiDocklet() {
         return new Docket(DocumentationType.SWAGGER_2)
+            .groupName("CMS-PSU-API")
             .apiInfo(getApiInfo())
             .select()
-            .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.consent.web"))
+            .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.consent.web.psu"))
             .paths(Predicates.not(PathSelectors.regex("/error.*?")))
             .paths(Predicates.not(PathSelectors.regex("/connect.*")))
             .paths(Predicates.not(PathSelectors.regex("/management.*")))
@@ -49,8 +50,8 @@ public class SwaggerConfig {
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-            .title("Consent management rest API")
-            .contact(new Contact("pru, adorsys GmbH & Co. KG", "http://www.adorsys.de", "pru@adorsys.com.ua"))
+            .title("XS2A CMS PSU REST API")
+            .contact(new Contact("adorsys GmbH & Co. KG", "https://adorsys.de/en/psd2/", "psd2@adorsys.de"))
             .version("1.0")
             .license("Apache License 2.0")
             .licenseUrl(licenseUrl)
