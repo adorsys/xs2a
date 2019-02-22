@@ -30,7 +30,8 @@ public class AisEndpointAccessCheckerService extends EndpointAccessChecker {
     /**
      * Checks whether endpoint is accessible for current authorisation
      *
-     * @param authorisationId ID of authorisation process
+     * @param authorisationId   ID of authorisation process
+     * @param consentId         ID of consent
      * @return <code>true</code> if accessible. <code>false</code> otherwise.
      */
     public boolean isEndpointAccessible(String authorisationId, String consentId) {
