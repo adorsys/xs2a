@@ -1,0 +1,158 @@
+{
+  "info": {
+    "_postman_id": "47c65e02-70dc-4ace-9137-2a545ff02d0a",
+    "name": "Test DTAZV payment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. DTAZV payment initiation",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "85a31d81-7ce1-416b-aba4-c282e893f08f",
+            "exec": [
+              "const jsonData = pm.response.json();",
+              "",
+              "pm.globals.set(\"payment_id\", jsonData.paymentId);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/plain"
+          },
+          {
+            "key": "PSU-IP-Address",
+            "value": "{{ip_address}}"
+          },
+          {
+            "key": "X-Request-ID",
+            "value": "{{X-Request-ID}}"
+          },
+          {
+            "key": "TPP-Explicit-Authorisation-Preferred",
+            "value": "true",
+            "type": "text"
+          },
+          {
+            "key": "PSU-ID",
+            "value": "{{psu_id_none}}",
+            "type": "text"
+          },
+          {
+            "key": "TPP-Nok-Redirect-URI",
+            "value": "someuri",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "0256Q250400900088889999REMPEL ANDREAS                                                        WENDEL                             52147 KOELE                        19012404190124N0000000000                                                                    0768T25040090EUR008888999900000000000000   0000000000ICRAITRR                                                                                                                                                  DE TESTER1                                                               WENDEL 1234                        52134 KOELN                                                                                              /IT77W0853046040000439600007       EUR00000000000025500AZV 25,50 EURO                     TEST 777                                                                                                 00000000                         0100                                                              0                                                   000256Z000000000000025000000000000001                                                                                                                                                                                                                             "
+        },
+        "url": {
+          "raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment",
+          "protocol": "{{protocol}}",
+          "host": [
+            "{{url_xs2a}}"
+          ],
+          "path": [
+            "v1",
+            "payments",
+            "dtazv-payment"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Get DTAZV payment",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "*/*",
+            "type": "text"
+          },
+          {
+            "key": "X-Request-ID",
+            "value": "{{X-Request-ID}}",
+            "type": "text"
+          },
+          {
+            "key": "PSU-IP-Address",
+            "value": "{{ip_address}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment/{{payment_id}}",
+          "protocol": "{{protocol}}",
+          "host": [
+            "{{url_xs2a}}"
+          ],
+          "path": [
+            "v1",
+            "payments",
+            "dtazv-payment",
+            "{{payment_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Get DTAZV payment status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "X-Request-ID",
+            "value": "{{X-Request-ID}}",
+            "type": "text"
+          },
+          {
+            "key": "PSU-IP-Address",
+            "value": "{{ip_address}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment/{{payment_id}}/status",
+          "protocol": "{{protocol}}",
+          "host": [
+            "{{url_xs2a}}"
+          ],
+          "path": [
+            "v1",
+            "payments",
+            "dtazv-payment",
+            "{{payment_id}}",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -28,10 +28,10 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
+import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -52,20 +52,14 @@ public class PaymentModelMapperPsd2 {
     private final AccountModelMapper accountModelMapper;
     private final TppRedirectUriMapper tppRedirectUriMapper;
     private final AmountModelMapper amountModelMapper;
+    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
-    public Object mapToGetPaymentResponse12(Object payment, PaymentType type, String product) {
-        if (isRawPayment(payment)) {
+    public Object mapToGetPaymentResponse12(Object payment, PaymentType type, String paymentProduct) {
+        if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
             PisPaymentInfo paymentInfo = (PisPaymentInfo) payment;
-            String paymentResponse = convertResponseToRawData(paymentInfo.getPaymentData());
-
-            //TODO rework this check during refactoring of payment saving https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/517
-            if (paymentInfo.getPaymentProduct().contains("pain")) {
-                return paymentResponse;
-            }
-
-            // it will be useful when we implement raw json payment
-            return enrichPaymentWithStatus(paymentInfo.getTransactionStatus(), paymentResponse);
+            return convertResponseToRawData(paymentInfo.getPaymentData());
         }
+
         if (type == SINGLE) {
             SinglePayment xs2aPayment = (SinglePayment) payment;
             PaymentInitiationTarget2WithStatusResponse paymentResponse = new PaymentInitiationTarget2WithStatusResponse();
@@ -111,18 +105,6 @@ public class PaymentModelMapperPsd2 {
         }
     }
 
-    @Nullable
-    private Object enrichPaymentWithStatus(de.adorsys.psd2.xs2a.core.pis.TransactionStatus transactionStatus, Object resp) {
-        try {
-            Map paymentData = mapper.readValue(resp.toString(), Map.class);
-            paymentData.put("transactionStatus", transactionStatus);
-            return paymentData;
-        } catch (IOException e) {
-            log.warn("Can not convert payment to json ", e);
-        }
-        return null;
-    }
-
     public static PaymentInitiationStatusResponse200Json mapToStatusResponse12(de.adorsys.psd2.xs2a.core.pis.TransactionStatus status) {
         return new PaymentInitiationStatusResponse200Json().transactionStatus(mapToTransactionStatus12(status));
     }
@@ -166,10 +148,6 @@ public class PaymentModelMapperPsd2 {
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(mapper.convertValue(cancelPaymentResponse.getLinks(), Map.class));
         return response;
-    }
-
-    private boolean isRawPayment(Object payment) {
-        return payment instanceof PisPaymentInfo;
     }
 
     private List<PaymentInitiationTarget2Json> mapToBulkPartList12(List<SinglePayment> payments) {
