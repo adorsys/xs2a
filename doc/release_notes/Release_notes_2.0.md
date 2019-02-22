@@ -49,3 +49,15 @@ From now on, these SPI payment objects contain list of PSU Data:
 Due to multilevel authorisation of consents, we can store data of several PSUs for each consent.
 
 These changes also affect SPI level, meaning that from now on `SpiAccountConsent` contains list of `SpiPsuData` instead of a single object.
+
+## Added support of payment initiation of any payment in `application/xml` or `text/plain` format
+
+Xs2a payment initiation controller now supports initiation of payment in `application/xml` or `text/plain` format.
+To enable this feature, a non-standard payment product should be added to aspsp-profile `supportedPaymentTypeAndProductMatrix`(standard payment products are the 4 ones, defined by the Berlin Group Specification 1.3).
+The body of the payment is stored in the byte array and returned completely in the same form with get payment endpoint.
+Get payment status endpoint returns JSON response with current transaction status of the payment.
+
+## Bugfix: Removed duplicate transaction status in CMS for payment
+
+Both `pis_common_payment` and `pis_payment_data` tables contained `transaction_status` column. This lead to inconsistencies.
+Transaction status field is removed from `pis_payment_data` table.

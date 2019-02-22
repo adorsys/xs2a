@@ -356,7 +356,7 @@ public class PaymentService {
     private List<PisPayment> getPisPaymentFromCommonPaymentResponse(PisCommonPaymentResponse pisCommonPaymentResponse) {
         List<PisPayment> pisPayments = Optional.of(pisCommonPaymentResponse)
                                            .map(PisCommonPaymentResponse::getPayments)
-                                           .orElse(Collections.emptyList());
+                                           .orElseGet(Collections::emptyList);
 
         pisPayments.forEach(pmt -> {
             pmt.setPaymentId(pisCommonPaymentResponse.getExternalId());
