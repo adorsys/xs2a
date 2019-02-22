@@ -140,7 +140,6 @@
         <aspectj.version>1.9.2</aspectj.version>
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <google.guava.version>23.0</google.guava.version>
         <mockito-all.version>1.10.19</mockito-all.version>
         <postgresql.version>42.2.4</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
@@ -352,12 +351,6 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-all</artifactId>
                 <version>${hamcrest.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${google.guava.version}</version>
             </dependency>
 
             <dependency>
