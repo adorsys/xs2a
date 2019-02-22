@@ -61,3 +61,12 @@ Get payment status endpoint returns JSON response with current transaction statu
 
 Both `pis_common_payment` and `pis_payment_data` tables contained `transaction_status` column. This lead to inconsistencies.
 Transaction status field is removed from `pis_payment_data` table.
+
+## Split Swagger Documentation to CMS APIs to three Swagger Specifications
+Now instead one annotation `@EnableCmsSwagger` there are three annotations:
+* `@EnableCmsAspspApiSwagger`,
+* `@EnableCmsPsuApiSwagger`,
+* `@EnableCmsXs2aApiSwagger`.
+
+They may be used independently or all together to provide 3 Swagger specifications (may be selected in top right corner of Swagger UI).
+
