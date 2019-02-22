@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
+import de.adorsys.psd2.consent.psu.api.pis.AuthorisationTypeStatusesByPsu;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -39,9 +40,9 @@ public interface CmsPsuPisService {
     /**
      * Returns Payment object by its ID
      *
-     * @param psuIdData     PSU credentials data
-     * @param paymentId     ID of Payment
-     * @param instanceId    optional ID of particular service instance
+     * @param psuIdData  PSU credentials data
+     * @param paymentId  ID of Payment
+     * @param instanceId optional ID of particular service instance
      * @return Payment object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
@@ -68,7 +69,7 @@ public interface CmsPsuPisService {
     Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull String redirectId, @NotNull String instanceId);
 
     /**
-     * Updates a Status of Payment's autorisation by its ID and PSU ID
+     * Updates a Status of Payment's authorisation by its ID and PSU ID
      *
      * @param psuIdData       PSU credentials data
      * @param paymentId       ID of Payment
@@ -82,10 +83,19 @@ public interface CmsPsuPisService {
     /**
      * Updates a Status of Payment object by its ID and PSU ID
      *
-     * @param paymentId     ID of Payment
-     * @param status        Status of Payment to be set
-     * @param instanceId    optional ID of particular service instance
+     * @param paymentId  ID of Payment
+     * @param status     Status of Payment to be set
+     * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
      */
     boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status, @NotNull String instanceId);
+
+    /**
+     * Returns object with of psu ids and statuses of their authorisations for this payment divided by auth type
+     *
+     * @param paymentId  ID of Payment
+     * @param instanceId optional ID of particular service instance
+     * @return map of psu data and scaStatuses
+     */
+    Optional<AuthorisationTypeStatusesByPsu> getAuthorisationTypeStatusesByPsu(@NotNull String paymentId, @NotNull String instanceId);
 }

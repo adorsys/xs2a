@@ -279,7 +279,7 @@ public class PisCommonPaymentServiceInternalTest {
         when(pisAuthorisationRepository.save(any(PisAuthorization.class))).thenReturn(pisAuthorization);
         when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
-        when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(PSU_DATA);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), any())).thenReturn(Optional.of(PSU_DATA));
         when(cmsPsuService.enrichPsuData(any(), any())).thenReturn(Collections.singletonList(PSU_DATA));
 
         // When

@@ -383,15 +383,19 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      * @return PisAuthorization
      */
     private PisAuthorization saveNewAuthorisation(PisCommonPaymentData paymentData, CreatePisAuthorisationRequest request) {
-        PsuData psuData = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), paymentData.getPsuData());
-        paymentData.setPsuData(cmsPsuService.enrichPsuData(psuData, paymentData.getPsuData()));
-
         PisAuthorization consentAuthorisation = new PisAuthorization();
+        Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), paymentData.getPsuData());
+
+        if (psuDataOptional.isPresent()) {
+            PsuData psuData = psuDataOptional.get();
+            paymentData.setPsuData(cmsPsuService.enrichPsuData(psuData, paymentData.getPsuData()));
+            consentAuthorisation.setPsuData(psuData);
+        }
+
         consentAuthorisation.setExternalId(UUID.randomUUID().toString());
         consentAuthorisation.setScaStatus(STARTED);
         consentAuthorisation.setAuthorizationType(request.getAuthorizationType());
         consentAuthorisation.setRedirectUrlExpirationTimestamp(countRedirectUrlExpirationTimestampForAuthorisationType(request.getAuthorizationType()));
-        consentAuthorisation.setPsuData(psuData);
         consentAuthorisation.setScaApproach(request.getScaApproach());
         consentAuthorisation.setPaymentData(paymentData);
 

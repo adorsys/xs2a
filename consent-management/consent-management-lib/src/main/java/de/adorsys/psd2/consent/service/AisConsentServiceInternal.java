@@ -351,11 +351,15 @@ public class AisConsentServiceInternal implements AisConsentService {
             }
 
             AisConsent aisConsent = aisConsentAuthorization.getConsent();
-            PsuData psuData = cmsPsuService.definePsuDataForAuthorisation(psuRequest, aisConsent.getPsuDataList());
-            aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
+            Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuRequest, aisConsent.getPsuDataList());
+
+            if (psuDataOptional.isPresent()) {
+                PsuData psuData = psuDataOptional.get();
+                aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
+                aisConsentAuthorization.setPsuData(psuData);
+            }
 
             aisConsentAuthorization.setConsent(aisConsent);
-            aisConsentAuthorization.setPsuData(psuData);
         }
 
         if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
@@ -495,12 +499,16 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
-        PsuData psuData = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), aisConsent.getPsuDataList());
-        aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
-
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
+        Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), aisConsent.getPsuDataList());
+
+        if (psuDataOptional.isPresent()) {
+            PsuData psuData = psuDataOptional.get();
+            aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
+            consentAuthorization.setPsuData(psuData);
+        }
+
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPsuData(psuData);
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
@@ -539,8 +547,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private boolean isPsuDataRequestCorrect(PsuData psuRequest, PsuData psuAuth) {
-        return psuRequest != null
-                   || psuAuth == null
-                   || psuRequest.contentEquals(psuAuth);
+        return Optional.ofNullable(psuRequest)
+                   .map(psu -> psuAuth == null || psu.contentEquals(psuAuth))
+                   .orElse(false);
     }
 }
