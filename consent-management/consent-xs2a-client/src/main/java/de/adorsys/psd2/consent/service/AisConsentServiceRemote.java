@@ -184,4 +184,11 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
         return consentRestTemplate.exchange(remoteAisConsentUrls.updateScaApproach(), HttpMethod.PUT, null, Boolean.class, authorisationId, scaApproach)
                    .getBody();
     }
+
+    @Override
+    public boolean updateMultilevelScaRequired(String encryptedConsentId, boolean multilevelScaRequired) {
+        return consentRestTemplate.exchange(remoteAisConsentUrls.updateMultilevelScaRequired(),
+            HttpMethod.PUT, null, Boolean.class, encryptedConsentId, multilevelScaRequired)
+                   .getBody();
+    }
 }

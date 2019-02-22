@@ -141,19 +141,31 @@ public class ConsentService {
                        .build();
         }
 
-        Optional<Xs2aAccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(initiateAisConsentSpiResponse.getPayload().getAccountAccess());
+        SpiInitiateAisConsentResponse spiResponsePayload = initiateAisConsentSpiResponse.getPayload();
+        boolean multilevelScaRequired = spiResponsePayload.isMultilevelScaRequired();
+
+        updateMultilevelSca(consentId, multilevelScaRequired);
+
+        Optional<Xs2aAccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(spiResponsePayload.getAccountAccess());
         xs2aAccountAccess.ifPresent(accountAccess ->
                                         accountReferenceUpdater.rewriteAccountAccess(consentId, accountAccess));
 
-        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null)).build();
+        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, multilevelScaRequired)).build();
 
         // TODO add actual value during imlementation of multilevel sca https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/515
         if (isEmbeddedOrRedirectScaApproach()
-                && authorisationMethodDecider.isImplicitMethod(explicitPreferred, false)) {
+                && authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
             proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, consentId);
         }
 
         return createConsentResponseObject;
+    }
+
+    private void updateMultilevelSca(String consentId, boolean multilevelScaRequired) {
+        // default value is false, so we do the call only for non-default (true) case
+        if (multilevelScaRequired) {
+            aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+        }
     }
 
     /**

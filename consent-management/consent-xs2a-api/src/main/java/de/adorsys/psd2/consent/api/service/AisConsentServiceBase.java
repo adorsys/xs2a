@@ -173,4 +173,12 @@ interface AisConsentServiceBase {
      * @return <code>true</code> if authorisation was found and SCA approach updated, <code>false</code> otherwise
      */
     boolean updateScaApproach(String authorisationId, ScaApproach scaApproach);
+
+    /**
+     * Updates multilevel SCA required field
+     *
+     * @param consentId             String representation of the consent identifier
+     * @param multilevelScaRequired multilevel SCA required indicator
+     */
+    boolean updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired);
 }
