@@ -38,7 +38,7 @@ public enum BookingStatus {
     @JsonCreator
     public static BookingStatus forValue(String value) {
         for (BookingStatus status : values()) {
-            if (status.value.equals(value)) {
+            if (status.value.equalsIgnoreCase(value)) {
                 return status;
             }
         }
