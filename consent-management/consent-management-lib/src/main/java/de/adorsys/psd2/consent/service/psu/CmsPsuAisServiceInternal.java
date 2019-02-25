@@ -38,6 +38,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -89,6 +90,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         Optional<AisConsent> actualAisConsent = getActualAisConsent(consentId, instanceId);
 
         if (!actualAisConsent.isPresent()) {
+            log.info("CmsPsuAisServiceInternal.updateAuthorisationStatus failed, because consent with consent ID [{}] either has finalised status or not found", consentId);
             return false;
         }
 
@@ -104,7 +106,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
             return true;
         }
-
+        log.info("CmsPsuAisServiceInternal.confirmConsent failed because consent with consent ID [{}] has finalised status or not found",
+                 consentId);
         return false;
     }
 
@@ -139,6 +142,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             if (authorisation.isNotExpired()) {
                 return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
             }
+            else {
+                log.info("CmsPsuAisServiceInternal.checkRedirectAndGetConsent failed, because authorisation with ID [{}] expired",
+                         redirectId);
+            }
 
             updateAuthorisationOnExpiration(authorisation);
             String tppNokRedirectUri = authorisation.getConsent().getTppInfo().getNokRedirectUri();
@@ -146,15 +153,21 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return Optional.of(new CmsAisConsentResponse(tppNokRedirectUri));
         }
 
+        log.info("CmsPsuAisServiceInternal.checkRedirectAndGetConsent failed, because authorisation with ID [{}] not found or has finalised status",
+                 redirectId);
         return Optional.empty();
     }
 
     @Override
     @Transactional
     public boolean updateAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId) {
-        return getActualAisConsent(consentId, instanceId)
-                   .map(con -> updateAccountAccessInConsent(con, accountAccessRequest))
-                   .orElse(false);
+        Optional<AisConsent> aisConsentOptional = getActualAisConsent(consentId, instanceId);
+        if(aisConsentOptional.isPresent()) {
+            return updateAccountAccessInConsent(aisConsentOptional.get(), accountAccessRequest);
+        }
+        log.info("CmsPsuAisServiceInternal.updateAccountAccessInConsent failed, because AIS consent with ID [{}] not found or has finalised status",
+                 consentId);
+        return false;
     }
 
     private boolean updateAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {
@@ -180,6 +193,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             consent.setLastActionDate(LocalDate.now());
             aisConsentRepository.save(consent);
         }
+        else {
+            log.info("CmsPsuAisServiceInternal.getConsent failed in checkAndUpdateOnExpiration method, because consent is null or expired.");
+        }
         return consent;
     }
 
@@ -190,6 +206,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private boolean updateConsentStatus(AisConsent consent, ConsentStatus status) {
         if (consent.getConsentStatus().isFinalisedStatus()) {
+            log.info("CmsPsuAisServiceInternal.confirmConsent failed in updateConsentStatus method, because consent with consent ID [{}] has finalised status [{}]",
+                     consent.getExternalId(), status.getValue());
             return false;
         }
         consent.setLastActionDate(LocalDate.now());
@@ -199,24 +217,34 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private boolean updatePsuData(AisConsentAuthorization authorisation, PsuIdData psuIdData) {
         PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData);
+
         if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
+            log.info("CmsPsuAisServiceInternal.updatePsuDataInConsent failed in updatePsuData method, newPsuData or psuId in newPsuData is empty or null. Authorisation id: [{}]",
+                     authorisation.getId());
             return false;
         }
 
-        Optional.ofNullable(authorisation.getPsuData())
-            .ifPresent(psu -> newPsuData.setId(psu.getId()));
+        Optional<PsuData> optionalPsuData = Optional.ofNullable(authorisation.getPsuData());
+        if (optionalPsuData.isPresent()){
+           newPsuData.setId(optionalPsuData.get().getId());
+        }
+        else {
+            log.info("CmsPsuAisServiceInternal.updatePsuDataInConsent failed in updatePsuData method because authorisation [{}] contains no psu data.", authorisation.getId());
+        }
 
         authorisation.setPsuData(newPsuData);
         aisConsentAuthorisationRepository.save(authorisation);
         return true;
     }
 
-    private boolean updateScaStatus(@NotNull ScaStatus status, AisConsentAuthorization authorization) {
-        if (authorization.getScaStatus().isFinalisedStatus()) {
+    private boolean updateScaStatus(@NotNull ScaStatus status, AisConsentAuthorization authorisation) {
+        if (authorisation.getScaStatus().isFinalisedStatus()) {
+            log.info("CmsPsuAisServiceInternal.updateAuthorisationStatus failed in updateScaStatus method because authorisation [{}] has finalised status [{}].", authorisation.getId(),
+                     authorisation.getScaStatus().getValue());
             return false;
         }
-        authorization.setScaStatus(status);
-        return aisConsentAuthorisationRepository.save(authorization) != null;
+        authorisation.setScaStatus(status);
+        return aisConsentAuthorisationRepository.save(authorisation) != null;
     }
 
     private void updateAuthorisationOnExpiration(AisConsentAuthorization authorisation) {
@@ -227,6 +255,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAisConsent(AisConsent aisConsent, String
                                                                                                                  redirectId) {
         if (aisConsent == null) {
+            log.info("CmsPsuAisServiceInternal.checkRedirectAndGetConsent failed in createCmsAisConsentResponseFromAisConsent method, because AIS consent is null");
             return Optional.empty();
         }
 
@@ -236,6 +265,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                                                 .map(AisAccountConsent::getTppInfo);
 
         if (!tppInfoOptional.isPresent()) {
+            log.info("CmsPsuAisServiceInternal.checkRedirectAndGetConsent failed in createCmsAisConsentResponseFromAisConsent method, because TPP info is not present");
             return Optional.empty();
         }
 

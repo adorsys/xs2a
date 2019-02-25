@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFundsExportService {
@@ -49,6 +51,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
                                                        @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData,
                                                        @Nullable String instanceId) {
         if (StringUtils.isBlank(tppAuthorisationNumber)) {
+            log.info("CmsAspspPiisFundsExportServiceInternal.exportConsentsByTpp failed, tppAuthorisationNumber is empty or null.");
             return Collections.emptyList();
         }
 
@@ -62,6 +65,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
     public Collection<PiisConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
                                                        @Nullable LocalDate createDateTo, @Nullable String instanceId) {
         if (psuIdData == null || psuIdData.isEmpty()) {
+            log.info("CmsAspspPiisFundsExportServiceInternal.exportConsentsByPsu failed, psuIdData is empty or null.");
             return Collections.emptyList();
         }
 
@@ -77,6 +81,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
                                                              @Nullable LocalDate createDateTo,
                                                              @Nullable String instanceId) {
         if (StringUtils.isBlank(aspspAccountId)) {
+            log.info("CmsAspspPiisFundsExportServiceInternal.exportConsentsByAccountId failed, aspspAccountId is empty or null.");
             return Collections.emptyList();
         }
 

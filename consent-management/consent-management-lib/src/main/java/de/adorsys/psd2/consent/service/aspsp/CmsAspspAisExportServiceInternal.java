@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportService {
@@ -46,6 +48,8 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                              @Nullable LocalDate createDateTo,
                                                              @Nullable PsuIdData psuIdData, @NotNull String instanceId) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
+            log.info("CmsAspspAisExportServiceInternal.exportConsentsByTpp failed, tppAuthorisationNumber '{}' or instanceId '{}' is empty.", tppAuthorisationNumber,
+                     instanceId);
             return Collections.emptyList();
         }
 
@@ -66,6 +70,8 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                              @Nullable LocalDate createDateTo,
                                                              @NotNull String instanceId) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
+            log.info("CmsAspspAisExportServiceInternal.exportConsentsByPsu failed, psuIdData or instanceId '{}'is empty or null.",
+                     instanceId);
             return Collections.emptyList();
         }
 
@@ -86,13 +92,14 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                    @NotNull String instanceId) {
 
         if (StringUtils.isBlank(instanceId)) {
+            log.info("CmsAspspAisExportServiceInternal.exportConsentsByAccountId failed, instanceId is empty or null.");
             return Collections.emptyList();
         }
 
         return aisConsentRepository.findAll(aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId,
-                                                                                                              createDateFrom,
-                                                                                                              createDateTo,
-                                                                                                              instanceId
+                                                                                                                   createDateFrom,
+                                                                                                                   createDateTo,
+                                                                                                                   instanceId
         ))
                    .stream()
                    .map(aisConsentMapper::mapToAisAccountConsent)
