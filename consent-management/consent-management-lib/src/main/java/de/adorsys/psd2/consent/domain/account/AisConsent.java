@@ -17,10 +17,10 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ConsentType;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
@@ -136,12 +136,12 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "available_accounts")
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Type of the available accounts access type: ALL_ACCOUNTS, ALL_ACCOUNTS_WITH_BALANCES.", example = "ALL_ACCOUNTS")
-    private AisAccountAccessType availableAccounts;
+    private AccountAccessType availableAccounts;
 
     @Column(name = "all_psd2")
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Type of the account access types.", example = "ALL_ACCOUNTS")
-    private AisAccountAccessType allPsd2;
+    private AccountAccessType allPsd2;
 
     @Column(name = "multilevel_sca_required", nullable = false)
     private boolean multilevelScaRequired;

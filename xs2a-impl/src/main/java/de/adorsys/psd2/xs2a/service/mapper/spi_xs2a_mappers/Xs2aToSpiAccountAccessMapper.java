@@ -27,7 +27,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Xs2aToSpiAccountAccessMapper {
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
-    private final Xs2aToSpiAccountAccessTypeMapper xs2aToSpiAccountAccessTypeMapper;
 
     public SpiAccountAccess mapToAccountAccess(Xs2aAccountAccess access) {
         return Optional.ofNullable(access)
@@ -36,8 +35,8 @@ public class Xs2aToSpiAccountAccessMapper {
                                 xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getAccounts()),
                                 xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getBalances()),
                                 xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getTransactions()),
-                                xs2aToSpiAccountAccessTypeMapper.mapToAccountAccessType(aa.getAvailableAccounts()),
-                                xs2aToSpiAccountAccessTypeMapper.mapToAccountAccessType(aa.getAllPsd2())
+                                aa.getAvailableAccounts(),
+                                aa.getAllPsd2()
                             )
                    )
                    .orElse(null);

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -168,14 +169,14 @@ public class ConsentModelMapper {
                             mappedAccountAccess.setAvailableAccounts(
                                 AccountAccess.AvailableAccountsEnum.fromValue(
                                     Optional.ofNullable(access.getAvailableAccounts())
-                                        .map(Xs2aAccountAccessType::getDescription)
+                                        .map(AccountAccessType::getDescription)
                                         .orElse(null)
                                 )
                             );
                             mappedAccountAccess.setAllPsd2(
                                 AccountAccess.AllPsd2Enum.fromValue(
                                     Optional.ofNullable(access.getAllPsd2())
-                                        .map(Xs2aAccountAccessType::getDescription)
+                                        .map(AccountAccessType::getDescription)
                                         .orElse(null)
                                 )
                             );
@@ -186,15 +187,15 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private Xs2aAccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
+    private AccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
-                   .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
+                   .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElse(null);
     }
 
-    private Xs2aAccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
+    private AccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
         return Optional.ofNullable(allPsd2Enum)
-                   .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
+                   .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElse(null);
     }
 
