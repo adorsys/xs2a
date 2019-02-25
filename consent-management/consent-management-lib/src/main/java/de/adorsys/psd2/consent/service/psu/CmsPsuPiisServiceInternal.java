@@ -66,8 +66,8 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         Optional<PiisConsentEntity> piisConsentEntity = Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)))
                                                             .filter(con -> isPsuIdDataContentEquals(con, psuIdData) && !con.getConsentStatus().isFinalisedStatus());
-        revokeConsent(piisConsentEntity.get());
         if (piisConsentEntity.isPresent()) {
+            revokeConsent(piisConsentEntity.get());
             return true;
         }
 
