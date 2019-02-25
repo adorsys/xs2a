@@ -64,5 +64,14 @@
     <include relativeToChangelogFile="true" file="migration/0039-add-multiple-sca-required-column-to-pis-commom-payment.xml"/>
     <include relativeToChangelogFile="true" file="migration/0040-add-not-null-constraint-to-common-payment-id.xml"/>
     <include relativeToChangelogFile="true" file="migration/0041-add-creation-timestamp-to-piis-consent.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0042-add-tan-to-pis-consent-authorization.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0043-create-pis-authorization-sca-approach.xml"/>
     <include relativeToChangelogFile="true" file="migration/0044-add-columns-to-ais-consent.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0045-create-ais-available-sca-method.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0046-change-authority-id-type-to-varchar.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0047-add-ais-consent-psu-data-table.xml"/>
+    <include relativeToChangelogFile="true"
+             file="migration/0048-add-column-sca-approach-for-ais-consent-authorisation-and-pis-authorisation.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0049-remove-transaction-status-column-from-pis-payment-data-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0050-add-multiple-sca-required-column-to-ais-consent.xml"/>
 </databaseChangeLog>

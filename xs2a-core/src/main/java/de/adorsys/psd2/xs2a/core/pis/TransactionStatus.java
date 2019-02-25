@@ -50,6 +50,10 @@ public enum TransactionStatus {
         return finalisedStatus;
     }
 
+    public boolean isNotFinalisedStatus() {
+        return !isFinalisedStatus();
+    }
+
     TransactionStatus(String transactionStatus, boolean finalisedStatus) {
         this.transactionStatus = transactionStatus;
         this.finalisedStatus = finalisedStatus;

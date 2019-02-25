@@ -299,7 +299,6 @@ public class CmsAspspPisExportServiceInternalTest {
     private List<PisPaymentData> buildPisPaymentDataListForCommonData() {
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentId(PAYMENT_ID);
-        pisPaymentData.setTransactionStatus(TransactionStatus.ACCP);
         pisPaymentData.setAmount(new BigDecimal("1000"));
         pisPaymentData.setCurrency(Currency.getInstance("EUR"));
 

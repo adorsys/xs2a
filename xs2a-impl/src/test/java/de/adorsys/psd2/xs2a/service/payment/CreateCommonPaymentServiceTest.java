@@ -25,17 +25,17 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
-import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
-import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentServiceResolver;
 import org.junit.Before;
@@ -45,7 +45,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -64,6 +66,9 @@ public class CreateCommonPaymentServiceTest {
     private final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private final CommonPaymentInitiationResponse RESPONSE = buildCommonPaymentInitiationResponse();
+    private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
+    private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null);
+    private final TppInfo WRONG_TPP_INFO = new TppInfo();
 
     @InjectMocks
     private CreateCommonPaymentService createCommonPaymentService;
@@ -86,6 +91,7 @@ public class CreateCommonPaymentServiceTest {
     @Before
     public void init() {
         when(scaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA)).thenReturn(RESPONSE);
+        when(scaPaymentService.createCommonPayment(COMMON_PAYMENT, WRONG_TPP_INFO, PRODUCT, WRONG_PSU_DATA)).thenReturn(buildSpiErrorForCommonPayment());
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
@@ -104,6 +110,23 @@ public class CreateCommonPaymentServiceTest {
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
+    }
+
+    @Test
+    public void initiate_payment_spi_fail() {
+        // Given
+        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
+
+        PaymentInitiationParameters param = buildPaymentInitiationParameters();
+        param.setPsuData(WRONG_PSU_DATA);
+
+        //When
+        ResponseObject<PaymentInitiationResponse> actualResponse = createCommonPaymentService.createPayment(COMMON_PAYMENT, param, WRONG_TPP_INFO);
+
+        //Then
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+        assertThat(actualResponse.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
     }
 
     private CommonPayment buildCommonPayment() {
@@ -139,6 +162,14 @@ public class CreateCommonPaymentServiceTest {
         tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
         tppInfo.setAuthorityId("authorityId");
         return tppInfo;
+    }
+    private CommonPaymentInitiationResponse buildSpiErrorForCommonPayment() {
+        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                                      .errorType(ErrorType.PIIS_400)
+                                      .messages(ERROR_MESSAGE_TEXT)
+                                      .build();
+
+        return new CommonPaymentInitiationResponse(errorHolder);
     }
 
     private PisPaymentInfo buildPisPaymentInfoRequest() {

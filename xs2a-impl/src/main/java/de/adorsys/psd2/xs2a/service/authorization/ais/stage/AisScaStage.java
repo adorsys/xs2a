@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticat
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +50,7 @@ public abstract class AisScaStage<T, R> implements Function<T, R> {
     protected final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     protected final SpiErrorMapper spiErrorMapper;
 
-    UpdateConsentPsuDataResponse createFailedResponse(MessageError messageError, List<String> messages) {
+    protected UpdateConsentPsuDataResponse createFailedResponse(MessageError messageError, List<String> messages) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setMessageError(messageError);
         response.setScaStatus(ScaStatus.FAILED);
@@ -70,9 +69,7 @@ public abstract class AisScaStage<T, R> implements Function<T, R> {
         }
 
         return Optional.ofNullable(aisConsentService.getAccountConsentAuthorizationById(request.getAuthorizationId(), request.getConsentId()))
-                   .map(AccountConsentAuthorization::getPsuId)
-                   .filter(StringUtils::isNotBlank)
-                   .map(id -> new PsuIdData(id, null, null, null))
+                   .map(AccountConsentAuthorization::getPsuIdData)
                    .orElse(psuDataInRequest);
     }
 

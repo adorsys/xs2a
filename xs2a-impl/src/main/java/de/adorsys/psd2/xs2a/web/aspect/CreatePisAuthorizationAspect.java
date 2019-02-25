@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -29,6 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+
+import java.util.EnumSet;
+
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.DECOUPLED;
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 
 @Slf4j
 @Aspect
@@ -53,7 +57,7 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
         Links links = new Links();
         links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentService, paymentProduct, paymentId));
         links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentService, paymentProduct, paymentId));
-        if (ScaApproach.EMBEDDED == scaApproachResolver.resolveScaApproach()) {
+        if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
             String path = "/v1/{paymentService}/{paymentProduct}/{paymentId}/authorisations/{authorisationId}";
             if (psuData.isEmpty()) {
                 links.setStartAuthorisationWithPsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));

@@ -19,9 +19,9 @@ package de.adorsys.psd2.aspsp.profile.service;
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import org.assertj.core.api.Assertions;
@@ -34,8 +34,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
-import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
+import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)

@@ -19,12 +19,13 @@ package de.adorsys.psd2.xs2a.web.controller;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.*;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -35,6 +36,7 @@ import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,15 +46,19 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.*;
@@ -60,6 +66,7 @@ import static org.springframework.http.HttpStatus.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentControllerTest {
     private static final String CORRECT_PAYMENT_ID = "33333-444444-55555-55555";
+    private static final String CORRECT_PAYMENT_ID_2 = "33333-444444-55555-66666";
     private static final String WRONG_PAYMENT_ID = "wrong_payment_id";
     private static final String REDIRECT_LINK = "http://localhost:4200/consent/confirmation/pis";
     private static final UUID REQUEST_ID = UUID.fromString("ddd36e05-d67a-4830-93ad-9462f71ae1e6");
@@ -98,11 +105,11 @@ public class PaymentControllerTest {
 
     @Before
     public void setUp() {
-        when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(CORRECT_PAYMENT_ID)))
+        when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
-        when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(WRONG_PAYMENT_ID)))
-            .thenReturn(ResponseObject.builder().fail(new MessageError(ErrorType.PIS_403,
-                                                                       new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+        when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
+            .thenReturn(ResponseObject.builder().fail(PIS_403,
+                of(RESOURCE_UNKNOWN_403)).build());
         when(aspspProfileService.getPisRedirectUrlToAspsp())
             .thenReturn(REDIRECT_LINK);
         when(referenceValidationService.validateAccountReferences(any()))
@@ -111,11 +118,11 @@ public class PaymentControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() {
-        when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(CORRECT_PAYMENT_ID)))
+        when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
             .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
-        when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(WRONG_PAYMENT_ID)))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(new MessageError(ErrorType.PIS_403,
-                                                                                          new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+        when(xs2aPaymentService.getPaymentStatusById(eq(PaymentType.SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
+            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(PIS_403,
+                TppMessageInformation.of(RESOURCE_UNKNOWN_403)).build());
     }
 
     @Test
@@ -128,9 +135,9 @@ public class PaymentControllerTest {
 
         //When
         ResponseEntity response = paymentController.getPaymentInformation(SINGLE.getValue(), PRODUCT, CORRECT_PAYMENT_ID,
-                                                                          REQUEST_ID, null, null, null, null, null,
-                                                                          null, null, null, null, null,
-                                                                          null, null, null);
+            REQUEST_ID, null, null, null, null, null,
+            null, null, null, null, null,
+            null, null, null);
 
         //Then
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -143,9 +150,9 @@ public class PaymentControllerTest {
 
         //When
         ResponseEntity response = paymentController.getPaymentInformation(SINGLE.getValue(), WRONG_PAYMENT_ID,
-                                                                          null, null, null, null, null, null,
-                                                                          null, null, null, null, null,
-                                                                          null, null, null, null);
+            null, null, null, null, null, null,
+            null, null, null, null, null,
+            null, null, null, null);
 
         //Then
         assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -167,7 +174,7 @@ public class PaymentControllerTest {
     public void getTransactionStatusById_Success() {
         doReturn(new ResponseEntity<>(getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
-        when(xs2aPaymentService.getPaymentStatusById(SINGLE, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
 
         //Given:
         PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus(de.adorsys.psd2.model.TransactionStatus.ACCP);
@@ -195,10 +202,10 @@ public class PaymentControllerTest {
 
     @Test
     public void getTransactionStatusById_WrongId() {
-        doReturn(new ResponseEntity<>(new MessageError(ErrorType.PIS_403,
-                                                       new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403)), FORBIDDEN)).when(responseMapper).ok(any(), any());
-        when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
-        when(xs2aPaymentService.getPaymentStatusById(SINGLE, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().fail(createMessageError(ErrorType.PIS_403, RESOURCE_UNKNOWN_403)).build());
+        doReturn(new ResponseEntity<>(new MessageError(PIS_403,
+            of(RESOURCE_UNKNOWN_403)), FORBIDDEN)).when(responseMapper).ok(any(), any());
+        when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().fail(createMessageError(PIS_403, RESOURCE_UNKNOWN_403)).build());
         //Given:
         HttpStatus expectedHttpStatus = FORBIDDEN;
 
@@ -230,10 +237,10 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity<PaymentInitiationCancelResponse204202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse204202>) paymentController.cancelPayment(SINGLE.getValue(), PRODUCT,
-                                                                                                                                                                     CORRECT_PAYMENT_ID, null, null,
-                                                                                                                                                                     null, null, null, null, null,
-                                                                                                                                                                     null, null,
-                                                                                                                                                                     null, null, null, null, null);
+            CORRECT_PAYMENT_ID, null, null,
+            null, null, null, null, null,
+            null, null,
+            null, null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -253,10 +260,10 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity<PaymentInitiationCancelResponse204202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse204202>) paymentController.cancelPayment(paymentType.getValue(),
-                                                                                                                                                                     CORRECT_PAYMENT_ID, null, null, null,
-                                                                                                                                                                     null, null, null, null, null,
-                                                                                                                                                                     null, null,
-                                                                                                                                                                     null, null, null, null, null);
+            CORRECT_PAYMENT_ID, null, null, null,
+            null, null, null, null, null,
+            null, null,
+            null, null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -273,10 +280,10 @@ public class PaymentControllerTest {
         ResponseEntity<PaymentInitiationCancelResponse204202> expectedResult = ResponseEntity.badRequest().build();
 
         ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(), PRODUCT,
-                                                                      CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
-                                                                      null, null, null, null, null,
-                                                                      null, null,
-                                                                      null, null, null, null);
+            CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
+            null, null, null, null, null,
+            null, null,
+            null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -292,10 +299,10 @@ public class PaymentControllerTest {
         ResponseEntity<PaymentInitiationCancelResponse204202> expectedResult = ResponseEntity.badRequest().build();
         // When
         ResponseEntity actualResult = paymentController.cancelPayment(paymentType.getValue(), PRODUCT,
-                                                                      CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
-                                                                      null, null, null, null,
-                                                                      null, null,
-                                                                      null, null, null, null, null);
+            CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
+            null, null, null, null,
+            null, null,
+            null, null, null, null, null);
 
         // Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -316,13 +323,13 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity actual = paymentController.getPaymentInitiationScaStatus(SINGLE.getValue(), PRODUCT, CORRECT_PAYMENT_ID,
-                                                                                AUTHORISATION_ID, REQUEST_ID,
-                                                                                null, null,
-                                                                                null, null,
-                                                                                null, null,
-                                                                                null, null,
-                                                                                null, null,
-                                                                                null, null, null);
+            AUTHORISATION_ID, REQUEST_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
@@ -333,17 +340,17 @@ public class PaymentControllerTest {
     public void getPaymentInitiationScaStatus_failure() {
         when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID))
             .thenReturn(buildScaStatusError());
-        when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
+        when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
         // When
         ResponseEntity actual = paymentController.getPaymentInitiationScaStatus(SINGLE.getValue(), PRODUCT, WRONG_PAYMENT_ID,
-                                                                                AUTHORISATION_ID, REQUEST_ID,
-                                                                                null, null,
-                                                                                null, null,
-                                                                                null, null,
-                                                                                null, null,
-                                                                                null, null,
-                                                                                null, null, null);
+            AUTHORISATION_ID, REQUEST_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -364,13 +371,13 @@ public class PaymentControllerTest {
 
         // When
         ResponseEntity actual = paymentController.getPaymentCancellationScaStatus(SINGLE.getValue(), PRODUCT, CORRECT_PAYMENT_ID,
-                                                                                  CANCELLATION_AUTHORISATION_ID, REQUEST_ID,
-                                                                                  null, null,
-                                                                                  null, null,
-                                                                                  null, null,
-                                                                                  null, null,
-                                                                                  null, null,
-                                                                                  null, null, null);
+            CANCELLATION_AUTHORISATION_ID, REQUEST_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
@@ -381,17 +388,142 @@ public class PaymentControllerTest {
     public void getPaymentCancellationScaStatus_failure() {
         when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
             .thenReturn(buildScaStatusError());
-        when(responseErrorMapper.generateErrorResponse(createMessageError(ErrorType.PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
+        when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
         // When
         ResponseEntity actual = paymentController.getPaymentCancellationScaStatus(SINGLE.getValue(), PRODUCT, WRONG_PAYMENT_ID,
-                                                                                  CANCELLATION_AUTHORISATION_ID, REQUEST_ID,
-                                                                                  null, null,
-                                                                                  null, null,
-                                                                                  null, null,
-                                                                                  null, null,
-                                                                                  null, null,
-                                                                                  null, null, null);
+            CANCELLATION_AUTHORISATION_ID, REQUEST_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformationClassCheck_success() {
+        when(consentModelMapper.mapToCancellationList(any()))
+            .thenCallRealMethod();
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID))
+            .thenReturn(getCancellationResponseList(Collections.singletonList(CORRECT_PAYMENT_ID)));
+
+        when(responseMapper.ok(any(), any()))
+            .thenCallRealMethod();
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(OK);
+        assertTrue(actual.getBody() instanceof CancellationList);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformation_success() {
+        when(consentModelMapper.mapToCancellationList(any()))
+            .thenCallRealMethod();
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID))
+            .thenReturn(getCancellationResponseList(Collections.singletonList(CORRECT_PAYMENT_ID)));
+
+        when(responseMapper.ok(any(), any()))
+            .thenCallRealMethod();
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(OK);
+        assertThat(((CancellationList) actual.getBody()).size()).isEqualTo(1);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformationManyIds_success() {
+        when(consentModelMapper.mapToCancellationList(any()))
+            .thenCallRealMethod();
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID))
+            .thenReturn(getCancellationResponseList(Arrays.asList(CORRECT_PAYMENT_ID, CORRECT_PAYMENT_ID_2)));
+
+        when(responseMapper.ok(any(), any()))
+            .thenCallRealMethod();
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null);
+
+        // Then
+        assertThat(((CancellationList) actual.getBody()).size()).isEqualTo(2);
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformationWithNull_success() {
+        when(consentModelMapper.mapToCancellationList(any()))
+            .thenCallRealMethod();
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(anyString()))
+            .thenReturn(getCancellationResponseNullList());
+
+        when(responseMapper.ok(any(), any()))
+            .thenCallRealMethod();
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null);
+
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(OK);
+        assertTrue(CollectionUtils.isEmpty((CancellationList) actual.getBody()));
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformation_error() {
+        when(responseErrorMapper.generateErrorResponse(any()))
+            .thenReturn(ResponseEntity.status(FORBIDDEN).build());
+
+        when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(anyString()))
+            .thenReturn(getCancellationResponseWithError());
+
+        // When
+        ResponseEntity actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(null, null, CORRECT_PAYMENT_ID,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null,
+            null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -411,7 +543,7 @@ public class PaymentControllerTest {
 
     private ResponseObject<CancelPaymentResponse> getErrorOnPaymentCancellation() {
         return ResponseObject.<CancelPaymentResponse>builder()
-                   .fail(new MessageError(ErrorType.PIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)))
+                   .fail(ErrorType.PIS_400, of(MessageErrorCode.FORMAT_ERROR))
                    .build();
     }
 
@@ -421,12 +553,31 @@ public class PaymentControllerTest {
 
     private ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> buildScaStatusError() {
         return ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
-                   .fail(new MessageError(ErrorType.PIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_403)))
+                   .fail(PIS_403, of(MessageErrorCode.RESOURCE_UNKNOWN_403))
                    .build();
     }
 
     private MessageError createMessageError(ErrorType errorType, MessageErrorCode errorCode) {
-        return new MessageError(errorType, new TppMessageInformation(MessageCategory.ERROR, errorCode));
+        return new MessageError(errorType, of(errorCode));
     }
+
+    private ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationResponseList(List<String> paymentIds) {
+        return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
+                   .body(new Xs2aPaymentCancellationAuthorisationSubResource(paymentIds))
+                   .build();
+    }
+
+    private ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationResponseNullList() {
+        return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
+                   .body(new Xs2aPaymentCancellationAuthorisationSubResource(null))
+                   .build();
+    }
+
+    private ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationResponseWithError() {
+        return ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
+                   .fail(new MessageError(ErrorHolder.builder(MessageErrorCode.PAYMENT_FAILED).errorType(PIS_403).build()))
+                   .build();
+    }
+
 
 }

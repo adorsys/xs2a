@@ -18,17 +18,13 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
-import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
-import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -36,55 +32,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePaymentStatusAfterSpiService {
-    private final PisPaymentDataRepository pisPaymentDataRepository;
     private final CommonPaymentDataService commonPaymentDataService;
 
     @Override
     @Transactional
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
-        if (!paymentDataOptional.isPresent()) {
+        if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
             return false;
         }
 
-        boolean commonResult = commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);
-
-        if (!commonResult) {
-            return false;
-        }
-        
-        Optional<List<PisPaymentData>> list = pisPaymentDataRepository.findByPaymentId(paymentId);
-
-        return list.map(pisPaymentData -> updateStatusInPaymentDataList(pisPaymentData, status))
-                   .orElse(commonResult);
-
-    }
-
-    private boolean updateStatusInPaymentDataList(List<PisPaymentData> payments, TransactionStatus newStatus) {
-        if (CollectionUtils.isEmpty(payments)) {
-            return false;
-        }
-
-        if (isChangingFinaliseStatus(payments, newStatus)) {
-            return false;
-        }
-
-        for (PisPaymentData pisPaymentData : payments) {
-            if (pisPaymentData.getTransactionStatus().isFinalisedStatus()) {
-                continue;
-            }
-
-            pisPaymentData.setTransactionStatus(newStatus);
-            pisPaymentDataRepository.save(pisPaymentData);
-        }
-
-        return true;
-    }
-
-    private boolean isChangingFinaliseStatus(List<PisPaymentData> payments, TransactionStatus newStatus) {
-        return payments.stream()
-                   .map(PisPaymentData::getTransactionStatus)
-                   .filter(TransactionStatus::isFinalisedStatus)
-                   .anyMatch(t -> t != newStatus);
+        return commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);
     }
 }

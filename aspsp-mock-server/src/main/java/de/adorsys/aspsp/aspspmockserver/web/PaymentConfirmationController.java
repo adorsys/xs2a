@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.domain.Confirmation;
-import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
@@ -76,7 +75,7 @@ public class PaymentConfirmationController {
     })
     public ResponseEntity confirmTan(@RequestBody Confirmation confirmation) {
         return CollectionUtils.isNotEmpty(paymentService.getPaymentById(confirmation.getPaymentId()))
-                   ? tanConfirmationService.confirmTan(confirmation.getPsuId(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.PAYMENT)
+                   ? tanConfirmationService.confirmTan(confirmation.getPsuId(), confirmation.getTanNumber())
                    : new ResponseEntity<>(new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request"), HttpStatus.BAD_REQUEST);
     }
 }

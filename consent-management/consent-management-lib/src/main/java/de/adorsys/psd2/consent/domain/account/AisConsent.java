@@ -27,6 +27,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -76,9 +77,11 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
     private LocalDate expireDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "psu_id")
-    private PsuData psuData;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "ais_consent_psu_data",
+        joinColumns = @JoinColumn(name = "ais_consent_id"),
+        inverseJoinColumns = @JoinColumn(name = "psu_data_id"))
+    private List<PsuData> psuDataList = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id", nullable = false)
@@ -140,6 +143,8 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Type of the account access types.", example = "ALL_ACCOUNTS")
     private AisAccountAccessType allPsd2;
 
+    @Column(name = "multilevel_sca_required", nullable = false)
+    private boolean multilevelScaRequired;
 
     public List<TppAccountAccess> getAccesses() {
         return new ArrayList<>(accesses);
@@ -180,5 +185,10 @@ public class AisConsent extends InstanceDependableEntity {
 
     public boolean isOneAccessType() {
         return !recurringIndicator;
+    }
+
+    public boolean isWrongConsentData() {
+        return CollectionUtils.isEmpty(psuDataList)
+                   || tppInfo == null;
     }
 }

@@ -36,12 +36,12 @@ import java.util.Optional;
 @Component
 public class Xs2aPisCommonPaymentMapper {
 
-    public Optional<Xs2aCreatePisAuthorisationResponse> mapToXsa2CreatePisAuthorizationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.of(new Xs2aCreatePisAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType));
+    public Optional<Xs2aCreatePisAuthorisationResponse> mapToXsa2CreatePisAuthorisationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
+        return Optional.of(new Xs2aCreatePisAuthorisationResponse(response.getAuthorizationId(), ScaStatus.STARTED, paymentType));
     }
 
     public Optional<Xs2aCreatePisCancellationAuthorisationResponse> mapToXs2aCreatePisCancellationAuthorisationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(response.getAuthorizationId(), ScaStatus.RECEIVED, paymentType));
+        return Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(response.getAuthorizationId(), ScaStatus.STARTED, paymentType));
     }
 
     public Xs2aPisCommonPayment mapToXs2aPisCommonPayment(CreatePisCommonPaymentResponse response, PsuIdData psuData) {

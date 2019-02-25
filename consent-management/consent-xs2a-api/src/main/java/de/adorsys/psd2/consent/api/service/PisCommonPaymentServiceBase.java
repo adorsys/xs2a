@@ -17,15 +17,14 @@
 package de.adorsys.psd2.consent.api.service;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
@@ -71,22 +70,20 @@ interface PisCommonPaymentServiceBase {
     /**
      * Creates payment authorization
      *
-     * @param paymentId         String representation of the payment identifier
-     * @param authorizationType Type of authorisation
-     * @param psuData           Information about PSU
+     * @param paymentId String representation of the payment identifier
+     * @param request   PIS authorisation request
      * @return Response containing authorization id
      */
-    Optional<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
+    Optional<CreatePisAuthorisationResponse> createAuthorization(String paymentId, CreatePisAuthorisationRequest request);
 
     /**
      * Creates payment authorization cancellation
      *
-     * @param paymentId         String representation of the payment identifier
-     * @param authorizationType Type of authorisation
-     * @param psuData           Information about PSU
+     * @param paymentId               String representation of the payment identifier
+     * @param pisAuthorisationRequest PIS authorisation request
      * @return Response containing authorization id
      */
-    Optional<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CmsAuthorisationType authorizationType, PsuIdData psuData);
+    Optional<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest pisAuthorisationRequest);
 
     /**
      * Updates payment authorization
@@ -156,4 +153,31 @@ interface PisCommonPaymentServiceBase {
      * @return Response containing information about PSU
      */
     Optional<List<PsuIdData>> getPsuDataListByPaymentId(String paymentId);
+
+    /**
+     * Checks if requested authentication method is decoupled.
+     *
+     * @param authorisationId        String representation of the authorisation identifier
+     * @param authenticationMethodId String representation of the available authentication method identifier
+     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
+     */
+    boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId);
+
+    /**
+     * Saves authentication methods in provided authorisation
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param methods         List of authentication methods to be saved
+     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
+     */
+    boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods);
+
+    /**
+     * Updates pis sca approach
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param scaApproach     chosen sca approach
+     * @return <code>true</code> if authorisation was found and sca approach updated, <code>false</code> otherwise
+     */
+    boolean updateScaApproach(String authorisationId, ScaApproach scaApproach);
 }

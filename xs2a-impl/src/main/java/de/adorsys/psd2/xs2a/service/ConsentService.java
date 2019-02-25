@@ -26,9 +26,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.*;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
@@ -38,11 +36,11 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -61,6 +59,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
+
 @Service
 @RequiredArgsConstructor
 //TODO Refactor Service: split responsibilities https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
@@ -71,6 +73,7 @@ public class ConsentService {
     private final AisConsentDataService aisConsentDataService;
     private final AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
     private final TppService tppService;
+    private final AisEndpointAccessCheckerService endpointAccessCheckerService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final AisConsentSpi aisConsentSpi;
@@ -90,6 +93,8 @@ public class ConsentService {
      *
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
      * @param psuData PsuIdData container of authorisation data about PSU
+     * @param explicitPreferred is TPP explicit authorisation preferred
+     * @param tppRedirectUri URI for redirect SCA approach
      * @return CreateConsentResponse representing the complete response to create consent request
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred, TppRedirectUri tppRedirectUri) {
@@ -97,7 +102,7 @@ public class ConsentService {
         if (aspspProfileService.isPsuInInitialRequestMandated()
                 && psuData.isEmpty()) {
             return ResponseObject.<CreateConsentResponse>builder()
-                       .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR, MESSAGE_ERROR_NO_PSU)))
+                       .fail(AIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU))
                        .build();
         }
 
@@ -118,7 +123,7 @@ public class ConsentService {
 
         if (StringUtils.isBlank(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder()
-                       .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400)))
+                       .fail(AIS_400, of(RESOURCE_UNKNOWN_400))
                        .build();
         }
 
@@ -136,19 +141,31 @@ public class ConsentService {
                        .build();
         }
 
-        Optional<Xs2aAccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(initiateAisConsentSpiResponse.getPayload().getAccountAccess());
+        SpiInitiateAisConsentResponse spiResponsePayload = initiateAisConsentSpiResponse.getPayload();
+        boolean multilevelScaRequired = spiResponsePayload.isMultilevelScaRequired();
+
+        updateMultilevelSca(consentId, multilevelScaRequired);
+
+        Optional<Xs2aAccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(spiResponsePayload.getAccountAccess());
         xs2aAccountAccess.ifPresent(accountAccess ->
                                         accountReferenceUpdater.rewriteAccountAccess(consentId, accountAccess));
 
-        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null)).build();
+        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, multilevelScaRequired)).build();
 
         // TODO add actual value during imlementation of multilevel sca https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/515
         if (isEmbeddedOrRedirectScaApproach()
-                && authorisationMethodDecider.isImplicitMethod(explicitPreferred, false)) {
+                && authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
             proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, consentId);
         }
 
         return createConsentResponseObject;
+    }
+
+    private void updateMultilevelSca(String consentId, boolean multilevelScaRequired) {
+        // default value is false, so we do the call only for non-default (true) case
+        if (multilevelScaRequired) {
+            aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+        }
     }
 
     /**
@@ -169,7 +186,7 @@ public class ConsentService {
         if (consentStatus.isPresent()) {
             responseBuilder = responseBuilder.body(new ConsentStatusResponse(consentStatus.get()));
         } else {
-            responseBuilder = responseBuilder.fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)));
+            responseBuilder = responseBuilder.fail(AIS_400, of(CONSENT_UNKNOWN_400));
         }
         return responseBuilder.build();
     }
@@ -187,7 +204,8 @@ public class ConsentService {
         if (accountConsent != null) {
             // TODO this is not correct. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
             // PSU Data here should be provided from actual request headers. Data in consent is provided in consent
-            SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(accountConsent.getPsuData());
+            //TODO provide correct PSU Data to the SPI https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/701
+            SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
             SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
             aisConsentDataService.updateAspspConsentData(revokeAisConsentResponse.getAspspConsentData());
@@ -207,7 +225,7 @@ public class ConsentService {
         }
 
         return ResponseObject.<Void>builder()
-                   .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
+                   .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
     }
 
     /**
@@ -221,7 +239,7 @@ public class ConsentService {
 
         AccountConsent consent = getInitialAccountConsent(consentId);
         return consent == null
-                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(ErrorType.AIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build()
+                   ? ResponseObject.<AccountConsent>builder().fail(AIS_403, of(CONSENT_UNKNOWN_403)).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
@@ -231,25 +249,25 @@ public class ConsentService {
 
         if (accountConsent == null) {
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
+                       .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
         }
 
         if (LocalDate.now().compareTo(accountConsent.getValidUntil()) >= 0) {
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
+                       .fail(AIS_401, of(CONSENT_EXPIRED)).build();
         }
 
         ConsentStatus consentStatus = accountConsent.getConsentStatus();
         if (consentStatus != ConsentStatus.VALID) {
             MessageErrorCode messageErrorCode = consentStatus == ConsentStatus.RECEIVED
-                                                    ? MessageErrorCode.CONSENT_INVALID
-                                                    : MessageErrorCode.CONSENT_EXPIRED;
+                                                    ? CONSENT_INVALID
+                                                    : CONSENT_EXPIRED;
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, messageErrorCode))).build();
+                       .fail(AIS_401, of(messageErrorCode)).build();
         }
         if (!accountConsent.isValidFrequency()) {
             return ResponseObject.<AccountConsent>builder()
-                       .fail(new MessageError(ErrorType.AIS_429, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.ACCESS_EXCEEDED))).build();
+                       .fail(AIS_429, of(ACCESS_EXCEEDED)).build();
         }
         return ResponseObject.<AccountConsent>builder().body(accountConsent).build();
     }
@@ -266,32 +284,38 @@ public class ConsentService {
         AccountConsent accountConsent = getValidatedAccountConsent(consentId);
         if (accountConsent != null && accountConsent.isExpired()) {
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                       .fail(new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED)))
+                       .fail(AIS_401, of(CONSENT_EXPIRED))
                        .build();
         }
 
         return aisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
                    .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                                  .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
+                                  .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                   ::build);
     }
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
         xs2aEventService.recordAisTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
 
+        if (!endpointAccessCheckerService.isEndpointAccessible(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId())) {
+            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                .fail(AIS_403, of(SERVICE_BLOCKED))
+                .build();
+        }
+
         // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
         AccountConsent accountConsent = getValidatedAccountConsent(updatePsuData.getConsentId());
         if (accountConsent != null && accountConsent.isExpired()) {
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(new MessageError(ErrorType.AIS_401, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED)))
+                       .fail(AIS_401, of(CONSENT_EXPIRED))
                        .build();
         }
 
         return Optional.ofNullable(aisScaAuthorisationServiceResolver.getService().getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId()))
                    .map(conAuth -> getUpdateConsentPsuDataResponse(updatePsuData, conAuth))
                    .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                  .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
+                                  .fail(AIS_404, of(RESOURCE_UNKNOWN_404))
                                   ::build);
     }
 
@@ -305,7 +329,7 @@ public class ConsentService {
                                                .build())
                                  .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response)::build))
                    .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                  .fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)))
+                                  .fail(AIS_400, of(FORMAT_ERROR))
                                   ::build);
     }
 
@@ -315,7 +339,7 @@ public class ConsentService {
         return aisScaAuthorisationServiceResolver.getService().getAuthorisationSubResources(consentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                                  .fail(new MessageError(ErrorType.AIS_404, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
+                                  .fail(AIS_404, of(RESOURCE_UNKNOWN_404))
                                   ::build);
     }
 
@@ -333,7 +357,7 @@ public class ConsentService {
 
         if (!scaStatus.isPresent()) {
             return ResponseObject.<ScaStatus>builder()
-                       .fail(new MessageError(ErrorType.AIS_403, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_403)))
+                       .fail(AIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -382,5 +406,12 @@ public class ConsentService {
     private boolean isEmbeddedOrRedirectScaApproach() {
         return EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.REDIRECT)
                    .contains(scaApproachResolver.resolveScaApproach());
+    }
+
+    private SpiContextData getSpiContextData(List<PsuIdData> psuIdDataList) {
+        //TODO provide correct PSU Data to the SPI https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/701
+        return spiContextDataProvider.provideWithPsuIdData(CollectionUtils.isNotEmpty(psuIdDataList)
+                                                               ? psuIdDataList.get(0)
+                                                               : null);
     }
 }

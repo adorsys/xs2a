@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.Error400NGPIS;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
@@ -42,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -188,6 +188,6 @@ public class HandlerInterceptorTest {
     }
 
     private TppMessageInformation[] getTppMessageInformationArray() {
-        return new TppMessageInformation[]{new TppMessageInformation(MessageCategory.ERROR, MESSAGE_ERROR_CODE, ERROR_MESSAGE_TEXT)};
+        return new TppMessageInformation[]{of(MESSAGE_ERROR_CODE, ERROR_MESSAGE_TEXT)};
     }
 }

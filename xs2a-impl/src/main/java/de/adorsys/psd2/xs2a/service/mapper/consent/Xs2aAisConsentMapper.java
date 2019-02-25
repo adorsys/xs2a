@@ -76,7 +76,7 @@ public class Xs2aAisConsentMapper {
                            ac.getConsentStatus(),
                            ac.isWithBalance(),
                            ac.isTppRedirectPreferred(),
-                           xs2aToSpiPsuDataMapper.mapToSpiPsuData(ac.getPsuData()),
+                           xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(ac.getPsuIdDataList()),
                            ac.getTppInfo(), ac.getAisConsentRequestType()
                        )
                    )
@@ -187,7 +187,7 @@ public class Xs2aAisConsentMapper {
                        ac.getConsentStatus(),
                        ac.isWithBalance(),
                        ac.isTppRedirectPreferred(),
-                       ac.getPsuData(),
+                       ac.getPsuIdDataList(),
                        ac.getTppInfo(),
                        ac.getAisConsentRequestType()))
                    .orElse(null);

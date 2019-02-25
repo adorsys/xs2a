@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.psd2.aspsp.mock.api.psu.Tan;
@@ -86,7 +85,7 @@ public class TanConfirmationService {
      * @param tanNumber TAN
      * @return true if Tan has status UNUSED, otherwise return false
      */
-    public ResponseEntity confirmTan(String psuId, String tanNumber, String consentId, ConfirmationType confirmationType) {
+    public ResponseEntity confirmTan(String psuId, String tanNumber) {
         if (isTanNumberValid(psuId, tanNumber)) {
             return new ResponseEntity(HttpStatus.OK);
         } else if (getTanNumberOfAttempts(psuId) < maximumNumberOfTanAttempts) {

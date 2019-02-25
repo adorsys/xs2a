@@ -59,6 +59,7 @@ public class CmsToXs2aPaymentMapper {
                        if (StringUtils.isNotBlank(frequency)) {
                            periodic.setFrequency(Xs2aFrequencyCode.valueOf(frequency));
                        }
+                       periodic.setPsuDataList(p.getPsuDataList());
                        return periodic;
                    }).orElse(null);
     }
@@ -80,20 +81,23 @@ public class CmsToXs2aPaymentMapper {
                        single.setRequestedExecutionDate(p.getRequestedExecutionDate());
                        single.setRequestedExecutionTime(p.getRequestedExecutionTime());
                        single.setTransactionStatus(p.getTransactionStatus());
+                       single.setPsuDataList(p.getPsuDataList());
                        return single;
                    }).orElse(null);
     }
 
     public BulkPayment mapToBulkPayment(List<PisPayment> payments) {
         BulkPayment bulk = new BulkPayment();
-        bulk.setPaymentId(payments.get(0).getPaymentId());
+        PisPayment firstPayment = payments.get(0);
+        bulk.setPaymentId(firstPayment.getPaymentId());
         bulk.setBatchBookingPreferred(false);
-        bulk.setDebtorAccount(payments.get(0).getDebtorAccount());
-        bulk.setRequestedExecutionDate(payments.get(0).getRequestedExecutionDate());
+        bulk.setDebtorAccount(firstPayment.getDebtorAccount());
+        bulk.setRequestedExecutionDate(firstPayment.getRequestedExecutionDate());
         List<SinglePayment> paymentList = payments.stream()
                                               .map(this::mapToSinglePayment)
                                               .collect(Collectors.toList());
         bulk.setPayments(paymentList);
+        bulk.setPsuDataList(firstPayment.getPsuDataList());
         return bulk;
     }
 
@@ -106,6 +110,7 @@ public class CmsToXs2aPaymentMapper {
                             commonPayment.setPaymentType(r.getPaymentType());
                             commonPayment.setPaymentData(r.getPaymentData());
                             commonPayment.setTppInfo(r.getTppInfo());
+                            commonPayment.setPsuDataList(r.getPsuData());
                             return commonPayment;
                         }
                    )
