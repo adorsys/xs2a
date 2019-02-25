@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ interface UpdatePaymentStatusAfterSpiServiceBase {
      *
      * @param paymentId ID of Payment
      * @param status    Status of Payment to be set
+     * @return          true if the status was updated, false otherwise
      */
     boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status);
 }

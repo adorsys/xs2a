@@ -151,4 +151,42 @@ public class AisConsentRemoteUrls {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorisations/{authorisation-id}/status";
     }
 
+    /**
+     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
+     * Method: GET
+     * PathVariables: String authorisationId
+     * PathVariables: String authenticationMethodId
+     */
+    public String isAuthenticationMethodDecoupled() {
+        return consentServiceBaseUrl + "/ais/consent/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}";
+    }
+
+    /**
+     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
+     * Method: POST
+     * PathVariables: String authorisationId
+     */
+    public String saveAuthenticationMethods() {
+        return consentServiceBaseUrl + "/ais/consent/authorisations/{authorisation-id}/authentication-methods";
+    }
+
+    /**
+     * @return <code>true</code> if authorisation was found and SCA approach updated, <code>false</code> otherwise
+     * Method: PUT
+     * PathVariables: String authorisationId
+     * PathVariables: String sca-approach
+     */
+    public String updateScaApproach() {
+        return consentServiceBaseUrl + "/ais/consent/authorisations/{authorisation-id}/sca-approach/{sca-approach}";
+    }
+
+    /**
+     * @return <code>true</code> if consent was found and multilevel SCA required updated, <code>false</code> otherwise
+     * Method: PUT
+     * PathVariables: String consentId
+     * RequestParam:  boolean multilevel-sca
+     */
+    public String updateMultilevelScaRequired() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/multilevel-sca?multilevel-sca={multilevel-sca}";
+    }
 }

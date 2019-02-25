@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class Xs2aToSpiBulkPaymentMapper {
     private final Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     public SpiBulkPayment mapToSpiBulkPayment(BulkPayment payment, String paymentProduct) {
         SpiBulkPayment bulk = new SpiBulkPayment();
@@ -43,7 +44,7 @@ public class Xs2aToSpiBulkPaymentMapper {
         bulk.setPaymentProduct(paymentProduct);
         bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         bulk.setPayments(mapToListSpiSinglePayment(payment.getPayments(), paymentProduct));
-        bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());
+        bulk.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
         return bulk;
     }
 

@@ -38,97 +38,43 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
     private final PisAuthorisationService authorisationService;
     private final Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
 
-    /**
-     * Creates authorization for pis consent
-     *
-     * @param paymentId   ASPSP identifier of a payment
-     * @param paymentType Type of payment
-     * @param psuData     PsuIdData container of authorisation data about PSU
-     * @return create consent authorization response, which contains authorization id, sca status, payment type and links
-     */
     @Override
     public Optional<Xs2aCreatePisAuthorisationResponse> createCommonPaymentAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
-        return pisCommonPaymentMapper.mapToXsa2CreatePisAuthorizationResponse(authorisationService.createPisAuthorisation(paymentId, psuData), paymentType);
+        return pisCommonPaymentMapper.mapToXsa2CreatePisAuthorisationResponse(authorisationService.createPisAuthorisation(paymentId, psuData), paymentType);
     }
 
-    /**
-     * Updates authorization for pis consent
-     *
-     * @param request Provides transporting data when updating consent psu data
-     * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
-     */
     @Override
     public Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        return authorisationService.updatePisAuthorisation(request);
+        return authorisationService.updatePisAuthorisation(request, getScaApproachServiceType());
     }
 
-    /**
-     * Creates authorization cancellation for pis consent
-     *
-     * @param paymentId   ASPSP identifier of a payment
-     * @param paymentType Type of payment
-     * @param psuData     PsuIdData container of authorisation data about PSU
-     * @return
-     */
     @Override
     public Optional<Xs2aCreatePisCancellationAuthorisationResponse> createCommonPaymentCancellationAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
         return pisCommonPaymentMapper.mapToXs2aCreatePisCancellationAuthorisationResponse(authorisationService.createPisAuthorisationCancellation(paymentId, psuData), paymentType);
     }
 
-    /**
-     * Gets authorization cancellation sub resources
-     *
-     * @param paymentId ASPSP identifier of a payment
-     * @return authorization cancellation sub resources
-     */
     @Override
     public Optional<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationAuthorisationSubResources(String paymentId) {
         return authorisationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(Xs2aPaymentCancellationAuthorisationSubResource::new);
     }
 
-    /**
-     * Updates cancellation authorisation for pis consent
-     *
-     * @param request Provides transporting data when updating consent psu data
-     * @return update consent authorisation response, which contains payment id, authorisation id, sca status, psu message and links
-     */
     @Override
     public Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        return authorisationService.updatePisCancellationAuthorisation(request);
+        return authorisationService.updatePisCancellationAuthorisation(request, getScaApproachServiceType());
     }
 
-    /**
-     * Gets authorisation sub resources
-     *
-     * @param paymentId ASPSP identifier of a payment
-     * @return authorization sub resources
-     */
     @Override
     public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String paymentId) {
         return authorisationService.getAuthorisationSubResources(paymentId)
                    .map(Xs2aAuthorisationSubResources::new);
     }
 
-    /**
-     * Gets SCA status of authorisation
-     *
-     * @param paymentId       ASPSP identifier of the payment, associated with the authorisation
-     * @param authorisationId authorisation identifier
-     * @return SCA status
-     */
     @Override
     public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId) {
         return authorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
     }
 
-    /**
-     * Gets SCA status of cancellation authorisation
-     *
-     * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
-     * @param cancellationId cancellation authorisation identifier
-     * @return SCA status
-     */
     @Override
     public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
         return authorisationService.getCancellationAuthorisationScaStatus(paymentId, cancellationId);

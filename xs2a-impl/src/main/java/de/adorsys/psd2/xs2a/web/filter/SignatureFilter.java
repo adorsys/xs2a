@@ -29,8 +29,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -69,15 +67,9 @@ public class SignatureFilter extends AbstractXs2aFilter {
         String encodedTppCert = request.getHeader("tpp-signature-certificate");
         TppSignatureValidator tppSignatureValidator = new TppSignatureValidator();
 
-        try {
-            if (tppSignatureValidator.verifySignature(signature, encodedTppCert, headers)) {
-                chain.doFilter(request, response);
-            } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                   CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
-            }
-        } catch (NoSuchAlgorithmException | SignatureException e) {
-            log.debug(e.getMessage());
+        if (tppSignatureValidator.verifySignature(signature, encodedTppCert, headers)) {
+            chain.doFilter(request, response);
+        } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                                CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
         }

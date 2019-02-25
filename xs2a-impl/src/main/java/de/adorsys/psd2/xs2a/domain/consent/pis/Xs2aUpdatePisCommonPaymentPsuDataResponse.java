@@ -22,10 +22,12 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class Xs2aUpdatePisCommonPaymentPsuDataResponse {
     private String psuId;
     private ErrorHolder errorHolder;
@@ -55,6 +57,15 @@ public class Xs2aUpdatePisCommonPaymentPsuDataResponse {
 
     public boolean hasError() {
         return errorHolder != null;
+    }
+
+    /**
+     * Returns chosenScaMethod. Should be used ONLY for mapping to PSD2 response.
+     *
+     * @return chosenScaMethod
+     */
+    public Xs2aAuthenticationObject getChosenScaMethodForPsd2Response() {
+        return getChosenScaMethod();
     }
 }
 

@@ -20,15 +20,15 @@ import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,9 @@ public class Xs2aAisConsentService {
     private final AisConsentServiceEncrypted aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
+    private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
+    private final ScaApproachResolver scaApproachResolver;
 
     /**
      * Sends a POST request to CMS to store created AISconsent
@@ -130,10 +132,12 @@ public class Xs2aAisConsentService {
      * Sends a POST request to CMS to store created consent authorization
      *
      * @param consentId String representation of identifier of stored consent
+     * @param scaStatus Enum for status of the SCA method applied
+     * @param psuData   authorisation data about PSU
      * @return long representation of identifier of stored consent authorization
      */
     public Optional<String> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
-        AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData);
+        AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData, scaApproachResolver.resolveScaApproach());
         return aisConsentService.createAuthorization(consentId, request);
     }
 
@@ -141,6 +145,7 @@ public class Xs2aAisConsentService {
      * Requests CMS to retrieve AIS consent authorization by its identifier
      *
      * @param authorizationId String representation of identifier of stored consent authorization
+     * @param consentId       ID of the consent
      * @return Response containing AIS Consent Authorization
      */
 
@@ -194,5 +199,47 @@ public class Xs2aAisConsentService {
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
         return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
+    }
+
+    /**
+     * Requests CMS to retrieve authentication method and checks if requested authentication method is decoupled.
+     *
+     * @param authorisationId        String representation of the authorisation identifier
+     * @param authenticationMethodId String representation of the available authentication method identifier
+     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
+     */
+    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
+        return aisConsentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+    }
+
+    /**
+     * Saves authentication methods in provided authorisation
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param methods         List of authentication methods to be saved
+     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
+     */
+    public boolean saveAuthenticationMethods(String authorisationId, List<Xs2aAuthenticationObject> methods) {
+        return aisConsentService.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+    }
+
+    /**
+     * Updates AIS SCA approach in authorisation
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @param scaApproach     Chosen SCA approach
+     */
+    public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
+        aisConsentService.updateScaApproach(authorisationId, scaApproach);
+    }
+
+    /**
+     * Updates multilevel SCA required field
+     *
+     * @param consentId             String representation of the consent identifier
+     * @param multilevelScaRequired multilevel SCA required indicator
+     */
+    public void updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
+        aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
     }
 }

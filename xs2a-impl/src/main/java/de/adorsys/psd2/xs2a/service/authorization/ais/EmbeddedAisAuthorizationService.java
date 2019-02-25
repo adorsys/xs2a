@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
+import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaMethodSelectedStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
 import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
@@ -59,18 +61,14 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             return Optional.empty();
         }
 
-        PsuIdData psuDataAuthorization = isPsuExist(psuData)
-                                             ? psuData
-                                             : consent.getPsuData();
-
-        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.STARTED, psuDataAuthorization)
+        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.STARTED, psuData)
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
                        resp.setConsentId(consentId);
                        resp.setAuthorizationId(authId);
                        resp.setScaStatus(ScaStatus.STARTED);
-                       resp.setResponseLinkType(getResponseLinkType(consent.getPsuData(), psuData));
+                       resp.setResponseLinkType(getResponseLinkType(psuData, psuData));
 
                        return resp;
                    });
@@ -93,7 +91,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      * Updates consent PSU data.
      * {@link AisScaStageAuthorisationFactory} is used there to provide the actual service for current stage.
      * Service returns UpdateConsentPsuDataResponse on invoking its apply() method
-     * (e.g. see {@link de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaMethodSelectedStage#apply}).
+     * (e.g. see {@link AisScaMethodSelectedStage#apply}).
      * If response has no errors, consent authorisation is updated by invoking CMS through AisConsentService
      * See {@link Xs2aAisConsentService#updateConsentAuthorization(UpdateConsentPsuDataReq)} for details.
      *
@@ -103,7 +101,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
-        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + consentAuthorization.getScaStatus().name());
+        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + consentAuthorization.getScaStatus().name());
         UpdateConsentPsuDataResponse response = service.apply(request);
 
         if (!response.hasError()) {

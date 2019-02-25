@@ -20,5 +20,6 @@ public enum ScaApproach {
     REDIRECT,
     OAUTH,
     DECOUPLED,
-    EMBEDDED
+    EMBEDDED,
+    UNDEFINED
 }

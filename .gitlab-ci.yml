@@ -74,6 +74,7 @@ variables: &variables
   DOCKER_IMAGE_NAME_ONLINE_BANKING_UI: "docker.io/adorsys/xs2a-mock-online-banking-ui"
   DOCKER_IMAGE_NAME_LEDGERS: "docker.io/adorsys/ledgers"
   DOCKER_IMAGE_NAME_CONNECTOR_EXAMPLES: "docker.io/adorsys/xs2a-connector-examples"
+  DOCKER_IMAGE_NAME_ONLINE_BANKING: "docker.io/adorsys/xs2a-online-banking"
 
   ###########################
   # Build variables         #
@@ -251,12 +252,14 @@ variables: &variables
     - SHA_ASPSP_PROFILE=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG | jq -r .Digest)
     - SHA_LEDGERS=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_LEDGERS:$DOCKER_TAG | jq -r .Digest)
     - SHA_CONNECTOR_EXAMPLES=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_CONNECTOR_EXAMPLES:$DOCKER_TAG | jq -r .Digest)
+#    - SHA_CONNECTOR_ONLINE_BANKING=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ONLINE_BANKING:$DOCKER_TAG | jq -r .Digest)
           # assemble full docker image name
     - IMAGE_WITH_SHA_XS2A="$DOCKER_IMAGE_NAME_XS2A@$SHA_XS2A"
     - IMAGE_WITH_SHA_CNT_MGMNT="$DOCKER_IMAGE_NAME_CNT_MGMNT@$SHA_CNT_MGMNT"
     - IMAGE_WITH_SHA_ASPSP_PROFILE="$DOCKER_IMAGE_NAME_ASPSP_PROFILE@$SHA_ASPSP_PROFILE"
     - IMAGE_WITH_SHA_LEDGERS="$DOCKER_IMAGE_NAME_LEDGERS@$SHA_LEDGERS"
     - IMAGE_WITH_SHA_CONNECTOR_EXAMPLES="$DOCKER_IMAGE_NAME_CONNECTOR_EXAMPLES@$SHA_CONNECTOR_EXAMPLES"
+#- IMAGE_WITH_SHA_ONLINE_BANKING="$DOCKER_IMAGE_NAME_ONLINE_BANKING@$SHA_ONLINE_BANKING"
     - |-
       HELM_ARGS=(
         "--set dockerImageXs2a=$IMAGE_WITH_SHA_XS2A"
@@ -268,9 +271,9 @@ variables: &variables
         "-f env/${HELM_STAGE}/secrets.yaml"
       )
       # diff helm changes
-    - helm-wrapper diff upgrade ${HELM_RELEASE} . --allow-unreleased -q ${HELM_ARGS}"  || true
+    - helm-wrapper diff upgrade ${HELM_RELEASE} . --allow-unreleased -q ${HELM_ARGS[@]} || true
       # apply helm changes
-    - helm-wrapper upgrade -i ${HELM_RELEASE} . --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600 --force ${HELM_ARGS}" 
+    - helm-wrapper upgrade -i ${HELM_RELEASE} . --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600 --force ${HELM_ARGS[@]}
   after_script:
     - pkill gpg-agent
 
@@ -431,7 +434,6 @@ deploy_develop_stage:
   <<: *helm_env_deploy
   only:
     - develop
-    - dgo_automatic_deployments
   variables:
     <<: *variables
     OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
@@ -452,7 +454,8 @@ sonar_code_coverage:
     - mvn --fail-at-end clean install
     - mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST -Dsonar.login=${SONAR_TOKEN}
   only:
-    - develop
+    - /^.*-sonar-.*$/
+    - /^.*_sonar_.*$/
 
 # Master
 

@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
-import de.adorsys.psd2.aspsp.profile.domain.BookingStatus;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,7 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
+import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.BOOKED;
 
 @Data
 public class ProfileConfiguration implements InitializingBean {

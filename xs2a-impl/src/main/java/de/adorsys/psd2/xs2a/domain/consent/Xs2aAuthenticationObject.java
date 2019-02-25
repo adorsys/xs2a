@@ -17,12 +17,14 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
 
+// TODO Move AuthenticationObject to xs2a-core https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/682
 @Data
 @ApiModel(description = "Authentication object", value = "AuthenticationObject")
 public class Xs2aAuthenticationObject {
@@ -43,5 +45,10 @@ public class Xs2aAuthenticationObject {
     @ApiModelProperty(value = "Detailed information about the sca method for the PSU", required = false)
     private String explanation;
 
+    /**
+     * Represents, whether current authentication object requires decoupled SCA
+     */
+    @JsonIgnore
+    private boolean decoupled;
 }
 

@@ -27,6 +27,7 @@ public class Xs2aToSpiSinglePaymentMapper {
     private final Xs2aToSpiAmountMapper xs2aToSpiAmountMapper;
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
+    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, String paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
@@ -44,6 +45,7 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setRequestedExecutionTime(payment.getRequestedExecutionTime());
         single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
+        single.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
         return single;
     }
 }

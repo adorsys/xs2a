@@ -21,9 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tomitribe.auth.signatures.Signature;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
@@ -37,15 +35,18 @@ public class TppSignatureValidator {
 	private static final List<String> MANDATORY_HEADERS_PSD2 = Arrays
 			.asList("digest", "tpp-transaction-id", "x-request-id", "timestamp");
 
-	/**
-	 * signature should not be null signature should be conform with psd2
-	 * addition signature should be verifiable by the entry certificate
-	 *
-	 * @param signature Signature to verify
-	 * @return true if signature is correct, false otherwise
-	 */
+    /**
+     * signature should not be null signature should be conform with psd2
+     * addition signature should be verifiable by the entry certificate
+     *
+     * @param signature         Signature to verify
+     * @param tppEncodedCert    TPP Certificate Data
+     * @param headers           headers from the request
+     * @return                  true if signature is correct, false otherwise
+     * @throws IOException      if signature process fails
+     */
 	public boolean verifySignature(String signature, String tppEncodedCert, Map<String, String> headers)
-			throws NoSuchAlgorithmException, SignatureException, IOException {
+			throws IOException {
 
 		if (StringUtils.isBlank(signature)) {
 			throw new IllegalArgumentException("SIGNATURE_MISSING");

@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -134,9 +133,4 @@ public class PisPaymentData extends InstanceDependableEntity {
     @JoinColumn(name = "common_payment_id", nullable = false)
     @ApiModelProperty(value = "Detailed information about payment", required = true)
     private PisCommonPaymentData paymentData;
-
-    @Column(name = "transaction_status")
-    @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(name = "transactionStatus", example = "ACCP")
-    private TransactionStatus transactionStatus;
 }

@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 
@@ -51,10 +52,18 @@ public class PsuData extends InstanceDependableEntity {
         this.psuCorporateIdType = psuCorporateIdType;
     }
 
-    public boolean contentEquals(PsuData otherPsuData) {
+    public boolean contentEquals(@NotNull PsuData otherPsuData) {
         return StringUtils.equals(this.getPsuId(), otherPsuData.getPsuId())
                    && StringUtils.equals(this.getPsuCorporateId(), otherPsuData.getPsuCorporateId())
                    && StringUtils.equals(this.getPsuCorporateIdType(), otherPsuData.getPsuCorporateIdType())
                    && StringUtils.equals(this.getPsuIdType(), otherPsuData.getPsuIdType());
+    }
+
+    public boolean isNotEmpty() {
+        return !isEmpty();
+    }
+
+    public boolean isEmpty() {
+        return StringUtils.isBlank(this.getPsuId());
     }
 }

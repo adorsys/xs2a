@@ -60,6 +60,9 @@ Support of content type `text/plain` is planned.
 ## Bugfix: added missing ais_consent fields
 Now while sending POST request to the `/v1/consents` endpoint the fields "availableAccounts" and "allPsd2" are persisted to the ais_consent table. Also they are available while calling the connector.
 
+## Changed response class for cancellation authorisation
+Now when sending GET request to the `/v1/{payment-service}/{paymentId}/cancellation-authorisations` the result is CancellationList class, which is actually a list of IDs.
+
 ## Added support of Spring Data 2.x
 In order to use Spring Data 2.x in CMS developer now shall use a dependency to help-module `spring-boot-2.x-support`
 ```xml
@@ -90,3 +93,55 @@ From now on these endpoints are fully functional:
 
 ## Bugfix: fix instanceId not being set in the CMS that doesn't have any pre-insert listeners
 From now on `instanceId` property will be correctly set to its default value(`UNDEFINED`) when the CMS doesn't have any pre-insert listeners to override this property. 
+
+## Bugfix: Error messages from spi-api should be returned to the tpp in response
+Now messages that are provided in spi-api in case of the error will be returned to the tpp in response
+
+## Implemented Decoupled SCA approach
+From now on XS2A supports Decoupled SCA approach for authorising account consents, payments and payment cancellations.
+It occurs in the following cases:
+ * if `DECOUPLED` SCA approach was chosen by ASPSP
+ * during the `EMBEDDED` SCA approach if decoupled SCA method was chosen by PSU during selection of SCA methods
+
+New method `de.adorsys.psd2.xs2a.spi.service.AuthorisationSpi#startScaDecoupled` was added to the SPI interface to be implemented by SPI developers.
+The response of this method should contain the message, shown to the PSU, containing recommendation to proceed the authorisation via the dedicated mobile app.
+
+`authorisationId`, provided in this method shall be used as `redirectId` to finish authorisation in the App, by accessing corresponding endpoints in CMS-PSU-API
+
+An SPI Developer now shall consider also Flag `decoupled` in `de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject` (defaults to `false`) returend by
+method `requestAvailableScaMethods`.
+If it is set to `true` and PSU chooses this authentication method, the SCA approach will be switched to `DECOUPLED`
+
+## Added a possibility to require PSU-ID in initial request for payment initiation or establishing consent
+Now ASPSP can forbid initiating payment or establishing AIS consent without PSU-ID by setting option `psuInInitialRequestMandated` to `true` in ASPSP Profile.
+
+| Option                      | Meaning                                                                                                      | Default value |
+|-----------------------------|--------------------------------------------------------------------------------------------------------------|---------------|
+| psuInInitialRequestMandated | This field indicates if ASPSP requires PSU in initial request for payment initiation or establishing consent | false         | 
+
+## Added additional step to identify PSU if TPP doesn’t send PSU-ID in authorisation
+When TPP creates authorisation for AIS consent, payment or payment cancellation without PSU-ID, 
+`startAuthorisationWithPsuIdentification` link will be returned, using which TPP should upload the PSU identification data.
+At  this stage if TPP doesn’t send PSU-ID, there will be FORMAT_ERROR with http status 400. 
+If PSU-ID was sent, authorisation status will be changed to `PSUIDENTIFIED` and TPP will get link 
+`startAuthorisationWithPsuAuthentication` using which PSU authentication data should be uploaded.
+After PSU identified itself, there is no need to send PSU-ID in next requests to make authorisation finalised.
+
+## Bugfix: Fixed problem with wrong payment service (payment product) for Get payment status, Get payment information and Cancel payment
+
+When using GET `/v1/{payment-service}/{payment-product}/{paymentId}/status`, GET `/v1/{payment-service}/{payment-product}/{paymentId}` or DELETE `/v1/{payment-service}/{payment-product}/{paymentId}/` 
+with incorrect payment service(e.g `periodic-payments` instead of `payments` with payment id of single payment, not periodic, or `instant-sepa-credit-transfers` instead of `sepa-credit-transfers`),
+there were no correct errors provided (`405 SERVICE_INVALID` for incorrect payment service and `403 PRODUCT_INVALID` for incorrect payment product).
+
+Now when you enter incorrect payment service, the request will not be executed and the error `405 SERVICE_INVALID` will be returned.
+If you enter incorrect payment product, the request also will not be executed and the error `403 PRODUCT_INVALID` will be returned.
+
+## Removed unused enumerator value
+According to the Implementation Guidelines version 1.3 the value `AVAILABLE` of the Balance type doesn't exist. It is removed from SpiBalanceType and AspspBalanceType.
+
+## Bugfix: fix error on AIS consent confirmation when using OracleDB
+Trying to confirm AIS consent in CMS that uses OracleDB will no longer fail.
+In order to fix this error the type of `authority_id` column in `tpp_info` table was changed to `VARCHAR(255)`.
+
+Beware: during migration of existing records in `tpp_info` table only the first `255` characters of `authority_id` 
+will be retained, all exceeding characters will be lost.

@@ -32,7 +32,7 @@ import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceType.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(value = "aspspAccountId", allowSetters=true)
+@JsonIgnoreProperties(value = "aspspAccountId", allowSetters = true)
 @ApiModel(description = "Account Reference", value = "AccountReference")
 public class AccountReference {
     @ApiModelProperty(example = "123-DEDE89370400440532013000-EUR")
@@ -61,6 +61,10 @@ public class AccountReference {
 
     /**
      * This constructor should be used for storing initial accounts data (as it was requested by TPP)
+     *
+     * @param accountReferenceType  Account identifier type
+     * @param accountReferenceValue Account identifier value
+     * @param currency              Currency Type
      */
     public AccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency) {
         this(accountReferenceType, accountReferenceValue, currency, null, null);
@@ -68,6 +72,12 @@ public class AccountReference {
 
     /**
      * This constructor should be used for storing accounts data received from aspsp
+     *
+     * @param accountReferenceType  Account identifier type
+     * @param accountReferenceValue Account identifier value
+     * @param currency              Currency Type
+     * @param resourceId            The identification that denotes the addressed account
+     * @param aspspAccountId        Bank specific account ID
      */
     public AccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency, String resourceId, String aspspAccountId) {
         if (accountReferenceType == IBAN) {

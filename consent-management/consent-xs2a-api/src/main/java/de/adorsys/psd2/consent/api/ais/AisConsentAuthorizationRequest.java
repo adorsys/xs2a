@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
@@ -40,4 +41,7 @@ public class AisConsentAuthorizationRequest {
 
     @ApiModelProperty(value = "SCA authentication data")
     private String scaAuthenticationData;
+
+    @ApiModelProperty(value = "SCA approach")
+    private ScaApproach scaApproach;
 }
