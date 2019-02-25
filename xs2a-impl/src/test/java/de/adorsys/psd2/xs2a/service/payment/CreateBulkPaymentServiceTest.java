@@ -26,6 +26,8 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
@@ -38,6 +40,7 @@ import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentServiceResolver;
 import org.junit.Before;
@@ -47,10 +50,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -61,14 +61,17 @@ public class CreateBulkPaymentServiceTest<resp> {
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
-    private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
+    private static final PsuIdData PSU_DATA = new PsuIdData("correct_psu", null, null, null);
+    private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null);
     private final TppInfo TPP_INFO = buildTppInfo();
+    private final TppInfo WRONG_TPP_INFO = new TppInfo();
     private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = new Xs2aPisCommonPayment(PAYMENT_ID, PSU_DATA);
     private final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
     private final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
     private final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private final BulkPaymentInitiationResponse RESPONSE = buildBulkPaymentInitiationResponse();
+    private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
 
     @InjectMocks
     private CreateBulkPaymentService createBulkPaymentService;
@@ -91,17 +94,18 @@ public class CreateBulkPaymentServiceTest<resp> {
     @Before
     public void init() {
         when(scaPaymentService.createBulkPayment(buildBulkPayment(), TPP_INFO, "sepa-credit-transfers", PSU_DATA)).thenReturn(RESPONSE);
+        when(scaPaymentService.createBulkPayment(buildBulkPayment(), WRONG_TPP_INFO, "sepa-credit-transfers", WRONG_PSU_DATA)).thenReturn(buildSpiErrorForBulkPayment());
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, RESPONSE ))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, RESPONSE))
             .thenReturn(PAYMENT_INFO);
         when(scaPaymentServiceResolver.getService())
             .thenReturn(scaPaymentService);
     }
 
     @Test
-    public void success_initiate_single_payment() {
+    public void success_initiate_payment() {
         //When
         ResponseObject<BulkPaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(buildBulkPayment(), buildPaymentInitiationParameters(), buildTppInfo());
 
@@ -109,6 +113,23 @@ public class CreateBulkPaymentServiceTest<resp> {
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
+    }
+
+    @Test
+    public void initiate_payment_spi_fail() {
+        // Given
+        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
+
+        PaymentInitiationParameters param = buildPaymentInitiationParameters();
+        param.setPsuData(WRONG_PSU_DATA);
+
+        //When
+        ResponseObject<BulkPaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(buildBulkPayment(), param, WRONG_TPP_INFO);
+
+        //Then
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+        assertThat(actualResponse.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
     }
 
     private BulkPayment buildBulkPayment() {
@@ -160,6 +181,15 @@ public class CreateBulkPaymentServiceTest<resp> {
         response.setTransactionStatus(TransactionStatus.RCVD);
         response.setAspspConsentData(ASPSP_CONSENT_DATA);
         return response;
+    }
+
+    private BulkPaymentInitiationResponse buildSpiErrorForBulkPayment() {
+        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
+                                      .errorType(ErrorType.PIIS_400)
+                                      .messages(ERROR_MESSAGE_TEXT)
+                                      .build();
+
+        return new BulkPaymentInitiationResponse(errorHolder);
     }
 
     private TppInfo buildTppInfo() {

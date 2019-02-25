@@ -87,7 +87,8 @@ public class ConsentModelMapper {
                                         .orElse(null)
                                 )
                                 .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
-                                .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
+                                .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethodForPsd2Response()))
+                                .psuMessage(r.getPsuMessage())
                    )
                    .orElse(null);
     }
@@ -160,27 +161,27 @@ public class ConsentModelMapper {
     private AccountAccess mapToAccountAccessDomain(Xs2aAccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
                    .map(access -> {
-                           AccountAccess mappedAccountAccess = new AccountAccess();
-                           mappedAccountAccess.setAccounts(accountModelMapper.mapToAccountReferences(access.getAccounts()));
-                           mappedAccountAccess.setBalances(accountModelMapper.mapToAccountReferences(access.getBalances()));
-                           mappedAccountAccess.setTransactions(accountModelMapper.mapToAccountReferences(access.getTransactions()));
-                           mappedAccountAccess.setAvailableAccounts(
-                               AccountAccess.AvailableAccountsEnum.fromValue(
-                                   Optional.ofNullable(access.getAvailableAccounts())
-                                       .map(Xs2aAccountAccessType::getDescription)
-                                       .orElse(null)
-                               )
-                           );
-                           mappedAccountAccess.setAllPsd2(
-                               AccountAccess.AllPsd2Enum.fromValue(
-                                   Optional.ofNullable(access.getAllPsd2())
-                                       .map(Xs2aAccountAccessType::getDescription)
-                                       .orElse(null)
-                               )
-                           );
+                            AccountAccess mappedAccountAccess = new AccountAccess();
+                            mappedAccountAccess.setAccounts(accountModelMapper.mapToAccountReferences(access.getAccounts()));
+                            mappedAccountAccess.setBalances(accountModelMapper.mapToAccountReferences(access.getBalances()));
+                            mappedAccountAccess.setTransactions(accountModelMapper.mapToAccountReferences(access.getTransactions()));
+                            mappedAccountAccess.setAvailableAccounts(
+                                AccountAccess.AvailableAccountsEnum.fromValue(
+                                    Optional.ofNullable(access.getAvailableAccounts())
+                                        .map(Xs2aAccountAccessType::getDescription)
+                                        .orElse(null)
+                                )
+                            );
+                            mappedAccountAccess.setAllPsd2(
+                                AccountAccess.AllPsd2Enum.fromValue(
+                                    Optional.ofNullable(access.getAllPsd2())
+                                        .map(Xs2aAccountAccessType::getDescription)
+                                        .orElse(null)
+                                )
+                            );
 
-                           return mappedAccountAccess;
-                       }
+                            return mappedAccountAccess;
+                        }
                    )
                    .orElse(null);
     }
@@ -234,6 +235,15 @@ public class ConsentModelMapper {
         return updatePsuData;
     }
 
+    public CancellationList mapToCancellationList(Xs2aPaymentCancellationAuthorisationSubResource idsContainer) {
+        CancellationList list = new CancellationList();
+
+        list.addAll(Optional.ofNullable(idsContainer.getCancellationIds())
+            .map(ArrayList::new)
+            .orElseGet(ArrayList::new));
+        return list;
+    }
+
     public Xs2aUpdatePisCommonPaymentPsuDataRequest mapToPisUpdatePsuData(PsuIdData psuData, String paymentId, String authorisationId, String paymentService, String paymentProduct, Map body) {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setPsuData(psuData);
@@ -262,11 +272,12 @@ public class ConsentModelMapper {
         return new UpdatePsuAuthenticationResponse()
                    ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                    .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
-                   .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
+                   .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethodForPsd2Response()))
                    .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
+                   .psuMessage(response.getPsuMessage())
                    .scaStatus(Optional.ofNullable(response.getScaStatus())
-                       .map(s -> ScaStatus.fromValue(s.getValue()))
-                       .orElse(ScaStatus.FAILED));
+                                  .map(s -> ScaStatus.fromValue(s.getValue()))
+                                  .orElse(ScaStatus.FAILED));
     }
 
     private ScaMethods getAvailableScaMethods(List<Xs2aAuthenticationObject> availableScaMethods) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,16 @@
 
 package de.adorsys.psd2.consent;
 
-import de.adorsys.psd2.consent.config.EnableCmsSwagger;
+import de.adorsys.psd2.consent.web.aspsp.config.EnableCmsAspspApiSwagger;
+import de.adorsys.psd2.consent.web.psu.config.EnableCmsPsuApiSwagger;
+import de.adorsys.psd2.consent.web.xs2a.config.EnableCmsXs2aApiSwagger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-@EnableCmsSwagger
+@EnableCmsXs2aApiSwagger
+@EnableCmsPsuApiSwagger
+@EnableCmsAspspApiSwagger
 @SpringBootApplication
 @ComponentScan("de.adorsys.psd2")
 public class ConsentManagementStandaloneApp {

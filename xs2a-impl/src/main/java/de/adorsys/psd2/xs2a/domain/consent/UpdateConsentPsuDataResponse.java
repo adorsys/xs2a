@@ -54,4 +54,13 @@ public class UpdateConsentPsuDataResponse {
     public boolean hasError() {
         return messageError != null;
     }
+
+    /**
+     * Returns chosenScaMethod. Should be used ONLY for mapping to PSD2 response.
+     *
+     * @return chosenScaMethod
+     */
+    public Xs2aAuthenticationObject getChosenScaMethodForPsd2Response() {
+        return getChosenScaMethod();
+    }
 }

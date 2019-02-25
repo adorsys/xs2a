@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="iiu@adorsys.com.ua" id="2019-02-07-2">
+        <comment>Create table pis_auth_available_sca_method</comment>
+
+        <createTable tableName="pis_available_sca_method">
+            <column name="authentication_method_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="decoupled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authorisation_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="authorisation_id" baseTableName="pis_available_sca_method"
+                                 constraintName="fk_avail_sca_pis_cons_auth"
+                                 referencedColumnNames="authorization_id"
+                                 referencedTableName="pis_consent_authorization"/>
+    </changeSet>
+
+</databaseChangeLog>
+

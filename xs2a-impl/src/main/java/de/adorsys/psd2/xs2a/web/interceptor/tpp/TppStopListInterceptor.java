@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.TppService;
@@ -33,10 +32,10 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CERTIFICATE_BLOCKED;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
 @RequiredArgsConstructor
 public class TppStopListInterceptor extends HandlerInterceptorAdapter {
@@ -54,23 +53,23 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
         TppInfo tppInfo = tppService.getTppInfo();
 
         if (tppStopListService.checkIfTppBlocked(new TppUniqueParamsHolder(tppInfo.getAuthorisationNumber(), tppInfo.getAuthorityId()))) {
-            response.getWriter().write(objectMapper.writeValueAsString(createError(MessageErrorCode.CERTIFICATE_BLOCKED)));
+            response.getWriter().write(objectMapper.writeValueAsString(createError()));
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setStatus(MessageErrorCode.CERTIFICATE_BLOCKED.getCode());
+            response.setStatus(CERTIFICATE_BLOCKED.getCode());
             return false;
         }
 
         return true;
     }
 
-    private Object createError(MessageErrorCode errorCode) {
-        MessageError messageError = new MessageError(errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), errorCode.getCode()), buildErrorTppMessages(errorCode));
+    private Object createError() {
+        MessageError messageError = new MessageError(errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), CERTIFICATE_BLOCKED.getCode()), buildErrorTppMessages());
         return Optional.ofNullable(errorMapperContainer.getErrorBody(messageError))
                    .map(ErrorMapperContainer.ErrorBody::getBody)
                    .orElse(null);
     }
 
-    private TppMessageInformation buildErrorTppMessages(MessageErrorCode errorCode) {
-        return new TppMessageInformation(ERROR, errorCode, STOP_LIST_ERROR_MESSAGE);
+    private TppMessageInformation buildErrorTppMessages() {
+        return of(CERTIFICATE_BLOCKED, STOP_LIST_ERROR_MESSAGE);
     }
 }

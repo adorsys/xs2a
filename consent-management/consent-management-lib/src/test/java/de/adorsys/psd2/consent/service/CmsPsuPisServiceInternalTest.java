@@ -126,9 +126,6 @@ public class CmsPsuPisServiceInternalTest {
         when(pisCommonPaymentService.getPsuDataListByPaymentId(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
 
-        when(commonPaymentDataService.getPisCommonPaymentData(WRONG_PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
-            .thenReturn(Optional.empty());
-
         when(psuDataRepository.save(any(PsuData.class)))
             .thenReturn(psuData);
         when(psuDataMapper.mapToPsuData(psuIdData))
@@ -276,31 +273,28 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePaymentStatus_Success() {
         // Given
-        //noinspection unchecked
-        when(pisPaymentDataRepository.findAll(any(Specification.class))).thenReturn(buildPisPaymentDataList());
+        when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn(Optional.of(buildPisCommonPaymentData()));
+        when(commonPaymentDataService.updateStatusInPaymentData(buildPisCommonPaymentData(), TransactionStatus.RCVD)).thenReturn(true);
 
         // When
         boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.RCVD, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult);
-        verify(pisPaymentDataSpecification, times(1))
-            .byPaymentIdAndInstanceId(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
     public void updatePaymentStatus_Fail_WrongPaymentId() {
         // Given
-        //noinspection unchecked
-        when(pisPaymentDataRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
+        when(commonPaymentDataService.getPisCommonPaymentData(WRONG_PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn(Optional.empty());
 
         // When
         boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(WRONG_PAYMENT_ID, TransactionStatus.CANC, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
-        verify(pisPaymentDataSpecification, times(1))
-            .byPaymentIdAndInstanceId(WRONG_PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -322,17 +316,14 @@ public class CmsPsuPisServiceInternalTest {
     @Test
     public void updatePaymentStatus_Fail_FinalisedStatus() {
         //Given
-        List<PisPaymentData> finalisedPisPaymentDataList = buildFinalisedPisPaymentDataList();
-        //noinspection unchecked
-        when(pisPaymentDataRepository.findAll(any(Specification.class))).thenReturn(finalisedPisPaymentDataList);
+        when(commonPaymentDataService.getPisCommonPaymentData(FINALISED_PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn(Optional.of(buildFinalisedPisCommonPaymentData()));
 
         // When
         boolean actualResult = cmsPsuPisServiceInternal.updatePaymentStatus(FINALISED_PAYMENT_ID, TransactionStatus.CANC, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult);
-        verify(pisPaymentDataSpecification, times(1))
-            .byPaymentIdAndInstanceId(FINALISED_PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -475,6 +466,19 @@ public class CmsPsuPisServiceInternalTest {
         return pisCommonPaymentData;
     }
 
+    private PisCommonPaymentData buildFinalisedPisCommonPaymentData() {
+        PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
+        pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
+        pisCommonPaymentData.setPsuData(Collections.singletonList(buildPsuData()));
+        pisCommonPaymentData.setPaymentType(PaymentType.SINGLE);
+        pisCommonPaymentData.setPaymentProduct(PAYMENT_PRODUCT);
+        pisCommonPaymentData.setPayments(buildPisPaymentDataListForCommonData());
+        pisCommonPaymentData.setTppInfo(buildTppInfo());
+        pisCommonPaymentData.setPaymentId(PAYMENT_ID);
+        pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
+        return pisCommonPaymentData;
+    }
+
     private TppInfoEntity buildTppInfo() {
         TppInfoEntity tppInfoEntity = new TppInfoEntity();
         tppInfoEntity.setNokRedirectUri("tpp nok redirect uri");
@@ -500,7 +504,6 @@ public class CmsPsuPisServiceInternalTest {
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentId(PAYMENT_ID);
         pisPaymentData.setPaymentData(buildPisCommonPaymentData());
-        pisPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisPaymentData.setDebtorAccount(buildAccountReference());
         pisPaymentData.setCreditorAccount(buildAccountReference());
         pisPaymentData.setAmount(new BigDecimal("1000"));
@@ -512,7 +515,6 @@ public class CmsPsuPisServiceInternalTest {
     private List<PisPaymentData> buildPisPaymentDataListForCommonData() {
         PisPaymentData pisPaymentData = new PisPaymentData();
         pisPaymentData.setPaymentId(PAYMENT_ID);
-        pisPaymentData.setTransactionStatus(TransactionStatus.ACCP);
         pisPaymentData.setDebtorAccount(buildAccountReference());
         pisPaymentData.setCreditorAccount(buildAccountReference());
         pisPaymentData.setAmount(new BigDecimal("1000"));
@@ -547,19 +549,6 @@ public class CmsPsuPisServiceInternalTest {
         return pisAuthorisation;
     }
 
-    private List<PisPaymentData> buildFinalisedPisPaymentDataList() {
-        PisPaymentData pisPaymentData = new PisPaymentData();
-        pisPaymentData.setPaymentId(PAYMENT_ID);
-        pisPaymentData.setPaymentData(buildPisCommonPaymentData());
-        pisPaymentData.setTransactionStatus(TransactionStatus.RJCT);
-        pisPaymentData.setDebtorAccount(buildAccountReference());
-        pisPaymentData.setCreditorAccount(buildAccountReference());
-        pisPaymentData.setAmount(new BigDecimal("1000"));
-        pisPaymentData.setCurrency(Currency.getInstance("EUR"));
-
-        return Collections.singletonList(pisPaymentData);
-    }
-
     private PisAuthorization buildExpiredAuthorisation() {
         PisAuthorization pisAuthorisation = new PisAuthorization();
         pisAuthorisation.setScaStatus(ScaStatus.STARTED);
@@ -570,15 +559,6 @@ public class CmsPsuPisServiceInternalTest {
         pisAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.parse("2017-12-03T10:15:30+01:00"));
 
         return pisAuthorisation;
-    }
-
-    private CmsPaymentResponse buildCmsPaymentResponse(String authorisationId) {
-        return new CmsPaymentResponse(
-            buildCmsPayment(),
-            authorisationId,
-            TPP_OK_REDIRECT_URI,
-            TPP_NOK_REDIRECT_URI
-        );
     }
 }
 

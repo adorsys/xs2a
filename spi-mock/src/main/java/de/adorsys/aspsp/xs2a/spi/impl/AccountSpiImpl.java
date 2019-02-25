@@ -17,12 +17,12 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.exception.RestException;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
@@ -70,17 +70,17 @@ public class AccountSpiImpl implements AccountSpi {
             }
 
             return SpiResponse.<List<SpiAccountDetails>>builder()
-                .payload(filterAccountDetailsByWithBalance(withBalance, accountDetailsList))
-                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                .success();
+                       .payload(filterAccountDetailsByWithBalance(withBalance, accountDetailsList))
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<List<SpiAccountDetails>>builder()
-                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<List<SpiAccountDetails>>builder()
-                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
 
@@ -94,22 +94,22 @@ public class AccountSpiImpl implements AccountSpi {
             }
 
             return SpiResponse.<SpiAccountDetails>builder()
-                .payload(accountDetails)
-                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                .success();
+                       .payload(accountDetails)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<SpiAccountDetails>builder()
-                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<SpiAccountDetails>builder()
-                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
 
     @Override
-    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionReport> requestTransactionsForAccount(@NotNull SpiContextData contextData, String acceptMediaType, boolean withBalance, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTo, BookingStatus bookingStatus, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent spiAccountConsent, @NotNull AspspConsentData aspspConsentData) {
         try {
             SpiAccountDetails accountDetails = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountReference.getResourceId());
 
@@ -117,19 +117,11 @@ public class AccountSpiImpl implements AccountSpi {
             uriParams.put("account-id", accountReference.getResourceId());
 
             UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
-                .queryParam("dateFrom", dateFrom)
-                .queryParam("dateTo", dateTo)
-                .buildAndExpand(uriParams);
+                                              .queryParam("dateFrom", dateFrom)
+                                              .queryParam("dateTo", dateTo)
+                                              .buildAndExpand(uriParams);
 
-            Optional<List<SpiTransaction>> transactionsOptional = Optional.ofNullable(aspspRestTemplate.exchange(
-                uriComponents.toUriString(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<SpiTransaction>>() {
-                }
-            ).getBody());
-
-            List<SpiTransaction> transactions = transactionsOptional.orElseGet(ArrayList::new);
+            List<SpiTransaction> transactions = getFilteredTransactions(uriComponents, bookingStatus);
             List<SpiAccountBalance> balances = null;
 
             if (withBalance) {
@@ -156,7 +148,7 @@ public class AccountSpiImpl implements AccountSpi {
                     .append("Transactions count: ").append(transactionsCount).append("\n\n");
                 if (transactionsCount > 0) {
                     textResponseBuilder.append("Transactions:\n");
-                    for (SpiTransaction transaction: transactions) {
+                    for (SpiTransaction transaction : transactions) {
                         textResponseBuilder.append(transaction).append("\n");
                     }
                 }
@@ -175,15 +167,15 @@ public class AccountSpiImpl implements AccountSpi {
             }
 
             return responseBuilder
-                .success();
+                       .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<SpiTransactionReport>builder()
-                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<SpiTransactionReport>builder()
-                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
 
@@ -192,17 +184,17 @@ public class AccountSpiImpl implements AccountSpi {
         try {
             SpiTransaction transaction = aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountReference.getResourceId());
             return SpiResponse.<SpiTransaction>builder()
-                .payload(transaction)
-                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                .success();
+                       .payload(transaction)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<SpiTransaction>builder()
-                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<SpiTransaction>builder()
-                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
 
@@ -219,30 +211,67 @@ public class AccountSpiImpl implements AccountSpi {
             ).getBody();
 
             return SpiResponse.<List<SpiAccountBalance>>builder()
-                .payload(accountBalances)
-                .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
-                .success();
+                       .payload(accountBalances)
+                       .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .success();
         } catch (RestException e) {
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 return SpiResponse.<List<SpiAccountBalance>>builder()
-                    .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
 
             return SpiResponse.<List<SpiAccountBalance>>builder()
-                .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
+    }
+
+    private List<SpiTransaction> getFilteredTransactions(UriComponents uriComponents, BookingStatus bookingStatus) {
+        return Optional.ofNullable(getTransactionsFromAspsp(uriComponents))
+                   .map(t -> filterByBookingStatus(t, bookingStatus))
+                   .orElse(Collections.emptyList());
+    }
+
+    private List<SpiTransaction> getTransactionsFromAspsp(UriComponents uriComponents) {
+        return aspspRestTemplate.exchange(
+            uriComponents.toUriString(),
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<SpiTransaction>>() {
+            }
+        ).getBody();
+    }
+
+    private List<SpiTransaction> filterByBookingStatus(List<SpiTransaction> transactionList, BookingStatus bookingStatus) {
+        switch (bookingStatus) {
+            case BOOKED:
+                return transactionList.stream()
+                           .filter(SpiTransaction::isBookedTransaction)
+                           .collect(Collectors.toList());
+            case PENDING:
+                return transactionList.stream()
+                           .filter(SpiTransaction::isPendingTransaction)
+                           .collect(Collectors.toList());
+            case BOTH:
+            default:
+                return transactionList;
         }
     }
 
     private List<SpiAccountDetails> getAccountDetailsByPsuId(SpiAccountConsent accountConsent) {
+        // TODO correctly handle multiple PSUs for multilevel SCA https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/516
+        String psuId = CollectionUtils.isNotEmpty(accountConsent.getPsuData())
+                           ? accountConsent.getPsuData().get(0).getPsuId()
+                           : null;
+
         return Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getAccountDetailsByPsuId(),
             HttpMethod.GET,
             null,
             new ParameterizedTypeReference<List<SpiAccountDetails>>() {
             },
-            Optional.ofNullable(accountConsent.getPsuData()).map(SpiPsuData::getPsuId).orElse(null)
+            psuId
         ).getBody())
-            .orElseGet(Collections::emptyList);
+                   .orElseGet(Collections::emptyList);
     }
 
     private List<SpiAccountDetails> getAccountDetailsFromReferences(SpiAccountConsent accountConsent) { // TODO remove consentId param, when SpiAccountConsent contains it https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/430
@@ -256,10 +285,10 @@ public class AccountSpiImpl implements AccountSpi {
         }
 
         return references.stream()
-            .map(this::getAccountDetailsByAccountReference)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toList());
+                   .map(this::getAccountDetailsByAccountReference)
+                   .filter(Optional::isPresent)
+                   .map(Optional::get)
+                   .collect(Collectors.toList());
     }
 
     private Optional<SpiAccountDetails> getAccountDetailsByAccountReference(SpiAccountReference reference) {
@@ -277,12 +306,12 @@ public class AccountSpiImpl implements AccountSpi {
                 reference.getIban()
             ).getBody()
         )
-            .orElseGet(Collections::emptyList);
+                                                     .orElseGet(Collections::emptyList);
 
         // TODO don't use currency as an account identifier https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
         return accountDetails.stream()
-            .filter(acc -> acc.getCurrency() == reference.getCurrency())
-            .findFirst();
+                   .filter(acc -> acc.getCurrency() == reference.getCurrency())
+                   .findFirst();
     }
 
     private List<SpiAccountDetails> filterAccountDetailsByWithBalance(boolean withBalance, List<SpiAccountDetails> details) {

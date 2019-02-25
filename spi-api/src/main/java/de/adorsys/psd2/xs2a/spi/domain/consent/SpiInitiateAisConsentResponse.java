@@ -27,4 +27,6 @@ import org.jetbrains.annotations.Nullable;
 public class SpiInitiateAisConsentResponse {
     @Nullable
     private SpiAccountAccess accountAccess;
+
+    private boolean multilevelScaRequired;
 }

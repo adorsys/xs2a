@@ -252,7 +252,7 @@ public class CmsAspspAisExportServiceInternalTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null);
+                                     false, false, null, null, null, false);
     }
 
     private AisConsent buildAisConsent() {
@@ -260,7 +260,7 @@ public class CmsAspspAisExportServiceInternalTest {
         aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
         aisConsent.setExpireDate(LocalDate.now().plusDays(1));
         aisConsent.setLastActionDate(LocalDate.now());
-        aisConsent.setPsuData(psuData);
+        aisConsent.setPsuDataList(Collections.singletonList(psuData));
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
         return aisConsent;

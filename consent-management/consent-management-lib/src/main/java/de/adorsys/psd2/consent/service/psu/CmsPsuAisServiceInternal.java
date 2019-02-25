@@ -71,8 +71,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         AisConsentAuthorization authorisation = aisConsentAuthorisationRepository.findOne(
             aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
         return Optional.ofNullable(authorisation)
-                   .map(AisConsentAuthorization::getConsent)
-                   .map(con -> updatePsuData(con, psuIdData))
+                   .map(auth -> updatePsuData(auth, psuIdData))
                    .orElse(false);
     }
 
@@ -198,17 +197,17 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         return aisConsentRepository.save(consent) != null;
     }
 
-    private boolean updatePsuData(AisConsent consent, PsuIdData psuIdData) {
+    private boolean updatePsuData(AisConsentAuthorization authorisation, PsuIdData psuIdData) {
         PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData);
         if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
             return false;
         }
 
-        Optional.ofNullable(consent.getPsuData())
+        Optional.ofNullable(authorisation.getPsuData())
             .ifPresent(psu -> newPsuData.setId(psu.getId()));
 
-        consent.setPsuData(newPsuData);
-        aisConsentRepository.save(consent);
+        authorisation.setPsuData(newPsuData);
+        aisConsentAuthorisationRepository.save(authorisation);
         return true;
     }
 

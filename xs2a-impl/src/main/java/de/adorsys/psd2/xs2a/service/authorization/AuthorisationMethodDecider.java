@@ -30,6 +30,7 @@ public class AuthorisationMethodDecider {
      * Explicit authorisation will be used in case if tppExplicitAuthorisationPreferred = true and signingBasketSupported = true or in case of multilevel SCA
      *
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
+     * @param multilevelScaRequired does response have multilevel SCA
      * @return is explicit method of authorisation will be used
      */
     public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {
@@ -43,6 +44,7 @@ public class AuthorisationMethodDecider {
      * Implicit approach is impossible in case of multilevel SCA
      *
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
+     * @param multilevelScaRequired does response have multilevel SCA
      * @return is implicit method of authorisation will be used
      */
     public boolean isImplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {

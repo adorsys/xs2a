@@ -89,7 +89,6 @@ public class CmsPsuPisMapper {
         periodicPayment.setCreditorName(pisPaymentData.getCreditorName());
         periodicPayment.setCreditorAddress(pisCommonPaymentMapper.mapToCmsAddress(pisPaymentData.getCreditorAddress()));
         periodicPayment.setRemittanceInformationUnstructured(pisPaymentData.getRemittanceInformationUnstructured());
-        periodicPayment.setPaymentStatus(pisPaymentData.getTransactionStatus());
         periodicPayment.setRequestedExecutionDate(pisPaymentData.getRequestedExecutionDate());
         periodicPayment.setRequestedExecutionTime(pisPaymentData.getRequestedExecutionTime());
         periodicPayment.setDayOfExecution(pisPaymentData.getDayOfExecution());
@@ -113,7 +112,6 @@ public class CmsPsuPisMapper {
                                               .collect(Collectors.toList());
         bulkPayment.setPayments(payments);
         bulkPayment.setPaymentProduct(paymentProduct);
-        bulkPayment.setPaymentStatus(bulkPisPaymentData.getTransactionStatus());
 
         return bulkPayment;
     }
@@ -129,7 +127,6 @@ public class CmsPsuPisMapper {
         singlePayment.setCreditorName(pisPaymentData.getCreditorName());
         singlePayment.setCreditorAddress(pisCommonPaymentMapper.mapToCmsAddress(pisPaymentData.getCreditorAddress()));
         singlePayment.setRemittanceInformationUnstructured(pisPaymentData.getRemittanceInformationUnstructured());
-        singlePayment.setPaymentStatus(pisPaymentData.getTransactionStatus());
         singlePayment.setRequestedExecutionDate(pisPaymentData.getRequestedExecutionDate());
         singlePayment.setRequestedExecutionTime(pisPaymentData.getRequestedExecutionTime());
 

@@ -65,7 +65,7 @@ public class PaymentModelMapperXs2a {
         }
     }
 
-    public Object mapToXs2aXmlPayment(PaymentInitiationParameters requestParameters, String xmlSct, String jsonStandingorderType) {
+    public Object mapToXs2aRawPayment(PaymentInitiationParameters requestParameters, String xmlSct, String jsonStandingorderType) {
         if (requestParameters.getPaymentType() == PERIODIC) {
             return buildPeriodicBinaryBodyData(xmlSct, jsonStandingorderType);
         }

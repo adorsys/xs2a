@@ -1,0 +1,67 @@
+<!--
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2019-02-15-1" author="ssh@adorsys.com.ua">
+        <comment>Create table ais_consent_psu_data</comment>
+
+        <createTable tableName="ais_consent_psu_data">
+            <column name="psu_data_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="ais_consent_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2019-02-15-2" author="ssh@adorsys.com.ua">
+        <comment>Copy existing PSU Data from ais_consent table to ais_consent_psu_data</comment>
+
+        <sql>
+            INSERT INTO ais_consent_psu_data (psu_data_id, ais_consent_id)
+            SELECT psu_id, id
+            FROM ais_consent
+            WHERE psu_id IS NOT NULL
+        </sql>
+    </changeSet>
+
+    <changeSet id="2019-02-15-3" author="ssh@adorsys.com.ua">
+        <comment>Remove psu_id column in ais_consent table</comment>
+
+        <dropForeignKeyConstraint baseTableName="ais_consent" constraintName="fk_ais_consent_psu_data"/>
+
+        <dropColumn tableName="ais_consent" columnName="psu_id"/>
+    </changeSet>
+
+    <changeSet id="2019-02-15-4" author="ssh@adorsys.com.ua">
+        <comment>Add foreign keys to ais_consent_psu_data table</comment>
+
+        <addForeignKeyConstraint baseColumnNames="psu_data_id" baseTableName="ais_consent_psu_data"
+                                 constraintName="fk_ais_consent_psu_data" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="psu_data"/>
+
+        <addForeignKeyConstraint baseColumnNames="ais_consent_id" baseTableName="ais_consent_psu_data"
+                                 constraintName="fk_psu_data_ais_consent" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="ais_consent"/>
+    </changeSet>
+
+</databaseChangeLog>

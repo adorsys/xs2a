@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -46,6 +47,7 @@ public class AisConsentServiceInternalEncryptedTest {
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.RECEIVED;
     private static final String AUTHORISATION_ID = "b3ecf205-da94-4e83-837b-5cd93ab88120";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+    private static final String AUTHENTICATION_METHOD_ID = "Method id";
 
     @InjectMocks
     private AisConsentServiceInternalEncrypted aisConsentServiceInternalEncrypted;
@@ -80,7 +82,7 @@ public class AisConsentServiceInternalEncryptedTest {
         when(aisConsentService.updateConsentAuthorization(AUTHORISATION_ID, buildAisConsentAuthorisationRequest()))
             .thenReturn(true);
         when(aisConsentService.getPsuDataByConsentId(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(buildPsuIdData()));
+            .thenReturn(Optional.of(Collections.singletonList(buildPsuIdData())));
         when(aisConsentService.getAuthorisationsByConsentId(DECRYPTED_CONSENT_ID))
             .thenReturn(Optional.of(buildAuthorisations()));
 
@@ -414,10 +416,11 @@ public class AisConsentServiceInternalEncryptedTest {
     @Test
     public void getPsuDataByConsentId_success() {
         // Given
-        PsuIdData expected = buildPsuIdData();
+
+        List<PsuIdData> expected = Collections.singletonList(buildPsuIdData());
 
         // When
-        Optional<PsuIdData> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
+        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
 
         // Then
         assertTrue(actual.isPresent());
@@ -431,7 +434,7 @@ public class AisConsentServiceInternalEncryptedTest {
         when(aisConsentService.getPsuDataByConsentId(any())).thenReturn(Optional.empty());
 
         // When
-        Optional<PsuIdData> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
+        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(ENCRYPTED_CONSENT_ID);
 
         // Then
         assertFalse(actual.isPresent());
@@ -441,7 +444,7 @@ public class AisConsentServiceInternalEncryptedTest {
     @Test
     public void getPsuDataByConsentId_decryptionFailed() {
         // When
-        Optional<PsuIdData> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(UNDECRYPTABLE_CONSENT_ID);
+        Optional<List<PsuIdData>> actual = aisConsentServiceInternalEncrypted.getPsuDataByConsentId(UNDECRYPTABLE_CONSENT_ID);
 
         // Then
         assertFalse(actual.isPresent());
@@ -518,6 +521,60 @@ public class AisConsentServiceInternalEncryptedTest {
         verify(aisConsentService, never()).getAuthorisationsByConsentId(any());
     }
 
+    @Test
+    public void isAuthenticationMethodDecoupled_success() {
+        // Given
+        when(aisConsentService.isAuthenticationMethodDecoupled(anyString(), anyString())).thenReturn(true);
+
+        // When
+        boolean actual = aisConsentServiceInternalEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+
+        // Then
+        assertTrue(actual);
+        verify(aisConsentService, times(1)).isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+    }
+
+    @Test
+    public void isAuthenticationMethodDecoupled_internalServiceFailed() {
+        // Given
+        when(aisConsentService.isAuthenticationMethodDecoupled(anyString(), anyString())).thenReturn(false);
+
+        // When
+        boolean actual = aisConsentServiceInternalEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+
+        // Then
+        assertFalse(actual);
+        verify(aisConsentService, times(1)).isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
+    }
+
+    @Test
+    public void saveAuthenticationMethods_success() {
+        // Given
+        when(aisConsentService.saveAuthenticationMethods(anyString(), any())).thenReturn(true);
+        List<CmsScaMethod> cmsScaMethods = Collections.singletonList(buildCmsScaMethod());
+
+        // When
+        boolean actual = aisConsentServiceInternalEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, cmsScaMethods);
+
+        // Then
+        assertTrue(actual);
+        verify(aisConsentService, times(1)).saveAuthenticationMethods(AUTHORISATION_ID, cmsScaMethods);
+    }
+
+    @Test
+    public void saveAuthenticationMethods_internalServiceFailed() {
+        // Given
+        when(aisConsentService.saveAuthenticationMethods(anyString(), any())).thenReturn(false);
+        List<CmsScaMethod> cmsScaMethods = Collections.singletonList(buildCmsScaMethod());
+
+        // When
+        boolean actual = aisConsentServiceInternalEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, cmsScaMethods);
+
+        // Then
+        assertFalse(actual);
+        verify(aisConsentService, times(1)).saveAuthenticationMethods(AUTHORISATION_ID, cmsScaMethods);
+    }
+
     private CreateAisConsentRequest buildCreateAisConsentRequest() {
         return new CreateAisConsentRequest();
     }
@@ -548,5 +605,9 @@ public class AisConsentServiceInternalEncryptedTest {
 
     private List<String> buildAuthorisations() {
         return Collections.singletonList(AUTHORISATION_ID);
+    }
+
+    private CmsScaMethod buildCmsScaMethod() {
+        return new CmsScaMethod(AUTHENTICATION_METHOD_ID, true);
     }
 }

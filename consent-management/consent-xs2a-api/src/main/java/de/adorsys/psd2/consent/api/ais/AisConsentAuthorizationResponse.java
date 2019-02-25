@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.consent.api.ais;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -28,8 +30,8 @@ public class AisConsentAuthorizationResponse {
     @ApiModelProperty(value = "ID of the Authorization", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
     private String authorizationId;
 
-    @ApiModelProperty(value = "ID of the corresponding PSU", required = true, example = "32aad578-58a6-4d5d-8b0c-45546dd88f07")
-    private String psuId;
+    @ApiModelProperty(value = "PSU identification data", required = true)
+    private PsuIdData psuIdData;
 
     @ApiModelProperty(value = "An identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String consentId;
@@ -45,4 +47,7 @@ public class AisConsentAuthorizationResponse {
 
     @ApiModelProperty(value = "SCA authentication data")
     private String scaAuthenticationData;
+
+    @ApiModelProperty(value = "Chosen SCA approach")
+    private ScaApproach chosenScaApproach;
 }

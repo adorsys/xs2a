@@ -19,31 +19,50 @@ package de.adorsys.psd2.xs2a.service.payment;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service("status-periodic-payments")
 @RequiredArgsConstructor
 public class ReadPeriodicPaymentStatusService implements ReadPaymentStatusService {
+    private final PisAspspDataService pisAspspDataService;
     private final SpiPaymentFactory spiPaymentFactory;
+    private final SpiErrorMapper spiErrorMapper;
     private final PeriodicPaymentSpi periodicPaymentSpi;
 
     @Override
-    public SpiResponse<TransactionStatus> readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
+    public  ReadPaymentStatusResponse readPaymentStatus(List<PisPayment> pisPayments, String paymentProduct, SpiContextData spiContextData, AspspConsentData aspspConsentData) {
         Optional<SpiPeriodicPayment> spiPeriodicPaymentOptional = spiPaymentFactory.createSpiPeriodicPayment(pisPayments.get(0), paymentProduct);
 
-        return spiPeriodicPaymentOptional
-                   .map(spiPeriodicPayment -> periodicPaymentSpi.getPaymentStatusById(spiContextData, spiPeriodicPayment, aspspConsentData))
-                   .orElseGet(() -> SpiResponse.<TransactionStatus>builder()
-                                        .message("Payment not found")
-                                        .fail(SpiResponseStatus.LOGICAL_FAILURE));
+        if (!spiPeriodicPaymentOptional.isPresent()) {
+            return new ReadPaymentStatusResponse(
+                ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
+                    .messages(Collections.singletonList("Payment not found"))
+                    .build()
+            );
+        }
+
+        SpiResponse<TransactionStatus> spiResponse = periodicPaymentSpi.getPaymentStatusById(spiContextData, spiPeriodicPaymentOptional.get(), aspspConsentData);
+        pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return new ReadPaymentStatusResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
+        }
+
+        return new ReadPaymentStatusResponse(spiResponse.getPayload());
     }
 }

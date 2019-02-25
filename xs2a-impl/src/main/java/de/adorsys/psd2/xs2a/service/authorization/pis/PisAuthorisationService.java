@@ -19,13 +19,16 @@ package de.adorsys.psd2.xs2a.service.authorization.pis;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +37,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory.CANCELLATION_SERVICE_PREFIX;
-import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory.SERVICE_PREFIX;
-
 @Service
 @RequiredArgsConstructor
 // TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
@@ -44,6 +44,7 @@ public class PisAuthorisationService {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     private final PisScaStageAuthorisationFactory pisScaStageAuthorisationFactory;
     private final Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
+    private final ScaApproachResolver scaApproachResolver;
 
     /**
      * Sends a POST request to CMS to store created pis authorisation
@@ -53,21 +54,23 @@ public class PisAuthorisationService {
      * @return a response object containing authorisation id
      */
     public CreatePisAuthorisationResponse createPisAuthorisation(String paymentId, PsuIdData psuData) {
-        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, CmsAuthorisationType.CREATED, psuData)
+        CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(CmsAuthorisationType.CREATED, psuData, scaApproachResolver.resolveScaApproach());
+        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId,  request)
                    .orElse(null);
     }
 
     /**
-     * Updates PIS  authorisation according to psu's sca methods
+     * Updates PIS authorisation according to psu's sca methods with embedded and decoupled SCA approach
      *
      * @param request Provides transporting data when updating pis authorisation
+     * @param scaApproach current SCA approach, preferred by the server
      * @return update pis authorisation response, which contains payment id, authorisation id, sca status, psu message and links
      */
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, ScaApproach scaApproach) {
         GetPisAuthorisationResponse response = pisCommonPaymentServiceEncrypted.getPisAuthorisationById(request.getAuthorisationId())
-                                                                .orElse(null);
+                                                   .orElse(null);
 
-        PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(SERVICE_PREFIX + response.getScaStatus().name());
+        PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(PisScaStageAuthorisationFactory.INITIATION_PREFIX + PisScaStageAuthorisationFactory.SEPARATOR + scaApproach.name() + PisScaStageAuthorisationFactory.SEPARATOR + response.getScaStatus().name());
         Xs2aUpdatePisCommonPaymentPsuDataResponse stageResponse = service.apply(request, response);
 
         if (!stageResponse.hasError()) {
@@ -78,16 +81,17 @@ public class PisAuthorisationService {
     }
 
     /**
-     * Updates PIS cancellation authorisation according to psu's sca methods
+     * Updates PIS cancellation authorisation according to psu's sca methods with embedded and decoupled SCA approach
      *
      * @param request Provides transporting data when updating pis cancellation authorisation
+     * @param scaApproach current SCA approach, preferred by the server
      * @return update pis authorisation response, which contains payment id, authorisation id, sca status, psu message and links
      */
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCancellationAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCancellationAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, ScaApproach scaApproach) {
         GetPisAuthorisationResponse response = pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(request.getAuthorisationId())
-                                                                .orElse(null);
+                                                   .orElse(null);
 
-        PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(CANCELLATION_SERVICE_PREFIX + response.getScaStatus().name());
+        PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(PisScaStageAuthorisationFactory.CANCELLATION_PREFIX + PisScaStageAuthorisationFactory.SEPARATOR + scaApproach.name() + PisScaStageAuthorisationFactory.SEPARATOR + response.getScaStatus().name());
         Xs2aUpdatePisCommonPaymentPsuDataResponse stageResponse = service.apply(request, response);
 
         if (!stageResponse.hasError()) {
@@ -113,7 +117,8 @@ public class PisAuthorisationService {
      * @return long representation of identifier of stored pis authorisation cancellation
      */
     public CreatePisAuthorisationResponse createPisAuthorisationCancellation(String paymentId, PsuIdData psuData) {
-        return pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(paymentId, CmsAuthorisationType.CANCELLED, psuData)
+        CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(CmsAuthorisationType.CANCELLED, psuData, scaApproachResolver.resolveScaApproach());
+        return pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(paymentId, request)
                    .orElse(null);
     }
 

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -30,6 +29,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+
+import java.util.EnumSet;
+
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
 @Slf4j
 @Aspect
@@ -57,17 +60,17 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
         links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentService, paymentProduct, paymentId));
         links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentService, paymentProduct, paymentId));
 
-        if (scaApproachResolver.resolveScaApproach() == ScaApproach.EMBEDDED) {
-            return addEmbeddedRelatedLinks(links, paymentService, paymentProduct, paymentId, authorizationId, psuData);
-        } else if (scaApproachResolver.resolveScaApproach() == ScaApproach.REDIRECT) {
+        if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
+            return addEmbeddedDecoupledRelatedLinks(links, paymentService, paymentProduct, paymentId, authorizationId, psuData);
+        } else if (scaApproachResolver.resolveScaApproach() == REDIRECT) {
             return addRedirectRelatedLinks(links, paymentService, paymentProduct, paymentId, authorizationId);
-        } else if (scaApproachResolver.resolveScaApproach() == ScaApproach.OAUTH) {
+        } else if (scaApproachResolver.resolveScaApproach() == OAUTH) {
             links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
         return links;
     }
 
-    private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
+    private Links addEmbeddedDecoupledRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
         String path = "/v1/{paymentService}/{payment-product}/{paymentId}/cancellation-authorisations/{authorisationId}";
         if (psuData.isEmpty()) {
             links.setStartAuthorisationWithPsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));

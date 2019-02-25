@@ -17,9 +17,11 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//TODO Rename consentId to encryptedConsentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/705
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/ais/consent")
@@ -204,5 +207,61 @@ public class AisConsentController {
         return aisConsentService.getAuthorisationsByConsentId(consentId)
                    .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}")
+    @ApiOperation(value = "Checks if requested authentication method is decoupled")
+    @ApiResponse(code = 200, message = "OK")
+    public ResponseEntity<Boolean> isAuthenticationMethodDecoupled(
+        @ApiParam(name = "authorisation-id", value = "Consent authorisation identification", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @ApiParam(name = "authentication-method-id", value = "Authentication method identification", example = "sms")
+        @PathVariable("authentication-method-id") String authenticationMethodId) {
+        boolean isMethodDecoupled = aisConsentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        return new ResponseEntity<>(isMethodDecoupled, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/authorisations/{authorisation-id}/authentication-methods")
+    @ApiOperation(value = "Saves authentication methods in authorisation")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "No Content"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<Void> saveAuthenticationMethods(
+        @ApiParam(name = "authorisation-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @RequestBody List<CmsScaMethod> methods) {
+        return aisConsentService.saveAuthenticationMethods(authorisationId, methods)
+                   ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping(path = "/authorisations/{authorisation-id}/sca-approach/{sca-approach}")
+    @ApiOperation(value = "Updates AIS SCA approach in authorisation")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<Boolean> updateScaApproach(
+        @ApiParam(name = "authorisation-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId,
+        @ApiParam(name = "sca-approach", value = "Chosen SCA approach.", example = "REDIRECT")
+        @PathVariable("sca-approach") ScaApproach scaApproach) {
+        return aisConsentService.updateScaApproach(authorisationId, scaApproach)
+                   ? new ResponseEntity<>(true, HttpStatus.OK)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping(path = "/{consent-id}/multilevel-sca")
+    @ApiOperation(value = "Updates multilevel SCA in consent")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<Boolean> updateMultilevelScaRequired(
+        @ApiParam(name = "consent-id", value = "The consent identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId,
+        @ApiParam(name = "multilevel-sca", value = "Multilevel SCA.", example = "false")
+        @RequestParam(value = "multilevel-sca", defaultValue = "false") boolean multilevelSca) {
+        return aisConsentService.updateMultilevelScaRequired(consentId, multilevelSca)
+                   ? new ResponseEntity<>(true, HttpStatus.OK)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

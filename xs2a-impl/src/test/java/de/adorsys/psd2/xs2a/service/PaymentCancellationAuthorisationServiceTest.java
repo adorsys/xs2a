@@ -20,15 +20,19 @@ import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,6 +71,8 @@ public class PaymentCancellationAuthorisationServiceTest {
     private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
     private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
+    @Mock
+    private PisEndpointAccessCheckerService endpointAccessCheckerService;
 
     @Before
     public void setUp() {
@@ -99,6 +105,8 @@ public class PaymentCancellationAuthorisationServiceTest {
     public void updatePisCancellationPsuData_Success_ShouldRecordEvent() {
         when(pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(any()))
             .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.STARTED));
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID))
+            .thenReturn(true);
 
         // Given:
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
@@ -110,6 +118,25 @@ public class PaymentCancellationAuthorisationServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture(), any());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void updatePisPsuData_Failure_EndpointIsNotAccessible() {
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
+
+        doNothing()
+            .when(xs2aEventService).recordPisTppRequest(PAYMENT_ID, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
+
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID))
+            .thenReturn(false);
+
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> actualResponse = paymentCancellationAuthorisationService.updatePisCancellationPsuData(request);
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError().getErrorType()).isEqualTo(ErrorType.PIS_403);
+        assertThat(actualResponse.getError().getTppMessage().getCategory()).isEqualTo(MessageCategory.ERROR);
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.SERVICE_BLOCKED);
     }
 
     @Test

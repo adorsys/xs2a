@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
@@ -26,7 +25,10 @@ import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 
+import java.util.EnumSet;
+
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     private final AuthorisationMethodDecider authorisationMethodDecider;
@@ -62,17 +64,17 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentService, paymentProduct, paymentId));
         links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentService, paymentProduct, paymentId));
 
-        if (scaApproachResolver.resolveScaApproach() == ScaApproach.EMBEDDED) {
-            return addEmbeddedRelatedLinks(links, paymentRequestParameters, body);
-        } else if (scaApproachResolver.resolveScaApproach() == ScaApproach.REDIRECT) {
+        if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
+            return addEmbeddedDecoupledRelatedLinks(links, paymentRequestParameters, body);
+        } else if (scaApproachResolver.resolveScaApproach() == REDIRECT) {
             return addRedirectRelatedLinks(links, paymentRequestParameters, body);
-        } else if (scaApproachResolver.resolveScaApproach() == ScaApproach.OAUTH) {
+        } else if (scaApproachResolver.resolveScaApproach() == OAUTH) {
             links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
         return links;
     }
 
-    private Links addEmbeddedRelatedLinks(Links links, PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
+    private Links addEmbeddedDecoupledRelatedLinks(Links links, PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
         String paymentService = paymentRequestParameters.getPaymentType().getValue();
         String paymentProduct = paymentRequestParameters.getPaymentProduct();
         String paymentId = body.getPaymentId();

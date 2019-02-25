@@ -37,7 +37,9 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -62,6 +64,8 @@ import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStat
 @Slf4j
 @RequiredArgsConstructor
 public class AisConsentSpiImpl implements AisConsentSpi {
+    private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
+
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
@@ -94,7 +98,7 @@ public class AisConsentSpiImpl implements AisConsentSpi {
             }
 
             return SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                       .payload(new SpiInitiateAisConsentResponse(access))
+                       .payload(new SpiInitiateAisConsentResponse(access, false))
                        .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .success();
 
@@ -225,6 +229,17 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         }
     }
 
+    @Override
+    @NotNull
+    public SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @Nullable String authenticationMethodId, @NotNull SpiAccountConsent businessObject, @NotNull AspspConsentData aspspConsentData) {
+        SpiAuthorisationDecoupledScaResponse response = new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE);
+
+        return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
+                   .payload(response)
+                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                   .success();
+    }
+
     private SpiAuthorizationCodeResult getDefaultSpiAuthorizationCodeResult() {
         SpiAuthenticationObject method = new SpiAuthenticationObject();
         method.setAuthenticationMethodId("sms");
@@ -240,13 +255,18 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     }
 
     private List<SpiAccountDetails> getAccountDetailsByPsuId(SpiAccountConsent accountConsent) {
+        // TODO correctly handle multiple PSUs for multilevel SCA https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/516
+        String psuId = CollectionUtils.isNotEmpty(accountConsent.getPsuData())
+                           ? accountConsent.getPsuData().get(0).getPsuId()
+                           : null;
+
         return Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getAccountDetailsByPsuId(),
             HttpMethod.GET,
             null,
             new ParameterizedTypeReference<List<SpiAccountDetails>>() {
             },
-            Optional.ofNullable(accountConsent.getPsuData()).map(SpiPsuData::getPsuId).orElse(null)
+            psuId
         ).getBody())
                    .orElseGet(Collections::emptyList);
     }
@@ -290,11 +310,5 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         return accountDetails.stream()
                    .filter(acc -> acc.getCurrency() == reference.getCurrency())
                    .findFirst();
-    }
-
-    @Override
-    @NotNull
-    public SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(@NotNull SpiContextData contextData, @NotNull String authorisationId, @NotNull String authenticationMethodId, @NotNull SpiAccountConsent businessObject, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }

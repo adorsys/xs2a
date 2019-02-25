@@ -17,13 +17,8 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
-import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +30,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 
 
 /**
@@ -56,7 +55,9 @@ public class AccountReferenceValidationService {
                                             .anyMatch(Predicate.isEqual(false));
 
         return isInvalidReferenceSet
-                   ? ResponseObject.builder().fail(new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR))).build()
+                   ? ResponseObject.builder()
+                         .fail(AIS_400, of(FORMAT_ERROR))
+                         .build()
                    : ResponseObject.builder().build();
     }
 

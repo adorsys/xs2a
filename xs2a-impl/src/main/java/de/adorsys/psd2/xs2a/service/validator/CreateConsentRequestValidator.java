@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -33,6 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
 
 @Component
@@ -43,11 +42,11 @@ public class CreateConsentRequestValidator {
 
     /**
      * Validates Create consent request according to:
-     * <p><ul>
+     * <ul>
      * <li>supporting of global consent for All Psd2</li>
      * <li>supporting of bank offered consent</li>
      * <li>expiration date of consent</li>
-     * </ul><p>
+     * </ul>
      * If there is new consent requirements, this method has to be updated.
      *
      * @param request CreateConsentReq request for consent creating
@@ -56,21 +55,21 @@ public class CreateConsentRequestValidator {
      */
     public ValidationResult validateRequest(CreateConsentReq request) {
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED)));
         }
         if (isNotSupportedBankOfferedConsent(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SERVICE_INVALID_405)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405)));
         }
         if (!isValidExpirationDate(request.getValidUntil())) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PERIOD_INVALID)));
         }
 
         if (isNotValidFrequencyForRecurringIndicator(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)));
         }
 
         if (isNotSupportedAvailableAccounts(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.SERVICE_INVALID_405)));
+            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405)));
         }
         return new ValidationResult(true, null);
     }
