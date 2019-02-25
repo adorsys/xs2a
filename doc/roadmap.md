@@ -27,17 +27,33 @@ Stable branch 2.x will be supported at least till 01.09.2019
 - Optional SCA for Access to all Accounts for all PSD2 defined AIS – Global Consent
 - Multilevel SCA for Payment initiation in Redirect sca approach
 - Multilevel SCA for consents in Redirect sca approach
+- Extend logging with technical activities 
+- Event table new searchable columns: psu info and tpp
+- Store in payments and in consents creation date and time
+- Payment Authorisations and Payment Cancellation Authorisations should be separated from AIS Consent Authorisations 
+- Bugfix: 500 Error when double Start Cancellation Authorisation
+- Bugfix: Return a corresponding "Bad Request" error response if consentApi._createConsent receives a consent object that contains both the list of accounts (resp. balances, transaction) and the flag AllPsd2 or AvailableAccounts 
+- Bugfix: Wrong response body for Start Payment Authorisation request Redirect Explicit approach for XS2A connector
+- Bugfix: Consents without successful authorisation should expire with status Rejected
+- Bugfix: Wrong response for provision of an invalid TAN or password 
+- Bugfix: "Currency" should be optional while creating AIS consent
+- Bugfix: Validation of frequency per day for consents
+- Bugfix: Tpp-Redirect-Uri is not mandatory for REDIRECT approach
+- Bugfix: No IBAN validation for payment intiation
+- Bugfix: Check incoming requests to have required information
+- Bugfix: Retrieve payment data by redirect-id with correct endpoint
 
 ### Upcoming features 2.x/3.x (Priorities may be changed)
-- Extend logging with technical activities 
+- Payment sepa-credit-transfers validator
+- Consent validator
 
 ## Development branch 3.x
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 2.x is guaranteed.
 
 ### version 3.0 (Planned date 15.03.2019)
-Migration to dynamic Sandbox, based on ledgers project and corresponding connector.
-Take out ASPSP Mock Server and corresponding Connector out of XS2A
+- Migration to dynamic Sandbox, based on ledgers project and corresponding connector.
+- Take out ASPSP Mock Server and corresponding Connector out of XS2A
 
 
 ### Upcoming features 3.x (Priorities may be changed)
