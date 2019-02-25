@@ -48,9 +48,10 @@ public class PisCommonDecoupledServiceTest {
     private static final SpiResponse<SpiAuthorisationDecoupledScaResponse> SPI_AUTHORISATION_DECOUPLED_SCA_RESPONSE_SPI_RESPONSE_FAIL = buildSpiResponseFail();
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest UPDATE_PIS_COMMON_PAYMENT_REQUEST = buildUpdatePisCommonPaymentPsuDataRequest(null);
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest UPDATE_PIS_COMMON_PAYMENT_REQUEST_WITH_AUTHENTICATION_METHOD_ID = buildUpdatePisCommonPaymentPsuDataRequest(AUTHENTICATION_METHOD_ID);
+    private static final PsuIdData PSU_DATA = buildPsuIdData(UPDATE_PIS_COMMON_PAYMENT_REQUEST);
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE = buildUpdatePisCommonPaymentPsuDataResponse(UPDATE_PIS_COMMON_PAYMENT_REQUEST);
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE_WITH_AUTHENTICATION_METHOD_ID = buildUpdatePisCommonPaymentPsuDataResponse(UPDATE_PIS_COMMON_PAYMENT_REQUEST_WITH_AUTHENTICATION_METHOD_ID);
-    private static final PsuIdData PSU_DATA = buildPsuIdData(UPDATE_PIS_COMMON_PAYMENT_REQUEST);
+
 
     @InjectMocks
     private PisCommonDecoupledService pisCommonDecoupledService;
