@@ -23,7 +23,6 @@ Stable branch will contain bugfixing and possibly necessary changes to support m
 Stable branch 2.x will be supported at least till 01.09.2019
 
 ### version 2.1 (Planned date 15.03.2019)
-
 - Optional SCA for Access to all Accounts for all PSD2 defined AIS – Global Consent
 - Multilevel SCA for Payment initiation in Redirect sca approach
 - Multilevel SCA for consents in Redirect sca approach
@@ -31,16 +30,20 @@ Stable branch 2.x will be supported at least till 01.09.2019
 - Event table new searchable columns: psu info and tpp
 - Store in payments and in consents creation date and time
 - Payment Authorisations and Payment Cancellation Authorisations should be separated from AIS Consent Authorisations 
-- Bugfix: 500 Error when double Start Cancellation Authorisation
-- Bugfix: Return a corresponding "Bad Request" error response if consentApi._createConsent receives a consent object that contains both the list of accounts (resp. balances, transaction) and the flag AllPsd2 or AvailableAccounts 
-- Bugfix: Wrong response body for Start Payment Authorisation request Redirect Explicit approach for XS2A connector
 - Bugfix: Consents without successful authorisation should expire with status Rejected
+- Bugfix: Return a corresponding "Bad Request" error response if consentApi._createConsent receives a consent object that contains both the list of accounts (resp. balances, transaction) and the flag AllPsd2 or AvailableAccounts 
+- Bugfix: Check incoming requests to have required information
+- Bugfix: No IBAN validation for payment initiation
+- Bugfix: Tpp-Redirect-Uri is not mandatory for REDIRECT approach
+
+
+
+### version 2.2 (Planned date 29.03.2019)
+- Bugfix: 500 Error when double Start Cancellation Authorisation
+- Bugfix: Wrong response body for Start Payment Authorisation request Redirect Explicit approach for XS2A connector
 - Bugfix: Wrong response for provision of an invalid TAN or password 
 - Bugfix: "Currency" should be optional while creating AIS consent
 - Bugfix: Validation of frequency per day for consents
-- Bugfix: Tpp-Redirect-Uri is not mandatory for REDIRECT approach
-- Bugfix: No IBAN validation for payment intiation
-- Bugfix: Check incoming requests to have required information
 - Bugfix: Retrieve payment data by redirect-id with correct endpoint
 
 ### Upcoming features 2.x/3.x (Priorities may be changed)
