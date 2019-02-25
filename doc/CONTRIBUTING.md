@@ -38,12 +38,10 @@ You may find more information and a plugin for your editor/IDE [here](http://edi
 * We prefer using Mockito over EasyMock for unit-tests.
 * We prefer SpringBoot autoconfiguration over manual Configuration where possible
 
-## Versioning and Releasing
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+## How to Release
 
 Release is being done using the [release scripts](https://github.com/borisskert/release-scripts) ( (C) by [Boris Skert](https://github.com/borisskert) ) located under scripts/release-scripts.
-For detailed info see [README for release-scripts](scripts/release-scripts/README.md).
+For detailed info see [README for release-scripts](../scripts/release-scripts/README.md).
 
 ### Steps to make a release
 
