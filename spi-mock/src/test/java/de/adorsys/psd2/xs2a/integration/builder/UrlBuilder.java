@@ -25,6 +25,10 @@ public class UrlBuilder {
         return "/v1/" + paymentType + "/" + paymentProduct + "/" + encrPaymentId + "/authorisations/" + authorisationId;
     }
 
+    public static String buildGetPaymentCancellationAuthorisationUrl(String paymentType, String paymentProduct, String encrPaymentId) {
+        return "/v1/" + paymentType + "/" + paymentProduct + "/" + encrPaymentId + "/cancellation-authorisations";
+    }
+
     public static String buildGetTransactionsUrlWithoutSlash(String accountId) {
         return "/v1/accounts/" + accountId + "/transactions" + "?bookingStatus=booked";
     }
