@@ -16,18 +16,18 @@
 
 package de.adorsys.psd2.consent.integration.config;
 
-import de.adorsys.psd2.consent.config.EnableCmsSwagger;
-import de.adorsys.psd2.consent.config.HibernateListenerConfig;
-import de.adorsys.psd2.consent.config.ServiceInstanceIdEventListener;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import de.adorsys.psd2.consent.web.aspsp.config.EnableCmsAspspApiSwagger;
+import de.adorsys.psd2.consent.web.psu.config.EnableCmsPsuApiSwagger;
+import de.adorsys.psd2.consent.web.xs2a.config.EnableCmsXs2aApiSwagger;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 @Configuration
 @ComponentScan(value = "de.adorsys.psd2",
-    excludeFilters = @ComponentScan.Filter(EnableCmsSwagger.class))
+    excludeFilters = @ComponentScan.Filter({
+        EnableCmsXs2aApiSwagger.class,
+        EnableCmsPsuApiSwagger.class,
+        EnableCmsAspspApiSwagger.class
+    }))
 public class IntegrationTestConfiguration {
 }
