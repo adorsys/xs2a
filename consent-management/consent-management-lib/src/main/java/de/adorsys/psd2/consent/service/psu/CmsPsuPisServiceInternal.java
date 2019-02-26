@@ -199,6 +199,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private boolean updateAuthorisationStatusAndSaveAuthorisation(PisAuthorization pisAuthorisation, ScaStatus status) {
         if (pisAuthorisation.getScaStatus().isFinalisedStatus()) {
+            log.info("CmsPsuPisServiceInternal.updateAuthorisationStatus failed in updateAuthorisationStatusAndSaveAuthorisation method, " +
+                         "because pis authorisation [{}] has finalised status [{}]", pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus().getValue());
             return false;
         }
         pisAuthorisation.setScaStatus(status);
