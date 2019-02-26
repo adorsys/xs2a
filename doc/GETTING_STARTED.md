@@ -17,6 +17,21 @@ This file starts all services for development with mock, except the main XS2A se
 The important prerequisites for using mock-server is to setup keycloak server before and
 to put the client secrets into environment variables using the `.env`-file.
 
+### Clone git repository and build a project:
+```bash
+$ git clone https://github.com/adorsys/xs2a.git
+$ cd xs2a
+$ mvn clean install
+```
+
+### Use docker-compose
+```
+$ cd online-banking-demo-ui
+$ npm install
+$ cd ..
+$ docker-compose up
+```
+
 ### Initial setup of keycloak server
 
 Download and run keycloak (port 8081):
@@ -44,13 +59,6 @@ $ ./init-realm-and-client.sh
 The user with username `admin` and password `admin123` will be used for keycloak administration then.
 The user with username `aspsp` and password `zzz` will be used for accessing the aspsp-mock-server api then.
 Please note that Keycloak creates realms and clients with some secrets, need to be passed to your environment.
-
-### Clone git repository and build a project:
-```bash
-$ git clone https://github.com/adorsys/xs2a.git
-$ cd xs2a
-$ mvn clean install
-```
 
 ### Run an ASPSP-Mock-Server:
 ```bash
