@@ -69,7 +69,7 @@ If you'd like to persist data, you may use real MongoDB instead.
 $ cd aspsp-profile/aspsp-profile-server
 $ mvn spring-boot:run
 ```
-Open a browser on page [http://localhost:48080/api/v1/swagger-ui.html](http://localhost:48080/api/v1/swagger-ui.html)
+Open a browser on page [http://localhost:48080/swagger-ui.html](http://localhost:48080/swagger-ui.html)
 
 ### Run a Consent-Management-System server:
 First of all you need to setup a relational database for it.
