@@ -51,7 +51,8 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
                                                        @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData,
                                                        @Nullable String instanceId) {
         if (StringUtils.isBlank(tppAuthorisationNumber)) {
-            log.info("CmsAspspPiisFundsExportServiceInternal.exportConsentsByTpp failed, tppAuthorisationNumber is empty or null.");
+            log.info("TPP ID: [{}], instanceId: [{}]. Export consents by TPP failed, TPP ID is empty or null.",
+                     tppAuthorisationNumber, instanceId);
             return Collections.emptyList();
         }
 
@@ -65,7 +66,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
     public Collection<PiisConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
                                                        @Nullable LocalDate createDateTo, @Nullable String instanceId) {
         if (psuIdData == null || psuIdData.isEmpty()) {
-            log.info("CmsAspspPiisFundsExportServiceInternal.exportConsentsByPsu failed, psuIdData is empty or null.");
+            log.info("InstanceId: [{}]. Export consents by psu failed, psuIdData is empty or null.", instanceId);
             return Collections.emptyList();
         }
 
@@ -81,7 +82,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
                                                              @Nullable LocalDate createDateTo,
                                                              @Nullable String instanceId) {
         if (StringUtils.isBlank(aspspAccountId)) {
-            log.info("CmsAspspPiisFundsExportServiceInternal.exportConsentsByAccountId failed, aspspAccountId is empty or null.");
+            log.info("InstanceId: [{}], export consents by accountId failed, aspspAccountId is empty or null.");
             return Collections.emptyList();
         }
 

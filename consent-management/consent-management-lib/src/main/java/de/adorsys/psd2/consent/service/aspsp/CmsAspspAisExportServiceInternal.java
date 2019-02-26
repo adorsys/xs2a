@@ -48,8 +48,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                              @Nullable LocalDate createDateTo,
                                                              @Nullable PsuIdData psuIdData, @NotNull String instanceId) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
-            log.info("CmsAspspAisExportServiceInternal.exportConsentsByTpp failed, tppAuthorisationNumber '{}' or instanceId '{}' is empty.", tppAuthorisationNumber,
-                     instanceId);
+            log.info("TPP ID: [{}], InstanceId: [{}]. Export Consents by TPP: Some of these two values are empty", tppAuthorisationNumber, instanceId);
             return Collections.emptyList();
         }
 
@@ -70,7 +69,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                              @Nullable LocalDate createDateTo,
                                                              @NotNull String instanceId) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
-            log.info("CmsAspspAisExportServiceInternal.exportConsentsByPsu failed, psuIdData or instanceId '{}'is empty or null.",
+            log.info("InstanceId: [{}]. Export consents by Psu failed, psuIdData or instanceId is empty or null.",
                      instanceId);
             return Collections.emptyList();
         }
@@ -92,7 +91,8 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                    @NotNull String instanceId) {
 
         if (StringUtils.isBlank(instanceId)) {
-            log.info("CmsAspspAisExportServiceInternal.exportConsentsByAccountId failed, instanceId is empty or null.");
+            log.info("InstanceId: [{}], aspspAccountId: [{}]. Export consents by accountId failed, instanceId is empty or null.",
+                     instanceId, aspspAccountId);
             return Collections.emptyList();
         }
 

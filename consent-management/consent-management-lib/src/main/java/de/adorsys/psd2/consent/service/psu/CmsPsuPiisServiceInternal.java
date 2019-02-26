@@ -71,8 +71,8 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
             return true;
         }
 
-        log.info("CmsPsuPiisServiceInternal.revokeConsent failed, because psuIdData is not equals stored psuData, or consent status is finalised, or consent with ID [{}] not found",
-                 consentId);
+        log.info("Consent ID [{}], Instance ID: [{}]. Revoke consent failed, because given psuData is not equals stored psuData, or consent status is finalised, or consent not found",
+                 consentId, instanceId);
         return false;
     }
 
@@ -82,7 +82,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
         if (optionalPsuIdData.isPresent()) {
             return optionalPsuIdData.get().contentEquals(psuIdData);
         }
-        log.info("CmsPsuPiisServiceInternal.isPsuIdDataContentEquals failed, because psuIdData is not present");
+        log.info("PIIS Consent IDL [{}]. isPsuIdDataContentEquals failed, because psuIdData is not present", piisConsentEntity.getExternalId());
         return false;
     }
 

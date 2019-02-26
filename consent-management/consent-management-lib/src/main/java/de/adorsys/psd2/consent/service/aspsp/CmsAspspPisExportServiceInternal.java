@@ -47,8 +47,8 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
     @Override
     public Collection<CmsPayment> exportPaymentsByTpp(String tppAuthorisationNumber, @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData, @NotNull String instanceId) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
-            log.info("CmsAspspPisExportServiceInternal.exportPaymentsByTpp failed, tppAuthorisationNumber '{}' or instanceId '{}' is empty or null.", tppAuthorisationNumber,
-                     instanceId);
+            log.info("InstanceId: [{}], TPP ID: [{}]. Export payments by TPP failed, TPP ID or instanceId is empty or null.", instanceId,
+                     tppAuthorisationNumber);
             return Collections.emptyList();
         }
 
@@ -59,7 +59,7 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
     @Override
     public Collection<CmsPayment> exportPaymentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo, @NotNull String instanceId) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
-            log.info("CmsAspspPisExportServiceInternal.exportPaymentsByPsu failed, psuIdData or instanceId '{}'is empty or null.",
+            log.info("InstanceId: [{}]. Export payments by psu failed, psuIdData or instanceId is empty or null.",
                      instanceId);
             return Collections.emptyList();
         }
@@ -71,8 +71,8 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
     @Override
     public Collection<CmsPayment> exportPaymentsByAccountId(@NotNull String aspspAccountId, @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo, @NotNull String instanceId) {
         if (StringUtils.isBlank(aspspAccountId) || StringUtils.isBlank(instanceId)) {
-            log.info("CmsAspspPisExportServiceInternal.exportPaymentsByAccountId failed, aspspAccountId [{}] or instanceId [{}] is empty or null.",
-                     aspspAccountId, instanceId);
+            log.info("InstanceId: [{}], aspspAccountId: [{}]. Export payments by accountId failed, aspspAccountId or instanceId is empty or null.",
+                     instanceId, aspspAccountId);
             return Collections.emptyList();
         }
 
