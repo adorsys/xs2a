@@ -20,35 +20,39 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.springframework.stereotype.Service;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 public class TppInfoMapper {
     public TppInfoEntity mapToTppInfoEntity(TppInfo tppInfo) {
         return Optional.ofNullable(tppInfo)
                    .map(tin -> {
-                       TppInfoEntity pisTppInfo = new TppInfoEntity();
-                       pisTppInfo.setAuthorisationNumber(tin.getAuthorisationNumber());
-                       pisTppInfo.setTppName(tin.getTppName());
-                       pisTppInfo.setTppRoles(new ArrayList<>(tin.getTppRoles()));
-                       pisTppInfo.setAuthorityId(tin.getAuthorityId());
-                       pisTppInfo.setAuthorityName(tin.getAuthorityName());
-                       pisTppInfo.setCountry(tin.getCountry());
-                       pisTppInfo.setOrganisation(tin.getOrganisation());
-                       pisTppInfo.setOrganisationUnit(tin.getOrganisationUnit());
-                       pisTppInfo.setCity(tin.getCity());
-                       pisTppInfo.setState(tin.getState());
+                       TppInfoEntity tppInfoEntity = new TppInfoEntity();
+                       tppInfoEntity.setAuthorisationNumber(tin.getAuthorisationNumber());
+                       tppInfoEntity.setTppName(tin.getTppName());
+                       tppInfoEntity.setTppRoles(copyTppRoles(tin.getTppRoles()));
+                       tppInfoEntity.setAuthorityId(tin.getAuthorityId());
+                       tppInfoEntity.setAuthorityName(tin.getAuthorityName());
+                       tppInfoEntity.setCountry(tin.getCountry());
+                       tppInfoEntity.setOrganisation(tin.getOrganisation());
+                       tppInfoEntity.setOrganisationUnit(tin.getOrganisationUnit());
+                       tppInfoEntity.setCity(tin.getCity());
+                       tppInfoEntity.setState(tin.getState());
 
                        TppRedirectUri tppRedirectUri = tin.getTppRedirectUri();
                        if (tppRedirectUri != null) {
-                           pisTppInfo.setRedirectUri(tppRedirectUri.getUri());
-                           pisTppInfo.setNokRedirectUri(tppRedirectUri.getNokUri());
+                           tppInfoEntity.setRedirectUri(tppRedirectUri.getUri());
+                           tppInfoEntity.setNokRedirectUri(tppRedirectUri.getNokUri());
                        }
 
-                       return pisTppInfo;
+                       return tppInfoEntity;
                    }).orElse(null);
     }
 
@@ -59,7 +63,7 @@ public class TppInfoMapper {
 
                        tppInfo.setAuthorisationNumber(tpp.getAuthorisationNumber());
                        tppInfo.setTppName(tpp.getTppName());
-                       tppInfo.setTppRoles(new ArrayList<>(tpp.getTppRoles()));
+                       tppInfo.setTppRoles(copyTppRoles(tpp.getTppRoles()));
                        tppInfo.setAuthorityId(tpp.getAuthorityId());
                        tppInfo.setAuthorityName(tpp.getAuthorityName());
                        tppInfo.setCountry(tpp.getCountry());
@@ -76,5 +80,11 @@ public class TppInfoMapper {
 
                        return tppInfo;
                    }).orElse(null);
+    }
+
+    private @NotNull List<TppRole> copyTppRoles(@Nullable List<TppRole> tppRoles) {
+        return Optional.ofNullable(tppRoles)
+                   .map(ArrayList::new)
+                   .orElseGet(ArrayList::new);
     }
 }

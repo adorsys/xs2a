@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.core.tpp;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -57,4 +58,13 @@ public class TppInfo {
     @Nullable
     @ApiModelProperty(value = "TPP redirect URIs")
     private TppRedirectUri tppRedirectUri;
+
+    public boolean isNotValid() {
+        return !isValid();
+    }
+
+    public boolean isValid() {
+        return StringUtils.isNotBlank(authorisationNumber)
+                   && StringUtils.isNotBlank(authorityId);
+    }
 }
