@@ -173,7 +173,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                                               tppInfo.getAuthorityId(),
                                                                                               newConsent.getInstanceId(),
                                                                                               newConsent.getExternalId(),
-                                                                                              EnumSet.of(RECEIVED, VALID));
+                                                                                              EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
 
         List<AisConsent> oldConsentsWithExactPsuDataLists = oldConsents.stream()
                                                                 .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))

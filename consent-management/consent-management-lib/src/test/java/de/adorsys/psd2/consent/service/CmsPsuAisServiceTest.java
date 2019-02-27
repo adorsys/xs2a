@@ -625,7 +625,7 @@ public class CmsPsuAisServiceTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false);
+                                     false, false, null, null, null, false, Collections.emptyList());
     }
 
     private TppInfoEntity buildTppInfoEntity() {

@@ -177,6 +177,8 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(true);
         when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired())
             .thenReturn(false);
+        when(accountConsent.isMultilevelScaRequired())
+            .thenReturn(false);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
         //When
@@ -189,7 +191,7 @@ public class AisScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_Failure_AuthorisationStatusSpiResponseFailed() {
+    public void apply_Failure_AuthorisationStatusSpiResponseFailedWithoutBody() {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
 
         ErrorHolder errorHolder = ErrorHolder.builder(FORMAT_ERROR_CODE)
@@ -214,6 +216,26 @@ public class AisScaStartAuthorisationStageTest {
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_401);
         assertThat(actualResponse.getMessageError().getTppMessage().getText()).isEqualTo(errorMessagesString);
+    }
+
+    @Test
+    public void apply_Failure_AuthorisationStatusSpiResponseFailedWithBody() {
+        SpiResponse<SpiAuthorisationStatus> spiResponse = SpiResponse.<SpiAuthorisationStatus>builder()
+                                                              .payload(SpiAuthorisationStatus.FAILURE)
+                                                              .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                              .message(ERROR_MESSAGE_TEXT)
+                                                              .fail(SpiResponseStatus.LOGICAL_FAILURE);
+
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(spiResponse);
+
+        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
+        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_401);
+
+        verify(aisConsentService).updateConsentAuthorization(any(UpdateConsentPsuDataReq.class));
     }
 
     @Test

@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,7 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
         AccountConsent accountConsent = aisConsentService.getAccountConsentById(consentId);
         PsuIdData psuData = extractPsuIdData(request);
 
-        SpiResponse<SpiResponse.VoidResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(spiContextDataProvider.provideWithPsuIdData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request, psuData), aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        SpiResponse<SpiVerifyScaAuthorisationResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(spiContextDataProvider.provideWithPsuIdData(psuData), aisConsentMapper.mapToSpiScaConfirmation(request, psuData), aisConsentMapper.mapToSpiAccountConsent(accountConsent), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
@@ -78,7 +79,15 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
             return createFailedResponse(messageError, spiResponse.getMessages());
         }
 
-        aisConsentService.updateConsentStatus(consentId, ConsentStatus.VALID);
+        ConsentStatus responseConsentStatus = spiResponse.getPayload().getConsentStatus();
+
+        if (ConsentStatus.PARTIALLY_AUTHORISED == responseConsentStatus && !accountConsent.isMultilevelScaRequired()) {
+            aisConsentService.updateMultilevelScaRequired(consentId, true);
+        }
+
+        if (accountConsent.getConsentStatus() != responseConsentStatus) {
+            aisConsentService.updateConsentStatus(consentId, responseConsentStatus);
+        }
         aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
