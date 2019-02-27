@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -50,7 +51,7 @@ public class PisCommonDecoupledService {
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
-        return proceedDecoupled(request, payment, authenticationMethodId, PaymentScaType.INITIATION);
+        return proceedDecoupled(request, payment, authenticationMethodId, PaymentAuthorisationType.INITIATION);
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment) {
@@ -58,10 +59,10 @@ public class PisCommonDecoupledService {
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
-        return proceedDecoupled(request, payment, authenticationMethodId, PaymentScaType.CANCELLATION);
+        return proceedDecoupled(request, payment, authenticationMethodId, PaymentAuthorisationType.CANCELLATION);
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupled(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId, PaymentScaType scaType) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupled(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId, PaymentAuthorisationType scaType) {
         PsuIdData psuData = request.getPsuData();
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(request.getPaymentId());
         SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = null;
@@ -95,11 +96,6 @@ public class PisCommonDecoupledService {
         Xs2aAuthenticationObject xs2aAuthenticationObject = new Xs2aAuthenticationObject();
         xs2aAuthenticationObject.setAuthenticationMethodId(authenticationMethodId);
         return xs2aAuthenticationObject;
-    }
-
-    private enum PaymentScaType {
-        INITIATION,
-        CANCELLATION
     }
 }
 
