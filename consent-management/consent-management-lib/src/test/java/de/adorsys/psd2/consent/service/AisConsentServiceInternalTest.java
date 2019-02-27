@@ -383,7 +383,7 @@ public class AisConsentServiceInternalTest {
 
         AisConsent oldConsent = buildConsent(EXTERNAL_CONSENT_ID_NOT_EXIST);
         List<AisConsent> oldConsents = Collections.singletonList(oldConsent);
-        when(aisConsentRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, AUTHORISATION_ID, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.VALID)))
+        when(aisConsentRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, AUTHORISATION_ID, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
             .thenReturn(oldConsents);
 
         when(aisConsentRepository.save(oldConsents))
@@ -611,7 +611,7 @@ public class AisConsentServiceInternalTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false);
+                                     false, false, null, null, null, false, Collections.emptyList());
     }
 
     private AisConsent buildFinalisedConsent() {

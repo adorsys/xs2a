@@ -21,36 +21,26 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@ApiModel(description = "Response for the get account information consent request by consent Id")
 public class AccountConsent {
-    @ApiModelProperty(value = "ID of the corresponding consent object as returned by an Account Information Consent Request", required = true)
     @JsonIgnore
     private final String id;
 
-    @ApiModelProperty(value = "Access", required = true)
     private final Xs2aAccountAccess access;
 
-    @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for one access to the account data", required = true)
     private final boolean recurringIndicator;
 
-    @ApiModelProperty(value = "valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2017-10-30")
     private final LocalDate validUntil;
 
-    @ApiModelProperty(value = "requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private final int frequencyPerDay;
 
-    @ApiModelProperty(value = "This date is containing the date of the last action on the consent object either through the XS2A interface or the PSU/ASPSP interface having an impact on the status.", required = true, example = "2017-10-30")
     private final LocalDate lastActionDate;
 
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private final ConsentStatus consentStatus;
 
     @JsonIgnore
@@ -67,6 +57,10 @@ public class AccountConsent {
 
     @JsonIgnore
     private final AisConsentRequestType aisConsentRequestType;
+
+    private final boolean multilevelScaRequired;
+
+    private final List<AccountConsentAuthorization> authorisations;
 
     @JsonIgnore
     public boolean isValidFrequency() {

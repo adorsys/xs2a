@@ -834,7 +834,7 @@ public class AccountServiceTest {
     }
 
     private static AccountConsent createConsent(String id, Xs2aAccountAccess access) {
-        return new AccountConsent(id, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL);
+        return new AccountConsent(id, access, false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList());
     }
 
     private static TppInfo createTppInfo() {

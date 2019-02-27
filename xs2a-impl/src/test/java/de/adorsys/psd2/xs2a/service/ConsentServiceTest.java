@@ -768,7 +768,7 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getConsent(String id, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL);
+        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList());
     }
 
     private SpiAccountConsent getSpiConsent(String consentId, SpiAccountAccess access, boolean withBalance) {
@@ -776,11 +776,11 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getAccountConsent(String consentId, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL);
+        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList());
     }
 
     private AccountConsent getAccountConsentDateValidYesterday(String consentId, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL);
+        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList());
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {

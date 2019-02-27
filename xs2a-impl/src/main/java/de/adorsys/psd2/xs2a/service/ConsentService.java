@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
@@ -288,7 +289,8 @@ public class ConsentService {
                        .build();
         }
 
-        return aisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
+        AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
+        return service.createConsentAuthorization(psuData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
                    .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder()
                                   .fail(AIS_400, of(CONSENT_UNKNOWN_400))
