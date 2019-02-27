@@ -80,3 +80,7 @@ They may be used independently or all together to provide 3 Swagger specificatio
 
 From now on only one enum that represents account access type exists in xs2a. `AccountAccessType` is moved to `xs2a-core` package, duplicates 
 `AisAccountAccessType`, `SpiAccountAccessType` and `Xs2aAccountAccessType` are deleted.
+
+## Feature: added endpoints for getting consents and payments SCA statuses
+
+New endpoints were added to the CmsPsuPisController and to the CmsPsuAisController. The first one: GET `psu-api/v1/payment/{payment-id}/authorisation/psus` - returns map consisting of PsuData IDs (keys) and statuses of their authorisations for the given payment (values). If PsuData ID is null - this entry is not present in the map. Second endpoint: GET `psu-api/v1/ais/consent/{consent-id}/authorisation/psus` - returns the same map, but input data is consent ID here and it returns authorisations for this consent ID.

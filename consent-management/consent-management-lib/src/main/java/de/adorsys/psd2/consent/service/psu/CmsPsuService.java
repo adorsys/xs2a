@@ -32,15 +32,16 @@ public class CmsPsuService {
      * Checks if the specified psuData is in the psu list, if it is true then returns an element from the list.
      * If psuData is absent then returns this psu
      *
-     * @param psuData     psu which will search in the list
-     * @param psuDataList list where will search psuData
+     * @param psuDataForCheck psu which will search in the list
+     * @param psuDataList     list where will search psuData
      * @return if the psuData is not in the psuDataList then will return this psuData otherwise return element form list
      */
-    public PsuData definePsuDataForAuthorisation(PsuData psuData, List<PsuData> psuDataList) {
-        return psuDataList.stream()
-                   .filter(psu -> StringUtils.equals(psu.getPsuId(), psuData.getPsuId()))
-                   .findAny()
-                   .orElse(psuData);
+    public Optional<PsuData> definePsuDataForAuthorisation(PsuData psuDataForCheck, List<PsuData> psuDataList) {
+        return Optional.ofNullable(psuDataForCheck)
+                   .map(psuData -> psuDataList.stream()
+                                       .filter(psu -> StringUtils.equals(psu.getPsuId(), psuData.getPsuId()))
+                                       .findFirst()
+                                       .orElse(psuDataForCheck));
     }
 
     /**
