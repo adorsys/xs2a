@@ -160,7 +160,7 @@ public class ReadPeriodicPaymentServiceTest {
 
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
-            new SpiPsuData("", "", "", ""),
+            new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo()
         );
     }
