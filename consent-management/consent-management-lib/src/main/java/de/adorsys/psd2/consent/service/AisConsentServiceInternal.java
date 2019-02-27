@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +54,7 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -79,6 +81,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public Optional<String> createConsent(CreateAisConsentRequest request) {
         if (request.getAllowedFrequencyPerDay() == null) {
+            log.info("TPP ID: [{}]. Consent cannot be created, because request contains no allowed frequency per day",
+                     request.getTppInfo().getAuthorisationNumber());
             return Optional.empty();
         }
         AisConsent consent = createConsentFromRequest(request);
@@ -98,10 +102,15 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public Optional<ConsentStatus> getConsentStatusById(String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
-                   .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
-                   .map(this::checkAndUpdateOnExpiration)
-                   .map(AisConsent::getConsentStatus);
+        Optional<AisConsent> optionalConsentStatus = aisConsentRepository.findByExternalId(consentId);
+        if (optionalConsentStatus.isPresent()) {
+            return optionalConsentStatus.map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                       .map(this::checkAndUpdateOnExpiration)
+                       .map(AisConsent::getConsentStatus);
+        } else {
+            log.info("Consent ID: [{}]. Get consent failed, because consent is not found", consentId);
+            return Optional.empty();
+        }
     }
 
     /**
@@ -281,12 +290,16 @@ public class AisConsentServiceInternal implements AisConsentService {
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
         Optional<AisConsent> consentOptional = aisConsentRepository.findByExternalId(consentId);
         if (!consentOptional.isPresent()) {
+            log.info("Consent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status failed, because consent is not found",
+                     consentId, authorisationId);
             return Optional.empty();
         }
 
         AisConsent consent = consentOptional.get();
         if (aisConsentConfirmationExpirationService.isConsentConfirmationExpired(consent)) {
             aisConsentConfirmationExpirationService.updateConsentOnConfirmationExpiration(consent);
+            log.info("Consent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status failed, because consent is expired",
+                     consentId, authorisationId);
             return Optional.of(ScaStatus.FAILED);
         }
 
@@ -311,6 +324,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!authorisationOptional.isPresent()) {
+            log.info(" Authorisation ID: [{}]. Save authentication methods failed, because authorisation is not found", authorisationId);
             return false;
         }
 
@@ -324,53 +338,59 @@ public class AisConsentServiceInternal implements AisConsentService {
     /**
      * Update consent authorization
      *
-     * @param authorizationId id of authorisation session
+     * @param authorisationId id of authorisation session
      * @param request         needed parameters for updating consent authorization
      * @return boolean
      */
     @Override
     @Transactional
-    public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
-        Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorisationRepository.findByExternalId(authorizationId);
+    public boolean updateConsentAuthorization(String authorisationId, AisConsentAuthorizationRequest request) {
+        Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!aisConsentAuthorizationOptional.isPresent()) {
+            log.info("Authorisation ID: [{}]. Update consent authorisation failed, because consent authorisation is not found",
+                     authorisationId);
             return false;
         }
 
-        AisConsentAuthorization aisConsentAuthorization = aisConsentAuthorizationOptional.get();
+        AisConsentAuthorization aisConsentAuthorisation = aisConsentAuthorizationOptional.get();
 
-        if (aisConsentAuthorization.getScaStatus().isFinalisedStatus()) {
+        if (aisConsentAuthorisation.getScaStatus().isFinalisedStatus()) {
+            log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because consent authorisation has finalised status",
+                     authorisationId, aisConsentAuthorisation.getScaStatus().getValue());
             return false;
         }
 
-        if (ScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
+        if (ScaStatus.STARTED == aisConsentAuthorisation.getScaStatus()) {
             PsuData psuRequest = psuDataMapper.mapToPsuData(request.getPsuData());
 
-            if (!isPsuDataRequestCorrect(psuRequest, aisConsentAuthorization.getPsuData())) {
+            if (!isPsuDataRequestCorrect(psuRequest, aisConsentAuthorisation.getPsuData())) {
+                log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
+                         authorisationId, aisConsentAuthorisation.getScaStatus().getValue());
                 return false;
             }
 
-            AisConsent aisConsent = aisConsentAuthorization.getConsent();
+            AisConsent aisConsent = aisConsentAuthorisation.getConsent();
             Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuRequest, aisConsent.getPsuDataList());
 
             if (psuDataOptional.isPresent()) {
                 PsuData psuData = psuDataOptional.get();
                 aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
-                aisConsentAuthorization.setPsuData(psuData);
+                aisConsentAuthorisation.setPsuData(psuData);
             }
 
-            aisConsentAuthorization.setConsent(aisConsent);
+            aisConsentAuthorisation.setConsent(aisConsent);
         }
 
         if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
             // TODO refactor logic and don't save tan and password data in plain text https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/390
-            aisConsentAuthorization.setAuthenticationMethodId(request.getAuthenticationMethodId());
+            aisConsentAuthorisation.setAuthenticationMethodId(request.getAuthenticationMethodId());
         }
 
-        aisConsentAuthorization.setScaStatus(request.getScaStatus());
-        aisConsentAuthorization = aisConsentAuthorisationRepository.save(aisConsentAuthorization);
+        aisConsentAuthorisation.setScaStatus(request.getScaStatus());
+        aisConsentAuthorisation = aisConsentAuthorisationRepository.save(aisConsentAuthorisation);
 
-        return aisConsentAuthorization.getExternalId() != null;
+        return aisConsentAuthorisation.getExternalId() != null;
     }
 
     @Override
@@ -385,6 +405,8 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<AisConsentAuthorization> aisConsentAuthorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!aisConsentAuthorisationOptional.isPresent()) {
+            log.info("Authorisation ID: [{}]. Update SCA approach failed, because consent authorisation is not found",
+                     authorisationId);
             return false;
         }
 
@@ -490,6 +512,8 @@ public class AisConsentServiceInternal implements AisConsentService {
 
     private boolean setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
         if (consent.getConsentStatus().isFinalisedStatus()) {
+            log.info("Consent ID: [{}], Consent status [{}]. Update consent status by ID failed, because consent status is finalised",
+                     consent.getExternalId(), consent.getConsentStatus());
             return false;
         }
         consent.setLastActionDate(LocalDate.now());
