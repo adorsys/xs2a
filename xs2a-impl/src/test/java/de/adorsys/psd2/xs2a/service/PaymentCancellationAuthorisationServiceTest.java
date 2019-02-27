@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
@@ -105,7 +106,7 @@ public class PaymentCancellationAuthorisationServiceTest {
     public void updatePisCancellationPsuData_Success_ShouldRecordEvent() {
         when(pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(any()))
             .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.STARTED));
-        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID))
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLATION))
             .thenReturn(true);
 
         // Given:
@@ -127,7 +128,7 @@ public class PaymentCancellationAuthorisationServiceTest {
         doNothing()
             .when(xs2aEventService).recordPisTppRequest(PAYMENT_ID, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
 
-        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID))
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLATION))
             .thenReturn(false);
 
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> actualResponse = paymentCancellationAuthorisationService.updatePisCancellationPsuData(request);
