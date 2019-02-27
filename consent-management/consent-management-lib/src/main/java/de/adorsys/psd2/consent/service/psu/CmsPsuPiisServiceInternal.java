@@ -82,7 +82,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
         if (optionalPsuIdData.isPresent()) {
             return optionalPsuIdData.get().contentEquals(psuIdData);
         }
-        log.info("PIIS Consent IDL [{}]. isPsuIdDataContentEquals failed, because psuIdData is not present", piisConsentEntity.getExternalId());
+        log.info("PIIS Consent ID [{}]. isPsuIdDataContentEquals failed, because psuIdData is not present", piisConsentEntity.getExternalId());
         return false;
     }
 
