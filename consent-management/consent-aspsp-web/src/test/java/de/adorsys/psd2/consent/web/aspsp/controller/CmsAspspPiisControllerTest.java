@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.aspsp;
+package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
-import de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspPiisController;
 import de.adorsys.psd2.consent.web.aspsp.domain.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.web.aspsp.domain.CreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +31,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +47,8 @@ public class CmsAspspPiisControllerTest {
     private static final String PSU_ID = "PSU-ID-1";
     private static final String WRONG_PSU_ID = "PSU-ID-2";
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
+    private static final List<AccountReference> ACCOUNTS = Collections.emptyList();
+    private static final LocalDate VALID_UNTIL = LocalDate.now();
 
     @Mock
     private CmsAspspPiisService cmsAspspPiisService;
@@ -71,7 +74,7 @@ public class CmsAspspPiisControllerTest {
     public void createConsent_Success() {
         //When
         ResponseEntity<CreatePiisConsentResponse> actual =
-            cmsAspspPiisController.createConsent(getCreatePiisConsentRequest(), null, null, null, null);
+            cmsAspspPiisController.createConsent(buildCreatePiisConsentRequest(), null, null, null, null);
 
         //Then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -79,12 +82,32 @@ public class CmsAspspPiisControllerTest {
     }
 
     @Test
-    public void createConsent_Failure() {
+    public void createConsent_withNullAccounts_shouldFail() {
+        //When
+        ResponseEntity<CreatePiisConsentResponse> actual =
+            cmsAspspPiisController.createConsent(buildCreatePiisConsentRequestWithoutAccounts(), null, null, null, null);
+
+        //Then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void createConsent_withNullValidUntilDate_shouldFail() {
+        //When
+        ResponseEntity<CreatePiisConsentResponse> actual =
+            cmsAspspPiisController.createConsent(buildCreatePiisConsentRequestWithoutValidUntilDate(), null, null, null, null);
+
+        //Then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void createConsent_shouldFail_whenServiceReturnsEmpty() {
         when(cmsAspspPiisService.createConsent(any(), any(), any(), any(), anyInt())).thenReturn(Optional.empty());
 
         //When
         ResponseEntity<CreatePiisConsentResponse> actual =
-            cmsAspspPiisController.createConsent(getCreatePiisConsentRequest(), null, null, null, null);
+            cmsAspspPiisController.createConsent(buildCreatePiisConsentRequest(), null, null, null, null);
 
         //Then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -139,9 +162,28 @@ public class CmsAspspPiisControllerTest {
         assertThat(actual.getBody()).isFalse();
     }
 
-    private CreatePiisConsentRequest getCreatePiisConsentRequest() {
-        return new CreatePiisConsentRequest();
+    private CreatePiisConsentRequest buildCreatePiisConsentRequest() {
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest();
+        request.setAccounts(ACCOUNTS);
+        request.setValidUntil(VALID_UNTIL);
+        return request;
     }
+
+    private CreatePiisConsentRequest buildCreatePiisConsentRequestWithoutAccounts() {
+        return buildCreatePiisConsentRequest(null, VALID_UNTIL);
+    }
+
+    private CreatePiisConsentRequest buildCreatePiisConsentRequestWithoutValidUntilDate() {
+        return buildCreatePiisConsentRequest(ACCOUNTS, null);
+    }
+
+    private CreatePiisConsentRequest buildCreatePiisConsentRequest(List<AccountReference> accounts, LocalDate validUntil) {
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest();
+        request.setAccounts(accounts);
+        request.setValidUntil(validUntil);
+        return request;
+    }
+
 
     private PsuIdData buildPsuIdData(String id) {
         return new PsuIdData(id, null, null, null);
