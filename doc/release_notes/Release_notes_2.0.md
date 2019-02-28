@@ -138,6 +138,14 @@ is `RCVD`, `PaymentCancellationSpi#cancelPaymentWithoutSca` is invoked;
 - when at least one of `cancellationAuthorisationMandated` and `paymentCancellationAuthorizationMandated` property in bank profile is true,
 no further SPI calls are made and `startAuthorisation` link is returned to TPP.
 
+## New SPI call AisConsentSpi.getConsentStatus
+
+The consent status may be dependent on some external systems, such as online banking or decoupled banking application.
+Not in all cases it is possible to save actual consent status directly in CMS, therefore it can be updated by get consent call from TPP.
+If the status is already finalised, no status request will be made.
+In this release we provide only interface definition. Real adjustment for this call will be done in upcoming release.
+
+
 ## Changed type of columns in tpp_info table in the CMS database
 Type of `authority_name`, `country`, `organisation`, `organisation_unit`, `city` and `state` columns in the `tpp_info` 
 table was to `VARCHAR(255)` and `@LOB` annotation was removed from the corresponding fields in `TppInfoEntity`.
