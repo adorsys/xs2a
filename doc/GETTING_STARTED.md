@@ -25,12 +25,19 @@ $ mvn clean install
 ```
 
 ### Use docker-compose
+
+There is docker-compose.yml in root folder which will help to run containers in docker.
+Some images will be build from sources, some fetched prebuild from docker hub.
+
+UI componet should be build before docker images created.
 ```
-$ cd online-banking-demo-ui
-$ npm install
-$ cd ..
+$ cd online-banking-demo-ui && npm ci && npm run build && cd ..
+```
+After UI build completed start docker compose.
+```
 $ docker-compose up
 ```
+
 
 ### Initial setup of keycloak server
 
