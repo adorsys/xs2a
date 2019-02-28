@@ -158,7 +158,13 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Override
     @Transactional
     public Optional<CreatePisAuthorisationResponse> createAuthorizationCancellation(String paymentId, CreatePisAuthorisationRequest request) {
-        return createAuthorization(paymentId, request);
+        return readPisCommonPaymentDataByPaymentId(paymentId)
+                   .filter(p -> p.getTransactionStatus().isNotFinalisedStatus())
+                   .map(pmt -> {
+                       closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
+                       return saveNewAuthorisation(pmt, request);
+                   })
+                   .map(c -> new CreatePisAuthorisationResponse(c.getExternalId()));
     }
 
     /**

@@ -63,4 +63,9 @@ public class SpiSinglePayment implements SpiPayment {
     public TransactionStatus getPaymentStatus() {
         return paymentStatus;
     }
+
+    @Override
+    public void setPaymentStatus(TransactionStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
 }

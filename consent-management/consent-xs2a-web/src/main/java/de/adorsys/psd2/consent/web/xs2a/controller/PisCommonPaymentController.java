@@ -117,7 +117,7 @@ public class PisCommonPaymentController {
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId,
         @RequestBody CreatePisAuthorisationRequest request) {
-        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, request)
+        return pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(paymentId, request)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

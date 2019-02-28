@@ -97,6 +97,7 @@ public class CmsToXs2aPaymentMapper {
                                               .map(this::mapToSinglePayment)
                                               .collect(Collectors.toList());
         bulk.setPayments(paymentList);
+        bulk.setTransactionStatus(firstPayment.getTransactionStatus());
         bulk.setPsuDataList(firstPayment.getPsuDataList());
         return bulk;
     }
@@ -106,6 +107,7 @@ public class CmsToXs2aPaymentMapper {
                    .map(r -> {
                             CommonPayment commonPayment = new CommonPayment();
                             commonPayment.setPaymentId(r.getExternalId());
+                            commonPayment.setTransactionStatus(r.getTransactionStatus());
                             commonPayment.setPaymentProduct(r.getPaymentProduct());
                             commonPayment.setPaymentType(r.getPaymentType());
                             commonPayment.setPaymentData(r.getPaymentData());
