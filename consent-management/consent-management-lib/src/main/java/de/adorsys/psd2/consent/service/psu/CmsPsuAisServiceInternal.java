@@ -117,7 +117,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     public @NotNull List<AisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
-        return aisConsentRepository.findAll(aisConsentSpecification.byPsuIdIdAndInstanceId(psuIdData.getPsuId(), instanceId)).stream()
+        return aisConsentRepository.findAll(aisConsentSpecification.byPsuIdInListAndInstanceId(psuIdData.getPsuId(), instanceId)).stream()
                    .map(consentMapper::mapToAisAccountConsent)
                    .collect(Collectors.toList());
     }

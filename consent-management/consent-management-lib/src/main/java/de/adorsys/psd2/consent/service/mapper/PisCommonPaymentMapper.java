@@ -57,7 +57,7 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setTransactionStatus(paymentInfo.getTransactionStatus());
         commonPaymentData.setPayment(paymentInfo.getPaymentData());
         commonPaymentData.setTppInfo(tppInfoMapper.mapToTppInfoEntity(paymentInfo.getTppInfo()));
-        commonPaymentData.setPsuData(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList()));
+        commonPaymentData.setPsuDataList(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList()));
         commonPaymentData.setMultilevelScaRequired(paymentInfo.isMultilevelScaRequired());
         commonPaymentData.setAspspAccountId(paymentInfo.getAspspAccountId());
         return commonPaymentData;
@@ -118,7 +118,7 @@ public class PisCommonPaymentMapper {
                        response.setPaymentType(cmd.getPaymentType());
                        response.setPaymentProduct(cmd.getPaymentProduct());
                        response.setTppInfo(tppInfoMapper.mapToTppInfo(cmd.getTppInfo()));
-                       response.setPsuData(psuDataMapper.mapToPsuIdDataList(cmd.getPsuData()));
+                       response.setPsuData(psuDataMapper.mapToPsuIdDataList(cmd.getPsuDataList()));
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
                        return response;
@@ -134,7 +134,7 @@ public class PisCommonPaymentMapper {
                             paymentInfo.setPaymentType(dta.getPaymentType());
                             paymentInfo.setTransactionStatus(dta.getTransactionStatus());
                             paymentInfo.setPaymentData(dta.getPayment());
-                            paymentInfo.setPsuDataList(psuDataMapper.mapToPsuIdDataList(dta.getPsuData()));
+                            paymentInfo.setPsuDataList(psuDataMapper.mapToPsuIdDataList(dta.getPsuDataList()));
                             paymentInfo.setTppInfo(tppInfoMapper.mapToTppInfo(dta.getTppInfo()));
 
                             return paymentInfo;
@@ -174,7 +174,7 @@ public class PisCommonPaymentMapper {
                        pisPayment.setExecutionRule(pm.getExecutionRule());
                        pisPayment.setFrequency(pm.getFrequency());
                        pisPayment.setDayOfExecution(pm.getDayOfExecution());
-                       pisPayment.setPsuDataList(psuDataMapper.mapToPsuIdDataList(pm.getPaymentData().getPsuData()));
+                       pisPayment.setPsuDataList(psuDataMapper.mapToPsuIdDataList(pm.getPaymentData().getPsuDataList()));
 
                        return pisPayment;
                    }).orElse(null);

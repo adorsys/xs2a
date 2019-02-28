@@ -287,7 +287,7 @@ public class CmsAspspPisExportServiceInternalTest {
     private PisCommonPaymentData buildPisCommonPaymentData() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
-        pisCommonPaymentData.setPsuData(Collections.singletonList(buildPsuData()));
+        pisCommonPaymentData.setPsuDataList(Collections.singletonList(buildPsuData()));
         pisCommonPaymentData.setPaymentType(PaymentType.SINGLE);
         pisCommonPaymentData.setPaymentProduct(PAYMENT_PRODUCT);
         pisCommonPaymentData.setPayments(buildPisPaymentDataListForCommonData());

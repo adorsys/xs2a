@@ -56,7 +56,10 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
     private byte[] payment;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<PsuData> psuData = new ArrayList<>();
+    @JoinTable(name = "pis_common_payment_psu_data",
+        joinColumns = @JoinColumn(name = "pis_common_payment_id"),
+        inverseJoinColumns = @JoinColumn(name = "psu_data_id"))
+    private List<PsuData> psuDataList = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id", nullable = false)

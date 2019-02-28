@@ -248,7 +248,7 @@ public class CmsAspspPiisServiceInternalTest {
         assertThat(actual.isEmpty()).isFalse();
         assertThat(actual.get(0)).isEqualTo(expected);
         verify(piisConsentEntitySpecification, times(1))
-            .byPsuIdIdAndInstanceId(PSU_ID, DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuIdAndInstanceId(PSU_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -264,7 +264,7 @@ public class CmsAspspPiisServiceInternalTest {
         // Then
         assertThat(actual.isEmpty()).isTrue();
         verify(piisConsentEntitySpecification, times(1))
-            .byPsuIdIdAndInstanceId(PSU_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuIdAndInstanceId(PSU_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test

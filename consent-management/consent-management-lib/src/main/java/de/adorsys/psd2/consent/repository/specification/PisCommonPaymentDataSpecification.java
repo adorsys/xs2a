@@ -56,7 +56,7 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                                                                                                  @Nullable String instanceId) {
         return Specifications.<PisCommonPaymentData>where(byTppAuthorisationNumber(tppAuthorisationNumber))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(byPsuIdData(psuIdData))
+                   .and(byPsuIdDataInList(psuIdData))
                    .and(byInstanceId(instanceId));
     }
 
@@ -73,7 +73,7 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                                                                                          @Nullable LocalDate createDateFrom,
                                                                                          @Nullable LocalDate createDateTo,
                                                                                          @Nullable String instanceId) {
-        return Specifications.<PisCommonPaymentData>where(byPsuIdData(psuIdData))
+        return Specifications.<PisCommonPaymentData>where(byPsuIdDataInList(psuIdData))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
     }
