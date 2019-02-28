@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
@@ -31,7 +30,10 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
-import de.adorsys.psd2.xs2a.domain.*;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -48,6 +50,8 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.service.validator.GetCommonPaymentByIdResponseValidator;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -66,26 +70,33 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SERVICE_INVALID_405;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_405;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
+    private static final String WRONG_PAYMENT_ID = "777";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String WRONG_PAYMENT_PRODUCT = "instant-sepa-credit-transfers";
     private static final String IBAN = "DE123456789";
     private static final String AMOUNT = "100";
+    private static final String WRONG_PAYMENT_TYPE_TEXT = "Service invalid for addressed payment";
+    private static final String WRONG_PAYMENT_PRODUCT_TEXT = "Payment product invalid for addressed payment";
+    private static final String WRONG_PAYMENT_ID_TEXT = "Payment not found";
+    private static final String FINALISED_TRANSACTION_STATUS_ERROR_TEXT = "Payment is finalised already and cannot be cancelled";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], PAYMENT_ID);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
+    private static final ValidationResult VALIDATION_RESULT_SUCCESS = new ValidationResult(true, null);
+    private static final ValidationResult VALIDATION_RESULT_WRONG_PAYMENT_TYPE = new ValidationResult(false, new MessageError(PIS_405, TppMessageInformation.of(SERVICE_INVALID_405, "Service invalid for adressed payment")));
+    private static final ValidationResult VALIDATION_RESULT_WRONG_PAYMENT_PRODUCT = new ValidationResult(false, new MessageError(PIS_403, TppMessageInformation.of(PRODUCT_INVALID, "Payment product invalid for addressed payment")));
+    private static final ValidationResult VALIDATION_RESULT_WRONG_PAYMENT_ID = new ValidationResult(false, new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404, "Payment not found")));
     private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private final SinglePayment SINGLE_PAYMENT_OK = getSinglePayment(IBAN, AMOUNT);
 
@@ -153,6 +164,8 @@ public class PaymentServiceTest {
     private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     @Mock
     private CommonPaymentSpi commonPaymentSpi;
+    @Mock
+    private GetCommonPaymentByIdResponseValidator getCommonPaymentByIdResponseValidator;
 
     @Before
     public void setUp() {
@@ -169,16 +182,6 @@ public class PaymentServiceTest {
 
         when(pisAspspDataService.getAspspConsentData(anyString())).thenReturn(ASPSP_CONSENT_DATA);
         when(tppService.getTppInfo()).thenReturn(getTppInfo());
-
-        when(cancelPaymentService.initiatePaymentCancellation(any(), any(), any()))
-            .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
-                            .body(getCancelPaymentResponse(true, ACTC))
-                            .build());
-        when(cancelPaymentService.cancelPaymentWithoutAuthorisation(any(), any(), any()))
-            .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
-                            .body(getCancelPaymentResponse(false, CANC))
-                            .build());
-
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(getPisCommonPayment());
         when(readPaymentFactory.getService(anyString())).thenReturn(readPaymentService);
@@ -186,120 +189,19 @@ public class PaymentServiceTest {
             .thenReturn(false);
     }
 
-    // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
-    //Bulk Tests
     @Test
     public void createBulkPayments() {
-        //When
+        // When
         ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK));
-        //Then
+        // Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
     }
 
     @Test
-    public void cancelPayment_Success_WithAuthorisation() {
-        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.TRUE);
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Collections.singletonList(PSU_ID_DATA));
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(ACCP);
-        doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(PaymentType.class));
-
-        // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
-
-        // Then
-        assertThat(actual.getBody()).isNotNull();
-        assertThat(actual.getBody().isStartAuthorisationRequired()).isEqualTo(true);
-    }
-
-    @Test
-    public void cancelPayment_Success_WithoutAuthorisation() {
-        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Collections.singletonList(PSU_ID_DATA));
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
-        when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(ACCP);
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
-        doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(PaymentType.class));
-
-        // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
-
-        // Then
-        assertThat(actual.getBody()).isNotNull();
-        assertThat(actual.getBody().isStartAuthorisationRequired()).isEqualTo(false);
-    }
-
-    @Test
-    public void cancelPayment_Fail_WithAuthorisation_FinalisedConsentStatus() {
-        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.TRUE);
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Collections.singletonList(PSU_ID_DATA));
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
-            .thenReturn(getFinalisedPisCommonPayment());
-        doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(getFinalisedPisPayment()), eq("sepa-credit-transfers"), any(PaymentType.class));
-
-        // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
-
-        // Then
-        assertThat(actual.getError()).isNotNull();
-    }
-
-    @Test
-    public void cancelPayment_Fail_WithoutAuthorisation_FinalisedConsentStatus() {
-        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Collections.singletonList(PSU_ID_DATA));
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
-            .thenReturn(getFinalisedPisCommonPayment());
-        doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(getFinalisedPisPayment()), eq("sepa-credit-transfers"), any(PaymentType.class));
-
-        // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
-
-        // Then
-        assertThat(actual.getError()).isNotNull();
-    }
-
-    @Test
-    public void cancelPayment_Success_ShouldRecordEvent() {
-        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Collections.singletonList(PSU_ID_DATA));
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
-        doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(PaymentType.class));
-
-        // Given:
-        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
-
-        // When
-        paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
-
-        // Then
-        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
-    }
-
-    @Test
     public void createPayment_Success_ShouldRecordEvent() {
-        // Given:
+        // Given
         PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
@@ -312,108 +214,15 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentById_Success_ShouldRecordEvent() {
-        when(readPaymentService.getPayment(any(), any(), any(), any()))
-            .thenReturn(new PaymentInformationResponse(SINGLE_PAYMENT_OK));
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
-            .thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentResponse))
-            .thenReturn(new CommonPayment());
-
-        // Given:
-        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
-
-        // When
-        paymentService.getPaymentById(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
-
-        // Then
-        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_REQUEST_RECEIVED);
-    }
-
-    @Test
-    public void getPaymentById_spi_fail() {
-        // Given:
-        TppMessageInformation errorMessages = of(RESOURCE_UNKNOWN_404);
-        Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = getPisCommonPayment();
-
-        PaymentInformationResponse<SinglePayment> errorResponse = new PaymentInformationResponse<>(
-            ErrorHolder.builder(RESOURCE_UNKNOWN_404)
-                .messages(ERROR_MESSAGE_TEXT)
-                .build());
-
-        when(readPaymentService.getPayment(any(), any(), any(), any()))
-            .thenReturn(errorResponse);
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
-            .thenReturn(Optional.empty());
-        when(cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentOptional.get()))
-            .thenReturn(new CommonPayment());
-
-        // When
-        ResponseObject actualResponse = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
-
-        //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_404);
-        assertThat(actualResponse.getError().getTppMessages()).containsOnly(errorMessages);
-    }
-
-    @Test
-    public void getPaymentStatusById_spi_fail() {
-        // Given:
-        TppMessageInformation errorMessages = of(RESOURCE_UNKNOWN_404);
-
-        ReadPaymentStatusResponse errorResponse = new ReadPaymentStatusResponse(
-            ErrorHolder.builder(RESOURCE_UNKNOWN_404)
-                .messages(ERROR_MESSAGE_TEXT)
-                .build());
-
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
-            .thenReturn(Optional.empty());
-        when(readPaymentStatusService.readPaymentStatus(any(), any(), any(), any())).thenReturn(errorResponse);
-
-        // When
-        ResponseObject actualResponse = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
-
-        // Then
-        //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_404);
-        assertThat(actualResponse.getError().getTppMessages()).containsOnly(errorMessages);
-    }
-
-    @Test
-    public void getPaymentStatusById_Success_ShouldRecordEvent() {
-        SpiResponse<TransactionStatus> spiResponse = buildSpiResponseTransactionStatus();
-        when(singlePaymentSpi.getPaymentStatusById(any(), any(), any())).thenReturn(spiResponse);
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
-        when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
-        when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq("sepa-credit-transfers"), any(SpiContextData.class), eq(ASPSP_CONSENT_DATA)))
-            .thenReturn(new ReadPaymentStatusResponse(RCVD));
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
-        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
-            .thenReturn(true);
-
-        // Given:
-        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
-
-        // When
-        paymentService.getPaymentStatusById(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
-
-        // Then
-        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
-    }
-
-    @Test
     public void createPayment_Failure_No_PSU() {
+        // Given
         when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
-        //When
+
+        // When
         PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(SINGLE_PAYMENT_OK, parameters);
-        //Then
+
+        // Then
         MessageError error = actualResponse.getError();
         assertThat(error).isNotNull();
         assertThat(error.getErrorType()).isEqualTo(ErrorType.PIS_400);
@@ -421,131 +230,279 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentStatusById_Failure_IncorrectPaymentService() {
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
-
+    public void getPaymentById_Success_ShouldRecordEvent() {
         // Given
-        ResponseObject expectedResult = ResponseObject.<CancelPaymentResponse>builder()
-                                            .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for adressed payment"))
-                                            .build();
+        when(readPaymentService.getPayment(any(), any(), any(), any()))
+            .thenReturn(new PaymentInformationResponse(SINGLE_PAYMENT_OK));
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
+            .thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_SUCCESS);
+        when(cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentResponse))
+            .thenReturn(new CommonPayment());
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        ResponseObject actualResult = paymentService.getPaymentStatusById(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
+        paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
-        assertThat(actualResult.hasError()).isTrue();
-        assertThat(actualResult.getError()).isEqualTo(expectedResult.getError());
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_REQUEST_RECEIVED);
     }
 
     @Test
     public void getPaymentById_Failure_IncorrectPaymentService() {
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
-
         // Given
-        ResponseObject expectedResult = ResponseObject.<CancelPaymentResponse>builder()
-                                            .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for adressed payment"))
-                                            .build();
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_TYPE);
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
 
         // When
-        ResponseObject actualResult = paymentService.getPaymentById(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
+        ResponseObject actualResult = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         assertThat(actualResult.hasError()).isTrue();
-        assertThat(actualResult.getError()).isEqualTo(expectedResult.getError());
-    }
-
-    @Test
-    public void cancelPayment_Failure_IncorrectPaymentService() {
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("sepa-credit-transfers");
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
-
-        // Given
-        ResponseObject expectedResult = ResponseObject.<CancelPaymentResponse>builder()
-                                            .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for adressed payment"))
-                                            .build();
-
-        // When
-        ResponseObject actualResult = paymentService.cancelPayment(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
-
-        // Then
-        assertThat(actualResult.hasError()).isTrue();
-        assertThat(actualResult.getError()).isEqualTo(expectedResult.getError());
-    }
-
-    @Test
-    public void getPaymentStatusById_Failure_IncorrectPaymentProduct() {
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("instant-sepa-credit-transfers");
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
-
-        // Given
-        ResponseObject expectedResult = ResponseObject.<CancelPaymentResponse>builder()
-                                            .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for adressed payment"))
-                                            .build();
-
-        // When
-        ResponseObject actualResult = paymentService.getPaymentStatusById(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
-
-        // Then
-        assertThat(actualResult.hasError()).isTrue();
-        assertThat(actualResult.getError()).isEqualTo(expectedResult.getError());
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_405);
+        assertThat(actualResult.getError().getTppMessages().contains(of(SERVICE_INVALID_405, WRONG_PAYMENT_TYPE_TEXT))).isTrue();
     }
 
     @Test
     public void getPaymentById_Failure_IncorrectPaymentProduct() {
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("instant-sepa-credit-transfers");
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
-
         // Given
-        ResponseObject expectedResult = ResponseObject.<CancelPaymentResponse>builder()
-                                            .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for adressed payment"))
-                                            .build();
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(WRONG_PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
 
         // When
-        ResponseObject actualResult = paymentService.getPaymentById(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
+        ResponseObject actualResult = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         assertThat(actualResult.hasError()).isTrue();
-        assertThat(actualResult.getError()).isEqualTo(expectedResult.getError());
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_403);
+        assertThat(actualResult.getError().getTppMessages().contains(of(PRODUCT_INVALID, WRONG_PAYMENT_PRODUCT_TEXT))).isTrue();
+    }
+
+    @Test
+    public void getPaymentById_Failure_WrongId() {
+        // Given
+        TppMessageInformation errorMessages = of(RESOURCE_UNKNOWN_404);
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(WRONG_PAYMENT_ID))
+            .thenReturn(Optional.empty());
+        when(getCommonPaymentByIdResponseValidator.validateRequest(null, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_ID);
+
+        // When
+        ResponseObject actualResult = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
+
+        //Then
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_404);
+        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_UNKNOWN_404, WRONG_PAYMENT_ID_TEXT))).isTrue();
+    }
+
+    @Test
+    public void getPaymentStatusById_Success_ShouldRecordEvent() {
+        // Given
+        SpiResponse<TransactionStatus> spiResponse = buildSpiResponseTransactionStatus();
+        when(singlePaymentSpi.getPaymentStatusById(any(), any(), any())).thenReturn(spiResponse);
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_SUCCESS);
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
+        when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(SpiContextData.class), eq(ASPSP_CONSENT_DATA)))
+            .thenReturn(new ReadPaymentStatusResponse(RCVD));
+        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
+            .thenReturn(true);
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getPaymentStatusById_Failure_IncorrectPaymentService() {
+        // Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_TYPE);
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
+
+        // When
+        ResponseObject actualResult = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_405);
+        assertThat(actualResult.getError().getTppMessages().contains(of(SERVICE_INVALID_405, WRONG_PAYMENT_TYPE_TEXT))).isTrue();
+    }
+
+    @Test
+    public void getPaymentStatusById_Failure_IncorrectPaymentProduct() {
+        // Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(WRONG_PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
+
+        // When
+        ResponseObject actualResult = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_403);
+        assertThat(actualResult.getError().getTppMessages().contains(of(PRODUCT_INVALID, WRONG_PAYMENT_PRODUCT_TEXT))).isTrue();
+    }
+
+    @Test
+    public void getPaymentStatusById_Failure_WrongId() {
+        // Given
+        TppMessageInformation errorMessages = of(RESOURCE_UNKNOWN_404);
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(WRONG_PAYMENT_ID))
+            .thenReturn(Optional.empty());
+        when(getCommonPaymentByIdResponseValidator.validateRequest(null, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_ID);
+
+        // When
+        ResponseObject actualResult = paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
+
+        // Then
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_404);
+        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_UNKNOWN_404, WRONG_PAYMENT_ID_TEXT))).isTrue();
+    }
+
+    @Test
+    public void cancelPayment_Success() {
+        //Given
+        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(Collections.singletonList(PSU_ID_DATA));
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
+        when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(ACCP);
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_SUCCESS);
+        doReturn(Optional.of(spiPayment))
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(PaymentType.class));
+        when(cancelPaymentService.initiatePaymentCancellation(any(), eq(spiPayment), eq(PAYMENT_ID)))
+            .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
+                            .body(getCancelPaymentResponse(true, CANC))
+                            .build());
+
+        // When
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(actual.getBody()).isNotNull();
+        assertThat(actual.getBody().getTransactionStatus()).isEqualTo(CANC);
+        assertThat(actual.getBody().isStartAuthorisationRequired()).isTrue();
+    }
+
+    @Test
+    public void cancelPayment_Success_ShouldRecordEvent() {
+        // Given
+        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
+        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(Collections.singletonList(PSU_ID_DATA));
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_SUCCESS);
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(TransactionStatus.ACCC);
+        doReturn(Optional.of(spiPayment))
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(PaymentType.class));
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+
+        // When
+        paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void cancelPayment_Failure_IncorrectPaymentService() {
+        // Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_TYPE);
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
+
+        // When
+        ResponseObject actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_405);
+        assertThat(actualResult.getError().getTppMessages().contains(of(SERVICE_INVALID_405, WRONG_PAYMENT_TYPE_TEXT))).isTrue();
     }
 
     @Test
     public void cancelPayment_Failure_IncorrectPaymentProduct() {
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn("instant-sepa-credit-transfers");
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.PERIODIC);
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
-
         // Given
-        ResponseObject expectedResult = ResponseObject.<CancelPaymentResponse>builder()
-                                            .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for adressed payment"))
-                                            .build();
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
+        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(WRONG_PAYMENT_PRODUCT);
+        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
 
         // When
-        ResponseObject actualResult = paymentService.cancelPayment(PaymentType.SINGLE, "sepa-credit-transfers", PAYMENT_ID);
+        ResponseObject actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
 
         // Then
         assertThat(actualResult.hasError()).isTrue();
-        assertThat(actualResult.getError()).isEqualTo(expectedResult.getError());
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_403);
+        assertThat(actualResult.getError().getTppMessages().contains(of(PRODUCT_INVALID, WRONG_PAYMENT_PRODUCT_TEXT))).isTrue();
     }
 
+    @Test
+    public void cancelPayment_Failure_WrongId() {
+        // Given
+        TppMessageInformation errorMessages = of(RESOURCE_UNKNOWN_404);
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(WRONG_PAYMENT_ID))
+            .thenReturn(Optional.empty());
+        when(getCommonPaymentByIdResponseValidator.validateRequest(null, PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_WRONG_PAYMENT_ID);
+
+        // When
+        ResponseObject actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
+
+        // Then
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_404);
+        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_UNKNOWN_404, WRONG_PAYMENT_ID_TEXT))).isTrue();
+    }
+
+    @Test
+    public void cancelPayment_Fail__FinalisedTransactionStatus() {
+        // Given
+        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
+        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
+            .thenReturn(Collections.singletonList(PSU_ID_DATA));
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
+            .thenReturn(Optional.of(getFinalisedPisCommonPayment()));
+        doReturn(Optional.of(spiPayment))
+            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(getFinalisedPisPayment()), eq(PAYMENT_PRODUCT), any(PaymentType.class));
+        when(getCommonPaymentByIdResponseValidator.validateRequest(getFinalisedPisCommonPayment(), PaymentType.SINGLE, PAYMENT_PRODUCT)).thenReturn(VALIDATION_RESULT_SUCCESS);
+
+        // When
+        ResponseObject<CancelPaymentResponse> actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(actualResult.getError()).isNotNull();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_400);
+        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_BLOCKED, FINALISED_TRANSACTION_STATUS_ERROR_TEXT))).isTrue();
+    }
 
     private SpiResponse<TransactionStatus> buildSpiResponseTransactionStatus() {
         return new SpiResponse<>(TransactionStatus.ACCP, ASPSP_CONSENT_DATA);
@@ -656,11 +613,12 @@ public class PaymentServiceTest {
         return Optional.of(response);
     }
 
-    private Optional<PisCommonPaymentResponse> getFinalisedPisCommonPayment() {
+    private PisCommonPaymentResponse getFinalisedPisCommonPayment() {
         PisCommonPaymentResponse response = new PisCommonPaymentResponse();
         response.setPaymentProduct("sepa-credit-transfers");
         response.setPayments(getFinalisedPisPayment());
-        return Optional.of(response);
+        response.setTransactionStatus(TransactionStatus.ACCC);
+        return response;
     }
 
     private PisPayment getPisPayment() {

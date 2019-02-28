@@ -115,3 +115,20 @@ To be considered valid the request must contain:
  - either no TPP object or TPP info object with authorisation number and authority ID
  - non-empty list of accounts
  - valid consent expiration date
+
+## Bugfix: Payment cancellation supports all non-finalised transaction status
+
+Before, any attempt to start cancellation authorisation for a payment with payment status other then `RCVD` or `PATC` would cause internal server error.
+Now, we support payment cancellation process for all payments with non-finalised transaction status(`ACCC`, `ACSC`, `RJCT`,`CANC`).
+
+## Payment cancellation flow reworked
+
+Start payment cancellation logic was reworked and the logic of spi calls was changed. From now, all cancel payment requests will invoke
+`PaymentCancellationSpi#initiatePaymentCancellation` method(except for payments with finalized payment status). Depending on SpiPaymentCancellationResponse properties
+`transactionStatus` and `cancellationAuthorisationMandated`:
+- when `transactionStatus` is `CANC`, no further SPI calls are made;
+- when `transactionStatus` is another finalized status(`ACCC`, `ACSC`, `RJCT`), no further SPI calls are made and error message is returned to TPP;
+- when both `cancellationAuthorisationMandated` and `paymentCancellationAuthorizationMandated` property in bank profile are false, or `transactionStatus`
+is `RCVD`, `PaymentCancellationSpi#cancelPaymentWithoutSca` is invoked;
+- when at least one of `cancellationAuthorisationMandated` and `paymentCancellationAuthorizationMandated` property in bank profile is true,
+no further SPI calls are made and `startAuthorisation` link is returned to TPP.
