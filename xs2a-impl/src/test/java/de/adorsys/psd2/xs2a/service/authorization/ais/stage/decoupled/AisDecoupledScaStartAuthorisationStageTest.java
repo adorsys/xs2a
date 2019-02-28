@@ -230,7 +230,6 @@ public class AisDecoupledScaStartAuthorisationStageTest {
 
     private UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setPsuId(PSU_ID);
         response.setPsuMessage(PSU_SUCCESS_MESSAGE);
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         return response;
