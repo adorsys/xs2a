@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
@@ -30,7 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -238,16 +238,16 @@ public class CmsPsuAisController {
     }
 
     @GetMapping(path = "/{consent-id}/authorisation/psus")
-    @ApiOperation(value = "Returns map of psu ids and statuses of their authorisations for this consent")
+    @ApiOperation(value = "Returns list of info objects about psu data and authorisation scaStatuses")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Map.class),
+        @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<Map<String, ScaStatus>> psuAuthorisationStatuses(
+    public ResponseEntity<List<CmsAisPsuDataAuthorisation>> psuDataAuthorisations(
         @ApiParam(name = "consent-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
-        return cmsPsuAisService.getPsuAuthorisationStatusMap(consentId, instanceId)
+        return cmsPsuAisService.getPsuDataAuthorisations(consentId, instanceId)
                    .map(ResponseEntity::ok)
                    .orElse(ResponseEntity.notFound().build());
     }
