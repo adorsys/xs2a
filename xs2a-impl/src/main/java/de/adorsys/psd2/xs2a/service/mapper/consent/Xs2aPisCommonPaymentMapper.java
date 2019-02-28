@@ -41,7 +41,11 @@ public class Xs2aPisCommonPaymentMapper {
     }
 
     public Optional<Xs2aCreatePisCancellationAuthorisationResponse> mapToXs2aCreatePisCancellationAuthorisationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(response.getAuthorizationId(), ScaStatus.STARTED, paymentType));
+        if (response != null) {
+            return Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(response.getAuthorizationId(), ScaStatus.STARTED, paymentType));
+        }
+
+        return Optional.empty();
     }
 
     public Xs2aPisCommonPayment mapToXs2aPisCommonPayment(CreatePisCommonPaymentResponse response, PsuIdData psuData) {
@@ -52,8 +56,9 @@ public class Xs2aPisCommonPaymentMapper {
                                                                                       Xs2aUpdatePisCommonPaymentPsuDataResponse updatePsuDataResponse) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
+                       PsuIdData psuIdDataFromRequest = updatePsuDataRequest.getPsuData();
                        UpdatePisCommonPaymentPsuDataRequest request = new UpdatePisCommonPaymentPsuDataRequest();
-                       request.setPsuData(new PsuIdData(data.getPsuId(), null, null, null));
+                       request.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType()));
                        request.setPaymentId(updatePsuDataRequest.getPaymentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorisationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));

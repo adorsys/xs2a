@@ -42,7 +42,6 @@ public class CommonDecoupledAisService {
         }
 
         UpdateConsentPsuDataResponse response = new DecoupledUpdateConsentPsuDataResponse();
-        response.setPsuId(psuData.getPsuId());
         response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(authenticationMethodId));

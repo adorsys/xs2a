@@ -177,6 +177,8 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(true);
         when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired())
             .thenReturn(false);
+        when(accountConsent.isMultilevelScaRequired())
+            .thenReturn(false);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
         //When
@@ -189,7 +191,7 @@ public class AisScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_Failure_AuthorisationStatusSpiResponseFailed() {
+    public void apply_Failure_AuthorisationStatusSpiResponseFailedWithoutBody() {
         String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
 
         ErrorHolder errorHolder = ErrorHolder.builder(FORMAT_ERROR_CODE)
@@ -217,6 +219,26 @@ public class AisScaStartAuthorisationStageTest {
     }
 
     @Test
+    public void apply_Failure_AuthorisationStatusSpiResponseFailedWithBody() {
+        SpiResponse<SpiAuthorisationStatus> spiResponse = SpiResponse.<SpiAuthorisationStatus>builder()
+                                                              .payload(SpiAuthorisationStatus.FAILURE)
+                                                              .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                              .message(ERROR_MESSAGE_TEXT)
+                                                              .fail(SpiResponseStatus.LOGICAL_FAILURE);
+
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(spiResponse);
+
+        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
+        assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_401);
+
+        verify(aisConsentService).updateConsentAuthorization(any(UpdateConsentPsuDataReq.class));
+    }
+
+    @Test
     public void apply_MultipleAvailableScaMethods_Success() {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
@@ -227,7 +249,6 @@ public class AisScaStartAuthorisationStageTest {
         UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getAvailableScaMethods()).isEqualTo(MULTIPLE_CMS_SCA_METHODS);
         assertThat(actualResponse.getScaStatus()).isEqualTo(AUTHENTICATED_SCA_STATUS);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
@@ -252,7 +273,6 @@ public class AisScaStartAuthorisationStageTest {
         UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(buildXs2aSmsAuthenticationObject());
         assertThat(actualResponse.getScaStatus()).isEqualTo(METHOD_SELECTED_SCA_STATUS);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
@@ -336,7 +356,6 @@ public class AisScaStartAuthorisationStageTest {
         UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }

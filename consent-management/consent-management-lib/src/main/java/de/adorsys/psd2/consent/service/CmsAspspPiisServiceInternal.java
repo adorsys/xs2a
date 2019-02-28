@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -62,9 +63,15 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
                                           @NotNull List<AccountReference> accounts,
                                           @NotNull LocalDate validUntil,
                                           int allowedFrequencyPerDay) {
+        if (isInvalidConsentCreationRequest(psuIdData, tppInfo, accounts, validUntil)) {
+            return Optional.empty();
+        }
+
         PiisConsentEntity consent = buildPiisConsent(psuIdData, tppInfo, accounts, validUntil, allowedFrequencyPerDay);
         consent.setExternalId(UUID.randomUUID().toString());
+
         PiisConsentEntity saved = piisConsentRepository.save(consent);
+
         return saved.getId() != null
                    ? Optional.ofNullable(saved.getExternalId())
                    : Optional.empty();
@@ -72,7 +79,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
     @Override
     public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
-        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdIdAndInstanceId(psuIdData.getPsuId(), instanceId))
+        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdAndInstanceId(psuIdData.getPsuId(), instanceId))
                    .stream()
                    .map(piisConsentMapper::mapToPiisConsent)
                    .collect(Collectors.toList());
@@ -90,7 +97,9 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         PiisConsentEntity entity = entityOptional.get();
         entity.setLastActionDate(LocalDate.now());
         entity.setConsentStatus(TERMINATED_BY_ASPSP);
-        return piisConsentRepository.save(entity) != null;
+        piisConsentRepository.save(entity);
+
+        return true;
     }
 
     private PiisConsentEntity buildPiisConsent(PsuIdData psuIdData,
@@ -111,5 +120,18 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         consent.setTppAccessType(accessType);
         consent.setAllowedFrequencyPerDay(allowedFrequencyPerDay);
         return consent;
+    }
+
+    private boolean isInvalidConsentCreationRequest(@NotNull PsuIdData psuIdData,
+                                                    @Nullable TppInfo tppInfo,
+                                                    @NotNull List<AccountReference> accounts,
+                                                    @NotNull LocalDate validUntil) {
+        boolean invalidTpp = tppInfo != null
+                                 && tppInfo.isNotValid();
+
+        return invalidTpp
+                   || psuIdData.isEmpty()
+                   || CollectionUtils.isEmpty(accounts)
+                   || validUntil.isBefore(LocalDate.now());
     }
 }

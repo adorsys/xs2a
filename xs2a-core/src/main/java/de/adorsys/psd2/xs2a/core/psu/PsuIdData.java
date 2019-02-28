@@ -21,6 +21,8 @@ import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Contains authorisation data about PSU.
  * Normally it comes with the TPP request header.
@@ -40,6 +42,10 @@ public class PsuIdData {
     private String psuCorporateIdType;
 
     public boolean contentEquals(PsuIdData otherPsuIdData) {
+        if (Objects.isNull(otherPsuIdData)) {
+            return false;
+        }
+
         return StringUtils.equals(this.getPsuId(), otherPsuIdData.getPsuId())
                    && StringUtils.equals(this.getPsuCorporateId(), otherPsuIdData.getPsuCorporateId())
                    && StringUtils.equals(this.getPsuCorporateIdType(), otherPsuIdData.getPsuCorporateIdType())

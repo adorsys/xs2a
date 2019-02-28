@@ -39,6 +39,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
+import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentStatusAfterSpiService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -111,6 +112,8 @@ public class PisCancellationScaStartAuthorisationStageTest {
     @Mock
     private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
     @Mock
+    private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    @Mock
     private SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     @Mock
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
@@ -148,7 +151,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
         //Then
         assertThat(response.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
-        assertThat(response.getPsuId()).isEqualTo(PSU_ID);
     }
 
     @Test
@@ -184,13 +186,13 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
         when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(NONE_SPI_SCA_METHOD));
         when(paymentCancellationSpi.cancelPaymentWithoutSca(SPI_CONTEXT_DATA, buildSpiPayment(), ASPSP_CONSENT_DATA)).thenReturn(buildSuccessfulSpiResponse(SpiResponse.voidResponse()));
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.CANC)).thenReturn(true);
 
         //When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
 
         //Then
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALISED);
     }
 
@@ -209,7 +211,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
 
         //Then
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(buildXs2aSmsAuthenticationObject());
         assertThat(actualResponse.getScaStatus()).isEqualTo(SCAMETHODSELECTED);
     }
@@ -227,7 +228,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
 
         //Then
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getAvailableScaMethods()).isEqualTo(MULTIPLE_XS2A_SCA_METHODS);
         assertThat(actualResponse.getScaStatus()).isEqualTo(PSUAUTHENTICATED);
     }

@@ -32,4 +32,5 @@ public class TppCertificateData {
     private String organisationUnit;
     private String city;
     private String state;
+    private String issuerCN;
 }

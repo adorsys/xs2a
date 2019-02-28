@@ -16,11 +16,13 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -30,29 +32,37 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentController> {
+    private final PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
 
-    public PaymentCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService) {
+    public PaymentCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider) {
         super(scaApproachResolver, messageService);
+        this.cancellationScaNeededDecider = cancellationScaNeededDecider;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args( paymentType, paymentProduct, paymentId)", returning = "result", argNames = "result,paymentType,paymentProduct,paymentId")
     public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PaymentType paymentType, String paymentProduct, String paymentId) {
         if (!result.hasError()) {
             CancelPaymentResponse response = result.getBody();
-            response.setLinks(buildCancellationLinks(response.isStartAuthorisationRequired(), paymentType, paymentProduct, paymentId));
+            response.setLinks(buildCancellationLinks(response, paymentType, paymentProduct, paymentId));
             return result;
         }
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildCancellationLinks(boolean startAuthorisationRequired, PaymentType paymentType, String paymentProduct, String paymentId) {
+    private Links buildCancellationLinks(CancelPaymentResponse response, PaymentType paymentType, String paymentProduct, String paymentId) {
         Links links = new Links();
 
-        if (startAuthorisationRequired) {
+        if (isStartAuthorisationLinksNeeded(response)) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/cancellation-authorisations", paymentType.getValue(), paymentProduct, paymentId));
             links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentType.getValue(), paymentProduct, paymentId));
             links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentType.getValue(), paymentProduct, paymentId));
         }
         return links;
+    }
+
+    private boolean isStartAuthorisationLinksNeeded(CancelPaymentResponse response) {
+        return response.getTransactionStatus().isNotFinalisedStatus()
+                   && response.getTransactionStatus() != TransactionStatus.RCVD
+                   && cancellationScaNeededDecider.isScaRequired(response.isStartAuthorisationRequired());
     }
 }

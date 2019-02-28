@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -54,7 +55,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
 
     @Override
     public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
-        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdIdAndInstanceId(psuIdData.getPsuId(), instanceId)).stream()
+        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdAndInstanceId(psuIdData.getPsuId(), instanceId)).stream()
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentMapper::mapToPiisConsent)
                    .collect(Collectors.toList());
@@ -64,24 +65,30 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     @Transactional
     public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         Optional<PiisConsentEntity> piisConsentEntity = Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)))
-                                                            .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
-                                                            .filter(con -> !con.getConsentStatus().isFinalisedStatus());
+                                                            .filter(con -> isPsuIdDataContentEquals(con, psuIdData) && !con.getConsentStatus().isFinalisedStatus());
+        if (piisConsentEntity.isPresent()) {
+            revokeConsent(piisConsentEntity.get());
+            return true;
+        }
 
-        return piisConsentEntity.isPresent()
-                   && revokeConsent(piisConsentEntity.get());
+        log.info("Consent ID [{}], Instance ID: [{}]. Revoke consent failed, because given psuData is not equals stored psuData, or consent status is finalised, or consent not found",
+                 consentId, instanceId);
+        return false;
     }
 
     private boolean isPsuIdDataContentEquals(PiisConsentEntity piisConsentEntity, PsuIdData psuIdData) {
         PsuIdData psuIdDataMapped = psuDataMapper.mapToPsuIdData(piisConsentEntity.getPsuData());
-        return Optional.ofNullable(psuIdDataMapped)
-                   .map(psu -> psu.contentEquals(psuIdData))
-                   .orElse(false);
+        Optional<PsuIdData> optionalPsuIdData = Optional.ofNullable(psuIdDataMapped);
+        if (optionalPsuIdData.isPresent()) {
+            return optionalPsuIdData.get().contentEquals(psuIdData);
+        }
+        log.info("PIIS Consent ID [{}]. isPsuIdDataContentEquals failed, because psuIdData is not present", piisConsentEntity.getExternalId());
+        return false;
     }
 
-    private boolean revokeConsent(PiisConsentEntity consent) {
+    private void revokeConsent(PiisConsentEntity consent) {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
         piisConsentRepository.save(consent);
-        return true;
     }
 }

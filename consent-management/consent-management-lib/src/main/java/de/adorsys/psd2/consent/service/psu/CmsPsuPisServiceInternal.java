@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.psu;
 
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
@@ -25,7 +26,9 @@ import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
+import de.adorsys.psd2.consent.psu.api.pis.AuthorisationTypeStatusesByPsu;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
+import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.specification.PisAuthorisationSpecification;
 import de.adorsys.psd2.consent.repository.specification.PisPaymentDataSpecification;
@@ -43,7 +46,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -58,6 +64,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final PsuDataMapper psuDataMapper;
     private final PisAuthorisationSpecification pisAuthorisationSpecification;
     private final PisPaymentDataSpecification pisPaymentDataSpecification;
+    private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
 
     @Override
     @Transactional
@@ -66,6 +73,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             pisAuthorisationRepository.findOne(
                 pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)
             );
+
         return Optional.ofNullable(authorisation)
                    .map(auth -> updatePsuData(auth, psuIdData))
                    .orElse(false);
@@ -84,7 +92,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                            .map(cmsPsuPisMapper::mapToCmsPayment);
             }
         }
-
+        log.info("Payment ID: [{}], Instance ID: [{}]. Get payment failed, because given PSU data and PSU data stored in payment are not equal",
+                 paymentId, instanceId);
         return Optional.empty();
     }
 
@@ -99,6 +108,9 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
             if (authorisation.isNotExpired()) {
                 return Optional.of(buildCmsPaymentResponse(authorisation));
+            } else {
+                log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment failed, because authorisation expired",
+                         redirectId);
             }
 
             changeAuthorisationStatusToFailed(authorisation);
@@ -107,6 +119,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             return Optional.of(new CmsPaymentResponse(tppNokRedirectUri));
         }
 
+        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment failed, because authorisation not found or has finalised status",
+                 redirectId);
         return Optional.empty();
     }
 
@@ -117,6 +131,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                                                                .filter(a -> !a.getScaStatus().isFinalisedStatus());
 
         if (!optionalAuthorisation.isPresent()) {
+            log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment cancellation failed, because authorisation is not found or has finalised status",
+                     redirectId, instanceId);
             return Optional.empty();
         }
 
@@ -124,6 +140,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
         if (authorisation.isExpired()) {
             changeAuthorisationStatusToFailed(authorisation);
+            log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment cancellation failed, because authorisation expired",
+                     redirectId, instanceId);
             return Optional.ofNullable(authorisation.getPaymentData())
                        .map(PisCommonPaymentData::getTppInfo)
                        .map(TppInfoEntity::getNokRedirectUri)
@@ -158,14 +176,44 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .orElse(false);
     }
 
+    @Override
+    public Optional<AuthorisationTypeStatusesByPsu> getAuthorisationTypeStatusesByPsu(@NotNull String paymentId, @NotNull String instanceId) {
+        return commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId)
+                   .map(PisCommonPaymentData::getAuthorizations)
+                   .map(this::getAuthorisationTypeStatusesByPsu);
+    }
+
+    @NotNull
+    private AuthorisationTypeStatusesByPsu getAuthorisationTypeStatusesByPsu(List<PisAuthorization> authorisations) {
+        List<PisAuthorization> actualAuthorisations = authorisations.stream()
+                                                          .filter(auth -> auth.getScaStatus() != ScaStatus.FAILED)
+                                                          .filter(auth -> Objects.nonNull(auth.getPsuData()))
+                                                          .collect(Collectors.toList());
+
+        return new AuthorisationTypeStatusesByPsu(getPsuScaStatusMapByAuthorisationType(actualAuthorisations, CmsAuthorisationType.CREATED),
+                                                  getPsuScaStatusMapByAuthorisationType(actualAuthorisations, CmsAuthorisationType.CANCELLED));
+    }
+
+    private Map<String, ScaStatus> getPsuScaStatusMapByAuthorisationType(List<PisAuthorization> authorisations, CmsAuthorisationType type) {
+        return authorisations.stream()
+                   .filter(auth -> auth.getAuthorizationType() == type)
+                   .collect(Collectors.toMap(auth -> auth.getPsuData().getPsuId(), PisAuthorization::getScaStatus));
+    }
+
     private boolean updatePsuData(PisAuthorization authorisation, PsuIdData psuIdData) {
         PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData);
         if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
+            log.info("Authorisation ID [{}]. Update PSU in payment failed in updatePsuData method, because newPsuData or psuId in newPsuData is empty or null",
+                     authorisation.getId());
             return false;
         }
 
-        Optional.ofNullable(authorisation.getPsuData())
-            .ifPresent(psu -> newPsuData.setId(psu.getId()));
+        Optional<PsuData> optionalPsuData = Optional.ofNullable(authorisation.getPsuData());
+        if (optionalPsuData.isPresent()) {
+            newPsuData.setId(optionalPsuData.get().getId());
+        } else {
+            log.info("Authorisation ID [{}]. Update PSU in payment failed in updatePsuData method because authorisation contains no psu data.", authorisation.getId());
+        }
 
         authorisation.setPsuData(newPsuData);
         pisAuthorisationRepository.save(authorisation);
@@ -181,6 +229,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
 
     private boolean updateAuthorisationStatusAndSaveAuthorisation(PisAuthorization pisAuthorisation, ScaStatus status) {
         if (pisAuthorisation.getScaStatus().isFinalisedStatus()) {
+            log.info("Authorisation ID [{}], SCA status: [{}]. Update authorisation status failed in updateAuthorisationStatusAndSaveAuthorisation method, " +
+                         "because authorisation has finalised status", pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus().getValue());
             return false;
         }
         pisAuthorisation.setScaStatus(status);

@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.xs2a.core.tpp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -57,4 +59,18 @@ public class TppInfo {
     @Nullable
     @ApiModelProperty(value = "TPP redirect URIs")
     private TppRedirectUri tppRedirectUri;
+
+    @ApiModelProperty(value = "Issuer CN", required = true, example = "Authority CA Domain Name")
+    private String issuerCN;
+
+    @JsonIgnore
+    public boolean isNotValid() {
+        return !isValid();
+    }
+
+    @JsonIgnore
+    public boolean isValid() {
+        return StringUtils.isNotBlank(authorisationNumber)
+                   && StringUtils.isNotBlank(authorityId);
+    }
 }

@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.psu.api;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +32,9 @@ public interface CmsPsuAisService {
     /**
      * Updates PSU Data in consent, based on the trusted information about PSU known to ASPSP (i.e. after authorisation)
      *
-     * @param psuIdData         PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
-     * @param authorisationId   ID of authorisation
-     * @param instanceId        optional ID of particular service instance
+     * @param psuIdData       PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
+     * @param authorisationId ID of authorisation
+     * @param instanceId      optional ID of particular service instance
      * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
      */
     boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId);
@@ -41,9 +42,9 @@ public interface CmsPsuAisService {
     /**
      * Returns AIS Consent object by its ID
      *
-     * @param psuIdData         PSU credentials data
-     * @param consentId         ID of Consent
-     * @param instanceId        optional ID of particular service instance
+     * @param psuIdData  PSU credentials data
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
      * @return Consent object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
@@ -65,9 +66,9 @@ public interface CmsPsuAisService {
     /**
      * Puts a Status of AIS Consent object by its ID and PSU ID to VALID
      *
-     * @param psuIdData       PSU credentials data
-     * @param consentId       ID of Consent
-     * @param instanceId      optional ID of particular service instance
+     * @param psuIdData  PSU credentials data
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
     boolean confirmConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
@@ -75,9 +76,9 @@ public interface CmsPsuAisService {
     /**
      * Puts a Status of AIS Consent object by its ID and PSU ID to REJECTED
      *
-     * @param psuIdData    PSU credentials data
-     * @param consentId    ID of Consent
-     * @param instanceId   optional ID of particular service instance
+     * @param psuIdData  PSU credentials data
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      */
     boolean rejectConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
@@ -85,8 +86,8 @@ public interface CmsPsuAisService {
     /**
      * Returns a list of AIS Consent objects by PSU ID
      *
-     * @param psuIdData     PSU credentials data
-     * @param instanceId    optional ID of particular service instance
+     * @param psuIdData  PSU credentials data
+     * @param instanceId optional ID of particular service instance
      * @return List of AIS Consent objects corresponding to the given PSU
      */
     @NotNull
@@ -95,9 +96,9 @@ public interface CmsPsuAisService {
     /**
      * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".
      *
-     * @param psuIdData     PSU credentials data
-     * @param consentId     ID of Consent
-     * @param instanceId    optional ID of particular service instance
+     * @param psuIdData  PSU credentials data
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if consent was found and revoked. <code>false</code> otherwise.
      */
     boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
@@ -105,8 +106,8 @@ public interface CmsPsuAisService {
     /**
      * Returns CMS AIS consent response object by redirect id if redirect id has not expired
      *
-     * @param redirectId    ID of redirect
-     * @param instanceId    optional ID of particular service instance
+     * @param redirectId ID of redirect
+     * @param instanceId optional ID of particular service instance
      * @return CMS AIS consent response object if it has been found
      */
     @NotNull
@@ -115,11 +116,19 @@ public interface CmsPsuAisService {
     /**
      * Stores account access to Consent in CMS. Any existing account accesses will be removed and overwritten.
      *
-     * @param consentId             ID of Consent, in which AccountAccess shall be saved
-     * @param accountAccessRequest  AccountAccess object with lists of AccountReferences. If empty, corresponding accesses to be removed.
-     * @param instanceId            optional ID of particular service instance
+     * @param consentId            ID of Consent, in which AccountAccess shall be saved
+     * @param accountAccessRequest AccountAccess object with lists of AccountReferences. If empty, corresponding accesses to be removed.
+     * @param instanceId           optional ID of particular service instance
      * @return false if Consent with this ID not found or in wrong state (Rejected, Revoked, Expired, Terminated by TPP or Terminated by ASPSP). True if consent was found.
      */
     boolean updateAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId);
 
+    /**
+     * Returns list of info objects about psu data and authorisation scaStatuses
+     *
+     * @param consentId  ID of Consent
+     * @param instanceId optional ID of particular service instance
+     * @return list of info objects about psu data and authorisation scaStatuses
+     */
+    Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId);
 }

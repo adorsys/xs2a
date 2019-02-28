@@ -19,10 +19,7 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -35,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -109,8 +107,9 @@ public class Xs2aAisConsentMapper {
                                                                    UpdateConsentPsuDataReq updatePsuDataRequest) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
+                       PsuIdData psuIdDataFromRequest = updatePsuDataRequest.getPsuData();
                        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-                       request.setPsuData(new PsuIdData(data.getPsuId(), null, null, null));
+                       request.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType()));
                        request.setConsentId(updatePsuDataRequest.getConsentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));
@@ -193,8 +192,30 @@ public class Xs2aAisConsentMapper {
                        ac.isTppRedirectPreferred(),
                        ac.getPsuIdDataList(),
                        ac.getTppInfo(),
-                       ac.getAisConsentRequestType()))
+                       ac.getAisConsentRequestType(),
+                       ac.isMultilevelScaRequired(),
+                       mapToAccountConsentAuthorisation(ais.getAccountConsentAuthorizations())))
                    .orElse(null);
+    }
+
+    private List<AccountConsentAuthorization> mapToAccountConsentAuthorisation(List<AisAccountConsentAuthorisation> accountConsentAuthorizations) {
+        if (CollectionUtils.isEmpty(accountConsentAuthorizations)) {
+            return Collections.emptyList();
+        }
+        return accountConsentAuthorizations.stream()
+                   .map(this::mapToAccountConsentAuthorisation)
+                   .collect(Collectors.toList());
+    }
+
+    private AccountConsentAuthorization mapToAccountConsentAuthorisation(AisAccountConsentAuthorisation aisAccountConsentAuthorisation) {
+        return Optional.ofNullable(aisAccountConsentAuthorisation)
+            .map(auth -> {
+                AccountConsentAuthorization accountConsentAuthorisation = new AccountConsentAuthorization();
+                accountConsentAuthorisation.setPsuIdData(auth.getPsuIdData());
+                accountConsentAuthorisation.setScaStatus(auth.getScaStatus());
+                return accountConsentAuthorisation;
+            })
+            .orElse(null);
     }
 
     private Xs2aAccountAccess mapToXs2aAccountAccess(AisAccountAccess ais) {

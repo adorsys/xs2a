@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ public class PsuDataMapper {
     public List<PsuData> mapToPsuDataList(List<PsuIdData> psuIdDataList) {
         return psuIdDataList.stream()
                    .map(this::mapToPsuData)
+                   .filter(Objects::nonNull)
                    .collect(Collectors.toList());
     }
 

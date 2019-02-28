@@ -70,6 +70,7 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
                 tppInfo.setOrganisationUnit(tppCertificateData.getOrganisationUnit());
                 tppInfo.setCity(tppCertificateData.getCity());
                 tppInfo.setState(tppCertificateData.getState());
+                tppInfo.setIssuerCN(tppCertificateData.getIssuerCN());
 
                 List<String> tppRoles = tppCertificateData.getPspRoles();
                 List<TppRole> xs2aTppRoles = tppRoles.stream()

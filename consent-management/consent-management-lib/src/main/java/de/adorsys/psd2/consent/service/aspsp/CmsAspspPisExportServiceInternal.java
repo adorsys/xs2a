@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.repository.specification.PisCommonPaymentDataSpec
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportService {
@@ -45,6 +47,8 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
     @Override
     public Collection<CmsPayment> exportPaymentsByTpp(String tppAuthorisationNumber, @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData, @NotNull String instanceId) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
+            log.info("InstanceId: [{}], TPP ID: [{}]. Export payments by TPP failed, TPP ID or instanceId is empty or null.", instanceId,
+                     tppAuthorisationNumber);
             return Collections.emptyList();
         }
 
@@ -55,6 +59,8 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
     @Override
     public Collection<CmsPayment> exportPaymentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo, @NotNull String instanceId) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
+            log.info("InstanceId: [{}]. Export payments by psu failed, psuIdData or instanceId is empty or null.",
+                     instanceId);
             return Collections.emptyList();
         }
 
@@ -65,6 +71,8 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
     @Override
     public Collection<CmsPayment> exportPaymentsByAccountId(@NotNull String aspspAccountId, @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo, @NotNull String instanceId) {
         if (StringUtils.isBlank(aspspAccountId) || StringUtils.isBlank(instanceId)) {
+            log.info("InstanceId: [{}], aspspAccountId: [{}]. Export payments by accountId failed, aspspAccountId or instanceId is empty or null.",
+                     instanceId, aspspAccountId);
             return Collections.emptyList();
         }
 

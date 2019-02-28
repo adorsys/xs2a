@@ -23,9 +23,10 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
+import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCancelPaymentMapper;
@@ -45,8 +46,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.ACTC;
-import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.CANC;
+import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -73,24 +73,18 @@ public class CancelPaymentServiceTest {
     private PisAspspDataService pisAspspDataService;
     @Mock
     private SpiErrorMapper spiErrorMapper;
+    @Mock
+    private Xs2aUpdatePaymentStatusAfterSpiService xs2aUpdatePaymentStatusAfterSpiService;
+    @Mock
+    private PaymentCancellationAuthorisationNeededDecider paymentCancellationAuthorisationNeededDecider;
 
     @Before
     public void setUp() {
-        when(paymentCancellationSpi.cancelPaymentWithoutSca(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
-            .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
-                            .payload(SpiResponse.voidResponse())
-                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
-                            .success());
         when(paymentCancellationSpi.cancelPaymentWithoutSca(any(), eq(getSpiPayment(WRONG_PAYMENT_ID)), any()))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
                             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
                             .message(ERROR_MESSAGE_TEXT)
                             .fail(SpiResponseStatus.LOGICAL_FAILURE));
-        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
-            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
-                            .payload(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC))
-                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
-                            .success());
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(WRONG_PAYMENT_ID)), any()))
             .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
                             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
@@ -99,78 +93,176 @@ public class CancelPaymentServiceTest {
 
         when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.CANC))))
             .thenReturn(getCancelPaymentResponse(false, CANC));
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.CANC))))
+            .thenReturn(getCancelPaymentResponse(true, CANC));
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.ACTC))))
+            .thenReturn(getCancelPaymentResponse(false, ACTC));
         when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC))))
             .thenReturn(getCancelPaymentResponse(true, ACTC));
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, RCVD))))
+            .thenReturn(getCancelPaymentResponse(false, RCVD));
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, ACSC))))
+            .thenReturn(getCancelPaymentResponse(false, ACSC));
+        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, null))))
+            .thenReturn(getCancelPaymentResponse(true, null));
+
     }
 
     @Test
-    public void cancelPaymentWithoutAuthorisation_Success() {
-        //When
-        ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(PAYMENT_ID), ENCRYPTED_PAYMENT_ID);
+    public void initiatePaymentCancellation_authorisationNotRequired_shouldCancelPaymentWithoutSca() {
+        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
+            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
+                            .payload(getSpiCancelPaymentResponse(false, TransactionStatus.ACTC))
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
 
-        //Than
+        when(paymentCancellationAuthorisationNeededDecider.isNoScaRequired(false))
+            .thenReturn(true);
+
+        when(paymentCancellationSpi.cancelPaymentWithoutSca(any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
+                            .payload(SpiResponse.voidResponse())
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
+
+        // When
+        ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(),
+                                                                                                          getSpiPayment(PAYMENT_ID),
+                                                                                                          ENCRYPTED_PAYMENT_ID);
+
+        // Then
         assertThat(response.hasError()).isFalse();
         assertThat(response.getBody()).isEqualTo(getCancelPaymentResponse(false, CANC));
     }
 
     @Test
-    public void cancelPaymentWithoutAuthorisation_Failure_WrongId() {
+    public void initiatePaymentCancellation_paymentAlreadyCancelledInSpi_shouldReturnCancelledInResponse() {
+        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
+            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
+                            .payload(getSpiCancelPaymentResponse(false, CANC))
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
 
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
-        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_403)
-                                      .errorType(ErrorType.PIS_403)
-                                      .messages(ERROR_MESSAGE_TEXT)
-                                      .build();
+        // When
+        ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(),
+                                                                                                          getSpiPayment(PAYMENT_ID),
+                                                                                                          ENCRYPTED_PAYMENT_ID);
 
-        when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
-            .thenReturn(errorHolder);
-
-        //When
-        ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.cancelPaymentWithoutAuthorisation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID), WRONG_PAYMENT_ID);
-
-        //Than
-        assertThat(response.hasError()).isTrue();
-        assertThat(response.getBody()).isNull();
-        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.PIS_403);
-        assertThat(response.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
-        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
+        // Then
+        assertThat(response.hasError()).isFalse();
+        assertThat(response.getBody()).isEqualTo(getCancelPaymentResponse(false, CANC));
     }
 
     @Test
-    public void cancelPaymentWithAuthorisation_Success() {
-        //When
-        ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(PAYMENT_ID), ENCRYPTED_PAYMENT_ID);
+    public void initiatePaymentCancellation_withPaymentInReceivedStatus_shouldCancelPaymentWithoutSca() {
+        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
+            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
+                            .payload(getSpiCancelPaymentResponse(false, RCVD))
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
 
-        //Than
+
+        when(paymentCancellationSpi.cancelPaymentWithoutSca(any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
+                            .payload(SpiResponse.voidResponse())
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
+
+        // When
+        ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(),
+                                                                                                          getSpiPayment(PAYMENT_ID),
+                                                                                                          ENCRYPTED_PAYMENT_ID);
+
+        // Then
+        assertThat(response.hasError()).isFalse();
+        assertThat(response.getBody()).isEqualTo(getCancelPaymentResponse(false, CANC));
+    }
+
+    @Test
+    public void initiatePaymentCancellation_authorisationRequired_shouldReturnResponseFromSpi() {
+        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
+            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
+                            .payload(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC))
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
+
+        when(paymentCancellationAuthorisationNeededDecider.isNoScaRequired(true))
+            .thenReturn(false);
+
+        // When
+        ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(),
+                                                                                                          getSpiPayment(PAYMENT_ID),
+                                                                                                          ENCRYPTED_PAYMENT_ID);
+
+        // Then
         assertThat(response.hasError()).isFalse();
         assertThat(response.getBody()).isEqualTo(getCancelPaymentResponse(true, ACTC));
     }
 
     @Test
-    public void cancelPaymentWithAuthorisation_Failure_WrongId() {
-        // Given
-        String errorMessagesString = ERROR_MESSAGE_TEXT.toString().replace("[", "").replace("]", "");
+    public void initiatePaymentCancellation_withFinalisedPayment_shouldReturnError() {
+        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
+            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
+                            .payload(getSpiCancelPaymentResponse(false, ACSC))
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
 
-        ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-                                      .errorType(PIS_400)
-                                      .messages(ERROR_MESSAGE_TEXT)
-                                      .build();
 
-        when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIS)))
-            .thenReturn(errorHolder);
-        //When
-        ResponseObject<CancelPaymentResponse> response =
-            cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(), getSpiPayment(WRONG_PAYMENT_ID), WRONG_PAYMENT_ID);
+        when(paymentCancellationSpi.cancelPaymentWithoutSca(any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
+                            .payload(SpiResponse.voidResponse())
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
 
-        //Than
+        // When
+        ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(),
+                                                                                                          getSpiPayment(PAYMENT_ID),
+                                                                                                          ENCRYPTED_PAYMENT_ID);
+
+        // Then
         assertThat(response.hasError()).isTrue();
-        assertThat(response.getBody()).isNull();
-        assertThat(response.getError().getErrorType()).isEqualTo(PIS_400);
-        assertThat(response.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
-        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+        MessageError error = response.getError();
+        assertThat(error.getErrorType()).isEqualTo(PIS_400);
+    }
+
+    @Test
+    public void initiatePaymentCancellation_spiErrorDuringInitiation_shouldReturnError() {
+        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
+            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .fail(SpiResponseStatus.LOGICAL_FAILURE));
+
+        when(spiErrorMapper.mapToErrorHolder(any(), eq(ServiceType.PIS)))
+            .thenReturn(ErrorHolder.builder(MessageErrorCode.RESOURCE_BLOCKED).build());
+
+        // When
+        ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(),
+                                                                                                          getSpiPayment(PAYMENT_ID),
+                                                                                                          ENCRYPTED_PAYMENT_ID);
+
+        // Then
+        assertThat(response.hasError()).isTrue();
+    }
+
+    @Test
+    public void initiatePaymentCancellation_noTransactionStatusFromSpi_shouldGetStatusFromPayment() {
+        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID, ACWC)), any()))
+            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
+                            .payload(getSpiCancelPaymentResponse(true, null))
+                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+                            .success());
+
+        when(paymentCancellationAuthorisationNeededDecider.isNoScaRequired(true))
+            .thenReturn(false);
+
+        // When
+        ResponseObject<CancelPaymentResponse> response = cancelPaymentService.initiatePaymentCancellation(getSpiPsuData(),
+                                                                                                          getSpiPayment(PAYMENT_ID, ACWC),
+                                                                                                          ENCRYPTED_PAYMENT_ID);
+
+        // Then
+        assertThat(response.hasError()).isFalse();
+        assertThat(response.getBody()).isEqualTo(getCancelPaymentResponse(true, ACWC));
     }
 
     private SpiPaymentCancellationResponse getSpiCancelPaymentResponse(boolean authorisationRequired, TransactionStatus transactionStatus) {
@@ -192,8 +284,13 @@ public class CancelPaymentServiceTest {
     }
 
     private SpiPayment getSpiPayment(String paymentId) {
+        return getSpiPayment(paymentId, null);
+    }
+
+    private SpiPayment getSpiPayment(String paymentId, TransactionStatus transactionStatus) {
         SpiSinglePayment spiSinglePayment = new SpiSinglePayment("sepa-credit-transfers");
         spiSinglePayment.setPaymentId(paymentId);
+        spiSinglePayment.setPaymentStatus(transactionStatus);
         return spiSinglePayment;
     }
 }
