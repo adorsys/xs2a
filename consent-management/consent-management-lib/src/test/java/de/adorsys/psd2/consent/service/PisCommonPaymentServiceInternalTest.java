@@ -243,7 +243,7 @@ public class PisCommonPaymentServiceInternalTest {
         PisAuthorization savedAuthorisation = savedAuthorisationCaptor.getValue();
 
         assertEquals(PSU_DATA, savedAuthorisation.getPsuData());
-        assertEquals(psuDataList, savedAuthorisation.getPaymentData().getPsuData());
+        assertEquals(psuDataList, savedAuthorisation.getPaymentData().getPsuDataList());
     }
 
     @Test
