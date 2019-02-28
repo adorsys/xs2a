@@ -68,6 +68,11 @@ Get payment status endpoint returns JSON response with current transaction statu
 Both `pis_common_payment` and `pis_payment_data` tables contained `transaction_status` column. This lead to inconsistencies.
 Transaction status field is removed from `pis_payment_data` table.
 
+## Put Swagger endpoint in ASPSP Profile to the root path
+Before this version ASPSP Profile Swagger was available under `/api/v1/swagger-ui.html`.
+Not it's available under `/swagger-ui.html`.
+For example at your machine default path will be `http://localhost:48080/swagger-ui.html`.
+
 ## Split Swagger Documentation to CMS APIs to three Swagger Specifications
 Now instead one annotation `@EnableCmsSwagger` there are three annotations:
 * `@EnableCmsAspspApiSwagger`,
