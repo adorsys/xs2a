@@ -52,8 +52,9 @@ public class Xs2aPisCommonPaymentMapper {
                                                                                       Xs2aUpdatePisCommonPaymentPsuDataResponse updatePsuDataResponse) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
+                       PsuIdData psuIdDataFromRequest = updatePsuDataRequest.getPsuData();
                        UpdatePisCommonPaymentPsuDataRequest request = new UpdatePisCommonPaymentPsuDataRequest();
-                       request.setPsuData(new PsuIdData(data.getPsuId(), null, null, null));
+                       request.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType()));
                        request.setPaymentId(updatePsuDataRequest.getPaymentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorisationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));

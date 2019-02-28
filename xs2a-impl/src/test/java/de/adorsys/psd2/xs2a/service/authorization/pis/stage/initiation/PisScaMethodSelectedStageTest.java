@@ -154,7 +154,6 @@ public class PisScaMethodSelectedStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALISED);
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildRequest(String authenticationMethodId, String paymentId) {

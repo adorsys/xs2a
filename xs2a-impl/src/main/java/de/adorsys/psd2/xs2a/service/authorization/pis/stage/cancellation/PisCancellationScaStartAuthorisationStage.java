@@ -109,9 +109,7 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder);
         }
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUIDENTIFIED);
-        response.setPsuId(request.getPsuData().getPsuId());
-        return response;
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUIDENTIFIED);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse applyAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, GetPisAuthorisationResponse pisAuthorisationResponse) {
@@ -153,9 +151,7 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
 
             pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(request.getPaymentId(), TransactionStatus.RJCT);
 
-            Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
-            response.setPsuId(spiPsuData.getPsuId());
-            return response;
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
 
         } else if (isSingleScaMethod(spiScaMethods)) {
             xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
@@ -167,19 +163,18 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
                 return pisCommonDecoupledService.proceedDecoupledCancellation(request, payment, chosenMethod.getAuthenticationMethodId());
             }
 
-            return proceedSingleScaEmbeddedApproach(payment, chosenMethod, spiPsuData, spiContextData, aspspConsentData);
+            return proceedSingleScaEmbeddedApproach(payment, chosenMethod, spiContextData, aspspConsentData);
 
         } else if (isMultipleScaMethods(spiScaMethods)) {
             xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
             Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUAUTHENTICATED);
-            response.setPsuId(psuData.getPsuId());
             response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
             return response;
         }
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FAILED);
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiPsuData psuData, SpiContextData contextData, AspspConsentData aspspConsentData) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiContextData contextData, AspspConsentData aspspConsentData) {
         SpiResponse<SpiAuthorizationCodeResult> authCodeResponse = paymentCancellationSpi.requestAuthorisationCode(contextData, chosenMethod.getAuthenticationMethodId(), payment, aspspConsentData);
         pisAspspDataService.updateAspspConsentData(authCodeResponse.getAspspConsentData());
 
@@ -190,7 +185,6 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
         ChallengeData challengeData = mapToChallengeData(authCodeResponse.getPayload());
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED);
-        response.setPsuId(psuData.getPsuId());
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(chosenMethod));
         response.setChallengeData(challengeData);
         return response;
