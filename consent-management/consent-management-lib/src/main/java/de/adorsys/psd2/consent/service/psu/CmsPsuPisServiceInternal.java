@@ -124,10 +124,9 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                                                                .filter(a -> !a.getScaStatus().isFinalisedStatus());
 
         if (!optionalAuthorisation.isPresent()) {
-            return Optional.empty();
-        } else {
             log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment cancellation failed, because authorisation is not found or has finalised status",
                      redirectId, instanceId);
+            return Optional.empty();
         }
 
         PisAuthorization authorisation = optionalAuthorisation.get();
