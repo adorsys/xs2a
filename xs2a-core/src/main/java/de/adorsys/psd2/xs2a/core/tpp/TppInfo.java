@@ -60,6 +60,9 @@ public class TppInfo {
     @ApiModelProperty(value = "TPP redirect URIs")
     private TppRedirectUri tppRedirectUri;
 
+    @ApiModelProperty(value = "Issuer CN", required = true, example = "Authority CA Domain Name")
+    private String issuerCN;
+
     @JsonIgnore
     public boolean isNotValid() {
         return !isValid();
