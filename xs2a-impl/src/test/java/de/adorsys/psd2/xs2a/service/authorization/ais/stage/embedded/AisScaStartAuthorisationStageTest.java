@@ -249,7 +249,6 @@ public class AisScaStartAuthorisationStageTest {
         UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getAvailableScaMethods()).isEqualTo(MULTIPLE_CMS_SCA_METHODS);
         assertThat(actualResponse.getScaStatus()).isEqualTo(AUTHENTICATED_SCA_STATUS);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
@@ -274,7 +273,6 @@ public class AisScaStartAuthorisationStageTest {
         UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(buildXs2aSmsAuthenticationObject());
         assertThat(actualResponse.getScaStatus()).isEqualTo(METHOD_SELECTED_SCA_STATUS);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
@@ -358,7 +356,6 @@ public class AisScaStartAuthorisationStageTest {
         UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }

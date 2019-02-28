@@ -276,7 +276,6 @@ public class PisCancellationScaAuthenticatedStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaAuthenticatedStage.apply(request, response);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(xs2aAuthenticationObject);
         assertThat(actualResponse.getChallengeData()).isEqualTo(challengeData);
     }

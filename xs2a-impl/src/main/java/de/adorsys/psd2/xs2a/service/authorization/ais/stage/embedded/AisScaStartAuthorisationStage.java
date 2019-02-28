@@ -130,7 +130,6 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
             aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.VALID);
 
             UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-            response.setPsuId(psuData.getPsuId());
             response.setScaAuthenticationData(request.getScaAuthenticationData());
             response.setScaStatus(ScaStatus.FINALISED);
             return response;
@@ -149,13 +148,13 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
             aisConsentService.saveAuthenticationMethods(request.getAuthorizationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
 
             if (availableScaMethods.size() > 1) {
-                return createResponseForMultipleAvailableMethods(psuData, availableScaMethods);
+                return createResponseForMultipleAvailableMethods(availableScaMethods);
             } else {
                 return createResponseForOneAvailableMethod(request, spiAccountConsent, availableScaMethods.get(0), psuData);
             }
         } else {
             aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.REJECTED);
-            UpdateConsentPsuDataResponse response = createResponseForNoneAvailableScaMethod(psuData);
+            UpdateConsentPsuDataResponse response = createResponseForNoneAvailableScaMethod();
             aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
             return response;
         }
@@ -175,16 +174,14 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         }
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setPsuId(request.getPsuData().getPsuId());
         response.setScaStatus(ScaStatus.PSUIDENTIFIED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
 
         return response;
     }
 
-    private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(PsuIdData psuData, List<SpiAuthenticationObject> availableScaMethods) {
+    private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(List<SpiAuthenticationObject> availableScaMethods) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setPsuId(psuData.getPsuId());
         response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
         response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
@@ -216,7 +213,6 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         ChallengeData challengeData = authorizationCodeResult.getChallengeData();
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setPsuId(psuData.getPsuId());
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(scaMethod));
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
@@ -224,9 +220,8 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         return response;
     }
 
-    private UpdateConsentPsuDataResponse createResponseForNoneAvailableScaMethod(PsuIdData psuData) {
+    private UpdateConsentPsuDataResponse createResponseForNoneAvailableScaMethod() {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setPsuId(psuData.getPsuId());
         response.setScaStatus(ScaStatus.FAILED);
         response.setMessageError(new MessageError(ErrorType.AIS_400, of(SCA_METHOD_UNKNOWN)));
         return response;

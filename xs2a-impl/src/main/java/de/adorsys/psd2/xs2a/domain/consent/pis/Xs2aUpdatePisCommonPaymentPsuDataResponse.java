@@ -29,7 +29,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Xs2aUpdatePisCommonPaymentPsuDataResponse {
-    private String psuId;
     private ErrorHolder errorHolder;
     private String psuMessage;
     private String paymentId;

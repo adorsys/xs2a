@@ -107,8 +107,9 @@ public class Xs2aAisConsentMapper {
                                                                    UpdateConsentPsuDataReq updatePsuDataRequest) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
+                       PsuIdData psuIdDataFromRequest = updatePsuDataRequest.getPsuData();
                        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-                       request.setPsuData(new PsuIdData(data.getPsuId(), null, null, null));
+                       request.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType()));
                        request.setConsentId(updatePsuDataRequest.getConsentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));

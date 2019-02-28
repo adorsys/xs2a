@@ -151,7 +151,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
         //Then
         assertThat(response.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
-        assertThat(response.getPsuId()).isEqualTo(PSU_ID);
     }
 
     @Test
@@ -194,7 +193,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
 
         //Then
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(FINALISED);
     }
 
@@ -213,7 +211,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
 
         //Then
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(buildXs2aSmsAuthenticationObject());
         assertThat(actualResponse.getScaStatus()).isEqualTo(SCAMETHODSELECTED);
     }
@@ -231,7 +228,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
 
         //Then
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
         assertThat(actualResponse.getAvailableScaMethods()).isEqualTo(MULTIPLE_XS2A_SCA_METHODS);
         assertThat(actualResponse.getScaStatus()).isEqualTo(PSUAUTHENTICATED);
     }

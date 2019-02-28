@@ -81,8 +81,6 @@ public class PisCancellationScaMethodSelectedStage extends PisScaStage<Xs2aUpdat
 
         updatePaymentStatusAfterSpiService.updatePaymentStatus(request.getPaymentId(), TransactionStatus.CANC);
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse xs2aResponse = new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
-        xs2aResponse.setPsuId(psuData.getPsuId());
-        return xs2aResponse;
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
     }
 }

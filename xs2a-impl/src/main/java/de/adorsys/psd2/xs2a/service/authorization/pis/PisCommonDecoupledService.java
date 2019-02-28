@@ -85,7 +85,6 @@ public class PisCommonDecoupledService {
         }
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED);
-        response.setPsuId(psuData.getPsuId());
         response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
         response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(request.getAuthenticationMethodId()));
         return response;
