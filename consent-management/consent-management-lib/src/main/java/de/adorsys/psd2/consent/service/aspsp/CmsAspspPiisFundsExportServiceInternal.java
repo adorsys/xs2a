@@ -82,7 +82,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
                                                              @Nullable LocalDate createDateTo,
                                                              @Nullable String instanceId) {
         if (StringUtils.isBlank(aspspAccountId)) {
-            log.info("InstanceId: [{}]. Export consents by accountId failed, aspspAccountId is empty or null.");
+            log.info("InstanceId: [{}]. Export consents by accountId failed, aspspAccountId is empty or null.", instanceId);
             return Collections.emptyList();
         }
 
