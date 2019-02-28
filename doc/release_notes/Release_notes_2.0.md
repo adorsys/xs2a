@@ -137,3 +137,12 @@ Start payment cancellation logic was reworked and the logic of spi calls was cha
 is `RCVD`, `PaymentCancellationSpi#cancelPaymentWithoutSca` is invoked;
 - when at least one of `cancellationAuthorisationMandated` and `paymentCancellationAuthorizationMandated` property in bank profile is true,
 no further SPI calls are made and `startAuthorisation` link is returned to TPP.
+
+## Changed type of columns in tpp_info table in the CMS database
+Type of `authority_name`, `country`, `organisation`, `organisation_unit`, `city` and `state` columns in the `tpp_info` 
+table was to `VARCHAR(255)` and `@LOB` annotation was removed from the corresponding fields in `TppInfoEntity`.
+
+Beware: during migration of existing records in `tpp_info` table only the first `255` characters in the aforementioned 
+columns will be retained, all exceeding characters will be lost.
+Also for `PostgreSQL` the assumption is made that all existing values in the aforementioned columns that contain only 
+numerical symbols are stored as large objects.
