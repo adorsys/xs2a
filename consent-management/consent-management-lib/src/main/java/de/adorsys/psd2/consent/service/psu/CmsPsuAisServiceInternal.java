@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
@@ -169,18 +170,20 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    public Optional<Map<String, ScaStatus>> getPsuAuthorisationStatusMap(@NotNull String consentId, @NotNull String instanceId) {
+    public Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId) {
         return getActualAisConsent(consentId, instanceId)
                    .map(AisConsent::getAuthorizations)
-                   .map(this::getPsuScaStatusMap);
+                   .map(this::getPsuDataAuthorisations);
     }
 
     @NotNull
-    private Map<String, ScaStatus> getPsuScaStatusMap(List<AisConsentAuthorization> authorisations) {
+    private List<CmsAisPsuDataAuthorisation> getPsuDataAuthorisations(List<AisConsentAuthorization> authorisations) {
         return authorisations.stream()
-                   .filter(auth -> auth.getScaStatus() != ScaStatus.FAILED)
                    .filter(auth -> Objects.nonNull(auth.getPsuData()))
-                   .collect(Collectors.toMap(auth -> auth.getPsuData().getPsuId(), AisConsentAuthorization::getScaStatus));
+                   .map(auth -> new CmsAisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()),
+                                                               auth.getExternalId(),
+                                                               auth.getScaStatus()))
+                   .collect(Collectors.toList());
     }
 
     private boolean updateAccountAccessInConsent(AisConsent consent, CmsAisConsentAccessRequest request) {

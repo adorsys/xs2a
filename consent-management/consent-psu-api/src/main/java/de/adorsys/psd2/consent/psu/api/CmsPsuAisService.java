@@ -19,12 +19,12 @@ package de.adorsys.psd2.consent.psu.api;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -124,11 +124,11 @@ public interface CmsPsuAisService {
     boolean updateAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId);
 
     /**
-     * Returns map of psu ids and statuses of their authorisations for this consent
+     * Returns list of info objects about psu data and authorisation scaStatuses
      *
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
-     * @return map of psu data and scaStatuses
+     * @return list of info objects about psu data and authorisation scaStatuses
      */
-    Optional<Map<String, ScaStatus>> getPsuAuthorisationStatusMap(@NotNull String consentId, @NotNull String instanceId);
+    Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId);
 }
