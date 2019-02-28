@@ -29,11 +29,11 @@ $ mvn clean install
 There is docker-compose.yml in root folder which will help to run containers in docker.
 Some images will be build from sources, some fetched prebuild from docker hub.
 
-UI componet should be build before docker images created.
+UI component should be built before docker images were created.
 ```
 $ cd online-banking-demo-ui && npm ci && npm run build && cd ..
 ```
-After UI build completed start docker compose.
+After UI build completes please start docker compose.
 ```
 $ docker-compose up
 ```
@@ -62,6 +62,11 @@ After keycloak starts and listens on port `8081` you may run keycloak scripts th
 $ cd scripts/keycloak-dev
 $ ./init-realm-and-client.sh
 ```
+You should see new realm, client and user created in your keycloak.
+
+Please note clients should be created with ``Access Type`` bearer-only and there should be tab named Credentials where you can get client secret, used in next step. ![client secret](images/keycloakClientSecret.png)
+
+In case tab Credentials are not visible, please toggle ``Access Type`` setting on tab ``Settings`` (change to public, save and change back to bearer-only).
 
 The user with username `admin` and password `admin123` will be used for keycloak administration then.
 The user with username `aspsp` and password `zzz` will be used for accessing the aspsp-mock-server api then.
