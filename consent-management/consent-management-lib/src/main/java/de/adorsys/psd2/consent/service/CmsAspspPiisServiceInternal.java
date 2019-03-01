@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.TERMINATED_BY_ASPSP;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
@@ -64,6 +66,8 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
                                           @NotNull LocalDate validUntil,
                                           int allowedFrequencyPerDay) {
         if (isInvalidConsentCreationRequest(psuIdData, tppInfo, accounts, validUntil)) {
+            log.info("TPP ID: [{}]. Consent cannot be created, because request contains no allowed frequency per day",
+                tppInfo.getAuthorisationNumber());
             return Optional.empty();
         }
 
@@ -72,9 +76,13 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
         PiisConsentEntity saved = piisConsentRepository.save(consent);
 
-        return saved.getId() != null
-                   ? Optional.ofNullable(saved.getExternalId())
-                   : Optional.empty();
+        if(saved.getId() != null){
+            return Optional.ofNullable(saved.getExternalId());
+        } else {
+            log.info("TPP ID: [{}]. Consent cannot be created, because not allowed to save to DB",
+                tppInfo.getAuthorisationNumber());
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -91,6 +99,8 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         Optional<PiisConsentEntity> entityOptional = Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)));
 
         if (!entityOptional.isPresent()) {
+            log.info("Consent ID: [{}], Instance ID: [{}]. Consent cannot be terminated, because not found by consentId and instanceId",
+                consentId, instanceId);
             return false;
         }
 
