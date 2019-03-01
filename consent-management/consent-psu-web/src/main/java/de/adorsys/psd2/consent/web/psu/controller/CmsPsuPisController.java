@@ -20,7 +20,7 @@ import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
-import de.adorsys.psd2.consent.psu.api.pis.AuthorisationTypeStatusesByPsu;
+import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -31,7 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -178,16 +178,16 @@ public class CmsPsuPisController {
     }
 
     @GetMapping(path = "/{payment-id}/authorisation/psus")
-    @ApiOperation(value = "Returns object with of psu ids and statuses of their authorisations for this payment divided by auth type")
+    @ApiOperation(value = "Returns list of info objects about PSU data and authorisation statuses")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Map.class),
+        @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<AuthorisationTypeStatusesByPsu> psuAuthorisationStatuses(
+    public ResponseEntity<List<CmsPisPsuDataAuthorisation>> psuAuthorisationStatuses(
         @ApiParam(name = "payment-id", value = "The payment identification assigned to the created payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
 
-        return cmsPsuPisService.getAuthorisationTypeStatusesByPsu(paymentId, instanceId)
+        return cmsPsuPisService.getPsuDataAuthorisations(paymentId, instanceId)
                    .map(ResponseEntity::ok)
                    .orElse(ResponseEntity.notFound().build());
     }
