@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -40,6 +41,23 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
      * @return Returns account access with Account's reference IDs. If Accounts/ReferenceIDs not know, returns empty Response object
      */
     SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsent(@NotNull SpiContextData contextData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData);
+
+    /**
+     * This call is invoked inside of Get Consent request to give the bank ability to provide consent status, if it was not saved in CMS before.
+     * If consent status is already final one, this call will be not performed.
+     *
+     * @param contextData             holder of call's context data (e.g. about PSU and TPP)
+     * @param accountConsent          Account consent from CMS
+     * @param aspspConsentData        Encrypted data that is stored in the consent management system.
+     *                                May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return Consent Status to be saved in CMS and provided back to TPP.
+     */
+    default SpiResponse<SpiAisConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull AspspConsentData aspspConsentData) {
+        return SpiResponse.<SpiAisConsentStatusResponse>builder()
+            .payload(new SpiAisConsentStatusResponse(accountConsent.getConsentStatus()))
+            .aspspConsentData(aspspConsentData)
+            .success();
+    }
 
     /**
      * Revokes AIS consent
