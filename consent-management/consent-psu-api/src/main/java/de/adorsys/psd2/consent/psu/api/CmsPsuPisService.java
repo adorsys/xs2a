@@ -18,12 +18,13 @@ package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
-import de.adorsys.psd2.consent.psu.api.pis.AuthorisationTypeStatusesByPsu;
+import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CmsPsuPisService {
@@ -91,11 +92,11 @@ public interface CmsPsuPisService {
     boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status, @NotNull String instanceId);
 
     /**
-     * Returns object with of psu ids and statuses of their authorisations for this payment divided by auth type
+     * Returns list of info objects about psu data and authorisation scaStatuses
      *
      * @param paymentId  ID of Payment
      * @param instanceId optional ID of particular service instance
-     * @return map of psu data and scaStatuses
+     * @return list of info objects about psu data and authorisation scaStatuses
      */
-    Optional<AuthorisationTypeStatusesByPsu> getAuthorisationTypeStatusesByPsu(@NotNull String paymentId, @NotNull String instanceId);
+    Optional<List<CmsPisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String paymentId, @NotNull String instanceId);
 }

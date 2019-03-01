@@ -16,13 +16,15 @@
 
 package de.adorsys.psd2.consent.psu.api.pis;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Value;
 
-import java.util.Map;
-
 @Value
-public class AuthorisationTypeStatusesByPsu {
-    private Map<String, ScaStatus> created;
-    private Map<String, ScaStatus> cancelled;
+public class CmsPisPsuDataAuthorisation {
+    @JsonUnwrapped
+    private PsuIdData psu;
+    private String authorisationId;
+    private ScaStatus scaStatus;
 }
