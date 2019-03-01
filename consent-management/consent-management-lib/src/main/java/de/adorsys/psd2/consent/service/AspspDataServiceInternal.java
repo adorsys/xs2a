@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -55,6 +57,7 @@ public class AspspDataServiceInternal implements AspspDataService {
     @Transactional
     public boolean updateAspspConsentData(@NotNull AspspConsentData aspspConsentData) {
         if(aspspConsentData.isEmptyConsentData()){
+            log.info("Update Aspsp consent data failed, because aspsp Consent data is empty.");
             return false;
         }
 
@@ -70,11 +73,13 @@ public class AspspDataServiceInternal implements AspspDataService {
 
         Optional<String> decryptConsentId = securityDataService.decryptId(encryptedConsentId);
         if (!decryptConsentId.isPresent()) {
+            log.info("Consent ID: [{}]. Update Aspsp consent data failed, because consent id cannot be decrypted.", encryptedConsentId);
             return false;
         }
 
         Optional<EncryptedData> encryptedData = securityDataService.encryptConsentData(encryptedConsentId, data);
         if (!encryptedData.isPresent()) {
+            log.info("Consent ID: [{}]. Update Aspsp consent data failed, because aspsp consent data cannot be encrypted.", encryptedConsentId);
             return false;
         }
 
@@ -98,6 +103,7 @@ public class AspspDataServiceInternal implements AspspDataService {
             aspspConsentDataRepository.delete(consentId);
             return true;
         }
+        log.info("Consent ID: [{}]. Delete Aspsp consent data failed, because aspsp consent data for this consent id does not exist.", consentId);
         return false;
     }
 
