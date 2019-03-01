@@ -120,6 +120,10 @@ To be considered valid the request must contain:
  - either no TPP object or TPP info object with authorisation number and authority ID
  - non-empty list of accounts
  - valid consent expiration date
+ 
+## X-Request-Id is now available on SPI level in SpiContextData structure
+X-Request-ID header identifies the request of TPP to XS2A Interface. For tracing purposes it is necessary to have a possibility to use in on SPI Level.
+Now `xRequestId` field is added to SpiContextData object (comes with every SPI-call).
 
 ## Bugfix: Payment cancellation supports all non-finalised transaction status
 

@@ -58,6 +58,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,7 +76,7 @@ public class AisScaMethodSelectedStageTest {
     private static final MessageErrorCode ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
     private static final ScaStatus FAILED_SCA_STATUS = ScaStatus.FAILED;
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
     private static final String AUTHENTICATION_METHOD_ID = "sms";

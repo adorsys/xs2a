@@ -66,6 +66,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
@@ -82,7 +83,7 @@ public class PisScaStartAuthorisationStageTest {
     private static final String PSU_ID = "Test psuId";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(TEST_ASPSP_DATA.getBytes(), "");
-    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo());
+    private static final SpiContextData CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID());
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
     private static final List<SpiAuthenticationObject> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(buildSpiSmsAuthenticationObject(false), buildSpiPushAuthenticationObject(true));
