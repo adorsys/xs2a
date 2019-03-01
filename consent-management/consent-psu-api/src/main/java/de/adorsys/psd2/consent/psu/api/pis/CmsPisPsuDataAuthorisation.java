@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain;
+package de.adorsys.psd2.consent.psu.api.pis;
 
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Value;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
-/**
- * This object represents known Context of call, provided by this or previous requests in scope of one process (e.g. one payment or one AIS consent)
- */
 @Value
-@NotNull
-public class SpiContextData {
-    private SpiPsuData psuData;
-    private TppInfo tppInfo;
-    private UUID xRequestId;
+public class CmsPisPsuDataAuthorisation {
+    @JsonUnwrapped
+    private PsuIdData psu;
+    private String authorisationId;
+    private ScaStatus scaStatus;
 }

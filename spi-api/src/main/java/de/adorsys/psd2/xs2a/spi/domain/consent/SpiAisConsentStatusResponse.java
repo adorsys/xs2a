@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.psu.api.pis;
+package de.adorsys.psd2.xs2a.spi.domain.consent;
 
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.Value;
-
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 @Value
-public class AuthorisationTypeStatusesByPsu {
-    private Map<String, ScaStatus> created;
-    private Map<String, ScaStatus> cancelled;
+public class SpiAisConsentStatusResponse {
+    @NotNull
+    private ConsentStatus consentStatus;
 }

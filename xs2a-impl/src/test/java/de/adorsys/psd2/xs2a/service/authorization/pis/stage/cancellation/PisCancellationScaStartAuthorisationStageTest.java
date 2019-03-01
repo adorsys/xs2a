@@ -56,10 +56,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,15 +78,12 @@ public class PisCancellationScaStartAuthorisationStageTest {
     private static final PsuIdData PSU_ID_DATA_WRONG = new PsuIdData("Wrong PSU", null, null, null);
     private static final TransactionStatus PAYMENT_STATUS = TransactionStatus.RCVD;
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(PSU_ID, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo());
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
     private static final SpiResponseStatus FAILURE_STATUS = SpiResponseStatus.UNAUTHORIZED_FAILURE;
     private static final List<SpiAuthenticationObject> MULTIPLE_SPI_SCA_METHODS = Arrays.asList(buildSpiSmsAuthenticationObject(), buildSpiPhotoAuthenticationObject());
     private static final List<SpiAuthenticationObject> ONE_SPI_SCA_METHOD = Collections.singletonList(buildSpiSmsAuthenticationObject());
     private static final List<SpiAuthenticationObject> NONE_SPI_SCA_METHOD = Collections.emptyList();
     private static final List<Xs2aAuthenticationObject> MULTIPLE_XS2A_SCA_METHODS = Arrays.asList(buildXs2aSmsAuthenticationObject(), buildXs2aPhotoAuthenticationObject());
-    private static final List<Xs2aAuthenticationObject> ONE_XS2A_SCA_METHOD = Collections.singletonList(buildXs2aSmsAuthenticationObject());
-    private static final List<Xs2aAuthenticationObject> NONE_XS2A_SCA_METHOD = Collections.emptyList();
-    private static final GetPisAuthorisationResponse GET_PIS_CANCELLATION_AUTHORISATION_BY_ID = buildGetPisAuthorisationResponse();
     private static final PisPayment PIS_PAYMENT = new PisPayment();
     private static final SinglePayment XS2A_PAYMENT = new SinglePayment();
 
