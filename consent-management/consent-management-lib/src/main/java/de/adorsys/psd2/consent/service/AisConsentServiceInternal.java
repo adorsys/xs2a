@@ -88,9 +88,14 @@ public class AisConsentServiceInternal implements AisConsentService {
         AisConsent consent = createConsentFromRequest(request);
         consent.setExternalId(UUID.randomUUID().toString());
         AisConsent saved = aisConsentRepository.save(consent);
-        return saved.getId() != null
-                   ? Optional.of(saved.getExternalId())
-                   : Optional.empty();
+
+        if (saved.getId() != null){
+            return Optional.of(saved.getExternalId());
+        } else {
+            log.info("TPP ID: [{}]. Consent cannot be created, because not allowed to save to DB",
+                request.getTppInfo().getAuthorisationNumber());
+            return Optional.empty();
+        }
     }
 
     /**
@@ -125,7 +130,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
         return getActualAisConsent(consentId)
                    .map(c -> setStatusAndSaveConsent(c, status))
-                   .orElse(false);
+                   .orElse(false);//...............................................
     }
 
     /**
@@ -160,13 +165,15 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         AisConsent newConsent = aisConsentRepository.findByExternalId(newConsentId)
-                                    .orElseThrow(() -> new IllegalArgumentException("Wrong consent id: " + newConsentId));
+                                    .orElseThrow(() -> new IllegalArgumentException("Wrong consent id: " + newConsentId));//////////////////////
 
         if (newConsent.isOneAccessType()) {
+            log.info("Consent ID: [{}]. Cannot find old consents, because consent is OneAccessType", newConsentId);
             return false;
         }
 
         if (newConsent.isWrongConsentData()) {
+            log.info("Consent ID: [{}]. Find old consents failed, because consent psu data list is empty or tppInfo is null", newConsentId);
             throw new IllegalArgumentException("Wrong consent data");
         }
 
@@ -189,6 +196,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                 .collect(Collectors.toList());
 
         if (oldConsentsWithExactPsuDataLists.isEmpty()) {
+            log.info("Consent ID: [{}]. Cannot find old consents, because consent hasn't exact psu data lists as old consents", newConsentId);
             return false;
         }
 

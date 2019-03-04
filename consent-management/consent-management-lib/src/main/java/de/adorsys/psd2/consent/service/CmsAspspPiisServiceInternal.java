@@ -66,8 +66,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
                                           @NotNull LocalDate validUntil,
                                           int allowedFrequencyPerDay) {
         if (isInvalidConsentCreationRequest(psuIdData, tppInfo, accounts, validUntil)) {
-            log.info("TPP ID: [{}]. Consent cannot be created, because request contains no allowed frequency per day",
-                tppInfo.getAuthorisationNumber());
+            log.info("Consent cannot be created, because request contains no allowed tppInfo or or validUntil or empty psuIdData or empty accounts");
             return Optional.empty();
         }
 
@@ -79,8 +78,8 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         if(saved.getId() != null){
             return Optional.ofNullable(saved.getExternalId());
         } else {
-            log.info("TPP ID: [{}]. Consent cannot be created, because not allowed to save to DB",
-                tppInfo.getAuthorisationNumber());
+            log.info("External Consent ID: [{}]. Consent cannot be created, because not allowed to save to DB",
+                consent.getExternalId());
             return Optional.empty();
         }
     }
