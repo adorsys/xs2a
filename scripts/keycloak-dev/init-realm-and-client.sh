@@ -6,10 +6,10 @@ echo 'create xs2a realm'
 sh add-realm.sh http://localhost:8081 xs2a admin admin123
 
 echo 'create client xs2a-impl'
-sh add-realm-client.sh http://localhost:8081 xs2a xs2a-impl false admin admin123
+sh add-realm-client.sh http://localhost:8081 xs2a xs2a-impl true admin admin123
 
 echo 'create client aspsp-mock'
-sh add-realm-client.sh http://localhost:8081 xs2a aspsp-mock false admin admin123
+sh add-realm-client.sh http://localhost:8081 xs2a aspsp-mock true admin admin123
 
 echo 'create admin role'
 roleId=$(sh add-realm-role.sh http://localhost:8081 xs2a admin admin123 admin)
