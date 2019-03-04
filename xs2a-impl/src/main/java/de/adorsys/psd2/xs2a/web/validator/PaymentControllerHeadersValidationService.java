@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.common.TppRedirectUriValidationService;
@@ -25,8 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_PREFERRED;
@@ -44,8 +41,6 @@ public class PaymentControllerHeadersValidationService {
     /**
      * Validates headers of initiatePayment(...) methods of PaymentController.
      * Headers are taken from HttpServletRequest.
-     * @see de.adorsys.psd2.xs2a.web.controller.PaymentController#initiatePayment(UUID, String, String, String, String, String, String, String, byte[], String, String, String, String, String, String, String, String, boolean, String, String, String, String, String, String, String, UUID, String)
-     * @see de.adorsys.psd2.xs2a.web.controller.PaymentController#initiatePayment(Object, UUID, String, String, String, String, String, byte[], String, String, String, String, String, boolean, String, String, boolean, String, String, String, String, String, String, String, UUID, String)
      *
      * @return ValidationResult: contains MessageError in case of not valid headers
      */
@@ -54,9 +49,9 @@ public class PaymentControllerHeadersValidationService {
         String tppRedirectUri = httpServletRequest.getHeader(TPP_REDIRECT_URI);
 
         if (tppRedirectUriValidationService.isNotValid(tppRedirectPreferred, tppRedirectUri)) {
-            return new ValidationResult(false, new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR)));
+            return ValidationResult.invalid(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR, TPP_REDIRECT_URI + " is not correct or empty"));
         }
 
-        return new ValidationResult(true, null);
+        return ValidationResult.valid();
     }
 }

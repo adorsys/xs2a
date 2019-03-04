@@ -16,9 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.common.TppRedirectUriValidationService;
@@ -26,8 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_PREFERRED;
@@ -43,9 +39,8 @@ public class ConsentControllerHeadersValidationService {
     private final TppRedirectUriValidationService tppRedirectUriValidationService;
 
     /**
-     * Validates them of createConsent(...) method of ConsentController.
+     * Validates headers of createConsent(...) method of ConsentController.
      * Headers are taken from HttpServletRequest.
-     * @see de.adorsys.psd2.xs2a.web.controller.ConsentController#createConsent(UUID, Consents, String, String, byte[], String, String, String, String, boolean, String, String, boolean, String, String, String, String, String, String, String, String, UUID, String)
      *
      * @return ValidationResult: contains MessageError in case of not valid headers
      */
@@ -54,9 +49,9 @@ public class ConsentControllerHeadersValidationService {
         String tppRedirectUri = httpServletRequest.getHeader(TPP_REDIRECT_URI);
 
         if (tppRedirectUriValidationService.isNotValid(tppRedirectPreferred, tppRedirectUri)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)));
+            return ValidationResult.invalid(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, TPP_REDIRECT_URI + " is not correct or empty"));
         }
 
-        return new ValidationResult(true, null);
+        return ValidationResult.valid();
     }
 }
