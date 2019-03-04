@@ -12,3 +12,6 @@ if no such accesses were granted beforehand.
 Before the response for getting payment details by its ID with wrong payment service in path (GET `/v1/wrong-payment-service/sepa-credit-transfers/payment_id`)
 was returning `400 - Bad Request`. The same was in getting payment status (GET `/v1/wrong-payment-service/sepa-credit-transfers/payment_id/status`).
 From now on new response is: `404 - Resource Unknown`.
+
+## Bugfix: Frequency per day in AIS consent can accept only positive values
+From now on value of the `frequencyPerDay` field in AIS consent is being validated and can only contain positive values 
