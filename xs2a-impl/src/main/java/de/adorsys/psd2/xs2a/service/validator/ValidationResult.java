@@ -16,8 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value
@@ -29,6 +33,27 @@ public class ValidationResult {
      */
     @Nullable
     private MessageError messageError;
+
+    public static ValidationResult valid() {
+        return new ValidationResult(true, null);
+    }
+
+    public static ValidationResult invalid(@NotNull MessageError messageError) {
+        return new ValidationResult(false, messageError);
+    }
+
+    public static ValidationResult invalid(@NotNull ErrorType errorType, MessageErrorCode messageErrorCode) {
+        return new ValidationResult(false, new MessageError(errorType, TppMessageInformation.of(messageErrorCode)));
+    }
+
+    public static ValidationResult invalid(@NotNull ErrorType errorType, TppMessageInformation tppMessageInformation) {
+        return new ValidationResult(false, new MessageError(errorType, tppMessageInformation));
+    }
+
+    private ValidationResult(boolean valid, @Nullable MessageError messageError) {
+        this.valid = valid;
+        this.messageError = messageError;
+    }
 
     public boolean isNotValid() {
         return !valid;
