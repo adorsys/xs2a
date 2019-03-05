@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +35,10 @@ import java.io.InputStream;
 @Configuration
 public class BankProfileReaderConfiguration implements ResourceLoaderAware {
     private static final String DEFAULT_BANK_PROFILE = "classpath:bank_profile.yml";
+    private static final String CLASSPATH_PREFIX = "classpath:";
     private static final String FILE_PREFIX = "file:";
 
-    @Value("${bank_profile.path}")
+    @Value("${bank_profile.path:}")
     private String customBankProfile;
     private ResourceLoader resourceLoader;
 
@@ -47,7 +49,10 @@ public class BankProfileReaderConfiguration implements ResourceLoaderAware {
 
     @Bean
     public ProfileConfiguration profileConfiguration() {
-        return new Yaml(getDumperOptions()).loadAs(loadProfile(), ProfileConfiguration.class);
+        Representer representer = new Representer();
+        representer.getPropertyUtils().setSkipMissingProperties(true);
+
+        return new Yaml(representer, getDumperOptions()).loadAs(loadProfile(), ProfileConfiguration.class);
     }
 
     private DumperOptions getDumperOptions() {
@@ -67,8 +72,14 @@ public class BankProfileReaderConfiguration implements ResourceLoaderAware {
     }
 
     private String resolveBankProfile() {
-        return StringUtils.isBlank(customBankProfile)
-                   ? DEFAULT_BANK_PROFILE
-                   : FILE_PREFIX + customBankProfile;
+        if (StringUtils.isBlank(customBankProfile)) {
+            return DEFAULT_BANK_PROFILE;
+        } else {
+            if (customBankProfile.startsWith(CLASSPATH_PREFIX)
+                || customBankProfile.startsWith(FILE_PREFIX)) {
+                return customBankProfile;
+            }
+            return FILE_PREFIX + customBankProfile;
+        }
     }
 }
