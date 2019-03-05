@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,17 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class CmsBulkPayment extends BaseCmsPayment {
-    private boolean batchBookingPreferred;
-    private CmsAccountReference debtorAccount;
-    private LocalDate requestedExecutionDate;
-    private TransactionStatus paymentStatus;
-    private List<CmsSinglePayment> payments;
-
-    @Override
-    public PaymentType getPaymentType() {
-        return PaymentType.BULK;
-    }
-
+public abstract class BaseCmsPayment implements CmsPayment {
+    private String paymentId;
+    private String paymentProduct;
+    private List<PsuIdData> psuIdDatas = new ArrayList<>();
+    private TppInfo tppInfo;
 }

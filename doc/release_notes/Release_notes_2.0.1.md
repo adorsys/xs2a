@@ -37,5 +37,10 @@ Now while creating new periodic payment its start date and end date are validate
 Also while creating the future payment its execution date is validated and it can not be in the past.
 In all above cases response with error `PERIOD_INVALID` (response code HTTP 400) is returned.
 
+## Bugfix: added the PSU Data and TPP Info to the CMS Payment
+From now, all CMS payment classes contain PSU Data and TPP Info, 
+so because of that all the ASPSP export payment, `get payment by redirect ID` and `get payment by redirect ID for cancellation` endpoints 
+return these data in the responses.
+
 ## Bugfix: added validation for expired QWAC certificates
 Now, it is not possible anymore to perform any successful endpoint call when providing QWAC certificate with `notAfter` date before now.
