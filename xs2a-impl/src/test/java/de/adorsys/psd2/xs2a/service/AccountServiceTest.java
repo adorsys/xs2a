@@ -245,6 +245,43 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getAccountDetailsList_shouldUpdateAccountReferences() {
+        // Given
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
+        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
+            .thenReturn(ASPSP_CONSENT_DATA);
+
+        List<SpiAccountDetails> spiAccountDetailsList = Collections.singletonList(spiAccountDetails);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(accountSpi.requestAccountList(SPI_CONTEXT_DATA, WITH_BALANCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+
+        List<Xs2aAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
+
+        when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(xs2aAccountDetailsList);
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Xs2aAccountDetails>> argumentCaptor = ArgumentCaptor.forClass((Class) List.class);
+
+        // When
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
+
+        // Then
+        Xs2aAccountAccess access = SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE.getBody().getAccess();
+        verify(accountReferenceUpdater).updateAccountReferences(eq(CONSENT_ID), eq(access), argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(xs2aAccountDetailsList);
+
+        Map<String, List<Xs2aAccountDetails>> responseBody = actualResponse.getBody();
+        assertThat(responseBody.get("accountList")).isEqualTo(xs2aAccountDetailsList);
+    }
+
+    @Test
     public void getAccountList_Success_ShouldRecordEvent() {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);

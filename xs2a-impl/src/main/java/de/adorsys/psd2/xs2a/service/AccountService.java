@@ -128,7 +128,7 @@ public class AccountService {
         }
 
         List<Xs2aAccountDetails> accountDetails = accountDetailsMapper.mapToXs2aAccountDetailsList(spiResponse.getPayload());
-        accountReferenceUpdater.updateAccountReferences(consentId, accountDetails);
+        accountReferenceUpdater.updateAccountReferences(consentId, accountConsent.getAccess(), accountDetails);
 
         ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = ResponseObject.<Map<String,
                                                                                                 List<Xs2aAccountDetails>>>builder()
