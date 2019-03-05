@@ -66,6 +66,7 @@ public class RedirectPisScaAuthorisationServiceTest {
     private Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
 
 
+
     @Test
     public void getCancellationAuthorisationSubResources_success() {
         // Given

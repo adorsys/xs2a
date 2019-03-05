@@ -16,9 +16,7 @@ public class PisScaAuthorisationServiceResolverTest {
     @Test
     public void PisScaAuthorisationServiceResolver_success() {
         //Given
-
         //When
-
         //Then
     }
 }
