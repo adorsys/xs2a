@@ -21,14 +21,12 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 
 @Data
-public class CmsCommonPayment implements CmsPayment {
-    private String paymentId;
-    private String paymentProduct;
+public class CmsCommonPayment extends BaseCmsPayment {
     private PaymentType paymentType;
     private TransactionStatus transactionStatus;
     private byte[] paymentData;
 
     public CmsCommonPayment(String paymentProduct) {
-        this.paymentProduct = paymentProduct;
+        setPaymentProduct(paymentProduct);
     }
 }
