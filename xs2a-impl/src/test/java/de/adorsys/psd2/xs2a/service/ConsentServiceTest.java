@@ -766,7 +766,7 @@ public class ConsentServiceTest {
     }
 
     private Optional<SpiAccountAccess> getSpiAccountAccessOptional(List<SpiAccountReference> accounts, List<SpiAccountReference> balances, List<SpiAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return Optional.of(getSpiAccountAccess(accounts,balances, transactions, allAccounts, allPsd2));
+        return Optional.of(getSpiAccountAccess(accounts, balances, transactions, allAccounts, allPsd2));
     }
 
     private SpiAccountAccess getSpiAccountAccess(List<SpiAccountReference> accounts, List<SpiAccountReference> balances, List<SpiAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
@@ -823,7 +823,9 @@ public class ConsentServiceTest {
     }
 
     private ValidationResult createValidationResult(boolean isValid, MessageError messageError) {
-        return new ValidationResult(isValid, messageError);
+        return isValid
+                   ? ValidationResult.valid()
+                   : ValidationResult.invalid(messageError);
     }
 
     private MessageError createMessageError(ErrorType errorType, MessageErrorCode errorCode) {
