@@ -138,7 +138,15 @@ public class PaymentService {
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.orElse(null);
+
+        if (!pisCommonPaymentOptional.isPresent()) {
+            return ResponseObject.builder()
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .build();
+        }
+
+
+        PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.get();
         ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(commonPaymentResponse, paymentType, paymentProduct);
 
         if (validationResult.isNotValid()) {
@@ -185,7 +193,14 @@ public class PaymentService {
     public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String paymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.orElse(null);
+
+        if (!pisCommonPaymentOptional.isPresent()) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .build();
+        }
+
+        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
         ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, paymentType, paymentProduct);
 
         if (validationResult.isNotValid()) {
@@ -252,7 +267,14 @@ public class PaymentService {
     public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
-        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.orElse(null);
+
+        if (!pisCommonPaymentOptional.isPresent()) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .build();
+        }
+
+        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
         ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, paymentType, paymentProduct);
 
         if (validationResult.isNotValid()) {
