@@ -41,6 +41,7 @@ import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.GetCommonPaymentByIdResponseValidator;
+import de.adorsys.psd2.xs2a.service.validator.PaymentValidationService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -84,8 +85,10 @@ public class PaymentService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final ReadCommonPaymentStatusService readCommonPaymentStatusService;
     private final GetCommonPaymentByIdResponseValidator getCommonPaymentByIdResponseValidator;
-    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
+    private final AccountReferenceValidationService referenceValidationService;
     private final RequestProviderService requestProviderService;
+    private final PaymentValidationService paymentValidationService;
+    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -119,11 +122,11 @@ public class PaymentService {
         }
 
         if (paymentInitiationParameters.getPaymentType() == PaymentType.SINGLE) {
-            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo);
+            return processSinglePayment((SinglePayment) payment, paymentInitiationParameters, tppInfo);
         } else if (paymentInitiationParameters.getPaymentType() == PaymentType.PERIODIC) {
-            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo);
+            return processPeriodicPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo);
         } else {
-            return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo);
+            return processBulkPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo);
         }
     }
 
@@ -332,4 +335,32 @@ public class PaymentService {
         }
         return null;
     }
+
+    private ResponseObject processSinglePayment(SinglePayment singePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject singlePaymentValidationResult = paymentValidationService.validateSinglePayment(singePayment);
+
+        return singlePaymentValidationResult.hasError()
+            ? singlePaymentValidationResult
+            : createSinglePaymentService.createPayment(singePayment, paymentInitiationParameters, tppInfo);
+    }
+
+    private ResponseObject processPeriodicPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject periodicPaymentValidationResponse = paymentValidationService.validatePeriodicPayment(periodicPayment);
+
+        return periodicPaymentValidationResponse.hasError()
+            ? periodicPaymentValidationResponse
+            : createPeriodicPaymentService.createPayment(periodicPayment, paymentInitiationParameters, tppInfo);
+    }
+
+    private ResponseObject processBulkPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject bulkPaymentValidationResponse = paymentValidationService.validateBulkPayment(bulkPayment);
+
+        return bulkPaymentValidationResponse.hasError()
+            ? bulkPaymentValidationResponse
+            : createBulkPaymentService.createPayment(bulkPayment, paymentInitiationParameters, tppInfo);
+    }
+
 }
