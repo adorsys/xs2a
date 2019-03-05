@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This service is designed to update AccountReferences in AisConsent. Also for bank offered consent and global consent
@@ -55,22 +56,44 @@ public class AccountReferenceInConsentUpdater {
      * will be ignored.
      *
      * @param consentId      an external ID of consent, where account access to be stored
+     * @param existingAccess existing account access of the consent
      * @param accountDetails list of account details with referenceId set
      */
-    public void updateAccountReferences(@NotNull String consentId, @NotNull List<Xs2aAccountDetails> accountDetails) {
+    public void updateAccountReferences(@NotNull String consentId, @NotNull Xs2aAccountAccess existingAccess, @NotNull List<Xs2aAccountDetails> accountDetails) {
         List<AccountReference> accounts = new ArrayList<>();
         List<AccountReference> transactions = new ArrayList<>();
         List<AccountReference> balances = new ArrayList<>();
 
         for (Xs2aAccountDetails accountDetail : accountDetails) {
-            AccountReference reference = new AccountReference(accountDetail.getAccountSelector().getAccountReferenceType(), accountDetail.getAccountReferenceValue(), accountDetail.getCurrency(), accountDetail.getResourceId(), accountDetail.getAspspAccountId());
-
-            accounts.add(reference);
-            transactions.add(reference);
-            balances.add(reference);
+            accounts.addAll(enrichAccountReferences(accountDetail, existingAccess.getAccounts()));
+            balances.addAll(enrichAccountReferences(accountDetail, existingAccess.getBalances()));
+            transactions.addAll(enrichAccountReferences(accountDetail, existingAccess.getTransactions()));
         }
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accounts, balances, transactions, null, null);
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accounts, balances, transactions, existingAccess.getAvailableAccounts(), existingAccess.getAllPsd2());
 
         aisConsentService.updateAspspAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(xs2aAccountAccess));
+    }
+
+    /**
+     * Enriches given list of account references with resource ID and ASPSP account ID from the given account details
+     * and returns it
+     *
+     * <p>
+     * If given list doesn't contain account reference that matches passed account details, an empty list will be
+     * returned instead.
+     *
+     * @param xs2aAccountDetails   accounts details with resourceId and aspspAccountId set
+     * @param accountReferenceList list of account references through which the search will be made
+     * @return list of account references with resourceId and aspspAccountId set
+     */
+    private List<AccountReference> enrichAccountReferences(Xs2aAccountDetails xs2aAccountDetails, List<AccountReference> accountReferenceList) {
+        return accountReferenceList.stream()
+                   .filter(ar -> ar.getUsedAccountReferenceSelector().equals(xs2aAccountDetails.getAccountSelector()))
+                   .map(ar -> new AccountReference(ar.getUsedAccountReferenceSelector().getAccountReferenceType(),
+                                                   ar.getUsedAccountReferenceSelector().getAccountValue(),
+                                                   ar.getCurrency(),
+                                                   xs2aAccountDetails.getResourceId(),
+                                                   xs2aAccountDetails.getAspspAccountId()))
+                   .collect(Collectors.toList());
     }
 }

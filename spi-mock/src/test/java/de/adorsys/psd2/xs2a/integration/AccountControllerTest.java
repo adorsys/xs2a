@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aUsageType;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
@@ -257,7 +258,8 @@ public class AccountControllerTest {
     }
 
     private AccountConsent buildAccountConsent(int usageCounter) {
-        return new AccountConsent(null, null, false, LocalDate.now().plusDays(1), 10,
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null);
+        return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), usageCounter);
     }
