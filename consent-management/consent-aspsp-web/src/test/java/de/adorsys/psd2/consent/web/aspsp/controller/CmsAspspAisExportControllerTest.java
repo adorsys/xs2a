@@ -134,6 +134,6 @@ public class CmsAspspAisExportControllerTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList());
+                                     false, false, null, null, null, false, Collections.emptyList(), 0);
     }
 }
