@@ -89,11 +89,11 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setExternalId(UUID.randomUUID().toString());
         AisConsent saved = aisConsentRepository.save(consent);
 
-        if (saved.getId() != null){
+        if (saved.getId() != null) {
             return Optional.of(saved.getExternalId());
         } else {
             log.info("TPP ID: [{}]. Consent cannot be created, because not allowed to save to DB",
-                request.getTppInfo().getAuthorisationNumber());
+                     request.getTppInfo().getAuthorisationNumber());
             return Optional.empty();
         }
     }
@@ -129,12 +129,12 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
         return getActualAisConsent(consentId)
-            .map(c -> setStatusAndSaveConsent(c, status))
-            .orElseGet(() -> {
-                log.info("Consent ID [{}]. Update consent status by id failed, because consent not found",
-                    consentId);
-                return  false;
-            });
+                   .map(c -> setStatusAndSaveConsent(c, status))
+                   .orElseGet(() -> {
+                       log.info("Consent ID [{}]. Update consent status by id failed, because consent not found",
+                                consentId);
+                       return false;
+                   });
     }
 
     /**
@@ -170,8 +170,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         AisConsent newConsent = aisConsentRepository.findByExternalId(newConsentId)
                                     .orElseThrow(() -> {
-                                            log.info("Consent ID: [{}]. Cannot find consent by id", newConsentId);
-                                            return new IllegalArgumentException("Wrong consent id: " + newConsentId);
+                                        log.info("Consent ID: [{}]. Cannot find consent by id", newConsentId);
+                                        return new IllegalArgumentException("Wrong consent id: " + newConsentId);
                                     });
 
         if (newConsent.isOneAccessType()) {
@@ -280,13 +280,13 @@ public class AisConsentServiceInternal implements AisConsentService {
                                      .filter(c -> !c.getConsentStatus().isFinalisedStatus())
                                      .isPresent();
 
-        if(consentPresent){
+        if (consentPresent) {
             return aisConsentAuthorisationRepository.findByExternalId(authorizationId)
-                .map(consentMapper::mapToAisConsentAuthorizationResponse);
+                       .map(consentMapper::mapToAisConsentAuthorizationResponse);
         }
 
         log.info("Consent ID: [{}], Authorisation ID: [{}]. Get account consent authorisation failed, because consent is not found",
-            consentId, authorizationId);
+                 consentId, authorizationId);
         return Optional.empty();
     }
 
@@ -334,11 +334,11 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                   .stream()
                                                   .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
                                                   .anyMatch(ScaMethod::isDecoupled))
-            .orElseGet(() -> {
-                log.info("Authorisation ID: [{}]. Get authorisation method decoupled status failed, because consent authorisation is not found",
-                    authorisationId);
-                return  false;
-            });
+                   .orElseGet(() -> {
+                       log.info("Authorisation ID: [{}]. Get authorisation method decoupled status failed, because consent authorisation is not found",
+                                authorisationId);
+                       return false;
+                   });
     }
 
     @Override
@@ -446,7 +446,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<AisConsent> aisConsentOptional = aisConsentRepository.findByExternalId(consentId);
         if (!aisConsentOptional.isPresent()) {
             log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
-                consentId);
+                     consentId);
             return false;
         }
         AisConsent consent = aisConsentOptional.get();
@@ -497,9 +497,9 @@ public class AisConsentServiceInternal implements AisConsentService {
 
     private ActionStatus resolveConsentActionStatus(AisConsentActionRequest request, AisConsent consent) {
 
-        if(consent == null) {
+        if (consent == null) {
             log.info("Consent ID: [{}]. Consent action status resolver received null consent",
-                request.getConsentId());
+                     request.getConsentId());
             return ActionStatus.BAD_PAYLOAD;
         }
         return request.getActionStatus();
