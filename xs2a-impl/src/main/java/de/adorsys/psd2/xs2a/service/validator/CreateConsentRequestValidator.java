@@ -64,7 +64,7 @@ public class CreateConsentRequestValidator {
             return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PERIOD_INVALID)));
         }
 
-        if (isNotValidFrequencyForRecurringIndicator(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
+        if (isNotValidFrequencyPerDay(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
             return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)));
         }
 
@@ -111,12 +111,10 @@ public class CreateConsentRequestValidator {
         return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
     }
 
-    private boolean isNotValidFrequencyForRecurringIndicator(boolean recurringIndicator, int frequencyPerDay) {
-        if (!recurringIndicator) {
-            return frequencyPerDay > 1;
-        }
-
-        return false;
+    private boolean isNotValidFrequencyPerDay(boolean recurringIndicator, int frequencyPerDay) {
+        return recurringIndicator
+                   ? frequencyPerDay <= 0
+                   : frequencyPerDay != 1;
     }
 
     private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {
