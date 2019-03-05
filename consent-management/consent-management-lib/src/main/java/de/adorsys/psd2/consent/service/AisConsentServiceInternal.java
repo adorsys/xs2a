@@ -70,6 +70,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final TppInfoMapper tppInfoMapper;
     private final ScaMethodMapper scaMethodMapper;
     private final CmsPsuService cmsPsuService;
+    private final AisConsentUsageService aisConsentUsageService;
 
     /**
      * Create AIS consent
@@ -210,7 +211,7 @@ public class AisConsentServiceInternal implements AisConsentService {
             AisConsent consent = consentOpt.get();
             aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent);
             checkAndUpdateOnExpiration(consent);
-            updateAisConsentCounter(consent);
+            updateAisConsentUsage(consent);
             logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
         }
     }
@@ -437,7 +438,6 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setConsentStatus(RECEIVED);
         consent.setAllowedFrequencyPerDay(request.getAllowedFrequencyPerDay());
         consent.setTppFrequencyPerDay(request.getRequestedFrequencyPerDay());
-        consent.setUsageCounter(request.getAllowedFrequencyPerDay()); // Initially we set maximum and then decrement it by usage
         consent.setRequestDateTime(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuDataList(psuDataMapper.mapToPsuDataList(Collections.singletonList(request.getPsuData())));
@@ -474,16 +474,6 @@ public class AisConsentServiceInternal implements AisConsentService {
         return consent == null
                    ? ActionStatus.BAD_PAYLOAD
                    : request.getActionStatus();
-    }
-
-    private void updateAisConsentCounter(AisConsent consent) {
-        if (consent != null && consent.hasUsagesAvailable()) {
-            int usageCounter = consent.getUsageCounter();
-            int newUsageCounter = --usageCounter;
-            consent.setUsageCounter(newUsageCounter);
-            consent.setLastActionDate(LocalDate.now());
-            aisConsentRepository.save(consent);
-        }
     }
 
     private void logConsentAction(String requestedConsentId, ActionStatus actionStatus, String tppId) {
@@ -574,5 +564,11 @@ public class AisConsentServiceInternal implements AisConsentService {
         return Optional.ofNullable(psuRequest)
                    .map(psu -> psuAuth == null || psu.contentEquals(psuAuth))
                    .orElse(false);
+    }
+
+    private void updateAisConsentUsage(AisConsent consent) {
+        aisConsentUsageService.incrementUsage(consent);
+        consent.setLastActionDate(LocalDate.now());
+        aisConsentRepository.save(consent);
     }
 }

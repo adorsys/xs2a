@@ -63,8 +63,11 @@ public class AccountConsent {
     private final List<AccountConsentAuthorization> authorisations;
 
     @JsonIgnore
-    public boolean isValidFrequency() {
-        return frequencyPerDay > 0;
+    private final int usageCounter;
+
+    @JsonIgnore
+    public boolean isAccessExceeded() {
+        return usageCounter <= 0;
     }
 
     @JsonIgnore
