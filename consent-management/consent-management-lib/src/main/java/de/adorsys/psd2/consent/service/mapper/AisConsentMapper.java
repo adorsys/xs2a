@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
+import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 public class AisConsentMapper {
     private final PsuDataMapper psuDataMapper;
     private final TppInfoMapper tppInfoMapper;
+    private final AisConsentUsageService aisConsentUsageService;
 
     /**
      * Maps AisConsent to AisAccountConsent with accesses populated with account references, provided by ASPSP.
@@ -68,7 +70,8 @@ public class AisConsentMapper {
             psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             consent.isMultilevelScaRequired(),
-            mapToAisAccountConsentAuthorisation(consent.getAuthorizations()));
+            mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
+            aisConsentUsageService.getUsageCounter(consent));
     }
 
     /**
@@ -92,7 +95,8 @@ public class AisConsentMapper {
             psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             consent.isMultilevelScaRequired(),
-            mapToAisAccountConsentAuthorisation(consent.getAuthorizations()));
+            mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
+            aisConsentUsageService.getUsageCounter(consent));
     }
 
     public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {

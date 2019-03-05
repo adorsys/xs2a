@@ -31,6 +31,7 @@ import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
+import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -64,6 +65,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentSpecification aisConsentSpecification;
     private final AisConsentService aisConsentService;
     private final PsuDataMapper psuDataMapper;
+    private final AisConsentUsageService aisConsentUsageService;
 
     @Override
     @Transactional
@@ -191,7 +193,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         consent.addAspspAccountAccess(aspspAccountAccesses);
         consent.setExpireDate(request.getValidUntil());
         consent.setAllowedFrequencyPerDay(request.getFrequencyPerDay());
-        consent.setUsageCounter(request.getFrequencyPerDay());
+        aisConsentUsageService.resetUsage(consent);
         aisConsentRepository.save(consent);
         return true;
     }

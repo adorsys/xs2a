@@ -94,7 +94,7 @@ public class ConsentServiceTest {
     private static final String WRONG_IBAN = "WRONG IBAN";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final Currency CURRENCY_2 = Currency.getInstance("USD");
-    private static final LocalDate DATE = LocalDate.parse("2019-03-03");
+    private static final LocalDate DATE = LocalDate.now().plusDays(1);
     private static final boolean EXPLICIT_PREFERRED = true;
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private static final String CONSENT_ID_DATE_VALID_YESTERDAY = "c966f143-f6a2-41db-9036-8abaeeef3af8";
@@ -624,6 +624,16 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void getValidateConsent_AccessExceeded() {
+        //When
+        ResponseObject<AccountConsent> xs2aAccountAccessResponseObject = consentService.getValidatedConsent(CONSENT_ID);
+        //Then
+        assertThat(xs2aAccountAccessResponseObject.getBody()).isNull();
+        assertThat(xs2aAccountAccessResponseObject.getError().getErrorType()).isEqualTo(ErrorType.AIS_429);
+        assertThat(xs2aAccountAccessResponseObject.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.ACCESS_EXCEEDED);
+    }
+
+    @Test
     public void updateConsentPsuData_Success_ShouldRecordEvent() {
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
@@ -768,7 +778,7 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getConsent(String id, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList());
+        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
     }
 
     private SpiAccountConsent getSpiConsent(String consentId, SpiAccountAccess access, boolean withBalance) {
@@ -776,11 +786,11 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getAccountConsent(String consentId, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList());
+        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
     }
 
     private AccountConsent getAccountConsentDateValidYesterday(String consentId, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList());
+        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {
