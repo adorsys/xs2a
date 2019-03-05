@@ -71,7 +71,8 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
-            aisConsentUsageService.getUsageCounter(consent));
+            aisConsentUsageService.getUsageCounter(consent),
+            consent.getCreationTimestamp());
     }
 
     /**
@@ -96,7 +97,8 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
-            aisConsentUsageService.getUsageCounter(consent));
+            aisConsentUsageService.getUsageCounter(consent),
+            consent.getCreationTimestamp());
     }
 
     public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {

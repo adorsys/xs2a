@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -47,6 +48,7 @@ public class CmsAspspAisExportControllerTest {
     private static final String PSU_ID = "psu id";
     private static final String WRONG_PSU_ID = "wrong psu id";
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final OffsetDateTime CREATION_DATE_TIME = OffsetDateTime.now();
 
     @Mock
     private CmsAspspAisExportService cmsAspspAisExportService;
@@ -134,6 +136,6 @@ public class CmsAspspAisExportControllerTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), 0);
+                                     false, false, null, null, null, false, Collections.emptyList(), 0, CREATION_DATE_TIME);
     }
 }
