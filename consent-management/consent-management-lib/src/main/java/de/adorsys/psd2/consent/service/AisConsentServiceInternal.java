@@ -129,8 +129,12 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
         return getActualAisConsent(consentId)
-                   .map(c -> setStatusAndSaveConsent(c, status))
-                   .orElse(false);//...............................................
+            .map(c -> setStatusAndSaveConsent(c, status))
+            .orElseGet(() -> {
+                log.info("Consent ID [{}]. Update consent status by id failed, because consent not found",
+                    consentId);
+                return  false;
+            });
     }
 
     /**
@@ -165,7 +169,10 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         AisConsent newConsent = aisConsentRepository.findByExternalId(newConsentId)
-                                    .orElseThrow(() -> new IllegalArgumentException("Wrong consent id: " + newConsentId));//////////////////////
+                                    .orElseThrow(() -> {
+                                            log.info("Consent ID: [{}]. Cannot find consent by id", newConsentId);
+                                            return new IllegalArgumentException("Wrong consent id: " + newConsentId);
+                                    });
 
         if (newConsent.isOneAccessType()) {
             log.info("Consent ID: [{}]. Cannot find old consents, because consent is OneAccessType", newConsentId);
@@ -273,10 +280,14 @@ public class AisConsentServiceInternal implements AisConsentService {
                                      .filter(c -> !c.getConsentStatus().isFinalisedStatus())
                                      .isPresent();
 
-        return consentPresent
-                   ? aisConsentAuthorisationRepository.findByExternalId(authorizationId)
-                         .map(consentMapper::mapToAisConsentAuthorizationResponse)
-                   : Optional.empty();
+        if(consentPresent){
+            return aisConsentAuthorisationRepository.findByExternalId(authorizationId)
+                .map(consentMapper::mapToAisConsentAuthorizationResponse);
+        }
+
+        log.info("Consent ID: [{}], Authorisation ID: [{}]. Get account consent authorisation failed, because consent is not found",
+            consentId, authorizationId);
+        return Optional.empty();
     }
 
     /**
@@ -323,7 +334,11 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                   .stream()
                                                   .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
                                                   .anyMatch(ScaMethod::isDecoupled))
-                   .orElse(false);
+            .orElseGet(() -> {
+                log.info("Authorisation ID: [{}]. Get authorisation method decoupled status failed, because consent authorisation is not found",
+                    authorisationId);
+                return  false;
+            });
     }
 
     @Override
@@ -430,6 +445,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     public boolean updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
         Optional<AisConsent> aisConsentOptional = aisConsentRepository.findByExternalId(consentId);
         if (!aisConsentOptional.isPresent()) {
+            log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
+                consentId);
             return false;
         }
         AisConsent consent = aisConsentOptional.get();
@@ -479,9 +496,13 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private ActionStatus resolveConsentActionStatus(AisConsentActionRequest request, AisConsent consent) {
-        return consent == null
-                   ? ActionStatus.BAD_PAYLOAD
-                   : request.getActionStatus();
+
+        if(consent == null) {
+            log.info("Consent ID: [{}]. Consent action status resolver received null consent",
+                request.getConsentId());
+            return ActionStatus.BAD_PAYLOAD;
+        }
+        return request.getActionStatus();
     }
 
     private void updateAisConsentCounter(AisConsent consent) {
@@ -560,6 +581,7 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         if (Objects.isNull(psuData)
                 || psuData.isEmpty()) {
+            log.info("Close previous authorisations by psu failed, because psuData is not allowed");
             return;
         }
 
