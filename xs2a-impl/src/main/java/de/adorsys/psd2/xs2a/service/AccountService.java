@@ -63,8 +63,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.REQUESTED_FORMATS_INVALID;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 
 @Slf4j
 @Service
@@ -166,7 +165,7 @@ public class AccountService {
 
         if (isNotPermittedAccountReference(requestedAccountReference, accountConsent.getAccess(), withBalance)) {
             return ResponseObject.<Xs2aAccountDetails>builder()
-                       .fail(ErrorType.AIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))
+                       .fail(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID))
                        .build();
         }
 
@@ -227,7 +226,7 @@ public class AccountService {
 
         if (!requestedAccountReference.isPresent()) {
             return ResponseObject.<Xs2aBalancesReport>builder()
-                       .fail(ErrorType.AIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))
+                       .fail(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID))
                        .build();
         }
 
@@ -300,7 +299,7 @@ public class AccountService {
 
         if (isNotPermittedAccountReference(requestedAccountReference, accountConsent.getAccess(), withBalance)) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
-                       .fail(ErrorType.AIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))
+                       .fail(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID))
                        .build();
         }
 
@@ -385,7 +384,7 @@ public class AccountService {
 
         if (!requestedAccountReference.isPresent()) {
             return ResponseObject.<Transactions>builder()
-                       .fail(ErrorType.AIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))
+                       .fail(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID))
                        .build();
         }
 
