@@ -73,6 +73,7 @@ public class CertificateExtractorUtil {
         tppCertData.setPspAuthorityName(psd2qcType.getnCAName().getString());
         tppCertData.setPspAuthorityId(psd2qcType.getnCAId().getString());
         tppCertData.setIssuerCN(extractIssuerCNFromIssuerDN(cert.getIssuerDN()));
+        tppCertData.setNotAfter(cert.getNotAfter());
 
         try {
             X500Name x500name = new JcaX509CertificateHolder(cert).getSubject();
