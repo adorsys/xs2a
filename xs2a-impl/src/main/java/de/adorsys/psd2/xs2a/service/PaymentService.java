@@ -85,7 +85,6 @@ public class PaymentService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final ReadCommonPaymentStatusService readCommonPaymentStatusService;
     private final GetCommonPaymentByIdResponseValidator getCommonPaymentByIdResponseValidator;
-    private final AccountReferenceValidationService referenceValidationService;
     private final RequestProviderService requestProviderService;
     private final PaymentValidationService paymentValidationService;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
