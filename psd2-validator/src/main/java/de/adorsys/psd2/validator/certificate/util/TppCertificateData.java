@@ -18,6 +18,7 @@ package de.adorsys.psd2.validator.certificate.util;
 
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -33,4 +34,5 @@ public class TppCertificateData {
     private String city;
     private String state;
     private String issuerCN;
+    private Date notAfter;
 }
