@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,9 @@ public class AmountModelMapper {
                    .map(a -> {
                        Amount amountTarget = new Amount();
                        amountTarget.setAmount(a.getAmount());
-                       amountTarget.setCurrency(a.getCurrency().getCurrencyCode());
+                       if (a.getCurrency() != null) {
+                           amountTarget.setCurrency(a.getCurrency().getCurrencyCode());
+                       }
                        return amountTarget;
                    })
                    .orElse(null);
