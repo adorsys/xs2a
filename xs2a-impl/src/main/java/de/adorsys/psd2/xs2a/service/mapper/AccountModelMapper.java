@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class AccountModelMapper {
         BeanUtils.copyProperties(accountDetails, target);
 
         target.resourceId(accountDetails.getResourceId())
-            .currency(accountDetails.getCurrency().getCurrencyCode())
+            .currency(accountDetails.getCurrency() != null ? accountDetails.getCurrency().getCurrencyCode() : null)
             .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType())
                                  .map(Enum::name)
                                  .orElse(null))
@@ -178,7 +178,9 @@ public class AccountModelMapper {
         de.adorsys.psd2.model.AccountReference accountReference = new de.adorsys.psd2.model.AccountReference();
         accountReference.setIban(reference.getIban());
         accountReference.setBban(reference.getBban());
-        accountReference.setCurrency(reference.getCurrency().getCurrencyCode());
+        if (reference.getCurrency() != null) {
+            accountReference.setCurrency(reference.getCurrency().getCurrencyCode());
+        }
         accountReference.setMaskedPan(reference.getMaskedPan());
         accountReference.setMsisdn(reference.getMsisdn());
         accountReference.setPan(reference.getPan());
@@ -250,7 +252,9 @@ public class AccountModelMapper {
                        de.adorsys.psd2.model.AccountReference reference = new de.adorsys.psd2.model.AccountReference();
                        reference.setIban(account.getIban());
                        reference.setBban(account.getBban());
-                       reference.setCurrency(account.getCurrency().getCurrencyCode());
+                       if (account.getCurrency() != null) {
+                           reference.setCurrency(account.getCurrency().getCurrencyCode());
+                       }
                        reference.setMaskedPan(account.getMaskedPan());
                        reference.setMsisdn(account.getMsisdn());
                        reference.setPan(account.getPan());
