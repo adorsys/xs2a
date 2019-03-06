@@ -92,8 +92,8 @@ public class AisConsentServiceInternal implements AisConsentService {
         if (saved.getId() != null) {
             return Optional.of(saved.getExternalId());
         } else {
-            log.info("TPP ID: [{}]. Consent cannot be created, because not allowed to save to DB",
-                     request.getTppInfo().getAuthorisationNumber());
+            log.info("TPP ID: [{}], External Consent ID: [{}]. Ais consent cannot be created, because when saving to DB got null ID",
+                     request.getTppInfo().getAuthorisationNumber(), consent.getExternalId());
             return Optional.empty();
         }
     }

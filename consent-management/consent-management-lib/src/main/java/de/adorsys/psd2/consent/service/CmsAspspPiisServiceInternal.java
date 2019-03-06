@@ -75,11 +75,11 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
         PiisConsentEntity saved = piisConsentRepository.save(consent);
 
-        if(saved.getId() != null){
+        if (saved.getId() != null) {
             return Optional.ofNullable(saved.getExternalId());
         } else {
-            log.info("External Consent ID: [{}]. Consent cannot be created, because not allowed to save to DB",
-                consent.getExternalId());
+            log.info("External Consent ID: [{}]. PIIS consent cannot be created, because when saving to DB got null ID",
+                     consent.getExternalId());
             return Optional.empty();
         }
     }
@@ -99,7 +99,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
         if (!entityOptional.isPresent()) {
             log.info("Consent ID: [{}], Instance ID: [{}]. Consent cannot be terminated, because not found by consentId and instanceId",
-                consentId, instanceId);
+                     consentId, instanceId);
             return false;
         }
 
