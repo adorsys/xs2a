@@ -19,3 +19,13 @@ From now on value of the `frequencyPerDay` field in AIS consent is being validat
 From now, during the process of AIS consent creation and payment initiation, 
 if `TPP-Redirect-Preferred` header is equal to `true`, the `TPP-Redirect-Uri` header is mandatory. 
 In case of missing `TPP-Redirect-Uri` header, `400` HTTP error code will be returned.
+
+## Bugfix: Change error code returned when access to the particular resources is not allowed for given AIS consent
+From now on error `CONSENT_INVALID` (HTTP response code `401`) will be returned instead of `RESOURCE_UNKNOWN` 
+(HTTP response code `404`) if the access to particular resources is not allowed for given AIS consent.
+
+Affected endpoints:
+ - Read Account Details (`GET /v1/accounts/{account-id}`)
+ - Read Balance (`GET /v1/accounts/{account-id}/balances`)
+ - Read Transaction List (`GET /v1/accounts/{account-id}/transactions`)
+ - Read Transaction Details (`GET /v1/accounts/{account-id}/transactions/{resourceId}`)

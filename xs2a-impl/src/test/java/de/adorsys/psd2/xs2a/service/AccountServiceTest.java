@@ -89,7 +89,6 @@ public class AccountServiceTest {
     private static final SpiResponseStatus LOGICAL_FAILURE_RESPONSE_STATUS = SpiResponseStatus.LOGICAL_FAILURE;
     private static final MessageErrorCode FORMAT_ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final MessageErrorCode CONSENT_INVALID_MESSAGE_ERROR_CODE = MessageErrorCode.CONSENT_INVALID;
-    private static final MessageErrorCode RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE = MessageErrorCode.RESOURCE_UNKNOWN_404;
     private static final MessageError CONSENT_INVALID_MESSAGE_ERROR = new MessageError(ErrorType.AIS_401, of(CONSENT_INVALID_MESSAGE_ERROR_CODE));
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("Test AspspConsentData".getBytes(), CONSENT_ID);
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
@@ -354,6 +353,18 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getAccountDetails_failure_accountReferenceNotFoundInAccountAccess() {
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(buildEmptyAllowedAccountDataResponse());
+
+        ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(CONSENT_INVALID_MESSAGE_ERROR);
+    }
+
+    @Test
     public void getAccountDetails_Success() {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
             .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
@@ -482,10 +493,7 @@ public class AccountServiceTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
 
-        TppMessageInformation tppMessage = actualResponse.getError().getTppMessage();
-
-        assertThat(tppMessage).isNotNull();
-        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_404_MESSAGE_ERROR_CODE);
+        assertThat(actualResponse.getError()).isEqualTo(CONSENT_INVALID_MESSAGE_ERROR);
     }
 
     @Test
@@ -607,6 +615,17 @@ public class AccountServiceTest {
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(FORMAT_ERROR_CODE);
     }
 
+    @Test
+    public void getTransactionsReportByPeriod_failure_accountReferenceNotFoundInAccountAccess() {
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(buildEmptyAllowedAccountDataResponse());
+
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS);
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(CONSENT_INVALID_MESSAGE_ERROR);
+    }
 
     @Test
     public void getTransactionsReportByPeriod_Success() {
@@ -750,6 +769,18 @@ public class AccountServiceTest {
 
         assertThat(tppMessage).isNotNull();
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(FORMAT_ERROR_CODE);
+    }
+
+    @Test
+    public void getTransactionDetails_failure_accountReferenceNotFoundInAccountAccess() {
+        when(consentService.getValidatedConsent(CONSENT_ID))
+            .thenReturn(buildEmptyAllowedAccountDataResponse());
+
+        ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
+
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(CONSENT_INVALID_MESSAGE_ERROR);
     }
 
 
