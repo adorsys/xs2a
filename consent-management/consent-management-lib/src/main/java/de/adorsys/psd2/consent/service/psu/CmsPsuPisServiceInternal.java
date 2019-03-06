@@ -27,7 +27,6 @@ import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
-import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.specification.PisAuthorisationSpecification;
 import de.adorsys.psd2.consent.repository.specification.PisPaymentDataSpecification;
@@ -62,7 +61,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final PsuDataMapper psuDataMapper;
     private final PisAuthorisationSpecification pisAuthorisationSpecification;
     private final PisPaymentDataSpecification pisPaymentDataSpecification;
-    private final PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+    private final CmsPsuService cmsPsuService;
 
     @Override
     @Transactional
@@ -71,7 +70,6 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             pisAuthorisationRepository.findOne(
                 pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)
             );
-
         return Optional.ofNullable(authorisation)
                    .map(auth -> updatePsuData(auth, psuIdData))
                    .orElse(false);
@@ -184,11 +182,11 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @NotNull
     private List<CmsPisPsuDataAuthorisation> getPsuDataAuthorisations(List<PisAuthorization> authorisations) {
         return authorisations.stream()
-            .filter(auth -> Objects.nonNull(auth.getPsuData()))
-            .map(auth -> new CmsPisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()),
-                auth.getExternalId(),
-                auth.getScaStatus()))
-            .collect(Collectors.toList());
+                   .filter(auth -> Objects.nonNull(auth.getPsuData()))
+                   .map(auth -> new CmsPisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()),
+                                                               auth.getExternalId(),
+                                                               auth.getScaStatus()))
+                   .collect(Collectors.toList());
     }
 
     private boolean updatePsuData(PisAuthorization authorisation, PsuIdData psuIdData) {
@@ -203,6 +201,14 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         if (optionalPsuData.isPresent()) {
             newPsuData.setId(optionalPsuData.get().getId());
         } else {
+            List<PsuData> paymentPsuList = authorisation.getPaymentData().getPsuDataList();
+            Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(newPsuData, paymentPsuList);
+
+            if (psuDataOptional.isPresent()) {
+                newPsuData = psuDataOptional.get();
+                authorisation.getPaymentData().setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, paymentPsuList));
+            }
+
             log.info("Authorisation ID [{}]. Update PSU in payment failed in updatePsuData method because authorisation contains no psu data.", authorisation.getId());
         }
 
