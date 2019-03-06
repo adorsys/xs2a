@@ -7,8 +7,8 @@ For upcoming versions see our [Roadmap](roadmap.md).
 ## Mainline 3.x (Development)
 
 ## Mainline 2.x (Stable. Supported minimum till 01.08.2019)
-* [Version 2.0.1 (release date: ?)](release_notes/Release_notes_2.0.1.md)
-* [Version 2.0 (release date: 01.03.2019)](release_notes/Release_notes_2.0.md)
+* [Version 2.0.1 (release date: 06.03.2019)](release_notes/Release_notes_2.0.1.md)
+* [Version 2.0   (release date: 01.03.2019)](release_notes/Release_notes_2.0.md)
 
 ## Mainline 1.x (Development. Planned release 01.03.2019 as 2.0)
 * [Version 1.17 (release date: 15.02.2019)](release_notes/Release_notes_1.17.md)
