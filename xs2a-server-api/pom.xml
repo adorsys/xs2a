@@ -31,6 +31,7 @@
     <properties>
         <springfox.version>2.9.2</springfox.version>
         <pmd.skip>true</pmd.skip> <!-- This module uses generated sources, that we cannot adopt -->
+        <checkstyle.skip>true</checkstyle.skip><!-- Checkstyle for javadocs is also useless here -->
     </properties>
 
     <dependencies>
