@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.filter;
 
+import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -34,7 +35,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +65,13 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
         if (StringUtils.isNotBlank(encodedTppQwacCert)) {
             try {
                 TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
+
+                if (isCertificateExpired(tppCertificateData.getNotAfter())) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                       CertificateErrorMsgCode.CERTIFICATE_EXPIRED.toString());
+                    return;
+                }
+
                 TppInfo tppInfo = new TppInfo();
                 tppInfo.setAuthorisationNumber(tppCertificateData.getPspAuthorisationNumber());
                 tppInfo.setTppName(tppCertificateData.getName());
@@ -97,5 +109,12 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
 
     public String getEncodedTppQwacCert(HttpServletRequest httpRequest) {
         return httpRequest.getHeader("tpp-qwac-certificate");
+    }
+
+    private boolean isCertificateExpired(Date date) {
+        return Optional.ofNullable(date)
+                   .map(d -> d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                   .map(d -> d.isBefore(LocalDateTime.now()))
+                   .orElse(true);
     }
 }
