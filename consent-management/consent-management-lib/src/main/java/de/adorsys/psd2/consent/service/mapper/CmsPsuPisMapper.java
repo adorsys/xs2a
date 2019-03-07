@@ -46,6 +46,7 @@ public class CmsPsuPisMapper {
 
         cmsCommonPayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
         cmsCommonPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
+        cmsCommonPayment.setCreationTimestamp(paymentData.getCreationTimestamp());
         return cmsCommonPayment;
     }
 
@@ -103,6 +104,7 @@ public class CmsPsuPisMapper {
         if (Objects.nonNull(paymentData)) {
             periodicPayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
             periodicPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
+            periodicPayment.setCreationTimestamp(paymentData.getCreationTimestamp());
         }
         return periodicPayment;
     }
@@ -140,6 +142,7 @@ public class CmsPsuPisMapper {
         if (Objects.nonNull(paymentData)) {
             singlePayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
             singlePayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
+            singlePayment.setCreationTimestamp(paymentData.getCreationTimestamp());
         }
 
         return singlePayment;
