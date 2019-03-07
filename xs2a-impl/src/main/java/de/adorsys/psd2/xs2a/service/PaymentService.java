@@ -41,6 +41,7 @@ import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.GetCommonPaymentByIdResponseValidator;
+import de.adorsys.psd2.xs2a.service.validator.PaymentValidationService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -84,8 +85,9 @@ public class PaymentService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final ReadCommonPaymentStatusService readCommonPaymentStatusService;
     private final GetCommonPaymentByIdResponseValidator getCommonPaymentByIdResponseValidator;
-    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final RequestProviderService requestProviderService;
+    private final PaymentValidationService paymentValidationService;
+    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -119,11 +121,11 @@ public class PaymentService {
         }
 
         if (paymentInitiationParameters.getPaymentType() == PaymentType.SINGLE) {
-            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo);
+            return processSinglePayment((SinglePayment) payment, paymentInitiationParameters, tppInfo);
         } else if (paymentInitiationParameters.getPaymentType() == PaymentType.PERIODIC) {
-            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo);
+            return processPeriodicPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo);
         } else {
-            return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo);
+            return processBulkPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo);
         }
     }
 
@@ -138,7 +140,15 @@ public class PaymentService {
     public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String paymentId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.orElse(null);
+
+        if (!pisCommonPaymentOptional.isPresent()) {
+            return ResponseObject.builder()
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .build();
+        }
+
+
+        PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.get();
         ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(commonPaymentResponse, paymentType, paymentProduct);
 
         if (validationResult.isNotValid()) {
@@ -185,7 +195,14 @@ public class PaymentService {
     public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String paymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.orElse(null);
+
+        if (!pisCommonPaymentOptional.isPresent()) {
+            return ResponseObject.<TransactionStatus>builder()
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .build();
+        }
+
+        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
         ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, paymentType, paymentProduct);
 
         if (validationResult.isNotValid()) {
@@ -252,7 +269,14 @@ public class PaymentService {
     public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
-        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.orElse(null);
+
+        if (!pisCommonPaymentOptional.isPresent()) {
+            return ResponseObject.<CancelPaymentResponse>builder()
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .build();
+        }
+
+        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
         ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, paymentType, paymentProduct);
 
         if (validationResult.isNotValid()) {
@@ -310,4 +334,32 @@ public class PaymentService {
         }
         return null;
     }
+
+    private ResponseObject processSinglePayment(SinglePayment singePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject singlePaymentValidationResult = paymentValidationService.validateSinglePayment(singePayment);
+
+        return singlePaymentValidationResult.hasError()
+            ? singlePaymentValidationResult
+            : createSinglePaymentService.createPayment(singePayment, paymentInitiationParameters, tppInfo);
+    }
+
+    private ResponseObject processPeriodicPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject periodicPaymentValidationResponse = paymentValidationService.validatePeriodicPayment(periodicPayment);
+
+        return periodicPaymentValidationResponse.hasError()
+            ? periodicPaymentValidationResponse
+            : createPeriodicPaymentService.createPayment(periodicPayment, paymentInitiationParameters, tppInfo);
+    }
+
+    private ResponseObject processBulkPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject bulkPaymentValidationResponse = paymentValidationService.validateBulkPayment(bulkPayment);
+
+        return bulkPaymentValidationResponse.hasError()
+            ? bulkPaymentValidationResponse
+            : createBulkPaymentService.createPayment(bulkPayment, paymentInitiationParameters, tppInfo);
+    }
+
 }

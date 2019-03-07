@@ -194,7 +194,8 @@ public class Xs2aAisConsentMapper {
                        ac.getTppInfo(),
                        ac.getAisConsentRequestType(),
                        ac.isMultilevelScaRequired(),
-                       mapToAccountConsentAuthorisation(ais.getAccountConsentAuthorizations())))
+                       mapToAccountConsentAuthorisation(ais.getAccountConsentAuthorizations()),
+                       ac.getUsageCounter()))
                    .orElse(null);
     }
 

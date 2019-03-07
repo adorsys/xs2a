@@ -40,7 +40,7 @@ import java.util.Set;
 
 
 @Data
-@ToString(exclude = {"accesses", "authorizations"})
+@ToString(exclude = {"accesses", "authorizations", "usages"})
 @Entity(name = "ais_consent")
 @ApiModel(description = "Ais consent entity", value = "AisConsent")
 public class AisConsent extends InstanceDependableEntity {
@@ -106,9 +106,14 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int tppFrequencyPerDay;
 
+    //TODO 2.3 Remove this field and db column https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/728
+    @Deprecated
     @Column(name = "usage_counter", nullable = false)
     @ApiModelProperty(value = "Usage counter for the consent", required = true, example = "7")
     private int usageCounter;
+
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AisConsentUsage> usages = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "ais_account_access", joinColumns = @JoinColumn(name = "consent_id"))
@@ -158,14 +163,10 @@ public class AisConsent extends InstanceDependableEntity {
         return consentStatus != ConsentStatus.EXPIRED;
     }
 
-    public boolean hasUsagesAvailable() {
-        return usageCounter > 0;
-    }
-
     public boolean isConfirmationExpired(long expirationPeriodMs) {
         if (isNotConfirmed()) {
             return creationTimestamp.plus(expirationPeriodMs, ChronoUnit.MILLIS)
-                .isBefore(OffsetDateTime.now());
+                       .isBefore(OffsetDateTime.now());
         }
 
         return false;
@@ -190,5 +191,11 @@ public class AisConsent extends InstanceDependableEntity {
     public boolean isWrongConsentData() {
         return CollectionUtils.isEmpty(psuDataList)
                    || tppInfo == null;
+    }
+    public void addUsage(AisConsentUsage aisConsentUsage) {
+        if (usages == null) {
+            usages = new ArrayList<>();
+        }
+        usages.add(aisConsentUsage);
     }
 }

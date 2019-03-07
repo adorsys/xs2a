@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.validator;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -55,23 +54,23 @@ public class CreateConsentRequestValidator {
      */
     public ValidationResult validateRequest(CreateConsentReq request) {
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED)));
+            return ValidationResult.invalid(ErrorType.AIS_400, PARAMETER_NOT_SUPPORTED);
         }
         if (isNotSupportedBankOfferedConsent(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405)));
+            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_405);
         }
         if (!isValidExpirationDate(request.getValidUntil())) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PERIOD_INVALID)));
+            return ValidationResult.invalid(ErrorType.AIS_400, PERIOD_INVALID);
         }
 
-        if (isNotValidFrequencyForRecurringIndicator(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)));
+        if (isNotValidFrequencyPerDay(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
+            return ValidationResult.invalid(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, "Value of frequencyPerDay is not correct"));
         }
 
         if (isNotSupportedAvailableAccounts(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405)));
+            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_405);
         }
-        return new ValidationResult(true, null);
+        return ValidationResult.valid();
     }
 
     private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {
@@ -111,12 +110,10 @@ public class CreateConsentRequestValidator {
         return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
     }
 
-    private boolean isNotValidFrequencyForRecurringIndicator(boolean recurringIndicator, int frequencyPerDay) {
-        if (!recurringIndicator) {
-            return frequencyPerDay > 1;
-        }
-
-        return false;
+    private boolean isNotValidFrequencyPerDay(boolean recurringIndicator, int frequencyPerDay) {
+        return recurringIndicator
+                   ? frequencyPerDay <= 0
+                   : frequencyPerDay != 1;
     }
 
     private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {

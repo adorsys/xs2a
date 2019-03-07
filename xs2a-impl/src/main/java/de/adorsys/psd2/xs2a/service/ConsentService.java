@@ -266,7 +266,7 @@ public class ConsentService {
             return ResponseObject.<AccountConsent>builder()
                        .fail(AIS_401, of(messageErrorCode)).build();
         }
-        if (!accountConsent.isValidFrequency()) {
+        if (accountConsent.isAccessExceeded()) {
             return ResponseObject.<AccountConsent>builder()
                        .fail(AIS_429, of(ACCESS_EXCEEDED)).build();
         }
