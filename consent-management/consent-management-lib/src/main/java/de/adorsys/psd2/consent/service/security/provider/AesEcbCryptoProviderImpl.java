@@ -42,7 +42,7 @@ public class AesEcbCryptoProviderImpl implements CryptoProvider {
             return Optional.of(new EncryptedData(encryptedData));
 
         } catch (GeneralSecurityException e) {
-            log.error("Error encryption data: {}", e);
+            log.info("Error encryption data: {}", e);
             return Optional.empty();
         }
     }
@@ -58,9 +58,9 @@ public class AesEcbCryptoProviderImpl implements CryptoProvider {
 
             return Optional.of(new DecryptedData(decryptedData));
         } catch (BadPaddingException e) {
-            log.error("Error decryption data. Wrong password");
+            log.info("Error decryption data. Wrong password");
         } catch (GeneralSecurityException e) {
-            log.error("Error decryption data: {}", e);
+            log.info("Error decryption data: {}", e);
         }
 
         return Optional.empty();
