@@ -202,4 +202,8 @@ public class AspspProfileServiceWrapper {
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }
+
+    public String getXs2aBaseUrl() {
+        return readAspspSettings().getXs2aBaseUrl();
+    }
 }

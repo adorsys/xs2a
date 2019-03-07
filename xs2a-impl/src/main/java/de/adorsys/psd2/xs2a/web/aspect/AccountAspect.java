@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.AccountController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -37,8 +38,8 @@ import java.util.Map;
 @Aspect
 @Component
 public class AccountAspect extends AbstractLinkAspect<AccountController> {
-    public AccountAspect(ScaApproachResolver scaApproachResolver, MessageService messageService) {
-        super(scaApproachResolver, messageService);
+    public AccountAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileServiceWrapper profileService) {
+        super(scaApproachResolver, messageService, profileService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountDetails(..)) && args( consentId, accountId, withBalance)", returning = "result", argNames = "result,consentId,accountId,withBalance")

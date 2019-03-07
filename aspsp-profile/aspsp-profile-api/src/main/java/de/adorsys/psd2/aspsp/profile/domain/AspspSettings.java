@@ -52,4 +52,5 @@ public class AspspSettings {
     private boolean availableAccountsConsentSupported;
     private boolean scaByOneTimeAvailableAccountsConsentRequired;
     private boolean psuInInitialRequestMandated;
+    private String xs2aBaseUrl;
 }

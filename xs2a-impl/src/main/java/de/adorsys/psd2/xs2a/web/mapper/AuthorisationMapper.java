@@ -22,11 +22,16 @@ import de.adorsys.psd2.model.StartScaprocessResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -34,28 +39,51 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthorisationMapper {
     private final CoreObjectsMapper coreObjectsMapper;
     private final ScaApproachResolver scaApproachResolver;
     private final RedirectLinkBuilder redirectLinkBuilder;
+    private final AspspProfileServiceWrapper profileService;
 
     public StartScaprocessResponse mapToStartScaProcessResponse(
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse) {
         return Optional.ofNullable(createConsentAuthorizationResponse)
-                   .map(csar -> {
-                       boolean redirectApproachUsed = scaApproachResolver.resolveScaApproach() == REDIRECT;
-                       String link = redirectApproachUsed
-                                         ? redirectLinkBuilder.buildConsentScaRedirectLink(csar.getConsentId(), csar.getAuthorizationId())
-                                         : linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(null, csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null))
-                                               .toString();
+            .map(csar -> {
+                boolean redirectApproachUsed = scaApproachResolver.resolveScaApproach() == REDIRECT;
+                String link = redirectApproachUsed
+                    ? redirectLinkBuilder.buildConsentScaRedirectLink(csar.getConsentId(), csar.getAuthorizationId())
+                    : createUpdateConsentsPsuDataLink(csar).toString();
+                return new StartScaprocessResponse()
+                    .scaStatus(coreObjectsMapper.mapToModelScaStatus(createConsentAuthorizationResponse.getScaStatus()))
+                    ._links(Collections.singletonMap(csar.getResponseLinkType().getValue(), link));
+            })
+            .orElse(null);
+    }
 
-                       return new StartScaprocessResponse()
-                                  .scaStatus(coreObjectsMapper.mapToModelScaStatus(createConsentAuthorizationResponse.getScaStatus()))
-                                  ._links(Collections.singletonMap(csar.getResponseLinkType().getValue(), link));
-                   })
-                   .orElse(null);
+    private String createUpdateConsentsPsuDataLink(CreateConsentAuthorizationResponse csar) {
+        URL baseUrl = null;
+        try {
+            baseUrl = profileService.getXs2aBaseUrl() != null ? new URL(profileService.getXs2aBaseUrl()) : null;
+        } catch (MalformedURLException e) {
+            log.error("invalid base url", e);
+        }
+
+        UriComponentsBuilder uriComponentsBuilder = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(null,
+            csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null))
+            .toUriComponentsBuilder();
+
+        Optional.ofNullable(baseUrl)
+            .ifPresent(url -> {
+                uriComponentsBuilder.scheme(url.getProtocol());
+                uriComponentsBuilder.host(url.getHost());
+                uriComponentsBuilder.port(url.getPort());
+            });
+
+        return uriComponentsBuilder.toUriString();
     }
 
     public @NotNull ScaStatusResponse mapToScaStatusResponse(@NotNull ScaStatus scaStatus) {

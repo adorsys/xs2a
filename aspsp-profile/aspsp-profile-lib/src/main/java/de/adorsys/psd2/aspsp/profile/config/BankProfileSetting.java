@@ -166,4 +166,8 @@ public class BankProfileSetting {
      * If "true" indicates that an ASPSP requires PSU in initial request for payment initiation or establishing consent
      */
     private boolean psuInInitialRequestMandated;
+    /**
+     * This url is used as base url for TPP Links
+     */
+    private String xs2aBaseUrl;
 }

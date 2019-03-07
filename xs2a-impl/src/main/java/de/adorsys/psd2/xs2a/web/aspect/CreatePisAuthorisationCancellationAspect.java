@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +41,8 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect<PaymentController> {
     private final RedirectLinkBuilder redirectLinkBuilder;
 
-    public CreatePisAuthorisationCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, RedirectLinkBuilder redirectLinkBuilder) {
-        super(scaApproachResolver, messageService);
+    public CreatePisAuthorisationCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, RedirectLinkBuilder redirectLinkBuilder, AspspProfileServiceWrapper profileService) {
+        super(scaApproachResolver, messageService, profileService);
         this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
