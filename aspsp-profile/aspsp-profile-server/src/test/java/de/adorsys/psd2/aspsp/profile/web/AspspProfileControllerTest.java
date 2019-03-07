@@ -67,6 +67,7 @@ public class AspspProfileControllerTest {
     private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = false;
     private static final boolean SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED = false;
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
+    private static final String XS2A_BASEURL = null;
 
     @InjectMocks
     private AspspProfileController aspspProfileController;
@@ -135,7 +136,8 @@ public class AspspProfileControllerTest {
             PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS,
             AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
             SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED,
-            PSU_IN_INITIAL_REQUEST_MANDATED);
+            PSU_IN_INITIAL_REQUEST_MANDATED,
+            XS2A_BASEURL);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
