@@ -457,14 +457,35 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
             return pisAuthorisation.getScaStatus();
         }
 
-        if (STARTED == pisAuthorisation.getScaStatus()) {
-            PsuData psuData = psuDataMapper.mapToPsuData(request.getPsuData());
-            PisCommonPaymentData paymentData = pisAuthorisation.getPaymentData();
-            List<PsuData> psuDataList = cmsPsuService.enrichPsuData(psuData, paymentData.getPsuDataList());
-            paymentData.setPsuDataList(psuDataList);
+        PsuData psuDataInAuthorisation = pisAuthorisation.getPsuData();
+        PsuData psuDataInRequest = psuDataMapper.mapToPsuData(request.getPsuData());
 
-            if (psuData != null) {
+        if (STARTED == pisAuthorisation.getScaStatus()) {
+
+            if (!cmsPsuService.isPsuDataRequestCorrect(psuDataInRequest, psuDataInAuthorisation)) {
+                log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
+                         pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus().getValue());
+                return pisAuthorisation.getScaStatus();
+            }
+
+            PisCommonPaymentData paymentData = pisAuthorisation.getPaymentData();
+            List<PsuData> psuListInPayment = paymentData.getPsuDataList();
+            Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataInRequest, psuListInPayment);
+
+            if (psuDataOptional.isPresent()) {
+                PsuData psuData = psuDataOptional.get();
+                paymentData.setPsuDataList(cmsPsuService.enrichPsuData(psuData, psuListInPayment));
                 pisAuthorisation.setPsuData(psuData);
+            }
+
+        } else {
+            boolean isPsuCorrect = Objects.nonNull(psuDataInAuthorisation)
+                                       && Objects.nonNull(psuDataInRequest)
+                                       && psuDataInAuthorisation.contentEquals(psuDataInRequest);
+            if (!isPsuCorrect) {
+                log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
+                         pisAuthorisation.getExternalId(), pisAuthorisation.getScaStatus().getValue());
+                return pisAuthorisation.getScaStatus();
             }
         }
 

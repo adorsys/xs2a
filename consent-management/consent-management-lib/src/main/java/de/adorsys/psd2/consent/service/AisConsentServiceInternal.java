@@ -365,7 +365,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         if (ScaStatus.STARTED == aisConsentAuthorisation.getScaStatus()) {
             PsuData psuRequest = psuDataMapper.mapToPsuData(request.getPsuData());
 
-            if (!isPsuDataRequestCorrect(psuRequest, aisConsentAuthorisation.getPsuData())) {
+            if (!cmsPsuService.isPsuDataRequestCorrect(psuRequest, aisConsentAuthorisation.getPsuData())) {
                 log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
                          authorisationId, aisConsentAuthorisation.getScaStatus().getValue());
                 return false;
@@ -558,12 +558,6 @@ public class AisConsentServiceInternal implements AisConsentService {
         auth.setScaStatus(ScaStatus.FAILED);
         auth.setRedirectUrlExpirationTimestamp(OffsetDateTime.now());
         return auth;
-    }
-
-    private boolean isPsuDataRequestCorrect(PsuData psuRequest, PsuData psuAuth) {
-        return Optional.ofNullable(psuRequest)
-                   .map(psu -> psuAuth == null || psu.contentEquals(psuAuth))
-                   .orElse(false);
     }
 
     private void updateAisConsentUsage(AisConsent consent) {
