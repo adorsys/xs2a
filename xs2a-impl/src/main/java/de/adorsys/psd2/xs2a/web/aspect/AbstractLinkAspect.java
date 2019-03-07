@@ -21,28 +21,35 @@ import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.reflect.ParameterizedType;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Optional;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public abstract class AbstractLinkAspect<T> {
     protected final ScaApproachResolver scaApproachResolver;
     private final MessageService messageService;
+    private final AspspProfileServiceWrapper profileService;
 
     protected <B> boolean hasError(ResponseEntity<B> target) {
         Optional<B> body = Optional.ofNullable(target.getBody());
         return body.isPresent() && body.get().getClass()
-                                       .isAssignableFrom(MessageError.class);
+            .isAssignableFrom(MessageError.class);
     }
 
     <R> ResponseObject<R> enrichErrorTextMessage(ResponseObject<R> response) {
@@ -53,23 +60,36 @@ public abstract class AbstractLinkAspect<T> {
             error.setTppMessages(Collections.singleton(tppMessage));
         }
         return ResponseObject.<R>builder()
-                   .fail(error)
-                   .build();
+            .fail(error)
+            .build();
     }
 
     String buildPath(String path, Object... params) {
-        return fromHttpUrl(linkTo(getControllerClass()).toString())
-                   .path(path)
-                   .buildAndExpand(params)
-                   .toUriString();
+        URL baseUrl = null;
+        try {
+            baseUrl = profileService.getXs2aBaseUrl() != null ? new URL(profileService.getXs2aBaseUrl()) : null;
+        } catch (MalformedURLException e) {
+            log.error("invalid base url", e);
+        }
+
+        UriComponentsBuilder uriComponentsBuilder = fromHttpUrl(linkTo(getControllerClass()).toString()).path(path);
+
+        Optional.ofNullable(baseUrl)
+            .ifPresent(url -> {
+                uriComponentsBuilder.scheme(url.getProtocol());
+                uriComponentsBuilder.host(url.getHost());
+                uriComponentsBuilder.port(url.getPort());
+            });
+
+        return uriComponentsBuilder.buildAndExpand(params).toUriString();
     }
 
     @SuppressWarnings("unchecked")
     private Class<T> getControllerClass() {
         try {
             String className = ((ParameterizedType) this.getClass().getGenericSuperclass())
-                                   .getActualTypeArguments()[0]
-                                   .getTypeName();
+                .getActualTypeArguments()[0]
+                .getTypeName();
             return (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Class isn't parametrized with generic type! Use <>");

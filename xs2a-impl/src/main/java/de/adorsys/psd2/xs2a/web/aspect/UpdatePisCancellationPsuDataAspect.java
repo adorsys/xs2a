@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -35,8 +36,8 @@ import org.springframework.stereotype.Component;
 public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<PaymentController> {
     private static final String PSU_CANCELLATION_AUTHORISATION_URL = "/v1/{paymentService}/{paymentProduct}/{paymentId}/cancellation-authorisations/{authorisationId}";
 
-    public UpdatePisCancellationPsuDataAspect(ScaApproachResolver scaApproachResolver, MessageService messageService) {
-        super(scaApproachResolver, messageService);
+    public UpdatePisCancellationPsuDataAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileServiceWrapper profileService) {
+        super(scaApproachResolver, messageService, profileService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService.updatePisCancellationPsuData(..)) && args( request)", returning = "result", argNames = "result,request")
