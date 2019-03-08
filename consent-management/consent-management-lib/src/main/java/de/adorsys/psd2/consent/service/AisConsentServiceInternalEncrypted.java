@@ -69,6 +69,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    @Transactional
     public Optional<AisAccountConsent> getInitialAisAccountConsentById(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getInitialAisAccountConsentById);
