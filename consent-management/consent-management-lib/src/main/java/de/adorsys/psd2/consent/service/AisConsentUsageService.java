@@ -45,7 +45,7 @@ public class AisConsentUsageService {
         aisConsentUsageRepository.save(aisConsentUsage);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional//(readOnly = true)
     public int getUsageCounter(AisConsent aisConsent) {
         Integer usage = aisConsentUsageRepository.findReadByConsentAndUsageDate(aisConsent, LocalDate.now())
                             .map(AisConsentUsage::getUsage)
