@@ -119,10 +119,10 @@ public class ScaPaymentServiceTest {
         when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_SINGLE_PAYMENT_RESPONSE), Matchers.<Supplier<SinglePaymentInitiationResponse>>any(), eq(SPI_SINGLE_RESPONSE.getAspspConsentData())))
             .thenReturn(SINGLE_PAYMENT_RESPONSE);
 
-        //when
+        //When
         SinglePaymentInitiationResponse actualResponse = scaPaymentService.createSinglePayment(SINGLE_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
         assertThat(actualResponse).isEqualTo(SINGLE_PAYMENT_RESPONSE);
@@ -145,10 +145,10 @@ public class ScaPaymentServiceTest {
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);
 
-        //when
+        //When
         SinglePaymentInitiationResponse actualResponse = scaPaymentService.createSinglePayment(SINGLE_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
@@ -164,10 +164,10 @@ public class ScaPaymentServiceTest {
         when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_PERIODIC_PAYMENT_RESPONSE), Matchers.<Supplier<PeriodicPaymentInitiationResponse>>any(), eq(SPI_PERIODIC_RESPONSE.getAspspConsentData())))
             .thenReturn(PERIODIC_PAYMENT_RESPONSE);
 
-        //when
+        //When
         PeriodicPaymentInitiationResponse actualResponse = scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
         assertThat(actualResponse).isEqualTo(PERIODIC_PAYMENT_RESPONSE);
@@ -190,10 +190,10 @@ public class ScaPaymentServiceTest {
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);
 
-        //when
+        //When
         PeriodicPaymentInitiationResponse actualResponse = scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
@@ -209,10 +209,10 @@ public class ScaPaymentServiceTest {
         when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_BULK_PAYMENT_RESPONSE), Matchers.<Supplier<BulkPaymentInitiationResponse>>any(), eq(SPI_PERIODIC_RESPONSE.getAspspConsentData())))
             .thenReturn(BULK_PAYMENT_RESPONSE);
 
-        //when
+        //When
         BulkPaymentInitiationResponse actualResponse = scaPaymentService.createBulkPayment(BULK_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
         assertThat(actualResponse).isEqualTo(BULK_PAYMENT_RESPONSE);
@@ -235,10 +235,10 @@ public class ScaPaymentServiceTest {
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);
 
-        //when
+        //When
         BulkPaymentInitiationResponse actualResponse = scaPaymentService.createBulkPayment(BULK_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
@@ -255,10 +255,10 @@ public class ScaPaymentServiceTest {
         when(spiToXs2aPaymentMapper.mapToCommonPaymentInitiateResponse(SPI_COMMON_RESPONSE.getPayload(), COMMON_PAYMENT.getPaymentType(), SPI_COMMON_RESPONSE.getAspspConsentData()))
             .thenReturn(COMMON_PAYMENT_RESPONSE);
 
-        //when
+        //When
         CommonPaymentInitiationResponse actualResponse = scaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isNull();
         assertThat(actualResponse).isEqualTo(COMMON_PAYMENT_RESPONSE);
@@ -283,10 +283,10 @@ public class ScaPaymentServiceTest {
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);
 
-        //when
+        //When
         CommonPaymentInitiationResponse actualResponse = scaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);

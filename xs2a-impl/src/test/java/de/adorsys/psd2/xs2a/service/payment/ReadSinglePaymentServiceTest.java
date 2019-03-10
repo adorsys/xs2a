@@ -75,14 +75,14 @@ public class ReadSinglePaymentServiceTest {
 
     @Test
     public void getPayment_success() {
-        //given
+        //Given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), SINGLE_PAYMENT.getTransactionStatus()))
             .thenReturn(true);
 
-        //when
+        //When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getPayment()).isNotNull();
         assertThat(actualResponse.getPayment()).isEqualTo(SINGLE_PAYMENT);
@@ -91,7 +91,7 @@ public class ReadSinglePaymentServiceTest {
 
     @Test
     public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
-        //given
+        //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
             .messages(Collections.singletonList("Payment is finalised already, so its status cannot be changed"))
             .build();
@@ -99,10 +99,10 @@ public class ReadSinglePaymentServiceTest {
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), SINGLE_PAYMENT.getTransactionStatus()))
             .thenReturn(false);
 
-        //when
+        //When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getPayment()).isNull();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
@@ -111,7 +111,7 @@ public class ReadSinglePaymentServiceTest {
 
     @Test
     public void getPayment_singlePaymentSpi_getPaymentById_failed() {
-        //given
+        //Given
         SpiResponse<SpiSinglePayment> spiResponseError = SpiResponse.<SpiSinglePayment>builder()
             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
@@ -123,10 +123,10 @@ public class ReadSinglePaymentServiceTest {
         when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, SOME_ASPSP_CONSENT_DATA)).thenReturn(spiResponseError);
         when(spiErrorMapper.mapToErrorHolder(spiResponseError, ServiceType.PIS)).thenReturn(expectedError);
 
-        //when
+        //When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getPayment()).isNull();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
@@ -135,17 +135,17 @@ public class ReadSinglePaymentServiceTest {
 
     @Test
     public void getPayment_spiPaymentFactory_createSpiSinglePayment_failed() {
-        //given
+        //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
             .messages(Collections.singletonList("Payment not found"))
             .build();
 
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.empty());
 
-        //when
+        //When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getPayment()).isNull();
         assertThat(actualResponse.getErrorHolder()).isNotNull();
