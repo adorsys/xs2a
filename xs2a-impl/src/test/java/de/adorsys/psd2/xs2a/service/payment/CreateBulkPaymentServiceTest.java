@@ -161,7 +161,7 @@ public class CreateBulkPaymentServiceTest<resp> {
     }
 
     @Test
-    public void createPayment_authorisationMethodDecider_isImplicitMethod_fail() {
+    public void createPayment_pisScaAuthorisationService_createCommonPaymentAuthorisation_fail() {
         // Given
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(true);
