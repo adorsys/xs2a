@@ -25,25 +25,25 @@ public class AisConsentDataServiceTest {
 
     @Test
     public void getAspspConsentDataByConsentId_success() {
-        //given
+        //Given
         when(aspspDataService.readAspspConsentData("some consent id")).thenReturn(Optional.of(ASPSP_CONSENT_DATA));
 
-        //when
+        //When
         AspspConsentData actualResponse = aisConsentDataService.getAspspConsentDataByConsentId("some consent id");
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(ASPSP_CONSENT_DATA);
     }
 
     @Test
     public void getAspspConsentDataByConsentId_with_nullAspspConsentData() {
-        //given
+        //Given
         when(aspspDataService.readAspspConsentData("some consent id")).thenReturn(Optional.empty());
 
-        //when
+        //When
         AspspConsentData actualResponse = aisConsentDataService.getAspspConsentDataByConsentId("some consent id");
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(ASPSP_CONSENT_DATA_NULL);
     }
 }

@@ -91,7 +91,7 @@ public class Xs2aAisConsentServiceTest {
 
     @Test
     public void createConsent_success() {
-        //given
+        //Given
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
@@ -99,16 +99,16 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentServiceEncrypted.createConsent(CREATE_AIS_CONSENT_REQUEST))
             .thenReturn(Optional.of(CONSENT_ID));
 
-        //when
+        //When
         String actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(CONSENT_ID);
     }
 
     @Test
     public void createConsent_failed() {
-        //given
+        //Given
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
@@ -116,125 +116,125 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentServiceEncrypted.createConsent(CREATE_AIS_CONSENT_REQUEST))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         String actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 
 
     @Test
     public void getAccountConsentById_success() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(AIS_ACCOUNT_CONSENT));
         when(aisConsentMapper.mapToAccountConsent(AIS_ACCOUNT_CONSENT))
             .thenReturn(ACCOUNT_CONSENT);
 
-        //when
+        //When
         AccountConsent actualResponse = xs2aAisConsentService.getAccountConsentById(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(ACCOUNT_CONSENT);
     }
 
     @Test
     public void getAccountConsentById_failed() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         AccountConsent actualResponse = xs2aAisConsentService.getAccountConsentById(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 
     @Test
     public void getInitialAccountConsentById_success() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getInitialAisAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(AIS_ACCOUNT_CONSENT));
         when(aisConsentMapper.mapToAccountConsent(AIS_ACCOUNT_CONSENT))
             .thenReturn(ACCOUNT_CONSENT);
 
-        //when
+        //When
         AccountConsent actualResponse = xs2aAisConsentService.getInitialAccountConsentById(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(ACCOUNT_CONSENT);
     }
 
     @Test
     public void getInitialAccountConsentById_failed() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getInitialAisAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         AccountConsent actualResponse = xs2aAisConsentService.getInitialAccountConsentById(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 
     @Test
     public void getAccountConsentStatusById_success() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getConsentStatusById(CONSENT_ID))
             .thenReturn(Optional.of(CONSENT_STATUS));
 
-        //when
+        //When
         ConsentStatus actualResponse = xs2aAisConsentService.getAccountConsentStatusById(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(CONSENT_STATUS);
     }
 
     @Test
     public void getAccountConsentStatusById_failed() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getConsentStatusById(CONSENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         ConsentStatus actualResponse = xs2aAisConsentService.getAccountConsentStatusById(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 
     @Test
     public void findAndTerminateOldConsentsByNewConsentId_success() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(true);
 
-        //when
+        //When
         boolean actualResponse = xs2aAisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isTrue();
     }
 
     @Test
     public void findAndTerminateOldConsentsByNewConsentId_false() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(false);
 
-        //when
+        //When
         boolean actualResponse = xs2aAisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isFalse();
     }
 
     @Test
     public void createAisConsentAuthorization_success() {
-        //given
+        //Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH))
@@ -242,17 +242,17 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentServiceEncrypted.createAuthorization(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
             .thenReturn(Optional.of(NEW_ID));
 
-        //when
+        //When
         Optional<String> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse.get()).isEqualTo(NEW_ID);
     }
 
     @Test
     public void createAisConsentAuthorization_false() {
-        //given
+        //Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH))
@@ -260,148 +260,148 @@ public class Xs2aAisConsentServiceTest {
         when(aisConsentServiceEncrypted.createAuthorization(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         Optional<String> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void getAccountConsentAuthorizationById_success() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.of(AIS_CONSENT_AUTHORIZATION_RESPONSE));
         when(aisConsentAuthorisationMapper.mapToAccountConsentAuthorization(AIS_CONSENT_AUTHORIZATION_RESPONSE))
             .thenReturn(ACCOUNT_CONSENT_AUTHORIZATION);
 
-        //when
+        //When
         AccountConsentAuthorization actualResponse = xs2aAisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(ACCOUNT_CONSENT_AUTHORIZATION);
     }
 
     @Test
     public void getAccountConsentAuthorizationById_failed() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         AccountConsentAuthorization actualResponse = xs2aAisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 
     @Test
     public void getAuthorisationSubResources_success() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
             .thenReturn(Optional.of(STRING_LIST));
 
-        //when
+        //When
         Optional<List<String>> actualResponse = xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse.get()).isEqualTo(STRING_LIST);
     }
 
     @Test
     public void getAuthorisationSubResources_failed() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         Optional<List<String>> actualResponse = xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void getAuthorisationScaStatus_success() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
 
-        //when
+        //When
         Optional<ScaStatus> actualResponse = xs2aAisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse.get()).isEqualTo(SCA_STATUS);
     }
 
     @Test
     public void getAuthorisationScaStatus_failed() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         Optional<ScaStatus> actualResponse = xs2aAisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void isAuthenticationMethodDecoupled_success() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(true);
 
-        //when
+        //When
         boolean actualResponse = xs2aAisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isTrue();
     }
 
     @Test
     public void isAuthenticationMethodDecoupled_failed() {
-        //given
+        //Given
         when(aisConsentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(false);
 
-        //when
+        //When
         boolean actualResponse = xs2aAisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isFalse();
     }
 
     @Test
     public void saveAuthenticationMethods_success() {
-        //given
+        //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
         when(aisConsentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(true);
 
-        //when
+        //When
         boolean actualResponse = xs2aAisConsentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
 
-        //then
+        //Then
         assertThat(actualResponse).isTrue();
     }
 
     @Test
     public void saveAuthenticationMethods_failed() {
-        //given
+        //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
         when(aisConsentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(false);
 
-        //when
+        //When
         boolean actualResponse = xs2aAisConsentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
 
-        //then
+        //Then
         assertThat(actualResponse).isFalse();
     }
 

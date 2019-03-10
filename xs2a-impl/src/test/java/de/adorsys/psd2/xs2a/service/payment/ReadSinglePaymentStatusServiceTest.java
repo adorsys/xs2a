@@ -41,9 +41,9 @@ public class ReadSinglePaymentStatusServiceTest {
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACSP;
-    private static final SpiResponse<TransactionStatus> TRANSACTION_STATUS_SPI_RESPONSE = buildSpiResponseTransactionStatus();
-    private static final SpiResponse<TransactionStatus> TRANSACTION_STATUS_SPI_RESPONSE_FAILURE = buildFailSpiResponseTransactionStatus();
-    private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_STATUS_SPI_RESPONSE.getPayload());
+    private static final SpiResponse<TransactionStatus> TRANSACTION_RESPONSE = buildSpiResponseTransactionStatus();
+    private static final SpiResponse<TransactionStatus> TRANSACTION_RESPONSE_FAILURE = buildFailSpiResponseTransactionStatus();
+    private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_RESPONSE.getPayload());
 
     @InjectMocks
     private ReadSinglePaymentStatusService readSinglePaymentStatusService;
@@ -63,7 +63,7 @@ public class ReadSinglePaymentStatusServiceTest {
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT))
             .thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
         when(singlePaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
-            .thenReturn(TRANSACTION_STATUS_SPI_RESPONSE);
+            .thenReturn(TRANSACTION_RESPONSE);
 
         //When
         ReadPaymentStatusResponse actualResponse = readSinglePaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, ASPSP_CONSENT_DATA);
@@ -100,8 +100,8 @@ public class ReadSinglePaymentStatusServiceTest {
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT))
             .thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
         when(singlePaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
-            .thenReturn(TRANSACTION_STATUS_SPI_RESPONSE_FAILURE);
-        when(spiErrorMapper.mapToErrorHolder(TRANSACTION_STATUS_SPI_RESPONSE_FAILURE, ServiceType.PIS))
+            .thenReturn(TRANSACTION_RESPONSE_FAILURE);
+        when(spiErrorMapper.mapToErrorHolder(TRANSACTION_RESPONSE_FAILURE, ServiceType.PIS))
             .thenReturn(expectedError);
 
         //When

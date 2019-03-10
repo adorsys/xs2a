@@ -60,119 +60,119 @@ public class DecoupledAisAuthorizationServiceTest {
 
     @Test
     public void createConsentAuthorization_success() {
-        //given
+        //Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(ACCOUNT_CONSENT);
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(AUTHORISATION_ID));
 
-        //when
+        //When
         Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.get().getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.get()).isEqualTo(CREATE_CONSENT_AUTHORIZATION_RESPONSE);
     }
 
     @Test
     public void createConsentAuthorization_failed() {
-        //given
+        //Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(null);
 
-        //when
+        //When
         Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void updateConsentPsuData() {
-        //given
+        //Given
         when(scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + SCA_APPROACH.name() + SEPARATOR + ACCOUNT_CONSENT_AUTHORIZATION.getScaStatus().name()))
             .thenReturn(aisScaAuthenticatedStage);
         when(aisScaAuthenticatedStage.apply(UPDATE_CONSENT_PSU_DATA_REQ))
             .thenReturn(UPDATE_CONSENT_PSU_DATA_RESPONSE);
 
-        //when
+        //When
         UpdateConsentPsuDataResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
     }
 
     @Test
     public void getAccountConsentAuthorizationById() {
-        //given
+        //Given
         when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(ACCOUNT_CONSENT_AUTHORIZATION);
 
-        //when
+        //When
         AccountConsentAuthorization actualResponse = decoupledAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(ACCOUNT_CONSENT_AUTHORIZATION);
     }
 
     @Test
     public void getAuthorisationSubResources_success() {
-        //given
+        //Given
         when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
             .thenReturn(Optional.of(STRING_LIST));
 
-        //when
+        //When
         Optional<Xs2aAuthorisationSubResources> actualResponse = decoupledAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.get()).isEqualTo(AUTHORISATION_SUB_RESOURCES);
     }
 
     @Test
     public void getAuthorisationSubResources_failed() {
-        //given
+        //Given
         when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         Optional<Xs2aAuthorisationSubResources> actualResponse = decoupledAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void getAuthorisationScaStatus_success() {
-        //given
+        //Given
         when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
 
-        //when
+        //When
         Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.get()).isEqualTo(SCA_STATUS);
     }
 
     @Test
     public void getAuthorisationScaStatus_failed() {
-        //given
+        //Given
         when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void getScaApproachServiceType() {
-        //when
+        //When
         ScaApproach actualResponse = decoupledAisAuthorizationService.getScaApproachServiceType();
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(SCA_APPROACH);
     }
 

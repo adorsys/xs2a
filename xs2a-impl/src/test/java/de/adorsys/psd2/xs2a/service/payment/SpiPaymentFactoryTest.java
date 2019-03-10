@@ -52,174 +52,174 @@ public class SpiPaymentFactoryTest {
 
     @Test
     public void createSpiPaymentByPaymentType_single_success() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT))
             .thenReturn(SINGLE_PAYMENT);
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
 
-        //when
+        //When
         Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(PIS_PAYMENTS, PRODUCT, PaymentType.SINGLE);
 
-        //then
+        //Then
         assertThat(actualResponse.get()).isEqualTo(SPI_SINGLE_PAYMENT);
     }
 
     @Test
     public void createSpiPaymentByPaymentType_single_failed() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT))
             .thenReturn(null);
 
-        //when
+        //When
         Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(PIS_PAYMENTS, PRODUCT, PaymentType.SINGLE);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
     public void createSpiPaymentByPaymentType_periodic_success() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToPeriodicPayment(PIS_PAYMENT))
             .thenReturn(PERIODIC_PAYMENT);
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
 
-        //when
+        //When
         Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(PIS_PAYMENTS, PRODUCT, PaymentType.PERIODIC);
 
-        //then
+        //Then
         assertThat(actualResponse.get()).isEqualTo(SPI_PERIODIC_PAYMENT);
     }
 
     @Test
     public void createSpiPaymentByPaymentType_periodic_failed() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToPeriodicPayment(PIS_PAYMENT))
             .thenReturn(null);
 
-        //when
+        //When
         Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(PIS_PAYMENTS, PRODUCT, PaymentType.PERIODIC);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
     public void createSpiPaymentByPaymentType_bulk_success() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToBulkPayment(PIS_PAYMENTS))
             .thenReturn(BULK_PAYMENT);
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
 
-        //when
+        //When
         Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(PIS_PAYMENTS, PRODUCT, PaymentType.BULK);
 
-        //then
+        //Then
         assertThat(actualResponse.get()).isEqualTo(SPI_BULK_PAYMENT);
     }
 
     @Test
     public void createSpiPaymentByPaymentType_bulk_failed() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToBulkPayment(PIS_PAYMENTS))
             .thenReturn(null);
 
-        //when
+        //When
         Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(PIS_PAYMENTS, PRODUCT, PaymentType.BULK);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
     public void createSpiSinglePayment_success() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT))
             .thenReturn(SINGLE_PAYMENT);
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
 
-        //when
+        //When
         Optional<SpiSinglePayment> actualResponse = spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENT, PRODUCT);
 
-        //then
+        //Then
         assertThat(actualResponse.get()).isEqualTo(SPI_SINGLE_PAYMENT);
     }
 
     @Test
     public void createSpiSinglePayment_failed() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT))
             .thenReturn(null);
 
-        //when
+        //When
         Optional<SpiSinglePayment> actualResponse = spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENT, PRODUCT);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
     public void createSpiPeriodicPayment_success() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToPeriodicPayment(PIS_PAYMENT))
             .thenReturn(PERIODIC_PAYMENT);
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
 
-        //when
+        //When
         Optional<SpiPeriodicPayment> actualResponse = spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENT, PRODUCT);
 
-        //then
+        //Then
         assertThat(actualResponse.get()).isEqualTo(SPI_PERIODIC_PAYMENT);
     }
 
     @Test
     public void createSpiPeriodicPayment_failed() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToPeriodicPayment(PIS_PAYMENT))
             .thenReturn(null);
 
-        //when
+        //When
         Optional<SpiPeriodicPayment> actualResponse = spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENT, PRODUCT);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
     public void createSpiBulkPayment_success() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToBulkPayment(PIS_PAYMENTS))
             .thenReturn(BULK_PAYMENT);
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
 
-        //when
+        //When
         Optional<SpiBulkPayment> actualResponse = spiPaymentFactory.createSpiBulkPayment(PIS_PAYMENTS, PRODUCT);
 
-        //then
+        //Then
         assertThat(actualResponse.get()).isEqualTo(SPI_BULK_PAYMENT);
     }
 
     @Test
     public void createSpiBulkPayment_failed() {
-        //given
+        //Given
         when(cmsToXs2aPaymentMapper.mapToBulkPayment(PIS_PAYMENTS))
             .thenReturn(null);
 
-        //when
+        //When
         Optional<SpiBulkPayment> actualResponse = spiPaymentFactory.createSpiBulkPayment(PIS_PAYMENTS, PRODUCT);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }

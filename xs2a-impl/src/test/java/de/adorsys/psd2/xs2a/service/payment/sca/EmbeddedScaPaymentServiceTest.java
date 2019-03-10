@@ -18,10 +18,10 @@ public class EmbeddedScaPaymentServiceTest {
 
     @Test
     public void getScaApproachServiceType() {
-        //when
+        //When
         ScaApproach actualResponse = embeddedScaPaymentService.getScaApproachServiceType();
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(SCA_APPROACH);
     }
 }

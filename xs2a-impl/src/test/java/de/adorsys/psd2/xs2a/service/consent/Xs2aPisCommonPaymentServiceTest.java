@@ -54,149 +54,149 @@ public class Xs2aPisCommonPaymentServiceTest {
 
     @Test
     public void createCommonPayment_by_parameters_tppInfo_success() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO_NULL))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
 
-        //when
+        //When
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(CREATE_PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
     public void createCommonPayment_by_parameters_tppInfo_failed() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO_NULL))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 
     @Test
     public void createCommonPayment_by_request_success() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
 
-        //when
+        //When
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PIS_PAYMENT_INFO);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(CREATE_PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
     public void createCommonPayment_by_request_failed() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PIS_PAYMENT_INFO);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 
     @Test
     public void createCommonPayment_by_parameters_tppInfo_paymentData_success() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(Optional.of(CREATE_PIS_COMMON_PAYMENT_RESPONSE));
 
-        //when
+        //When
         CreatePisCommonPaymentResponse actualResponse = xs2aPisCommonPaymentService.createCommonPayment(PAYMENT_INITIATION_PARAMETERS, TPP_INFO, PAYMENT_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(CREATE_PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
     public void getPisCommonPaymentById_success() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(PIS_COMMON_PAYMENT_RESPONSE));
 
-        //when
+        //When
         Optional<PisCommonPaymentResponse> actualResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse.get()).isEqualTo(PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
     public void getPisCommonPaymentById_failed() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         Optional<PisCommonPaymentResponse> actualResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void isAuthenticationMethodDecoupled_success() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(true);
 
-        //when
+        //When
         boolean actualResponse = xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isTrue();
     }
 
     @Test
     public void isAuthenticationMethodDecoupled_failed() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(false);
 
-        //when
+        //When
         boolean actualResponse = xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isFalse();
     }
 
     @Test
     public void saveAuthenticationMethods_success() {
-        //given
+        //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
         when(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(true);
 
-        //when
+        //When
         boolean actualResponse = xs2aPisCommonPaymentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
 
-        //then
+        //Then
         assertThat(actualResponse).isTrue();
     }
 
     @Test
     public void saveAuthenticationMethods_failed() {
-        //given
+        //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
         when(pisCommonPaymentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(false);
 
-        //when
+        //When
         boolean actualResponse = xs2aPisCommonPaymentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
 
-        //then
+        //Then
         assertThat(actualResponse).isFalse();
     }
 

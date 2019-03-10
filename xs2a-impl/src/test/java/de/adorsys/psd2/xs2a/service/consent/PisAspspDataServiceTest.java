@@ -31,53 +31,53 @@ public class PisAspspDataServiceTest {
 
     @Test
     public void getAspspConsentData_success() {
-        //given
+        //Given
         when(aspspDataService.readAspspConsentData(PAYMENT_ID))
             .thenReturn(Optional.of(ASPSP_CONSENT_DATA));
 
-        //when
+        //When
         AspspConsentData actualResponse = pisAspspDataService.getAspspConsentData(PAYMENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(ASPSP_CONSENT_DATA);
     }
 
     @Test
     public void getAspspConsentData_with_nullAspspConsentData() {
-        //given
+        //Given
         when(aspspDataService.readAspspConsentData(PAYMENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         AspspConsentData actualResponse = pisAspspDataService.getAspspConsentData(PAYMENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(ASPSP_CONSENT_DATA_NULL);
     }
 
     @Test
     public void getInternalPaymentIdByEncryptedString_success() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.getDecryptedId(ENCRYPTED_ID))
             .thenReturn(Optional.of(PAYMENT_ID));
 
-        //when
+        //When
         String actualResponse = pisAspspDataService.getInternalPaymentIdByEncryptedString(ENCRYPTED_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(PAYMENT_ID);
     }
 
     @Test
     public void getInternalPaymentIdByEncryptedString_failed() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.getDecryptedId(ENCRYPTED_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         String actualResponse = pisAspspDataService.getInternalPaymentIdByEncryptedString(ENCRYPTED_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 }

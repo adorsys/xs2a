@@ -28,27 +28,27 @@ public class PisPsuDataServiceTest {
 
     @Test
     public void getPsuDataByPaymentId_success() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(PAYMENT_ID))
             .thenReturn(Optional.of(LIST_PSU_DATA));
 
-        //when
+        //When
         List<PsuIdData> actualResponse = pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(LIST_PSU_DATA);
     }
 
     @Test
     public void getPsuDataByPaymentId_failed() {
-        //given
+        //Given
         when(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(PAYMENT_ID))
             .thenReturn(Optional.empty());
 
-        //when
+        //When
         List<PsuIdData> actualResponse = pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID);
 
-        //then
+        //Then
         assertThat(actualResponse).isNull();
     }
 

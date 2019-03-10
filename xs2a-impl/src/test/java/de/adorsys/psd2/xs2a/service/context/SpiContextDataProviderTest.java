@@ -24,7 +24,7 @@ public class SpiContextDataProviderTest {
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData(null);
-    private static final SpiContextData SPI_CONTEXT_DATA_WITH_SPI_PSU_DATA = getSpiContextData(SPI_PSU_DATA);
+    private static final SpiContextData SPI_CONTEXT_DATA_WITH_PSU_DATA = getSpiContextData(SPI_PSU_DATA);
 
     @InjectMocks
     private SpiContextDataProvider spiContextDataProvider;
@@ -36,30 +36,30 @@ public class SpiContextDataProviderTest {
 
     @Test
     public void provideWithPsuIdData() {
-        //given
+        //Given
         when(tppService.getTppInfo())
             .thenReturn(TPP_INFO);
 
-        //when
+        //When
         SpiContextData actualResponse = spiContextDataProvider.provideWithPsuIdData(PSU_DATA);
 
-        //then
+        //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(SPI_CONTEXT_DATA);
     }
 
     @Test
     public void provide() {
-        //given
+        //Given
         when(psuDataMapper.mapToSpiPsuData(PSU_DATA))
             .thenReturn(SPI_PSU_DATA);
 
-        //when
+        //When
         SpiContextData actualResponse = spiContextDataProvider.provide(PSU_DATA, TPP_INFO);
 
-        //then
+        //Then
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse).isEqualTo(SPI_CONTEXT_DATA_WITH_SPI_PSU_DATA);
+        assertThat(actualResponse).isEqualTo(SPI_CONTEXT_DATA_WITH_PSU_DATA);
     }
 
     private static TppInfo buildTppInfo() {

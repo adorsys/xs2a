@@ -18,10 +18,10 @@ public class RedirectScaPaymentServiceTest {
 
     @Test
     public void getScaApproachServiceType() {
-        //when
+        //When
         ScaApproach actualResponse = redirectScaPaymentService.getScaApproachServiceType();
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(SCA_APPROACH);
     }
 }

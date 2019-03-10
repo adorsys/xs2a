@@ -18,10 +18,10 @@ public class DecoupledScaPaymentServiceTest {
 
     @Test
     public void getScaApproachServiceType() {
-        //when
+        //When
         ScaApproach actualResponse = decoupledScaPaymentService.getScaApproachServiceType();
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(SCA_APPROACH);
     }
 }

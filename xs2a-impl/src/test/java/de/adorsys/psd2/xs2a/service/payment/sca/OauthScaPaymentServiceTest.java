@@ -36,34 +36,34 @@ public class OauthScaPaymentServiceTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void createSinglePayment() {
-        //when
+        //When
         SinglePaymentInitiationResponse actualResponse = oauthScaPaymentService.createSinglePayment(SINGLE_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void createPeriodicPayment() {
-        //when
+        //When
         PeriodicPaymentInitiationResponse actualResponse = oauthScaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void createBulkPayment() {
-        //when
+        //When
         BulkPaymentInitiationResponse actualResponse = oauthScaPaymentService.createBulkPayment(BULK_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void createCommonPayment() {
-        //when
+        //When
         CommonPaymentInitiationResponse actualResponse = oauthScaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA);
     }
 
     @Test
     public void getScaApproachServiceType() {
-        //when
+        //When
         ScaApproach actualResponse = oauthScaPaymentService.getScaApproachServiceType();
 
-        //then
+        //Then
         assertThat(actualResponse).isEqualTo(SCA_APPROACH);
     }
 
