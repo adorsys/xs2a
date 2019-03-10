@@ -22,10 +22,13 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentInfoMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
@@ -33,6 +36,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,12 +54,12 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ReadCommonPaymentServiceTest {
     private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null);
-    private final TppInfo TPP_INFO = buildTppInfo();
+    private static final TppInfo TPP_INFO = buildTppInfo();
     private static final String PRODUCT = "sepa-credit-transfers";
-    private final CommonPayment COMMON_PAYMENT = buildCommonPayment();
-    private final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
-    private final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
-    private final PisPaymentInfo PIS_PAYMENT_INFO = getPisPaymentInfo();
+    private static final CommonPayment COMMON_PAYMENT = buildCommonPayment();
+    private static final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
+    private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
+    private static final PisPaymentInfo PIS_PAYMENT_INFO = getPisPaymentInfo();
     private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "some consent id");
 
     @InjectMocks
@@ -92,10 +96,33 @@ public class ReadCommonPaymentServiceTest {
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();
-
     }
 
-    private CommonPayment buildCommonPayment() {
+    @Test
+    public void getPayment_failed() {
+        //Given
+        ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
+            .messages(Collections.singletonList("Payment not found"))
+            .build();
+        SpiResponse<SpiPaymentInfo> failSpiResponse = SpiResponse.<SpiPaymentInfo>builder()
+            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
+            .fail(SpiResponseStatus.LOGICAL_FAILURE);
+
+        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, SOME_ASPSP_CONSENT_DATA)).thenReturn(failSpiResponse);
+        when(spiErrorMapper.mapToErrorHolder(failSpiResponse, ServiceType.PIS))
+            .thenReturn(expectedError);
+
+        //When
+        PaymentInformationResponse<PisPaymentInfo> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
+
+        //Then
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getPayment()).isNull();
+        assertThat(actualResponse.getErrorHolder()).isNotNull();
+        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+    }
+
+    private static CommonPayment buildCommonPayment() {
         CommonPayment request = new CommonPayment();
         request.setPaymentType(PaymentType.SINGLE);
         request.setPaymentProduct("sepa-credit-transfers");
@@ -105,7 +132,7 @@ public class ReadCommonPaymentServiceTest {
         return request;
     }
 
-    private TppInfo buildTppInfo() {
+    private static TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("registrationNumber");
         tppInfo.setTppName("tppName");
@@ -114,14 +141,14 @@ public class ReadCommonPaymentServiceTest {
         return tppInfo;
     }
 
-    private SpiContextData getSpiContextData() {
+    private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("", "", "", ""),
             new TppInfo()
             );
     }
 
-    private PisPaymentInfo getPisPaymentInfo() {
+    private static PisPaymentInfo getPisPaymentInfo() {
         return new PisPaymentInfo();
     }
 }
