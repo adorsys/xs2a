@@ -72,14 +72,17 @@ public abstract class AbstractLinkAspect<T> {
             log.error("invalid base url", e);
         }
 
-        UriComponentsBuilder uriComponentsBuilder = fromHttpUrl(linkTo(getControllerClass()).toString()).path(path);
+        UriComponentsBuilder uriComponentsBuilder = fromHttpUrl(linkTo(getControllerClass()).toString());
 
         Optional.ofNullable(baseUrl)
             .ifPresent(url -> {
                 uriComponentsBuilder.scheme(url.getProtocol());
                 uriComponentsBuilder.host(url.getHost());
                 uriComponentsBuilder.port(url.getPort());
+                uriComponentsBuilder.path(url.getPath());
             });
+
+        uriComponentsBuilder.path(path);
 
         return uriComponentsBuilder.buildAndExpand(params).toUriString();
     }
