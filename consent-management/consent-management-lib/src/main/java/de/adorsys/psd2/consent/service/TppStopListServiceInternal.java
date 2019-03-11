@@ -43,7 +43,7 @@ public class TppStopListServiceInternal implements TppStopListService {
         return stopListEntityOptional
                    .map(TppStopListEntity::isBlocked)
                    .orElseGet(() -> {
-                       log.info("Authorisation Number: [{}], Authority ID: [{}]. Check if TPP blocked failed, because Tpp stop list entity is not found by authorisation number and authority Id",
+                       log.info("TPP ID: [{}], Authority ID: [{}]. Check if TPP blocked failed, because Tpp stop list entity is not found by authorisation number and authority Id",
                                 tppUniqueParams.getAuthorisationNumber(), tppUniqueParams.getAuthorityId());
                        return false;
                    });
