@@ -18,5 +18,5 @@ package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
 public enum SpiAuthorisationStatus {
     SUCCESS,
-    FAILURE;
+    FAILURE
 }

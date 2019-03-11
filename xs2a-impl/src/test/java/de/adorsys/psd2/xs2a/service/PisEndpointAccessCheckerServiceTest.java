@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -42,48 +44,72 @@ public class PisEndpointAccessCheckerServiceTest {
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
     @Test
-    public void isEndpointAccessible_ShouldAccessible_EmptyResponse_True() {
+    public void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible_EmptyResponse_True() {
         //When
         when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(anyString()))
             .thenReturn(Optional.empty());
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString());
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.INITIATION);
 
         //Then
         assertTrue(endpointAccessible);
     }
 
     @Test
-    public void isEndpointAccessible_ShouldAccessible__Redirect_False() {
+    public void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible_EmptyResponse_True() {
+        //When
+        when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
+            .thenReturn(Optional.empty());
+
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLATION);
+
+        //Then
+        assertTrue(endpointAccessible);
+    }
+
+    @Test
+    public void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible__Redirect_False() {
         //When
         when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.REDIRECT));
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString());
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.INITIATION);
 
         //Then
         assertFalse(endpointAccessible);
     }
 
     @Test
-    public void isEndpointAccessible_ShouldAccessible_Decoupled_True() {
+    public void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible__Redirect_False() {
+        //When
+        when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
+            .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.REDIRECT));
+
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLATION);
+
+        //Then
+        assertFalse(endpointAccessible);
+    }
+
+    @Test
+    public void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible_Decoupled_True() {
         //When
         when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.DECOUPLED));
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString());
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.INITIATION);
 
         //Then
         assertTrue(endpointAccessible);
     }
 
     @Test
-    public void isEndpointAccessible_ShouldAccessible_Decoupled_ScaMethodSelected_False() {
+    public void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible_Decoupled_ScaMethodSelected_False() {
         //When
-        when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(anyString()))
+        when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.DECOUPLED, ScaStatus.SCAMETHODSELECTED));
 
-        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString());
+        boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(anyString(), PaymentAuthorisationType.CANCELLATION);
 
         //Then
         assertFalse(endpointAccessible);

@@ -39,6 +39,7 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentStatusAfterSpiService;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -63,7 +64,7 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
     private final Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
     private final PisPsuDataService pisPsuDataService;
     private final PisCommonDecoupledService pisCommonDecoupledService;
-    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final ScaApproachResolver scaApproachResolver;
     private final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
@@ -71,14 +72,14 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
-    public PisCancellationScaStartAuthorisationStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, PaymentCancellationSpi paymentCancellationSpi, PisAspspDataService pisAspspDataService, Xs2aPisCommonPaymentService xs2aPisCommonPaymentService, PisPsuDataService pisPsuDataService, PisCommonDecoupledService pisCommonDecoupledService, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted1, SpiContextDataProvider spiContextDataProvider, ScaApproachResolver scaApproachResolver, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
+    public PisCancellationScaStartAuthorisationStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, PaymentCancellationSpi paymentCancellationSpi, PisAspspDataService pisAspspDataService, Xs2aPisCommonPaymentService xs2aPisCommonPaymentService, PisPsuDataService pisPsuDataService, PisCommonDecoupledService pisCommonDecoupledService, Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService, SpiContextDataProvider spiContextDataProvider, ScaApproachResolver scaApproachResolver, SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper, SpiErrorMapper spiErrorMapper) {
         super(cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, pisCommonPaymentServiceEncrypted, applicationContext, xs2aToSpiPsuDataMapper);
         this.paymentCancellationSpi = paymentCancellationSpi;
         this.pisAspspDataService = pisAspspDataService;
         this.xs2aPisCommonPaymentService = xs2aPisCommonPaymentService;
         this.pisPsuDataService = pisPsuDataService;
         this.pisCommonDecoupledService = pisCommonDecoupledService;
-        this.pisCommonPaymentServiceEncrypted = pisCommonPaymentServiceEncrypted1;
+        this.updatePaymentStatusAfterSpiService = updatePaymentStatusAfterSpiService;
         this.spiContextDataProvider = spiContextDataProvider;
         this.scaApproachResolver = scaApproachResolver;
         this.spiToXs2aAuthenticationObjectMapper = spiToXs2aAuthenticationObjectMapper;
@@ -109,9 +110,7 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder);
         }
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUIDENTIFIED);
-        response.setPsuId(request.getPsuData().getPsuId());
-        return response;
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUIDENTIFIED);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse applyAuthorisation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, GetPisAuthorisationResponse pisAuthorisationResponse) {
@@ -151,11 +150,9 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
                 return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(executePaymentResponse, ServiceType.PIS));
             }
 
-            pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(request.getPaymentId(), TransactionStatus.RJCT);
+            updatePaymentStatusAfterSpiService.updatePaymentStatus(request.getPaymentId(), TransactionStatus.CANC);
 
-            Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
-            response.setPsuId(spiPsuData.getPsuId());
-            return response;
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
 
         } else if (isSingleScaMethod(spiScaMethods)) {
             xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
@@ -167,19 +164,18 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
                 return pisCommonDecoupledService.proceedDecoupledCancellation(request, payment, chosenMethod.getAuthenticationMethodId());
             }
 
-            return proceedSingleScaEmbeddedApproach(payment, chosenMethod, spiPsuData, spiContextData, aspspConsentData);
+            return proceedSingleScaEmbeddedApproach(payment, chosenMethod, spiContextData, aspspConsentData);
 
         } else if (isMultipleScaMethods(spiScaMethods)) {
             xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
             Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUAUTHENTICATED);
-            response.setPsuId(psuData.getPsuId());
             response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
             return response;
         }
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FAILED);
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiPsuData psuData, SpiContextData contextData, AspspConsentData aspspConsentData) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiContextData contextData, AspspConsentData aspspConsentData) {
         SpiResponse<SpiAuthorizationCodeResult> authCodeResponse = paymentCancellationSpi.requestAuthorisationCode(contextData, chosenMethod.getAuthenticationMethodId(), payment, aspspConsentData);
         pisAspspDataService.updateAspspConsentData(authCodeResponse.getAspspConsentData());
 
@@ -190,7 +186,6 @@ public class PisCancellationScaStartAuthorisationStage extends PisScaStage<Xs2aU
         ChallengeData challengeData = mapToChallengeData(authCodeResponse.getPayload());
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED);
-        response.setPsuId(psuData.getPsuId());
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(chosenMethod));
         response.setChallengeData(challengeData);
         return response;

@@ -14,36 +14,30 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.consent;
-
+package de.adorsys.psd2.xs2a.core.ais;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "AccountAccess type", value = "AisAccountAccessType")
-public enum Xs2aAccountAccessType {
+public enum AccountAccessType {
     ALL_ACCOUNTS("allAccounts"),
     ALL_ACCOUNTS_WITH_BALANCES("allAccountsWithBalances");
 
-    private static Map<String, Xs2aAccountAccessType> container = new HashMap<>();
+    private static Map<String, AccountAccessType> container = new HashMap<>();
 
     static {
         Arrays.stream(values())
             .forEach(aat -> container.put(aat.getDescription(), aat));
     }
 
-    @ApiModelProperty(value = "description", example = "allAccounts")
     private String description;
 
-    @JsonCreator
-    Xs2aAccountAccessType(String description) {
+    AccountAccessType(String description) {
         this.description = description;
     }
 
@@ -52,7 +46,8 @@ public enum Xs2aAccountAccessType {
         return description;
     }
 
-    public static Optional<Xs2aAccountAccessType> getByDescription(String description) {
+    @JsonCreator
+    public static Optional<AccountAccessType> getByDescription(String description) {
         return Optional.ofNullable(container.get(description));
     }
 }

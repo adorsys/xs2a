@@ -49,6 +49,13 @@ public class AspspAccountAccessHolder extends AccountAccessHolder<AspspAccountAc
 
     /**
      * According to specification if user gives access to TRANSACTION or BALANCE the access to accounts is granted automatically
+     *
+     * @param aspspAccountId       Bank specific account ID
+     * @param accountIdentifier    Account-Identifier
+     * @param resourceId           This identification is denoting the addressed account
+     * @param currency             ISO 4217 currency code
+     * @param accountReferenceType Type of the account reference
+     * @param typeAccess           Type access
      */
     private void addAccountAccess(String aspspAccountId, String accountIdentifier, String resourceId, Currency currency, AccountReferenceType accountReferenceType, TypeAccess typeAccess) {
         accountAccesses.add(new AspspAccountAccess(accountIdentifier, typeAccess, accountReferenceType, currency, resourceId, aspspAccountId));

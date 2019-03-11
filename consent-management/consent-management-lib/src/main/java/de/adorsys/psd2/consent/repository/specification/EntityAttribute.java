@@ -21,6 +21,7 @@ public class EntityAttribute {
     public static final String AUTHORISATION_EXTERNAL_ID_ATTRIBUTE = "externalId";
     public static final String CONSENT_EXTERNAL_ID_ATTRIBUTE = "externalId";
     public static final String PSU_DATA_ATTRIBUTE = "psuData";
+    public static final String PSU_DATA_LIST_ATTRIBUTE = "psuDataList";
     public static final String CONSENT_ID_ATTRIBUTE = "consentId";
     public static final String PAYMENT_ID_ATTRIBUTE = "paymentId";
     public static final String TIMESTAMP_ID_ATTRIBUTE = "timestamp";

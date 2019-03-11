@@ -118,7 +118,6 @@ public class AisDecoupledScaStartAuthorisationStage extends AisScaStage<UpdateCo
             aisConsentService.updateConsentStatus(updateConsentPsuDataReq.getConsentId(), ConsentStatus.VALID);
 
             UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-            response.setPsuId(psuData.getPsuId());
             response.setScaAuthenticationData(updateConsentPsuDataReq.getScaAuthenticationData());
             response.setScaStatus(ScaStatus.FINALISED);
             return response;
@@ -134,7 +133,6 @@ public class AisDecoupledScaStartAuthorisationStage extends AisScaStage<UpdateCo
         }
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setPsuId(request.getPsuData().getPsuId());
         response.setScaStatus(ScaStatus.PSUIDENTIFIED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
 

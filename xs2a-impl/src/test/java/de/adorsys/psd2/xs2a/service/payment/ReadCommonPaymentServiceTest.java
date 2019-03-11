@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -144,7 +145,8 @@ public class ReadCommonPaymentServiceTest {
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("", "", "", ""),
-            new TppInfo()
+            new TppInfo(),
+            UUID.randomUUID()
             );
     }
 

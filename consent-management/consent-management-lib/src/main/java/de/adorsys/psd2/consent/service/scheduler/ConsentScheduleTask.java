@@ -58,7 +58,6 @@ public class ConsentScheduleTask {
     }
 
     private AisConsent updateConsentParameters(AisConsent consent) {
-        consent.setUsageCounter(consent.getAllowedFrequencyPerDay());
         consent.setConsentStatus(updateConsentStatus(consent));
         return consent;
     }

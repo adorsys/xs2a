@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public abstract class AbstractSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     protected final CorsConfigProperties corsConfigProperties;
-    protected final String[] ALLOW_PATH = {"/swagger-ui.html**", "/o2c.html", "index.html", "/","/api-docs/**", "/v2/api-docs/**",
-        "/info", "/error", "/*.js", "/*.css", "/*.ico", "/*.json", "/webjars/**", "/lib/*", "/swagger-resources/**", "/swagger/**", "/auth/**",
-        "/sso/**", "/img/*.png"};
+    @SuppressWarnings("WeakerAccess") // package private is not working for spring configuration here because of proxy creation
+    protected static final String[] ALLOW_PATH = {"/swagger-ui.html**", "/o2c.html", "index.html", "/", "/api-docs/**", "/v2/api-docs/**",
+                                               "/info", "/error", "/*.js", "/*.css", "/*.ico", "/*.json", "/webjars/**", "/lib/*", "/swagger-resources/**", "/swagger/**", "/auth/**",
+                                               "/sso/**", "/img/*.png"};
 
 
     @Autowired
