@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "ACCESS_EXCEEDED",
+      "text": "The access on the account has been exceeding the consented multiplicity per day"
+    }
+  ]
+}

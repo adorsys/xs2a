@@ -20,6 +20,7 @@ package de.adorsys.psd2.xs2a.integration;
 import de.adorsys.aspsp.xs2a.spi.ASPSPXs2aApplication;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
@@ -27,6 +28,7 @@ import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
@@ -55,6 +57,7 @@ import java.util.Optional;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -75,6 +78,7 @@ public class PaymentControllerTest {
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
+    private static final String CANCELLATION_ID = "cancellationId";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
@@ -107,6 +111,12 @@ public class PaymentControllerTest {
         given(eventServiceEncrypted.recordEvent(any(Event.class)))
             .willReturn(true);
 
+        given(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(any()))
+            .willReturn(Optional.of(Collections.singletonList(getPsuIdData())));
+
+        given(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(any(), any()))
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(CANCELLATION_ID)));
+
         httpHeadersExplicit.add("Content-Type", "application/json");
         httpHeadersExplicit.add("tpp-qwac-certificate", "qwac certificate");
         httpHeadersExplicit.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
@@ -137,5 +147,29 @@ public class PaymentControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json("{\"scaStatus\":\"received\"}"));
     }
+
+    @Test
+    public void cancelPaymentAuthorisation_successful() throws Exception {
+
+        // Given
+        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .willReturn(Optional.of(ScaStatus.RECEIVED));
+        MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildGetPaymentCancellationAuthorisationUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID));
+        requestBuilder.headers(httpHeadersExplicit);
+
+        // When
+        ResultActions resultActions = mockMvc.perform(requestBuilder);
+
+        //Then
+        resultActions.andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json("{\"scaStatus\":\"started\"}"))
+            .andExpect(content().json("{\"_links\":{\"scaStatus\":\"http://localhost/v1/payments/" + SEPA_PAYMENT_PRODUCT + "/" + ENCRYPT_PAYMENT_ID + "/cancellation-authorisations/" + CANCELLATION_ID + "\"}}"));
+    }
+
+    private PsuIdData getPsuIdData() {
+        return new PsuIdData("PSU-123", "Some type", "Some corporate id", "Some corporate id type");
+    }
+
 }
 

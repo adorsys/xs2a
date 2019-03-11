@@ -37,7 +37,8 @@ public enum ConsentStatus {
     REVOKED_BY_PSU("revokedByPsu", true),
     EXPIRED("expired", true),
     TERMINATED_BY_TPP("terminatedByTpp", true),
-    TERMINATED_BY_ASPSP("terminatedByAspsp", true);
+    TERMINATED_BY_ASPSP("terminatedByAspsp", true),
+    PARTIALLY_AUTHORISED("partiallyAuthorised", false);
 
     private static final Map<String, ConsentStatus> CONTAINER = new HashMap<>();
 

@@ -18,11 +18,13 @@ package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
+import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CmsPsuPisService {
@@ -39,9 +41,9 @@ public interface CmsPsuPisService {
     /**
      * Returns Payment object by its ID
      *
-     * @param psuIdData     PSU credentials data
-     * @param paymentId     ID of Payment
-     * @param instanceId    optional ID of particular service instance
+     * @param psuIdData  PSU credentials data
+     * @param paymentId  ID of Payment
+     * @param instanceId optional ID of particular service instance
      * @return Payment object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
@@ -68,7 +70,7 @@ public interface CmsPsuPisService {
     Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull String redirectId, @NotNull String instanceId);
 
     /**
-     * Updates a Status of Payment's autorisation by its ID and PSU ID
+     * Updates a Status of Payment's authorisation by its ID and PSU ID
      *
      * @param psuIdData       PSU credentials data
      * @param paymentId       ID of Payment
@@ -82,10 +84,19 @@ public interface CmsPsuPisService {
     /**
      * Updates a Status of Payment object by its ID and PSU ID
      *
-     * @param paymentId     ID of Payment
-     * @param status        Status of Payment to be set
-     * @param instanceId    optional ID of particular service instance
+     * @param paymentId  ID of Payment
+     * @param status     Status of Payment to be set
+     * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
      */
     boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status, @NotNull String instanceId);
+
+    /**
+     * Returns list of info objects about psu data and authorisation scaStatuses
+     *
+     * @param paymentId  ID of Payment
+     * @param instanceId optional ID of particular service instance
+     * @return list of info objects about psu data and authorisation scaStatuses
+     */
+    Optional<List<CmsPisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String paymentId, @NotNull String instanceId);
 }

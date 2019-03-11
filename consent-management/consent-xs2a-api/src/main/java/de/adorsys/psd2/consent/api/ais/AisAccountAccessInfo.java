@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.api.ais;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -39,8 +40,8 @@ public class AisAccountAccessInfo {
     private List<AccountInfo> transactions;
 
     @ApiModelProperty(value = "Consent on all available accounts of psu", example = "ALL_ACCOUNTS")
-    private AisAccountAccessType availableAccounts;
+    private AccountAccessType availableAccounts;
 
     @ApiModelProperty(value = "Consent on all accounts, balances and transactions of psu", example = "ALL_ACCOUNTS")
-    private AisAccountAccessType allPsd2;
+    private AccountAccessType allPsd2;
 }

@@ -37,6 +37,14 @@ public class EventMapper {
                    .collect(Collectors.toList());
     }
 
+    /**
+     * Maps properties from Event object into the EventEntity object.
+     *
+     * Pay attention that this mapper ignores instance id property of the event.
+     *
+     * @param event event object
+     * @return event entity
+     */
     public EventEntity mapToEventEntity(@NotNull Event event) {
         EventEntity eventEntity = new EventEntity();
         eventEntity.setTimestamp(event.getTimestamp());

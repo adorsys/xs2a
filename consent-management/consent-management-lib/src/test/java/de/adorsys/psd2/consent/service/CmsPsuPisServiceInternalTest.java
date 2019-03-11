@@ -456,7 +456,7 @@ public class CmsPsuPisServiceInternalTest {
     private PisCommonPaymentData buildPisCommonPaymentData() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
-        pisCommonPaymentData.setPsuData(Collections.singletonList(buildPsuData()));
+        pisCommonPaymentData.setPsuDataList(Collections.singletonList(buildPsuData()));
         pisCommonPaymentData.setPaymentType(PaymentType.SINGLE);
         pisCommonPaymentData.setPaymentProduct(PAYMENT_PRODUCT);
         pisCommonPaymentData.setPayments(buildPisPaymentDataListForCommonData());
@@ -469,7 +469,7 @@ public class CmsPsuPisServiceInternalTest {
     private PisCommonPaymentData buildFinalisedPisCommonPaymentData() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
-        pisCommonPaymentData.setPsuData(Collections.singletonList(buildPsuData()));
+        pisCommonPaymentData.setPsuDataList(Collections.singletonList(buildPsuData()));
         pisCommonPaymentData.setPaymentType(PaymentType.SINGLE);
         pisCommonPaymentData.setPaymentProduct(PAYMENT_PRODUCT);
         pisCommonPaymentData.setPayments(buildPisPaymentDataListForCommonData());

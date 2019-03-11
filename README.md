@@ -23,7 +23,7 @@ regulated by PSD2.
 [adorsys](https://adorsys.de/en/index.html) is a company who works ever since the very beginning of PSD2 with its requirements and implicit tasks.
 We help banks to be PSD2 complaint (technical and legal terms). To speed up the process we provide this open source XS2A interface, specified by Berlin Group,
 that can be connected to your middleware system.
-You can check your readiness for PSD2 Compliance and other information via [our Web-site](https://adorsys.de/en/psd2.html).
+You can check your readiness for PSD2 Compliance and other information via [our Web-site](https://adorsys.de/en/psd2).
 
 ## Features of adorsys/XS2A
 
@@ -52,8 +52,11 @@ All mandatory API endpoints defined in Berlin Group specification are implemente
 
 [These instructions](doc/GETTING_STARTED.md) will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
-### Brief architecture documentation
-Available in [the documentation](doc/architecture/README.md)
+## Built With
+
+* [Java, version 1.8](http://java.oracle.com) - The main language of implementation
+* [Maven, version 3.0](https://maven.apache.org/) - Dependency Management
+* [Spring Boot](https://projects.spring.io/spring-boot/) - Spring boot as core Java framework
 
 ## Deployment
 
@@ -62,19 +65,19 @@ configured through your environment (documentation follows) to interact properly
 
 More details see in [instruction](doc/deployment.md)
 
-## Built With
-
-* [Java, version 1.8](http://java.oracle.com) - The main language of implementation
-* [Maven, version 3.0](https://maven.apache.org/) - Dependency Management
-* [Spring Boot](https://projects.spring.io/spring-boot/) - Spring boot as core Java framework
+### Brief architecture documentation
+Available in [the documentation](doc/architecture/README.md)
 
 ## Development and contributing
 
 Please read [CONTRIBUTING](doc/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Release notes
-  
-  * [Release notes](doc/releasenotes.md) 
+## Releases and versions
+
+* [Versioning, Release and Support policy](doc/Version_Policy.md)
+ 
+* [Release notes](doc/releasenotes.md) 
+* [Roadmap for next features development](doc/roadmap.md)
  
 ### Testing API with Postman json collections
  
@@ -88,15 +91,15 @@ Please read [CONTRIBUTING](doc/CONTRIBUTING.md) for details on our code of condu
  
  To start testing with Postman collections it is necessary to have all services running.
  
-## Roadmap
  
- * [Roadmap](doc/roadmap.md) - The up-to-date project's roadmap
 
-## Authors
+## Authors & Contact
 
 * **[Francis Pouatcha](mailto:fpo@adorsys.de)** - *Initial work* - [adorsys](https://www.adorsys.de)
 
 See also the list of [contributors](doc/contributors.md) who participated in this project.
+
+For commercial support please contact **[adorsys Team](https://adorsys.de/en/psd2)**.
 
 ## License
 

@@ -83,7 +83,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId) {
         String link = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorizationId);
         links.setScaRedirect(link);
-        links.setScaStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
+        links.setScaStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/cancellation-authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
 
         return links;
     }

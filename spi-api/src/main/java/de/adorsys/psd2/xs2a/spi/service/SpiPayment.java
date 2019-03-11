@@ -27,4 +27,6 @@ public interface SpiPayment {
     String getPaymentProduct();
 
     TransactionStatus getPaymentStatus();
+
+    void setPaymentStatus(TransactionStatus paymentStatus);
 }
