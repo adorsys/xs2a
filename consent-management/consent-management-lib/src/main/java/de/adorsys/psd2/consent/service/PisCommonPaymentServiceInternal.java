@@ -385,7 +385,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     /**
      * Creates PIS consent authorisation entity and stores it into database
      *
-     * @param paymentData PIS payment data, for which authorisation is performed
+     * @param paymentData   PIS payment data, for which authorisation is performed
+     * @param request       needed parameters for creating PIS authorisation
      * @return PisAuthorization
      */
     private PisAuthorization saveNewAuthorisation(PisCommonPaymentData paymentData, CreatePisAuthorisationRequest request) {

@@ -33,6 +33,7 @@ public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
      * Checks whether endpoint is accessible for current authorisation
      *
      * @param authorisationId ID of authorisation process
+     * @param authorisationType payment initiation or cancellation
      * @return <code>true</code> if accessible. <code>false</code> otherwise.
      */
     public boolean isEndpointAccessible(String authorisationId, PaymentAuthorisationType authorisationType) {

@@ -87,9 +87,10 @@ public class PSD2QCStatement {
             .orElseThrow(() -> new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString()));
     }
 
-    /** Iterate the list of qcStatements and try to find teh EtsiPsd2 statenent
+    /**
+     * Iterate the list of qcStatements and try to find the EtsiPsd2 statement
      *
-     * @param qcStatements
+     * @param qcStatements input parameter to get the EtsiPsd2
      * @return Etsi Pds2 Statement or Optional.empty if not found
      */
     private static Optional<QCStatement> getEtsiPsd2QcStatement(ASN1Sequence qcStatements) {
@@ -106,12 +107,13 @@ public class PSD2QCStatement {
         return Optional.of(QCStatement.getInstance(filteredIterator.next()));
     }
 
-    /** This is a fallback for the cases where a single qcStatement with PSD2 items is added without wrapping it
+    /**
+     * This is a fallback for the cases where a single qcStatement with PSD2 items is added without wrapping it
      * in a SEQUENCE.
      *
-     * @param qcStatements
+     * @param qcStatements input parameter to get a single QC statement.
      * @return QCStatement
-     * @throws CertificateValidationException
+     * @throws CertificateValidationException in case of wrong statement type in psd2 certificate
      */
     private static QCStatement getSingleQcStatement(ASN1Sequence qcStatements) throws CertificateValidationException {
         // We have a single entity with oid and value direct
