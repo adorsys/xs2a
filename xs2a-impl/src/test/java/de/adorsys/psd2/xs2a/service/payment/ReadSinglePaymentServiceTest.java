@@ -8,6 +8,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -29,6 +30,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ReadSinglePaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
+    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
@@ -60,6 +63,8 @@ public class ReadSinglePaymentServiceTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private SpiPaymentFactory spiPaymentFactory;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void init() {
@@ -98,15 +103,16 @@ public class ReadSinglePaymentServiceTest {
 
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), SINGLE_PAYMENT.getTransactionStatus()))
             .thenReturn(false);
+        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
         //When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
         //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getPayment()).isNull();
-        assertThat(actualResponse.getErrorHolder()).isNotNull();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.hasError()).isFalse();
+        assertThat(actualResponse.getPayment()).isNotNull();
+        assertThat(actualResponse.getPayment()).isEqualTo(SINGLE_PAYMENT);
+        assertThat(actualResponse.getErrorHolder()).isNull();
     }
 
     @Test
@@ -155,7 +161,8 @@ public class ReadSinglePaymentServiceTest {
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
-            new TppInfo()
+            new TppInfo(),
+            X_REQUEST_ID
         );
     }
 

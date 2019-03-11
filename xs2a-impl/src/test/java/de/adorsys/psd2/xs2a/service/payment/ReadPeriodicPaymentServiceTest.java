@@ -8,6 +8,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -29,6 +30,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ReadPeriodicPaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
+    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
@@ -60,6 +63,8 @@ public class ReadPeriodicPaymentServiceTest {
     private SpiPaymentFactory spiPaymentFactory;
     @Mock
     private SpiErrorMapper spiErrorMapper;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void init() {
@@ -101,15 +106,16 @@ public class ReadPeriodicPaymentServiceTest {
 
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), PERIODIC_PAYMENT.getTransactionStatus()))
             .thenReturn(false);
+        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
         //When
         PaymentInformationResponse<PeriodicPayment> actualResponse = readPeriodicPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
         //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getPayment()).isNull();
-        assertThat(actualResponse.getErrorHolder()).isNotNull();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.hasError()).isFalse();
+        assertThat(actualResponse.getPayment()).isNotNull();
+        assertThat(actualResponse.getPayment()).isEqualTo(PERIODIC_PAYMENT);
+        assertThat(actualResponse.getErrorHolder()).isNull();
     }
 
     @Test
@@ -161,7 +167,8 @@ public class ReadPeriodicPaymentServiceTest {
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
-            new TppInfo()
+            new TppInfo(),
+            X_REQUEST_ID
         );
     }
 

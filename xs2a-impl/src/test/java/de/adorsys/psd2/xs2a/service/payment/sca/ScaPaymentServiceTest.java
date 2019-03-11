@@ -38,6 +38,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +48,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ScaPaymentServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
+    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
@@ -295,7 +297,8 @@ public class ScaPaymentServiceTest {
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
-            new TppInfo()
+            new TppInfo(),
+            X_REQUEST_ID
         );
     }
 

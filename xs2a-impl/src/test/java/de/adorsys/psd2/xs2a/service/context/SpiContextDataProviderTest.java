@@ -3,6 +3,7 @@ package de.adorsys.psd2.xs2a.service.context;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SpiContextDataProviderTest {
     private static final TppInfo TPP_INFO = buildTppInfo();
+    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData(null);
@@ -33,12 +36,17 @@ public class SpiContextDataProviderTest {
     private TppService tppService;
     @Mock
     private Xs2aToSpiPsuDataMapper psuDataMapper;
+    @Mock
+    private RequestProviderService requestProviderService;
+
 
     @Test
     public void provideWithPsuIdData() {
         //Given
         when(tppService.getTppInfo())
             .thenReturn(TPP_INFO);
+        when(requestProviderService.getRequestId())
+            .thenReturn(X_REQUEST_ID);
 
         //When
         SpiContextData actualResponse = spiContextDataProvider.provideWithPsuIdData(PSU_DATA);
@@ -53,6 +61,8 @@ public class SpiContextDataProviderTest {
         //Given
         when(psuDataMapper.mapToSpiPsuData(PSU_DATA))
             .thenReturn(SPI_PSU_DATA);
+        when(requestProviderService.getRequestId())
+            .thenReturn(X_REQUEST_ID);
 
         //When
         SpiContextData actualResponse = spiContextDataProvider.provide(PSU_DATA, TPP_INFO);
@@ -72,7 +82,7 @@ public class SpiContextDataProviderTest {
     }
 
     private static SpiContextData getSpiContextData(SpiPsuData spiPsuData) {
-        SpiContextData spiContextData = new SpiContextData(spiPsuData, TPP_INFO);
+        SpiContextData spiContextData = new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID);
         return spiContextData;
     }
 }

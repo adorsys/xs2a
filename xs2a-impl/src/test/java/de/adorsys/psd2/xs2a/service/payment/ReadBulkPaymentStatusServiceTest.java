@@ -25,6 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ReadBulkPaymentStatusServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
+    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
@@ -110,7 +112,8 @@ public class ReadBulkPaymentStatusServiceTest {
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
-            new TppInfo()
+            new TppInfo(),
+            X_REQUEST_ID
         );
     }
 

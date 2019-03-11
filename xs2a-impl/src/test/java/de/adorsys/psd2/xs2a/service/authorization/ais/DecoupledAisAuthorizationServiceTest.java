@@ -1,6 +1,7 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -201,10 +202,10 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     private static AccountConsent createConsent(String id) {
-        return new AccountConsent(id, createEmptyAccountAccess(), false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL);
+        return new AccountConsent(id, createEmptyAccountAccess(), false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
     }
 
     private static Xs2aAccountAccess createEmptyAccountAccess() {
-        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
+        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
     }
 }

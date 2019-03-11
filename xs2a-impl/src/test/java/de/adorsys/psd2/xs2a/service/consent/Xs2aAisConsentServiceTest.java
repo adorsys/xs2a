@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -45,6 +46,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -52,6 +54,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aAisConsentServiceTest {
     private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
+    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final String NEW_ID = "fhu53g-6811-19ff-4b5a-8188";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -429,10 +432,10 @@ public class Xs2aAisConsentServiceTest {
     }
 
     private static AccountConsent createConsent(String id) {
-        return new AccountConsent(id, createEmptyAccountAccess(), false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL);
+        return new AccountConsent(id, createEmptyAccountAccess(), false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
     }
 
     private static Xs2aAccountAccess createEmptyAccountAccess() {
-        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
+        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
     }
 }
