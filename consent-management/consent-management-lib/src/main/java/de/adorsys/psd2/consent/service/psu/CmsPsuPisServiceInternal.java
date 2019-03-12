@@ -72,7 +72,11 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             );
         return Optional.ofNullable(authorisation)
                    .map(auth -> updatePsuData(auth, psuIdData))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in Payment failed, because authorisation not found",
+                                instanceId, authorisationId);
+                       return false;
+                   });
     }
 
     @Override
@@ -156,7 +160,11 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         boolean isValid = pisAuthorisation
                               .map(auth -> auth.getPaymentData().getPaymentId())
                               .map(id -> validateGivenData(id, paymentId, psuIdData))
-                              .orElse(false);
+                              .orElseGet(() -> {
+                                  log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found",
+                                           authorisationId, instanceId);
+                                  return false;
+                              });
 
         return isValid && updateAuthorisationStatusAndSaveAuthorisation(pisAuthorisation.get(), status);
     }
@@ -169,7 +177,11 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         return paymentDataOptional
                    .filter(p -> p.getTransactionStatus().isNotFinalisedStatus())
                    .map(pd -> commonPaymentDataService.updateStatusInPaymentData(pd, status))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Payment ID [{}], Instance ID: [{}]. Update payment status failed, because PIS common payment data not found",
+                                paymentId, instanceId);
+                       return false;
+                   });
     }
 
     @Override
@@ -208,8 +220,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                 newPsuData = psuDataOptional.get();
                 authorisation.getPaymentData().setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, paymentPsuList));
             }
-
-            log.info("Authorisation ID [{}]. Update PSU in payment failed in updatePsuData method because authorisation contains no psu data.", authorisation.getId());
+            log.info("Authorisation ID [{}]. Update PSU in payment failed in updatePsuData method because authorisation contains no PSU data.", authorisation.getId());
         }
 
         authorisation.setPsuData(newPsuData);
@@ -221,7 +232,10 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         return Optional.of(givenPaymentId)
                    .filter(p -> isPsuDataEquals(p, psuIdData))
                    .map(id -> StringUtils.equals(realPaymentId, id))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Cannot validate given PSU data, because given payment id is null");
+                       return false;
+                   });
     }
 
     private boolean updateAuthorisationStatusAndSaveAuthorisation(PisAuthorization pisAuthorisation, ScaStatus status) {
@@ -239,7 +253,10 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         return pisCommonPaymentService.getPsuDataListByPaymentId(paymentId)
                    .map(lst -> lst.stream()
                                    .anyMatch(psu -> psu.contentEquals(psuIdData)))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Payment ID: [{}]. Cannot equal PSU data with payment id, because PSU data list not found by id", paymentId);
+                       return false;
+                   });
     }
 
     private CmsPaymentResponse buildCmsPaymentResponse(PisAuthorization authorisation) {
