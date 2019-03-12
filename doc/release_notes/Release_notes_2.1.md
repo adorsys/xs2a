@@ -26,3 +26,8 @@ If requested date exceeds the allowed one, the consent will be created with `val
 
 Now these endpoints: `/v1/payment/{payment-id}/authorisation/psus` and `/v1/ais/consent/{consent-id}/authorisation/psus` have enriched
 responses with new field added - `authorisationType`. The value can be `CREATED` or `CANCELLED` by now.
+
+## Payment and consent CMS endpoints return creation datetime in the response
+
+From now CMS `/psu-api/v1/ais/`, `/psu-api/v1/payment/`, `/aspsp-api/v1/ais/` and `/aspsp-api/v1/pis/` endpoints 
+contain payment/consent creation datetime in the response.

@@ -36,10 +36,9 @@ public class CmsPsuPisMapper {
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
 
-    public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
+        public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
         CmsCommonPayment cmsCommonPayment = new CmsCommonPayment(paymentData.getPaymentProduct());
         cmsCommonPayment.setPaymentId(paymentData.getPaymentId());
-        cmsCommonPayment.setPaymentProduct(paymentData.getPaymentProduct());
         cmsCommonPayment.setPaymentType(paymentData.getPaymentType());
         cmsCommonPayment.setTransactionStatus(paymentData.getTransactionStatus());
         cmsCommonPayment.setPaymentData(paymentData.getPayment());
