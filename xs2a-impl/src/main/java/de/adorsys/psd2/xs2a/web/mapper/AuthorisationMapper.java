@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Optional;
@@ -71,17 +72,25 @@ public class AuthorisationMapper {
             log.error("invalid base url", e);
         }
 
-        UriComponentsBuilder uriComponentsBuilder = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(null,
+        URI uri = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(null,
             csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null))
-            .toUriComponentsBuilder();
+            .toUri();
+
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
+        uriComponentsBuilder.scheme(uri.getScheme());
+        uriComponentsBuilder.host(uri.getHost());
+        uriComponentsBuilder.port(uri.getPort());
 
         Optional.ofNullable(baseUrl)
             .ifPresent(url -> {
                 uriComponentsBuilder.scheme(url.getProtocol());
                 uriComponentsBuilder.host(url.getHost());
                 uriComponentsBuilder.port(url.getPort());
+                uriComponentsBuilder.path(url.getPath());
             });
+
+        uriComponentsBuilder.path(uri.getPath());
 
         return uriComponentsBuilder.toUriString();
     }
