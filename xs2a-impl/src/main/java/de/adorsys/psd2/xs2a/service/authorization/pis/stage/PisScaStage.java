@@ -71,11 +71,11 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
         if (CollectionUtils.isEmpty(pisAuthorisationResponse.getPayments())) {
             return mapToSpiPayment(pisAuthorisationResponse.getPaymentInfo());
         } else {
-            return mapToSpiPayment(pisAuthorisationResponse.getPayments(), paymentType, paymentProduct);
+            return mapToSpiPayment(pisAuthorisationResponse.getPayments(), paymentType, paymentProduct, pisAuthorisationResponse.getPaymentId());
         }
     }
 
-    private SpiPayment mapToSpiPayment(List<PisPayment> payments, PaymentType paymentType, String paymentProduct) {
+    private SpiPayment mapToSpiPayment(List<PisPayment> payments, PaymentType paymentType, String paymentProduct, String globalPaymentId) {
         if (PaymentType.SINGLE == paymentType) {
             SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(payments.get(0));
             return xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, paymentProduct);
@@ -85,6 +85,7 @@ public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
             return xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(periodicPayment, paymentProduct);
         } else {
             BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(payments);
+            bulkPayment.setPaymentId(globalPaymentId);
             return xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(bulkPayment, paymentProduct);
         }
     }
