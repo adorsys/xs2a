@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -48,6 +49,8 @@ import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -58,9 +61,11 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import org.junit.Before;
@@ -86,6 +91,7 @@ import static org.mockito.Mockito.*;
 public class ConsentServiceTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
+    private static final String CONSENT_ID_FINALISED = "finalised_consent_id";
     private static final String TPP_ID = "Test TppId";
     private static final String CORRECT_PSU_ID = "123456789";
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
@@ -103,7 +109,7 @@ public class ConsentServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(CORRECT_PSU_ID, null, null, null);
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
-    private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
+    private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
 
     @InjectMocks
     private ConsentService consentService;
@@ -150,6 +156,8 @@ public class ConsentServiceTest {
     private RedirectAisAuthorizationService redirectAisAuthorizationService;
     @Mock
     private AisEndpointAccessCheckerService endpointAccessCheckerService;
+    @Mock
+    private SpiErrorMapper spiErrorMapper;
 
     @Before
     public void setUp() {
@@ -199,8 +207,9 @@ public class ConsentServiceTest {
             .thenReturn(CONSENT_ID);
 
         //GetConsentById
-        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(getAccountConsent(CONSENT_ID, DATE, 0));
+        when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID, DATE, 0)));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(getAccountConsent(CONSENT_ID, DATE, 0));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID_FINALISED)).thenReturn(getAccountConsentFinalised(CONSENT_ID, getXs2aAccountAccess(Collections.singletonList(getXs2aReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
         when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_YESTERDAY)).thenReturn(getAccountConsent(CONSENT_ID_DATE_VALID_YESTERDAY, YESTERDAY, 0));
         when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_TODAY)).thenReturn(getAccountConsent(CONSENT_ID_DATE_VALID_TODAY, LocalDate.now(), 1));
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
@@ -232,6 +241,9 @@ public class ConsentServiceTest {
 
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(ScaApproach.EMBEDDED);
+
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
     }
 
     @Test
@@ -424,6 +436,15 @@ public class ConsentServiceTest {
 
     @Test
     public void getAccountConsentsStatusById_Success() {
+        //Given:
+        SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                                   .success();
+
+        when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(spiResponse);
+
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID);
         //Then:
@@ -431,10 +452,45 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void getAccountConsentsStatusById_status_finalised_Success() {
+        //When:
+        ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID_FINALISED);
+        //Then:
+        assertThat(response.getBody()).isEqualTo(new ConsentStatusResponse(ConsentStatus.REJECTED));
+    }
+
+    @Test
+    public void getAccountConsentsStatusById_spi_response_has_error() {
+        //Given:
+        SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
+                                                                   .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                                   .fail(SpiResponseStatus.LOGICAL_FAILURE);
+
+        when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(spiResponse);
+        when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS))
+            .thenReturn(ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR).errorType(ErrorType.AIS_400).build());
+
+        //When:
+        ResponseObject actualResponse = consentService.getAccountConsentsStatusById(CONSENT_ID);
+        //Then:
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getBody()).isNull();
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+        assertThat(actualResponse.getError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+    }
+
+    @Test
     public void getAccountConsentsStatusById_Success_ShouldRecordEvent() {
         //Given:
-        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+        SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                                   .success();
 
+        ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+        when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(spiResponse);
         //When:
         consentService.getAccountConsentsStatusById(CONSENT_ID);
 
@@ -453,6 +509,17 @@ public class ConsentServiceTest {
 
     @Test
     public void getAccountConsentsById_Success() {
+        //Given:
+        AccountConsent consentExpected = getAccountConsent(CONSENT_ID, DATE, 0);
+        SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                                   .success();
+        when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(spiResponse);
+        when(aisConsentMapper.mapToAccountConsentWithNewStatus(consentExpected, spiResponse.getPayload().getConsentStatus()))
+            .thenReturn(consentExpected);
+
         //When:
         ResponseObject response = consentService.getAccountConsentById(CONSENT_ID);
         AccountConsent consent = (AccountConsent) response.getBody();
@@ -464,6 +531,15 @@ public class ConsentServiceTest {
     public void getAccountConsentsById_Success_ShouldRecordEvent() {
         //Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+        AccountConsent consentExpected = getAccountConsent(CONSENT_ID, DATE, 0);
+        SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                                   .success();
+        when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(spiResponse);
+        when(aisConsentMapper.mapToAccountConsentWithNewStatus(consentExpected, spiResponse.getPayload().getConsentStatus()))
+            .thenReturn(consentExpected);
 
         // When
         consentService.getAccountConsentById(CONSENT_ID);
@@ -475,6 +551,9 @@ public class ConsentServiceTest {
 
     @Test
     public void getAccountConsentsById_Failure() {
+        //Given:
+        when(aisConsentService.getInitialAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
+
         //When:
         ResponseObject response = consentService.getAccountConsentById(WRONG_CONSENT_ID);
         //Than:
@@ -799,6 +878,14 @@ public class ConsentServiceTest {
         Xs2aAccountAccess access = getXs2aAccountAccess(Collections.singletonList(getXs2aReference(CORRECT_IBAN, CURRENCY)), null, null, false, false);
 
         return new AccountConsent(consentId, access, false, validUntil, 4, null, ConsentStatus.VALID, false, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), usageCounter);
+    }
+
+    private AccountConsent getAccountConsentFinalised(String consentId, Xs2aAccountAccess access, boolean withBalance) {
+        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.REJECTED, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
+    }
+
+    private AccountConsent getAccountConsentDateValidYesterday(String consentId, Xs2aAccountAccess access, boolean withBalance) {
+        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {
