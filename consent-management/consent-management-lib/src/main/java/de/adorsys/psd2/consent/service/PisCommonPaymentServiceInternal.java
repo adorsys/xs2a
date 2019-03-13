@@ -86,8 +86,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(commonPaymentData);
 
         if (saved.getId() == null) {
-            log.info("TPP ID: [{}], Payment ID: [{}]. Pis common payment cannot be created, because when saving to DB got null PisCommonPaymentData ID",
-                     request.getTppInfo().getAuthorisationNumber(), request.getPaymentId());
+            log.info("Payment ID: [{}]. Pis common payment cannot be created, because when saving to DB got null PisCommonPaymentData ID",
+                     request.getPaymentId());
             return Optional.empty();
         }
 
