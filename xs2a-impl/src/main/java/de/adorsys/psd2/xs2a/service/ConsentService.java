@@ -253,7 +253,7 @@ public class ConsentService {
                        .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
         }
 
-        if (LocalDate.now().compareTo(accountConsent.getValidUntil()) >= 0) {
+        if (LocalDate.now().compareTo(accountConsent.getValidUntil()) > 0) {
             return ResponseObject.<AccountConsent>builder()
                        .fail(AIS_401, of(CONSENT_EXPIRED)).build();
         }
