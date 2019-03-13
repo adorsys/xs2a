@@ -16,11 +16,13 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.domain.PsuDataEmbeddable;
 import de.adorsys.psd2.consent.domain.event.EventEntity;
 import de.adorsys.psd2.consent.service.JsonConverterService;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.event.EventOrigin;
 import de.adorsys.psd2.xs2a.core.event.EventType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +35,7 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -49,6 +52,16 @@ public class EventMapperTest {
     private static final EventType EVENT_TYPE = EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED;
     private static final String INSTANCE_ID = "instance id";
     private static final String DEFAULT_INSTANCE_ID = "UNDEFINED";
+
+    private static final String PSU_ID = "ID";
+    private static final String PSU_ID_TYPE = "TYPE";
+    private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
+    private static final String PSU_CORPORATE_ID_TYPE = "CORPORATE_ID_TYPE";
+    private static final String AUTHORISATION_NUMBER = "999";
+    private static final UUID REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
+
+
+    private static final PsuDataEmbeddable PSU_DATA_EMBEDDABLE = new PsuDataEmbeddable(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
 
     @InjectMocks
     private EventMapper eventMapper;
@@ -91,6 +104,9 @@ public class EventMapperTest {
         assertEquals(PAYLOAD_BYTES, eventEntity.getPayload());
         assertEquals(EVENT_ORIGIN, eventEntity.getEventOrigin());
         assertEquals(EVENT_TYPE, eventEntity.getEventType());
+        assertEquals(PSU_DATA_EMBEDDABLE, eventEntity.getPsuData());
+        assertEquals(AUTHORISATION_NUMBER, eventEntity.getTppAuthorisationNumber());
+        assertEquals(REQUEST_ID, UUID.fromString(eventEntity.getXRequestId()));
     }
 
     @Test
@@ -124,6 +140,13 @@ public class EventMapperTest {
                    .eventOrigin(EVENT_ORIGIN)
                    .eventType(EVENT_TYPE)
                    .instanceId(INSTANCE_ID)
+                   .psuIdData(buildPsuIdData())
+                   .tppAuthorisationNumber(AUTHORISATION_NUMBER)
+                   .xRequestId(REQUEST_ID)
                    .build();
+    }
+
+    private PsuIdData buildPsuIdData() {
+        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
     }
 }

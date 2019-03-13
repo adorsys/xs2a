@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.RequestData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,10 @@ import java.util.stream.Collectors;
 public class RequestProviderService {
     private static final String TPP_REDIRECT_PREFERRED_HEADER = "tpp-redirect-preferred";
     private static final String X_REQUEST_ID_HEADER = "x-request-id";
+    private static final String PSU_ID_HEADER = "psu-id";
+    private static final String PSU_ID_TYPE_HEADER = "psu-id-type";
+    private static final String PSU_CORPORATE_ID_HEADER = "psu-corporate-id";
+    private static final String PSU_CORPORATE_ID_TYPE_HEADER = "psu-corporate-id-type";
 
     private final HttpServletRequest httpServletRequest;
 
@@ -45,11 +50,23 @@ public class RequestProviderService {
 
     public RequestData getRequestData() {
         String uri = httpServletRequest.getRequestURI();
-        UUID requestId = UUID.fromString(httpServletRequest.getHeader(X_REQUEST_ID_HEADER));
+        UUID requestId = UUID.fromString(getHeader(X_REQUEST_ID_HEADER));
         String ip = httpServletRequest.getRemoteAddr();
         Map<String, String> headers = getRequestHeaders(httpServletRequest);
+        PsuIdData psuIdData = buildPsuIdData();
 
-        return new RequestData(uri, requestId, ip, headers);
+        return new RequestData(uri, requestId, ip, headers, psuIdData);
+    }
+
+    private PsuIdData buildPsuIdData() {
+        return new PsuIdData(getHeader(PSU_ID_HEADER),
+                             getHeader(PSU_ID_TYPE_HEADER),
+                             getHeader(PSU_CORPORATE_ID_HEADER),
+                             getHeader(PSU_CORPORATE_ID_TYPE_HEADER));
+    }
+
+    private String getHeader(String headerName) {
+        return httpServletRequest.getHeader(headerName);
     }
 
     public UUID getRequestId() {
