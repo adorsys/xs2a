@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.event;
+package de.adorsys.psd2.consent.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Map;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 @Data
-public class RequestEventPayload {
-    private TppInfo tppInfo;
-    private String tppIp;
-    private String uri;
-    private Map<String, String> headers;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Object body;
+@NoArgsConstructor
+@AllArgsConstructor
+public class PsuDataEmbeddable {
+    @Column(name = "psu_id")
+    private String psuId;
+    @Column(name = "psu_id_type")
+    private String psuIdType;
+    @Column(name = "psu_corporate_id")
+    private String psuCorporateId;
+    @Column(name = "psu_corporate_id_type")
+    private String psuCorporateIdType;
 }
