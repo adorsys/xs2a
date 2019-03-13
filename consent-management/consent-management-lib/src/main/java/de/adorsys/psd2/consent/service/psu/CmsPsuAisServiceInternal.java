@@ -78,7 +78,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
         return Optional.ofNullable(authorisation)
                    .map(auth -> updatePsuData(auth, psuIdData))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, because authorisation not found",
+                                instanceId, authorisationId);
+                       return false;
+                   });
     }
 
     @Override
@@ -101,7 +105,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
         return Optional.ofNullable(aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)))
                    .map(auth -> updateScaStatus(status, auth))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found",
+                                authorisationId, instanceId);
+                       return false;
+                   });
     }
 
     @Override
@@ -206,7 +214,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {
         return Optional.ofNullable(aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId)))
                    .map(con -> updateConsentStatus(con, status))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Consent ID [{}], Instance ID: [{}]. Change consent status failed, because AIS consent not found",
+                                consentId, instanceId);
+                       return false;
+                   });
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {

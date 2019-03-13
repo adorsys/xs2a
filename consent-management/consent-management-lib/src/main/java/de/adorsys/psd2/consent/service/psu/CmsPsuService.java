@@ -68,7 +68,10 @@ public class CmsPsuService {
     public boolean isPsuDataNew(PsuData psuData, List<PsuData> psuDataList) {
         return Optional.ofNullable(psuData)
                    .map(psu -> !isPsuDataInList(psu, psuDataList))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Check is psu data a new instance failed - psuData is null");
+                       return false;
+                   });
     }
 
     /**

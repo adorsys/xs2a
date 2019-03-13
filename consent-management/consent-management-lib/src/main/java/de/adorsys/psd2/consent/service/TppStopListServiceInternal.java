@@ -21,11 +21,13 @@ import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
 import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TppStopListServiceInternal implements TppStopListService {
@@ -40,6 +42,10 @@ public class TppStopListServiceInternal implements TppStopListService {
 
         return stopListEntityOptional
                    .map(TppStopListEntity::isBlocked)
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("TPP ID: [{}], Authority ID: [{}]. Check if TPP blocked failed, because Tpp stop list entity is not found by authorisation number and authority Id",
+                                tppUniqueParams.getAuthorisationNumber(), tppUniqueParams.getAuthorityId());
+                       return false;
+                   });
     }
 }

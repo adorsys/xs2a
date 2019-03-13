@@ -30,14 +30,14 @@ import java.util.Optional;
 public class CryptoProviderFactory {
     private final CryptoAlgorithmRepository cryptoAlgorithmRepository;
     private CryptoProvider aesEcbCryptoProviderId = new AesEcbCryptoProviderImpl();
-    private CryptoProvider jweCryptoProviderConsentData  = new JweCryptoProviderImpl();
+    private CryptoProvider jweCryptoProviderConsentData = new JweCryptoProviderImpl();
 
     public Optional<CryptoProvider> getCryptoProviderByAlgorithmVersion(String algorithmVersion) {
         Optional<CryptoProvider> provider = cryptoAlgorithmRepository.findByExternalId(algorithmVersion)
                                                 .map(CryptoAlgorithm::getAlgorithm)
                                                 .flatMap(this::mapCryptoProviderByAlgorithmName);
         if (!provider.isPresent()) {
-            log.error("Crypto provider can not be identify by id: {}", algorithmVersion);
+            log.info("Crypto Algorithm ID: {{}}. Crypto provider can not be identify by id", algorithmVersion);
         }
         return provider;
     }
@@ -56,6 +56,7 @@ public class CryptoProviderFactory {
         } else if (algorithm.equals(jweCryptoProviderConsentData.getAlgorithmVersion().getAlgorithmName())) {
             return Optional.of(jweCryptoProviderConsentData);
         } else {
+            log.info("Crypto provider can not be identify by algorithm: {}", algorithm);
             return Optional.empty();
         }
     }
