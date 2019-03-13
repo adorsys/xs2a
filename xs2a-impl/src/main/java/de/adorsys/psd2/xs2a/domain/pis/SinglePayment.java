@@ -24,8 +24,6 @@ import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -39,70 +37,52 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-@ApiModel(description = "Payment Initialisation Request", value = "SinglePayments")
 public class SinglePayment implements AccountReferenceCollector {
-
     private String paymentId;
-
     @Size(max = 35)
-    @ApiModelProperty(value = "end to end identification", example = "RI-123456789")
     private String endToEndIdentification;
 
     @NotNull
-    @ApiModelProperty(value = "debtor account", required = true)
     private AccountReference debtorAccount;
 
     @Deprecated // Since 1.2
     @Size(max = 70)
-    @ApiModelProperty(value = "ultimate debtor", example = "Mueller")
     private String ultimateDebtor;
 
     @Valid
     @NotNull
-    @ApiModelProperty(value = "instructed amount", required = true)
     private Xs2aAmount instructedAmount;
 
     @NotNull
-    @ApiModelProperty(value = "creditor account", required = true)
     private AccountReference creditorAccount;
 
-    @ApiModelProperty(value = "creditor agent")
     private String creditorAgent;
 
     @NotNull
     @Size(max = 70)
-    @ApiModelProperty(value = "creditor name", required = true, example = "Telekom")
     private String creditorName;
 
     @Valid
-    @ApiModelProperty(value = "creditor Address")
     private Xs2aAddress creditorAddress;
 
     @Deprecated // Since 1.2
     @Size(max = 70)
-    @ApiModelProperty(value = "ultimate creditor", example = "Telekom")
     private String ultimateCreditor;
 
     @Deprecated // Since 1.2
-    @ApiModelProperty(value = "purpose code")
     private Xs2aPurposeCode purposeCode;
 
     @Size(max = 140)
-    @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
     @Deprecated // Since 1.2
     @Valid
-    @ApiModelProperty(value = "remittance information structured")
     private Remittance remittanceInformationStructured;
 
-    @ApiModelProperty(value = "requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "requested execution time", example = "2020-01-01T15:30:35.035Z")
     private OffsetDateTime requestedExecutionTime;
 
-    @ApiModelProperty(value = "Transaction status", example = "Pending")
     private TransactionStatus transactionStatus;
 
     private List<PsuIdData> psuDataList;
