@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
@@ -23,7 +24,6 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 
 import java.util.EnumSet;
@@ -35,8 +35,8 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final RedirectLinkBuilder redirectLinkBuilder;
 
-    public AbstractPaymentLink(ScaApproachResolver scaApproachResolver, MessageService messageService, AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder, AspspProfileServiceWrapper profileService) {
-        super(scaApproachResolver, messageService, profileService);
+    public AbstractPaymentLink(ScaApproachResolver scaApproachResolver, MessageService messageService, AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder, AspspProfileService aspspProfileService) {
+        super(scaApproachResolver, messageService, aspspProfileService);
         this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectLinkBuilder = redirectLinkBuilder;
     }

@@ -45,6 +45,7 @@ public class AspspProfileServiceTest {
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final ScaApproach REDIRECT_APPROACH = ScaApproach.REDIRECT;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
+    private static final String PIS_CANCELLATION_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/cancellation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
@@ -63,6 +64,11 @@ public class AspspProfileServiceTest {
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
+    private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = true;
+    private static final boolean SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED = true;
+    private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
+    private static final boolean FORCE_XS2A_BASE_URL = false;
+    private static final String XS2A_BASE_URL = "http://myhost.com/";
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -82,6 +88,15 @@ public class AspspProfileServiceTest {
 
         //Then:
         Assertions.assertThat(actualResponse.getPisRedirectUrlToAspsp()).isEqualTo(PIS_REDIRECT_LINK);
+    }
+
+    @Test
+    public void getPisPaymentCancellationRedirectUrlToAspsp_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getPisPaymentCancellationRedirectUrlToAspsp()).isEqualTo(PIS_CANCELLATION_REDIRECT_LINK);
     }
 
     @Test
@@ -155,12 +170,53 @@ public class AspspProfileServiceTest {
         Assertions.assertThat(actualResponse.getPaymentCancellationRedirectUrlExpirationTimeMs()).isEqualTo(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
     }
 
+    public void getAvailableAccountsConsentSupported_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.isAvailableAccountsConsentSupported()).isEqualTo(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED);
+    }
+
+    public void getScaByOneTimeAvailableAccountsConsentRequired_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.isScaByOneTimeAvailableAccountsConsentRequired()).isEqualTo(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED);
+    }
+
+    public void getPsuInInitialRequestMandated_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.isPsuInInitialRequestMandated()).isEqualTo(PSU_IN_INITIAL_REQUEST_MANDATED);
+    }
+
+    public void getForceXs2aBaseUrl_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.isForceXs2aBaseUrl()).isEqualTo(FORCE_XS2A_BASE_URL);
+    }
+
+    public void getXs2aBaseUrl_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.getXs2aBaseUrl()).isEqualTo(XS2A_BASE_URL);
+    }
+
     private BankProfileSetting buildBankProfileSetting() {
         BankProfileSetting setting = new BankProfileSetting();
         setting.setFrequencyPerDay(FREQUENCY_PER_DAY);
         setting.setCombinedServiceIndicator(COMBINED_SERVICE_INDICATOR);
         setting.setTppSignatureRequired(TPP_SIGNATURE_REQUIRED);
         setting.setPisRedirectUrlToAspsp(PIS_REDIRECT_LINK);
+        setting.setPisPaymentCancellationRedirectUrlToAspsp(PIS_CANCELLATION_REDIRECT_LINK);
         setting.setAisRedirectUrlToAspsp(AIS_REDIRECT_LINK);
         setting.setMulticurrencyAccountLevel(MULTICURRENCY_ACCOUNT_LEVEL);
         setting.setBankOfferedConsentSupport(BANK_OFFERED_CONSENT_SUPPORT);
@@ -180,6 +236,11 @@ public class AspspProfileServiceTest {
         setting.setNotConfirmedPaymentExpirationPeriodMs(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
         setting.setSupportedPaymentTypeAndProductMatrix(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX);
         setting.setPaymentCancellationRedirectUrlExpirationTimeMs(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
+        setting.setAvailableAccountsConsentSupported(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED);
+        setting.setScaByOneTimeAvailableAccountsConsentRequired(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED);
+        setting.setPsuInInitialRequestMandated(PSU_IN_INITIAL_REQUEST_MANDATED);
+        setting.setForceXs2aBaseUrl(FORCE_XS2A_BASE_URL);
+        setting.setXs2aBaseUrl(XS2A_BASE_URL);
         return setting;
     }
 

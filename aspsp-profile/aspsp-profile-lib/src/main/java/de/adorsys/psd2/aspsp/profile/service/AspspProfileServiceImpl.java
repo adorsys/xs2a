@@ -60,6 +60,7 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isAvailableAccountsConsentSupported(),
             setting.isScaByOneTimeAvailableAccountsConsentRequired(),
             setting.isPsuInInitialRequestMandated(),
+            setting.isForceXs2aBaseUrl(),
             setting.getXs2aBaseUrl()
         );
     }

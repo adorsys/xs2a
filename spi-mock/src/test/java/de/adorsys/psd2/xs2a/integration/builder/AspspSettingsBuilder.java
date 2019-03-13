@@ -54,7 +54,8 @@ public class AspspSettingsBuilder {
     private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = false;
     private static final boolean SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED = false;
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
-    private static final String XS2A_BASEURL = null;
+    private static final boolean FORCE_XS2A_BASE_URL = false;
+    private static final String XS2A_BASEURL = "http://myhost.com/";
 
 
     public static AspspSettings buildAspspSettings() {
@@ -85,6 +86,7 @@ public class AspspSettingsBuilder {
             AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED,
             SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED,
             PSU_IN_INITIAL_REQUEST_MANDATED,
+            FORCE_XS2A_BASE_URL,
             XS2A_BASEURL);
     }
 

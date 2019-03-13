@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -23,7 +24,6 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -40,8 +40,8 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 @Component
 public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentController> {
 
-    public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileServiceWrapper profileService) {
-        super(scaApproachResolver, messageService, profileService);
+    public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileService aspspProfileService) {
+        super(scaApproachResolver, messageService, aspspProfileService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorization(..)) && args(paymentId, paymentType, paymentProduct, psuData)", returning = "result", argNames = "result,paymentId,paymentType,paymentProduct,psuData")
