@@ -31,3 +31,8 @@ responses with new field added - `authorisationType`. The value can be `CREATED`
 
 From now CMS `/psu-api/v1/ais/`, `/psu-api/v1/payment/`, `/aspsp-api/v1/ais/` and `/aspsp-api/v1/pis/` endpoints 
 contain payment/consent creation datetime in the response.
+
+## Call Spi for ConsentStatus on GET Consent request
+From now on, SPI Developer may implement logic for method `getConsentStatus` in `AisConsentSpi` interface.
+Requests get consent status (for AIS) call SPI level.
+If consent status in CMS is finalised (REJECTED, REVOKED_BY_PSU, EXPIRED, TERMINATED_BY_TPP, TERMINATED_BY_ASPSP), call to SPI won't be performed. 

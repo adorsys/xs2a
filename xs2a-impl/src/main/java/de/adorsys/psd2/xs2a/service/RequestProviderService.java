@@ -53,12 +53,12 @@ public class RequestProviderService {
         UUID requestId = UUID.fromString(getHeader(X_REQUEST_ID_HEADER));
         String ip = httpServletRequest.getRemoteAddr();
         Map<String, String> headers = getRequestHeaders(httpServletRequest);
-        PsuIdData psuIdData = buildPsuIdData();
+        PsuIdData psuIdData = getPsuIdData();
 
         return new RequestData(uri, requestId, ip, headers, psuIdData);
     }
 
-    private PsuIdData buildPsuIdData() {
+    public PsuIdData getPsuIdData() {
         return new PsuIdData(getHeader(PSU_ID_HEADER),
                              getHeader(PSU_ID_TYPE_HEADER),
                              getHeader(PSU_CORPORATE_ID_HEADER),
