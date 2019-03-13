@@ -59,7 +59,7 @@ public class CreateConsentRequestValidator {
         if (isNotSupportedBankOfferedConsent(request)) {
             return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_405);
         }
-        if (!isValidExpirationDate(request.getValidUntil())) {
+        if (isNotValidExpirationDate(request.getValidUntil())) {
             return ValidationResult.invalid(ErrorType.AIS_400, PERIOD_INVALID);
         }
 
@@ -90,9 +90,8 @@ public class CreateConsentRequestValidator {
         return !aspspProfileService.isBankOfferedConsentSupported();
     }
 
-    private boolean isValidExpirationDate(LocalDate validUntil) {
-        int consentLifetime = Math.abs(aspspProfileService.getConsentLifetime());
-        return validUntil.isAfter(LocalDate.now()) && isValidConsentLifetime(consentLifetime, validUntil);
+    private boolean isNotValidExpirationDate(LocalDate validUntil) {
+        return validUntil.isBefore(LocalDate.now());
     }
 
     private boolean isConsentGlobal(CreateConsentReq request) {
@@ -104,10 +103,6 @@ public class CreateConsentRequestValidator {
         return Optional.ofNullable(access)
                    .map(Xs2aAccountAccess::isNotEmpty)
                    .orElse(false);
-    }
-
-    private boolean isValidConsentLifetime(int consentLifetime, LocalDate validUntil) {
-        return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
     }
 
     private boolean isNotValidFrequencyPerDay(boolean recurringIndicator, int frequencyPerDay) {

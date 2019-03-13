@@ -35,6 +35,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PERIOD_INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -82,7 +83,7 @@ public class CreateConsentRequestValidatorTest {
         //When
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
         //Then
-        assertValidationResultNotValid(validationResult);
+        assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
@@ -92,7 +93,7 @@ public class CreateConsentRequestValidatorTest {
         //When
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
         //Then
-        assertValidationResultNotValid(validationResult);
+        assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
@@ -102,7 +103,7 @@ public class CreateConsentRequestValidatorTest {
         //When
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
         //Then
-        assertValidationResultNotValid(validationResult);
+        assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
@@ -112,7 +113,7 @@ public class CreateConsentRequestValidatorTest {
         //When
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
         //Then
-        assertValidationResultNotValid(validationResult);
+        assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
@@ -122,13 +123,38 @@ public class CreateConsentRequestValidatorTest {
         //When
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
         //Then
-        assertValidationResultNotValid(validationResult);
+        assertValidationResultNotValid_FORMAT_ERROR(validationResult);
+    }
+
+    @Test
+    public void validateRequestSuccess_ValidUntilToday() {
+        //Given
+        CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1, LocalDate.now());
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validateRequestFail_ValidUntilInThePast() {
+        //Given
+        CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1, LocalDate.now().minusDays(1));
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        //Then
+        assertValidationResultNotValid_PERIOD_INVALID(validationResult);
     }
 
     @NotNull
     private CreateConsentReq buildCreateConsentReq(boolean recurringIndicator, int frequencyPerDay) {
+        return buildCreateConsentReq(recurringIndicator, frequencyPerDay, LocalDate.now().plusDays(1));
+    }
+
+    @NotNull
+    private CreateConsentReq buildCreateConsentReq(boolean recurringIndicator, int frequencyPerDay, LocalDate validUntil) {
         CreateConsentReq createConsentReq = new CreateConsentReq();
-        createConsentReq.setValidUntil(LocalDate.now().plusDays(1));
+        createConsentReq.setValidUntil(validUntil);
         createConsentReq.setRecurringIndicator(recurringIndicator);
         createConsentReq.setFrequencyPerDay(frequencyPerDay);
         Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null);
@@ -141,10 +167,17 @@ public class CreateConsentRequestValidatorTest {
         assertThat(validationResult.getMessageError()).isNull();
     }
 
-    private void assertValidationResultNotValid(ValidationResult validationResult) {
+    private void assertValidationResultNotValid_FORMAT_ERROR(ValidationResult validationResult) {
         assertThat(validationResult.isNotValid()).isTrue();
         assertThat(validationResult.getMessageError()).isNotNull();
         assertThat(validationResult.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
         assertThat(validationResult.getMessageError().getTppMessage().getMessageErrorCode()).isEqualTo(FORMAT_ERROR);
+    }
+
+    private void assertValidationResultNotValid_PERIOD_INVALID(ValidationResult validationResult) {
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isNotNull();
+        assertThat(validationResult.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(validationResult.getMessageError().getTppMessage().getMessageErrorCode()).isEqualTo(PERIOD_INVALID);
     }
 }
