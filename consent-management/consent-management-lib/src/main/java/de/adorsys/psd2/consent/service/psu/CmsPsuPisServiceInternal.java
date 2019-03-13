@@ -185,7 +185,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .filter(auth -> Objects.nonNull(auth.getPsuData()))
                    .map(auth -> new CmsPisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()),
                                                                auth.getExternalId(),
-                                                               auth.getScaStatus()))
+                                                               auth.getScaStatus(),
+                                                               auth.getAuthorizationType()))
                    .collect(Collectors.toList());
     }
 

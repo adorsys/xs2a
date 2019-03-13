@@ -21,3 +21,8 @@ Following rules are used to adjust `validUntil` date:
  * if `consentLifetime` = 0 - no adjustments will be applied
  * if `consentLifetime` > 0 - ASPSP calculates maximum allowed `validUntil` date for AIS consent as current date plus value of `consentLifetime` property. 
 If requested date exceeds the allowed one, the consent will be created with `validUntil` property set to maximal allowed date, otherwise no adjustments will be applied.
+
+## Added authorisation type to response for getting PSU data authorisations
+
+Now these endpoints: `/v1/payment/{payment-id}/authorisation/psus` and `/v1/ais/consent/{consent-id}/authorisation/psus` have enriched
+responses with new field added - `authorisationType`. The value can be `CREATED` or `CANCELLED` by now.
