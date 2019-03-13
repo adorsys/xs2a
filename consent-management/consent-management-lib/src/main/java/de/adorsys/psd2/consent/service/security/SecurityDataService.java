@@ -80,7 +80,7 @@ public class SecurityDataService {
      */
     public Optional<String> decryptId(String encryptedId) {
         if (!encryptedId.contains(SEPARATOR)) {
-            log.info("ID: [{}]. Couldn't decrypt, because id contains separator [{}]", encryptedId, SEPARATOR);
+            log.info("ID: [{}]. Couldn't decrypt, because id does not contain separator [{}]", encryptedId, SEPARATOR);
             return Optional.empty();
         }
 
