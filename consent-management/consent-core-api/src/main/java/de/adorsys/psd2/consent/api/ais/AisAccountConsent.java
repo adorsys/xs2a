@@ -25,6 +25,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -46,4 +47,5 @@ public class AisAccountConsent {
     private boolean multilevelScaRequired;
     private List<AisAccountConsentAuthorisation> accountConsentAuthorizations;
     private int usageCounter;
+    private OffsetDateTime creationTimestamp;
 }
