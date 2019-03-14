@@ -43,6 +43,6 @@ From now on, SPI Developer may implement logic for method `getConsentStatus` in 
 Requests get consent status (for AIS) call SPI level.
 If consent status in CMS is finalised (REJECTED, REVOKED_BY_PSU, EXPIRED, TERMINATED_BY_TPP, TERMINATED_BY_ASPSP), call to SPI won't be performed.
 
- ## Links are generated using internal URL
+## Links are generated using internal URL
 From now on, it is possible to generate links using internal URL, defined in the ASPSP profile, as `xs2aBaseUrl` property. To enable this feature, `forceXs2aBaseUrl` property
 in ASPSP profile should be set to `true`.
