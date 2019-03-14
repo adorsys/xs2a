@@ -120,7 +120,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         }
 
         log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect and get payment failed, because authorisation not found or has finalised status",
-                 redirectId);
+                 redirectId, instanceId);
         return Optional.empty();
     }
 
