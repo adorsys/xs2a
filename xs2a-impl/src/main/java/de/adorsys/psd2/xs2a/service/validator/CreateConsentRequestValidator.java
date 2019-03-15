@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -62,15 +63,28 @@ public class CreateConsentRequestValidator {
         if (isNotValidExpirationDate(request.getValidUntil())) {
             return ValidationResult.invalid(ErrorType.AIS_400, PERIOD_INVALID);
         }
-
         if (isNotValidFrequencyPerDay(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
             return ValidationResult.invalid(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, "Value of frequencyPerDay is not correct"));
         }
-
         if (isNotSupportedAvailableAccounts(request)) {
             return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_405);
         }
+        if (areFlagsAndAccountsInvalid(request)) {
+            return ValidationResult.invalid(ErrorType.AIS_400, FORMAT_ERROR);
+        }
         return ValidationResult.valid();
+    }
+
+    private boolean areFlagsAndAccountsInvalid(CreateConsentReq request) {
+        Xs2aAccountAccess access = request.getAccess();
+        if (access.isNotEmpty()) {
+            return !(CollectionUtils.isEmpty(request.getAccountReferences()) || areFlagsEmpty(access));
+        }
+        return false;
+    }
+
+    private boolean areFlagsEmpty(Xs2aAccountAccess access) {
+        return Objects.isNull(access.getAvailableAccounts()) && Objects.isNull(access.getAllPsd2());
     }
 
     private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {

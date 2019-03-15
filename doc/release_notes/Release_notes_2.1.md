@@ -46,3 +46,13 @@ If consent status in CMS is finalised (REJECTED, REVOKED_BY_PSU, EXPIRED, TERMIN
 ## Links are generated using internal URL
 From now on, it is possible to generate links using internal URL, defined in the ASPSP profile, as `xs2aBaseUrl` property. To enable this feature, `forceXs2aBaseUrl` property
 in ASPSP profile should be set to `true`.
+
+## Bugfix: New step in consent creation validation
+
+From now on the consent creation request has the new validation: if consent has both the account accesses list AND the flag (`allPsd2` or `availableAccounts` or both) - 
+the `400 Bad Request` response is returned.  
+
+## Bugfix: IBAN validation in payment creation
+
+From now on the IBAN codes are validated during the payment initiation requests. In case of wrong IBAN the response is `400 FORMAT_ERROR`. Note, that
+IBAN is validated by checking its length, country code and checksum.
