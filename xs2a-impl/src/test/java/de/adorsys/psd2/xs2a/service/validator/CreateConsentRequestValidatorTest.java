@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
@@ -33,6 +34,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PERIOD_INVALID;
@@ -146,6 +148,36 @@ public class CreateConsentRequestValidatorTest {
         assertValidationResultNotValid_PERIOD_INVALID(validationResult);
     }
 
+    @Test
+    public void validateRequestSuccess_FlagsAndAccessesEmpty() {
+        //Given
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithoutFlagsAndAccesses(true, 1);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validateRequestSuccess_FlagsPresentAccessesEmpty() {
+        //Given
+        CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validateRequestFail_FlagsAndAccessesPresent() {
+        //Given
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithFlagsAndAccesses(true, 1);
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        //Then
+        assertValidationResultNotValid_FORMAT_ERROR(validationResult);
+    }
+
     @NotNull
     private CreateConsentReq buildCreateConsentReq(boolean recurringIndicator, int frequencyPerDay) {
         return buildCreateConsentReq(recurringIndicator, frequencyPerDay, LocalDate.now().plusDays(1));
@@ -158,6 +190,21 @@ public class CreateConsentRequestValidatorTest {
         createConsentReq.setRecurringIndicator(recurringIndicator);
         createConsentReq.setFrequencyPerDay(frequencyPerDay);
         Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null);
+        createConsentReq.setAccess(accountAccess);
+        return createConsentReq;
+    }
+
+    private CreateConsentReq buildCreateConsentReqWithoutFlagsAndAccesses(boolean recurringIndicator, int frequencyPerDay) {
+        CreateConsentReq createConsentReq = buildCreateConsentReq(recurringIndicator, frequencyPerDay);
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null);
+        createConsentReq.setAccess(accountAccess);
+        return createConsentReq;
+    }
+
+    private CreateConsentReq buildCreateConsentReqWithFlagsAndAccesses(boolean recurringIndicator, int frequencyPerDay) {
+        CreateConsentReq createConsentReq = buildCreateConsentReq(recurringIndicator, frequencyPerDay);
+        List<AccountReference> accesses = Collections.singletonList(new AccountReference());
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(accesses, Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null);
         createConsentReq.setAccess(accountAccess);
         return createConsentReq;
     }
