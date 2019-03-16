@@ -33,7 +33,7 @@ public class OauthPisScaAuthorisationServiceTest {
     private OauthPisScaAuthorisationService oauthPisScaAuthorisationService;
 
     @Test
-    public void createCommonPaymentAuthorisation_succes() {
+    public void createCommonPaymentAuthorisation_success() {
         // When
         Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = oauthPisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
         // Then
@@ -41,7 +41,7 @@ public class OauthPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void updateCommonPaymentPsuData_succes() {
+    public void updateCommonPaymentPsuData_success() {
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = oauthPisScaAuthorisationService.updateCommonPaymentPsuData(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
         // Then
@@ -49,7 +49,7 @@ public class OauthPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void createCommonPaymentCancellationAuthorisation_succes() {
+    public void createCommonPaymentCancellationAuthorisation_success() {
         // When
         Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = oauthPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
         // Then
@@ -57,7 +57,7 @@ public class OauthPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getCancellationAuthorisationSubResources_succes() {
+    public void getCancellationAuthorisationSubResources_success() {
         // When
         Optional<Xs2aPaymentCancellationAuthorisationSubResource> actualResponse = oauthPisScaAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
         // Then
@@ -65,7 +65,7 @@ public class OauthPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void updateCommonPaymentCancellationPsuData_succes() {
+    public void updateCommonPaymentCancellationPsuData_success() {
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = oauthPisScaAuthorisationService.updateCommonPaymentCancellationPsuData(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
         // Then
@@ -73,7 +73,7 @@ public class OauthPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getAuthorisationSubResources_succes() {
+    public void getAuthorisationSubResources_success() {
         // When
         Optional<Xs2aAuthorisationSubResources> actualResponse = oauthPisScaAuthorisationService.getAuthorisationSubResources(PAYMENT_ID);
         // Then
@@ -81,7 +81,7 @@ public class OauthPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_succes() {
+    public void getAuthorisationScaStatus_success() {
         // When
         Optional<ScaStatus> actualResponse = oauthPisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID);
         // Then
@@ -89,7 +89,7 @@ public class OauthPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getCancellationAuthorisationScaStatus_succes() {
+    public void getCancellationAuthorisationScaStatus_success() {
         // When
         Optional<ScaStatus> actualResponse = oauthPisScaAuthorisationService.getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID);
         // Then
