@@ -1,10 +1,14 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaAuthenticatedStage;
@@ -16,35 +20,36 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
+import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class DecoupledAisAuthorizationServiceTest {
-    private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
-    private static final String WRONG_CONSENT_ID = "Wrong consent id";
-    private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
-    private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
-    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final List<String> STRING_LIST = Collections.singletonList(AUTHORISATION_ID);
-    private static final Xs2aAuthorisationSubResources AUTHORISATION_SUB_RESOURCES = new Xs2aAuthorisationSubResources(STRING_LIST);
+    private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
+    private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
+    private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final AccountConsentAuthorization ACCOUNT_CONSENT_AUTHORIZATION = buildAccountConsentAuthorization();
-    private static final UpdateConsentPsuDataReq UPDATE_CONSENT_PSU_DATA = new UpdateConsentPsuDataReq();
-    private static final UpdateConsentPsuDataResponse UPDATE_CONSENT_PSU_DATA_RESPONSE = buildUpdateConsentPsuDataResponse();
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
-    private static final AccountConsent ACCOUNT_CONSENT = builderAccountConsent();
-    private static final AccountConsent ACCOUNT_CONSENT_NULL = null;
-    private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildConsentAuthResponse();
-    private static final String SOME_STRING = "";
+    private static final ScaStatus SCA_STATUS = ScaStatus.STARTED;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
+    private static final List<String> STRING_LIST = Collections.singletonList(AUTHORISATION_ID);
+    private static final AccountConsent ACCOUNT_CONSENT = createConsent(CONSENT_ID);
+    private static final Xs2aAuthorisationSubResources AUTHORISATION_SUB_RESOURCES = new Xs2aAuthorisationSubResources(STRING_LIST);
+    private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildCreateConsentAuthorizationResponse();
+    private static final UpdateConsentPsuDataReq UPDATE_CONSENT_PSU_DATA_REQ = new UpdateConsentPsuDataReq();
+    private static final UpdateConsentPsuDataResponse UPDATE_CONSENT_PSU_DATA_RESPONSE = new UpdateConsentPsuDataResponse();
+    private static final AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> AIS_SCA_STAGE = null;
 
     @InjectMocks
     private DecoupledAisAuthorizationService decoupledAisAuthorizationService;
+
     @Mock
     private Xs2aAisConsentService aisConsentService;
     @Mock
@@ -56,141 +61,151 @@ public class DecoupledAisAuthorizationServiceTest {
 
     @Test
     public void createConsentAuthorization_success() {
-        // Given
-        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(ACCOUNT_CONSENT);
-        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, ScaStatus.STARTED, PSU_ID_DATA))
-            .thenReturn(Optional.of(SOME_STRING));
-        // When
-        Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
-        // Then
-        assertThat(actualResponse).isEqualTo(Optional.of(CREATE_CONSENT_AUTHORIZATION_RESPONSE));
+        //Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(ACCOUNT_CONSENT);
+        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA))
+            .thenReturn(Optional.of(AUTHORISATION_ID));
+
+        //When
+        Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
+
+        //Then
+        assertThat(actualResponse.get().getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
+        assertThat(actualResponse.get()).isEqualTo(CREATE_CONSENT_AUTHORIZATION_RESPONSE);
     }
 
     @Test
-    public void createConsentAuthorization_consentIsNULL_success() {
-        // Given
-        String str = "";
-        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(ACCOUNT_CONSENT_NULL);
-        // When
-        Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
-        // Then
+    public void createConsentAuthorization_failed() {
+        //Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(null);
+
+        //When
+        Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
+
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
-    public void updateConsentPsuData_success() {
-        // Given
-
-        when(scaStageAuthorisationFactory.getService(any(String.class)))
+    public void updateConsentPsuData() {
+        //Given
+        when(scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + SCA_APPROACH.name() + SEPARATOR + ACCOUNT_CONSENT_AUTHORIZATION.getScaStatus().name()))
             .thenReturn(aisScaAuthenticatedStage);
-        when(aisScaAuthenticatedStage.apply(UPDATE_CONSENT_PSU_DATA))
+        when(aisScaAuthenticatedStage.apply(UPDATE_CONSENT_PSU_DATA_REQ))
             .thenReturn(UPDATE_CONSENT_PSU_DATA_RESPONSE);
-        when(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(UPDATE_CONSENT_PSU_DATA_RESPONSE, UPDATE_CONSENT_PSU_DATA))
-            .thenReturn(UPDATE_CONSENT_PSU_DATA);
 
-        // When
-        UpdateConsentPsuDataResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA, ACCOUNT_CONSENT_AUTHORIZATION);
-        // Then
+        //When
+        UpdateConsentPsuDataResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION);
+
+        //Then
         assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_success() {
-        // Given
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID)).thenReturn(ACCOUNT_CONSENT_AUTHORIZATION);
-        // When
+    public void getAccountConsentAuthorizationById() {
+        //Given
+        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+            .thenReturn(ACCOUNT_CONSENT_AUTHORIZATION);
+
+        //When
         AccountConsentAuthorization actualResponse = decoupledAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
-        // Then
+
+        //Then
         assertThat(actualResponse).isEqualTo(ACCOUNT_CONSENT_AUTHORIZATION);
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_fail() {
-        // Given
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID)).thenReturn(null);
-        // When
-        AccountConsentAuthorization actualResponse = decoupledAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
-        // Then
-        assertThat(actualResponse).isNull();
-    }
-
-    @Test
     public void getAuthorisationSubResources_success() {
-        // Given
-        when(aisConsentService.getAuthorisationSubResources(CONSENT_ID)).thenReturn(Optional.of(STRING_LIST));
-        // When
+        //Given
+        when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
+            .thenReturn(Optional.of(STRING_LIST));
+
+        //When
         Optional<Xs2aAuthorisationSubResources> actualResponse = decoupledAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
-        // Then
-        assertThat(actualResponse).isEqualTo(Optional.of(AUTHORISATION_SUB_RESOURCES));
+
+        //Then
+        assertThat(actualResponse.get()).isEqualTo(AUTHORISATION_SUB_RESOURCES);
     }
 
     @Test
-    public void getAuthorisationSubResources_fail() {
-        // Given
-        when(aisConsentService.getAuthorisationSubResources(CONSENT_ID)).thenReturn(Optional.empty());
-        // When
+    public void getAuthorisationSubResources_failed() {
+        //Given
+        when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
+            .thenReturn(Optional.empty());
+
+        //When
         Optional<Xs2aAuthorisationSubResources> actualResponse = decoupledAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
-        // Then
+
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void getAuthorisationScaStatus_success() {
-        // Given
-        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID)).thenReturn(Optional.of(SCA_STATUS));
-        // When
+        //Given
+        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.of(SCA_STATUS));
+
+        //When
         Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
-        // Then
-        assertThat(actualResponse).isEqualTo(Optional.of(SCA_STATUS));
+
+        //Then
+        assertThat(actualResponse.get()).isEqualTo(SCA_STATUS);
     }
 
     @Test
-    public void getAuthorisationScaStatus_fail() {
-        // Given
-        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID)).thenReturn(Optional.empty());
-        // When
+    public void getAuthorisationScaStatus_failed() {
+        //Given
+        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+
+        //When
         Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
-        // Then
+
+        //Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
-    public void getScaApproachServiceType_test() {
+    public void getScaApproachServiceType() {
         //When
         ScaApproach actualResponse = decoupledAisAuthorizationService.getScaApproachServiceType();
+
         //Then
-        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse).isEqualTo(SCA_APPROACH);
+    }
+
+    private static CreateConsentAuthorizationResponse buildCreateConsentAuthorizationResponse() {
+        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
+        resp.setConsentId(CONSENT_ID);
+        resp.setAuthorizationId(AUTHORISATION_ID);
+        resp.setScaStatus(ScaStatus.STARTED);
+        resp.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+        return resp;
+    }
+
+    private static TppInfo buildTppInfo() {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber("registrationNumber");
+        tppInfo.setTppName("tppName");
+        tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
+        tppInfo.setAuthorityId("authorityId");
+        return tppInfo;
     }
 
     private static AccountConsentAuthorization buildAccountConsentAuthorization() {
         AccountConsentAuthorization accountConsentAuthorization = new AccountConsentAuthorization();
-        accountConsentAuthorization.setScaStatus(ScaStatus.RECEIVED);
+        accountConsentAuthorization.setScaStatus(ScaStatus.STARTED);
         return accountConsentAuthorization;
     }
 
-    private static UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setScaStatus(ScaStatus.RECEIVED);
-        return response;
+    private static AccountConsent createConsent(String id) {
+        return new AccountConsent(id, createEmptyAccountAccess(), false, LocalDate.now(), 4, null, ConsentStatus.VALID, false, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
     }
 
-    private static AccountConsent builderAccountConsent() {
-        List<AccountReference> list = Collections.singletonList(new AccountReference());
-        AccountConsent accountConsent = new AccountConsent(CONSENT_ID,
-                                                    new Xs2aAccountAccess(list, list, list,null,null),
-                                                    false, null, 1,
-                                                null, null,false,
-                                            false, null, null, null);
-        return accountConsent;
-    }
-
-    private static CreateConsentAuthorizationResponse buildConsentAuthResponse() {
-        CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
-        response.setConsentId(CONSENT_ID);
-        response.setAuthorizationId("");
-        response.setScaStatus(ScaStatus.STARTED);
-        response.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
-        return response;
+    private static Xs2aAccountAccess createEmptyAccountAccess() {
+        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
     }
 }
