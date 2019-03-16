@@ -30,7 +30,6 @@ import java.util.List;
 @NoArgsConstructor
 public class UpdateConsentPsuDataResponse {
 
-    private String psuId;
     private String consentId;
     private String authorizationId;
 

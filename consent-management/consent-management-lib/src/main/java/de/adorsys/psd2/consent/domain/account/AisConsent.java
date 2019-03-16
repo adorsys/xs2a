@@ -17,10 +17,10 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.api.ConsentType;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.ApiModel;
@@ -40,7 +40,7 @@ import java.util.Set;
 
 
 @Data
-@ToString(exclude = {"accesses", "authorizations"})
+@ToString(exclude = {"accesses", "authorizations", "usages"})
 @Entity(name = "ais_consent")
 @ApiModel(description = "Ais consent entity", value = "AisConsent")
 public class AisConsent extends InstanceDependableEntity {
@@ -106,9 +106,14 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int tppFrequencyPerDay;
 
+    //TODO 2.3 Remove this field and db column https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/728
+    @Deprecated
     @Column(name = "usage_counter", nullable = false)
     @ApiModelProperty(value = "Usage counter for the consent", required = true, example = "7")
     private int usageCounter;
+
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AisConsentUsage> usages = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "ais_account_access", joinColumns = @JoinColumn(name = "consent_id"))
@@ -136,12 +141,12 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "available_accounts")
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Type of the available accounts access type: ALL_ACCOUNTS, ALL_ACCOUNTS_WITH_BALANCES.", example = "ALL_ACCOUNTS")
-    private AisAccountAccessType availableAccounts;
+    private AccountAccessType availableAccounts;
 
     @Column(name = "all_psd2")
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Type of the account access types.", example = "ALL_ACCOUNTS")
-    private AisAccountAccessType allPsd2;
+    private AccountAccessType allPsd2;
 
     @Column(name = "multilevel_sca_required", nullable = false)
     private boolean multilevelScaRequired;
@@ -158,14 +163,10 @@ public class AisConsent extends InstanceDependableEntity {
         return consentStatus != ConsentStatus.EXPIRED;
     }
 
-    public boolean hasUsagesAvailable() {
-        return usageCounter > 0;
-    }
-
     public boolean isConfirmationExpired(long expirationPeriodMs) {
         if (isNotConfirmed()) {
             return creationTimestamp.plus(expirationPeriodMs, ChronoUnit.MILLIS)
-                .isBefore(OffsetDateTime.now());
+                       .isBefore(OffsetDateTime.now());
         }
 
         return false;
@@ -190,5 +191,11 @@ public class AisConsent extends InstanceDependableEntity {
     public boolean isWrongConsentData() {
         return CollectionUtils.isEmpty(psuDataList)
                    || tppInfo == null;
+    }
+    public void addUsage(AisConsentUsage aisConsentUsage) {
+        if (usages == null) {
+            usages = new ArrayList<>();
+        }
+        usages.add(aisConsentUsage);
     }
 }

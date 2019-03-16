@@ -35,6 +35,7 @@ public enum MessageErrorCode {
     SIGNATURE_INVALID(401),  //Application layer eIDAS Signature for TPP authentication is not correct
     SIGNATURE_MISSING(401),  //Application layer eIDAS Signature for TPP authentication is mandated by the ASPSP but is missing
     FORMAT_ERROR(400),  //Format of certain request fields are not matching the XS2A requirements. An explicit path to the corresponding field might be added in the return message
+    RESOURCE_BLOCKED(400), //The addressed resource is not addressable by this request, since it is blocked e.g. by a grouping in a signing basket
     PSU_CREDENTIALS_INVALID(401),  // The PSU-ID cannot be matched by the addressed ASPSP or is blocked, or a password resp. OTP was not correct. Additional information might be added
     CORPORATE_ID_INVALID(401),  //The PSU-Corporate-ID cannot be matched by the addressed ASPSP
     CONSENT_INVALID(401),  //The consent was created by this TPP but is not valid for the addressed service/resource

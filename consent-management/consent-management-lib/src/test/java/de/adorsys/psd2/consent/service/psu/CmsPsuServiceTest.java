@@ -22,10 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,16 +45,18 @@ public class CmsPsuServiceTest {
 
     @Test
     public void definePsuDataForAuthorisation_PsuIsExistInList() {
-        PsuData actualResult = cmsPsuService.definePsuDataForAuthorisation(PSU_DATA_1, PSU_DATA_LIST);
+        Optional<PsuData> actualResult = cmsPsuService.definePsuDataForAuthorisation(PSU_DATA_1, PSU_DATA_LIST);
 
-        assertThat(actualResult).isEqualTo(PSU_DATA_LIST.get(0));
+        assertThat(actualResult.isPresent()).isTrue();
+        assertThat(actualResult.get()).isEqualTo(PSU_DATA_LIST.get(0));
     }
 
     @Test
     public void definePsuDataForAuthorisation_PsuIsNotExistInList() {
-        PsuData actualResult = cmsPsuService.definePsuDataForAuthorisation(PSU_DATA_3, PSU_DATA_LIST);
+        Optional<PsuData> actualResult = cmsPsuService.definePsuDataForAuthorisation(PSU_DATA_3, PSU_DATA_LIST);
 
-        assertThat(actualResult).isEqualTo(PSU_DATA_3);
+        assertThat(actualResult.isPresent()).isTrue();
+        assertThat(actualResult.get()).isEqualTo(PSU_DATA_3);
     }
 
     @Test

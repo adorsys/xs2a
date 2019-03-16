@@ -232,11 +232,7 @@ public class PaymentService {
             return Optional.empty();
         }
 
-        payments.forEach(
-            payment -> updateAspsPaymentStatus(payment, AspspTransactionStatus.ACTC)
-        );
-
-        return Optional.of(getPaymentCancellationResponse(true, AspspTransactionStatus.ACTC));
+        return Optional.of(getPaymentCancellationResponse(true, payments.get(0).getPaymentStatus()));
     }
 
     /**

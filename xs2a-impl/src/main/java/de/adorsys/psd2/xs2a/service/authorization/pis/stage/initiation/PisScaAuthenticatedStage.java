@@ -111,7 +111,6 @@ public class PisScaAuthenticatedStage extends PisScaStage<Xs2aUpdatePisCommonPay
         ChallengeData challengeData = authorizationCodeResult.getChallengeData();
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED);
-        response.setPsuId(psuData.getPsuId());
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(spiAuthenticationObject));
         response.setChallengeData(challengeData);
         return response;

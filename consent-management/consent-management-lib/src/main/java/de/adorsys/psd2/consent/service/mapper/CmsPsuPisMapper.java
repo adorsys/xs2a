@@ -26,14 +26,15 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CmsPsuPisMapper {
     private final PisCommonPaymentMapper pisCommonPaymentMapper;
+    private final TppInfoMapper tppInfoMapper;
+    private final PsuDataMapper psuDataMapper;
 
     public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
         CmsCommonPayment cmsCommonPayment = new CmsCommonPayment(paymentData.getPaymentProduct());
@@ -43,6 +44,8 @@ public class CmsPsuPisMapper {
         cmsCommonPayment.setTransactionStatus(paymentData.getTransactionStatus());
         cmsCommonPayment.setPaymentData(paymentData.getPayment());
 
+        cmsCommonPayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
+        cmsCommonPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
         return cmsCommonPayment;
     }
 
@@ -96,7 +99,11 @@ public class CmsPsuPisMapper {
         periodicPayment.setEndDate(pisPaymentData.getEndDate());
         periodicPayment.setExecutionRule(pisPaymentData.getExecutionRule());
         periodicPayment.setFrequency(CmsFrequencyCode.valueOf(pisPaymentData.getFrequency()));
-
+        PisCommonPaymentData paymentData = pisPaymentData.getPaymentData();
+        if (Objects.nonNull(paymentData)) {
+            periodicPayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
+            periodicPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
+        }
         return periodicPayment;
     }
 
@@ -129,6 +136,11 @@ public class CmsPsuPisMapper {
         singlePayment.setRemittanceInformationUnstructured(pisPaymentData.getRemittanceInformationUnstructured());
         singlePayment.setRequestedExecutionDate(pisPaymentData.getRequestedExecutionDate());
         singlePayment.setRequestedExecutionTime(pisPaymentData.getRequestedExecutionTime());
+        PisCommonPaymentData paymentData = pisPaymentData.getPaymentData();
+        if (Objects.nonNull(paymentData)) {
+            singlePayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
+            singlePayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
+        }
 
         return singlePayment;
     }
@@ -136,12 +148,12 @@ public class CmsPsuPisMapper {
     private CmsAccountReference mapToCmsAccountReference(AccountReferenceEntity pisAccountReference) {
         return Optional.ofNullable(pisAccountReference)
                    .map(ref -> new CmsAccountReference(null,
-                                                       ref.getIban(),
-                                                       ref.getBban(),
-                                                       ref.getPan(),
-                                                       ref.getMaskedPan(),
-                                                       ref.getMsisdn(),
-                                                       ref.getCurrency())
+                       ref.getIban(),
+                       ref.getBban(),
+                       ref.getPan(),
+                       ref.getMaskedPan(),
+                       ref.getMsisdn(),
+                       ref.getCurrency())
                    ).orElse(null);
     }
 }

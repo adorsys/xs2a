@@ -40,6 +40,9 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfo
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.service.validator.GetCommonPaymentByIdResponseValidator;
+import de.adorsys.psd2.xs2a.service.validator.PaymentValidationService;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.AllArgsConstructor;
@@ -59,6 +62,8 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 @Service
 @AllArgsConstructor
 public class PaymentService {
+    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
+
     private final ReadPaymentFactory readPaymentFactory;
     private final ReadPaymentStatusFactory readPaymentStatusFactory;
     private final SpiPaymentFactory spiPaymentFactory;
@@ -79,10 +84,10 @@ public class PaymentService {
     private final CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
     private final SpiContextDataProvider spiContextDataProvider;
     private final ReadCommonPaymentStatusService readCommonPaymentStatusService;
-
+    private final GetCommonPaymentByIdResponseValidator getCommonPaymentByIdResponseValidator;
+    private final RequestProviderService requestProviderService;
+    private final PaymentValidationService paymentValidationService;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
-
-    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -116,11 +121,11 @@ public class PaymentService {
         }
 
         if (paymentInitiationParameters.getPaymentType() == PaymentType.SINGLE) {
-            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo);
+            return processSinglePayment((SinglePayment) payment, paymentInitiationParameters, tppInfo);
         } else if (paymentInitiationParameters.getPaymentType() == PaymentType.PERIODIC) {
-            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo);
+            return processPeriodicPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo);
         } else {
-            return createBulkPaymentService.createPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo);
+            return processBulkPayment((BulkPayment) payment, paymentInitiationParameters, tppInfo);
         }
     }
 
@@ -142,22 +147,15 @@ public class PaymentService {
                        .build();
         }
 
+
         PisCommonPaymentResponse commonPaymentResponse = pisCommonPaymentOptional.get();
+        ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(commonPaymentResponse, paymentType, paymentProduct);
 
-        if (isPaymentTypeIncorrect(paymentType, commonPaymentResponse)) {
-            return ResponseObject.builder()
-                       .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for adressed payment"))
-                       .build();
-        }
-
-        if (isPaymentProductIncorrect(paymentProduct, commonPaymentResponse)) {
-            return ResponseObject.<TransactionStatus>builder()
-                       .fail(PIS_403, of(PRODUCT_INVALID, "Payment product invalid for addressed payment"))
-                       .build();
+        if (validationResult.isNotValid()) {
+            return ResponseObject.builder().fail(validationResult.getMessageError()).build();
         }
 
         CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(commonPaymentResponse);
-
         AspspConsentData aspspConsentData = pisAspspDataService.getAspspConsentData(paymentId);
         PaymentInformationResponse response;
 
@@ -197,27 +195,21 @@ public class PaymentService {
     public ResponseObject<TransactionStatus> getPaymentStatusById(PaymentType paymentType, String paymentProduct, String paymentId) {//NOPMD //TODO refactor method  and remove https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
+
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<TransactionStatus>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
                        .build();
         }
 
-        // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
+        ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, paymentType, paymentProduct);
 
-        if (isPaymentTypeIncorrect(paymentType, pisCommonPaymentResponse)) {
-            return ResponseObject.<TransactionStatus>builder()
-                       .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for adressed payment"))
-                       .build();
+        if (validationResult.isNotValid()) {
+            return ResponseObject.<TransactionStatus>builder().fail(validationResult.getMessageError()).build();
         }
 
-        if (isPaymentProductIncorrect(paymentProduct, pisCommonPaymentResponse)) {
-            return ResponseObject.<TransactionStatus>builder()
-                       .fail(PIS_403, of(PRODUCT_INVALID, "Payment product invalid for addressed payment"))
-                       .build();
-        }
-
+        // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             return ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build();
         }
@@ -259,9 +251,8 @@ public class PaymentService {
         }
 
         if (!updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, transactionStatus)) {
-            return ResponseObject.<TransactionStatus>builder()
-                       .fail(PIS_400, of(FORMAT_ERROR, "Payment is finalised already, so its status cannot be changed"))
-                       .build();
+            log.info("X-Request-ID: [{}], Payment ID: [{}], Transaction status: [{}]. Update of a payment status in the CMS has failed.",
+                     requestProviderService.getRequestId(), paymentId, transactionStatus);
         }
 
         return ResponseObject.<TransactionStatus>builder().body(transactionStatus).build();
@@ -275,7 +266,7 @@ public class PaymentService {
      * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) { //NOPMD //TODO refactor method  and remove NOPMD check https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/683
+    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
@@ -286,22 +277,21 @@ public class PaymentService {
         }
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentOptional.get();
+        ValidationResult validationResult = getCommonPaymentByIdResponseValidator.validateRequest(pisCommonPaymentResponse, paymentType, paymentProduct);
 
-        if (isPaymentTypeIncorrect(paymentType, pisCommonPaymentResponse)) {
-            return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_405, of(SERVICE_INVALID_405, "Service invalid for addressed payment"))
-                       .build();
+        if (validationResult.isNotValid()) {
+            return ResponseObject.<CancelPaymentResponse>builder().fail(validationResult.getMessageError()).build();
         }
 
-        if (isPaymentProductIncorrect(paymentProduct, pisCommonPaymentResponse)) {
+        if (isFinalisedPayment(pisCommonPaymentResponse)) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_403, of(PRODUCT_INVALID, "Payment product invalid for addressed payment"))
+                       .fail(PIS_400, of(RESOURCE_BLOCKED))
                        .build();
         }
 
         SpiPayment spiPayment;
 
-        if (pisCommonPaymentResponse.getPaymentData() != null) {
+        if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
             CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentResponse);
             spiPayment = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
         } else {
@@ -313,40 +303,11 @@ public class PaymentService {
             }
 
             Optional<? extends SpiPayment> spiPaymentOptional = spiPaymentFactory.createSpiPaymentByPaymentType(pisPayments, pisCommonPaymentResponse.getPaymentProduct(), paymentType);
-
-            if (!spiPaymentOptional.isPresent()) {
-                log.error("Unknown payment type: {}", paymentType);
-                return ResponseObject.<CancelPaymentResponse>builder()
-                           .fail(PIS_400, of(FORMAT_ERROR))
-                           .build();
-            }
-
             spiPayment = spiPaymentOptional.get();
         }
 
-        Optional<PisCommonPaymentResponse> commonPayment = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
-
-        if (commonPayment.isPresent() && isFinalisedPayment(commonPayment.get())) {
-            return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_400, of(FORMAT_ERROR, "Payment is finalised already and cannot be cancelled"))
-                       .build();
-        }
-
-        List<PsuIdData> psuData = pisPsuDataService.getPsuDataByPaymentId(encryptedPaymentId);
-
-        if (profileService.isPaymentCancellationAuthorizationMandated()) {
-            return cancelPaymentService.initiatePaymentCancellation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId);
-        } else {
-            return cancelPaymentService.cancelPaymentWithoutAuthorisation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId);
-        }
-    }
-
-    private boolean isPaymentTypeIncorrect(PaymentType paymentType, PisCommonPaymentResponse commonPaymentResponse) {
-        return commonPaymentResponse.getPaymentType() != paymentType;
-    }
-
-    private boolean isPaymentProductIncorrect(String paymentProduct, PisCommonPaymentResponse commonPaymentResponse) {
-        return !commonPaymentResponse.getPaymentProduct().equalsIgnoreCase(paymentProduct);
+        List<PsuIdData> psuData = pisCommonPaymentResponse.getPsuData();
+        return cancelPaymentService.initiatePaymentCancellation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId);
     }
 
     private boolean isFinalisedPayment(PisCommonPaymentResponse response) {
@@ -360,6 +321,7 @@ public class PaymentService {
 
         pisPayments.forEach(pmt -> {
             pmt.setPaymentId(pisCommonPaymentResponse.getExternalId());
+            pmt.setTransactionStatus(pisCommonPaymentResponse.getTransactionStatus());
             pmt.setPsuDataList(pisCommonPaymentResponse.getPsuData());
         });
 
@@ -371,6 +333,33 @@ public class PaymentService {
             return psuIdDataList.get(0);
         }
         return null;
+    }
+
+    private ResponseObject processSinglePayment(SinglePayment singePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject singlePaymentValidationResult = paymentValidationService.validateSinglePayment(singePayment);
+
+        return singlePaymentValidationResult.hasError()
+            ? singlePaymentValidationResult
+            : createSinglePaymentService.createPayment(singePayment, paymentInitiationParameters, tppInfo);
+    }
+
+    private ResponseObject processPeriodicPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject periodicPaymentValidationResponse = paymentValidationService.validatePeriodicPayment(periodicPayment);
+
+        return periodicPaymentValidationResponse.hasError()
+            ? periodicPaymentValidationResponse
+            : createPeriodicPaymentService.createPayment(periodicPayment, paymentInitiationParameters, tppInfo);
+    }
+
+    private ResponseObject processBulkPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
+
+        ResponseObject bulkPaymentValidationResponse = paymentValidationService.validateBulkPayment(bulkPayment);
+
+        return bulkPaymentValidationResponse.hasError()
+            ? bulkPaymentValidationResponse
+            : createBulkPaymentService.createPayment(bulkPayment, paymentInitiationParameters, tppInfo);
     }
 
 }

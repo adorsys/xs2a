@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.consent;
+package de.adorsys.psd2.xs2a.web.validator.constants;
 
-public enum SpiAccountAccessType {
-    ALL_ACCOUNTS("allAccounts"),
-    ALL_ACCOUNTS_WITH_BALANCES("allAccountsWithBalances");
+public class Xs2aHeaderConstant {
+    public static final String TPP_REDIRECT_PREFERRED = "TPP-Redirect-Preferred";
+    public static final String TPP_REDIRECT_URI = "TPP-Redirect-URI";
 
-    private String description;
-
-    SpiAccountAccessType(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
+    private Xs2aHeaderConstant() {
     }
 }

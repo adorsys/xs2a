@@ -18,6 +18,7 @@ package de.adorsys.aspsp.aspspmockserver.domain.ais;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.adorsys.aspsp.aspspmockserver.domain.AccountInfo;
+import de.adorsys.psd2.aspsp.mock.api.consent.AspspAccountAccessType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -39,8 +40,8 @@ public class AisAccountAccessInfo {
     private List<AccountInfo> transactions;
 
     @ApiModelProperty(value = "Consent on all available accounts of psu", example = "ALL_ACCOUNTS")
-    private AccountAccessType availableAccounts;
+    private AspspAccountAccessType availableAccounts;
 
     @ApiModelProperty(value = "Consent on all accounts, balances and transactions of psu", example = "ALL_ACCOUNTS")
-    private AccountAccessType allPsd2;
+    private AspspAccountAccessType allPsd2;
 }

@@ -135,9 +135,7 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisComm
 
             TransactionStatus paymentStatus = spiResponse.getPayload().getTransactionStatus();
             updatePaymentStatusAfterSpiService.updatePaymentStatus(request.getPaymentId(), paymentStatus);
-            Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
-            response.setPsuId(spiPsuData.getPsuId());
-            return response;
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
 
         } else if (isSingleScaMethod(spiScaMethods)) {
             xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
@@ -149,19 +147,18 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisComm
                 return pisCommonDecoupledService.proceedDecoupledInitiation(request, payment, chosenMethod.getAuthenticationMethodId());
             }
 
-            return proceedSingleScaEmbeddedApproach(payment, chosenMethod, spiPsuData, contextData, aspspConsentData);
+            return proceedSingleScaEmbeddedApproach(payment, chosenMethod, contextData, aspspConsentData);
 
         } else if (isMultipleScaMethods(spiScaMethods)) {
             xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
             Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUAUTHENTICATED);
-            response.setPsuId(psuData.getPsuId());
             response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(spiScaMethods));
             return response;
         }
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FAILED);
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiPsuData psuData, SpiContextData contextData, AspspConsentData aspspConsentData) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(SpiPayment payment, SpiAuthenticationObject chosenMethod, SpiContextData contextData, AspspConsentData aspspConsentData) {
         SpiResponse<SpiAuthorizationCodeResult> authCodeResponse = paymentAuthorisationSpi.requestAuthorisationCode(contextData, chosenMethod.getAuthenticationMethodId(), payment, aspspConsentData);
         pisAspspDataService.updateAspspConsentData(authCodeResponse.getAspspConsentData());
 
@@ -170,7 +167,6 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisComm
         }
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED);
-        response.setPsuId(psuData.getPsuId());
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(chosenMethod));
         response.setChallengeData(mapToChallengeData(authCodeResponse.getPayload()));
         return response;
@@ -185,9 +181,7 @@ public class PisScaStartAuthorisationStage extends PisScaStage<Xs2aUpdatePisComm
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder);
         }
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUIDENTIFIED);
-        response.setPsuId(request.getPsuData().getPsuId());
-        return response;
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUIDENTIFIED);
     }
 
     private ChallengeData mapToChallengeData(SpiAuthorizationCodeResult authorizationCodeResult) {

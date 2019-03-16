@@ -1,0 +1,112 @@
+<!--
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="ssh@adorsys.com.ua" id="2019-02-28-1">
+        <preConditions onFail="MARK_RAN" onSqlOutput="TEST">
+            <not>
+                <dbms type="oracle"/>
+            </not>
+        </preConditions>
+
+        <comment>
+            Change type of authority_name, country, organisation, organisation_unit, city and state columns in tpp_info
+            table to VARCHAR(except for Oracle)
+        </comment>
+
+        <modifyDataType tableName="tpp_info" columnName="authority_name" newDataType="VARCHAR(255)"/>
+        <modifyDataType tableName="tpp_info" columnName="country" newDataType="VARCHAR(255)"/>
+        <modifyDataType tableName="tpp_info" columnName="organisation" newDataType="VARCHAR(255)"/>
+        <modifyDataType tableName="tpp_info" columnName="organisation_unit" newDataType="VARCHAR(255)"/>
+        <modifyDataType tableName="tpp_info" columnName="city" newDataType="VARCHAR(255)"/>
+        <modifyDataType tableName="tpp_info" columnName="state" newDataType="VARCHAR(255)"/>
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2019-02-28-2" dbms="oracle">
+        <comment>
+            Create temporary column temp_authority_name, temp_country, temp_organisation, temp_organisation_unit,
+            temp_city and temp_state with VARCHAR type and values from existing columns for Oracle
+        </comment>
+
+        <addColumn tableName="tpp_info">
+            <column name="temp_authority_name" type="VARCHAR(255)"/>
+            <column name="temp_country" type="VARCHAR(255)"/>
+            <column name="temp_organisation" type="VARCHAR(255)"/>
+            <column name="temp_organisation_unit" type="VARCHAR(255)"/>
+            <column name="temp_city" type="VARCHAR(255)"/>
+            <column name="temp_state" type="VARCHAR(255)"/>
+        </addColumn>
+
+        <sql>UPDATE tpp_info SET temp_authority_name = dbms_lob.substr(authority_name, 255, 1)</sql>
+        <sql>UPDATE tpp_info SET temp_country = dbms_lob.substr(country, 255, 1)</sql>
+        <sql>UPDATE tpp_info SET temp_organisation = dbms_lob.substr(organisation, 255, 1)</sql>
+        <sql>UPDATE tpp_info SET temp_organisation_unit = dbms_lob.substr(organisation_unit, 255, 1)</sql>
+        <sql>UPDATE tpp_info SET temp_city = dbms_lob.substr(city, 255, 1)</sql>
+        <sql>UPDATE tpp_info SET temp_state = dbms_lob.substr(state, 255, 1)</sql>
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2019-02-28-3" dbms="oracle">
+        <comment>
+            Replace authority_name, country, organisation, organisation_unit, city and state columns with
+            temp_authority_name, temp_country, temp_organisation, temp_organisation_unit, temp_city and temp_state
+            respectively for Oracle
+        </comment>
+
+        <dropColumn tableName="tpp_info" columnName="authority_name"/>
+        <dropColumn tableName="tpp_info" columnName="country"/>
+        <dropColumn tableName="tpp_info" columnName="organisation"/>
+        <dropColumn tableName="tpp_info" columnName="organisation_unit"/>
+        <dropColumn tableName="tpp_info" columnName="city"/>
+        <dropColumn tableName="tpp_info" columnName="state"/>
+
+        <renameColumn tableName="tpp_info" oldColumnName="temp_authority_name" newColumnName="authority_name"/>
+        <renameColumn tableName="tpp_info" oldColumnName="temp_country" newColumnName="country"/>
+        <renameColumn tableName="tpp_info" oldColumnName="temp_organisation" newColumnName="organisation"/>
+        <renameColumn tableName="tpp_info" oldColumnName="temp_organisation_unit" newColumnName="organisation_unit"/>
+        <renameColumn tableName="tpp_info" oldColumnName="temp_city" newColumnName="city"/>
+        <renameColumn tableName="tpp_info" oldColumnName="temp_state" newColumnName="state"/>
+    </changeSet>
+
+    <changeSet author="ssh@adorsys.com.ua" id="2019-02-28-4" dbms="postgresql">
+        <comment>
+            Convert existing large object values in authority_name, country, organisation, organisation_unit, city and state
+            columns into varchar for PostgreSQL. Assumption is made that all existing values in these columns that
+            contain only numerical symbols are stored as large objects.
+        </comment>
+
+        <sql>
+            UPDATE tpp_info
+            SET authority_name = convert_from(loread( lo_open(authority_name::int, x'40000'::int), x'40000'::int),
+            'UTF-8'),
+            country = convert_from(loread( lo_open(country::int, x'40000'::int), x'40000'::int), 'UTF-8'),
+            organisation = convert_from(loread( lo_open(organisation::int, x'40000'::int), x'40000'::int), 'UTF-8'),
+            organisation_unit = convert_from(loread( lo_open(organisation_unit::int, x'40000'::int), x'40000'::int),
+            'UTF-8'),
+            city = convert_from(loread( lo_open(city::int, x'40000'::int), x'40000'::int), 'UTF-8'),
+            state = convert_from(loread( lo_open(state::int, x'40000'::int), x'40000'::int), 'UTF-8')
+            WHERE authority_name ~ '^\d+?$'
+            AND country ~ '^\d+?$'
+            AND organisation ~ '^\d+?$'
+            AND organisation_unit ~ '^\d+?$'
+            AND city ~ '^\d+?$'
+            AND state ~ '^\d+?$'
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

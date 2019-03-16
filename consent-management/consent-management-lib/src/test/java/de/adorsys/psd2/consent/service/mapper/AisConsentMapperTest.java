@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
+import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import org.junit.Test;
@@ -49,6 +50,8 @@ public class AisConsentMapperTest {
     private PsuDataMapper psuDataMapper;
     @Mock
     private TppInfoMapper tppInfoMapper;
+    @Mock
+    private AisConsentUsageService aisConsentUsageService;
 
     @InjectMocks
     private AisConsentMapper aisConsentMapper;

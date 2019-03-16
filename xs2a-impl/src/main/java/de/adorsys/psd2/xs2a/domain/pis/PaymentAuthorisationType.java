@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.ais;
+package de.adorsys.psd2.xs2a.domain.pis;
 
-import io.swagger.annotations.ApiModel;
-
-// TODO to be removed in future: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/671
-@ApiModel(description = "AccountAccess type", value = "AisAccountAccessType")
-public enum AisAccountAccessType {
-    ALL_ACCOUNTS,
-    ALL_ACCOUNTS_WITH_BALANCES
+// TODO Move PaymentAuthorisationType to the xs2a-core https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/717
+public enum PaymentAuthorisationType {
+    INITIATION,
+    CANCELLATION
 }

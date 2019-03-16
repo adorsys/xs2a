@@ -49,7 +49,9 @@ public class UpdatePisPsuDataAspect extends AbstractLinkAspect<PaymentController
 
                 links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
                 links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
-            } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), body.getScaStatus()) || scaApproachResolver.resolveScaApproach() == ScaApproach.DECOUPLED) {
+
+            // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
+            } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), body.getScaStatus()) && scaApproachResolver.resolveScaApproach() == ScaApproach.EMBEDDED) {
                 links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             } else if (isScaStatusFinalised(body.getScaStatus())) {
 

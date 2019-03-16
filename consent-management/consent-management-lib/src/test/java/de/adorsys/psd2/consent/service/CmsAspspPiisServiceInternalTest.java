@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,6 +63,8 @@ public class CmsAspspPiisServiceInternalTest {
     private static final int FREQUENCY_PER_DAY = 4;
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
+    private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
+    private static final String TPP_AUTHORITY_ID = "authority id";
 
     @Mock
     private PiisConsentRepository piisConsentRepository;
@@ -89,7 +92,7 @@ public class CmsAspspPiisServiceInternalTest {
     }
 
     @Test
-    public void createConsent_Success() {
+    public void createConsent_success() {
         when(piisConsentRepository.save(any(PiisConsentEntity.class)))
             .thenReturn(buildConsent());
 
@@ -108,7 +111,46 @@ public class CmsAspspPiisServiceInternalTest {
     }
 
     @Test
-    public void createConsent_Failure_FailedToSave() {
+    public void createConsent_withExpireDateToday_success() {
+        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+            .thenReturn(buildConsent());
+
+        // Given
+        PsuIdData psuIdData = buildPsuIdData();
+        List<AccountReference> accounts = buildAccountReferenceList();
+
+        // When
+        Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, null, accounts,
+                                                                            LocalDate.now(), FREQUENCY_PER_DAY);
+
+        // Then
+        assertThat(actual.isPresent()).isTrue();
+        //noinspection OptionalGetWithoutIsPresent
+        assertThat(StringUtils.isNotBlank(actual.get())).isTrue();
+    }
+
+    @Test
+    public void createConsent_withTppInfo_success() {
+        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+            .thenReturn(buildConsent());
+
+        // Given
+        PsuIdData psuIdData = buildPsuIdData();
+        List<AccountReference> accounts = buildAccountReferenceList();
+        TppInfo tppInfo = buildTppInfo();
+
+        // When
+        Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, tppInfo, accounts,
+                                                                            EXPIRE_DATE, FREQUENCY_PER_DAY);
+
+        // Then
+        assertThat(actual.isPresent()).isTrue();
+        //noinspection OptionalGetWithoutIsPresent
+        assertThat(StringUtils.isNotBlank(actual.get())).isTrue();
+    }
+
+    @Test
+    public void createConsent_savingFailed_shouldFail() {
         when(piisConsentRepository.save(any(PiisConsentEntity.class)))
             .thenReturn(buildConsent(null));
 
@@ -122,6 +164,72 @@ public class CmsAspspPiisServiceInternalTest {
 
         // Then
         assertThat(actual.isPresent()).isFalse();
+    }
+
+    @Test
+    public void createConsent_withEmptyPsuIdDate_shouldFail() {
+        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+            .thenReturn(buildConsent());
+
+        // Given
+        PsuIdData emptyPsuIdData = new PsuIdData(null, null, null, null);
+
+        // When
+        Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(emptyPsuIdData, null, Collections.emptyList(),
+                                                                            EXPIRE_DATE, FREQUENCY_PER_DAY);
+
+        // Then
+        assertThat(actual.isPresent()).isFalse();
+        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+    }
+
+    @Test
+    public void createConsent_withEmptyTppInfo_shouldFail() {
+        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+            .thenReturn(buildConsent());
+
+        // Given
+        PsuIdData psuIdData = buildPsuIdData();
+        List<AccountReference> accounts = buildAccountReferenceList();
+
+        // When
+        Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, new TppInfo(), accounts,
+                                                                            EXPIRE_DATE, FREQUENCY_PER_DAY);
+
+        // Then
+        assertThat(actual.isPresent()).isFalse();
+    }
+
+    @Test
+    public void createConsent_withEmptyAccounts_shouldFail() {
+        // Given
+        PsuIdData psuIdData = buildPsuIdData();
+
+        // When
+        Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, null, Collections.emptyList(),
+                                                                            EXPIRE_DATE, FREQUENCY_PER_DAY);
+
+        // Then
+        assertThat(actual.isPresent()).isFalse();
+        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+    }
+
+    @Test
+    public void createConsent_withInvalidExpireDate_shouldFail() {
+        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+            .thenReturn(buildConsent());
+
+        // Given
+        PsuIdData psuIdData = buildPsuIdData();
+        LocalDate yesterdayDate = LocalDate.now().minusDays(1);
+
+        // When
+        Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, null, Collections.emptyList(),
+                                                                            yesterdayDate, FREQUENCY_PER_DAY);
+
+        // Then
+        assertThat(actual.isPresent()).isFalse();
+        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
     }
 
     @Test
@@ -140,7 +248,7 @@ public class CmsAspspPiisServiceInternalTest {
         assertThat(actual.isEmpty()).isFalse();
         assertThat(actual.get(0)).isEqualTo(expected);
         verify(piisConsentEntitySpecification, times(1))
-            .byPsuIdIdAndInstanceId(PSU_ID, DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuIdAndInstanceId(PSU_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -156,7 +264,7 @@ public class CmsAspspPiisServiceInternalTest {
         // Then
         assertThat(actual.isEmpty()).isTrue();
         verify(piisConsentEntitySpecification, times(1))
-            .byPsuIdIdAndInstanceId(PSU_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuIdAndInstanceId(PSU_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -249,5 +357,12 @@ public class CmsAspspPiisServiceInternalTest {
         consent.setId(CONSENT_EXTERNAL_ID);
         consent.setCreationTimestamp(CREATION_TIMESTAMP);
         return consent;
+    }
+
+    private TppInfo buildTppInfo() {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
+        tppInfo.setAuthorityId(TPP_AUTHORITY_ID);
+        return tppInfo;
     }
 }
