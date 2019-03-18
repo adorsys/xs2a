@@ -2,12 +2,14 @@ package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
@@ -26,22 +28,33 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReadSinglePaymentServiceTest {
+    private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
+    private static final String END_TO_END_IDENTIFICATION = "PAYMENT_ID";
+    private static final String CREDITOR_AGENT = "AAAADEBBXXX";
+    private static final String CREDITOR_NAME = "WBG";
+    private static final String REMITTANCE_INFORMATION_UNSTRUCTURED = "Ref Number Merchant";
+    private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
+    private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
+    private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
-    private static final SinglePayment SINGLE_PAYMENT = new SinglePayment();
+    private static final SinglePayment SINGLE_PAYMENT = buildSinglePayment();
 
     @InjectMocks
     private ReadSinglePaymentService readSinglePaymentService;
@@ -60,6 +73,8 @@ public class ReadSinglePaymentServiceTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private SpiPaymentFactory spiPaymentFactory;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Before
     public void init() {
@@ -71,6 +86,7 @@ public class ReadSinglePaymentServiceTest {
                 .payload(SPI_SINGLE_PAYMENT)
                 .success());
         when(spiToXs2aSinglePaymentMapper.mapToXs2aSinglePayment(SPI_SINGLE_PAYMENT)).thenReturn(SINGLE_PAYMENT);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test
@@ -103,10 +119,10 @@ public class ReadSinglePaymentServiceTest {
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
 
         //Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getPayment()).isNull();
-        assertThat(actualResponse.getErrorHolder()).isNotNull();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
+        assertThat(actualResponse.hasError()).isFalse();
+        assertThat(actualResponse.getPayment()).isNotNull();
+        assertThat(actualResponse.getPayment()).isEqualTo(SINGLE_PAYMENT);
+        assertThat(actualResponse.getErrorHolder()).isNull();
     }
 
     @Test
@@ -155,11 +171,25 @@ public class ReadSinglePaymentServiceTest {
     private static SpiContextData getSpiContextData() {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
-            new TppInfo()
+            new TppInfo(),
+            UUID.randomUUID()
         );
     }
 
     private static List<PisPayment> getListPisPayment() {
         return Collections.singletonList(new PisPayment());
+    }
+
+    private static SinglePayment buildSinglePayment() {
+        SinglePayment singlePayment = new SinglePayment();
+        singlePayment.setPaymentId(PAYMENT_ID);
+        singlePayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
+        singlePayment.setCreditorAgent(CREDITOR_AGENT);
+        singlePayment.setCreditorName(CREDITOR_NAME);
+        singlePayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION_UNSTRUCTURED);
+        singlePayment.setTransactionStatus(TRANSACTION_STATUS);
+        singlePayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
+        singlePayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
+        return singlePayment;
     }
 }
