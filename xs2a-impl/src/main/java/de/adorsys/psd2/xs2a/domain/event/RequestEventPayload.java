@@ -21,13 +21,11 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
 
 import java.util.Map;
-import java.util.UUID;
 
 @Data
 public class RequestEventPayload {
     private TppInfo tppInfo;
     private String tppIp;
-    private UUID requestId;
     private String uri;
     private Map<String, String> headers;
     @JsonInclude(JsonInclude.Include.NON_NULL)

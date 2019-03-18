@@ -451,7 +451,7 @@ sonar_code_coverage:
     - jabba use system@1.8
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -Dmaven.test.skip=true package sonar:sonar -Dsonar.host.url=$SONAR_HOST -Dsonar.login=${SONAR_TOKEN}
+    - mvn package sonar:sonar -Dsonar.host.url=$SONAR_HOST -Dsonar.login=${SONAR_TOKEN}
   except:
     - tags
     - schedules

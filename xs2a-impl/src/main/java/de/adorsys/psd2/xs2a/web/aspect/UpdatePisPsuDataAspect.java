@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -35,8 +36,8 @@ import org.springframework.stereotype.Component;
 public class UpdatePisPsuDataAspect extends AbstractLinkAspect<PaymentController> {
     private static final String PSU_AUTHORISATION_URL = "/v1/{paymentService}/{paymentProduct}/{paymentId}/authorisations/{authorisationId}";
 
-    public UpdatePisPsuDataAspect(ScaApproachResolver scaApproachResolver, MessageService messageService) {
-        super(scaApproachResolver, messageService);
+    public UpdatePisPsuDataAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileService aspspProfileService) {
+        super(scaApproachResolver, messageService, aspspProfileService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.updatePisCommonPaymentPsuData(..)) && args( request)", returning = "result", argNames = "result,request")
@@ -50,7 +51,7 @@ public class UpdatePisPsuDataAspect extends AbstractLinkAspect<PaymentController
                 links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
                 links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
 
-            // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
+                // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
             } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), body.getScaStatus()) && scaApproachResolver.resolveScaApproach() == ScaApproach.EMBEDDED) {
                 links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             } else if (isScaStatusFinalised(body.getScaStatus())) {

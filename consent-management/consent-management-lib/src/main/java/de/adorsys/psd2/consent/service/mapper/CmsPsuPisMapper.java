@@ -36,7 +36,7 @@ public class CmsPsuPisMapper {
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
 
-    public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
+        public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
         CmsCommonPayment cmsCommonPayment = new CmsCommonPayment(paymentData.getPaymentProduct());
         cmsCommonPayment.setPaymentId(paymentData.getPaymentId());
         cmsCommonPayment.setPaymentProduct(paymentData.getPaymentProduct());
@@ -46,6 +46,7 @@ public class CmsPsuPisMapper {
 
         cmsCommonPayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
         cmsCommonPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
+        cmsCommonPayment.setCreationTimestamp(paymentData.getCreationTimestamp());
         return cmsCommonPayment;
     }
 
@@ -103,6 +104,8 @@ public class CmsPsuPisMapper {
         if (Objects.nonNull(paymentData)) {
             periodicPayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
             periodicPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
+            periodicPayment.setPaymentStatus(paymentData.getTransactionStatus());
+            periodicPayment.setCreationTimestamp(paymentData.getCreationTimestamp());
         }
         return periodicPayment;
     }
@@ -140,6 +143,8 @@ public class CmsPsuPisMapper {
         if (Objects.nonNull(paymentData)) {
             singlePayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
             singlePayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
+            singlePayment.setPaymentStatus(paymentData.getTransactionStatus());
+            singlePayment.setCreationTimestamp(paymentData.getCreationTimestamp());
         }
 
         return singlePayment;

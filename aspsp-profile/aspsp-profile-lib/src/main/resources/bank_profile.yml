@@ -45,3 +45,5 @@ setting:
  availableAccountsConsentSupported: true
  scaByOneTimeAvailableAccountsConsentRequired: true
  psuInInitialRequestMandated: false
+ forceXs2aBaseUrl: false
+ xs2aBaseUrl: http://myhost.com/

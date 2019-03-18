@@ -43,7 +43,7 @@ public class SecurityDataService {
         this.cryptoProviderFactory = cryptoProviderFactory;
         serverKey = environment.getProperty("server_key");
         if (StringUtils.isBlank(serverKey)) {
-            log.error("The 'server_key' must be specified at CMS start");
+            log.info("The 'server_key' missing - must be specified at CMS start");
             throw new IllegalArgumentException("CMS_SERVER_KEY_MISSING");
         }
     }
@@ -66,7 +66,7 @@ public class SecurityDataService {
                                            .map(this::addVersionToEncryptedId);
 
         if (!encryptedId.isPresent()) {
-            log.warn("Couldn't encrypt ID: {}", originalId);
+            log.info("ID: [{}]. Couldn't encrypt ID", originalId);
         }
 
         return encryptedId;
@@ -80,7 +80,7 @@ public class SecurityDataService {
      */
     public Optional<String> decryptId(String encryptedId) {
         if (!encryptedId.contains(SEPARATOR)) {
-            log.warn("Couldn't decrypt ID: {}", encryptedId);
+            log.info("ID: [{}]. Couldn't decrypt, because id does not contain separator [{}]", encryptedId, SEPARATOR);
             return Optional.empty();
         }
 
@@ -88,7 +88,7 @@ public class SecurityDataService {
                                            .map(cmst -> cmst.split(SEPARATOR)[0]);
 
         if (!decryptedId.isPresent()) {
-            log.warn("Couldn't decrypt ID: {}", encryptedId);
+            log.info("ID: [{}]. Couldn't decrypt ID", encryptedId);
         }
 
         return decryptedId;
@@ -97,8 +97,8 @@ public class SecurityDataService {
     /**
      * Encrypts ASPSP consent data
      *
-     * @param encryptedId       encrypted consent ID
-     * @param aspspConsentData  original data to be encrypted
+     * @param encryptedId      encrypted consent ID
+     * @param aspspConsentData original data to be encrypted
      * @return response contains encrypted data
      */
     public Optional<EncryptedData> encryptConsentData(String encryptedId, byte[] aspspConsentData) {
@@ -109,8 +109,8 @@ public class SecurityDataService {
     /**
      * Decrypt ASPSP consent data
      *
-     * @param encryptedId       encrypted consent ID
-     * @param aspspConsentData  encrypted data to be decrypted
+     * @param encryptedId      encrypted consent ID
+     * @param aspspConsentData encrypted data to be decrypted
      * @return response contains decrypted data
      */
     public Optional<DecryptedData> decryptConsentData(String encryptedId, byte[] aspspConsentData) {
@@ -133,6 +133,7 @@ public class SecurityDataService {
 
         byte[] bytesCompositeId = decode64(encryptedCompositeId, true);
         if (bytesCompositeId == null) {
+            log.info("ID: [{}]. Couldn't decrypt composite id", encryptedId);
             return Optional.empty();
         }
 
@@ -156,7 +157,7 @@ public class SecurityDataService {
                        ? Base64.getUrlDecoder().decode(raw)
                        : Base64.getDecoder().decode(raw);
         } catch (IllegalArgumentException ex) {
-            log.error("Input id has wrong format: {}", raw);
+            log.info("ID: [{}]. Input id has wrong format", raw);
             return null;
         }
     }
