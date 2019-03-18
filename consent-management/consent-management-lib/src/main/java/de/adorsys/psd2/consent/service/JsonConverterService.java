@@ -35,7 +35,7 @@ public class JsonConverterService {
         try {
             return Optional.ofNullable(objectMapper.writeValueAsBytes(object));
         } catch (JsonProcessingException e) {
-            log.error("Can't convert object to json: {}", e.getMessage(), e);
+            log.info("Can't convert object to json: {}", e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -44,7 +44,7 @@ public class JsonConverterService {
         try {
             return Optional.ofNullable(objectMapper.readValue(bytes, target));
         } catch (IOException e) {
-            log.error("Can't convert json to object: {}", e.getMessage(), e);
+            log.info("Can't convert json to object: {}", e.getMessage(), e);
         }
         return Optional.empty();
     }

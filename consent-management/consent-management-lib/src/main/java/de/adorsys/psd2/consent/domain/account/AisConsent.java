@@ -156,7 +156,7 @@ public class AisConsent extends InstanceDependableEntity {
     }
 
     public boolean isExpiredByDate() {
-        return LocalDate.now().compareTo(expireDate) >= 0;
+        return LocalDate.now().compareTo(expireDate) > 0;
     }
 
     public boolean isStatusNotExpired() {

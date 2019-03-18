@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -34,8 +35,8 @@ import org.springframework.stereotype.Component;
 public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentController> {
     private final PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
 
-    public PaymentCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider) {
-        super(scaApproachResolver, messageService);
+    public PaymentCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider, AspspProfileService aspspProfileService) {
+        super(scaApproachResolver, messageService, aspspProfileService);
         this.cancellationScaNeededDecider = cancellationScaNeededDecider;
     }
 

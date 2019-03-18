@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,4 +30,5 @@ public abstract class BaseCmsPayment implements CmsPayment {
     private String paymentProduct;
     private List<PsuIdData> psuIdDatas = new ArrayList<>();
     private TppInfo tppInfo;
+    private OffsetDateTime creationTimestamp;
 }

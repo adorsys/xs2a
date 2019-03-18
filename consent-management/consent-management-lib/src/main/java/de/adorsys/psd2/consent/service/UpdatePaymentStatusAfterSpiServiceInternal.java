@@ -39,6 +39,8 @@ public class UpdatePaymentStatusAfterSpiServiceInternal implements UpdatePayment
     public boolean updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
         if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
+            log.info("Payment ID [{}]. Update payment status by id failed, because pis payment data not found or payment is finalized",
+                     paymentId);
             return false;
         }
 
