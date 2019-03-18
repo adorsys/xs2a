@@ -99,6 +99,42 @@
             <organization>LLC Golden Dimension</organization>
             <organizationUrl>https://adorsys.com.ua/</organizationUrl>
         </developer>
+        <developer>
+            <name>Mykola Shumyn</name>
+            <email>msh@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Ivan Iuminov</name>
+            <email>iiu@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Serhii Shymkov</name>
+            <email>ssh@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Ihor Kuchevskyi</name>
+            <email>iku@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Hryhorii Hevorkian</name>
+            <email>hhe@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Vitaliy Shershnyov</name>
+            <email>vse@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
     </developers>
 
     <properties>
