@@ -164,10 +164,10 @@ public class Xs2aAisConsentServiceTest {
             .thenReturn(ACCOUNT_CONSENT);
 
         //When
-        AccountConsent actualResponse = xs2aAisConsentService.getInitialAccountConsentById(CONSENT_ID);
+        Optional<AccountConsent> actualResponse = xs2aAisConsentService.getInitialAccountConsentById(CONSENT_ID);
 
         //Then
-        assertThat(actualResponse).isEqualTo(ACCOUNT_CONSENT);
+        assertThat(actualResponse).isEqualTo(Optional.of(ACCOUNT_CONSENT));
     }
 
     @Test
@@ -177,10 +177,10 @@ public class Xs2aAisConsentServiceTest {
             .thenReturn(Optional.empty());
 
         //When
-        AccountConsent actualResponse = xs2aAisConsentService.getInitialAccountConsentById(CONSENT_ID);
+        Optional<AccountConsent> actualResponse = xs2aAisConsentService.getInitialAccountConsentById(CONSENT_ID);
 
         //Then
-        assertThat(actualResponse).isNull();
+        assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
