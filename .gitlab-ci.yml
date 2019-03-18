@@ -394,22 +394,29 @@ test_build_docker:
     DOCKER_TAG: "snapshot"
 
 
-# Develop
+# Develop / Support
 
-deploy_dockerhub_stage:
+deploy_dockerhub_stage_develop:
   stage: "build:image"
   only:
     - develop
-    - dgo_automatic_deployments
   variables:
     DOCKER_TAG: develop
+  <<: *build_dockerhub_image
+
+deploy_dockerhub_stage_support:
+  stage: "build:image"
+  only:
+    - support-2.x
+  variables:
+    DOCKER_TAG: develop2
   <<: *build_dockerhub_image
 
 # TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
 build_image_integ:
   stage: "build:image"
   only:
-    - develop
+    - support-2.x
   variables:
     DOCKER_TAG: integ
   environment:
@@ -421,7 +428,7 @@ build_image_integ:
 deploy_image_integ:
   stage: deploy
   only:
-    - develop
+    - support-2.x
   environment:
     name: integ
     url: https://xs2a.integ.cloud.adorsys.de
