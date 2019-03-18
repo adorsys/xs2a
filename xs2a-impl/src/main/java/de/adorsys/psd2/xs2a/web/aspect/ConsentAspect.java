@@ -84,7 +84,6 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
         if (EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
             buildLinkForEmbeddedAndDecoupledScaApproach(response, links, explicitPreferred, psuData);
         } else if (ScaApproach.REDIRECT == scaApproachResolver.resolveScaApproach()) {
-            // TODO add actual value during imlementation of multilevel sca https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/515
             if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, response.isMultilevelScaRequired())) {
                 links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", consentId));
             } else {
@@ -99,8 +98,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private void buildLinkForEmbeddedAndDecoupledScaApproach(CreateConsentResponse response, Links links, boolean explicitPreferred, PsuIdData psuData) {
         String consentId = response.getConsentId();
 
-        // TODO add actual value during imlementation of multilevel sca https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/515
-        if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, false)) {
+        if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, response.isMultilevelScaRequired())) {
             links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", consentId));
         } else {
             String path = buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", consentId, response.getAuthorizationId());
