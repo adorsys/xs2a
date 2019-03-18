@@ -113,7 +113,7 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createSinglePayment_success() {
-        //given
+        //Given
         when(xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
         when(singlePaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, AspspConsentData.emptyConsentData()))
@@ -132,7 +132,7 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createSinglePayment_singlePaymentSpi_initiatePayment_failed() {
-        //given
+        //Given
         SpiResponse<SpiSinglePaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
             .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
@@ -158,7 +158,7 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createPeriodicPayment_success() {
-        //given
+        //Given
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
         when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, AspspConsentData.emptyConsentData()))
@@ -177,7 +177,7 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createPeriodicPayment_periodicPaymentSpi_initiatePayment_failed() {
-        //given
+        //Given
         SpiResponse<SpiPeriodicPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
             .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
@@ -203,7 +203,7 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createBulkPayment_success() {
-        //given
+        //Given
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
         when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, AspspConsentData.emptyConsentData()))
@@ -222,7 +222,7 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createBulkPayment_bulkPaymentSpi_initiatePayment_failed() {
-        //given
+        //Given
         SpiResponse<SpiBulkPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
             .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
@@ -268,7 +268,7 @@ public class ScaPaymentServiceTest {
 
     @Test
     public void createCommonPayment_commonPaymentSpi_initiatePayment_failed() {
-        //given
+        //Given
         SpiResponse<SpiPaymentInitiationResponse> expectedFailureResponse = SpiResponse.<SpiPaymentInitiationResponse>builder()
             .aspspConsentData(AspspConsentData.emptyConsentData().respondWith(TEST_ASPSP_DATA.getBytes()))
             .fail(SpiResponseStatus.LOGICAL_FAILURE);
@@ -298,7 +298,7 @@ public class ScaPaymentServiceTest {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo(),
-            X_REQUEST_ID
+            UUID.randomUUID()
         );
     }
 
