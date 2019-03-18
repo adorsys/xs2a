@@ -48,27 +48,21 @@ public class TppInfoEntity extends InstanceDependableEntity {
     @Column(name = "authority_id", nullable = false)
     private String authorityId;
 
-    @Lob
     @Column(name = "authority_name")
     private String authorityName;
 
-    @Lob
     @Column(name = "country")
     private String country;
 
-    @Lob
     @Column(name = "organisation")
     private String organisation;
 
-    @Lob
     @Column(name = "organisation_unit")
     private String organisationUnit;
 
-    @Lob
     @Column(name = "city")
     private String city;
 
-    @Lob
     @Column(name = "state")
     private String state;
 

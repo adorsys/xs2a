@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,14 @@ import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 public class BankProfileSetting {
     /**
      * This field indicates the requested maximum frequency for an access per day
@@ -168,4 +166,14 @@ public class BankProfileSetting {
      * If "true" indicates that an ASPSP requires PSU in initial request for payment initiation or establishing consent
      */
     private boolean psuInInitialRequestMandated;
+
+    /**
+     * If "true" indicates that links in responses (except "scaRedirect") shall be generated with the base URL set by `xs2aBaseUrl`, if "false" - with the base URL of controller
+     */
+    private boolean forceXs2aBaseUrl;
+
+    /**
+     * This url is used as base url for TPP Links in case when `forceXs2aBaseLinksUrl` property is set to "true"
+     */
+    private String xs2aBaseUrl;
 }

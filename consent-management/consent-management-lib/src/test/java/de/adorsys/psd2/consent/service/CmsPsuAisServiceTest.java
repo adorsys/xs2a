@@ -24,9 +24,11 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentResponse;
+import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.PsuDataRepository;
@@ -57,6 +59,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -88,6 +91,8 @@ public class CmsPsuAisServiceTest {
     private AisConsentSpecification aisConsentSpecification;
     @Mock
     private AisConsentService aisConsentService;
+    @Mock
+    private AisConsentUsageService aisConsentUsageService;
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
@@ -234,7 +239,7 @@ public class CmsPsuAisServiceTest {
         // Assert
         assertEquals(consentsForPsu.size(), aisConsents.size());
         verify(aisConsentSpecification, times(1))
-            .byPsuIdIdAndInstanceId(psuIdData.getPsuId(), DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuIdInListAndInstanceId(psuIdData.getPsuId(), DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -249,7 +254,7 @@ public class CmsPsuAisServiceTest {
         // Assert
         assertTrue(consentsForPsu.isEmpty());
         verify(aisConsentSpecification, times(1))
-            .byPsuIdIdAndInstanceId(psuIdDataWrong.getPsuId(), DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuIdInListAndInstanceId(psuIdDataWrong.getPsuId(), DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -511,14 +516,55 @@ public class CmsPsuAisServiceTest {
         boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, "");
         //Then
         verify(aisConsentRepository).save(argument.capture());
-        List<AspspAccountAccess> aspspAccountAccessesChecked= argument.getValue().getAspspAccountAccesses();
+        List<AspspAccountAccess> aspspAccountAccessesChecked = argument.getValue().getAspspAccountAccesses();
         assertSame(aspspAccountAccessesChecked.size(), aspspAccountAccesses.size());
         assertSame(aspspAccountAccessesChecked.get(0).getAccountIdentifier(), iban);
         assertSame(aspspAccountAccessesChecked.get(0).getCurrency(), currency);
         assertSame(argument.getValue().getExpireDate(), validUntil);
         assertEquals(argument.getValue().getAllowedFrequencyPerDay(), frequencyPerDay);
-        assertEquals(argument.getValue().getUsageCounter(), frequencyPerDay);
+        assertEquals(getUsageCounter(argument.getValue()), frequencyPerDay);
         assertTrue(saved);
+    }
+
+    private int getUsageCounter(AisConsent aisConsent) {
+        Integer usage = aisConsent.getUsages().stream()
+                            .filter(consent -> LocalDate.now().isEqual(consent.getUsageDate()))
+                            .findFirst()
+                            .map(AisConsentUsage::getUsage)
+                            .orElse(0);
+
+        return Math.max(aisConsent.getAllowedFrequencyPerDay() - usage, 0);
+    }
+
+    @Test
+    public void getPsuDataAuthorisations_Success() {
+        // Given
+        AisConsent consent = buildAisConsentWithFinalisedAuthorisation();
+        //noinspection unchecked
+        when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(consent);
+
+        // When
+        Optional<List<CmsAisPsuDataAuthorisation>> actualResult = cmsPsuAisService.getPsuDataAuthorisations(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertTrue(actualResult.isPresent());
+        assertThat(actualResult.get().size()).isEqualTo(1);
+        assertThat(actualResult.get().get(0).getScaStatus()).isEqualTo(ScaStatus.FINALISED);
+    }
+
+    @Test
+    public void getPsuDataAuthorisationsEmptyPsuData_Success() {
+        // Given
+        AisConsent consent = buildAisConsentWithFinalisedAuthorisationNoPsuData();
+        //noinspection unchecked
+        when(aisConsentRepository.findOne(any(Specification.class))).thenReturn(consent);
+
+        // When
+        Optional<List<CmsAisPsuDataAuthorisation>> actualResult = cmsPsuAisService.getPsuDataAuthorisations(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+
+        // Then
+        assertTrue(actualResult.isPresent());
+        assertTrue(actualResult.get().isEmpty());
     }
 
     @Test
@@ -560,6 +606,20 @@ public class CmsPsuAisServiceTest {
                                       accountReference.getCurrency(),
                                       accountReference.getResourceId(),
                                       accountReference.getAspspAccountId());
+    }
+
+    private AisConsent buildAisConsentWithFinalisedAuthorisation() {
+        AisConsent consent = buildConsent();
+        AisConsentAuthorization finalisedAuthorisation = buildFinalisedAuthorisation();
+        finalisedAuthorisation.setPsuData(buildPsuData());
+        consent.setAuthorizations(Collections.singletonList(finalisedAuthorisation));
+        return consent;
+    }
+
+    private AisConsent buildAisConsentWithFinalisedAuthorisationNoPsuData() {
+        AisConsent consent = buildConsent();
+        consent.setAuthorizations(Collections.singletonList(buildFinalisedAuthorisation()));
+        return consent;
     }
 
     private AisConsent buildFinalisedConsent() {
@@ -625,7 +685,7 @@ public class CmsPsuAisServiceTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false);
+                                     false, false, null, null, null, false, Collections.emptyList(), 0, OffsetDateTime.now());
     }
 
     private TppInfoEntity buildTppInfoEntity() {

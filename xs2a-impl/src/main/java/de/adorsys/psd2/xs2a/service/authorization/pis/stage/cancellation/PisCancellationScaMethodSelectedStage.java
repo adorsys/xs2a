@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentStatusAfterSpiService;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
@@ -44,19 +45,19 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.FINALISED;
 public class PisCancellationScaMethodSelectedStage extends PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> {
     private final PaymentCancellationSpi paymentCancellationSpi;
     private final PisAspspDataService pisAspspDataService;
-    private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    private final Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiErrorMapper spiErrorMapper;
     private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
 
-    public PisCancellationScaMethodSelectedStage(PaymentCancellationSpi paymentCancellationSpi, PisAspspDataService pisAspspDataService, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper, SpiErrorMapper spiErrorMapper, SpiContextDataProvider spiContextDataProvider, ApplicationContext applicationContext, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
+    public PisCancellationScaMethodSelectedStage(CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted, ApplicationContext applicationContext, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper, PaymentCancellationSpi paymentCancellationSpi, PisAspspDataService pisAspspDataService, Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService, SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper, Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper) {
         super(cmsToXs2aPaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiSinglePaymentMapper, xs2aToSpiBulkPaymentMapper, pisCommonPaymentServiceEncrypted, applicationContext, xs2aToSpiPsuDataMapper);
-        this.spiErrorMapper = spiErrorMapper;
-        this.pisAspspDataService = pisAspspDataService;
-        this.pisCommonPaymentServiceEncrypted = pisCommonPaymentServiceEncrypted;
-        this.xs2aPisCommonPaymentMapper = xs2aPisCommonPaymentMapper;
-        this.spiContextDataProvider = spiContextDataProvider;
         this.paymentCancellationSpi = paymentCancellationSpi;
+        this.pisAspspDataService = pisAspspDataService;
+        this.updatePaymentStatusAfterSpiService = updatePaymentStatusAfterSpiService;
+        this.spiContextDataProvider = spiContextDataProvider;
+        this.spiErrorMapper = spiErrorMapper;
+        this.xs2aPisCommonPaymentMapper = xs2aPisCommonPaymentMapper;
     }
 
     @Override
@@ -78,11 +79,8 @@ public class PisCancellationScaMethodSelectedStage extends PisScaStage<Xs2aUpdat
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
-        // TODO update payment with status that comes from SPI https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/676
-        pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(request.getPaymentId(), TransactionStatus.CANC);
+        updatePaymentStatusAfterSpiService.updatePaymentStatus(request.getPaymentId(), TransactionStatus.CANC);
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse xs2aResponse = new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
-        xs2aResponse.setPsuId(psuData.getPsuId());
-        return xs2aResponse;
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
     }
 }

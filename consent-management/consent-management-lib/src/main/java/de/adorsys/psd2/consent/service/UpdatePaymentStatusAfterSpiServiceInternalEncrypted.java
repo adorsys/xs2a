@@ -21,10 +21,12 @@ import de.adorsys.psd2.consent.api.service.UpdatePaymentStatusAfterSpiServiceEnc
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -37,6 +39,10 @@ public class UpdatePaymentStatusAfterSpiServiceInternalEncrypted implements Upda
     public boolean updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
         return securityDataService.decryptId(encryptedPaymentId)
                    .map(id -> updatePaymentStatusAfterSpiService.updatePaymentStatus(id, status))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Encrypted Payment ID [{}]. Update payment status by id failed, couldn't decrypt payment id",
+                                encryptedPaymentId);
+                       return false;
+                   });
     }
 }

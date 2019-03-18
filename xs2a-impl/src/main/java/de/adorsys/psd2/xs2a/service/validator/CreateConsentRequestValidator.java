@@ -19,20 +19,20 @@ package de.adorsys.psd2.xs2a.service.validator;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
-import static de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
 
 @Component
 @RequiredArgsConstructor
@@ -47,7 +47,7 @@ public class CreateConsentRequestValidator {
      * <li>supporting of bank offered consent</li>
      * <li>expiration date of consent</li>
      * </ul>
-     * If there is new consent requirements, this method has to be updated.
+     * If there are new consent requirements, this method has to be updated.
      *
      * @param request CreateConsentReq request for consent creating
      * @return ValidationResult instance, that contains boolean isValid, that shows if request is valid
@@ -55,23 +55,36 @@ public class CreateConsentRequestValidator {
      */
     public ValidationResult validateRequest(CreateConsentReq request) {
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED)));
+            return ValidationResult.invalid(ErrorType.AIS_400, PARAMETER_NOT_SUPPORTED);
         }
         if (isNotSupportedBankOfferedConsent(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405)));
+            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_405);
         }
-        if (!isValidExpirationDate(request.getValidUntil())) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PERIOD_INVALID)));
+        if (isNotValidExpirationDate(request.getValidUntil())) {
+            return ValidationResult.invalid(ErrorType.AIS_400, PERIOD_INVALID);
         }
-
-        if (isNotValidFrequencyForRecurringIndicator(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)));
+        if (isNotValidFrequencyPerDay(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
+            return ValidationResult.invalid(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, "Value of frequencyPerDay is not correct"));
         }
-
         if (isNotSupportedAvailableAccounts(request)) {
-            return new ValidationResult(false, new MessageError(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405)));
+            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_405);
         }
-        return new ValidationResult(true, null);
+        if (areFlagsAndAccountsInvalid(request)) {
+            return ValidationResult.invalid(ErrorType.AIS_400, FORMAT_ERROR);
+        }
+        return ValidationResult.valid();
+    }
+
+    private boolean areFlagsAndAccountsInvalid(CreateConsentReq request) {
+        Xs2aAccountAccess access = request.getAccess();
+        if (access.isNotEmpty()) {
+            return !(CollectionUtils.isEmpty(request.getAccountReferences()) || areFlagsEmpty(access));
+        }
+        return false;
+    }
+
+    private boolean areFlagsEmpty(Xs2aAccountAccess access) {
+        return Objects.isNull(access.getAvailableAccounts()) && Objects.isNull(access.getAllPsd2());
     }
 
     private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {
@@ -91,9 +104,8 @@ public class CreateConsentRequestValidator {
         return !aspspProfileService.isBankOfferedConsentSupported();
     }
 
-    private boolean isValidExpirationDate(LocalDate validUntil) {
-        int consentLifetime = Math.abs(aspspProfileService.getConsentLifetime());
-        return validUntil.isAfter(LocalDate.now()) && isValidConsentLifetime(consentLifetime, validUntil);
+    private boolean isNotValidExpirationDate(LocalDate validUntil) {
+        return validUntil.isBefore(LocalDate.now());
     }
 
     private boolean isConsentGlobal(CreateConsentReq request) {
@@ -107,16 +119,10 @@ public class CreateConsentRequestValidator {
                    .orElse(false);
     }
 
-    private boolean isValidConsentLifetime(int consentLifetime, LocalDate validUntil) {
-        return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
-    }
-
-    private boolean isNotValidFrequencyForRecurringIndicator(boolean recurringIndicator, int frequencyPerDay) {
-        if (!recurringIndicator) {
-            return frequencyPerDay > 1;
-        }
-
-        return false;
+    private boolean isNotValidFrequencyPerDay(boolean recurringIndicator, int frequencyPerDay) {
+        return recurringIndicator
+                   ? frequencyPerDay <= 0
+                   : frequencyPerDay != 1;
     }
 
     private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {

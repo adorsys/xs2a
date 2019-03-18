@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Profile("debug_mode")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "aspsp-profile/for-debug")
+@RequestMapping(path = "/api/v1/aspsp-profile/for-debug")
 @Api(value = "Update aspsp profile ", tags = "Update aspsp profile.  Only for DEBUG!",
     description = "Provides access to update aspsp profile")
 public class AspspProfileUpdateController {

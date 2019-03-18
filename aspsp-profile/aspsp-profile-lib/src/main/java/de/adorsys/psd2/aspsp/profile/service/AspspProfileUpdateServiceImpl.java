@@ -48,7 +48,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * is tpp signature required, PIS redirect URL, AIS redirect URL, multicurrency account level, is bank offered consent supported,
      * available booking statuses, supported account reference fields, consent lifetime, transaction lifetime, allPsd2 support,
      * transactions without balances support, signing basket support, is payment cancellation authorisation mandated, piis consent support,
-     * delta report support, redirect url expiration time and type of authorisation start) except SCA approach
+     * delta report support, redirect url expiration time, type of authorisation start, etc.) except SCA approach
      *
      * @param aspspSettings new aspsp specific settings which to be stored in profile
      */
@@ -81,5 +81,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setAvailableAccountsConsentSupported(aspspSettings.isAvailableAccountsConsentSupported());
         setting.setScaByOneTimeAvailableAccountsConsentRequired(aspspSettings.isScaByOneTimeAvailableAccountsConsentRequired());
         setting.setPsuInInitialRequestMandated(aspspSettings.isPsuInInitialRequestMandated());
+        setting.setForceXs2aBaseUrl(aspspSettings.isForceXs2aBaseUrl());
+        setting.setXs2aBaseUrl(aspspSettings.getXs2aBaseUrl());
     }
 }

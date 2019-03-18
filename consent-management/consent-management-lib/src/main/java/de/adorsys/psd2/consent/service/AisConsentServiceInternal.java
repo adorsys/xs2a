@@ -33,12 +33,14 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +54,7 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -67,6 +70,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private final TppInfoMapper tppInfoMapper;
     private final ScaMethodMapper scaMethodMapper;
     private final CmsPsuService cmsPsuService;
+    private final AisConsentUsageService aisConsentUsageService;
 
     /**
      * Create AIS consent
@@ -78,14 +82,21 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public Optional<String> createConsent(CreateAisConsentRequest request) {
         if (request.getAllowedFrequencyPerDay() == null) {
+            log.info("TPP ID: [{}]. Consent cannot be created, because request contains no allowed frequency per day",
+                     request.getTppInfo().getAuthorisationNumber());
             return Optional.empty();
         }
         AisConsent consent = createConsentFromRequest(request);
         consent.setExternalId(UUID.randomUUID().toString());
         AisConsent saved = aisConsentRepository.save(consent);
-        return saved.getId() != null
-                   ? Optional.of(saved.getExternalId())
-                   : Optional.empty();
+
+        if (saved.getId() != null) {
+            return Optional.of(saved.getExternalId());
+        } else {
+            log.info("TPP ID: [{}], External Consent ID: [{}]. Ais consent cannot be created, because when saving to DB got null ID",
+                     request.getTppInfo().getAuthorisationNumber(), consent.getExternalId());
+            return Optional.empty();
+        }
     }
 
     /**
@@ -97,10 +108,15 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public Optional<ConsentStatus> getConsentStatusById(String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
-                   .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
-                   .map(this::checkAndUpdateOnExpiration)
-                   .map(AisConsent::getConsentStatus);
+        Optional<AisConsent> optionalConsentStatus = aisConsentRepository.findByExternalId(consentId);
+        if (optionalConsentStatus.isPresent()) {
+            return optionalConsentStatus.map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                       .map(this::checkAndUpdateOnExpiration)
+                       .map(AisConsent::getConsentStatus);
+        } else {
+            log.info("Consent ID: [{}]. Get consent failed, because consent is not found", consentId);
+            return Optional.empty();
+        }
     }
 
     /**
@@ -115,7 +131,11 @@ public class AisConsentServiceInternal implements AisConsentService {
     public boolean updateConsentStatusById(String consentId, ConsentStatus status) {
         return getActualAisConsent(consentId)
                    .map(c -> setStatusAndSaveConsent(c, status))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Consent ID [{}]. Update consent status by id failed, because consent not found",
+                                consentId);
+                       return false;
+                   });
     }
 
     /**
@@ -140,6 +160,7 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return AisAccountConsent
      */
     @Override
+    @Transactional
     public Optional<AisAccountConsent> getInitialAisAccountConsentById(String consentId) {
         return aisConsentRepository.findByExternalId(consentId)
                    .map(this::checkAndUpdateOnExpiration)
@@ -150,13 +171,18 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Transactional
     public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         AisConsent newConsent = aisConsentRepository.findByExternalId(newConsentId)
-                                    .orElseThrow(() -> new IllegalArgumentException("Wrong consent id: " + newConsentId));
+                                    .orElseThrow(() -> {
+                                        log.info("Consent ID: [{}]. Cannot find consent by id", newConsentId);
+                                        return new IllegalArgumentException("Wrong consent id: " + newConsentId);
+                                    });
 
         if (newConsent.isOneAccessType()) {
+            log.info("Consent ID: [{}]. Cannot find old consents, because consent is OneAccessType", newConsentId);
             return false;
         }
 
         if (newConsent.isWrongConsentData()) {
+            log.info("Consent ID: [{}]. Find old consents failed, because consent psu data list is empty or tppInfo is null", newConsentId);
             throw new IllegalArgumentException("Wrong consent data");
         }
 
@@ -172,13 +198,14 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                                               tppInfo.getAuthorityId(),
                                                                                               newConsent.getInstanceId(),
                                                                                               newConsent.getExternalId(),
-                                                                                              EnumSet.of(RECEIVED, VALID));
+                                                                                              EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
 
         List<AisConsent> oldConsentsWithExactPsuDataLists = oldConsents.stream()
                                                                 .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
                                                                 .collect(Collectors.toList());
 
         if (oldConsentsWithExactPsuDataLists.isEmpty()) {
+            log.info("Consent ID: [{}]. Cannot find old consents, because consent hasn't exact psu data lists as old consents", newConsentId);
             return false;
         }
 
@@ -200,7 +227,7 @@ public class AisConsentServiceInternal implements AisConsentService {
             AisConsent consent = consentOpt.get();
             aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent);
             checkAndUpdateOnExpiration(consent);
-            updateAisConsentCounter(consent);
+            updateAisConsentUsage(consent);
             logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
         }
     }
@@ -255,10 +282,14 @@ public class AisConsentServiceInternal implements AisConsentService {
                                      .filter(c -> !c.getConsentStatus().isFinalisedStatus())
                                      .isPresent();
 
-        return consentPresent
-                   ? aisConsentAuthorisationRepository.findByExternalId(authorizationId)
-                         .map(consentMapper::mapToAisConsentAuthorizationResponse)
-                   : Optional.empty();
+        if (consentPresent) {
+            return aisConsentAuthorisationRepository.findByExternalId(authorizationId)
+                       .map(consentMapper::mapToAisConsentAuthorizationResponse);
+        }
+
+        log.info("Consent ID: [{}], Authorisation ID: [{}]. Get account consent authorisation failed, because consent is not found",
+                 consentId, authorizationId);
+        return Optional.empty();
     }
 
     /**
@@ -280,12 +311,16 @@ public class AisConsentServiceInternal implements AisConsentService {
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
         Optional<AisConsent> consentOptional = aisConsentRepository.findByExternalId(consentId);
         if (!consentOptional.isPresent()) {
+            log.info("Consent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status failed, because consent is not found",
+                     consentId, authorisationId);
             return Optional.empty();
         }
 
         AisConsent consent = consentOptional.get();
         if (aisConsentConfirmationExpirationService.isConsentConfirmationExpired(consent)) {
             aisConsentConfirmationExpirationService.updateConsentOnConfirmationExpiration(consent);
+            log.info("Consent ID: [{}], Authorisation ID: [{}]. Get authorisation SCA status failed, because consent is expired",
+                     consentId, authorisationId);
             return Optional.of(ScaStatus.FAILED);
         }
 
@@ -301,7 +336,11 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                   .stream()
                                                   .filter(m -> Objects.equals(m.getAuthenticationMethodId(), authenticationMethodId))
                                                   .anyMatch(ScaMethod::isDecoupled))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Authorisation ID: [{}]. Get authorisation method decoupled status failed, because consent authorisation is not found",
+                                authorisationId);
+                       return false;
+                   });
     }
 
     @Override
@@ -310,6 +349,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<AisConsentAuthorization> authorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!authorisationOptional.isPresent()) {
+            log.info(" Authorisation ID: [{}]. Save authentication methods failed, because authorisation is not found", authorisationId);
             return false;
         }
 
@@ -323,49 +363,59 @@ public class AisConsentServiceInternal implements AisConsentService {
     /**
      * Update consent authorization
      *
-     * @param authorizationId id of authorisation session
+     * @param authorisationId id of authorisation session
      * @param request         needed parameters for updating consent authorization
      * @return boolean
      */
     @Override
     @Transactional
-    public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
-        Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorisationRepository.findByExternalId(authorizationId);
+    public boolean updateConsentAuthorization(String authorisationId, AisConsentAuthorizationRequest request) {
+        Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!aisConsentAuthorizationOptional.isPresent()) {
+            log.info("Authorisation ID: [{}]. Update consent authorisation failed, because consent authorisation is not found",
+                     authorisationId);
             return false;
         }
 
-        AisConsentAuthorization aisConsentAuthorization = aisConsentAuthorizationOptional.get();
+        AisConsentAuthorization aisConsentAuthorisation = aisConsentAuthorizationOptional.get();
 
-        if (aisConsentAuthorization.getScaStatus().isFinalisedStatus()) {
+        if (aisConsentAuthorisation.getScaStatus().isFinalisedStatus()) {
+            log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because consent authorisation has finalised status",
+                     authorisationId, aisConsentAuthorisation.getScaStatus().getValue());
             return false;
         }
 
-        if (ScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
+        if (ScaStatus.STARTED == aisConsentAuthorisation.getScaStatus()) {
             PsuData psuRequest = psuDataMapper.mapToPsuData(request.getPsuData());
 
-            if (!isPsuDataRequestCorrect(psuRequest, aisConsentAuthorization.getPsuData())) {
+            if (!cmsPsuService.isPsuDataRequestCorrect(psuRequest, aisConsentAuthorisation.getPsuData())) {
+                log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
+                         authorisationId, aisConsentAuthorisation.getScaStatus().getValue());
                 return false;
             }
 
-            AisConsent aisConsent = aisConsentAuthorization.getConsent();
-            PsuData psuData = cmsPsuService.definePsuDataForAuthorisation(psuRequest, aisConsent.getPsuDataList());
-            aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
+            AisConsent aisConsent = aisConsentAuthorisation.getConsent();
+            Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuRequest, aisConsent.getPsuDataList());
 
-            aisConsentAuthorization.setConsent(aisConsent);
-            aisConsentAuthorization.setPsuData(psuData);
+            if (psuDataOptional.isPresent()) {
+                PsuData psuData = psuDataOptional.get();
+                aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
+                aisConsentAuthorisation.setPsuData(psuData);
+            }
+
+            aisConsentAuthorisation.setConsent(aisConsent);
         }
 
         if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
             // TODO refactor logic and don't save tan and password data in plain text https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/390
-            aisConsentAuthorization.setAuthenticationMethodId(request.getAuthenticationMethodId());
+            aisConsentAuthorisation.setAuthenticationMethodId(request.getAuthenticationMethodId());
         }
 
-        aisConsentAuthorization.setScaStatus(request.getScaStatus());
-        aisConsentAuthorization = aisConsentAuthorisationRepository.save(aisConsentAuthorization);
+        aisConsentAuthorisation.setScaStatus(request.getScaStatus());
+        aisConsentAuthorisation = aisConsentAuthorisationRepository.save(aisConsentAuthorisation);
 
-        return aisConsentAuthorization.getExternalId() != null;
+        return aisConsentAuthorisation.getExternalId() != null;
     }
 
     @Override
@@ -380,6 +430,8 @@ public class AisConsentServiceInternal implements AisConsentService {
         Optional<AisConsentAuthorization> aisConsentAuthorisationOptional = aisConsentAuthorisationRepository.findByExternalId(authorisationId);
 
         if (!aisConsentAuthorisationOptional.isPresent()) {
+            log.info("Authorisation ID: [{}]. Update SCA approach failed, because consent authorisation is not found",
+                     authorisationId);
             return false;
         }
 
@@ -395,6 +447,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     public boolean updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
         Optional<AisConsent> aisConsentOptional = aisConsentRepository.findByExternalId(consentId);
         if (!aisConsentOptional.isPresent()) {
+            log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
+                     consentId);
             return false;
         }
         AisConsent consent = aisConsentOptional.get();
@@ -410,9 +464,8 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setConsentStatus(RECEIVED);
         consent.setAllowedFrequencyPerDay(request.getAllowedFrequencyPerDay());
         consent.setTppFrequencyPerDay(request.getRequestedFrequencyPerDay());
-        consent.setUsageCounter(request.getAllowedFrequencyPerDay()); // Initially we set maximum and then decrement it by usage
         consent.setRequestDateTime(LocalDateTime.now());
-        consent.setExpireDate(request.getValidUntil());
+        consent.setExpireDate(adjustExpireDate(request.getValidUntil()));
         consent.setPsuDataList(psuDataMapper.mapToPsuDataList(Collections.singletonList(request.getPsuData())));
         consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
         consent.addAccountAccess(new TppAccountAccessHolder(request.getAccess())
@@ -426,10 +479,21 @@ public class AisConsentServiceInternal implements AisConsentService {
         return consent;
     }
 
+    private LocalDate adjustExpireDate(LocalDate validUntil) {
+        int lifetime = aspspProfileService.getAspspSettings().getConsentLifetime();
+        if (lifetime <= 0) {
+            return validUntil;
+        }
+
+        //Expire date is inclusive and TPP can access AIS consent from current date
+        LocalDate lifeTimeDate = LocalDate.now().plusDays(lifetime - 1);
+        return lifeTimeDate.isBefore(validUntil) ? lifeTimeDate : validUntil;
+    }
+
     private AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
-        if (accessInfo.getAllPsd2() == AisAccountAccessType.ALL_ACCOUNTS) {
+        if (accessInfo.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
             return AisConsentRequestType.GLOBAL;
-        } else if (EnumSet.of(AisAccountAccessType.ALL_ACCOUNTS, AisAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
+        } else if (EnumSet.of(AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
         } else if (isEmptyAccess(accessInfo)) {
             return AisConsentRequestType.BANK_OFFERED;
@@ -444,19 +508,13 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private ActionStatus resolveConsentActionStatus(AisConsentActionRequest request, AisConsent consent) {
-        return consent == null
-                   ? ActionStatus.BAD_PAYLOAD
-                   : request.getActionStatus();
-    }
 
-    private void updateAisConsentCounter(AisConsent consent) {
-        if (consent != null && consent.hasUsagesAvailable()) {
-            int usageCounter = consent.getUsageCounter();
-            int newUsageCounter = --usageCounter;
-            consent.setUsageCounter(newUsageCounter);
-            consent.setLastActionDate(LocalDate.now());
-            aisConsentRepository.save(consent);
+        if (consent == null) {
+            log.info("Consent ID: [{}]. Consent action status resolver received null consent",
+                     request.getConsentId());
+            return ActionStatus.BAD_PAYLOAD;
         }
+        return request.getActionStatus();
     }
 
     private void logConsentAction(String requestedConsentId, ActionStatus actionStatus, String tppId) {
@@ -485,6 +543,8 @@ public class AisConsentServiceInternal implements AisConsentService {
 
     private boolean setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
         if (consent.getConsentStatus().isFinalisedStatus()) {
+            log.info("Consent ID: [{}], Consent status [{}]. Update consent status by ID failed, because consent status is finalised",
+                     consent.getExternalId(), consent.getConsentStatus());
             return false;
         }
         consent.setLastActionDate(LocalDate.now());
@@ -494,12 +554,16 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
-        PsuData psuData = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), aisConsent.getPsuDataList());
-        aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
-
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
+        Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), aisConsent.getPsuDataList());
+
+        if (psuDataOptional.isPresent()) {
+            PsuData psuData = psuDataOptional.get();
+            aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
+            consentAuthorization.setPsuData(psuData);
+        }
+
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPsuData(psuData);
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
@@ -519,6 +583,7 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         if (Objects.isNull(psuData)
                 || psuData.isEmpty()) {
+            log.info("Close previous authorisations by psu failed, because psuData is not allowed");
             return;
         }
 
@@ -537,9 +602,9 @@ public class AisConsentServiceInternal implements AisConsentService {
         return auth;
     }
 
-    private boolean isPsuDataRequestCorrect(PsuData psuRequest, PsuData psuAuth) {
-        return psuRequest != null
-                   || psuAuth == null
-                   || psuRequest.contentEquals(psuAuth);
+    private void updateAisConsentUsage(AisConsent consent) {
+        aisConsentUsageService.incrementUsage(consent);
+        consent.setLastActionDate(LocalDate.now());
+        aisConsentRepository.save(consent);
     }
 }

@@ -87,8 +87,6 @@ public class PisScaMethodSelectedStage extends PisScaStage<Xs2aUpdatePisCommonPa
         TransactionStatus paymentStatus = spiResponse.getPayload().getTransactionStatus();
         updatePaymentStatusAfterSpiService.updatePaymentStatus(request.getPaymentId(), paymentStatus);
         // TODO check the paymentSpi result first https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/338
-        Xs2aUpdatePisCommonPaymentPsuDataResponse xs2aResponse = new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
-        xs2aResponse.setPsuId(psuData.getPsuId());
-        return xs2aResponse;
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED);
     }
 }

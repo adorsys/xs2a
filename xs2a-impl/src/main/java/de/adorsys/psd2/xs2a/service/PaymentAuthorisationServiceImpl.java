@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
@@ -91,7 +92,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
 
-        if (!pisEndpointAccessCheckerService.isEndpointAccessible(request.getAuthorisationId())) {
+        if (!pisEndpointAccessCheckerService.isEndpointAccessible(request.getAuthorisationId(), PaymentAuthorisationType.INITIATION)) {
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                        .fail(PIS_403, of(SERVICE_BLOCKED))
                        .build();

@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.ConsentApi;
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -28,9 +28,11 @@ import de.adorsys.psd2.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
+import de.adorsys.psd2.xs2a.web.validator.ConsentControllerHeadersValidationService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +53,7 @@ public class ConsentController implements ConsentApi {
     private final ConsentService consentService;
     private final ResponseMapper responseMapper;
     private final AccountReferenceValidationService referenceValidationService;
+    private final ConsentControllerHeadersValidationService headersValidationService;
     private final ConsentModelMapper consentModelMapper;
     private final AuthorisationMapper authorisationMapper;
     private final TppRedirectUriMapper tppRedirectUriMapper;
@@ -64,6 +67,10 @@ public class ConsentController implements ConsentApi {
                                         String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                         String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                         String psUGeoLocation) {
+        ValidationResult consentValidationResult = headersValidationService.validateCreateConsent();
+        if (consentValidationResult.isNotValid()) {
+            return responseErrorMapper.generateErrorResponse(consentValidationResult.getMessageError());
+        }
 
         CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body);
 

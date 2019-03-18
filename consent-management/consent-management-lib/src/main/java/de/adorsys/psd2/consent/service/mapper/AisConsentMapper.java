@@ -18,16 +18,19 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessType;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
+import de.adorsys.psd2.consent.service.AisConsentUsageService;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -38,6 +41,7 @@ import java.util.stream.Collectors;
 public class AisConsentMapper {
     private final PsuDataMapper psuDataMapper;
     private final TppInfoMapper tppInfoMapper;
+    private final AisConsentUsageService aisConsentUsageService;
 
     /**
      * Maps AisConsent to AisAccountConsent with accesses populated with account references, provided by ASPSP.
@@ -65,7 +69,10 @@ public class AisConsentMapper {
             consent.getAisConsentRequestType(),
             psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
-            consent.isMultilevelScaRequired());
+            consent.isMultilevelScaRequired(),
+            mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
+            aisConsentUsageService.getUsageCounter(consent),
+            consent.getCreationTimestamp());
     }
 
     /**
@@ -88,7 +95,10 @@ public class AisConsentMapper {
             consent.getAisConsentRequestType(),
             psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
-            consent.isMultilevelScaRequired());
+            consent.isMultilevelScaRequired(),
+            mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
+            aisConsentUsageService.getUsageCounter(consent),
+            consent.getCreationTimestamp());
     }
 
     public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {
@@ -119,10 +129,10 @@ public class AisConsentMapper {
     private AisAccountAccess mapToAisAccountAccess(AisConsent consent) {
         List<TppAccountAccess> accesses = consent.getAccesses();
         return new AisAccountAccess(mapToInitialAccountReferences(accesses, TypeAccess.ACCOUNT),
-                                    mapToInitialAccountReferences(accesses, TypeAccess.BALANCE),
-                                    mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
-                                    getAccessType(consent.getAvailableAccounts()),
-                                    getAccessType(consent.getAllPsd2()));
+            mapToInitialAccountReferences(accesses, TypeAccess.BALANCE),
+            mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
+            getAccessType(consent.getAvailableAccounts()),
+            getAccessType(consent.getAllPsd2()));
     }
 
     private List<AccountReference> mapToInitialAccountReferences(List<TppAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -135,10 +145,10 @@ public class AisConsentMapper {
     private AisAccountAccess mapToAspspAisAccountAccess(AisConsent consent) {
         List<AspspAccountAccess> accesses = consent.getAspspAccountAccesses();
         return new AisAccountAccess(mapToAccountReferences(accesses, TypeAccess.ACCOUNT),
-                                    mapToAccountReferences(accesses, TypeAccess.BALANCE),
-                                    mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
-                                    getAccessType(consent.getAvailableAccounts()),
-                                    getAccessType(consent.getAllPsd2()));
+            mapToAccountReferences(accesses, TypeAccess.BALANCE),
+            mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
+            getAccessType(consent.getAvailableAccounts()),
+            getAccessType(consent.getAllPsd2()));
     }
 
     private List<AccountReference> mapToAccountReferences(List<AspspAccountAccess> aisAccounts, TypeAccess typeAccess) {
@@ -160,17 +170,33 @@ public class AisConsentMapper {
         AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
 
         return new AspspAccountAccess(selector.getAccountValue(),
-                                      typeAccess,
-                                      selector.getAccountReferenceType(),
-                                      accountReference.getCurrency(),
-                                      accountReference.getResourceId(),
-                                      accountReference.getAspspAccountId());
+            typeAccess,
+            selector.getAccountReferenceType(),
+            accountReference.getCurrency(),
+            accountReference.getResourceId(),
+            accountReference.getAspspAccountId());
     }
 
-    private String getAccessType(AisAccountAccessType type) {
+    private String getAccessType(AccountAccessType type) {
         return Optional.ofNullable(type)
                    .map(Enum::name)
                    .orElse(null);
     }
 
+
+    private List<AisAccountConsentAuthorisation> mapToAisAccountConsentAuthorisation(List<AisConsentAuthorization> aisConsentAuthorisations) {
+        if (CollectionUtils.isEmpty(aisConsentAuthorisations)) {
+            return Collections.emptyList();
+        }
+
+        return aisConsentAuthorisations.stream()
+                   .map(this::mapToAisAccountConsentAuthorisation)
+                   .collect(Collectors.toList());
+    }
+
+    private AisAccountConsentAuthorisation mapToAisAccountConsentAuthorisation(AisConsentAuthorization aisConsentAuthorisation) {
+        return Optional.ofNullable(aisConsentAuthorisation)
+                   .map(auth -> new AisAccountConsentAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()), auth.getScaStatus()))
+                   .orElse(null);
+    }
 }

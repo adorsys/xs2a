@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.consent;
+package de.adorsys.psd2.consent.api.pis;
 
-public enum SpiAccountAccessType {
-    ALL_ACCOUNTS("allAccounts"),
-    ALL_ACCOUNTS_WITH_BALANCES("allAccountsWithBalances");
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import lombok.Data;
 
-    private String description;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-    SpiAccountAccessType(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
+@Data
+public abstract class BaseCmsPayment implements CmsPayment {
+    private String paymentId;
+    private String paymentProduct;
+    private List<PsuIdData> psuIdDatas = new ArrayList<>();
+    private TppInfo tppInfo;
+    private OffsetDateTime creationTimestamp;
 }

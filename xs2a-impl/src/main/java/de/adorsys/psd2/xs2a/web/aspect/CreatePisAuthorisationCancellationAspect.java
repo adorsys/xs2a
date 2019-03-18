@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -40,8 +41,8 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect<PaymentController> {
     private final RedirectLinkBuilder redirectLinkBuilder;
 
-    public CreatePisAuthorisationCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, RedirectLinkBuilder redirectLinkBuilder) {
-        super(scaApproachResolver, messageService);
+    public CreatePisAuthorisationCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, RedirectLinkBuilder redirectLinkBuilder, AspspProfileService aspspProfileService) {
+        super(scaApproachResolver, messageService, aspspProfileService);
         this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
@@ -83,7 +84,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId) {
         String link = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorizationId);
         links.setScaRedirect(link);
-        links.setScaStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
+        links.setScaStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/cancellation-authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
 
         return links;
     }

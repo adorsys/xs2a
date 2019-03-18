@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.ais;
+package de.adorsys.psd2.consent.psu.api.pis;
 
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import lombok.Value;
 
-// TODO to be removed in future: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/671
-@ApiModel(description = "AccountAccess type", value = "AisAccountAccessType")
-public enum AisAccountAccessType {
-    ALL_ACCOUNTS,
-    ALL_ACCOUNTS_WITH_BALANCES
+@Value
+public class CmsPisPsuDataAuthorisation {
+    @JsonUnwrapped
+    private PsuIdData psu;
+    private String authorisationId;
+    private ScaStatus scaStatus;
+    private CmsAuthorisationType authorisationType;
 }

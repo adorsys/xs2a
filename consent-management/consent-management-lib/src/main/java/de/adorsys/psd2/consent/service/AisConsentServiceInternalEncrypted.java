@@ -26,12 +26,14 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -58,7 +60,11 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     public boolean updateConsentStatusById(String encryptedConsentId, ConsentStatus status) {
         return securityDataService.decryptId(encryptedConsentId)
                    .map(id -> aisConsentService.updateConsentStatusById(id, status))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Encrypted Consent ID: [{}]. Update consent by id failed, couldn't decrypt consent id",
+                                encryptedConsentId);
+                       return false;
+                   });
     }
 
     @Override
@@ -69,6 +75,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     }
 
     @Override
+    @Transactional
     public Optional<AisAccountConsent> getInitialAisAccountConsentById(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getInitialAisAccountConsentById);
@@ -79,7 +86,11 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     public boolean findAndTerminateOldConsentsByNewConsentId(String encryptedNewConsentId) {
         return securityDataService.decryptId(encryptedNewConsentId)
                    .map(aisConsentService::findAndTerminateOldConsentsByNewConsentId)
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Encrypted Consent ID: [{}]. Terminate consent by id failed, couldn't decrypt consent id",
+                                encryptedNewConsentId);
+                       return false;
+                   });
     }
 
     @Override
@@ -88,12 +99,14 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
         String consentId = encryptedRequest.getConsentId();
         Optional<String> decryptedConsentId = securityDataService.decryptId(consentId);
         if (!decryptedConsentId.isPresent()) {
+            log.info("Encrypted Consent ID: [{}]. Check consent and save action log failed, couldn't decrypt consent id",
+                     consentId);
             return;
         }
 
         AisConsentActionRequest decryptedRequest = new AisConsentActionRequest(encryptedRequest.getTppId(),
-            decryptedConsentId.get(),
-            encryptedRequest.getActionStatus());
+                                                                               decryptedConsentId.get(),
+                                                                               encryptedRequest.getActionStatus());
         aisConsentService.checkConsentAndSaveActionLog(decryptedRequest);
     }
 
@@ -166,6 +179,10 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     public boolean updateMultilevelScaRequired(String encryptedConsentId, boolean multilevelScaRequired) {
         return securityDataService.decryptId(encryptedConsentId)
                    .map(consentId -> aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Encrypted Consent ID: [{}]. Update MultilevelScaRequired failed, couldn't decrypt consent id",
+                                encryptedConsentId);
+                       return false;
+                   });
     }
 }

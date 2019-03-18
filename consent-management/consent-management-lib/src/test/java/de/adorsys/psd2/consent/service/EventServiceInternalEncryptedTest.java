@@ -19,15 +19,19 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.service.EventService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.event.Event;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Optional;
+import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -41,6 +45,13 @@ public class EventServiceInternalEncryptedTest {
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String UNDECRYPTABLE_PAYMENT_ID = "undecryptable payment id";
     private static final String DECRYPTED_PAYMENT_ID = "91cd2158-4344-44f4-bdbb-c736ededa436";
+
+    private static final String PSU_ID = "ID";
+    private static final String PSU_ID_TYPE = "TYPE";
+    private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
+    private static final String PSU_CORPORATE_ID_TYPE = "CORPORATE_ID_TYPE";
+    private static final String AUTHORISATION_NUMBER = "999";
+    private static final UUID REQUEST_ID = UUID.fromString("0d7f200e-09b4-46f5-85bd-f4ea89fccace");
 
     @InjectMocks
     private EventServiceInternalEncrypted eventServiceInternalEncrypted;
@@ -101,14 +112,36 @@ public class EventServiceInternalEncryptedTest {
         verify(eventService, times(1)).recordEvent(buildEvent());
     }
 
+    @Test
+    public void recordEvent_CheckEventBuilder() {
+        // Given
+        Event event = buildEvent(ENCRYPTED_CONSENT_ID, ENCRYPTED_PAYMENT_ID);
+        ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass(Event.class);
+
+        // When
+        boolean actual = eventServiceInternalEncrypted.recordEvent(event);
+
+        // Then
+        assertTrue(actual);
+        verify(eventService).recordEvent(argumentCaptor.capture());
+        assertEquals(buildEvent(DECRYPTED_CONSENT_ID, DECRYPTED_PAYMENT_ID), argumentCaptor.getValue());
+    }
+
     private Event buildEvent() {
         return buildEvent(null, null);
     }
 
     private Event buildEvent(String consentId, String paymentId) {
         return Event.builder()
-            .consentId(consentId)
-            .paymentId(paymentId)
-            .build();
+                   .consentId(consentId)
+                   .paymentId(paymentId)
+                   .psuIdData(buildPsuIdData())
+                   .tppAuthorisationNumber(AUTHORISATION_NUMBER)
+                   .xRequestId(REQUEST_ID)
+                   .build();
+    }
+
+    private PsuIdData buildPsuIdData() {
+        return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
     }
 }

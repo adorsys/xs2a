@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
+import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
@@ -49,6 +51,8 @@ public class AisConsentMapperTest {
     private PsuDataMapper psuDataMapper;
     @Mock
     private TppInfoMapper tppInfoMapper;
+    @Mock
+    private AisConsentUsageService aisConsentUsageService;
 
     @InjectMocks
     private AisConsentMapper aisConsentMapper;
@@ -86,6 +90,7 @@ public class AisConsentMapperTest {
         aisConsent.setExternalId(EXTERNAL_ID);
         aisConsent.setAspspAccountAccesses(aspspAccountAccesses);
         aisConsent.setAccesses(Collections.singletonList(buildTppAccountAccessAccounts()));
+        aisConsent.setCreationTimestamp(OffsetDateTime.now());
         return aisConsent;
     }
 
