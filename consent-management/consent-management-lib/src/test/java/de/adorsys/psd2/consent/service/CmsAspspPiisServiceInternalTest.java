@@ -259,6 +259,23 @@ public class CmsAspspPiisServiceInternalTest {
     }
 
     @Test
+    public void createConsent_withNullExpireDate_shouldFail() {
+        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+            .thenReturn(buildConsent());
+
+        // Given
+        PsuIdData psuIdData = buildPsuIdData();
+        CreatePiisConsentRequest request = buildCreatePiisConsentRequest(tppInfo, Collections.emptyList(), null);
+
+        // When
+        Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, request);
+
+        // Then
+        assertThat(actual.isPresent()).isFalse();
+        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+    }
+
+    @Test
     public void createConsent_withCardExpireDate_shouldFail() {
         when(piisConsentRepository.save(any(PiisConsentEntity.class)))
             .thenReturn(buildConsent());

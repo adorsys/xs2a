@@ -27,11 +27,14 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,22 +61,18 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
     @Override
     @Transactional
-    public Optional<String> createConsent(@NotNull PsuIdData psuIdData, CreatePiisConsentRequest request) {
-        if (isInvalidConsentCreationRequest(psuIdData, request)) {
-            log.info("Consent cannot be created, because request contains no allowed tppInfo or empty psuIdData or empty accounts or validUntil or cardExpiryDate in the past");
-            return Optional.empty();
-        }
+    public Optional<String> createConsent(@NotNull PsuIdData psuIdData,
+                                          @Nullable TppInfo tppInfo,
+                                          @NotNull List<AccountReference> accounts,
+                                          @NotNull LocalDate validUntil,
+                                          int allowedFrequencyPerDay) {
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest();
+        request.setTppInfo(tppInfo);
+        request.setAccounts(accounts);
+        request.setValidUntil(validUntil);
+        request.setAllowedFrequencyPerDay(allowedFrequencyPerDay);
 
-        PiisConsentEntity consent = buildPiisConsent(psuIdData, request);
-        PiisConsentEntity saved = piisConsentRepository.save(consent);
-
-        if (saved.getId() != null) {
-            return Optional.ofNullable(saved.getExternalId());
-        } else {
-            log.info("External Consent ID: [{}]. PIIS consent cannot be created, because when saving to DB got null ID",
-                     consent.getExternalId());
-            return Optional.empty();
-        }
+        return createConsent(psuIdData, request);
     }
 
     @Override
@@ -101,6 +100,26 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         piisConsentRepository.save(entity);
 
         return true;
+    }
+
+    @Override
+    @Transactional
+    public Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request) {
+        if (isInvalidConsentCreationRequest(psuIdData, request)) {
+            log.info("Consent cannot be created, because request contains no allowed tppInfo or empty psuIdData or empty accounts or validUntil or cardExpiryDate in the past");
+            return Optional.empty();
+        }
+
+        PiisConsentEntity consent = buildPiisConsent(psuIdData, request);
+        PiisConsentEntity saved = piisConsentRepository.save(consent);
+
+        if (saved.getId() != null) {
+            return Optional.ofNullable(saved.getExternalId());
+        } else {
+            log.info("External Consent ID: [{}]. PIIS consent cannot be created, because when saving to DB got null ID",
+                     consent.getExternalId());
+            return Optional.empty();
+        }
     }
 
     private PiisConsentEntity buildPiisConsent(PsuIdData psuIdData, CreatePiisConsentRequest request) {
@@ -131,7 +150,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         return invalidTpp
                    || psuIdData.isEmpty()
                    || CollectionUtils.isEmpty(request.getAccounts())
-                   || request.getValidUntil().isBefore(LocalDate.now())
+                   || request.getValidUntil() != null && request.getValidUntil().isBefore(LocalDate.now())
                    || request.getCardExpiryDate() != null && request.getCardExpiryDate().isBefore(LocalDate.now());
     }
 }
