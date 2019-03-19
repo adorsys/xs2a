@@ -17,13 +17,9 @@
 package de.adorsys.psd2.consent.aspsp.api.piis;
 
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,17 +28,11 @@ public interface CmsAspspPiisService {
      * Creates new PIIS consent. Consent gets status "Valid".
      *
      * @param psuIdData              PSU credentials data
-     * @param tppInfo                TPP for which the consent will be created. If the value is omitted, the consent
-     *                               will be created for all TPPs. If the TPP info object is present, it must contain
-     *                               authorisation number and authority ID.
-     * @param accounts               List of accounts for which the consent will be created
-     * @param validUntil             Consent's expiration date
-     * @param allowedFrequencyPerDay Maximum frequency for an access per day
+     * @param request                Request with all information for creating PIIS consent.
      * @return Consent id if the consent was created
      */
-    Optional<String> createConsent(@NotNull PsuIdData psuIdData, @Nullable TppInfo tppInfo,
-                                   @NotNull List<AccountReference> accounts, @NotNull LocalDate validUntil,
-                                   int allowedFrequencyPerDay);
+    Optional<String> createConsent(@NotNull PsuIdData psuIdData, CreatePiisConsentRequest request);
+
 
     /**
      * Terminates PIIS Consent object by its ID. Consent gets status "Terminated by ASPSP".

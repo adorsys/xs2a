@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
-import de.adorsys.psd2.consent.web.aspsp.domain.CreatePiisConsentRequest;
+import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.web.aspsp.domain.CreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -58,7 +58,7 @@ public class CmsAspspPiisControllerTest {
 
     @Before
     public void setUp() {
-        when(cmsAspspPiisService.createConsent(any(), any(), any(), any(), anyInt()))
+        when(cmsAspspPiisService.createConsent(any(), any()))
             .thenReturn(Optional.of(CONSENT_ID));
         when(cmsAspspPiisService.getConsentsForPsu(eq(buildPsuIdData(PSU_ID)), eq(DEFAULT_SERVICE_INSTANCE_ID)))
             .thenReturn(buildPiisConsentList());
@@ -103,7 +103,7 @@ public class CmsAspspPiisControllerTest {
 
     @Test
     public void createConsent_shouldFail_whenServiceReturnsEmpty() {
-        when(cmsAspspPiisService.createConsent(any(), any(), any(), any(), anyInt())).thenReturn(Optional.empty());
+        when(cmsAspspPiisService.createConsent(any(), any())).thenReturn(Optional.empty());
 
         //When
         ResponseEntity<CreatePiisConsentResponse> actual =
