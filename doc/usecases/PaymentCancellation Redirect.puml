@@ -3,7 +3,6 @@ actor PSU
 entity TPP
 entity XS2A
 entity SPI
-entity SPI
 entity CMS
 entity Online_banking
 entity Core_banking
@@ -11,27 +10,36 @@ note right of CMS
 For an Authorithation Call
 CMS-PSU-API is used
 end note
-PSU->TPP: Initiate payment
+PSU->TPP: Initiate Payment Cancellation
 activate TPP
 activate PSU
-TPP -> XS2A: REST Call Initiate payment\nPOST "/v1/payments/{payment-product}"
+TPP -> XS2A: REST Call Initiate Payment Cancellation request \n"DELETE /v1/payment-service/{payment-product} / {paymentId}"
 activate XS2A
-XS2A->SPI: Java Call SPIinitiatePayment
+XS2A->SPI: Java Call SPIinitiatePaymentCancellation
 activate SPI
 |||
-SPI-->XS2A: SpiSinglePaymentInitiationResponse
+SPI-->XS2A: SpiPaymentCancellationResponse
 deactivate SPI
+note left of TPP
+Depending on the payment-service, the payment- product
+and the ASPSP's implementation,
+this TPP call might be sufficient to cancel a payment.
+If an authorisation of the payment cancellation
+is mandated by the ASPSP,
+a corresponding hyperlink will be contained
+in the response message.
+end note
+alt paymentCancellationAuthorizationMandated = FALSE
 |||
-XS2A-->TPP:Payment initiation response
+      XS2A-->TPP: Response "http Code: 204 successful\n{"transactionStatus": "CANC"}"
 deactivate XS2A
 |||
-TPP->XS2A: REST Call Initiate authorithation implicitly \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
+else paymentCancellationAuthorizationMandated = TRUE
+|||
+      XS2A-->TPP: Payment Cancellation Response\n"link startAuthorisation"\n"http Code: 202 successful"
+|||
+TPP->XS2A: REST Call Initiate Payment Cancellation authorisation \n"POST/v1/{payment-service }/{payment-product}/\n{paymentId}/cancellation-authorisations"
 activate XS2A
-note left
-         in case of Multilevel SCA
-         the authorisation steps
-         should be repeated for other PSU
-end note
 |||
 XS2A-->TPP:Start authorisation response\n"link_SCARedirect "
 deactivate XS2A
@@ -42,7 +50,7 @@ PSU->Online_banking: PSU re-direct to an authorisation webpage of the ASPSP
 deactivate PSU
 activate Online_banking
 |||
-Online_banking->CMS: REST Call GetPaymentByRedirectId\n"GET/psu-api/v1/payment/redirect/{redirect-id}"
+Online_banking->CMS: REST Call GetPaymentByRedirectIdForCancellation\n"GET/psu-api/v1/payment/cancellation/redirect/{redirect-id}"
 activate CMS
 |||
 CMS-->Online_banking: CmsPaymentResponse
@@ -56,7 +64,7 @@ Online_banking-->PSU: Authorisation Process Response
 deactivate Online_banking
 activate PSU
 |||
-PSU->Online_banking: The PSU Authorises the Payment
+PSU->Online_banking: The PSU Authorises the Cancellation
 activate Online_banking
 |||
 Online_banking->CMS: REST Call UpdateAuthorisationStatus\n"PUT/psu-api/v1/payment/{payment-id}/authorisation/\n{authorisation-id}/status/{status}"
@@ -64,7 +72,7 @@ activate CMS
 |||
 CMS-->Online_banking: Response "http Codes: 200 successful or 400 error"
 deactivate CMS
-Online_banking->Core_banking: Execute Payment
+Online_banking->Core_banking: Execute Payment Cancellation
 activate Core_banking
 |||
 Core_banking-->Online_banking: Response PaymentStatus
@@ -75,17 +83,20 @@ activate CMS
 CMS-->Online_banking: Response "http Codes: 200 successful or 400 error"
 deactivate CMS
 |||
-Online_banking-->PSU: Payment confirmed
+Online_banking-->PSU: Cancellation confirmed
 deactivate Online_banking
 |||
 PSU->TPP: Redirect back to TPP
 deactivate PSU
 activate TPP
 |||
+|||
+end
+|||
 TPP->XS2A: REST Call get payment status\n"GET/v1/{payment-service}/{paymentId}/status"
 activate XS2A
 |||
-XS2A->CMS: REST Call GetPaymentById
+XS2A->CMS: REST Call GetPaymentById 
 activate CMS
 |||
 CMS-->XS2A: Payment Object Response
@@ -106,19 +117,19 @@ deactivate SPI
 XS2A->CMS: REST Call UpdateTransactionStatus
 activate CMS
 |||
-CMS->XS2A: UpdateTransactionStatus Response
+CMS-->XS2A: UpdateTransactionStatus Response
 deactivate CMS
 |||
-XS2A-->TPP: Transaction Status Response
+XS2A-->TPP: Response: Transaction Status Response
 deactivate XS2A
 |||
 TPP->XS2A: REST Call Get Payment Request "GET/v1/\n{payment-service}/{paymentId}"
 deactivate TPP
 activate XS2A
-XS2A->CMS: REST Call GetPaymentById
+XS2A->CMS: REST Call GetPaymentById 
 activate CMS
 |||
-CMS-->XS2A: Payment Object Response
+CMS->XS2A: Payment Object Response
 deactivate CMS
 |||
 XS2A->SPI: Java Call SPIGetPaymentbyId
@@ -142,24 +153,28 @@ XS2A-->TPP: Get Payment Response
 deactivate XS2A
 activate TPP
 |||
-TPP->XS2A: REST Call Get Authorisation Sub-resources\n"GET/v1/{payment-service}/{payment-product}\n/{paymentId/authorisations}"
+TPP->XS2A: REST Call get Cancellation Authorisaton Sub-Resouces Request\n"GET/v1/{payment-service}/{paymentId}/cancellation-authorithations"
 activate XS2A
 |||
-XS2A->CMS: GetAuthorisationsByPaymentId
+XS2A->CMS: GetCancellationAuthorisationsByPaymentId
 activate CMS
 |||
-CMS-->XS2A: GetAuthorisationsByPaymentId Response
+CMS-->XS2A: GetCancellationAuthorisationsByPaymentId Response
 deactivate CMS
-XS2A-->TPP: Authorisation Ids List
+XS2A-->TPP: Cancellation Authorisation Ids List
 |||
-TPP->XS2A: REST Call Get Authorisation\n"GET/v1/{payment-service}/{payment-product}/\n{paymentId/authorisations}/{authorithationId}"
-XS2A->CMS: GetAuthorisationScaStatus
+TPP->XS2A: REST Call Get Cancellation Authorisation\n"GET/v1/{payment-service}/{payment-product}/\n{paymentId}/cancellation-authorisations/{cancellationId}"
+XS2A->CMS: GetCancellationAuthorisationScaStatus
 activate CMS
 |||
-CMS-->XS2A: GetAuthorisationScaStatus Response
+CMS->XS2A: GetCancellationAuthorisationScaStatus Response
 deactivate CMS
+|||
 XS2A-->TPP: Sca Status
+|||
 deactivate XS2A
 deactivate TPP
+|||
+
 @enduml
 
