@@ -80,6 +80,7 @@ public class PaymentControllerTest {
     private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CANCELLATION_ID = "cancellationId";
+    private static final String HREF = "href";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
@@ -169,7 +170,7 @@ public class PaymentControllerTest {
         resultActions.andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json("{\"scaStatus\":\"started\"}"))
-            .andExpect(content().json("{\"_links\":{\"scaStatus\":\"http://localhost/v1/payments/" + SEPA_PAYMENT_PRODUCT + "/" + ENCRYPT_PAYMENT_ID + "/cancellation-authorisations/" + CANCELLATION_ID + "\"}}"));
+            .andExpect(content().json("{\"_links\":{\"scaStatus\":{" + HREF + ":\"http://localhost/v1/payments/" + SEPA_PAYMENT_PRODUCT + "/" + ENCRYPT_PAYMENT_ID + "/cancellation-authorisations/" + CANCELLATION_ID + "\"}}}"));
     }
 
     private PsuIdData getPsuIdData() {

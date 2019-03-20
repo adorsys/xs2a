@@ -40,6 +40,7 @@ public class ConsentModelMapper {
     private final CoreObjectsMapper coreObjectsMapper;
     private final ObjectMapper objectMapper;
     public final AccountModelMapper accountModelMapper;
+    private final HrefLinkMapper hrefLinkMapper;
 
     public CreateConsentReq mapToCreateConsentReq(Consents consent) {
         return Optional.ofNullable(consent)
@@ -66,21 +67,21 @@ public class ConsentModelMapper {
                    .map(r -> new StartScaprocessResponse()
                                  .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
                                  .authorisationId(r.getAuthorisationId())
-                                 ._links(objectMapper.convertValue(r.getLinks(), Map.class)))
+                                 ._links(hrefLinkMapper.mapToLinksMap(r.getLinks())))
                    .orElse(null);
     }
 
     public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisCancellationAuthorisationResponse response) {
         return new StartScaprocessResponse()
                    .scaStatus(coreObjectsMapper.mapToModelScaStatus(response.getScaStatus()))
-                   ._links(objectMapper.convertValue(response.getLinks(), Map.class));
+                   ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()));
     }
 
     public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
                    .map(r ->
                             new UpdatePsuAuthenticationResponse()
-                                ._links(objectMapper.convertValue(response.getLinks(), Map.class))
+                                ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
                                 .scaMethods(getAvailableScaMethods(r.getAvailableScaMethods()))
                                 .scaStatus(
                                     Optional.ofNullable(r.getScaStatus())
@@ -101,7 +102,7 @@ public class ConsentModelMapper {
                                 .consentStatus(ConsentStatus.fromValue(cnst.getConsentStatus()))
                                 .consentId(cnst.getConsentId())
                                 .scaMethods(mapToScaMethodsOuter(cnst))
-                                ._links(objectMapper.convertValue(cnst.getLinks(), Map.class))
+                                ._links(hrefLinkMapper.mapToLinksMap(cnst.getLinks()))
                                 .message(cnst.getPsuMessage())
                    )
                    .orElse(null);
@@ -240,8 +241,8 @@ public class ConsentModelMapper {
         CancellationList list = new CancellationList();
 
         list.addAll(Optional.ofNullable(idsContainer.getCancellationIds())
-            .map(ArrayList::new)
-            .orElseGet(ArrayList::new));
+                        .map(ArrayList::new)
+                        .orElseGet(ArrayList::new));
         return list;
     }
 
@@ -271,7 +272,7 @@ public class ConsentModelMapper {
 
     public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {
         return new UpdatePsuAuthenticationResponse()
-                   ._links(objectMapper.convertValue(response.getLinks(), Map.class))
+                   ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
                    .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
                    .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethodForPsd2Response()))
                    .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
