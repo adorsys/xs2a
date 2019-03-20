@@ -278,8 +278,9 @@ public class CmsAspspPiisServiceInternalTest {
             .thenReturn(buildConsent());
 
         // Given
+        List<AccountReference> accounts = buildAccountReferenceList();
         PsuIdData psuIdData = buildPsuIdData();
-        CreatePiisConsentRequest request = buildCreatePiisConsentRequest(tppInfo, Collections.emptyList(), null);
+        CreatePiisConsentRequest request = buildCreatePiisConsentRequest(tppInfo, accounts, null);
 
         // When
         Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, request);

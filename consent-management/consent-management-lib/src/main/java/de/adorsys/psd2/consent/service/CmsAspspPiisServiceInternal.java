@@ -150,7 +150,8 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         return invalidTpp
                    || psuIdData.isEmpty()
                    || CollectionUtils.isEmpty(request.getAccounts())
-                   || request.getValidUntil() != null && request.getValidUntil().isBefore(LocalDate.now())
+                   || request.getValidUntil() == null
+                   || request.getValidUntil().isBefore(LocalDate.now())
                    || request.getCardExpiryDate() != null && request.getCardExpiryDate().isBefore(LocalDate.now());
     }
 }

@@ -15,3 +15,5 @@ The following fields were added to PIIS consent (`de.adorsys.psd2.xs2a.core.piis
 | registrationInformation | Additional information about the registration process for the PSU, e.g. a reference to the TPP / PSU contract |
 
 Also these fields were added to `de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest` and can be used for PIIS consent creation in CMS-ASPSP-API 
+From now on method de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService#createConsent(PsuIdData, TppInfo, List, LocalDate, int) is deprecated,
+use CmsAspspPiisService#createConsent(PsuIdData, CreatePiisConsentRequest)instead.
