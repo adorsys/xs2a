@@ -76,6 +76,26 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     }
 
     @Override
+    @Transactional
+    public Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request) {
+        if (isInvalidConsentCreationRequest(psuIdData, request)) {
+            log.info("Consent cannot be created, because request contains no allowed tppInfo or empty psuIdData or empty accounts or validUntil or cardExpiryDate in the past");
+            return Optional.empty();
+        }
+
+        PiisConsentEntity consent = buildPiisConsent(psuIdData, request);
+        PiisConsentEntity saved = piisConsentRepository.save(consent);
+
+        if (saved.getId() != null) {
+            return Optional.ofNullable(saved.getExternalId());
+        } else {
+            log.info("External Consent ID: [{}]. PIIS consent cannot be created, because when saving to DB got null ID",
+                     consent.getExternalId());
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
         return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdAndInstanceId(psuIdData.getPsuId(), instanceId))
                    .stream()
@@ -100,26 +120,6 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         piisConsentRepository.save(entity);
 
         return true;
-    }
-
-    @Override
-    @Transactional
-    public Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request) {
-        if (isInvalidConsentCreationRequest(psuIdData, request)) {
-            log.info("Consent cannot be created, because request contains no allowed tppInfo or empty psuIdData or empty accounts or validUntil or cardExpiryDate in the past");
-            return Optional.empty();
-        }
-
-        PiisConsentEntity consent = buildPiisConsent(psuIdData, request);
-        PiisConsentEntity saved = piisConsentRepository.save(consent);
-
-        if (saved.getId() != null) {
-            return Optional.ofNullable(saved.getExternalId());
-        } else {
-            log.info("External Consent ID: [{}]. PIIS consent cannot be created, because when saving to DB got null ID",
-                     consent.getExternalId());
-            return Optional.empty();
-        }
     }
 
     private PiisConsentEntity buildPiisConsent(PsuIdData psuIdData, CreatePiisConsentRequest request) {

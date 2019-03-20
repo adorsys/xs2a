@@ -52,11 +52,6 @@ public class CmsAspspPiisController {
                                                                    @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
                                                                    @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
                                                                    @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType) {
-        if (request.getAccounts() == null
-                || request.getValidUntil() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
 
         return cmsAspspPiisService.createConsent(psuIdData, request)
