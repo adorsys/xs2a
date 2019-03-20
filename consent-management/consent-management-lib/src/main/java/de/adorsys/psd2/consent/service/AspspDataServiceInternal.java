@@ -95,7 +95,11 @@ public class AspspDataServiceInternal implements AspspDataService {
 
         return securityDataService.decryptId(externalId)
                    .map(this::deleteAspspConsentDataIfExist)
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("External Consent ID: [{}]. Delete aspsp consent data failed, couldn't decrypt consent id",
+                                externalId);
+                       return false;
+                   });
     }
 
     private boolean deleteAspspConsentDataIfExist(@NotNull String consentId) {

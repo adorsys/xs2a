@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.psu;
 
 
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -47,7 +48,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
@@ -74,7 +78,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
         return Optional.ofNullable(authorisation)
                    .map(auth -> updatePsuData(auth, psuIdData))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, because authorisation not found",
+                                instanceId, authorisationId);
+                       return false;
+                   });
     }
 
     @Override
@@ -97,7 +105,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
         return Optional.ofNullable(aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)))
                    .map(auth -> updateScaStatus(status, auth))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found",
+                                authorisationId, instanceId);
+                       return false;
+                   });
     }
 
     @Override
@@ -142,8 +154,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
             if (authorisation.isNotExpired()) {
                 return createCmsAisConsentResponseFromAisConsent(authorisation.getConsent(), redirectId);
-            }
-            else {
+            } else {
                 log.info("Authorisation ID [{}]. Check redirect and get consent failed, because authorisation is expired",
                          redirectId);
             }
@@ -163,7 +174,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Transactional
     public boolean updateAccountAccessInConsent(@NotNull String consentId, @NotNull CmsAisConsentAccessRequest accountAccessRequest, @NotNull String instanceId) {
         Optional<AisConsent> aisConsentOptional = getActualAisConsent(consentId, instanceId);
-        if(aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isPresent()) {
             return updateAccountAccessInConsent(aisConsentOptional.get(), accountAccessRequest);
         }
         log.info("Consent ID [{}]. Update account access in consent failed, because consent not found or has finalised status",
@@ -184,7 +195,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                    .filter(auth -> Objects.nonNull(auth.getPsuData()))
                    .map(auth -> new CmsAisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()),
                                                                auth.getExternalId(),
-                                                               auth.getScaStatus()))
+                                                               auth.getScaStatus(),
+                                                               // Here we use hardcoded value of enum, because AIS consent can not be in any other status than 'CREATED'.
+                                                               CmsAuthorisationType.CREATED))
                    .collect(Collectors.toList());
     }
 
@@ -201,7 +214,11 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {
         return Optional.ofNullable(aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId)))
                    .map(con -> updateConsentStatus(con, status))
-                   .orElse(false);
+                   .orElseGet(() -> {
+                       log.info("Consent ID [{}], Instance ID: [{}]. Change consent status failed, because AIS consent not found",
+                                consentId, instanceId);
+                       return false;
+                   });
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
@@ -210,8 +227,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             consent.setExpireDate(LocalDate.now());
             consent.setLastActionDate(LocalDate.now());
             aisConsentRepository.save(consent);
-        }
-        else {
+        } else {
             log.info("Get consent failed in checkAndUpdateOnExpiration method, because consent is null or expired.");
         }
         return consent;
@@ -243,10 +259,9 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
 
         Optional<PsuData> optionalPsuData = Optional.ofNullable(authorisation.getPsuData());
-        if (optionalPsuData.isPresent()){
-           newPsuData.setId(optionalPsuData.get().getId());
-        }
-        else {
+        if (optionalPsuData.isPresent()) {
+            newPsuData.setId(optionalPsuData.get().getId());
+        } else {
             log.info("Authorisation ID [{}]. Update PSU data in consent failed in updatePsuData method because authorisation contains no psu data.", authorisation.getId());
         }
 

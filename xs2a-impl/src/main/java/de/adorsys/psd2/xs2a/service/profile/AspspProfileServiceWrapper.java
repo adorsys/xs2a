@@ -199,6 +199,24 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().isPsuInInitialRequestMandated();
     }
 
+    /**
+     * Reads if links shall be generated with the base URL set by `xs2aBaseUrl`
+     *
+     * @return true if ASPSP requires that links shall be generated with the base URL set by `xs2aBaseUrl` property
+     */
+    public boolean isForceXs2aBaseLinksUrl() {
+        return readAspspSettings().isForceXs2aBaseUrl();
+    }
+
+    /**
+     * Reads the url, which is used as base url for TPP Links in case when `forceXs2aBaseLinksUrl` property is set to "true"
+     *
+     * @return String value of the url
+     */
+    public String getXs2aBaseUrl() {
+        return readAspspSettings().getXs2aBaseUrl();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

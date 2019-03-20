@@ -32,6 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
@@ -89,6 +90,7 @@ public class AisConsentMapperTest {
         aisConsent.setExternalId(EXTERNAL_ID);
         aisConsent.setAspspAccountAccesses(aspspAccountAccesses);
         aisConsent.setAccesses(Collections.singletonList(buildTppAccountAccessAccounts()));
+        aisConsent.setCreationTimestamp(OffsetDateTime.now());
         return aisConsent;
     }
 

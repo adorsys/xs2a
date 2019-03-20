@@ -46,6 +46,9 @@ public class EventServiceInternalEncrypted implements EventServiceEncrypted {
                                    .payload(event.getPayload())
                                    .eventOrigin(event.getEventOrigin())
                                    .eventType(event.getEventType())
+                                   .psuIdData(event.getPsuIdData())
+                                   .tppAuthorisationNumber(event.getTppAuthorisationNumber())
+                                   .xRequestId(event.getXRequestId())
                                    .build();
         return eventService.recordEvent(decryptedEvent);
     }

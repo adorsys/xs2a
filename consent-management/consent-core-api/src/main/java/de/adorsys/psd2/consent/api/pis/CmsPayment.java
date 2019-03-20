@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.*;
 import de.adorsys.psd2.xs2a.core.tpp.*;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 
 public interface CmsPayment {
@@ -28,4 +29,5 @@ public interface CmsPayment {
     String getPaymentProduct();
     List<PsuIdData> getPsuIdDatas();
     TppInfo getTppInfo();
+    OffsetDateTime getCreationTimestamp();
 }

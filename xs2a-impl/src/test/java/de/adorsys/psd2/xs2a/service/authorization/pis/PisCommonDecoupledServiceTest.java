@@ -38,7 +38,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PisCommonDecoupledServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
-    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final String PAYMENT_ID = "c713a32c-15ff-4f90-afa0-34a500359844";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String AUTHENTICATION_METHOD_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
@@ -53,7 +52,6 @@ public class PisCommonDecoupledServiceTest {
     private static final PsuIdData PSU_DATA = buildPsuIdData();
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE = buildUpdatePisCommonPaymentPsuDataResponse(UPDATE_PIS_COMMON_PAYMENT_REQUEST);
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE_AUTH_METHOD_ID = buildUpdatePisCommonPaymentPsuDataResponse(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID);
-
 
     @InjectMocks
     private PisCommonDecoupledService pisCommonDecoupledService;
@@ -95,8 +93,8 @@ public class PisCommonDecoupledServiceTest {
     public void proceedDecoupledInitiation_by_request_payment_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
+                                        .messages(Collections.singletonList("Payment not found"))
+                                        .build();
 
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
@@ -129,8 +127,8 @@ public class PisCommonDecoupledServiceTest {
     public void proceedDecoupledInitiation_by_request_payment_authenticationMethodId_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
+                                        .messages(Collections.singletonList("Payment not found"))
+                                        .build();
 
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
@@ -163,8 +161,8 @@ public class PisCommonDecoupledServiceTest {
     public void proceedDecoupledCancellation_by_request_payment_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
+                                        .messages(Collections.singletonList("Payment not found"))
+                                        .build();
 
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
@@ -197,8 +195,8 @@ public class PisCommonDecoupledServiceTest {
     public void proceedDecoupledCancellation_by_request_payment_authenticationMethodId_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
-            .messages(Collections.singletonList("Payment not found"))
-            .build();
+                                        .messages(Collections.singletonList("Payment not found"))
+                                        .build();
 
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
@@ -230,27 +228,26 @@ public class PisCommonDecoupledServiceTest {
         return new SpiContextData(
             new SpiPsuData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType"),
             new TppInfo(),
-            X_REQUEST_ID
+            UUID.randomUUID()
         );
     }
 
     private static SpiResponse<SpiAuthorisationDecoupledScaResponse> buildSpiResponse() {
         SpiAuthorisationDecoupledScaResponse response = new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE);
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-            .payload(response)
-            .aspspConsentData(ASPSP_CONSENT_DATA)
-            .success();
+                   .payload(response)
+                   .aspspConsentData(ASPSP_CONSENT_DATA)
+                   .success();
     }
 
     private static SpiResponse<SpiAuthorisationDecoupledScaResponse> buildSpiResponseFail() {
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-            .aspspConsentData(ASPSP_CONSENT_DATA)
-            .fail(SpiResponseStatus.NOT_SUPPORTED);
+                   .aspspConsentData(ASPSP_CONSENT_DATA)
+                   .fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     private static Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdatePisCommonPaymentPsuDataResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED);
-        //response.setPsuId(PSU_DATA.getPsuId());
         response.setPsuMessage(AUTH_DECOUPLED_RESPONSE.getPayload().getPsuMessage());
         response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(request.getAuthenticationMethodId()));
         return response;

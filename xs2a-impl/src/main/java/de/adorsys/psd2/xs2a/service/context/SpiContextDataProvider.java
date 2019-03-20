@@ -34,6 +34,10 @@ public class SpiContextDataProvider {
     private final RequestProviderService requestProviderService;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
 
+    public SpiContextData provide() {
+        return provideWithPsuIdData(requestProviderService.getPsuIdData());
+    }
+
     public SpiContextData provideWithPsuIdData(PsuIdData psuIdData) {
         TppInfo tppInfo = tppService.getTppInfo();
         return provide(psuIdData, tppInfo);
