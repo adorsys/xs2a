@@ -45,4 +45,8 @@ public class PiisConsent {
     private int allowedFrequencyPerDay;
     private OffsetDateTime creationTimestamp;
     private String instanceId;
+    private String cardNumber;
+    private LocalDate cardExpiryDate;
+    private String cardInformation;
+    private String registrationInformation;
 }
