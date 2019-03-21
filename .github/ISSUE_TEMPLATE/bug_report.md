@@ -1,38 +1,37 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+### Place where bug appeared
+* Endpoint or Component or Class
 
----
+### Current behavior
+* Right now...
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+### Expected behavior
+* Should be....
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+### Steps to reproduce
+* 1st step
+* 2nd step
+* ...
+* Nth step
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+### SCA approach
+- [ ] Redirect
+- [ ] Embedded
+- [ ] Decoupled
+  
+### Request / Response example
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+#### Request
+```json
+{"request": 1}
+```
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+#### Response
+```json
+{"response": 0}
+```
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+### XS2A version(s):
+- 1.15 - please specify yours
 
-**Additional context**
-Add any other context about the problem here.
+### Log files or other additional info
+Feel free to provide more info about your problem
