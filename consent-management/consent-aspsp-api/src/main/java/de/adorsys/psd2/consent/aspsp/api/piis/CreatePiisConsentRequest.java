@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.aspsp.domain;
+package de.adorsys.psd2.consent.aspsp.api.piis;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -39,5 +39,17 @@ public class CreatePiisConsentRequest {
 
     @ApiModelProperty(value = "Maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int allowedFrequencyPerDay;
+
+    @ApiModelProperty(value = "Card Number of the card issued by the PIISP. Should be delivered if available.", example = "1234567891234")
+    private String cardNumber;
+
+    @ApiModelProperty(value = "Expiry date of the card issued by the PIISP", example = "2020-12-31")
+    private LocalDate cardExpiryDate;
+
+    @ApiModelProperty(value = "Additional explanation for the card product.", example = "MyMerchant Loyalty Card")
+    private String cardInformation;
+
+    @ApiModelProperty(value = "Additional information about the registration process for the PSU, e.g. a reference to the TPP / PSU contract.", example = "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.")
+    private String registrationInformation;
 }
 
