@@ -44,7 +44,11 @@ public class PiisConsentMapper {
                                piisConsentEntity.getTppAccessType(),
                                piisConsentEntity.getAllowedFrequencyPerDay(),
                                piisConsentEntity.getCreationTimestamp(),
-                               piisConsentEntity.getInstanceId());
+                               piisConsentEntity.getInstanceId(),
+                               piisConsentEntity.getCardNumber(),
+                               piisConsentEntity.getCardExpiryDate(),
+                               piisConsentEntity.getCardInformation(),
+                               piisConsentEntity.getRegistrationInformation());
     }
 
     public List<PiisConsent> mapToPiisConsentList(List<PiisConsentEntity> consentEntities) {

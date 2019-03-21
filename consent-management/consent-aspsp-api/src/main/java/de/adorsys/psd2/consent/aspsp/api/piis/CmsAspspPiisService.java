@@ -39,10 +39,23 @@ public interface CmsAspspPiisService {
      * @param validUntil             Consent's expiration date
      * @param allowedFrequencyPerDay Maximum frequency for an access per day
      * @return Consent id if the consent was created
+     *
+     * @deprecated since 2.2, use {@link CmsAspspPiisService#createConsent(PsuIdData, CreatePiisConsentRequest)} instead
      */
+    //TODO 2.5 Delete this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/759
+    @Deprecated // Since 2.2
     Optional<String> createConsent(@NotNull PsuIdData psuIdData, @Nullable TppInfo tppInfo,
                                    @NotNull List<AccountReference> accounts, @NotNull LocalDate validUntil,
                                    int allowedFrequencyPerDay);
+
+    /**
+     * Creates new PIIS consent. Consent gets status "Valid".
+     *
+     * @param psuIdData              PSU credentials data
+     * @param request                Request with all information for creating PIIS consent.
+     * @return Consent id if the consent was created
+     */
+    Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request);
 
     /**
      * Terminates PIIS Consent object by its ID. Consent gets status "Terminated by ASPSP".

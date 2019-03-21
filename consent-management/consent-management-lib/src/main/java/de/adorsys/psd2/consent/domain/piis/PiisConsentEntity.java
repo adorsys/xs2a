@@ -92,4 +92,16 @@ public class PiisConsentEntity extends InstanceDependableEntity {
 
     @Column(name = "creation_timestamp", nullable = false)
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
+
+    @Column(name = "card_number", length = 35)
+    private String cardNumber;
+
+    @Column(name = "card_expiry_date")
+    private LocalDate cardExpiryDate;
+
+    @Column(name = "card_information", length = 140)
+    private String cardInformation;
+
+    @Column(name = "registration_information", length = 140)
+    private String registrationInformation;
 }
