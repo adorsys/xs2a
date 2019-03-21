@@ -107,7 +107,6 @@ public class PiisConsentMapperTest {
         Assert.assertEquals(piisConsentEntity.getCardExpiryDate(), piisConsent.getCardExpiryDate());
         Assert.assertEquals(piisConsentEntity.getCardInformation(), piisConsent.getCardInformation());
         Assert.assertEquals(piisConsentEntity.getRegistrationInformation(), piisConsent.getRegistrationInformation());
-
     }
 
     @NotNull
@@ -182,6 +181,4 @@ public class PiisConsentMapperTest {
         accountReferenceEntity.setIban(accountReference.getIban());
         return accountReferenceEntity;
     }
-
-
 }
