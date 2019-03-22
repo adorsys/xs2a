@@ -41,7 +41,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
@@ -77,6 +79,9 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
+    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(LocalDate.now(),
+                                                                                    LocalTime.NOON,
+                                                                                    ZoneOffset.UTC);
 
     @InjectMocks
     private Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPaymentInfoMapper;
@@ -112,25 +117,26 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         //When
         SpiPeriodicPayment spiPeriodicPayment = xs2aToSpiPaymentInfoMapper.mapToSpiPeriodicPayment(periodicPayment, PAYMENT_PRODUCT);
         //Then
-        assertEquals(spiPeriodicPayment.getStartDate(), START_DATE);
-        assertEquals(spiPeriodicPayment.getEndDate(), END_DATE);
-        assertEquals(spiPeriodicPayment.getExecutionRule(), PisExecutionRule.PRECEEDING);
-        assertEquals(spiPeriodicPayment.getFrequency(), SpiFrequencyCode.MONTHLY);
-        assertEquals(spiPeriodicPayment.getDayOfExecution(), PisDayOfExecution._13);
-        assertEquals(spiPeriodicPayment.getPaymentId(), PAYMENT_ID);
-        assertEquals(spiPeriodicPayment.getEndToEndIdentification(), END_TO_END_IDENTIFICATION);
-        assertEquals(spiPeriodicPayment.getDebtorAccount(), buildSpiAccountReference());
-        assertEquals(spiPeriodicPayment.getCreditorAccount(), buildSpiAccountReference());
-        assertEquals(spiPeriodicPayment.getInstructedAmount(), buildSpiAmount(EUR_CURRENCY, "100"));
-        assertEquals(spiPeriodicPayment.getCreditorAgent(), CREDITOR_AGENT);
-        assertEquals(spiPeriodicPayment.getCreditorName(), CREDITOR_NAME);
-        assertEquals(spiPeriodicPayment.getCreditorAddress(), buildSpiAddress());
-        assertEquals(spiPeriodicPayment.getRemittanceInformationUnstructured(), REMITTANCE_INFORMATION_UNSTRUCTURED);
-        assertEquals(spiPeriodicPayment.getPaymentStatus(), TRANSACTION_STATUS);
-        assertEquals(spiPeriodicPayment.getPaymentProduct(), PAYMENT_PRODUCT);
-        assertEquals(spiPeriodicPayment.getRequestedExecutionDate(), REQUESTED_EXECUTION_DATE);
-        assertEquals(spiPeriodicPayment.getRequestedExecutionTime(), REQUESTED_EXECUTION_TIME);
-        assertEquals(spiPeriodicPayment.getPsuDataList(), spiPsuDataList);
+        assertEquals(START_DATE, spiPeriodicPayment.getStartDate());
+        assertEquals(END_DATE, spiPeriodicPayment.getEndDate());
+        assertEquals(PisExecutionRule.PRECEEDING, spiPeriodicPayment.getExecutionRule());
+        assertEquals(SpiFrequencyCode.MONTHLY, spiPeriodicPayment.getFrequency());
+        assertEquals(PisDayOfExecution._13, spiPeriodicPayment.getDayOfExecution());
+        assertEquals(PAYMENT_ID, spiPeriodicPayment.getPaymentId());
+        assertEquals(END_TO_END_IDENTIFICATION, spiPeriodicPayment.getEndToEndIdentification());
+        assertEquals(buildSpiAccountReference(), spiPeriodicPayment.getDebtorAccount());
+        assertEquals(buildSpiAccountReference(), spiPeriodicPayment.getCreditorAccount());
+        assertEquals(buildSpiAmount(EUR_CURRENCY, "100"), spiPeriodicPayment.getInstructedAmount());
+        assertEquals(CREDITOR_AGENT, spiPeriodicPayment.getCreditorAgent());
+        assertEquals(CREDITOR_NAME, spiPeriodicPayment.getCreditorName());
+        assertEquals(buildSpiAddress(), spiPeriodicPayment.getCreditorAddress());
+        assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, spiPeriodicPayment.getRemittanceInformationUnstructured());
+        assertEquals(TRANSACTION_STATUS, spiPeriodicPayment.getPaymentStatus());
+        assertEquals(PAYMENT_PRODUCT, spiPeriodicPayment.getPaymentProduct());
+        assertEquals(REQUESTED_EXECUTION_DATE, spiPeriodicPayment.getRequestedExecutionDate());
+        assertEquals(REQUESTED_EXECUTION_TIME, spiPeriodicPayment.getRequestedExecutionTime());
+        assertEquals(spiPsuDataList, spiPeriodicPayment.getPsuDataList());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, spiPeriodicPayment.getStatusChangeTimestamp());
     }
 
     private PeriodicPayment buildPeriodicPayment() {
@@ -153,6 +159,7 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         periodicPayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         periodicPayment.setPsuDataList(psuDataList);
+        periodicPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         return periodicPayment;
     }
 

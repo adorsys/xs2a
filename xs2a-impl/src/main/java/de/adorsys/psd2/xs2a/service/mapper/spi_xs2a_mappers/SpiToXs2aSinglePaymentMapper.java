@@ -41,6 +41,7 @@ public class SpiToXs2aSinglePaymentMapper {
         single.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setTransactionStatus(payment.getPaymentStatus());
+        single.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
         return single;
     }
 }

@@ -31,4 +31,5 @@ public abstract class BaseCmsPayment implements CmsPayment {
     private List<PsuIdData> psuIdDatas = new ArrayList<>();
     private TppInfo tppInfo;
     private OffsetDateTime creationTimestamp;
+    private OffsetDateTime statusChangeTimestamp;
 }

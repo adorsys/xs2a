@@ -72,7 +72,8 @@ public class AisConsentMapper {
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
             aisConsentUsageService.getUsageCounter(consent),
-            consent.getCreationTimestamp());
+            consent.getCreationTimestamp(),
+            consent.getStatusChangeTimestamp());
     }
 
     /**
@@ -98,7 +99,8 @@ public class AisConsentMapper {
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
             aisConsentUsageService.getUsageCounter(consent),
-            consent.getCreationTimestamp());
+            consent.getCreationTimestamp(),
+            consent.getStatusChangeTimestamp());
     }
 
     public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {

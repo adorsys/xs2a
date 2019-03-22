@@ -77,6 +77,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.Period;
 import java.util.*;
 
@@ -110,6 +111,7 @@ public class ConsentServiceTest {
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(CORRECT_PSU_ID, null, null, null);
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
+    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.MAX;
 
     @InjectMocks
     private ConsentService consentService;
@@ -875,25 +877,25 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getConsent(String id, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
+        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), STATUS_CHANGE_TIMESTAMP, 0);
     }
 
     private SpiAccountConsent getSpiConsent(String consentId, SpiAccountAccess access, boolean withBalance) {
-        return new SpiAccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL);
+        return new SpiAccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, STATUS_CHANGE_TIMESTAMP);
     }
 
     private AccountConsent getAccountConsent(String consentId, LocalDate validUntil, int usageCounter) {
         Xs2aAccountAccess access = getXs2aAccountAccess(Collections.singletonList(getXs2aReference(CORRECT_IBAN, CURRENCY)), null, null, false, false);
 
-        return new AccountConsent(consentId, access, false, validUntil, 4, null, ConsentStatus.VALID, false, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), usageCounter);
+        return new AccountConsent(consentId, access, false, validUntil, 4, null, ConsentStatus.VALID, false, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.MAX, usageCounter);
     }
 
     private AccountConsent getAccountConsentFinalised(String consentId, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.REJECTED, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
+        return new AccountConsent(consentId, access, false, DATE, 4, null, ConsentStatus.REJECTED, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), STATUS_CHANGE_TIMESTAMP, 0);
     }
 
     private AccountConsent getAccountConsentDateValidYesterday(String consentId, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
+        return new AccountConsent(consentId, access, false, YESTERDAY, 4, null, ConsentStatus.VALID, withBalance, false, null, buildTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), STATUS_CHANGE_TIMESTAMP, 0);
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {

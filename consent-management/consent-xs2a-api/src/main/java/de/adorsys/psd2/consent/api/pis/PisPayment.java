@@ -105,5 +105,8 @@ public class PisPayment {
     @ApiModelProperty(name = "Day of execution", example = "14")
     private PisDayOfExecution dayOfExecution; //Day here max 31
 
+    @ApiModelProperty(value = "Timestamp of the last payment transaction status changing")
+    private OffsetDateTime statusChangeTimestamp;
+
     private List<PsuIdData> psuDataList;
 }

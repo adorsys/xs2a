@@ -27,6 +27,7 @@ public class Xs2aToSpiPaymentInfo {
         request.setPaymentId(payment.getPaymentId());
         request.setPaymentType(payment.getPaymentType());
         request.setPaymentData(payment.getPaymentData());
+        request.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
         return request;
     }
 }

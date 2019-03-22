@@ -87,6 +87,9 @@ public class CmsToXs2aPaymentMapperTest {
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.of(REQUESTED_EXECUTION_DATE,
                                                                                      LocalTime.NOON,
                                                                                      ZoneOffset.UTC);
+    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(REQUESTED_EXECUTION_DATE,
+                                                                                    LocalTime.NOON,
+                                                                                    ZoneOffset.UTC);
 
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final String PURPOSE_CODE = "purpose code";
@@ -153,6 +156,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(xs2aFrequencyCode, periodicPayment.getFrequency());
 
         assertEquals(DAY_OF_EXECUTION, periodicPayment.getDayOfExecution());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, periodicPayment.getStatusChangeTimestamp());
     }
 
     @Test
@@ -217,6 +221,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(REQUESTED_EXECUTION_TIME, singlePayment.getRequestedExecutionTime());
         assertEquals(TRANSACTION_STATUS, singlePayment.getTransactionStatus());
         assertEquals(PSU_ID_DATA_LIST, singlePayment.getPsuDataList());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
     }
 
     @Test
@@ -287,6 +292,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(REQUESTED_EXECUTION_TIME, firstPayment.getRequestedExecutionTime());
         assertEquals(TRANSACTION_STATUS, firstPayment.getTransactionStatus());
         assertEquals(PSU_ID_DATA_LIST, firstPayment.getPsuDataList());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, firstPayment.getStatusChangeTimestamp());
     }
 
     @Test
@@ -316,6 +322,7 @@ public class CmsToXs2aPaymentMapperTest {
         assertEquals(PAYMENT_DATA, commonPayment.getPaymentData());
         assertEquals(TPP_INFO, commonPayment.getTppInfo());
         assertEquals(PSU_ID_DATA_LIST, commonPayment.getPsuDataList());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, commonPayment.getStatusChangeTimestamp());
     }
 
     @Test
@@ -358,6 +365,7 @@ public class CmsToXs2aPaymentMapperTest {
         pisPayment.setFrequency(FREQUENCY);
         pisPayment.setDayOfExecution(DAY_OF_EXECUTION);
         pisPayment.setPsuDataList(PSU_ID_DATA_LIST);
+        pisPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         return pisPayment;
     }
 
@@ -388,6 +396,7 @@ public class CmsToXs2aPaymentMapperTest {
         pisCommonPaymentResponse.setPsuData(PSU_ID_DATA_LIST);
         pisCommonPaymentResponse.setPaymentData(PAYMENT_DATA);
         pisCommonPaymentResponse.setTransactionStatus(TRANSACTION_STATUS);
+        pisCommonPaymentResponse.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
 
         return pisCommonPaymentResponse;
     }

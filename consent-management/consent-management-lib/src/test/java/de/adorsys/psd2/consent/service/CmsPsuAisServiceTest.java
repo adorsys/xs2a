@@ -685,7 +685,8 @@ public class CmsPsuAisServiceTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), 0, OffsetDateTime.now());
+                                     false, false, null, null, null, false, Collections.emptyList(), 0, OffsetDateTime.now(),
+                                     OffsetDateTime.now());
     }
 
     private TppInfoEntity buildTppInfoEntity() {
