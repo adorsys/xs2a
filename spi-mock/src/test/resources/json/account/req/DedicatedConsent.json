@@ -1,0 +1,38 @@
+{
+  "access": {
+    "accounts": [
+      {
+        "bban": 89370400440532010000,
+        "currency": "EUR",
+        "iban": "DE89370400440532013000",
+        "maskedPan": "2356xxxxxx1234",
+        "msisdn": "+49(0)911 360698-0",
+        "pan": "2356 5746 3217 1234"
+      }
+    ],
+    "balances": [
+      {
+        "bban": 89370400440532010000,
+        "currency": "EUR",
+        "iban": "DE89370400440532013000",
+        "maskedPan": "2356xxxxxx1234",
+        "msisdn": "+49(0)911 360698-0",
+        "pan": "2356 5746 3217 1234"
+      }
+    ],
+    "transactions": [
+      {
+        "bban": 89370400440532010000,
+        "currency": "EUR",
+        "iban": "DE89370400440532013000",
+        "maskedPan": "2356xxxxxx1234",
+        "msisdn": "+49(0)911 360698-0",
+        "pan": "2356 5746 3217 1234"
+      }
+    ]
+  },
+  "combinedServiceIndicator": true,
+  "frequencyPerDay": 15,
+  "recurringIndicator": true,
+  "validUntil": "2019-10-10"
+}

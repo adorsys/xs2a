@@ -1,0 +1,9 @@
+{
+    "tppMessages": [
+        {
+            "category": "ERROR",
+            "code": "SERVICE_INVALID",
+            "text": "The addressed service is not valid for the addressed resources or the submitted data"
+        }
+    ]
+}
