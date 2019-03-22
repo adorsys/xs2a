@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -47,6 +48,7 @@ import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PSU_CREDENTIALS_INVALID;
@@ -86,7 +88,14 @@ public class AisDecoupledScaStartAuthorisationStage extends AisScaStage<UpdateCo
     }
 
     private UpdateConsentPsuDataResponse applyAuthorisation(UpdateConsentPsuDataReq updateConsentPsuDataReq) {
-        AccountConsent accountConsent = aisConsentService.getAccountConsentById(updateConsentPsuDataReq.getConsentId());
+        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(updateConsentPsuDataReq.getConsentId());
+
+        if (!accountConsentOptional.isPresent()) {
+            MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400));
+            return createFailedResponse(messageError, Collections.emptyList());
+        }
+        AccountConsent accountConsent = accountConsentOptional.get();
+
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
         PsuIdData psuData = extractPsuIdData(updateConsentPsuDataReq);
 

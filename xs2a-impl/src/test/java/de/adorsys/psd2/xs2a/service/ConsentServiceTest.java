@@ -208,17 +208,17 @@ public class ConsentServiceTest {
 
         //GetConsentById
         when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID, DATE, 0)));
-        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(getAccountConsent(CONSENT_ID, DATE, 0));
-        when(aisConsentService.getAccountConsentById(CONSENT_ID_FINALISED)).thenReturn(getAccountConsentFinalised(CONSENT_ID, getXs2aAccountAccess(Collections.singletonList(getXs2aReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
-        when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_YESTERDAY)).thenReturn(getAccountConsent(CONSENT_ID_DATE_VALID_YESTERDAY, YESTERDAY, 0));
-        when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_TODAY)).thenReturn(getAccountConsent(CONSENT_ID_DATE_VALID_TODAY, LocalDate.now(), 1));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID, DATE, 0)));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID_FINALISED)).thenReturn(Optional.of(getAccountConsentFinalised(CONSENT_ID, getXs2aAccountAccess(Collections.singletonList(getXs2aReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false)));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_YESTERDAY)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID_DATE_VALID_YESTERDAY, YESTERDAY, 0)));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_TODAY)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID_DATE_VALID_TODAY, LocalDate.now(), 1)));
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
 
         //GetStatusById
         when(aisConsentService.getAccountConsentStatusById(CONSENT_ID))
-            .thenReturn(ConsentStatus.RECEIVED);
+            .thenReturn(Optional.of(ConsentStatus.RECEIVED));
         when(aisConsentService.getAccountConsentStatusById(WRONG_CONSENT_ID))
-            .thenReturn(null);
+            .thenReturn(Optional.empty());
 
         when(aspspProfileService.getConsentLifetime())
             .thenReturn(0);
@@ -501,6 +501,9 @@ public class ConsentServiceTest {
 
     @Test
     public void getAccountConsentsStatusById_Failure() {
+        //Given:
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(Optional.empty());
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID);
         //Then:
@@ -595,6 +598,9 @@ public class ConsentServiceTest {
 
     @Test
     public void deleteAccountConsentsById_Failure() {
+        //Given
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(Optional.empty());
         //When:
         ResponseObject response = consentService.deleteAccountConsentsById(WRONG_CONSENT_ID);
         //Than:
@@ -725,6 +731,8 @@ public class ConsentServiceTest {
     @Test
     public void updateConsentPsuData_Success_ShouldRecordEvent() {
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+            .thenReturn(Optional.of(new AccountConsentAuthorization()));
         when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(new CreateConsentAuthorizationResponse()));
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
