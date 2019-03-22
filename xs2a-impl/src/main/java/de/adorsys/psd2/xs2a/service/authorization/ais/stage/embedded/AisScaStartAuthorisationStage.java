@@ -52,6 +52,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -103,8 +104,14 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
     }
 
     private UpdateConsentPsuDataResponse applyAuthorisation(UpdateConsentPsuDataReq request) {
+        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(request.getConsentId());
+        if (!accountConsentOptional.isPresent()) {
+            MessageError messageError = new MessageError(ErrorType.AIS_400, of(CONSENT_UNKNOWN_400));
+            return createFailedResponse(messageError, Collections.emptyList());
+        }
         PsuIdData psuData = extractPsuIdData(request);
-        AccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
+
+        AccountConsent accountConsent = accountConsentOptional.get();
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
 
         SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextDataProvider.provideWithPsuIdData(psuData), psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));

@@ -68,7 +68,7 @@ public abstract class AisScaStage<T, R> implements Function<T, R> {
             return psuDataInRequest;
         }
 
-        return Optional.ofNullable(aisConsentService.getAccountConsentAuthorizationById(request.getAuthorizationId(), request.getConsentId()))
+        return aisConsentService.getAccountConsentAuthorizationById(request.getAuthorizationId(), request.getConsentId())
                    .map(AccountConsentAuthorization::getPsuIdData)
                    .orElse(psuDataInRequest);
     }
