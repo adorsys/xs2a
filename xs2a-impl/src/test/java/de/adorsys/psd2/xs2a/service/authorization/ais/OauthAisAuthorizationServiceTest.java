@@ -11,9 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OauthAisAuthorizationServiceTest {
@@ -24,59 +22,64 @@ public class OauthAisAuthorizationServiceTest {
     private static final UpdateConsentPsuDataResponse UPDATE_CONSENT_PSU_DATA_RESPONSE = new UpdateConsentPsuDataResponse();
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
 
-
     @InjectMocks
     private OauthAisAuthorizationService oauthAisAuthorizationService;
 
     @Test
-    public void createConsentAuthorization_test() {
+    public void createConsentAuthorization_success() {
         //When
         Optional<CreateConsentAuthorizationResponse> actualResponse = oauthAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
+
         //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
-    public void updateConsentPsuData_test() {
+    public void updateConsentPsuData_success() {
         //When
         UpdateConsentPsuDataResponse actualResponse = oauthAisAuthorizationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION);
+
         //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_test() {
+    public void getAccountConsentAuthorizationById_success() {
         //When
         AccountConsentAuthorization actualResponse = oauthAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
+
         //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(ACCOUNT_CONSENT_AUTHORIZATION);
     }
 
     @Test
-    public void getAuthorisationSubResources_test() {
+    public void getAuthorisationSubResources_success() {
         //When
         Optional<Xs2aAuthorisationSubResources> actualResponse = oauthAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
+
         //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
-    public void getAuthorisationScaStatus_test() {
+    public void getAuthorisationScaStatus_success() {
         //When
         Optional<ScaStatus> actualResponse = oauthAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+
         //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
-    public void getScaApproachServiceType_test() {
+    public void getScaApproachServiceType_success() {
         //When
         ScaApproach actualResponse = oauthAisAuthorizationService.getScaApproachServiceType();
+
         //Then
         assertThat(actualResponse).isNotNull();
     }

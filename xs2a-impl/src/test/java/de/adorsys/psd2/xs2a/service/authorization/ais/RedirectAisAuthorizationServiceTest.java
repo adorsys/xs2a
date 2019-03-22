@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -49,10 +48,9 @@ public class RedirectAisAuthorizationServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
     private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildCreateConsentAuthResponse();
 
-
-
     @InjectMocks
     private RedirectAisAuthorizationService redirectAisAuthorisationService;
+
     @Mock
     private Xs2aAisConsentService aisConsentService;
 
@@ -61,36 +59,42 @@ public class RedirectAisAuthorizationServiceTest {
         // Given
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, ScaStatus.STARTED, PSU_ID_DATA))
             .thenReturn(Optional.of(AUTHORISATION_ID));
+
         // When
         Optional<CreateConsentAuthorizationResponse> actualResponse = redirectAisAuthorisationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
+
         // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(Optional.of(CREATE_CONSENT_AUTHORIZATION_RESPONSE));
     }
 
     @Test
-    public void createConsentAuthorization_fail() {
+    public void createConsentAuthorization_failure_wrongConsentId() {
         // Given
-        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, ScaStatus.STARTED, PSU_ID_DATA))
+        when(aisConsentService.createAisConsentAuthorization(WRONG_CONSENT_ID, ScaStatus.STARTED, PSU_ID_DATA))
             .thenReturn(Optional.empty());
+
         // When
-        Optional<CreateConsentAuthorizationResponse> actualResponse = redirectAisAuthorisationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponse = redirectAisAuthorisationService.createConsentAuthorization(PSU_ID_DATA, WRONG_CONSENT_ID);
+
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
-    public void updateConsentPsuData_test() {
+    public void updateConsentPsuData_success() {
         // When
         UpdateConsentPsuDataResponse actualResponse = redirectAisAuthorisationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION);
+
         // Then
         assertThat(actualResponse).isNull();
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_test() {
+    public void getAccountConsentAuthorizationById_success() {
         // When
         AccountConsentAuthorization actualResponse = redirectAisAuthorisationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
+
         // Then
         assertThat(actualResponse).isNull();
     }
@@ -100,24 +104,27 @@ public class RedirectAisAuthorizationServiceTest {
         // Given
         when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
             .thenReturn(Optional.of(STRING_LIST));
+
         // When
         Optional<Xs2aAuthorisationSubResources> actualResponse = redirectAisAuthorisationService.getAuthorisationSubResources(CONSENT_ID);
+
         // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
     }
 
     @Test
-    public void getAuthorisationSubResources_fail() {
+    public void getAuthorisationSubResources_failure_wrongConsentId() {
         // Given
-        when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
+        when(aisConsentService.getAuthorisationSubResources(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
+
         // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = redirectAisAuthorisationService.getAuthorisationSubResources(CONSENT_ID);
+        Optional<Xs2aAuthorisationSubResources> actualResponse = redirectAisAuthorisationService.getAuthorisationSubResources(WRONG_CONSENT_ID);
+
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
-// =============================================================================================
 
     @Test
     public void getAuthorisationScaStatus_success() {
@@ -148,9 +155,10 @@ public class RedirectAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getScaApproachServiceType_test() {
+    public void getScaApproachServiceType_success() {
         //When
         ScaApproach actualResponse = redirectAisAuthorisationService.getScaApproachServiceType();
+
         //Then
         assertThat(actualResponse).isNotNull();
     }
@@ -163,5 +171,4 @@ public class RedirectAisAuthorizationServiceTest {
         response.setResponseLinkType(ConsentAuthorizationResponseLinkType.SCA_REDIRECT);
         return response;
     }
-
 }

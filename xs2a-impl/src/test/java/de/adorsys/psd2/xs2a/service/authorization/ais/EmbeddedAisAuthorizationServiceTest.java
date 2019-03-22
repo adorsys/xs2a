@@ -33,7 +33,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
@@ -58,7 +57,6 @@ public class EmbeddedAisAuthorizationServiceTest {
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final List<String> STRING_LIST = Collections.singletonList(CONSENT_ID);
     private static final Xs2aAuthorisationSubResources XS2A_AUTHORISATION_SUB_RESOURCES = new Xs2aAuthorisationSubResources(STRING_LIST);
-    private static final AccountConsent ACCOUNT_CONSENT_NULL = null;
 
     @InjectMocks
     private EmbeddedAisAuthorizationService authorizationService;
@@ -95,17 +93,16 @@ public class EmbeddedAisAuthorizationServiceTest {
             .thenReturn(Optional.of(SCA_STATUS));
         when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
-
     }
 
-    // ============== NEW ================
     @Test
-    public void createConsentAuthorization_consentIsNull_Success() {
+    public void createConsentAuthorization_failure_wrongConsentId() {
         // Given
-        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(ACCOUNT_CONSENT_NULL);
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(null);
 
         // When
-        Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -117,11 +114,26 @@ public class EmbeddedAisAuthorizationServiceTest {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(consentAuthorization);
+
         // When
         AccountConsentAuthorization actualResponse = authorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
+
         // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(consentAuthorization);
+    }
+
+    @Test
+    public void getAccountConsentAuthorizationById_failure_wrongIds() {
+        // Given
+        when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID))
+            .thenReturn(null);
+
+        // When
+        AccountConsentAuthorization actualResponse = authorizationService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID);
+
+        // Then
+        assertThat(actualResponse).isNull();
     }
 
     @Test
@@ -129,32 +141,36 @@ public class EmbeddedAisAuthorizationServiceTest {
         // Given
         when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
             .thenReturn(Optional.of(STRING_LIST));
+
         // When
         Optional<Xs2aAuthorisationSubResources> actualResponse = authorizationService.getAuthorisationSubResources(CONSENT_ID);
+
         // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
     }
 
     @Test
-    public void getAuthorisationSubResources_fail() {
+    public void getAuthorisationSubResources_failure_wrongConsentId() {
         // Given
-        when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
+        when(aisConsentService.getAuthorisationSubResources(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
+
         // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = authorizationService.getAuthorisationSubResources(CONSENT_ID);
+        Optional<Xs2aAuthorisationSubResources> actualResponse = authorizationService.getAuthorisationSubResources(WRONG_CONSENT_ID);
+
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
-    public void getScaApproachServiceType_test() {
-        //When
+    public void getScaApproachServiceType_success() {
+        // When
         ScaApproach actualResponse = authorizationService.getScaApproachServiceType();
-        //Then
+
+        // Then
         assertThat(actualResponse).isNotNull();
     }
-    // ============== !NEW ================
 
     @Test
     public void createConsentAuthorization_Success() {

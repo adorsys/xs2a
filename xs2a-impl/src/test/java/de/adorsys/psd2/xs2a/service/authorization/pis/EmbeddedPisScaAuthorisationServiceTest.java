@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationS
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -60,11 +59,13 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
     private static final CreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreatePisAuthorisationResponse(AUTHORISATION_ID);
+    private static final CreatePisAuthorisationResponse WRONG_CREATE_PIS_AUTHORISATION_RESPONSE = new CreatePisAuthorisationResponse(WRONG_AUTHORISATION_ID);
     private static final Xs2aCreatePisCancellationAuthorisationResponse XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE = new Xs2aCreatePisCancellationAuthorisationResponse(CREATE_PIS_AUTHORISATION_RESPONSE.getAuthorizationId(), ScaStatus.STARTED, PAYMENT_TYPE);
     private static final Xs2aCreatePisAuthorisationResponse XS2A_CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, PAYMENT_TYPE);
 
     @InjectMocks
     private EmbeddedPisScaAuthorisationService embeddedPisScaAuthorisationService;
+
     @Mock
     private PisAuthorisationService pisAuthorisationService;
     @Mock
@@ -87,19 +88,20 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void createCommonPaymentAuthorisation_fail() {
+    public void createCommonPaymentAuthorisation_failure_wrongCreatePisAuthResponse() {
         // Given
-        when(pisAuthorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA))
-            .thenReturn(CREATE_PIS_AUTHORISATION_RESPONSE);
-        when(pisCommonPaymentMapper.mapToXsa2CreatePisAuthorisationResponse(CREATE_PIS_AUTHORISATION_RESPONSE, PAYMENT_TYPE))
-            .thenReturn(null);
+        when(pisAuthorisationService.createPisAuthorisation(WRONG_PAYMENT_ID, PSU_ID_DATA))
+            .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
+        when(pisCommonPaymentMapper.mapToXsa2CreatePisAuthorisationResponse(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE, PAYMENT_TYPE))
+            .thenReturn(Optional.empty());
 
         // When
-        Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
+        Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentAuthorisation(WRONG_PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse).isNull();
+        assertThat(actualResponse.isPresent()).isFalse();
     }
+
     @Test
     public void updateCommonPaymentPsuData_success() {
         // Given
@@ -115,7 +117,7 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void updateCommonPaymentPsuData_fail() {
+    public void updateCommonPaymentPsuData_failure_emptyUpdPisCommonPsuDataResponse() {
         // Given
         when(pisAuthorisationService.updatePisAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, ScaApproach.EMBEDDED))
             .thenReturn(null);
@@ -144,15 +146,15 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void createCommonPaymentCancellationAuthorisation_fail() {
+    public void createCommonPaymentCancellationAuthorisation_failure_wrongCreatePisAuthResponse() {
         // Given
-        when(pisAuthorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA))
-            .thenReturn(CREATE_PIS_AUTHORISATION_RESPONSE);
-        when(pisCommonPaymentMapper.mapToXs2aCreatePisCancellationAuthorisationResponse(CREATE_PIS_AUTHORISATION_RESPONSE, PAYMENT_TYPE))
+        when(pisAuthorisationService.createPisAuthorisationCancellation(WRONG_PAYMENT_ID, PSU_ID_DATA))
+            .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
+        when(pisCommonPaymentMapper.mapToXs2aCreatePisCancellationAuthorisationResponse(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE, PAYMENT_TYPE))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
+        Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(WRONG_PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -173,13 +175,13 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getCancellationAuthorisationSubResources_fail() {
+    public void getCancellationAuthorisationSubResources_failure_wrongPaymentId() {
         // Given
-        when(pisAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID))
+        when(pisAuthorisationService.getCancellationAuthorisationSubResources(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<Xs2aPaymentCancellationAuthorisationSubResource> actualResponse = embeddedPisScaAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
+        Optional<Xs2aPaymentCancellationAuthorisationSubResource> actualResponse = embeddedPisScaAuthorisationService.getCancellationAuthorisationSubResources(WRONG_PAYMENT_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -225,18 +227,18 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getAuthorisationSubResources_fail() {
+    public void getAuthorisationSubResources_failure_wrongPaymentId() {
         // Given
-        when(pisAuthorisationService.getAuthorisationSubResources(PAYMENT_ID))
+        when(pisAuthorisationService.getAuthorisationSubResources(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = embeddedPisScaAuthorisationService.getAuthorisationSubResources(PAYMENT_ID);
+        Optional<Xs2aAuthorisationSubResources> actualResponse = embeddedPisScaAuthorisationService.getAuthorisationSubResources(WRONG_PAYMENT_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
-    // =======================================================================================
+
     @Test
     public void getAuthorisationScaStatus_success() {
         // Given
@@ -292,9 +294,10 @@ public class EmbeddedPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getScaApproachServiceType_test() {
+    public void getScaApproachServiceType_success() {
         //When
         ScaApproach actualResponse = embeddedPisScaAuthorisationService.getScaApproachServiceType();
+
         //Then
         assertThat(actualResponse).isNotNull();
     }

@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation.PisScaStartAuthorisationStage;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import org.junit.Before;
@@ -39,12 +38,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -66,9 +66,6 @@ public class PisAuthorisationServiceTest {
     private static final GetPisAuthorisationResponse GET_PIS_AUTHORISATION_RESPONSE = buildGetPisAuthorisationResponse();
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse STAGE_RESPONSE = new Xs2aUpdatePisCommonPaymentPsuDataResponse();
     private static final UpdatePisCommonPaymentPsuDataRequest UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = new UpdatePisCommonPaymentPsuDataRequest();
-
-
-
 
     @InjectMocks
     private PisAuthorisationService pisAuthorisationService;
@@ -96,39 +93,39 @@ public class PisAuthorisationServiceTest {
             .thenReturn(Optional.empty());
     }
 
-    //=============== NEW ===========
     @Test
     public void createPisAuthorisation_success() {
-        //given
+        // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
         when(pisCommonPaymentServiceEncrypted.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CREATED))
             .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
 
-        //when
+        // When
         CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA);
 
-        //then
+        // Then
         assertThat(actualResponse).isEqualTo(CREATE_PIS_AUTHORISATION_RESPONSE);
     }
+
     @Test
-    public void createPisAuthorisation_fail() {
-        //given
+    public void createPisAuthorisation_failure_wrongCreatePisAuthResponse() {
+        // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(pisCommonPaymentServiceEncrypted.createAuthorization(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CREATED))
+        when(pisCommonPaymentServiceEncrypted.createAuthorization(WRONG_PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CREATED))
             .thenReturn(Optional.empty());
 
-        //when
-        CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA);
+        // When
+        CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(WRONG_PAYMENT_ID, PSU_ID_DATA);
 
-        //then
+        // Then
         assertThat(actualResponse).isNull();
     }
 
-    @Test //I don't know how make fail test  ->
+    @Test
     public void updatePisAuthorisation_success() {
-        //given
+        // Given
         when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
         when(pisScaStageAuthorisationFactory.getService(any(String.class)))
@@ -138,16 +135,16 @@ public class PisAuthorisationServiceTest {
         when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, STAGE_RESPONSE))
             .thenReturn(UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
 
-        //when
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisAuthorisationService.updatePisAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, SCA_APPROACH);
 
-        //then
+        // Then
         assertThat(actualResponse).isEqualTo(STAGE_RESPONSE);
     }
 
-    @Test //I don't know how make fail test  ->
+    @Test
     public void updatePisCancellationAuthorisation_success() {
-        //given
+        // Given
         when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
         when(pisScaStageAuthorisationFactory.getService(any(String.class)))
@@ -157,95 +154,94 @@ public class PisAuthorisationServiceTest {
         when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, STAGE_RESPONSE))
             .thenReturn(UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
 
-        //when
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisAuthorisationService.updatePisCancellationAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, SCA_APPROACH);
 
-        //then
+        // Then
         assertThat(actualResponse).isEqualTo(STAGE_RESPONSE);
     }
 
     @Test
     public void createPisAuthorisationCancellation_success() {
-        //given
+        // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
         when(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED))
             .thenReturn(Optional.of(CREATE_PIS_AUTHORISATION_RESPONSE));
 
-        //when
+        // When
         CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA);
 
-        //then
+        // Then
         assertThat(actualResponse).isEqualTo(CREATE_PIS_AUTHORISATION_RESPONSE);
     }
 
     @Test
-    public void createPisAuthorisationCancellation_fail() {
-        //given
+    public void createPisAuthorisationCancellation_failure_wrongCreatePisAuthResponse() {
+        // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED))
+        when(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(WRONG_PAYMENT_ID, CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED))
             .thenReturn(Optional.empty());
 
-        //when
-        CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA);
+        // When
+        CreatePisAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(WRONG_PAYMENT_ID, PSU_ID_DATA);
 
-        //then
+        // Then
         assertThat(actualResponse).isNull();
     }
 
     @Test
     public void getCancellationAuthorisationSubResources_success() {
-        //given
+        // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, CmsAuthorisationType.CANCELLED))
             .thenReturn(Optional.of(SOME_LIST));
 
-        //when
+        // When
         Optional<List<String>> actualResponse = pisAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
 
-        //then
+        // Then
         assertThat(actualResponse.isPresent()).isTrue();
     }
 
     @Test
-    public void getCancellationAuthorisationSubResources_fail() {
-        //given
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, CmsAuthorisationType.CANCELLED))
+    public void getCancellationAuthorisationSubResources_failure_wrongPaymentId() {
+        // Given
+        when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, CmsAuthorisationType.CANCELLED))
             .thenReturn(Optional.empty());
 
-        //when
-        Optional<List<String>> actualResponse = pisAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
+        // When
+        Optional<List<String>> actualResponse = pisAuthorisationService.getCancellationAuthorisationSubResources(WRONG_PAYMENT_ID);
 
-        //then
+        // Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
     public void getAuthorisationSubResources_success() {
-        //given
+        // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(PAYMENT_ID, CmsAuthorisationType.CREATED))
             .thenReturn(Optional.of(SOME_LIST));
 
-        //when
+        // When
         Optional<List<String>> actualResponse = pisAuthorisationService.getAuthorisationSubResources(PAYMENT_ID);
 
-        //then
+        // Then
         assertThat(actualResponse.isPresent()).isTrue();
     }
 
     @Test
-    public void getAuthorisationSubResources_fail() {
-        //given
+    public void getAuthorisationSubResources_failure_wrongPaymentId() {
+        // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, CmsAuthorisationType.CREATED))
             .thenReturn(Optional.empty());
 
-        //when
+        // When
         Optional<List<String>> actualResponse = pisAuthorisationService.getAuthorisationSubResources(WRONG_PAYMENT_ID);
 
-        //then
+        // Then
         assertThat(actualResponse.isPresent()).isFalse();
     }
-    //=========== End NEW ===========
 
     @Test
     public void getAuthorisationScaStatus_success() {

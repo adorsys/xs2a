@@ -102,12 +102,10 @@ public class CommonDecoupledAisServiceTest {
     }
 
     @Test
-    public void proceedDecoupledApproach_first_Success() {
+    public void proceedDecoupledApproach_first_success() {
         // Given
         when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
-//        when(commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA))
-//            .thenReturn(UPDATE_CONSENT_PSU_DATA_RESPONSE);
 
         // When
         UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, PSU_ID_DATA);
@@ -115,9 +113,6 @@ public class CommonDecoupledAisServiceTest {
         // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
-//        assertThat(actualResponse.getPsuId()).isEqualTo(PSU_ID);
-//        assertThat(actualResponse.getPsuMessage()).isEqualTo(PSU_SUCCESS_MESSAGE);
-//        assertThat(actualResponse.getScaStatus()).isEqualTo(METHOD_SELECTED_SCA_STATUS);
     }
 
     @Test
