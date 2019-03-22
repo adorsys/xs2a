@@ -57,6 +57,10 @@ public class AspspDataServiceRemote implements AspspDataService {
 
     @Override
     public boolean updateAspspConsentData(@NotNull AspspConsentData aspspConsentData) {
+        if (aspspConsentData.isEmptyConsentData()) {
+            log.warn("Failed to update AspspConsentData. AspspConsentData is empty");
+            return false;
+        }
         String base64Payload = base64AspspDataService.encode(aspspConsentData.getAspspConsentData());
         String consentId = aspspConsentData.getConsentId();
         CmsAspspConsentDataBase64 cmsAspspConsentDataBase64 = new CmsAspspConsentDataBase64(consentId, base64Payload);
