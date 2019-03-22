@@ -91,11 +91,8 @@ public class ConsentCreation_successfulTest {
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";
     private static final String GLOBAL_CONSENT_REQUEST_JSON_PATH = "/json/account/req/GlobalConsent.json";
     private static final String ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH = "/json/account/req/AllAvailableAccountConsent.json";
-
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
-
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 
     private HttpHeaders httpHeadersImplicit = new HttpHeaders();
@@ -179,7 +176,6 @@ public class ConsentCreation_successfulTest {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, BANK_OFFERED_CONSENT_REQUEST_JSON_PATH);
     }
 
-
     @Test
     public void creation_all_available_account_consent_implicit_embedded_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH);
@@ -189,7 +185,6 @@ public class ConsentCreation_successfulTest {
     public void creation_all_available_account_consent_implicit_redirect_successful() throws Exception {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH);
     }
-
 
     // =============== EXPLICIT MODE
     //
