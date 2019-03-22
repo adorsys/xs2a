@@ -85,15 +85,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class ConsentCreation_notsuccessfulTest {
+public class ConsentCreation_notSuccessfulTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";
     private static final String TPP_ERROR_MESSAGE_JSON_PATH = "/json/account/TppErrorMessage.json";
-
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
-
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 
     private HttpHeaders httpHeadersImplicit = new HttpHeaders();
