@@ -50,6 +50,7 @@ public class SpiToXs2aPeriodicPaymentMapper {
                        periodic.setFrequency(Xs2aFrequencyCode.valueOf(p.getFrequency().name()));
                        periodic.setDayOfExecution(p.getDayOfExecution());
                        periodic.setTransactionStatus(payment.getPaymentStatus());
+                       periodic.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
                        return periodic;
                    }).orElse(null);
     }

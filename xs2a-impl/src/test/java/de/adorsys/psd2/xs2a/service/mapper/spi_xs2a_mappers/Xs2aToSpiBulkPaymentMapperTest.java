@@ -34,11 +34,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,7 +57,9 @@ public class Xs2aToSpiBulkPaymentMapperTest {
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
-
+    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(REQUESTED_EXECUTION_DATE,
+                                                                                    LocalTime.NOON,
+                                                                                    ZoneOffset.UTC);
     @InjectMocks
     private Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper;
     @Mock
@@ -83,14 +86,15 @@ public class Xs2aToSpiBulkPaymentMapperTest {
         //When
         SpiBulkPayment spiBulkPayment = xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(payment, PAYMENT_PRODUCT);
         //Then
-        assertEquals(spiBulkPayment.getPaymentId(), PAYMENT_ID);
+        assertEquals(PAYMENT_ID, spiBulkPayment.getPaymentId());
         assertTrue(spiBulkPayment.getBatchBookingPreferred());
-        assertEquals(spiBulkPayment.getDebtorAccount(), buildSpiAccountReference());
-        assertEquals(spiBulkPayment.getRequestedExecutionDate(), REQUESTED_EXECUTION_DATE);
-        assertEquals(spiBulkPayment.getPaymentStatus(), TRANSACTION_STATUS);
+        assertEquals(buildSpiAccountReference(), spiBulkPayment.getDebtorAccount());
+        assertEquals(REQUESTED_EXECUTION_DATE, spiBulkPayment.getRequestedExecutionDate());
+        assertEquals(TRANSACTION_STATUS, spiBulkPayment.getPaymentStatus());
         assertFalse(spiBulkPayment.getPayments().isEmpty());
-        assertEquals(spiBulkPayment.getPaymentProduct(), PAYMENT_PRODUCT);
-        assertEquals(spiBulkPayment.getPsuDataList(), spiPsuDataList);
+        assertEquals(PAYMENT_PRODUCT, spiBulkPayment.getPaymentProduct());
+        assertEquals(spiPsuDataList, spiBulkPayment.getPsuDataList());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, spiBulkPayment.getStatusChangeTimestamp());
     }
 
     @NotNull
@@ -103,6 +107,7 @@ public class Xs2aToSpiBulkPaymentMapperTest {
         payment.setDebtorAccount(buildAccountReference(DEB_ACCOUNT_ID));
         payment.setTransactionStatus(TRANSACTION_STATUS);
         payment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
+        payment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         return payment;
     }
 

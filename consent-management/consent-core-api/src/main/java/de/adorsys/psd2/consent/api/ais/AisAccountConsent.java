@@ -48,4 +48,5 @@ public class AisAccountConsent {
     private List<AisAccountConsentAuthorisation> accountConsentAuthorizations;
     private int usageCounter;
     private OffsetDateTime creationTimestamp;
+    private OffsetDateTime statusChangeTimestamp;
 }

@@ -49,4 +49,5 @@ public class PiisConsent {
     private LocalDate cardExpiryDate;
     private String cardInformation;
     private String registrationInformation;
+    private OffsetDateTime statusChangeTimestamp;
 }

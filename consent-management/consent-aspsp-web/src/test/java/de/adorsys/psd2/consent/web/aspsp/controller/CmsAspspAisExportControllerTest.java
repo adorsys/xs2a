@@ -49,6 +49,7 @@ public class CmsAspspAisExportControllerTest {
     private static final String WRONG_PSU_ID = "wrong psu id";
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final OffsetDateTime CREATION_DATE_TIME = OffsetDateTime.now();
+    private static final OffsetDateTime STATUS_CHANGE_DATE_TIME = OffsetDateTime.now();
 
     @Mock
     private CmsAspspAisExportService cmsAspspAisExportService;
@@ -136,6 +137,6 @@ public class CmsAspspAisExportControllerTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), 0, CREATION_DATE_TIME);
+                                     false, false, null, null, null, false, Collections.emptyList(), 0, CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
     }
 }

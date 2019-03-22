@@ -29,6 +29,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +50,9 @@ public class Xs2aToSpiPaymentInfoMapperTest {
     private static final byte [] PAYMENT_DATA = PAYMENT_ID.getBytes();
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
+    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(LocalDate.now(),
+                                                                                    LocalTime.NOON,
+                                                                                    ZoneOffset.UTC);
 
     @InjectMocks
     private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
@@ -67,12 +74,13 @@ public class Xs2aToSpiPaymentInfoMapperTest {
         //When
         SpiPaymentInfo spiPaymentInfo = xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPayment);
         //Then
-        assertEquals(spiPaymentInfo.getPaymentId(), PAYMENT_ID);
-        assertEquals(spiPaymentInfo.getPaymentProduct(), PAYMENT_PRODUCT);
-        assertEquals(spiPaymentInfo.getPaymentType(), PaymentType.SINGLE);
-        assertEquals(spiPaymentInfo.getStatus(), TRANSACTION_STATUS);
-        assertEquals(spiPaymentInfo.getPaymentData(), PAYMENT_DATA);
-        assertEquals(spiPaymentInfo.getPsuDataList(), spiPsuDataList);
+        assertEquals(PAYMENT_ID, spiPaymentInfo.getPaymentId());
+        assertEquals(PAYMENT_PRODUCT, spiPaymentInfo.getPaymentProduct());
+        assertEquals(PaymentType.SINGLE, spiPaymentInfo.getPaymentType());
+        assertEquals(TRANSACTION_STATUS, spiPaymentInfo.getStatus());
+        assertEquals(PAYMENT_DATA, spiPaymentInfo.getPaymentData());
+        assertEquals(spiPsuDataList, spiPaymentInfo.getPsuDataList());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, spiPaymentInfo.getStatusChangeTimestamp());
     }
 
     private CommonPayment buildCommonPayment() {
@@ -83,6 +91,7 @@ public class Xs2aToSpiPaymentInfoMapperTest {
         commonPayment.setTransactionStatus(TRANSACTION_STATUS);
         commonPayment.setPaymentData(PAYMENT_DATA);
         commonPayment.setPsuDataList(psuDataList);
+        commonPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         return commonPayment;
     }
 

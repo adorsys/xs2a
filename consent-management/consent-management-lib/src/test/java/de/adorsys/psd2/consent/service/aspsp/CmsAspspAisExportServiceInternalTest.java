@@ -56,6 +56,7 @@ public class CmsAspspAisExportServiceInternalTest {
     private static final String ASPSP_ACCOUNT_ID = "aspsp account id";
     private static final String WRONG_ASPSP_ACCOUNT_ID = "wrong aspsp account id";
     private static final OffsetDateTime CREATION_DATE_TIME = OffsetDateTime.now();
+    private static final OffsetDateTime STATUS_CHANGE_DATE_TIME = OffsetDateTime.now();
 
     private PsuIdData psuIdData;
     private PsuIdData wrongPsuIdData;
@@ -253,7 +254,7 @@ public class CmsAspspAisExportServiceInternalTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), 0, CREATION_DATE_TIME);
+                                     false, false, null, null, null, false, Collections.emptyList(), 0, CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
     }
 
     private AisConsent buildAisConsent() {
