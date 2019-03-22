@@ -20,8 +20,6 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class AisEndpointAccessCheckerService extends EndpointAccessChecker {
@@ -30,12 +28,12 @@ public class AisEndpointAccessCheckerService extends EndpointAccessChecker {
     /**
      * Checks whether endpoint is accessible for current authorisation
      *
-     * @param authorisationId   ID of authorisation process
-     * @param consentId         ID of consent
+     * @param authorisationId ID of authorisation process
+     * @param consentId       ID of consent
      * @return <code>true</code> if accessible. <code>false</code> otherwise.
      */
     public boolean isEndpointAccessible(String authorisationId, String consentId) {
-        return Optional.ofNullable(aisConsentService.getAccountConsentAuthorizationById(authorisationId, consentId))
+        return aisConsentService.getAccountConsentAuthorizationById(authorisationId, consentId)
                    .map(a -> isAccessible(a.getChosenScaApproach(), a.getScaStatus()))
                    .orElse(true);
     }
