@@ -323,6 +323,7 @@ public class PaymentService {
             pmt.setPaymentId(pisCommonPaymentResponse.getExternalId());
             pmt.setTransactionStatus(pisCommonPaymentResponse.getTransactionStatus());
             pmt.setPsuDataList(pisCommonPaymentResponse.getPsuData());
+            pmt.setStatusChangeTimestamp(pisCommonPaymentResponse.getStatusChangeTimestamp());
         });
 
         return pisPayments;
@@ -340,8 +341,8 @@ public class PaymentService {
         ResponseObject singlePaymentValidationResult = paymentValidationService.validateSinglePayment(singePayment);
 
         return singlePaymentValidationResult.hasError()
-            ? singlePaymentValidationResult
-            : createSinglePaymentService.createPayment(singePayment, paymentInitiationParameters, tppInfo);
+                   ? singlePaymentValidationResult
+                   : createSinglePaymentService.createPayment(singePayment, paymentInitiationParameters, tppInfo);
     }
 
     private ResponseObject processPeriodicPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
@@ -349,8 +350,8 @@ public class PaymentService {
         ResponseObject periodicPaymentValidationResponse = paymentValidationService.validatePeriodicPayment(periodicPayment);
 
         return periodicPaymentValidationResponse.hasError()
-            ? periodicPaymentValidationResponse
-            : createPeriodicPaymentService.createPayment(periodicPayment, paymentInitiationParameters, tppInfo);
+                   ? periodicPaymentValidationResponse
+                   : createPeriodicPaymentService.createPayment(periodicPayment, paymentInitiationParameters, tppInfo);
     }
 
     private ResponseObject processBulkPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
@@ -358,8 +359,8 @@ public class PaymentService {
         ResponseObject bulkPaymentValidationResponse = paymentValidationService.validateBulkPayment(bulkPayment);
 
         return bulkPaymentValidationResponse.hasError()
-            ? bulkPaymentValidationResponse
-            : createBulkPaymentService.createPayment(bulkPayment, paymentInitiationParameters, tppInfo);
+                   ? bulkPaymentValidationResponse
+                   : createBulkPaymentService.createPayment(bulkPayment, paymentInitiationParameters, tppInfo);
     }
 
 }

@@ -75,6 +75,7 @@ public class CmsPsuPisMapperTest {
     private static final List<PsuData> PSU_DATA_LIST = Collections.singletonList(PSU_DATA);
     private static final List<PsuIdData> PSU_ID_DATA_LIST = Collections.singletonList(PSU_ID_DATA);
     private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.now();
+    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.now();
     private static final PisCommonPaymentData PIS_COMMON_PAYMENT_DATA_SINGLE = buildPisCommonPaymentData(PAYMENT_TYPE_SINGLE);
     private static final PisCommonPaymentData PIS_COMMON_PAYMENT_DATA_PERIODIC = buildPisCommonPaymentData(PAYMENT_TYPE_PERIODIC);
     private static final PisCommonPaymentData PIS_COMMON_PAYMENT_DATA_BULK = buildPisCommonPaymentData(PAYMENT_TYPE_BULK);
@@ -144,6 +145,7 @@ public class CmsPsuPisMapperTest {
         assertEquals(PSU_ID_DATA_LIST, cmsPayment.getPsuIdDatas());
         assertEquals(TPP_INFO, cmsPayment.getTppInfo());
         assertEquals(CREATION_TIMESTAMP, cmsPayment.getCreationTimestamp());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, cmsPayment.getStatusChangeTimestamp());
     }
 
     @Test
@@ -173,6 +175,7 @@ public class CmsPsuPisMapperTest {
         assertEquals(TPP_INFO, singlePayment.getTppInfo());
         assertEquals(PSU_ID_DATA_LIST, singlePayment.getPsuIdDatas());
         assertEquals(CREATION_TIMESTAMP, singlePayment.getCreationTimestamp());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
     }
 
     @Test
@@ -202,6 +205,7 @@ public class CmsPsuPisMapperTest {
         assertEquals(TPP_INFO, periodicPayment.getTppInfo());
         assertEquals(PSU_ID_DATA_LIST, periodicPayment.getPsuIdDatas());
         assertEquals(CREATION_TIMESTAMP, periodicPayment.getCreationTimestamp());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, periodicPayment.getStatusChangeTimestamp());
     }
 
     @Test
@@ -240,6 +244,7 @@ public class CmsPsuPisMapperTest {
         assertEquals(TPP_INFO, singlePayment.getTppInfo());
         assertEquals(PSU_ID_DATA_LIST, singlePayment.getPsuIdDatas());
         assertEquals(CREATION_TIMESTAMP, singlePayment.getCreationTimestamp());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
     }
 
     private static PisCommonPaymentData buildPisCommonPaymentData(PaymentType paymentType) {
@@ -252,6 +257,7 @@ public class CmsPsuPisMapperTest {
         pisCommonPaymentData.setTppInfo(TPP_INFO_ENTITY);
         pisCommonPaymentData.setPsuDataList(PSU_DATA_LIST);
         pisCommonPaymentData.setCreationTimestamp(CREATION_TIMESTAMP);
+        pisCommonPaymentData.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         return pisCommonPaymentData;
     }
 

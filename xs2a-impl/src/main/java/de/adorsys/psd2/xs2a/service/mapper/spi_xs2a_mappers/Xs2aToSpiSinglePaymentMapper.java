@@ -46,6 +46,7 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setRequestedExecutionTime(payment.getRequestedExecutionTime());
         single.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         single.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
+        single.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
         return single;
     }
 }

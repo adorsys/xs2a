@@ -60,6 +60,7 @@ public class CmsToXs2aPaymentMapper {
                            periodic.setFrequency(Xs2aFrequencyCode.valueOf(frequency));
                        }
                        periodic.setPsuDataList(p.getPsuDataList());
+                       periodic.setStatusChangeTimestamp(p.getStatusChangeTimestamp());
                        return periodic;
                    }).orElse(null);
     }
@@ -82,6 +83,7 @@ public class CmsToXs2aPaymentMapper {
                        single.setRequestedExecutionTime(p.getRequestedExecutionTime());
                        single.setTransactionStatus(p.getTransactionStatus());
                        single.setPsuDataList(p.getPsuDataList());
+                       single.setStatusChangeTimestamp(p.getStatusChangeTimestamp());
                        return single;
                    }).orElse(null);
     }
@@ -99,6 +101,7 @@ public class CmsToXs2aPaymentMapper {
         bulk.setPayments(paymentList);
         bulk.setTransactionStatus(firstPayment.getTransactionStatus());
         bulk.setPsuDataList(firstPayment.getPsuDataList());
+        bulk.setStatusChangeTimestamp(firstPayment.getStatusChangeTimestamp());
         return bulk;
     }
 
@@ -113,6 +116,7 @@ public class CmsToXs2aPaymentMapper {
                             commonPayment.setPaymentData(r.getPaymentData());
                             commonPayment.setTppInfo(r.getTppInfo());
                             commonPayment.setPsuDataList(r.getPsuData());
+                            commonPayment.setStatusChangeTimestamp(r.getStatusChangeTimestamp());
                             return commonPayment;
                         }
                    )

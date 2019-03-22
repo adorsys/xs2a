@@ -19,6 +19,8 @@ package de.adorsys.psd2.xs2a.spi.service;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 
+import java.time.OffsetDateTime;
+
 public interface SpiPayment {
     String getPaymentId();
 
@@ -29,4 +31,6 @@ public interface SpiPayment {
     TransactionStatus getPaymentStatus();
 
     void setPaymentStatus(TransactionStatus paymentStatus);
+
+    OffsetDateTime getStatusChangeTimestamp();
 }

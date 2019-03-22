@@ -45,6 +45,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -340,7 +341,7 @@ public class ConsentControllerTest {
     private ResponseObject<AccountConsent> getConsent(String consentId) {
         AccountConsent accountConsent = consentId.equals(WRONG_CONSENT_ID)
                                             ? null
-                                            : new AccountConsent(consentId, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
+                                            : new AccountConsent(consentId, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), 0);
         return isEmpty(accountConsent)
                    ? ResponseObject.<AccountConsent>builder().fail(MESSAGE_ERROR_AIS_404).build()
                    : ResponseObject.<AccountConsent>builder().body(accountConsent).build();

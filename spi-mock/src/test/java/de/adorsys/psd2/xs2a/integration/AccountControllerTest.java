@@ -70,6 +70,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.mockito.BDDMockito.given;
@@ -261,7 +262,7 @@ public class AccountControllerTest {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null);
         return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), usageCounter);
+                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter);
     }
 }
 
