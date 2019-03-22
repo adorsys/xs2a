@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -61,6 +62,8 @@ public class AccountConsent {
     private final boolean multilevelScaRequired;
 
     private final List<AccountConsentAuthorization> authorisations;
+
+    private final OffsetDateTime statusChangeTimestamp;
 
     @JsonIgnore
     private final int usageCounter;

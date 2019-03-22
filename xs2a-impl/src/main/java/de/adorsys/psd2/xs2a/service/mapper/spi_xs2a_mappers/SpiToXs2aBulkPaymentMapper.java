@@ -43,6 +43,7 @@ public class SpiToXs2aBulkPaymentMapper {
         bulk.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()).orElse(null));
         bulk.setTransactionStatus(payment.getPaymentStatus());
         bulk.setPayments(mapToListXs2aSinglePayments(payment.getPayments()));
+        bulk.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
         return bulk;
     }
 

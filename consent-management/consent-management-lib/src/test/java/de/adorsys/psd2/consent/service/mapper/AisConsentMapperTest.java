@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
@@ -65,6 +64,7 @@ public class AisConsentMapperTest {
         AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent);
 
         assertEquals(expectedAccess, result.getAccess());
+        assertEquals(aisConsent.getStatusChangeTimestamp(), result.getStatusChangeTimestamp());
     }
 
     @Test
@@ -75,6 +75,19 @@ public class AisConsentMapperTest {
         AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent);
 
         assertEquals(expectedAccess, result.getAccess());
+        assertEquals(aisConsent.getStatusChangeTimestamp(), result.getStatusChangeTimestamp());
+    }
+
+    @Test
+    public void mapToAisAccountConsent_statusChange() {
+        // Given
+        AisConsent aisConsent = buildAisConsent();
+
+        // When
+        AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent);
+
+        // Then
+        assertEquals(aisConsent.getStatusChangeTimestamp(), result.getStatusChangeTimestamp());
     }
 
     private AisConsent buildAisConsentEmptyAspspAccesses() {
@@ -91,6 +104,8 @@ public class AisConsentMapperTest {
         aisConsent.setAspspAccountAccesses(aspspAccountAccesses);
         aisConsent.setAccesses(Collections.singletonList(buildTppAccountAccessAccounts()));
         aisConsent.setCreationTimestamp(OffsetDateTime.now());
+        aisConsent.setStatusChangeTimestamp(OffsetDateTime.now());
+        aisConsent.setStatusChangeTimestamp(OffsetDateTime.now());
         return aisConsent;
     }
 
@@ -100,10 +115,6 @@ public class AisConsentMapperTest {
 
     private static AspspAccountAccess buildAspspAccountAccessAccounts() {
         return new AspspAccountAccess(ACCOUNT_IBAN, TypeAccess.ACCOUNT, AccountReferenceType.IBAN, CURRENCY, RESOURCE_ID, ASPSP_ACCOUNT_ID);
-    }
-
-    private static List<AisConsentAuthorization> buildAuthorisations() {
-        return Collections.singletonList(new AisConsentAuthorization());
     }
 
     private AisAccountAccess buildAisAccountAccessAccounts() {

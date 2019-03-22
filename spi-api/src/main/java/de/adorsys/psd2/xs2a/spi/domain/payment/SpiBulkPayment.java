@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -36,6 +37,7 @@ public class SpiBulkPayment implements SpiPayment {
     private List<SpiSinglePayment> payments;
     private String paymentProduct;
     private List<SpiPsuData> psuDataList;
+    private OffsetDateTime statusChangeTimestamp;
 
     @Override
     public PaymentType getPaymentType() {

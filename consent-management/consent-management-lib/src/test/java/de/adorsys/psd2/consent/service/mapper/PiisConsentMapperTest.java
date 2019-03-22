@@ -60,6 +60,7 @@ public class PiisConsentMapperTest {
     private static final LocalDate CARD_EXPIRY_DATE = LocalDate.now().plusDays(1);
     private static final String CARD_INFORMATION = "MyMerchant Loyalty Card";
     private static final String REGISTRATION_INFORMATION = "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.";
+    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.now();
 
     @InjectMocks
     private PiisConsentMapper piisConsentMapper;
@@ -107,6 +108,7 @@ public class PiisConsentMapperTest {
         Assert.assertEquals(piisConsentEntity.getCardExpiryDate(), piisConsent.getCardExpiryDate());
         Assert.assertEquals(piisConsentEntity.getCardInformation(), piisConsent.getCardInformation());
         Assert.assertEquals(piisConsentEntity.getRegistrationInformation(), piisConsent.getRegistrationInformation());
+        Assert.assertEquals(piisConsentEntity.getStatusChangeTimestamp(), piisConsent.getStatusChangeTimestamp());
     }
 
     @NotNull
@@ -129,6 +131,7 @@ public class PiisConsentMapperTest {
         piisConsentEntity.setCardExpiryDate(CARD_EXPIRY_DATE);
         piisConsentEntity.setCardInformation(CARD_INFORMATION);
         piisConsentEntity.setRegistrationInformation(REGISTRATION_INFORMATION);
+        piisConsentEntity.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         return piisConsentEntity;
     }
 

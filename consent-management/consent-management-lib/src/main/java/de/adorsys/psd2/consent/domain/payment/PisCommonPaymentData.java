@@ -28,6 +28,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity(name = "pis_common_payment")
@@ -83,6 +84,31 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
 
     @Column(name = "aspsp_account_id", length = 100)
     private String aspspAccountId;
+
+    @Column(name = "status_change_timestamp")
+    private OffsetDateTime statusChangeTimestamp;
+
+    @Transient
+    private TransactionStatus previousTransactionStatus;
+
+    @PostLoad
+    public void pisCommonPaymentDataPostLoad() {
+        previousTransactionStatus = transactionStatus;
+    }
+
+    @PreUpdate
+    public void pisCommonPaymentDataPreUpdate() {
+        if (previousTransactionStatus != transactionStatus) {
+            statusChangeTimestamp = OffsetDateTime.now();
+        }
+    }
+
+    @PrePersist
+    public void pisCommonPaymentDataPrePersist() {
+        if (Objects.isNull(statusChangeTimestamp)) {
+            statusChangeTimestamp = creationTimestamp;
+        }
+    }
 
     public boolean isConfirmationExpired(long expirationPeriodMs) {
         if (isNotConfirmed()) {

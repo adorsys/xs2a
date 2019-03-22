@@ -23,6 +23,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -35,4 +36,5 @@ public class BulkPayment {
     private List<SinglePayment> payments;
     private TransactionStatus transactionStatus;
     private List<PsuIdData> psuDataList;
+    private OffsetDateTime statusChangeTimestamp;
 }

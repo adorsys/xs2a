@@ -37,7 +37,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
@@ -71,6 +73,9 @@ public class Xs2aToSpiSinglePaymentMapperTest {
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
+    private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(LocalDate.now(),
+                                                                                    LocalTime.NOON,
+                                                                                    ZoneOffset.UTC);
 
     @InjectMocks
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
@@ -106,20 +111,21 @@ public class Xs2aToSpiSinglePaymentMapperTest {
         //When
         SpiSinglePayment spiSinglePayment = xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(singlePayment, PAYMENT_PRODUCT);
         //Then
-        assertEquals(spiSinglePayment.getPaymentId(), PAYMENT_ID);
-        assertEquals(spiSinglePayment.getEndToEndIdentification(), END_TO_END_IDENTIFICATION);
-        assertEquals(spiSinglePayment.getDebtorAccount(), buildSpiAccountReference());
-        assertEquals(spiSinglePayment.getCreditorAccount(), buildSpiAccountReference());
-        assertEquals(spiSinglePayment.getInstructedAmount(), buildSpiAmount(EUR_CURRENCY, "100"));
-        assertEquals(spiSinglePayment.getCreditorAgent(), CREDITOR_AGENT);
-        assertEquals(spiSinglePayment.getCreditorName(), CREDITOR_NAME);
-        assertEquals(spiSinglePayment.getCreditorAddress(), buildSpiAddress());
-        assertEquals(spiSinglePayment.getRemittanceInformationUnstructured(), REMITTANCE_INFORMATION_UNSTRUCTURED);
-        assertEquals(spiSinglePayment.getPaymentStatus(), TRANSACTION_STATUS);
-        assertEquals(spiSinglePayment.getPaymentProduct(), PAYMENT_PRODUCT);
-        assertEquals(spiSinglePayment.getRequestedExecutionDate(), REQUESTED_EXECUTION_DATE);
-        assertEquals(spiSinglePayment.getRequestedExecutionTime(), REQUESTED_EXECUTION_TIME);
-        assertEquals(spiSinglePayment.getPsuDataList(), spiPsuDataList);
+        assertEquals(PAYMENT_ID, spiSinglePayment.getPaymentId());
+        assertEquals(END_TO_END_IDENTIFICATION, spiSinglePayment.getEndToEndIdentification());
+        assertEquals(buildSpiAccountReference(), spiSinglePayment.getDebtorAccount());
+        assertEquals(buildSpiAccountReference(), spiSinglePayment.getCreditorAccount());
+        assertEquals(buildSpiAmount(EUR_CURRENCY, "100"), spiSinglePayment.getInstructedAmount());
+        assertEquals(CREDITOR_AGENT, spiSinglePayment.getCreditorAgent());
+        assertEquals(CREDITOR_NAME, spiSinglePayment.getCreditorName());
+        assertEquals(buildSpiAddress(), spiSinglePayment.getCreditorAddress());
+        assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, spiSinglePayment.getRemittanceInformationUnstructured());
+        assertEquals(TRANSACTION_STATUS, spiSinglePayment.getPaymentStatus());
+        assertEquals(PAYMENT_PRODUCT, spiSinglePayment.getPaymentProduct());
+        assertEquals(REQUESTED_EXECUTION_DATE, spiSinglePayment.getRequestedExecutionDate());
+        assertEquals(REQUESTED_EXECUTION_TIME, spiSinglePayment.getRequestedExecutionTime());
+        assertEquals(spiPsuDataList, spiSinglePayment.getPsuDataList());
+        assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
     }
 
     private SinglePayment buildSinglePayment() {
@@ -137,6 +143,7 @@ public class Xs2aToSpiSinglePaymentMapperTest {
         singlePayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         singlePayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         singlePayment.setPsuDataList(psuDataList);
+        singlePayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         return singlePayment;
     }
 

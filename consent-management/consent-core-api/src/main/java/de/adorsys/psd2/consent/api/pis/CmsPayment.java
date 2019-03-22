@@ -17,17 +17,24 @@
 package de.adorsys.psd2.consent.api.pis;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.psu.*;
-import de.adorsys.psd2.xs2a.core.tpp.*;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.List;
 
 public interface CmsPayment {
     String getPaymentId();
+
     PaymentType getPaymentType();
+
     String getPaymentProduct();
+
     List<PsuIdData> getPsuIdDatas();
+
     TppInfo getTppInfo();
+
     OffsetDateTime getCreationTimestamp();
+
+    OffsetDateTime getStatusChangeTimestamp();
 }

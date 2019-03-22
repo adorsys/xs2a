@@ -25,6 +25,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -53,4 +54,7 @@ public class PisCommonPaymentResponse {
 
     @ApiModelProperty(value = "Transaction status", required = true)
     private TransactionStatus transactionStatus;
+
+    @ApiModelProperty(value = "Timestamp of the last payment transaction status changing")
+    private OffsetDateTime statusChangeTimestamp;
 }

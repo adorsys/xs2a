@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -33,4 +34,5 @@ public class CommonPayment {
     private byte[] paymentData;
     private TppInfo tppInfo;
     private List<PsuIdData> psuDataList;
+    private OffsetDateTime statusChangeTimestamp;
 }

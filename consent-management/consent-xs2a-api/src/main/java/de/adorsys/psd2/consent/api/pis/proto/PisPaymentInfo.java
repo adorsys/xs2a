@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -53,4 +54,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Aspsp-Account-ID: Bank specific account ID", example = "26bb59a3-2f63-4027-ad38-67d87e59611a")
     private String aspspAccountId;
+
+    @ApiModelProperty(value = "Timestamp of the last payment transaction status changing")
+    private OffsetDateTime statusChangeTimestamp;
 }

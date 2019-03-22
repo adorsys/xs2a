@@ -26,7 +26,9 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +49,7 @@ public class CmsPsuPisMapper {
         cmsCommonPayment.setTppInfo(tppInfoMapper.mapToTppInfo(paymentData.getTppInfo()));
         cmsCommonPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
         cmsCommonPayment.setCreationTimestamp(paymentData.getCreationTimestamp());
+        cmsCommonPayment.setStatusChangeTimestamp(paymentData.getStatusChangeTimestamp());
         return cmsCommonPayment;
     }
 
@@ -106,6 +109,7 @@ public class CmsPsuPisMapper {
             periodicPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
             periodicPayment.setPaymentStatus(paymentData.getTransactionStatus());
             periodicPayment.setCreationTimestamp(paymentData.getCreationTimestamp());
+            periodicPayment.setStatusChangeTimestamp(paymentData.getStatusChangeTimestamp());
         }
         return periodicPayment;
     }
@@ -145,6 +149,7 @@ public class CmsPsuPisMapper {
             singlePayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
             singlePayment.setPaymentStatus(paymentData.getTransactionStatus());
             singlePayment.setCreationTimestamp(paymentData.getCreationTimestamp());
+            singlePayment.setStatusChangeTimestamp(paymentData.getStatusChangeTimestamp());
         }
 
         return singlePayment;
