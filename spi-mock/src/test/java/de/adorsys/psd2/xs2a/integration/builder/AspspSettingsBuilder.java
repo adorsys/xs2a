@@ -38,8 +38,8 @@ public class AspspSettingsBuilder {
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
     private static final int CONSENT_LIFETIME = 0;
     private static final int TRANSACTION_LIFETIME = 0;
-    private static final boolean ALL_PSD_2_SUPPORT = false;
-    private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
+    private static final boolean ALL_PSD_2_SUPPORT = true;
+    private static final boolean BANK_OFFERED_CONSENT_SUPPORT = true;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
@@ -51,7 +51,7 @@ public class AspspSettingsBuilder {
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "http://localhost:4200/pis/cancellation/{redirect-id}/";
     private static final Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
-    private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = false;
+    private static final boolean AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED = true;
     private static final boolean SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED = false;
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
     private static final boolean FORCE_XS2A_BASE_URL = false;
