@@ -37,8 +37,8 @@ public class OauthAisAuthorizationService implements AisAuthorizationService {
     }
 
     @Override
-    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return new AccountConsentAuthorization();
+    public Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+        return Optional.empty();
     }
 
     @Override

@@ -28,7 +28,7 @@ public interface AisAuthorizationService extends ScaApproachServiceTypeProvider 
 
     UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization);
 
-    AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId);
+    Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId);
 
     Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId);
 

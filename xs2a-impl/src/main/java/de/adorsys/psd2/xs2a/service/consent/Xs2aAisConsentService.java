@@ -17,7 +17,10 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
+import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -67,11 +70,9 @@ public class Xs2aAisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent
      */
-    // TODO return Optional instead of orElse(null) https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/585
-    public AccountConsent getAccountConsentById(String consentId) {
-        AisAccountConsent aisAccountConsent = aisConsentService.getAisAccountConsentById(consentId)
-                                                  .orElse(null);
-        return aisConsentMapper.mapToAccountConsent(aisAccountConsent);
+    public Optional<AccountConsent> getAccountConsentById(String consentId) {
+        return aisConsentService.getAisAccountConsentById(consentId)
+                   .map(aisConsentMapper::mapToAccountConsent);
     }
 
     /**
@@ -91,9 +92,8 @@ public class Xs2aAisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent Status
      */
-    public ConsentStatus getAccountConsentStatusById(String consentId) {
-        return aisConsentService.getConsentStatusById(consentId)
-                   .orElse(null);
+    public Optional<ConsentStatus> getAccountConsentStatusById(String consentId) {
+        return aisConsentService.getConsentStatusById(consentId);
     }
 
     /**
@@ -148,10 +148,9 @@ public class Xs2aAisConsentService {
      * @return Response containing AIS Consent Authorization
      */
 
-    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        AisConsentAuthorizationResponse response = aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId)
-                                                       .orElse(null);
-        return aisConsentAuthorisationMapper.mapToAccountConsentAuthorization(response);
+    public Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+        return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId)
+                   .map(aisConsentAuthorisationMapper::mapToAccountConsentAuthorization);
     }
 
     /**

@@ -69,7 +69,6 @@ public class ReadSinglePaymentService extends ReadPaymentService<PaymentInformat
 
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
 
-
         SpiResponse<SpiSinglePayment> spiResponse = singlePaymentSpi.getPaymentById(spiContextData, spiPaymentOptional.get(), aspspConsentData);
         pisAspspDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
