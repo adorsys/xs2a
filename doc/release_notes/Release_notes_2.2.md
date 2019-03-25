@@ -40,3 +40,7 @@ Added validation for the `X-Request-ID` header in all controllers. Two cases are
  - Header is null. In this case response is `400 FORMAT ERROR` with the text `'X-Request-ID' may not be null`
  - Header is not UUID (wrong format). In this case response is also `400 FORMAT ERROR`, the text is `'X-Request-ID' 
  has to be represented by standard 36-char UUID representation`
+
+## Bugfix: search for AIS and PIIS consent now use psuCorporateId property in getConsentsForPsu method
+From now on in CmsAspspPiisService#getConsentsForPsu and CmsPsuPiisService#getConsentsForPsu
+PSU Data property `psuCorporateId` is also used for filtering results. 

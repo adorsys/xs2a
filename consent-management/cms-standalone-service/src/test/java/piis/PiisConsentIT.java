@@ -17,12 +17,15 @@
 package piis;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
+import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,8 +94,51 @@ public class PiisConsentIT {
         assertTrue(updatedEntity.getStatusChangeTimestamp().isAfter(updatedEntity.getCreationTimestamp()));
     }
 
+    @Test
+    public void getConsentsForPsu_successWithDifferentPsu() {
+        //Given
+        CreatePiisConsentRequest request = buildCreatePiisConsentRequest();
+        PsuIdData aspsp = buildPsuIdData("aspsp", "aspsp corporate id");
+        PsuIdData aspsp1 = buildPsuIdData("aspsp1", "aspsp1 corporate id");
+        PsuIdData aspsp1NoCorporateId = buildPsuIdData("aspsp1", null);
+
+        //When
+        cmsAspspPiisServiceInternal.createConsent(aspsp, request);
+        cmsAspspPiisServiceInternal.createConsent(aspsp, request);
+        cmsAspspPiisServiceInternal.createConsent(aspsp1, request);
+        cmsAspspPiisServiceInternal.createConsent(aspsp1NoCorporateId, request);
+        flushAndClearPersistenceContext();
+
+        //Then
+        List<PiisConsent> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID);
+        assertEquals(2, consentsAspsp.size());
+        assertEquals(aspsp, consentsAspsp.get(0).getPsuData());
+
+        List<PiisConsent> consentsAspsp1 = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID);
+        assertEquals(1, consentsAspsp1.size());
+        assertEquals(aspsp1, consentsAspsp1.get(0).getPsuData());
+
+        List<PiisConsent> consentsAspsp1NoCorporateId = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID);
+        assertEquals(2, consentsAspsp1NoCorporateId.size());
+        assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(0).getPsuData().getPsuId());
+        assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(1).getPsuData().getPsuId());
+    }
+
+    @NotNull
+    private CreatePiisConsentRequest buildCreatePiisConsentRequest() {
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest();
+        request.setAccounts(buildAccountReferenceList());
+        request.setValidUntil(LocalDate.now().plusDays(1));
+        request.setAllowedFrequencyPerDay(1);
+        return request;
+    }
+
     private PsuIdData buildPsuIdData() {
         return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
+    }
+
+    private PsuIdData buildPsuIdData(String psuId, String psuCorporateId) {
+        return new PsuIdData(psuId, null, psuCorporateId, null);
     }
 
     private AccountReference buildAccountReference() {

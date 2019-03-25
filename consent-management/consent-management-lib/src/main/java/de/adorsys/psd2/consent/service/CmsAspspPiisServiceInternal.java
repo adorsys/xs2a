@@ -97,7 +97,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
     @Override
     public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
-        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdAndInstanceId(psuIdData.getPsuId(), instanceId))
+        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId))
                    .stream()
                    .map(piisConsentMapper::mapToPiisConsent)
                    .collect(Collectors.toList());
