@@ -31,7 +31,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
@@ -39,21 +38,6 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSp
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttribute;
 
 public abstract class GenericSpecification {
-    /**
-     * Returns specification for some entity for filtering data by PSU ID data from list and instance id.
-     *
-     * @param psuId      PSU ID data
-     * @param instanceId ID of particular service instance
-     * @param <T>        type of the entity, for which this specification will be created
-     * @return resulting specification
-     * @deprecated since 2.2, use {@link GenericSpecification#byPsuDataInListAndInstanceId(PsuIdData, String)} instead
-     */
-    //TODO 2.5 Delete this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/772
-    @Deprecated // Since 2.2
-    public <T> Specification<T> byPsuIdInListAndInstanceId(String psuId, String instanceId) {
-        return byPsuIdIdAndInstanceId(psuId, instanceId, PSU_DATA_LIST_ATTRIBUTE);
-    }
-
     /**
      * Returns specification for some entity for filtering data by PSU data from list and instance id.
      *
@@ -64,22 +48,6 @@ public abstract class GenericSpecification {
      */
     public <T> Specification<T> byPsuDataInListAndInstanceId(PsuIdData psuIdData, String instanceId) {
         return byPsuDataAndInstanceId(psuIdData, instanceId, PSU_DATA_LIST_ATTRIBUTE);
-    }
-
-    /**
-     * Returns specification for some entity for filtering data by PSU ID data and instance id.
-     *
-     * @param psuId      PSU ID data
-     * @param instanceId ID of particular service instance
-     * @param <T>        type of the entity, for which this specification will be created
-     * @return resulting specification
-     * <p>
-     * * @deprecated since 2.2, use {@link GenericSpecification#byPsuDataAndInstanceId(PsuIdData, String)} instead
-     */
-    //TODO 2.5 Delete this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/772
-    @Deprecated // Since 2.2
-    public <T> Specification<T> byPsuIdAndInstanceId(String psuId, String instanceId) {
-        return byPsuIdIdAndInstanceId(psuId, instanceId, PSU_DATA_ATTRIBUTE);
     }
 
     /**
@@ -120,26 +88,9 @@ public abstract class GenericSpecification {
         return byPsuIdData(psuIdData, PSU_DATA_ATTRIBUTE);
     }
 
-    private  <T> Specification<T> byPsuIdIdAndInstanceId(String psuId, String instanceId, String psuAttribute) {
-        Specification<T> aisConsentSpecification = (root, query, cb) -> {
-            Join<T, PsuData> aisConsentPsuDataJoin = root.join(psuAttribute);
-            return cb.equal(aisConsentPsuDataJoin.get(PSU_ID_ATTRIBUTE), psuId);
-        };
-        return Specifications.where(aisConsentSpecification)
-                   .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
-    }
-
     private <T> Specification<T> byPsuDataAndInstanceId(PsuIdData psuIdData, String instanceId, String psuAttribute) {
-        Specification<T> psuIdDataSpecification = (root, query, cb) -> {
-            Join<T, PsuData> psuIdDataJoin = root.join(psuAttribute);
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.equal(psuIdDataJoin.get(PSU_ID_ATTRIBUTE), psuIdData.getPsuId()));
-            if (Objects.nonNull(psuIdData.getPsuCorporateId())) {
-                predicates.add(cb.equal(psuIdDataJoin.get(PSU_CORPORATE_ID_ATTRIBUTE), psuIdData.getPsuCorporateId()));
-            }
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-        return Specifications.where(psuIdDataSpecification)
+        Specification<T> psuSpecification = byPsuIdData(psuIdData, psuAttribute);
+        return Specifications.where(psuSpecification)
                    .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
     }
 
