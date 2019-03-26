@@ -33,6 +33,6 @@ Requires underlying relative database (We use PostgreSQL for development and tes
 * You would also need to implement a consent confirmation and consent listing pages on your local online application to be able to redirect TPP requests to that pages.
 
 ## Services for development and testing purposes
-* [aspsp-mock-server](../aspsp-mock-server/README.md) To have a quick start you may deploy the mock server (requires undelying MongoDB). In that case you'd need to use mockspi profile in xs2a service
+* [aspsp-mock-server](../aspsp-mock-server/README.md) To have a quick start you may deploy the mock server (requires undelying MongoDB). In that case you'd need to use mock-qwac profile in xs2a service
 
 

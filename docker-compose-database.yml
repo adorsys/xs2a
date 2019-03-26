@@ -136,7 +136,7 @@ services:
 #      - xs2a-net
 #    environment:
 #      - JAVA_TOOL_OPTIONS="-Xmx512M"
-#      - SPRING_PROFILES_ACTIVE=mockspi
+#      - SPRING_PROFILES_ACTIVE=mock-qwac
 #      - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
 #      - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_SERVICE_CLIENT_SECRET}"
 #      - CONSENT_SERVICE_BASEURL=http://consent-management:8080/api/v1

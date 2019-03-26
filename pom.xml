@@ -35,6 +35,8 @@
         <module>aspsp-mock-server</module>
         <module>psd2-validator</module>
         <module>online-banking-demo</module>
+        <module>xs2a-standalone-starter</module>
+        <module>spi-stub</module>
     </modules>
     <packaging>pom</packaging>
 
