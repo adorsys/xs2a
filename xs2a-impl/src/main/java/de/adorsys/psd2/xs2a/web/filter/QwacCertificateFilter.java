@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * WebSecurityConfigurerAdapter to filter path by role. And a SecurityUtil class
  * have been implemented to get this TPP data everywhere.
  */
-@Profile("default")
+@Profile("!mock-qwac")
 @Component
 @Slf4j
 @RequiredArgsConstructor

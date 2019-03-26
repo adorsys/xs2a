@@ -1,0 +1,9 @@
+{
+  "scaStatus": "started",
+  "_links": {
+    "scaRedirect": "http://localhost:4200/pis/cancellation/cancellationId/",
+    "self": "http://localhost/v1/payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
+    "status": "http://localhost/v1/payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/status",
+    "scaStatus": "http://localhost/v1/payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/cancellation-authorisations/cancellationId"
+  }
+}
