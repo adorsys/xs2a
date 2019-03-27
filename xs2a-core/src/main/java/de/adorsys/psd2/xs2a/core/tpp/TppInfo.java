@@ -19,12 +19,14 @@ package de.adorsys.psd2.xs2a.core.tpp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(of = {"authorisationNumber", "authorityId"})
 public class TppInfo {
     @ApiModelProperty(value = "Authorization number", required = true, example = "12345987")
     private String authorisationNumber;
