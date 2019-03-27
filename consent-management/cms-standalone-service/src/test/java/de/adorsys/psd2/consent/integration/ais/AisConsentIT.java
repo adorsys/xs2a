@@ -17,12 +17,15 @@
 package de.adorsys.psd2.consent.integration.ais;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
+import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.junit.Test;
@@ -36,6 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -49,6 +53,7 @@ public class AisConsentIT {
     private static final int FREQUENCY_PER_DAY = 5;
     private static final LocalDate VALID_UNTIL = LocalDate.now().plusDays(1);
     private static final String AUTHORITY_ID = "test authority ID";
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
     @Autowired
     private AisConsentService aisConsentService;
@@ -56,6 +61,8 @@ public class AisConsentIT {
     private EntityManager entityManager;
     @Autowired
     private AisConsentRepository aisConsentRepository;
+    @Autowired
+    private CmsPsuAisService cmsPsuAisService;
 
     @Test
     public void createAisConsent_successWithNewStatus() {
@@ -133,6 +140,45 @@ public class AisConsentIT {
         // Then
         // Here the exception should be thrown
         flushAndClearPersistenceContext();
+    }
+
+    @Test
+    public void getConsentsForPsu_successWithDifferentPsu() {
+        //Given
+        PsuIdData aspsp = buildPsuIdData("aspsp", "aspsp corporate id");
+        PsuIdData aspsp1 = buildPsuIdData("aspsp1", "aspsp1 corporate id");
+        PsuIdData aspsp1NoCorporateId = buildPsuIdData("aspsp1", null);
+
+        //When
+        aisConsentService.createConsent(buildCreateAisConsentRequestWithPsuData(aspsp));
+        aisConsentService.createConsent(buildCreateAisConsentRequestWithPsuData(aspsp));
+        aisConsentService.createConsent(buildCreateAisConsentRequestWithPsuData(aspsp1));
+        aisConsentService.createConsent(buildCreateAisConsentRequestWithPsuData(aspsp1NoCorporateId));
+        flushAndClearPersistenceContext();
+
+        //Then
+        List<AisAccountConsent> consentsAspsp = cmsPsuAisService.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID);
+        assertEquals(2, consentsAspsp.size());
+        assertEquals(aspsp, consentsAspsp.get(0).getPsuIdDataList().get(0));
+
+        List<AisAccountConsent> consentsAspsp1 = cmsPsuAisService.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID);
+        assertEquals(1, consentsAspsp1.size());
+        assertEquals(aspsp1, consentsAspsp1.get(0).getPsuIdDataList().get(0));
+
+        List<AisAccountConsent> consentsAspsp1NoCorporateId = cmsPsuAisService.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID);
+        assertEquals(2, consentsAspsp1NoCorporateId.size());
+        assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(0).getPsuIdDataList().get(0).getPsuId());
+        assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(1).getPsuIdDataList().get(0).getPsuId());
+    }
+
+    private PsuIdData buildPsuIdData(String psuId, String psuCorporateId) {
+        return new PsuIdData(psuId, null, psuCorporateId, null);
+    }
+
+    private CreateAisConsentRequest buildCreateAisConsentRequestWithPsuData(PsuIdData psuIdData) {
+        CreateAisConsentRequest createAisConsentRequest = buildCreateAisConsentRequest();
+        createAisConsentRequest.setPsuData(psuIdData);
+        return createAisConsentRequest;
     }
 
     private CreateAisConsentRequest buildCreateAisConsentRequest() {
