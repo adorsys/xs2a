@@ -49,6 +49,7 @@ public class CreatePaymentValidator implements BusinessValidator<PaymentInitiati
      * @param paymentInitiationParameters payment initiation parameters, passed to the service method
      * @return valid result if the parameters are valid, invalid result with appropriate error otherwise
      */
+    @NotNull
     @Override
     public ValidationResult validate(@NotNull PaymentInitiationParameters paymentInitiationParameters) {
         if (aspspProfileServiceWrapper.isPsuInInitialRequestMandated()

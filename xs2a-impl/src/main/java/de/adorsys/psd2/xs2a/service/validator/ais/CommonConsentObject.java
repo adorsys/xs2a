@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator;
+package de.adorsys.psd2.xs2a.service.validator.ais;
 
-import org.jetbrains.annotations.NotNull;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
+import lombok.Value;
 
 /**
- * Generic validator for validating certain request according to some business rules
- *
- * @param <T> type of object to be checked
+ * Common consent object that contains necessary information for validating consent
  */
-public interface BusinessValidator<T> {
-    /**
-     * Validates some object according to some business rules
-     *
-     * @param object business object to be validated
-     * @return valid result if the object is valid, invalid result with appropriate error otherwise
-     */
-    @NotNull
-    ValidationResult validate(@NotNull T object);
+@Value
+public class CommonConsentObject implements TppInfoProvider {
+    private final AccountConsent accountConsent;
+
+    @Override
+    public TppInfo getTppInfo() {
+        return accountConsent.getTppInfo();
+    }
 }
