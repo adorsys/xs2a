@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator;
+package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
@@ -22,8 +22,11 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -34,9 +37,12 @@ import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 
+/**
+ * Validator to be used for validating create consent request according to some business rules
+ */
 @Component
 @RequiredArgsConstructor
-public class CreateConsentRequestValidator {
+public class CreateConsentRequestValidator implements BusinessValidator<CreateConsentReq> {
     private final AspspProfileServiceWrapper aspspProfileService;
     private final ScaApproachResolver scaApproachResolver;
 
@@ -53,7 +59,9 @@ public class CreateConsentRequestValidator {
      * @return ValidationResult instance, that contains boolean isValid, that shows if request is valid
      * and MessageError for invalid case
      */
-    public ValidationResult validateRequest(CreateConsentReq request) {
+    @NotNull
+    @Override
+    public ValidationResult validate(@NotNull CreateConsentReq request) {
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
             return ValidationResult.invalid(ErrorType.AIS_400, PARAMETER_NOT_SUPPORTED);
         }

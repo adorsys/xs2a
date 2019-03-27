@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator;
+package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,121 +60,121 @@ public class CreateConsentRequestValidatorTest {
     }
 
     @Test
-    public void validateRequestSuccess_RecurringIndicatorTrue() {
+    public void validateSuccess_RecurringIndicatorTrue() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultValid(validationResult);
     }
 
     @Test
-    public void validateRequestSuccess_RecurringIndicatorFalse() {
+    public void validateSuccess_RecurringIndicatorFalse() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(false, 1);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultValid(validationResult);
     }
 
     @Test
-    public void validateRequestFail_RecurringIndicatorTrueFrequencyPerDayMinus() {
+    public void validateFail_RecurringIndicatorTrueFrequencyPerDayMinus() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(true, -1);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
-    public void validateRequestFail_RecurringIndicatorTrueFrequencyPerDayZero() {
+    public void validateFail_RecurringIndicatorTrueFrequencyPerDayZero() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(true, 0);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
-    public void validateRequestFail_RecurringIndicatorFalseFrequencyPerDayMinus() {
+    public void validateFail_RecurringIndicatorFalseFrequencyPerDayMinus() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(false, -1);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
-    public void validateRequestFail_RecurringIndicatorFalseFrequencyPerDayZero() {
+    public void validateFail_RecurringIndicatorFalseFrequencyPerDayZero() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(false, 0);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
-    public void validateRequestFail_RecurringIndicatorFalseFrequencyPerDayMoreThanOne() {
+    public void validateFail_RecurringIndicatorFalseFrequencyPerDayMoreThanOne() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(false, 2);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
     @Test
-    public void validateRequestSuccess_ValidUntilToday() {
+    public void validateSuccess_ValidUntilToday() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1, LocalDate.now());
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultValid(validationResult);
     }
 
     @Test
-    public void validateRequestFail_ValidUntilInThePast() {
+    public void validateFail_ValidUntilInThePast() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1, LocalDate.now().minusDays(1));
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultNotValid_PERIOD_INVALID(validationResult);
     }
 
     @Test
-    public void validateRequestSuccess_FlagsAndAccessesEmpty() {
+    public void validateSuccess_FlagsAndAccessesEmpty() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReqWithoutFlagsAndAccesses(true, 1);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultValid(validationResult);
     }
 
     @Test
-    public void validateRequestSuccess_FlagsPresentAccessesEmpty() {
+    public void validateSuccess_FlagsPresentAccessesEmpty() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultValid(validationResult);
     }
 
     @Test
-    public void validateRequestFail_FlagsAndAccessesPresent() {
+    public void validateFail_FlagsAndAccessesPresent() {
         //Given
         CreateConsentReq createConsentReq = buildCreateConsentReqWithFlagsAndAccesses(true, 1);
         //When
-        ValidationResult validationResult = createConsentRequestValidator.validateRequest(createConsentReq);
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
         //Then
         assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }

@@ -44,3 +44,10 @@ Added validation for the `X-Request-ID` header in all controllers. Two cases are
 ## Bugfix: search for AIS and PIIS consent now use all PSU Data properties in getConsentsForPsu method
 From now on in CmsAspspPiisService#getConsentsForPsu, CmsPsuPiisService#getConsentsForPsu and CmsPsuAisService#getConsentsForPsu 
 all PSU Data properties are used for filtering results. 
+
+## Bugfix: TPP validation in AIS and PIS
+From now on XS2A will check every request to AIS and PIS endpoints that contains consent ID or payment ID (i. e. every 
+request, except `POST /v1/payments/{payment-product}` for payments and `POST /v1/consents` for consents) and verify that 
+the request comes from the same TPP that created given consent or payment. TPP in requests are considered to be equal if 
+they've used certificates that contain the same authorisation number and authority id.
+If there is a mismatch, `401 Unauthorized` error will be returned in the response.

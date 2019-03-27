@@ -44,7 +44,10 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -101,6 +104,8 @@ public class AccountServiceTest {
     private static final ResponseObject<AccountConsent> SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE = buildSuccessAllowedAccountDataResponse();
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID());
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOTH;
+    private static final MessageError VALIDATION_ERROR =
+        new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
 
     @InjectMocks
     private AccountService accountService;
@@ -156,6 +161,17 @@ public class AccountServiceTest {
     @Mock
     private SpiErrorMapper spiErrorMapper;
 
+    @Mock
+    private GetAccountListValidator getAccountListValidator;
+    @Mock
+    private GetAccountDetailsValidator getAccountDetailsValidator;
+    @Mock
+    private GetBalancesReportValidator getBalancesReportValidator;
+    @Mock
+    private GetTransactionsReportValidator getTransactionsReportValidator;
+    @Mock
+    private GetTransactionDetailsValidator getTransactionDetailsValidator;
+
     @Before
     public void setUp() {
         doNothing()
@@ -166,6 +182,17 @@ public class AccountServiceTest {
 
         when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class)))
             .thenReturn(SPI_CONTEXT_DATA);
+
+        when(getAccountListValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(getAccountDetailsValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(getBalancesReportValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(getTransactionsReportValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(getTransactionDetailsValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
     }
 
     @Test
@@ -307,6 +334,28 @@ public class AccountServiceTest {
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_ACCOUNT_LIST_REQUEST_RECEIVED);
     }
 
+
+    @Test
+    public void getAccountList_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
+        when(getAccountListValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
+
+        // Then
+        AccountConsent consent = SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE.getBody();
+
+        verify(getAccountListValidator).validate(new CommonConsentObject(consent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
     @Test
     public void getAccountDetails_Failure_AllowedAccountDataHasError() {
         when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
@@ -430,6 +479,27 @@ public class AccountServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_ACCOUNT_DETAILS_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getAccountDetails_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
+        when(getAccountDetailsValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Xs2aAccountDetails> actualResponse = accountService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE);
+
+        // Then
+        AccountConsent consent = SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE.getBody();
+
+        verify(getAccountDetailsValidator).validate(new CommonConsentObject(consent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
     }
 
     @Test
@@ -562,6 +632,27 @@ public class AccountServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_BALANCE_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getBalancesReport_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(consentService.getValidatedConsent(CONSENT_ID))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
+        when(getBalancesReportValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
+
+        // Then
+        AccountConsent consent = SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE.getBody();
+
+        verify(getBalancesReportValidator).validate(new CommonConsentObject(consent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
     }
 
     @Test
@@ -724,6 +815,27 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getTransactionsReportByPeriod_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(consentService.getValidatedConsent(CONSENT_ID, WITH_BALANCE))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
+        when(getTransactionsReportValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS);
+
+        // Then
+        AccountConsent consent = SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE.getBody();
+
+        verify(getTransactionsReportValidator).validate(new CommonConsentObject(consent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
+    @Test
     public void getTransactionDetails_Failure_AllowedAccountDataHasError() {
         when(consentService.getValidatedConsent(CONSENT_ID))
             .thenReturn(ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE);
@@ -849,6 +961,27 @@ public class AccountServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_TRANSACTION_DETAILS_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void getTransactionDetails_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(consentService.getValidatedConsent(CONSENT_ID))
+            .thenReturn(SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE);
+
+        when(getTransactionDetailsValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Transactions> actualResponse = accountService.getTransactionDetails(CONSENT_ID, ACCOUNT_ID, TRANSACTION_ID);
+
+        // Then
+        AccountConsent consent = SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE.getBody();
+
+        verify(getTransactionDetailsValidator).validate(new CommonConsentObject(consent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
