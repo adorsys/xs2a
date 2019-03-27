@@ -55,7 +55,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
 
     @Override
     public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
-        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuIdAndInstanceId(psuIdData.getPsuId(), instanceId)).stream()
+        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId)).stream()
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentMapper::mapToPiisConsent)
                    .collect(Collectors.toList());
