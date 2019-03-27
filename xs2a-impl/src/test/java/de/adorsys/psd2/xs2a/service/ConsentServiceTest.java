@@ -55,8 +55,9 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAcce
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
-import de.adorsys.psd2.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
@@ -110,8 +111,11 @@ public class ConsentServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(CORRECT_PSU_ID, null, null, null);
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
+    private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.MAX;
+    private static final MessageError VALIDATION_ERROR =
+        new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
 
     @InjectMocks
     private ConsentService consentService;
@@ -160,6 +164,21 @@ public class ConsentServiceTest {
     private AisEndpointAccessCheckerService endpointAccessCheckerService;
     @Mock
     private SpiErrorMapper spiErrorMapper;
+
+    @Mock
+    private GetAccountConsentsStatusByIdValidator getAccountConsentsStatusByIdValidator;
+    @Mock
+    private GetAccountConsentByIdValidator getAccountConsentByIdValidator;
+    @Mock
+    private DeleteAccountConsentsByIdValidator deleteAccountConsentsByIdValidator;
+    @Mock
+    private CreateConsentAuthorisationValidator createConsentAuthorisationValidator;
+    @Mock
+    private UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
+    @Mock
+    private GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
+    @Mock
+    private GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
 
     @Before
     public void setUp() {
@@ -246,6 +265,21 @@ public class ConsentServiceTest {
 
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(getAccountConsentByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(deleteAccountConsentsByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(updateConsentPsuDataValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(getConsentAuthorisationsValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(getConsentAuthorisationScaStatusValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
     }
 
     @Test
@@ -256,7 +290,7 @@ public class ConsentServiceTest {
         );
 
         //When:
-        when(createConsentRequestValidator.validateRequest(req))
+        when(createConsentRequestValidator.validate(req))
             .thenReturn(createValidationResult(true, null));
 
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
@@ -279,7 +313,7 @@ public class ConsentServiceTest {
         );
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
-        when(createConsentRequestValidator.validateRequest(req))
+        when(createConsentRequestValidator.validate(req))
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
@@ -303,7 +337,7 @@ public class ConsentServiceTest {
         );
 
         //When:
-        when(createConsentRequestValidator.validateRequest(req))
+        when(createConsentRequestValidator.validate(req))
             .thenReturn(createValidationResult(true, null));
 
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
@@ -327,7 +361,7 @@ public class ConsentServiceTest {
         );
 
         //When:
-        when(createConsentRequestValidator.validateRequest(req))
+        when(createConsentRequestValidator.validate(req))
             .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
 
         when(aspspProfileService.getAllPsd2Support())
@@ -355,7 +389,7 @@ public class ConsentServiceTest {
         );
 
         //When:
-        when(createConsentRequestValidator.validateRequest(req))
+        when(createConsentRequestValidator.validate(req))
             .thenReturn(createValidationResult(true, null));
 
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
@@ -379,7 +413,7 @@ public class ConsentServiceTest {
         );
 
         //When:
-        when(createConsentRequestValidator.validateRequest(req))
+        when(createConsentRequestValidator.validate(req))
             .thenReturn(createValidationResult(true, null));
 
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
@@ -403,7 +437,7 @@ public class ConsentServiceTest {
         );
 
         //When:
-        when(createConsentRequestValidator.validateRequest(req))
+        when(createConsentRequestValidator.validate(req))
             .thenReturn(createValidationResult(true, null));
 
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
@@ -420,6 +454,30 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void createAccountConsentWithResponse_Success_BankOfferedConsent() {
+        //Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
+        );
+
+        when(createConsentRequestValidator.validate(req))
+            .thenReturn(createValidationResult(true, null));
+
+        when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false))
+                            .aspspConsentData(ASPSP_CONSENT_DATA)
+                            .success());
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
+        CreateConsentResponse response = responseObj.getBody();
+
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
     public void createAccountConsentsWithResponse_Failure() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
@@ -427,13 +485,100 @@ public class ConsentServiceTest {
         );
 
         //When:
-        when(createConsentRequestValidator.validateRequest(req))
+        when(createConsentRequestValidator.validate(req))
             .thenReturn(createValidationResult(true, null));
 
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         //Then:
         assertThat(responseObj.getError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+    }
+
+    @Test
+    public void createAccountConsentWithResponse_Failure_BankOfferedConsent() {
+        //Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
+        );
+
+        //When
+        when(createConsentRequestValidator.validate(req))
+            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
+
+        when(aspspProfileService.isBankOfferedConsentSupported())
+            .thenReturn(false);
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
+        MessageError messageError = responseObj.getError();
+
+        //Then
+        assertThat(messageError).isNotNull();
+        assertThat(messageError.getErrorType()).isEqualTo(ErrorType.AIS_400);
+
+        TppMessageInformation tppMessage = messageError.getTppMessage();
+
+        assertThat(tppMessage).isNotNull();
+        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.PARAMETER_NOT_SUPPORTED);
+    }
+
+    @Test
+    public void createAccountConsentWithResponse_Failure_NotSupportedAvailableAccounts() {
+        //Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
+        );
+
+        //When
+        when(createConsentRequestValidator.validate(req))
+            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_405, MessageErrorCode.SERVICE_INVALID_405)));
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
+        MessageError messageError = responseObj.getError();
+
+        //Then
+        assertThat(messageError).isNotNull();
+        assertThat(messageError.getErrorType()).isEqualTo(ErrorType.AIS_405);
+
+        TppMessageInformation tppMessage = messageError.getTppMessage();
+
+        assertThat(tppMessage).isNotNull();
+        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.SERVICE_INVALID_405);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_Failure_No_PSU() {
+        //Given:
+        when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
+        //When:
+        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(null, psuIdData, EXPLICIT_PREFERRED, buildTppRedirectUri());
+        //Then:
+        MessageError error = responseObj.getError();
+        assertThat(error).isNotNull();
+        assertThat(error.getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(error.getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.singletonList(getReference(WRONG_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), false, false)
+        );
+
+        when(createConsentRequestValidator.validate(any(CreateConsentReq.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<CreateConsentResponse> actualResponse = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
+
+        // Then
+        verify(createConsentRequestValidator).validate(req);
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
     }
 
     @Test
@@ -513,6 +658,24 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void getAccountConsentsStatusById_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(getAccountConsentsStatusByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<ConsentStatusResponse> actualResponse = consentService.getAccountConsentsStatusById(CONSENT_ID);
+
+        // Then
+        AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);
+
+        verify(getAccountConsentsStatusByIdValidator).validate(new CommonConsentObject(accountConsent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
+    @Test
     public void getAccountConsentsById_Success() {
         //Given:
         AccountConsent consentExpected = getAccountConsent(CONSENT_ID, DATE, 0);
@@ -566,6 +729,24 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void getAccountConsentsById_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(getAccountConsentByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<AccountConsent> actualResponse = consentService.getAccountConsentById(CONSENT_ID);
+
+        // Then
+        AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);
+
+        verify(getAccountConsentByIdValidator).validate(new CommonConsentObject(accountConsent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
+    @Test
     public void deleteAccountConsentsById_Success() {
         //When:
         when(aisConsentSpi.revokeAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
@@ -610,80 +791,21 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentWithResponse_Success_BankOfferedConsent() {
-        //Given
-        CreateConsentReq req = getCreateConsentRequest(
-            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
-        );
+    public void deleteAccountConsentsById_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(deleteAccountConsentsByIdValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
-        when(createConsentRequestValidator.validateRequest(req))
-            .thenReturn(createValidationResult(true, null));
+        // When
+        ResponseObject<Void> actualResponse = consentService.deleteAccountConsentsById(CONSENT_ID);
 
-        when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
-            .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false))
-                            .aspspConsentData(ASPSP_CONSENT_DATA)
-                            .success());
+        // Then
+        AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);
 
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
-        CreateConsentResponse response = responseObj.getBody();
-
-        //Then:
-        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
-    }
-
-    @Test
-    public void createAccountConsentWithResponse_Failure_BankOfferedConsent() {
-        //Given
-        CreateConsentReq req = getCreateConsentRequest(
-            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
-        );
-
-        //When
-        when(createConsentRequestValidator.validateRequest(req))
-            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
-
-        when(aspspProfileService.isBankOfferedConsentSupported())
-            .thenReturn(false);
-
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
-        MessageError messageError = responseObj.getError();
-
-        //Then
-        assertThat(messageError).isNotNull();
-        assertThat(messageError.getErrorType()).isEqualTo(ErrorType.AIS_400);
-
-        TppMessageInformation tppMessage = messageError.getTppMessage();
-
-        assertThat(tppMessage).isNotNull();
-        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.PARAMETER_NOT_SUPPORTED);
-    }
-
-    @Test
-    public void createAccountConsentWithResponse_Failure_NotSupportedAvailableAccounts() {
-        //Given
-        CreateConsentReq req = getCreateConsentRequest(
-            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
-        );
-
-        //When
-        when(createConsentRequestValidator.validateRequest(req))
-            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_405, MessageErrorCode.SERVICE_INVALID_405)));
-
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
-        MessageError messageError = responseObj.getError();
-
-        //Then
-        assertThat(messageError).isNotNull();
-        assertThat(messageError.getErrorType()).isEqualTo(ErrorType.AIS_405);
-
-        TppMessageInformation tppMessage = messageError.getTppMessage();
-
-        assertThat(tppMessage).isNotNull();
-        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.SERVICE_INVALID_405);
+        verify(deleteAccountConsentsByIdValidator).validate(new CommonConsentObject(accountConsent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
     }
 
     @Test
@@ -701,6 +823,24 @@ public class ConsentServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
+    }
+
+    @Test
+    public void createConsentAuthorisationWithResponse_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(createConsentAuthorisationValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<CreateConsentAuthorizationResponse> actualResponse = consentService.createConsentAuthorizationWithResponse(PSU_ID_DATA, CONSENT_ID);
+
+        // Then
+        AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);
+
+        verify(createConsentAuthorisationValidator).validate(new CommonConsentObject(accountConsent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
     }
 
     @Test
@@ -772,6 +912,29 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void updateConsentPsuData_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq();
+
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
+            .thenReturn(true);
+
+        when(updateConsentPsuDataValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<UpdateConsentPsuDataResponse> actualResponse = consentService.updateConsentPsuData(updateConsentPsuDataReq);
+
+        // Then
+        AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);
+
+        verify(updateConsentPsuDataValidator).validate(new CommonConsentObject(accountConsent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
+    @Test
     public void getConsentInitiationAuthorisation() {
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAuthorisationSubResources(anyString()))
@@ -791,6 +954,24 @@ public class ConsentServiceTest {
         List<String> authorisationIds = paymentInitiationAuthorisation.getBody().getAuthorisationIds();
         assertFalse(authorisationIds.isEmpty());
         assertThat(authorisationIds.get(0)).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void getConsentInitiationAuthorisations_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(getConsentAuthorisationsValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Xs2aAuthorisationSubResources> actualResponse = consentService.getConsentInitiationAuthorisations(CONSENT_ID);
+
+        // Then
+        AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);
+
+        verify(getConsentAuthorisationsValidator).validate(new CommonConsentObject(accountConsent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
     }
 
     @Test
@@ -827,11 +1008,11 @@ public class ConsentServiceTest {
     @Test
     public void getConsentAuthorisationScaStatus_failure() {
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
-        when(redirectAisAuthorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         // When
-        ResponseObject<ScaStatus> actual = consentService.getConsentAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID);
+        ResponseObject<ScaStatus> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
         assertTrue(actual.hasError());
@@ -839,17 +1020,21 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Failure_No_PSU() {
-        //Given:
-        when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
-        //When:
-        PsuIdData psuIdData = new PsuIdData(null, null, null, null);
-        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(null, psuIdData, EXPLICIT_PREFERRED, buildTppRedirectUri());
-        //Then:
-        MessageError error = responseObj.getError();
-        assertThat(error).isNotNull();
-        assertThat(error.getErrorType()).isEqualTo(ErrorType.AIS_400);
-        assertThat(error.getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.FORMAT_ERROR);
+    public void getConsentAuthorisationScaStatus_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(getConsentAuthorisationScaStatusValidator.validate(any(CommonConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<ScaStatus> actualResponse = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);
+
+        verify(getConsentAuthorisationScaStatusValidator).validate(new CommonConsentObject(accountConsent));
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+        assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
     }
 
     /**
