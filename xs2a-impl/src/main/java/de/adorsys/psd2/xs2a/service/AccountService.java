@@ -44,7 +44,10 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -92,6 +95,12 @@ public class AccountService {
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiErrorMapper spiErrorMapper;
 
+    private final GetAccountListValidator getAccountListValidator;
+    private final GetAccountDetailsValidator getAccountDetailsValidator;
+    private final GetBalancesReportValidator getBalancesReportValidator;
+    private final GetTransactionsReportValidator getTransactionsReportValidator;
+    private final GetTransactionDetailsValidator getTransactionDetailsValidator;
+
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
      * AccountAccess in AIS-consent Balances are passed along with AccountDetails.
@@ -111,6 +120,13 @@ public class AccountService {
         }
 
         AccountConsent accountConsent = accountConsentResponse.getBody();
+
+        ValidationResult validationResult = getAccountListValidator.validate(new CommonConsentObject(accountConsent));
+        if (validationResult.isNotValid()) {
+            return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
+                       .fail(validationResult.getMessageError())
+                       .build();
+        }
 
         SpiContextData contextData = getSpiContextData(accountConsent.getPsuIdDataList());
 
@@ -160,6 +176,13 @@ public class AccountService {
         }
 
         AccountConsent accountConsent = accountConsentResponse.getBody();
+
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonConsentObject(accountConsent));
+        if (validationResult.isNotValid()) {
+            return ResponseObject.<Xs2aAccountDetails>builder()
+                       .fail(validationResult.getMessageError())
+                       .build();
+        }
 
         Optional<SpiAccountReference> requestedAccountReference = findAccountReference(accountConsent.getAccess().getAccounts(), accountId);
 
@@ -221,6 +244,13 @@ public class AccountService {
         }
 
         AccountConsent accountConsent = accountConsentResponse.getBody();
+
+        ValidationResult validationResult = getBalancesReportValidator.validate(new CommonConsentObject(accountConsent));
+        if (validationResult.isNotValid()) {
+            return ResponseObject.<Xs2aBalancesReport>builder()
+                       .fail(validationResult.getMessageError())
+                       .build();
+        }
 
         Optional<SpiAccountReference> requestedAccountReference = findAccountReference(accountConsent.getAccess().getBalances(), accountId);
 
@@ -294,6 +324,13 @@ public class AccountService {
         }
 
         AccountConsent accountConsent = accountConsentResponse.getBody();
+
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new CommonConsentObject(accountConsent));
+        if (validationResult.isNotValid()) {
+            return ResponseObject.<Xs2aTransactionsReport>builder()
+                       .fail(validationResult.getMessageError())
+                       .build();
+        }
 
         Optional<SpiAccountReference> requestedAccountReference = findAccountReference(accountConsent.getAccess().getTransactions(), accountId);
 
@@ -379,6 +416,13 @@ public class AccountService {
         }
 
         AccountConsent accountConsent = accountConsentResponse.getBody();
+
+        ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonConsentObject(accountConsent));
+        if (validationResult.isNotValid()) {
+            return ResponseObject.<Transactions>builder()
+                       .fail(validationResult.getMessageError())
+                       .build();
+        }
 
         Optional<SpiAccountReference> requestedAccountReference = findAccountReference(accountConsent.getAccess().getTransactions(), accountId);
 
