@@ -49,7 +49,6 @@ public class ReadSinglePaymentServiceTest {
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final String PRODUCT = "sepa-credit-transfers";
-    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[16], "some consent id");
     private static final List<PisPayment> PIS_PAYMENTS = getListPisPayment();
@@ -115,7 +114,6 @@ public class ReadSinglePaymentServiceTest {
 
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ASPSP_CONSENT_DATA.getConsentId(), SINGLE_PAYMENT.getTransactionStatus()))
             .thenReturn(false);
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
         //When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);

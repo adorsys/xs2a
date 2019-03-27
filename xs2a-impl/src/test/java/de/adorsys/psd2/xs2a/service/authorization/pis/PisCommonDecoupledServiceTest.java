@@ -38,7 +38,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PisCommonDecoupledServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
-    private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final String PAYMENT_ID = "c713a32c-15ff-4f90-afa0-34a500359844";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String AUTHENTICATION_METHOD_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
