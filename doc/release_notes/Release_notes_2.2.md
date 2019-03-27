@@ -34,3 +34,9 @@ The responses for the listed below endpoints are enriched with the proper field 
  - GET `/aspsp-api/v1/piis/consents/account/{account-id}`
 
 Also, this field is propagated to the SPI level for PIS, AIS and PIIS. 
+
+## Bugfix: X-Request-ID header validation
+Added validation for the `X-Request-ID` header in all controllers. Two cases are handled by now:
+ - Header is null. In this case response is `400 FORMAT ERROR` with the text `'X-Request-ID' may not be null`
+ - Header is not UUID (wrong format). In this case response is also `400 FORMAT ERROR`, the text is `'X-Request-ID' 
+ has to be represented by standard 36-char UUID representation`
