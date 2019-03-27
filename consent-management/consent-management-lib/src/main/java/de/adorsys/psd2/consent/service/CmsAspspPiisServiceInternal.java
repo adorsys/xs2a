@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -97,6 +98,10 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
     @Override
     public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+        if (psuIdData.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId))
                    .stream()
                    .map(piisConsentMapper::mapToPiisConsent)

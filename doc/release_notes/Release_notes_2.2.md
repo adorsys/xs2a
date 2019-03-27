@@ -42,5 +42,5 @@ Added validation for the `X-Request-ID` header in all controllers. Two cases are
  has to be represented by standard 36-char UUID representation`
 
 ## Bugfix: search for AIS and PIIS consent now use all PSU Data properties in getConsentsForPsu method
-From now on in CmsAspspPiisService#getConsentsForPsu and CmsPsuPiisService#getConsentsForPsu 
+From now on in CmsAspspPiisService#getConsentsForPsu, CmsPsuPiisService#getConsentsForPsu and CmsPsuAisService#getConsentsForPsu 
 all PSU Data properties are used for filtering results. 
