@@ -239,7 +239,7 @@ public class CmsPsuAisServiceTest {
         // Assert
         assertEquals(consentsForPsu.size(), aisConsents.size());
         verify(aisConsentSpecification, times(1))
-            .byPsuIdInListAndInstanceId(psuIdData.getPsuId(), DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuDataInListAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -254,7 +254,7 @@ public class CmsPsuAisServiceTest {
         // Assert
         assertTrue(consentsForPsu.isEmpty());
         verify(aisConsentSpecification, times(1))
-            .byPsuIdInListAndInstanceId(psuIdDataWrong.getPsuId(), DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuDataInListAndInstanceId(psuIdDataWrong, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
