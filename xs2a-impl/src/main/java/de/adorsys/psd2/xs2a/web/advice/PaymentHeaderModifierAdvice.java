@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.advice;
 
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.web.LinkExtractor;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.MethodParameter;
@@ -28,13 +29,16 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import java.util.List;
-import java.util.Optional;
 
 @ControllerAdvice(assignableTypes = {PaymentController.class})
 public class PaymentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
+    private static final String SELF_LINK_NAME = "self";
 
-    public PaymentHeaderModifierAdvice(ScaApproachResolver scaApproachResolver) {
+    private final LinkExtractor linkExtractor;
+
+    public PaymentHeaderModifierAdvice(ScaApproachResolver scaApproachResolver, LinkExtractor linkExtractor) {
         super(scaApproachResolver);
+        this.linkExtractor = linkExtractor;
     }
 
     @Override
@@ -77,8 +81,7 @@ public class PaymentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
         if (response instanceof PaymentInitationRequestResponse201) {
             PaymentInitationRequestResponse201 paymentResponse = (PaymentInitationRequestResponse201) response;
 
-            selfLink = Optional.ofNullable(paymentResponse.getLinks())
-                           .map(links -> links.get("self").toString())
+            selfLink = linkExtractor.extract(paymentResponse.getLinks(), SELF_LINK_NAME)
                            .orElse(null);
         }
         return selfLink;
