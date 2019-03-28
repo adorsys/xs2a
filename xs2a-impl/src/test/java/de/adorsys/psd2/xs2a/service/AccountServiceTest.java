@@ -181,7 +181,7 @@ public class AccountServiceTest {
         when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class)))
             .thenReturn(SPI_CONTEXT_DATA);
 
-        when(getAccountListValidator.validate(any(CommonConsentObject.class)))
+        when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(getAccountDetailsValidator.validate(any(CommonAccountRequestObject.class)))
             .thenReturn(ValidationResult.valid());
@@ -199,7 +199,7 @@ public class AccountServiceTest {
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
-        when(getAccountListValidator.validate(new CommonConsentObject(accountConsent)))
+        when(getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, WITH_BALANCE)))
             .thenReturn(ValidationResult.invalid(CONSENT_INVALID_MESSAGE_ERROR));
 
         ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
@@ -343,7 +343,6 @@ public class AccountServiceTest {
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.READ_ACCOUNT_LIST_REQUEST_RECEIVED);
     }
 
-
     @Test
     public void getAccountList_withInvalidConsent_shouldReturnValidationError() {
         AccountConsent accountConsent = createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE));
@@ -352,13 +351,13 @@ public class AccountServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(getAccountListValidator.validate(any(CommonConsentObject.class)))
+        when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
         ResponseObject<Map<String, List<Xs2aAccountDetails>>> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE);
 
-        verify(getAccountListValidator).validate(new CommonConsentObject(accountConsent));
+        verify(getAccountListValidator).validate(new GetAccountListConsentObject(accountConsent, WITH_BALANCE));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);

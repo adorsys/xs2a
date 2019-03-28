@@ -121,7 +121,7 @@ public class AccountService {
 
         AccountConsent accountConsent = accountConsentOptional.get();
 
-        ValidationResult validationResult = getAccountListValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, withBalance));
         if (validationResult.isNotValid()) {
             return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
                        .fail(validationResult.getMessageError())
