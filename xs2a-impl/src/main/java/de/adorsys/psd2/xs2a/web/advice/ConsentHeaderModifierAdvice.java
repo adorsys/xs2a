@@ -18,7 +18,9 @@ package de.adorsys.psd2.xs2a.web.advice;
 
 import de.adorsys.psd2.model.ConsentsResponse201;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.web.LinkExtractor;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -26,13 +28,17 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
-import java.util.Optional;
-
+@Slf4j
 @ControllerAdvice(assignableTypes = {ConsentController.class})
 public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
+    private static final String SELF_LINK_NAME = "self";
 
-    public ConsentHeaderModifierAdvice(ScaApproachResolver scaApproachResolver) {
+    private final LinkExtractor linkExtractor;
+
+    public ConsentHeaderModifierAdvice(ScaApproachResolver scaApproachResolver,
+                                       LinkExtractor linkExtractor) {
         super(scaApproachResolver);
+        this.linkExtractor = linkExtractor;
     }
 
     @Override
@@ -47,9 +53,10 @@ public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
             response.getHeaders().add("Aspsp-Sca-Approach", scaApproachResolver.resolveScaApproach().name());
             if (!hasError(body, ConsentsResponse201.class)) {
                 ConsentsResponse201 consentResponse = (ConsentsResponse201) body;
-                response.getHeaders().add("Location", Optional.ofNullable(consentResponse.getLinks().get("self"))
-                                                          .map(Object::toString)
-                                                          .orElse(null));
+
+                String selfLink = linkExtractor.extract(consentResponse.getLinks(), SELF_LINK_NAME)
+                                      .orElse(null);
+                response.getHeaders().add("Location", selfLink);
             }
         } else if ("_startConsentAuthorisation".equals(methodName)
                        || "_updateConsentsPsuData".equals(methodName)) {
