@@ -60,3 +60,8 @@ If there is a mismatch, `401 Unauthorized` error will be returned in the respons
 ## Bugfix: Update PSU data in consent authorisation
 From now on CMS will update PSU data in authorisation while calling the `/psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/psu-data`
 endpoint.
+
+## Bugfix: Check whether consent has access to balances in Read account list request with balances
+From now on XS2A will validate Read account list request (`GET /v1/accounts`) with query parameter `withBalance` set to 
+`true` by checking whether given consent has access to balances. If the consent has no such access (i. e. consent's `access` 
+property doesn't contain `balances`), `401 CONSENT_INVALID` error will be returned in the response.
