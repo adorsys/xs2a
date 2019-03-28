@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// TODO Use HrefType instead of HrefLinkMapper https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/777
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -43,6 +44,10 @@ public class HrefLinkMapper {
      * Returned Map with added 'href' to link value.
      */
     public Map<String, Map<String, String>> mapToLinksMap(Links links) {
+        if (links == null) {
+            return null;
+        }
+
         Map<String, String> linksMap = mapper.convertValue(links, new TypeReference<Map<String, String>>() {
         });
         return linksMap
