@@ -844,33 +844,6 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getValidateConsent_DateValidAfter() {
-        //When
-        ResponseObject<AccountConsent> xs2aAccountAccessResponseObject = consentService.getValidatedConsent(CONSENT_ID_DATE_VALID_YESTERDAY);
-        //Then
-        assertThat(xs2aAccountAccessResponseObject.getBody()).isNull();
-        assertThat(xs2aAccountAccessResponseObject.getError().getErrorType()).isEqualTo(ErrorType.AIS_401);
-    }
-
-    @Test
-    public void getValidateConsent_DateValidToday() {
-        //When
-        ResponseObject<AccountConsent> xs2aAccountAccessResponseObject = consentService.getValidatedConsent(CONSENT_ID_DATE_VALID_TODAY);
-        //Then
-        assertThat(xs2aAccountAccessResponseObject.hasError()).isFalse();
-    }
-
-    @Test
-    public void getValidateConsent_AccessExceeded() {
-        //When
-        ResponseObject<AccountConsent> xs2aAccountAccessResponseObject = consentService.getValidatedConsent(CONSENT_ID);
-        //Then
-        assertThat(xs2aAccountAccessResponseObject.getBody()).isNull();
-        assertThat(xs2aAccountAccessResponseObject.getError().getErrorType()).isEqualTo(ErrorType.AIS_429);
-        assertThat(xs2aAccountAccessResponseObject.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.ACCESS_EXCEEDED);
-    }
-
-    @Test
     public void updateConsentPsuData_Success_ShouldRecordEvent() {
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
