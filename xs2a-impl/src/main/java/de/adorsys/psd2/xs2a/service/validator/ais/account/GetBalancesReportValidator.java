@@ -19,6 +19,8 @@ package de.adorsys.psd2.xs2a.service.validator.ais.account;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +28,10 @@ import org.springframework.stereotype.Component;
  * Validator to be used for validating get balances report request according to some business rules
  */
 @Component
+@RequiredArgsConstructor
 public class GetBalancesReportValidator extends AbstractAisTppValidator<CommonConsentObject> {
+    private final AccountConsentValidator accountConsentValidator;
+
     /**
      * Validates get balances report request
      *
@@ -36,6 +41,6 @@ public class GetBalancesReportValidator extends AbstractAisTppValidator<CommonCo
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(CommonConsentObject consentObject) {
-        return ValidationResult.valid();
+        return accountConsentValidator.validate(consentObject.getAccountConsent());
     }
 }

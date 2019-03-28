@@ -16,13 +16,17 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
 
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.UNAUTHORIZED;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -42,15 +47,27 @@ import static org.mockito.Mockito.when;
 public class GetAccountDetailsValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
+    private static final String ACCOUNT_ID = "account id";
+    private static final boolean WITH_BALANCE = false;
 
     private static final MessageError TPP_VALIDATION_ERROR =
-        new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
+        new MessageError(ErrorType.AIS_401, TppMessageInformation.of(UNAUTHORIZED));
 
-    @Mock
-    private AisTppInfoValidator aisTppInfoValidator;
+    private static final MessageError PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR =
+        new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
 
     @InjectMocks
     private GetAccountDetailsValidator getAccountDetailsValidator;
+
+    @Mock
+    private AccountConsentValidator accountConsentValidator;
+    @Mock
+    private AisTppInfoValidator aisTppInfoValidator;
+    @Mock
+    private PermittedAccountReferenceValidator permittedAccountReferenceValidator;
+
+    @Mock
+    private AccountReference accountReference;
 
     @Before
     public void setUp() {
@@ -64,12 +81,35 @@ public class GetAccountDetailsValidatorTest {
     }
 
     @Test
+    public void validate_withInvalidAccountReference_shouldReturnInvalid() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE))
+            .thenReturn(ValidationResult.invalid(PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
+
+        // When
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE));
+
+        // Then
+        verify(permittedAccountReferenceValidator).validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE);
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
     public void validate_withValidConsentObject_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE))
+            .thenReturn(ValidationResult.valid());
+
+        when(accountConsentValidator.validate(accountConsent))
+            .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE));
 
         // Then
         verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -83,9 +123,11 @@ public class GetAccountDetailsValidatorTest {
     public void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
+        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE))
+            .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE));
 
         // Then
         verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -102,9 +144,13 @@ public class GetAccountDetailsValidatorTest {
     }
 
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", null, false, null, 0,
+        return new AccountConsent("id", buildXs2aAccountAccess(), false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
                                   Collections.emptyList(), null, 0);
+    }
+
+    private Xs2aAccountAccess buildXs2aAccountAccess() {
+        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null);
     }
 }
