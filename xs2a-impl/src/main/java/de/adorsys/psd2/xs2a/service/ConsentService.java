@@ -137,7 +137,7 @@ public class ConsentService {
                        .build();
         }
 
-        Optional<AccountConsent> accountConsentOptional = getInitialAccountConsent(consentId);
+        Optional<AccountConsent> accountConsentOptional = aisConsentService.getInitialAccountConsentById(consentId);
         // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/749
         if (!accountConsentOptional.isPresent()) {
             return ResponseObject.<CreateConsentResponse>builder()
@@ -285,7 +285,7 @@ public class ConsentService {
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_AIS_CONSENT_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> consentOptional = getInitialAccountConsent(consentId);
+        Optional<AccountConsent> consentOptional = aisConsentService.getInitialAccountConsentById(consentId);
 
         if (!consentOptional.isPresent()) {
             return ResponseObject.<AccountConsent>builder()
@@ -527,12 +527,6 @@ public class ConsentService {
             request.getAccess().getAvailableAccounts(),
             request.getAccess().getAllPsd2()
         );
-    }
-
-    private Optional<AccountConsent> getInitialAccountConsent(String consentId) {
-        return aisConsentService.getInitialAccountConsentById(consentId)
-                   .filter(consent -> tppService.getTppId().equals(consent.getTppInfo()
-                                                                       .getAuthorisationNumber()));
     }
 
     private void proceedImplicitCaseForCreateConsent(CreateConsentResponse response, PsuIdData psuData, String consentId) {
