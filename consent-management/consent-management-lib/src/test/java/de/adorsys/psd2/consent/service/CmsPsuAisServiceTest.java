@@ -37,6 +37,7 @@ import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuAisServiceInternal;
+import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -50,7 +51,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -76,7 +76,7 @@ public class CmsPsuAisServiceTest {
     private AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
     @Mock
     private PsuDataRepository psuDataRepository;
-    @Spy
+    @Mock
     private PsuDataMapper psuDataMapper;
 
     @Mock
@@ -93,6 +93,8 @@ public class CmsPsuAisServiceTest {
     private AisConsentService aisConsentService;
     @Mock
     private AisConsentUsageService aisConsentUsageService;
+    @Mock
+    private CmsPsuService cmsPsuService;
 
     private AisConsent aisConsent;
     private List<AisConsent> aisConsents;
@@ -116,7 +118,7 @@ public class CmsPsuAisServiceTest {
     @Before
     public void setUp() {
         psuIdData = buildPsuIdData(PSU_ID);
-        psuData = buildPsuData();
+        psuData = buildPsuData(PSU_ID);
         aisConsent = buildConsent();
         psuIdDataWrong = buildPsuIdData("wrong");
         aisAccountConsent = buildSpiAccountConsent();
@@ -133,6 +135,10 @@ public class CmsPsuAisServiceTest {
         // When
         //noinspection unchecked
         when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(aisConsentAuthorization);
+        when(psuDataMapper.mapToPsuData(psuIdData))
+            .thenReturn(psuData);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), anyList()))
+            .thenReturn(Optional.of(psuData));
 
         // Then
         boolean updatePsuDataInConsent = cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -611,7 +617,7 @@ public class CmsPsuAisServiceTest {
     private AisConsent buildAisConsentWithFinalisedAuthorisation() {
         AisConsent consent = buildConsent();
         AisConsentAuthorization finalisedAuthorisation = buildFinalisedAuthorisation();
-        finalisedAuthorisation.setPsuData(buildPsuData());
+        finalisedAuthorisation.setPsuData(psuData);
         consent.setAuthorizations(Collections.singletonList(finalisedAuthorisation));
         return consent;
     }
@@ -669,11 +675,8 @@ public class CmsPsuAisServiceTest {
         return aisConsent;
     }
 
-    private PsuData buildPsuData() {
-        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
-        psuData.setId(CONSENT_ID);
-        return psuData;
-
+    private PsuData buildPsuData(String psuId) {
+        return new PsuData(psuId, "", "", "");
     }
 
     private PsuIdData buildPsuIdData(String psuId) {
