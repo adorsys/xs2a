@@ -67,7 +67,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final AisConsentService aisConsentService;
     private final PsuDataMapper psuDataMapper;
     private final AisConsentUsageService aisConsentUsageService;
-
+    private final CmsPsuService cmsPsuService;
     @Override
     @Transactional
     public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) {
@@ -263,7 +263,13 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         if (optionalPsuData.isPresent()) {
             newPsuData.setId(optionalPsuData.get().getId());
         } else {
-            log.info("Authorisation ID [{}]. Update PSU data in consent failed in updatePsuData method because authorisation contains no psu data.", authorisation.getId());
+            log.info("Authorisation ID [{}]. no psu data available in the authorization.", authorisation.getId());
+            List<PsuData> psuDataList = authorisation.getConsent().getPsuDataList();
+            Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(newPsuData, psuDataList);
+            if (psuDataOptional.isPresent()) {
+                newPsuData = psuDataOptional.get();
+                authorisation.getConsent().setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, psuDataList));
+            }
         }
 
         authorisation.setPsuData(newPsuData);

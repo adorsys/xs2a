@@ -56,3 +56,7 @@ request, except `POST /v1/payments/{payment-product}` for payments and `POST /v1
 the request comes from the same TPP that created given consent or payment. TPP in requests are considered to be equal if 
 they've used certificates that contain the same authorisation number and authority id.
 If there is a mismatch, `401 Unauthorized` error will be returned in the response.
+
+## Bugfix: Update PSU data in consent authorisation
+From now on CMS will update PSU data in authorisation while calling the `/psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/psu-data`
+endpoint.
