@@ -18,13 +18,11 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -57,7 +55,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
@@ -326,42 +323,6 @@ public class ConsentService {
                    .build();
     }
 
-    @SuppressWarnings("WeakerAccess") // fixes the issue https://github.com/adorsys/xs2a/issues/16
-    public ResponseObject<AccountConsent> getValidatedConsent(String consentId, boolean withBalance) {
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
-
-        if (!accountConsentOptional.isPresent()) {
-            return ResponseObject.<AccountConsent>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
-        }
-
-        AccountConsent accountConsent = accountConsentOptional.get();
-
-        if (LocalDate.now().compareTo(accountConsent.getValidUntil()) > 0) {
-            return ResponseObject.<AccountConsent>builder()
-                       .fail(AIS_401, of(CONSENT_EXPIRED)).build();
-        }
-
-        ConsentStatus consentStatus = accountConsent.getConsentStatus();
-        if (consentStatus != ConsentStatus.VALID) {
-            MessageErrorCode messageErrorCode = consentStatus == ConsentStatus.RECEIVED
-                                                    ? CONSENT_INVALID
-                                                    : CONSENT_EXPIRED;
-            return ResponseObject.<AccountConsent>builder()
-                       .fail(AIS_401, of(messageErrorCode)).build();
-        }
-        if (accountConsent.isAccessExceeded()) {
-            return ResponseObject.<AccountConsent>builder()
-                       .fail(AIS_429, of(ACCESS_EXCEEDED)).build();
-        }
-        return ResponseObject.<AccountConsent>builder().body(accountConsent).build();
-    }
-
-    @SuppressWarnings("WeakerAccess")  // fixes the issue https://github.com/adorsys/xs2a/issues/16
-    public ResponseObject<AccountConsent> getValidatedConsent(String consentId) {
-        return getValidatedConsent(consentId, false);
-    }
-
     public ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuData, String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
@@ -502,13 +463,6 @@ public class ConsentService {
         return ResponseObject.<ScaStatus>builder()
                    .body(scaStatus.get())
                    .build();
-    }
-
-    @SuppressWarnings("WeakerAccess")  // fixes the issue https://github.com/adorsys/xs2a/issues/16
-    public boolean isValidAccountByAccess(String resourceId, List<AccountReference> allowedAccountData) {
-        return CollectionUtils.isNotEmpty(allowedAccountData)
-                   && allowedAccountData.stream()
-                          .anyMatch(a -> a.getResourceId().equals(resourceId));
     }
 
     private SpiResponse<SpiAisConsentStatusResponse> getConsentStatusFromSpi(AccountConsent accountConsent, String consentId) {

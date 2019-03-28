@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +48,8 @@ public class GetTransactionDetailsValidatorTest {
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
 
     @Mock
+    private AccountConsentValidator accountConsentValidator;
+    @Mock
     private AisTppInfoValidator aisTppInfoValidator;
 
     @InjectMocks
@@ -67,6 +70,8 @@ public class GetTransactionDetailsValidatorTest {
     public void validate_withValidConsentObject_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(accountConsentValidator.validate(accountConsent))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonConsentObject(accountConsent));
