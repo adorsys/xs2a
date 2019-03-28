@@ -83,6 +83,7 @@ public class PaymentControllerTest {
     private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CANCELLATION_ID = "cancellationId";
+    private static final String HREF = "href";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
 

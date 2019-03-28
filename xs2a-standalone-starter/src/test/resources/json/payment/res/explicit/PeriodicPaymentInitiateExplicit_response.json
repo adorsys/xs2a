@@ -3,8 +3,14 @@
   "paymentId": "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
   "transactionFeeIndicator": false,
   "_links": {
-    "self": "http://localhost/v1/periodic-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
-    "status": "http://localhost/v1/periodic-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/status",
-    "startAuthorisation": "http://localhost/v1/periodic-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations"
+    "self": {
+      "href": "http://localhost/v1/periodic-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI"
+    },
+    "status": {
+      "href": "http://localhost/v1/periodic-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/status"
+    },
+    "startAuthorisation": {
+      "href": "http://localhost/v1/periodic-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations"
+    }
   }
 }

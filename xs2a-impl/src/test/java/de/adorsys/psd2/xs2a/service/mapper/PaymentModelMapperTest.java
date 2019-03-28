@@ -34,6 +34,7 @@ import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
 import org.apache.commons.lang3.StringUtils;
@@ -98,7 +99,7 @@ public class PaymentModelMapperTest {
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     @Spy
-    AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper(), amountModelMapper);
+    AccountModelMapper accountModelMapper = new AccountModelMapper(amountModelMapper, new HrefLinkMapper(new ObjectMapper()));
 
     @Before
     public void setUp() {

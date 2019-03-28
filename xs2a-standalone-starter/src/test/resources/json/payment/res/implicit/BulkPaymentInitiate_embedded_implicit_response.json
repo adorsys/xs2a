@@ -3,9 +3,17 @@
   "paymentId": "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
   "transactionFeeIndicator": false,
   "_links": {
-    "self": "http://localhost/v1/bulk-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
-    "status": "http://localhost/v1/bulk-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/status",
-    "startAuthorisationWithPsuAuthentication": "http://localhost/v1/bulk-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations/e8356ea7-8e3e-474f-b5ea-2b89346cb2dc",
-    "scaStatus": "http://localhost/v1/bulk-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations/e8356ea7-8e3e-474f-b5ea-2b89346cb2dc"
+    "self": {
+      "href": "http://localhost/v1/bulk-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI"
+    },
+    "status": {
+      "href": "http://localhost/v1/bulk-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/status"
+    },
+    "startAuthorisationWithPsuAuthentication": {
+      "href": "http://localhost/v1/bulk-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations/e8356ea7-8e3e-474f-b5ea-2b89346cb2dc"
+    },
+    "scaStatus": {
+      "href": "http://localhost/v1/bulk-payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations/e8356ea7-8e3e-474f-b5ea-2b89346cb2dc"
+    }
   }
 }
