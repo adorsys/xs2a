@@ -41,6 +41,11 @@ Added validation for the `X-Request-ID` header in all controllers. Two cases are
  - Header is not UUID (wrong format). In this case response is also `400 FORMAT ERROR`, the text is `'X-Request-ID' 
  has to be represented by standard 36-char UUID representation`
 
+## Bugfix: All links must be contained in an object with `href`
+
+From now on, all Links in the response in the _links object contain an object with `href`. E.g.
+`"scaRedirect": {"href": "https://www.testbank.com/asdfasdfasdf"}`
+
 ## Bugfix: search for AIS and PIIS consent now use all PSU Data properties in getConsentsForPsu method
 From now on in CmsAspspPiisService#getConsentsForPsu, CmsPsuPiisService#getConsentsForPsu and CmsPsuAisService#getConsentsForPsu 
 all PSU Data properties are used for filtering results. 
