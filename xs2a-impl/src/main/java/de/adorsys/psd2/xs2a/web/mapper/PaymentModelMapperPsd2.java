@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
@@ -37,7 +36,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
@@ -47,11 +49,11 @@ import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 @Component
 @RequiredArgsConstructor
 public class PaymentModelMapperPsd2 {
-    private final ObjectMapper mapper;
     private final CoreObjectsMapper coreObjectsMapper;
     private final AccountModelMapper accountModelMapper;
     private final TppRedirectUriMapper tppRedirectUriMapper;
     private final AmountModelMapper amountModelMapper;
+    private final HrefLinkMapper hrefLinkMapper;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     public Object mapToGetPaymentResponse12(Object payment, PaymentType type, String paymentProduct) {
@@ -124,7 +126,7 @@ public class PaymentModelMapperPsd2 {
         response201.setTransactionFeeIndicator(specificResponse.isTransactionFeeIndicator());
         response201.setScaMethods(mapToScaMethods(specificResponse.getScaMethods()));
         response201.setChallengeData(coreObjectsMapper.mapToChallengeData(specificResponse.getChallengeData()));
-        response201.setLinks(mapper.convertValue(((PaymentInitiationResponse) response).getLinks(), Map.class));
+        response201.setLinks(hrefLinkMapper.mapToLinksMap(((PaymentInitiationResponse) response).getLinks()));
         response201.setPsuMessage(specificResponse.getPsuMessage());
         return response201;
     }
@@ -146,7 +148,7 @@ public class PaymentModelMapperPsd2 {
         response.setScaMethods(mapToScaMethods(cancelPaymentResponse.getScaMethods()));
         response.setChosenScaMethod(mapToChosenScaMethod(cancelPaymentResponse.getChosenScaMethod()));
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
-        response._links(mapper.convertValue(cancelPaymentResponse.getLinks(), Map.class));
+        response._links(hrefLinkMapper.mapToLinksMap(cancelPaymentResponse.getLinks()));
         return response;
     }
 

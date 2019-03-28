@@ -112,7 +112,7 @@ public class Xs2aEventService {
     private void recordEventInCms(Event event) {
         boolean recorded = eventService.recordEvent(event);
         if (!recorded) {
-            log.error("Couldn't record event from TPP request: {}", event);
+            log.info("X-REQUEST-ID: [{}], TPP ID: [{}]. Couldn't record event from TPP request: {}", event.getXRequestId(), event.getTppAuthorisationNumber(), event);
         }
     }
 

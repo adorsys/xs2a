@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
@@ -46,6 +45,7 @@ public class AuthorisationMapper {
     private final ScaApproachResolver scaApproachResolver;
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final AspspProfileService aspspProfileService;
+    private final HrefLinkMapper hrefLinkMapper;
 
     public StartScaprocessResponse mapToStartScaProcessResponse(
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse) {
@@ -57,7 +57,7 @@ public class AuthorisationMapper {
                                          : createUpdateConsentsPsuDataLink(csar);
                        return new StartScaprocessResponse()
                                   .scaStatus(coreObjectsMapper.mapToModelScaStatus(createConsentAuthorizationResponse.getScaStatus()))
-                                  ._links(Collections.singletonMap(csar.getResponseLinkType().getValue(), link));
+                                  ._links(hrefLinkMapper.mapToLinksMap(csar.getResponseLinkType().getValue(), link));
                    })
                    .orElse(null);
     }
