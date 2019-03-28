@@ -17,8 +17,11 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.domain.Links;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -28,11 +31,16 @@ public class HrefLinkMapperTest {
     private static final String LINK_PATH = "http://localhost/v1/payments/";
     private static final String HREF = "href";
 
+    private HrefLinkMapper hrefMapper;
+
+    @Before
+    public void setUp() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        hrefMapper = new HrefLinkMapper(objectMapper);
+    }
+
     @Test
     public void mapToLinksMapWhenStringString() {
-        //Given:
-        ObjectMapper mapper = new ObjectMapper();
-        HrefLinkMapper hrefMapper = new HrefLinkMapper(mapper);
         //When:
         Map<String, Map<String, String>> linkMap = hrefMapper.mapToLinksMap(LINK_NAME, LINK_PATH);
         Map<String, String> hrefMap = linkMap.get(LINK_NAME);
@@ -40,21 +48,18 @@ public class HrefLinkMapperTest {
         //Then:
         assertNotNull(linkMap);
         assertFalse(linkMap.isEmpty());
-        assertEquals(linkMap.size(), 1);
+        assertEquals(1, linkMap.size());
         assertTrue(linkMap.containsKey(LINK_NAME));
 
         assertNotNull(hrefMap);
         assertFalse(hrefMap.isEmpty());
-        assertEquals(hrefMap.size(), 1);
+        assertEquals(1, hrefMap.size());
         assertTrue(hrefMap.containsKey(HREF));
         assertTrue(hrefMap.containsValue(LINK_PATH));
     }
 
     @Test
     public void mapToLinksMapWhenStringNull() {
-        //Given:
-        ObjectMapper mapper = new ObjectMapper();
-        HrefLinkMapper hrefMapper = new HrefLinkMapper(mapper);
         //When:
         Map<String, Map<String, String>> linkMap = hrefMapper.mapToLinksMap(LINK_NAME, null);
         Map<String, String> hrefMap = linkMap.get(LINK_NAME);
@@ -62,9 +67,36 @@ public class HrefLinkMapperTest {
         //Then:
         assertNotNull(linkMap);
         assertFalse(linkMap.isEmpty());
-        assertEquals(linkMap.size(), 1);
+        assertEquals(1, linkMap.size());
         assertTrue(linkMap.containsKey(LINK_NAME));
 
         assertNull(hrefMap);
+    }
+
+    @Test
+    public void mapToLinksMap_withValidMap_shouldReturnLinks() {
+        // Given
+        Links links = new Links();
+        links.setScaStatus(LINK_PATH);
+
+        //When:
+        Map<String, Map<String, String>> linkMap = hrefMapper.mapToLinksMap(links);
+
+        //Then:
+        assertNotNull(linkMap);
+
+        Map<String, String> wrappedLink = linkMap.get(LINK_NAME);
+
+        assertNotNull(wrappedLink);
+        assertEquals(LINK_PATH, wrappedLink.get(HREF));
+    }
+
+    @Test
+    public void mapToLinksMap_withNullMap_shouldReturnNull() {
+        //When:
+        Map<String, Map<String, String>> linkMap = hrefMapper.mapToLinksMap(null);
+
+        //Then:
+        assertNull(linkMap);
     }
 }
