@@ -64,12 +64,12 @@ public class RedirectAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = redirectAisAuthorisationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse).isEqualTo(Optional.of(CREATE_CONSENT_AUTHORIZATION_RESPONSE));
     }
 
     @Test
-    public void createConsentAuthorization_failure_wrongConsentId() {
+    public void createConsentAuthorization_wrongConsentId_fail() {
         // Given
         when(aisConsentService.createAisConsentAuthorization(WRONG_CONSENT_ID, ScaStatus.STARTED, PSU_ID_DATA))
             .thenReturn(Optional.empty());
@@ -109,12 +109,12 @@ public class RedirectAisAuthorizationServiceTest {
         Optional<Xs2aAuthorisationSubResources> actualResponse = redirectAisAuthorisationService.getAuthorisationSubResources(CONSENT_ID);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
     }
 
     @Test
-    public void getAuthorisationSubResources_failure_wrongConsentId() {
+    public void getAuthorisationSubResources_wrongConsentId_fail() {
         // Given
         when(aisConsentService.getAuthorisationSubResources(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());

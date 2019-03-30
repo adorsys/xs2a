@@ -12,7 +12,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaAuthenticatedStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -69,12 +68,12 @@ public class DecoupledAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
         // Then
-        assertThat(actualResponse.get().getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse.get()).isEqualTo(CREATE_CONSENT_AUTHORIZATION_RESPONSE);
     }
 
     @Test
-    public void createConsentAuthorization_failure_wrongConsentId() {
+    public void createConsentAuthorization_wrongConsentId_fail() {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(null);
@@ -115,7 +114,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_failure_wrongIds() {
+    public void getAccountConsentAuthorizationById_wrongIds_fail() {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID))
             .thenReturn(null);
@@ -137,11 +136,12 @@ public class DecoupledAisAuthorizationServiceTest {
         Optional<Xs2aAuthorisationSubResources> actualResponse = decoupledAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
 
         // Then
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse.get()).isEqualTo(AUTHORISATION_SUB_RESOURCES);
     }
 
     @Test
-    public void getAuthorisationSubResources_failure_wrongConsentId() {
+    public void getAuthorisationSubResources_wrongConsentId_fail() {
         // Given
         when(aisConsentService.getAuthorisationSubResources(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -163,11 +163,12 @@ public class DecoupledAisAuthorizationServiceTest {
         Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
         // Then
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse.get()).isEqualTo(SCA_STATUS);
     }
 
     @Test
-    public void getAuthorisationScaStatus_failure_wrongIds() {
+    public void getAuthorisationScaStatus_wrongIds_fail() {
         // Given
         when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());

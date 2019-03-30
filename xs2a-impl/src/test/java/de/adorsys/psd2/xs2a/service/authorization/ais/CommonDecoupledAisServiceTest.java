@@ -52,7 +52,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CommonDecoupledAisServiceTest {
     private static final String CONSENT_ID = "Test consentId";
-    private static final String PASSWORD = "Test password";
     private static final String PSU_ID = "Test psuId";
     private static final String AUTHORISATION_ID = "Test authorisationId";
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
@@ -102,7 +101,7 @@ public class CommonDecoupledAisServiceTest {
     }
 
     @Test
-    public void proceedDecoupledApproach_first_success() {
+    public void proceedDecoupledApproach_by_request_spiAccountConsent_psuData_success() {
         // Given
         when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
@@ -111,7 +110,6 @@ public class CommonDecoupledAisServiceTest {
         UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
     }
 

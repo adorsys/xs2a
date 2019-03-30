@@ -31,8 +31,7 @@ public class OauthAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = oauthAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
 
         //Then
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
@@ -41,7 +40,6 @@ public class OauthAisAuthorizationServiceTest {
         UpdateConsentPsuDataResponse actualResponse = oauthAisAuthorizationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION);
 
         //Then
-        assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
     }
 
@@ -51,7 +49,6 @@ public class OauthAisAuthorizationServiceTest {
         AccountConsentAuthorization actualResponse = oauthAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
         //Then
-        assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(ACCOUNT_CONSENT_AUTHORIZATION);
     }
 
@@ -61,8 +58,7 @@ public class OauthAisAuthorizationServiceTest {
         Optional<Xs2aAuthorisationSubResources> actualResponse = oauthAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
 
         //Then
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
@@ -71,8 +67,7 @@ public class OauthAisAuthorizationServiceTest {
         Optional<ScaStatus> actualResponse = oauthAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
         //Then
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test

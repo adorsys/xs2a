@@ -96,7 +96,7 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void createConsentAuthorization_failure_wrongConsentId() {
+    public void createConsentAuthorization_wrongConsentId_fail() {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(null);
@@ -106,7 +106,6 @@ public class EmbeddedAisAuthorizationServiceTest {
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
     }
 
     @Test
@@ -119,12 +118,11 @@ public class EmbeddedAisAuthorizationServiceTest {
         AccountConsentAuthorization actualResponse = authorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
         // Then
-        assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(consentAuthorization);
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_failure_wrongIds() {
+    public void getAccountConsentAuthorizationById_wrongIds_fail() {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID))
             .thenReturn(null);
@@ -146,12 +144,12 @@ public class EmbeddedAisAuthorizationServiceTest {
         Optional<Xs2aAuthorisationSubResources> actualResponse = authorizationService.getAuthorisationSubResources(CONSENT_ID);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
     }
 
     @Test
-    public void getAuthorisationSubResources_failure_wrongConsentId() {
+    public void getAuthorisationSubResources_wrongConsentId_fail() {
         // Given
         when(aisConsentService.getAuthorisationSubResources(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());

@@ -82,12 +82,12 @@ public class RedirectPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertTrue(actualResponse.isPresent());
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_CREATE_PIS_AUTHORISATION_RESPONSE));
     }
 
     @Test
-    public void createCommonPaymentAuthorisation_failure_wrongCreatePisAuthResponse() {
+    public void createCommonPaymentAuthorisation_wrongCreatePisAuthResponse_fail() {
         // Given
         when(pisAuthorisationService.createPisAuthorisation(WRONG_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -111,12 +111,11 @@ public class RedirectPisScaAuthorisationServiceTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = redirectPisScaAuthorisationService.updateCommonPaymentPsuData(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
 
         // Then
-        assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE);
     }
 
     @Test
-    public void updateCommonPaymentPsuData_failure_emptyUpdPisCommonPsuDataResponse() {
+    public void updateCommonPaymentPsuData_emptyUpdPisCommonPsuDataResponse_fail() {
         // Given
         when(pisAuthorisationService.updatePisAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, ScaApproach.REDIRECT))
             .thenReturn(null);
@@ -140,12 +139,12 @@ public class RedirectPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertTrue(actualResponse.isPresent());
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE));
     }
 
     @Test
-    public void createCommonPaymentCancellationAuthorisation_failure_wrongCreatePisAuthResponse() {
+    public void createCommonPaymentCancellationAuthorisation_wrongCreatePisAuthResponse_fail() {
         // Given
         when(pisAuthorisationService.createPisAuthorisationCancellation(WRONG_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -169,12 +168,12 @@ public class RedirectPisScaAuthorisationServiceTest {
         Optional<Xs2aPaymentCancellationAuthorisationSubResource> actualResponse = redirectPisScaAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertTrue(actualResponse.isPresent());
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_PAYMENT_CANCELLATION_AUTHORISATION_SUB_RESOURCE));
     }
 
     @Test
-    public void getCancellationAuthorisationSubResources_failure_wrongPaymentId() {
+    public void getCancellationAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisAuthorisationService.getCancellationAuthorisationSubResources(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
@@ -206,12 +205,11 @@ public class RedirectPisScaAuthorisationServiceTest {
 
         // Then
         assertTrue(actualResponse.isPresent());
-        assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
     }
 
     @Test
-    public void getAuthorisationSubResources_failure_wrongPaymentId() {
+    public void getAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisAuthorisationService.getAuthorisationSubResources(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
@@ -238,7 +236,7 @@ public class RedirectPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_failure_wrongIds() {
+    public void getAuthorisationScaStatus_wrongIds_fail() {
         // Given
         when(pisAuthorisationService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
@@ -265,7 +263,7 @@ public class RedirectPisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void getCancellationAuthorisationScaStatus_failure_wrongIds() {
+    public void getCancellationAuthorisationScaStatus_wrongIds_fail() {
         // Given
         when(pisAuthorisationService.getCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID))
             .thenReturn(Optional.empty());

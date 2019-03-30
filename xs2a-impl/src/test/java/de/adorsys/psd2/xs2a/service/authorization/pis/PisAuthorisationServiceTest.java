@@ -109,7 +109,7 @@ public class PisAuthorisationServiceTest {
     }
 
     @Test
-    public void createPisAuthorisation_failure_wrongCreatePisAuthResponse() {
+    public void createPisAuthorisation_wrongCreatePisAuthResponse_fail() {
         // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
@@ -177,7 +177,7 @@ public class PisAuthorisationServiceTest {
     }
 
     @Test
-    public void createPisAuthorisationCancellation_failure_wrongCreatePisAuthResponse() {
+    public void createPisAuthorisationCancellation_wrongCreatePisAuthResponse_fail() {
         // Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
@@ -202,10 +202,11 @@ public class PisAuthorisationServiceTest {
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
+        assertThat(actualResponse).isEqualTo(Optional.of(SOME_LIST));
     }
 
     @Test
-    public void getCancellationAuthorisationSubResources_failure_wrongPaymentId() {
+    public void getCancellationAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, CmsAuthorisationType.CANCELLED))
             .thenReturn(Optional.empty());
@@ -228,10 +229,11 @@ public class PisAuthorisationServiceTest {
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
+        assertThat(actualResponse).isEqualTo(Optional.of(SOME_LIST));
     }
 
     @Test
-    public void getAuthorisationSubResources_failure_wrongPaymentId() {
+    public void getAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(WRONG_PAYMENT_ID, CmsAuthorisationType.CREATED))
             .thenReturn(Optional.empty());

@@ -83,12 +83,12 @@ public class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_CREATE_PIS_AUTHORISATION_RESPONSE));
     }
 
     @Test
-    public void createCommonPaymentAuthorisation_failure_wrongCreatePisAuthResponse() {
+    public void createCommonPaymentAuthorisation_wrongCreatePisAuthResponse_fail() {
         // Given
         when(pisAuthorisationService.createPisAuthorisation(WRONG_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -112,12 +112,11 @@ public class EmbeddedPisScaAuthorisationServiceTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = embeddedPisScaAuthorisationService.updateCommonPaymentPsuData(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
 
         // Then
-        assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE);
     }
 
     @Test
-    public void updateCommonPaymentPsuData_failure_emptyUpdPisCommonPsuDataResponse() {
+    public void updateCommonPaymentPsuData_emptyUpdPisCommonPsuDataResponse_fail() {
         // Given
         when(pisAuthorisationService.updatePisAuthorisation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, ScaApproach.EMBEDDED))
             .thenReturn(null);
@@ -141,12 +140,12 @@ public class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE));
     }
 
     @Test
-    public void createCommonPaymentCancellationAuthorisation_failure_wrongCreatePisAuthResponse() {
+    public void createCommonPaymentCancellationAuthorisation_wrongCreatePisAuthResponse_fail() {
         // Given
         when(pisAuthorisationService.createPisAuthorisationCancellation(WRONG_PAYMENT_ID, PSU_ID_DATA))
             .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -170,12 +169,12 @@ public class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aPaymentCancellationAuthorisationSubResource> actualResponse = embeddedPisScaAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_PAYMENT_CANCELLATION_AUTHORISATION_SUB_RESOURCE));
     }
 
     @Test
-    public void getCancellationAuthorisationSubResources_failure_wrongPaymentId() {
+    public void getCancellationAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisAuthorisationService.getCancellationAuthorisationSubResources(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
@@ -196,7 +195,6 @@ public class EmbeddedPisScaAuthorisationServiceTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = embeddedPisScaAuthorisationService.updateCommonPaymentCancellationPsuData(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
 
         // Then
-        assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE);
     }
 
@@ -222,12 +220,12 @@ public class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aAuthorisationSubResources> actualResponse = embeddedPisScaAuthorisationService.getAuthorisationSubResources(PAYMENT_ID);
 
         // Then
-        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.isPresent()).isTrue();
         assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
     }
 
     @Test
-    public void getAuthorisationSubResources_failure_wrongPaymentId() {
+    public void getAuthorisationSubResources_wrongPaymentId_fail() {
         // Given
         when(pisAuthorisationService.getAuthorisationSubResources(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
