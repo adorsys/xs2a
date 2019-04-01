@@ -1,0 +1,85 @@
+@startuml integrated_sdv
+
+title OAuth 2.0 Integrated
+
+participant PSU as psu
+participant TPP as tpp
+participant XS2A as xs2a
+participant SPI as spi
+participant CMS as cms
+participant IDP as idp
+participant "Core Banking" as cbs
+
+== Initiate Payment ==
+
+psu -> tpp: initiate payment
+activate tpp
+activate psu
+tpp -> xs2a: initiate payment\nREST Call Initiate payment\nPOST "/v1/payments/{payment-product}"
+activate xs2a
+xs2a -> spi: Java Call SPIinitiatePayment
+activate spi
+|||
+spi-->xs2a: SpiSinglePaymentInitiationResponse
+deactivate spi
+xs2a-->tpp:Payment initiation response + PaymentID
+deactivate xs2a
+|||
+tpp->xs2a: REST Call Initiate authorithation \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
+activate xs2a
+note left
+         in case of Multilevel SCA
+         the authorisation steps
+         should be repeated for other PSU
+end note
+|||
+xs2a-->tpp:Start authorisation response\n"link_scaOAuth"
+deactivate xs2a
+tpp --> psu: Feedback to the customer\nAuthorise the transaction
+psu -> idp: login + SCA (with PaymentID)
+activate idp
+idp -> cms: REST Call GetPaymentByRedirectId\n"GET/psu-api/v1/payment/redirect/{redirect-id}"
+activate cms
+cms-->idp: CmsPaymentResponse
+|||
+idp->cms: REST Call UpdatePsuIdPayment\n"PUT/psu-api/v1/payment/authorithation/\n{authorisation-id}/psu-data"
+|||
+cms-->idp: Response "http Codes: 200 successful or 400 error"
+deactivate cms
+|||
+idp-->psu: Authorisation Process Response
+deactivate idp
+|||
+psu->idp: The PSU Authorises the Payment
+activate idp
+|||
+idp->cms: REST Call UpdateAuthorisationStatus\n"PUT/psu-api/v1/payment/{payment-id}/authorisation/\n{authorisation-id}/status/{status}"
+activate cms
+|||
+cms-->idp: Response "http Codes: 200 successful or 400 error"
+deactivate cms
+idp->cbs: Execute Payment
+activate cbs
+|||
+cbs-->idp: Response PaymentStatus
+deactivate cbs
+idp->cms: REST Call UpdatePaymentStatus\n"PUT/psu-api/v1/payment/{payment-id}/status/{status}"
+activate cms
+|||
+cms-->idp: Response "http Codes: 200 successful or 400 error"
+deactivate cms
+|||
+idp --> psu: Auth Code
+|||
+psu -> tpp: Auth Code
+tpp -> idp: Get Token with Auth Code + Secret
+|||
+idp --> tpp: Token (with PaymentID in scope)
+|||
+tpp -> tpp: save token
+tpp -> psu: Payment confirmed
+deactivate psu
+deactivate tpp
+deactivate idp
+@enduml
+
