@@ -2,20 +2,21 @@
 
 ## Versions in progress
 
-### version 2.2 (Planned date 29.03.2019)
-- Add Card number for PIIS
-- Add status and date of last status change for PIS, AIS, PIIS during export
-- Bugfix: Check TPPinfo in all calls after initial request
-- Bugfix: All links must be contained in an object with "href"
-- Bugfix: WithBalance = true does not check / validate if permission exists in the Consent
-- Bugfix: Consent endpoints in cms should return corresponding PSU Data and TPPinfo in consent object 
+### version 2.3 (Planned date 12.04.2019)
 - Bugfix: Transaction access using an invalid dynamic consent 
-- Bugfix: Invalid or null X-Request-ID returns wrong error in PIS Services
-- Bugfix: Search for PsuIdData must also consider psuCorporateId 
+- Bugfix: SCA-Status EXEMPTED should be a finalised status 
+- Bugfix: Update PSU Data with sca method shouldn't demand PSU-ID
+- Bugfix: Links balances and transactions should appear in getAccoutList response according to consent accesses 
+- Bugfix: Get authorisations of payment when one is already finalised 
+- Bugfix: XS2A ObjectMapper clashes with Bank Offered Consents
+- Bugfix: Embedded approach will not work if order of scaApproaches in bank_profile is: first - REDIRECT then - EMBEDDED 
 
-### version 3.0 (Planned date 29.03.2019)
-- Migration to dynamic Sandbox, based on ledgers project and corresponding connector.
-- Take out ASPSP Mock Server and corresponding Connector out of XS2A
+### version 3.1 (Planned date 12.04.2019)
+- Migrate to new Docker images 
+- Migrate to .yaml open API ver 1.3.3 
+- Support OAuth and Standart variants for Redirect approach in profile
+- Support OAuth sca for AIS 
+
 
 # Further development
 Starting 15th of March 2019 XS2A Team is going to provide development within two branches:
@@ -24,13 +25,10 @@ Starting 15th of March 2019 XS2A Team is going to provide development within two
 Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3
 Stable branch 2.x will be supported at least till 01.09.2019
 
-### version 2.3 (Planned date 12.04.2019)
-- Bugfix: SCA-Status EXEMPTED should be a finalised status 
-- Bugfix: Get authorisations of payment when one is already finalised 
-- Bugfix: XS2A ObjectMapper clashes with Bank Offered Consents
-- Bugfix: Embedded approach will not work if order of scaApproaches in bank_profile is: first - REDIRECT then - EMBEDDED 
-
 ### version 2.4 (Planned date 26.04.2019)
+- Bugfix: scaStatus link not available in response for Update PSU data for payment initiation (Decoupled Implicit) 
+- Bugfix: Updating authorsation status not working like api-doc 
+- Bugfix: "Currency" should be optional in Account Reference
 - Bugfix: Use Sca Approach from Authorisation Object instead of separate resolving 
 - Bugfix: EndToEndIdentification in CMS DB too short
 - Extend logging with technical activities 
@@ -40,21 +38,16 @@ Stable branch 2.x will be supported at least till 01.09.2019
 - Bugfix: Retrieve payment data by redirect-id with correct endpoint
 - Bugfix: Consents without successful authorisation should expire with status Rejected 
 
-
 ### version 2.6 (Planned date 24.05.2019)
-- Bugfix: scaStatus link not available in response for Update PSU data for payment initiation (Decoupled Implicit) 
 - Bugfix: Wrong Error code in payment initiation respond for not supported xml product types 
 - Bugfix: startAuthorisationWithPsuAuthentication link not available in response for start the authorisation process for a payment initiation 
-- Bugfix: "Currency" should be optional while creating AIS consent
 - Bugfix: Wrong response body for Start Payment Authorisation request Redirect Explicit approach
-
 
 ### version 2.7 (Planned date 07.06.2019)
 - Bugfix: Get consent status request do not return mandated lastActionDate attribute in response body
 - Bugfix: startAuthorisationWithPsuAuthentication link not available in response for  start the authorisation process for a payment initiation
 - Bugfix: Populating PSU_DATA table with excessive data
 - Bugfix: Provide correct PSU Data to the SPI in SpiContextData
-
 
 ### version 2.8 (Planned date 21.06.2019)
 - Bugfix: Matching of fund confirmation to aspspConsentData
@@ -64,38 +57,29 @@ Stable branch 2.x will be supported at least till 01.09.2019
 
 
 ### Upcoming features 2.x/3.x (Priorities may be changed)
-- Bugfix: Invalid format in PIS payment initiation request returns successful response 
-- Payment Authorisations and Payment Cancellation Authorisations should be separated from AIS Consent Authorisations 
-- Optional SCA for Access to all Accounts for all PSD2 defined AIS – Global Consent 
-- Provide creation date and time in SPIrequest 
-- add the request execution duration to the log  
-- Payment sepa-credit-transfers validator 
-- Consent validator 
-- PIIS should validate IBAN  
+- Bugfix: Invalid format in PIS payment initiation request returns successful response
+- Payment Authorisations and Payment Cancellation Authorisations should be separated from AIS Consent Authorisations
+- Optional SCA for Access to all Accounts for all PSD2 defined AIS – Global Consent
+- Provide creation date and time in SPIrequest
+- add the request execution duration to the log
+- Payment sepa-credit-transfers validator
+- Consent validator
+- PIIS should validate IBAN
 
 
 ## Development branch 3.x
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 2.x is guaranteed.
 
-
-
-
-### version 3.1 (Planned date 12.04.2019)
-- Migrate to new Docker images 
-- Migrate to .yaml open API ver 1.3.3 
-- Support OAuth and Standart variants for Redirect approach in profile
-- Support OAuth sca for AIS 
-- Multilevel SCA for Establish Consent in Redirect approach 
-- Payment Cancellation Request update according to Errata for Specification v.1.3
-
-
-
 ### version 3.2 (Planned date 26.04.2019)
 - Support OAuth sca for PIS
 - Support OAuth sca for Payment cancellation
-- Multilevel SCA for Payment Initiation in Redirect approach
+- Multilevel SCA for Establish Consent in Redirect approach 
 
+
+### version 3.3 (Planned date 26.04.2019)
+- Multilevel SCA for Payment Initiation in Redirect approach
+- Payment Cancellation Request update according to Errata for Specification v.1.3
 
 
 
