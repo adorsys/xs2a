@@ -63,7 +63,7 @@ public enum ScaStatus {
      * SCA was exempted for the related transaction,
      * the related authorisation is successful.
      */
-    EXEMPTED("exempted", false);
+    EXEMPTED("exempted", true);
 
     private static final Map<String, ScaStatus> HOLDER = new HashMap<>();
 
@@ -83,7 +83,7 @@ public enum ScaStatus {
 
     /**
      * Maps textual representation to ScaStatus enum-value.
-     * Mapping is peformed case-insensetive.
+     * Mapping is performed case-insensitive.
      *
      * @param text - text to be mapped.
      * @return Enum value mapped. Null otherwise.
@@ -103,6 +103,7 @@ public enum ScaStatus {
 
     /**
      * Provides a textual representation to be used i.e. in JSON-Serialization.
+     *
      * @return a textual representation according to Berlin Group Implementation Guidelines
      */
     @JsonValue
