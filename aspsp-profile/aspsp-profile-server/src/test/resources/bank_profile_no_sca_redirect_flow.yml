@@ -47,4 +47,4 @@ setting:
  psuInInitialRequestMandated: false
  forceXs2aBaseUrl: false
  xs2aBaseUrl: http://myhost.com/
- scaRedirectFlow: REDIRECT
+

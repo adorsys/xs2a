@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -69,6 +70,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = true;
     private static final boolean FORCE_XS2A_BASE_URL = true;
     private static final String XS2A_BASE_URL = "http://myhost.com/";
+    private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
 
     @InjectMocks
     private AspspProfileUpdateServiceImpl aspspProfileUpdateService;
@@ -97,7 +99,7 @@ public class AspspProfileUpdateServiceImplTest {
                                                                         MULTICURRENCY_ACCOUNT_LEVEL, BANK_OFFERED_CONSENT_SUPPORT, AVAILABLE_BOOKING_STATUSES, SUPPORTED_ACCOUNT_REFERENCE_FIELDS, CONSENT_LIFETIME, TRANSACTION_LIFETIME, ALL_PSD_2_SUPPORT,
                                                                         TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED, SIGNING_BASKET_SUPPORTED, PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED, PIIS_CONSENT_SUPPORTED, DELTA_REPORT_SUPPORTED, REDIRECT_URL_EXPIRATION_TIME_MS,
                                                                         PIS_CANCELLATION_REDIRECT_LINK, NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS, NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS, SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX, PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS,
-                                                                        AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED, SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, PSU_IN_INITIAL_REQUEST_MANDATED, FORCE_XS2A_BASE_URL, XS2A_BASE_URL));
+                                                                        AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED, SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, PSU_IN_INITIAL_REQUEST_MANDATED, FORCE_XS2A_BASE_URL, XS2A_BASE_URL, SCA_REDIRECT_FLOW));
 
         //Then:
         BankProfileSetting setting = profileConfiguration.getSetting();
@@ -129,6 +131,7 @@ public class AspspProfileUpdateServiceImplTest {
         Assertions.assertThat(setting.isPsuInInitialRequestMandated()).isEqualTo(PSU_IN_INITIAL_REQUEST_MANDATED);
         Assertions.assertThat(setting.isForceXs2aBaseUrl()).isEqualTo(FORCE_XS2A_BASE_URL);
         Assertions.assertThat(setting.getXs2aBaseUrl()).isEqualTo(XS2A_BASE_URL);
+        Assertions.assertThat(setting.getScaRedirectFlow()).isEqualTo(SCA_REDIRECT_FLOW);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

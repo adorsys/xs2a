@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,5 +63,31 @@ public class BankProfileReaderConfigurationTest {
 
 
         assertNotEquals(defaultConfiguration.getSetting(), configurationWithCustomProfile.getSetting());
+    }
+
+    @Test
+    public void profileConfigurationScaRedirectFlowOAUTH() {
+        //Given
+        //When
+        Whitebox.setInternalState(bankProfileReaderConfiguration,
+                                  "customBankProfile",
+                                  "classpath:bank_profile_sca_redirect_flow_oauth.yml");
+
+        ProfileConfiguration configurationWithCustomProfile = bankProfileReaderConfiguration.profileConfiguration();
+        //Then
+        assertEquals(ScaRedirectFlow.OAUTH, configurationWithCustomProfile.getSetting().getScaRedirectFlow());
+    }
+
+    @Test
+    public void profileConfigurationScaRedirectFlowRedirect() {
+        //Given
+        //When
+        Whitebox.setInternalState(bankProfileReaderConfiguration,
+                                  "customBankProfile",
+                                  "classpath:bank_profile_sca_redirect_flow_redirect.yml");
+
+        ProfileConfiguration configurationWithCustomProfile = bankProfileReaderConfiguration.profileConfiguration();
+        //Then
+        assertEquals(ScaRedirectFlow.REDIRECT, configurationWithCustomProfile.getSetting().getScaRedirectFlow());
     }
 }

@@ -18,6 +18,7 @@ package de.adorsys.psd2.aspsp.profile.web;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
@@ -69,6 +70,8 @@ public class AspspProfileControllerTest {
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
     private static final boolean FORCE_XS2A_BASE_URL = false;
     private static final String XS2A_BASEURL = "http://myhost.com/";
+    private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
+
 
     @InjectMocks
     private AspspProfileController aspspProfileController;
@@ -139,7 +142,8 @@ public class AspspProfileControllerTest {
             SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED,
             PSU_IN_INITIAL_REQUEST_MANDATED,
             FORCE_XS2A_BASE_URL,
-            XS2A_BASEURL);
+            XS2A_BASEURL,
+            SCA_REDIRECT_FLOW);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

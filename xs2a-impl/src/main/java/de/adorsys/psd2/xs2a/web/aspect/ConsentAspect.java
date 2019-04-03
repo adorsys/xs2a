@@ -84,15 +84,21 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
         if (EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
             buildLinkForEmbeddedAndDecoupledScaApproach(response, links, explicitPreferred, psuData);
         } else if (ScaApproach.REDIRECT == scaApproachResolver.resolveScaApproach()) {
-            if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, response.isMultilevelScaRequired())) {
-                links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", consentId));
-            } else {
-                links.setScaRedirect(redirectLinkBuilder.buildConsentScaRedirectLink(consentId, response.getAuthorizationId()));
-                links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", consentId, response.getAuthorizationId()));
-            }
+            buildLinkForRedirectScaApproach(response, explicitPreferred, links);
         }
 
         return links;
+    }
+
+    private void buildLinkForRedirectScaApproach(CreateConsentResponse response, boolean explicitPreferred, Links links) {
+        String consentId = response.getConsentId();
+
+        if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, response.isMultilevelScaRequired())) {
+            links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", consentId));
+        } else {
+            links.setScaRedirectOAuthLink(getScaRedirectFlow(), redirectLinkBuilder.buildConsentScaRedirectLink(consentId, response.getAuthorizationId()));
+            links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisation-id}", consentId, response.getAuthorizationId()));
+        }
     }
 
     private void buildLinkForEmbeddedAndDecoupledScaApproach(CreateConsentResponse response, Links links, boolean explicitPreferred, PsuIdData psuData) {

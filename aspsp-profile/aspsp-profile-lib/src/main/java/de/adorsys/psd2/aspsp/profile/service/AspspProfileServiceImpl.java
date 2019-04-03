@@ -61,7 +61,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isScaByOneTimeAvailableAccountsConsentRequired(),
             setting.isPsuInInitialRequestMandated(),
             setting.isForceXs2aBaseUrl(),
-            setting.getXs2aBaseUrl()
+            setting.getXs2aBaseUrl(),
+            setting.getScaRedirectFlow()
         );
     }
 

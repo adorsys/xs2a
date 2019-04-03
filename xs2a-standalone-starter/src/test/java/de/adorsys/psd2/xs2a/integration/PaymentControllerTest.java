@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.integration;
 
 
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
@@ -28,6 +29,7 @@ import de.adorsys.psd2.xs2a.config.*;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -88,6 +90,7 @@ public class PaymentControllerTest {
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     private static final String CANCELLATION_AUTHORISATIONS_RESP = "/json/payment/res/explicit/SinglePaymentCancellationAuth_response.json";
+    private static final String CANCELLATION_AUTHORISATIONS_REDIRECT_OAUTH_RESP = "/json/payment/res/explicit/SinglePaymentCancellationAuth_Redirect_OAuth_response.json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -175,6 +178,30 @@ public class PaymentControllerTest {
         resultActions.andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(IOUtils.resourceToString(CANCELLATION_AUTHORISATIONS_RESP, UTF_8)));
+    }
+
+    @Test
+    public void cancelPaymentAuthorisation_Redirect_OAuth_successful() throws Exception {
+        // Given
+        AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
+        aspspSettings.setScaRedirectFlow(ScaRedirectFlow.OAUTH);
+        given(aspspProfileService.getAspspSettings())
+            .willReturn(aspspSettings);
+        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .willReturn(Optional.of(ScaStatus.RECEIVED));
+        given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
+            .willReturn(Optional.of(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponse()));
+
+        MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildGetPaymentCancellationAuthorisationUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID));
+        requestBuilder.headers(httpHeadersExplicit);
+
+        // When
+        ResultActions resultActions = mockMvc.perform(requestBuilder);
+
+        //Then
+        resultActions.andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(IOUtils.resourceToString(CANCELLATION_AUTHORISATIONS_REDIRECT_OAUTH_RESP, UTF_8)));
     }
 
     private PsuIdData getPsuIdData() {
