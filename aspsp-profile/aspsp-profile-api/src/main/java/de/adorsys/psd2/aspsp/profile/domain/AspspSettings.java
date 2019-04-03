@@ -18,13 +18,16 @@ package de.adorsys.psd2.aspsp.profile.domain;
 
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import lombok.Value;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Value
+@Data
+@AllArgsConstructor
 public class AspspSettings {
     private int frequencyPerDay;
     private boolean combinedServiceIndicator;
@@ -54,4 +57,5 @@ public class AspspSettings {
     private boolean psuInInitialRequestMandated;
     private boolean forceXs2aBaseUrl;
     private String xs2aBaseUrl;
+    private ScaRedirectFlow scaRedirectFlow;
 }

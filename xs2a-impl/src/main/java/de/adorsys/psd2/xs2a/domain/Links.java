@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -92,4 +93,12 @@ public class Links {
 
     @ApiModelProperty(value = "The link to the authorisation or cancellation authorisation sub-resource, where the authorisation data has to be uploaded, e.g. the TOP received by SMS.")
     private String authoriseTransaction;
+
+    public void setScaRedirectOAuthLink(ScaRedirectFlow scaRedirectFlow, String path) {
+        if (ScaRedirectFlow.OAUTH == scaRedirectFlow) {
+            setScaOAuth(path);
+        } else {
+            setScaRedirect(path);
+        }
+    }
 }

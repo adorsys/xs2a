@@ -17,6 +17,7 @@
 package de.adorsys.psd2.aspsp.profile.config;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -176,4 +177,9 @@ public class BankProfileSetting {
      * This url is used as base url for TPP Links in case when `forceXs2aBaseLinksUrl` property is set to "true"
      */
     private String xs2aBaseUrl;
+
+    /**
+     * This field indicates what variant of Redirect approach will be used
+     */
+    private ScaRedirectFlow scaRedirectFlow;
 }

@@ -83,5 +83,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setPsuInInitialRequestMandated(aspspSettings.isPsuInInitialRequestMandated());
         setting.setForceXs2aBaseUrl(aspspSettings.isForceXs2aBaseUrl());
         setting.setXs2aBaseUrl(aspspSettings.getXs2aBaseUrl());
+        setting.setScaRedirectFlow(aspspSettings.getScaRedirectFlow());
     }
 }

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.integration;
 
 
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
@@ -32,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.*;
 import de.adorsys.psd2.xs2a.integration.builder.payment.SpiPaymentInitiationResponseBuilder;
@@ -107,6 +109,7 @@ public class InitiatePayments_successfulTest {
     private HttpHeaders httpHeadersImplicit = new HttpHeaders();
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
     private MultiKeyMap responseMap = new MultiKeyMap();
+    private MultiKeyMap responseMapOauth = new MultiKeyMap();
 
     @Autowired
     private MockMvc mockMvc;
@@ -166,6 +169,8 @@ public class InitiatePayments_successfulTest {
         responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/explicit/BulkPaymentInitiateExplicit_response.json");
         responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/explicit/BulkPaymentInitiateExplicit_response.json");
 
+        responseMapOauth.put(httpHeadersImplicit, PaymentType.SINGLE, ScaApproach.REDIRECT, "/json/payment/res/implicit/SinglePaymentInitiate_redirect_oauth_implicit_response.json");
+
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppService.getTppInfo())
@@ -196,6 +201,17 @@ public class InitiatePayments_successfulTest {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
             .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
         initiateSinglePayment_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
+    }
+
+    @Test
+    public void initiateSinglePayment_implicit_redirect_oauth_successful() throws Exception {
+        AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
+        aspspSettings.setScaRedirectFlow(ScaRedirectFlow.OAUTH);
+        given(aspspProfileService.getAspspSettings())
+            .willReturn(aspspSettings);
+        given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+        initiateSinglePaymentOauth_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
     }
 
     @Test
@@ -281,8 +297,6 @@ public class InitiatePayments_successfulTest {
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(AspspConsentData.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse());
 
-
-
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
 
@@ -297,6 +311,29 @@ public class InitiatePayments_successfulTest {
         resultActions.andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(IOUtils.resourceToString((String) responseMap.get(headers, PaymentType.SINGLE, scaApproach), UTF_8)));
+    }
+
+    private void initiateSinglePaymentOauth_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
+        // Given
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+
+        given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(AspspConsentData.class)))
+            .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse());
+
+        given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
+            .willReturn(ResponseEntity.ok(Void.class));
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlBuilder.buildInitiatePaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
+        requestBuilder.headers(headers);
+        requestBuilder.content(IOUtils.resourceToString(SINGLE_PAYMENT_REQUEST_JSON_PATH, UTF_8));
+
+        // When
+        ResultActions resultActions = mockMvc.perform(requestBuilder);
+
+        //Then
+        resultActions.andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(IOUtils.resourceToString((String) responseMapOauth.get(headers, PaymentType.SINGLE, scaApproach), UTF_8)));
     }
 
     private void initiatePeriodicPayment_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {

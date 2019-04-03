@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.BOOKED;
 
@@ -37,6 +39,13 @@ public class ProfileConfiguration implements InitializingBean {
         setDefaultScaApproach(ScaApproach.REDIRECT);
         setDefaultBookingStatus(BOOKED);
         setAvailableAccountReferenceField(SupportedAccountReferenceField.IBAN); //Sets default Account Reference Field
+        setDefaultScaRedirectFlow();
+    }
+
+    private void setDefaultScaRedirectFlow() {
+        if (Objects.isNull(setting.getScaRedirectFlow())) {
+            setting.setScaRedirectFlow(ScaRedirectFlow.REDIRECT);
+        }
     }
 
     private void setDefaultScaApproach(ScaApproach scaApproach) {
