@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.DECOUPLED;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
@@ -36,9 +37,11 @@ public class ScaApproachResolver {
 
     /**
      * Resolve which sca approach from sca approaches list in ASPSP-profile should be used for authorisation.
-     * If SCA approach was forced beforehand, it will be returned instead.
-     * If header "tpp-redirect-preferred" is provided with value "true", Redirect approach will be used,
-     * otherwise the first approach from the list will be chosen. If ASPSP has only one SCA approach in profile, header "tpp-redirect-preferred" will be ignored
+     *
+     * If header "tpp-redirect-preferred" is provided with value "true" and ASPSP supports Redirect approach, then this approach will be used.
+     * If header "tpp-redirect-preferred" is provided with value "false", the first non-Redirect approach from the list will be used.
+     * If header "tpp-redirect-preferred" is not provided, the first approach from the list will be chosen.
+     * If ASPSP has only one SCA approach in profile, header "tpp-redirect-preferred" will be ignored
      * and only approach from profile will be used
      *
      * @return chosen ScaApproach to be used for authorisation
@@ -48,13 +51,25 @@ public class ScaApproachResolver {
             return scaApproachHolder.getScaApproach();
         }
 
-        boolean tppRedirectPreferred = requestProviderService.resolveTppRedirectPreferred();
         List<ScaApproach> scaApproaches = aspspProfileService.getScaApproaches();
+        ScaApproach firstScaApproach = getFirst(scaApproaches);
+        Optional<Boolean> tppRedirectPreferredOptional = requestProviderService.resolveTppRedirectPreferred();
+        if (!tppRedirectPreferredOptional.isPresent()) {
+            return firstScaApproach;
+        }
 
+        boolean tppRedirectPreferred = tppRedirectPreferredOptional.get();
         if (tppRedirectPreferred && scaApproaches.contains(REDIRECT)) {
             return REDIRECT;
         }
-        return getFirst(scaApproaches);
+
+        if (!tppRedirectPreferred
+                && REDIRECT == firstScaApproach
+                && scaApproaches.size() > 1) {
+            return getSecond(scaApproaches);
+        }
+
+        return firstScaApproach;
     }
 
     /**
@@ -67,5 +82,9 @@ public class ScaApproachResolver {
 
     private ScaApproach getFirst(List<ScaApproach> scaApproaches) {
         return scaApproaches.get(0);
+    }
+
+    private ScaApproach getSecond(List<ScaApproach> scaApproaches) {
+        return scaApproaches.get(1);
     }
 }
