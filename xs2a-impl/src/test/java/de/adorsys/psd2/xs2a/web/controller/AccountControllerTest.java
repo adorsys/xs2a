@@ -23,11 +23,8 @@ import de.adorsys.psd2.model.AccountList;
 import de.adorsys.psd2.model.AccountReport;
 import de.adorsys.psd2.model.ReadAccountBalanceResponse200;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
-import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.xs2a.service.AccountService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -43,11 +40,12 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.lang.Exception;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
@@ -80,10 +78,10 @@ public class AccountControllerTest {
     private HttpServletRequest request;
 
     @Before
-    public void setUp() throws Exception {
-        when(accountService.getAccountList(anyString(), anyBoolean())).thenReturn(getXs2aAccountDetailsList());
+    public void setUp() {
+        when(accountService.getAccountList(anyString(), anyBoolean())).thenReturn(getXs2aAccountListHolder());
         when(accountService.getBalancesReport(anyString(), anyString())).thenReturn(getBalanceReport());
-        when(accountService.getAccountDetails(anyString(), any(), anyBoolean())).thenReturn(getXs2aAccountDetails());
+        when(accountService.getAccountDetails(anyString(), any(), anyBoolean())).thenReturn(getXs2aAccountDetailsHolder());
     }
 
     @Test
@@ -132,9 +130,9 @@ public class AccountControllerTest {
 
         //When:
         ReadAccountBalanceResponse200 result = (ReadAccountBalanceResponse200) accountController.getBalances(ACCOUNT_ID,
-                                                                                               null, CONSENT_ID, null, null, null, null,
-                                                                                               null, null, null, null, null,
-                                                                                               null, null, null, null).getBody();
+                                                                                                             null, CONSENT_ID, null, null, null, null,
+                                                                                                             null, null, null, null, null,
+                                                                                                             null, null, null, null).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -146,7 +144,8 @@ public class AccountControllerTest {
             .when(responseMapper).ok(any(), any());
 
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
-        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));;
+        transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
+        ;
 
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
             .when(accountService).getTransactionsReportByPeriod(anyString(), anyString(), anyString(), anyBoolean(), any(), any(), any());
@@ -165,16 +164,14 @@ public class AccountControllerTest {
         assertThat(result).isEqualTo(expectedResult);
     }
 
-    private ResponseObject<Map<String, List<Xs2aAccountDetails>>> getXs2aAccountDetailsList() {
+    private ResponseObject<Xs2aAccountListHolder> getXs2aAccountListHolder() {
         List<Xs2aAccountDetails> accountDetails = Collections.singletonList(
             new Xs2aAccountDetails(ASPSP_ACCOUNT_ID, "33333-999999999", "DE371234599997", null, null, null,
                                    null, Currency.getInstance("EUR"), "Schmidt", null,
                                    CashAccountType.CACC, AccountStatus.ENABLED, "GENODEF1N02", "", Xs2aUsageType.PRIV, "", null));
-        Map<String, List<Xs2aAccountDetails>> result = new HashMap<>();
-        result.put("accountList", accountDetails);
-        return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
-                   .body(result).build();
-
+        Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(accountDetails, null);
+        return ResponseObject.<Xs2aAccountListHolder>builder()
+                   .body(xs2aAccountListHolder).build();
     }
 
     private ResponseObject<AccountList> createAccountDetailsList(String path) throws IOException {
@@ -183,10 +180,11 @@ public class AccountControllerTest {
                    .body(details).build();
     }
 
-    private ResponseObject<Xs2aAccountDetails> getXs2aAccountDetails() throws IOException {
-        Map<String, List<Xs2aAccountDetails>> map = getXs2aAccountDetailsList().getBody();
-        return ResponseObject.<Xs2aAccountDetails>builder()
-                   .body(map.get("accountList").get(0)).build();
+    private ResponseObject<Xs2aAccountDetailsHolder> getXs2aAccountDetailsHolder() {
+        List<Xs2aAccountDetails> accountDetailsList = getXs2aAccountListHolder().getBody().getAccountDetails();
+        Xs2aAccountDetailsHolder xs2aAccountDetailsHolder = new Xs2aAccountDetailsHolder(accountDetailsList.get(0), null);
+        return ResponseObject.<Xs2aAccountDetailsHolder>builder()
+                   .body(xs2aAccountDetailsHolder).build();
     }
 
     private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
@@ -201,30 +199,6 @@ public class AccountControllerTest {
 
         return ResponseObject.<AccountReport>builder()
                    .body(accountReport).build();
-    }
-
-    private ResponseObject<Xs2aAccountReport> getXs2aAccountReport() {
-        Transactions transaction = new Transactions();
-        transaction.setTransactionId("1234578");
-        transaction.setEndToEndId("EndToEndId");
-        transaction.setMandateId("MandateId");
-        transaction.setCreditorId("CreditorId");
-        transaction.setBookingDate(LocalDate.of(2018, 3, 9));
-        Xs2aAmount amount = new Xs2aAmount();
-        amount.setAmount("3000.45");
-        amount.setCurrency(Currency.getInstance("EUR"));
-        transaction.setAmount(amount);
-        AccountReference debtor = new AccountReference();
-        debtor.setIban("DE371234599997");
-        debtor.setCurrency(Currency.getInstance("EUR"));
-        transaction.setDebtorAccount(debtor);
-        transaction.setRemittanceInformationStructured("Ref Number Merchant");
-        transaction.setRemittanceInformationUnstructured("Ref Number Merchant");
-        transaction.setPurposeCode(new Xs2aPurposeCode("BKDF"));
-        transaction.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
-        List<Transactions> booked = Collections.singletonList(new Transactions());
-        Xs2aAccountReport accountReport = new Xs2aAccountReport(booked, Collections.emptyList(), null);
-        return ResponseObject.<Xs2aAccountReport>builder().body(accountReport).build();
     }
 
     private ResponseObject<ReadAccountBalanceResponse200> createReadBalances() throws IOException {

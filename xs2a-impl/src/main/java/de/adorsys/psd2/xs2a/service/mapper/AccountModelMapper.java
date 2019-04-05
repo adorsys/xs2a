@@ -45,15 +45,22 @@ public class AccountModelMapper {
     private final AmountModelMapper amountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
 
-    public AccountList mapToAccountList(Map<String, List<Xs2aAccountDetails>> accountDetailsList) {
-        List<AccountDetails> details = accountDetailsList.values().stream()
-                                           .flatMap(ad -> ad.stream().map(this::mapToAccountDetails))
+    public AccountList mapToAccountList(Xs2aAccountListHolder xs2aAccountListHolder) {
+        List<Xs2aAccountDetails> accountDetailsList = xs2aAccountListHolder.getAccountDetails();
+
+        List<AccountDetails> details = accountDetailsList.stream()
+                                           .map(this::mapToAccountDetails)
                                            .collect(Collectors.toList());
         return new AccountList().accounts(details);
     }
 
-    public AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
+    public AccountDetails mapToAccountDetails(Xs2aAccountDetailsHolder xs2aAccountDetailsHolder) {
+        return mapToAccountDetails(xs2aAccountDetailsHolder.getAccountDetails());
+    }
+
+    private AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
         AccountDetails target = new AccountDetails();
+
         BeanUtils.copyProperties(accountDetails, target);
 
         target.resourceId(accountDetails.getResourceId())

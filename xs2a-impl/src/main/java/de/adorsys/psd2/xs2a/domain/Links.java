@@ -52,10 +52,10 @@ public class Links {
     private String account;
 
     @ApiModelProperty(value = "balances: A link to the resource providing the balance of a dedicated account.", example = "api/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances")
-    private String viewBalances;
+    private String balances;
 
     @ApiModelProperty(value = "TransactionsCreditorResponse: A link to the resource providing the transaction history of a dediated amount.", example = "api/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions")
-    private String viewTransactions;
+    private String transactions;
 
     @ApiModelProperty(value = "Navigation link for paginated account reports.", example = "api/v1/firstPage/")
     private String first;

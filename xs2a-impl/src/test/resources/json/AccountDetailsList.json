@@ -7,8 +7,8 @@
     "product": "SCT",
     "bic": "GENODEF1N02",
     "_links": {
-      "viewBalances": "http://localhost/api/v1/accounts/33333-999999999/balances",
-      "viewTransactions": "http://localhost/api/v1/accounts/33333-999999999/transactions"
+      "balances": "http://localhost/api/v1/accounts/33333-999999999/balances",
+      "transactions": "http://localhost/api/v1/accounts/33333-999999999/transactions"
     }
   }]
 }
