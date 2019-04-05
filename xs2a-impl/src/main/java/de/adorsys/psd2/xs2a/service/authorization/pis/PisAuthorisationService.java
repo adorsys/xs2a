@@ -17,9 +17,9 @@
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
@@ -55,14 +55,14 @@ public class PisAuthorisationService {
      */
     public CreatePisAuthorisationResponse createPisAuthorisation(String paymentId, PsuIdData psuData) {
         CreatePisAuthorisationRequest request = new CreatePisAuthorisationRequest(CmsAuthorisationType.CREATED, psuData, scaApproachResolver.resolveScaApproach());
-        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId,  request)
+        return pisCommonPaymentServiceEncrypted.createAuthorization(paymentId, request)
                    .orElse(null);
     }
 
     /**
      * Updates PIS authorisation according to psu's sca methods with embedded and decoupled SCA approach
      *
-     * @param request Provides transporting data when updating pis authorisation
+     * @param request     Provides transporting data when updating pis authorisation
      * @param scaApproach current SCA approach, preferred by the server
      * @return update pis authorisation response, which contains payment id, authorisation id, sca status, psu message and links
      */
@@ -74,7 +74,7 @@ public class PisAuthorisationService {
         Xs2aUpdatePisCommonPaymentPsuDataResponse stageResponse = service.apply(request, response);
 
         if (!stageResponse.hasError()) {
-            doUpdatePisAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(request, stageResponse));
+            doUpdatePisAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(stageResponse));
         }
 
         return stageResponse;
@@ -83,7 +83,7 @@ public class PisAuthorisationService {
     /**
      * Updates PIS cancellation authorisation according to psu's sca methods with embedded and decoupled SCA approach
      *
-     * @param request Provides transporting data when updating pis cancellation authorisation
+     * @param request     Provides transporting data when updating pis cancellation authorisation
      * @param scaApproach current SCA approach, preferred by the server
      * @return update pis authorisation response, which contains payment id, authorisation id, sca status, psu message and links
      */
@@ -95,7 +95,7 @@ public class PisAuthorisationService {
         Xs2aUpdatePisCommonPaymentPsuDataResponse stageResponse = service.apply(request, response);
 
         if (!stageResponse.hasError()) {
-            doUpdatePisCancellationAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(request, stageResponse));
+            doUpdatePisCancellationAuthorisation(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(stageResponse));
         }
 
         return stageResponse;

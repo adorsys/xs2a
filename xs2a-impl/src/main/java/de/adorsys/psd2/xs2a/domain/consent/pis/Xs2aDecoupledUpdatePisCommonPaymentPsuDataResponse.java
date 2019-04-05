@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.consent.pis;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 
@@ -25,8 +26,8 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 
 public class Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse extends Xs2aUpdatePisCommonPaymentPsuDataResponse {
 
-    public Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus) {
-        super(scaStatus);
+    public Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, String paymentId, String authorisationId, PsuIdData psuData) {
+        super(scaStatus, paymentId, authorisationId, psuData);
     }
 
     /**
