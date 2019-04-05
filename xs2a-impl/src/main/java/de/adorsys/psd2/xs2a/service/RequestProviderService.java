@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -40,12 +41,12 @@ public class RequestProviderService {
 
     private final HttpServletRequest httpServletRequest;
 
-    public boolean resolveTppRedirectPreferred() {
+    public Optional<Boolean> resolveTppRedirectPreferred() {
         Map<String, String> headers = getRequestData().getHeaders();
         if (headers == null || !headers.containsKey(TPP_REDIRECT_PREFERRED_HEADER)) {
-            return false;
+            return Optional.empty();
         }
-        return Boolean.valueOf(headers.get(TPP_REDIRECT_PREFERRED_HEADER));
+        return Optional.of(Boolean.valueOf(headers.get(TPP_REDIRECT_PREFERRED_HEADER)));
     }
 
     public RequestData getRequestData() {
