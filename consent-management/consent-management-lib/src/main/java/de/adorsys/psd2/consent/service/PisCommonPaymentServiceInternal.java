@@ -188,7 +188,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
             return Optional.empty();
         }
 
-        ScaStatus scaStatus = doUpdateConsentAuthorisation(request, pisAuthorisationOptional.get());
+        PisAuthorization authorisation = pisAuthorisationOptional.get();
+        closePreviousAuthorisationsByPsu(authorisation, request.getPsuData());
+
+        ScaStatus scaStatus = doUpdateConsentAuthorisation(request, authorisation);
         return Optional.of(new UpdatePisCommonPaymentPsuDataResponse(scaStatus));
     }
 
@@ -211,7 +214,10 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
             return Optional.empty();
         }
 
-        ScaStatus scaStatus = doUpdateConsentAuthorisation(request, pisAuthorisationOptional.get());
+        PisAuthorization authorisation = pisAuthorisationOptional.get();
+        closePreviousAuthorisationsByPsu(authorisation, request.getPsuData());
+
+        ScaStatus scaStatus = doUpdateConsentAuthorisation(request, authorisation);
         return Optional.of(new UpdatePisCommonPaymentPsuDataResponse(scaStatus));
     }
 
@@ -436,6 +442,13 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         }
 
         return OffsetDateTime.now().plus(redirectUrlExpirationTimeMs, ChronoUnit.MILLIS);
+    }
+
+    private void closePreviousAuthorisationsByPsu(PisAuthorization authorisation, PsuIdData psuIdData) {
+        PisCommonPaymentData paymentData = authorisation.getPaymentData();
+        CmsAuthorisationType authorizationType = authorisation.getAuthorizationType();
+
+        closePreviousAuthorisationsByPsu(paymentData.getAuthorizations(), authorizationType, psuIdData);
     }
 
     private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {

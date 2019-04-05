@@ -323,6 +323,7 @@ public class PisCommonPaymentServiceInternalTest {
         PisAuthorization pisAuthorization = new PisAuthorization();
         pisAuthorization.setExternalId(FINALISED_AUTHORISATION_ID);
         pisAuthorization.setScaStatus(status);
+        pisAuthorization.setPaymentData(buildPisCommonPaymentData());
         return pisAuthorization;
     }
 
@@ -342,6 +343,7 @@ public class PisCommonPaymentServiceInternalTest {
         pisAuthorization.setScaStatus(SCA_STATUS);
         pisAuthorization.setPaymentData(buildPisCommonPaymentData());
         pisAuthorization.setPsuData(PSU_DATA);
+        pisAuthorization.setPaymentData(buildPisCommonPaymentData());
         return pisAuthorization;
     }
 

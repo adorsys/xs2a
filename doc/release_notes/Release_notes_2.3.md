@@ -23,3 +23,6 @@ Currently these links depend on the consent and its accesses: if the consent has
 not provided. If the consent has balances access - balances link is present and for the transactions access - transactions
 link is given. Boolean path parameter `withBalance` influences only the responses for these requests and has nothing common
 with the links.
+
+## Bugfix: Fix update PSU Data without unnecessary PSU_ID in header
+From now on, `update PSU Data` request for selecting SCA method doesn’t need to contain PSU-ID header and will be processed correctly even without it.
