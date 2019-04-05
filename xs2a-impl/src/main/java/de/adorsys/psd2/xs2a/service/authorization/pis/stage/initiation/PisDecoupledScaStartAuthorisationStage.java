@@ -73,7 +73,7 @@ public class PisDecoupledScaStartAuthorisationStage extends PisScaStage<Xs2aUpda
         pisAspspDataService.updateAspspConsentData(aspspConsentData);
 
         if (authPsuResponse.hasError()) {
-            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS));
+            return new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS), request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
         }
 
         return pisCommonDecoupledService.proceedDecoupledInitiation(request, payment);
