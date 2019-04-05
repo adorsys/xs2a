@@ -20,9 +20,7 @@ import de.adorsys.psd2.api.AccountApi;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.AccountService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -35,8 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,7 +50,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity getAccountList(UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Map<String, List<Xs2aAccountDetails>>> accountList = accountService.getAccountList(consentID, Optional.ofNullable(withBalance).orElse(false));
+        ResponseObject<Xs2aAccountListHolder> accountList = accountService.getAccountList(consentID, Optional.ofNullable(withBalance).orElse(false));
         return accountList.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountList.getError())
                    : responseMapper.ok(accountList, accountModelMapper::mapToAccountList);
@@ -62,7 +58,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity readAccountDetails(String accountId, UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Xs2aAccountDetails> accountDetails = accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false));
+        ResponseObject<Xs2aAccountDetailsHolder> accountDetails = accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false));
         return accountDetails.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountDetails.getError())
                    : responseMapper.ok(accountDetails, accountModelMapper::mapToAccountDetails);

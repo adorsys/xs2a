@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
@@ -65,7 +66,8 @@ public class GetAccountDetailsValidatorTest {
     private AisTppInfoValidator aisTppInfoValidator;
     @Mock
     private PermittedAccountReferenceValidator permittedAccountReferenceValidator;
-
+    @Mock
+    private AccountAccessValidator accountAccessValidator;
     @Mock
     private AccountReference accountReference;
 
@@ -104,7 +106,8 @@ public class GetAccountDetailsValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
-
+        when(accountAccessValidator.validate(accountConsent, accountConsent.isWithBalance()))
+            .thenReturn(ValidationResult.valid());
         when(accountConsentValidator.validate(accountConsent))
             .thenReturn(ValidationResult.valid());
 
