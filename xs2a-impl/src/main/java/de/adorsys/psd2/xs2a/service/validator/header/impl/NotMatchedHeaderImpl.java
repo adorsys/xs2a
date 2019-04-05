@@ -19,6 +19,8 @@ package de.adorsys.psd2.xs2a.service.validator.header.impl;
 import de.adorsys.psd2.xs2a.service.validator.header.RequestHeader;
 import io.swagger.annotations.ApiModel;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 @ApiModel(description = "Is used when handler is not matched", value = "NotMatchedHeaderImpl")
 public class NotMatchedHeaderImpl implements RequestHeader {
 }
