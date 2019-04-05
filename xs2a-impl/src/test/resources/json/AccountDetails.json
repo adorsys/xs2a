@@ -16,7 +16,7 @@
     }
   ],
   "_links": {
-    "viewBalances": "/api/v1/accounts/33333-999999999/balances",
-    "viewTransactions": "/api/v1/accounts/33333-999999999/transactions"
+    "balances": "/api/v1/accounts/33333-999999999/balances",
+    "transactions": "/api/v1/accounts/33333-999999999/transactions"
   }
 }

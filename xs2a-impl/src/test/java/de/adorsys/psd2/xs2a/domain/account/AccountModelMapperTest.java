@@ -104,9 +104,9 @@ public class AccountModelMapperTest {
                                                                    AccountStatus.ENABLED, "y11", "linked3", Xs2aUsageType.PRIV, "details3", new ArrayList<>());
         accountDetails.setLinks(createLinks());
         accountDetailsList.add(accountDetails);
-        Map<String, List<Xs2aAccountDetails>> accountDetailsMap = Collections.singletonMap("TEST", accountDetailsList);
 
-        AccountList result = accountModelMapper.mapToAccountList(accountDetailsMap);
+        Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(accountDetailsList, null);
+        AccountList result = accountModelMapper.mapToAccountList(xs2aAccountListHolder);
         assertNotNull(result);
 
         List<AccountDetails> accounts = result.getAccounts();
