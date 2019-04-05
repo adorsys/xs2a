@@ -16,5 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.parameter;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 public interface RequestParameter {
 }

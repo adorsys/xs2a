@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator.parameter.impl;
+package de.adorsys.psd2.xs2a.web.validator;
 
-import de.adorsys.psd2.xs2a.service.validator.parameter.RequestParameter;
-import io.swagger.annotations.ApiModel;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
-@Deprecated
-@ApiModel(description = "Is used when handler is not matched", value = "NotMatchedParameterImpl")
-public class NotMatchedParameterImpl implements RequestParameter {
-
+public interface HeadersValidator {
+    boolean validate(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException;
 }

@@ -39,7 +39,6 @@ import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
-import de.adorsys.psd2.xs2a.web.validator.PaymentControllerHeadersValidationService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -119,8 +118,6 @@ public class PaymentControllerTest {
     private ResponseErrorMapper responseErrorMapper;
     @Mock
     private PaymentService xs2aPaymentService;
-    @Mock
-    private PaymentControllerHeadersValidationService headersValidationService;
 
     @Mock
     private PaymentInitiationParameters paymentInitiationParameters;
@@ -568,29 +565,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_Failure_InvalidHeaders() {
-        when(headersValidationService.validateInitiatePayment())
-            .thenReturn(INVALID_VALIDATION_RESULT);
-
-        when(responseErrorMapper.generateErrorResponse(PIS_400_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(BAD_REQUEST));
-
-        // When
-        ResponseEntity actual = paymentController.initiatePayment(null, REQUEST_ID, null, CORRECT_PAYMENT_SERVICE, PRODUCT,
-            null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-            null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, true, null,
-            null, null, null, null, null, null,
-            null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(BAD_REQUEST);
-    }
-
-    @Test
     public void initiatePayment_Failure_CreatePaymentHasError() {
-        when(headersValidationService.validateInitiatePayment())
-            .thenReturn(VALID_VALIDATION_RESULT);
-
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData()))
             .thenReturn(paymentInitiationParameters);
 
@@ -616,9 +591,6 @@ public class PaymentControllerTest {
 
     @Test
     public void initiatePayment_Success() {
-        when(headersValidationService.validateInitiatePayment())
-            .thenReturn(VALID_VALIDATION_RESULT);
-
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData()))
             .thenReturn(paymentInitiationParameters);
 
@@ -666,29 +638,7 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void initiatePayment_XML_Failure_InvalidHeaders() {
-        when(headersValidationService.validateInitiatePayment())
-            .thenReturn(INVALID_VALIDATION_RESULT);
-
-        when(responseErrorMapper.generateErrorResponse(PIS_400_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(BAD_REQUEST));
-
-        // When
-        ResponseEntity actual = paymentController.initiatePayment(REQUEST_ID, null, CORRECT_PAYMENT_SERVICE, PRODUCT,
-            XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-            null, String.valueOf(TPP_REDIRECT_PREFERRED_TRUE), null, REDIRECT_LINK, true, null,
-            null, null, null, null, null, null,
-            null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(BAD_REQUEST);
-    }
-
-    @Test
     public void initiatePayment_XML_Failure_CreatePaymentHasError() {
-        when(headersValidationService.validateInitiatePayment())
-            .thenReturn(VALID_VALIDATION_RESULT);
-
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData()))
             .thenReturn(paymentInitiationParameters);
 
@@ -714,9 +664,6 @@ public class PaymentControllerTest {
 
     @Test
     public void initiatePayment_XML_Success() {
-        when(headersValidationService.validateInitiatePayment())
-            .thenReturn(VALID_VALIDATION_RESULT);
-
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData()))
             .thenReturn(paymentInitiationParameters);
 

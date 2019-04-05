@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.config.factory;
 
+import de.adorsys.psd2.xs2a.web.validator.methods.factory.HeadersValidationServiceFactory;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,6 +67,19 @@ public class ServiceLocatorFactoryConfiguration {
     public ServiceLocatorFactoryBean aisScaUpdateAuthorisationFactory() {
         ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
         serviceLocatorFactoryBean.setServiceLocatorInterface(AisScaStageAuthorisationFactory.class);
+        return serviceLocatorFactoryBean;
+    }
+
+    /**
+     * Configuration of ServiceLocatorFactoryBean bean to be used as a factory for validating method-specific headers in incoming requests.
+     * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
+     *
+     * @return ServiceLocatorFactoryBean
+     */
+    @Bean
+    public ServiceLocatorFactoryBean headersValidationServiceFactory() {
+        ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
+        serviceLocatorFactoryBean.setServiceLocatorInterface(HeadersValidationServiceFactory.class);
         return serviceLocatorFactoryBean;
     }
 }

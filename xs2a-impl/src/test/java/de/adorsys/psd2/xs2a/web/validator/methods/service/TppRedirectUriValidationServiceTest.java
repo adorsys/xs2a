@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.common;
+package de.adorsys.psd2.xs2a.web.validator.methods.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
