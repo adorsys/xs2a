@@ -52,15 +52,13 @@ public class Xs2aPisCommonPaymentMapper {
         return new Xs2aPisCommonPayment(response.getPaymentId(), psuData);
     }
 
-    public UpdatePisCommonPaymentPsuDataRequest mapToCmsUpdateCommonPaymentPsuDataReq(Xs2aUpdatePisCommonPaymentPsuDataRequest updatePsuDataRequest,
-                                                                                      Xs2aUpdatePisCommonPaymentPsuDataResponse updatePsuDataResponse) {
+    public UpdatePisCommonPaymentPsuDataRequest mapToCmsUpdateCommonPaymentPsuDataReq(Xs2aUpdatePisCommonPaymentPsuDataResponse updatePsuDataResponse) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
-                       PsuIdData psuIdDataFromRequest = updatePsuDataRequest.getPsuData();
                        UpdatePisCommonPaymentPsuDataRequest request = new UpdatePisCommonPaymentPsuDataRequest();
-                       request.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType()));
-                       request.setPaymentId(updatePsuDataRequest.getPaymentId());
-                       request.setAuthorizationId(updatePsuDataRequest.getAuthorisationId());
+                       request.setPsuData(data.getPsuData());
+                       request.setPaymentId(data.getPaymentId());
+                       request.setAuthorizationId(data.getAuthorisationId());
                        request.setAuthenticationMethodId(getAuthenticationMethodId(data));
                        request.setScaStatus(data.getScaStatus());
                        return request;

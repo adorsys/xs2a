@@ -247,7 +247,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     private static Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdatePisCommonPaymentPsuDataResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aDecoupledUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, PAYMENT_ID, AUTHORISATION_ID, PSU_DATA);
         response.setPsuMessage(AUTH_DECOUPLED_RESPONSE.getPayload().getPsuMessage());
         response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(request.getAuthenticationMethodId()));
         return response;

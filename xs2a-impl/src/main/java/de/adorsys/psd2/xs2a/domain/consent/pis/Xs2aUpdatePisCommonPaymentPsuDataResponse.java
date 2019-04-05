@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.consent.pis;
 
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
@@ -39,18 +40,17 @@ public class Xs2aUpdatePisCommonPaymentPsuDataResponse {
     private Xs2aAuthenticationObject chosenScaMethod;
     private ChallengeData challengeData;
     private Links links = new Links();
+    private PsuIdData psuData;
 
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, List<Xs2aAuthenticationObject> availableScaMethods) {
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, String paymentId, String authorisationId, PsuIdData psuData) {
         this.scaStatus = scaStatus;
-        this.availableScaMethods = availableScaMethods;
+        this.paymentId = paymentId;
+        this.authorisationId = authorisationId;
+        this.psuData = psuData;
     }
 
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus) {
-        this(scaStatus, null);
-    }
-
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse(ErrorHolder errorHolder) {
-        this(ScaStatus.FAILED);
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse(ErrorHolder errorHolder, String paymentId, String authorisationId, PsuIdData psuData) {
+        this(ScaStatus.FAILED, paymentId, authorisationId, psuData);
         this.errorHolder = errorHolder;
     }
 
