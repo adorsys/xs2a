@@ -39,6 +39,8 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 @Slf4j
 public class RequestValidatorService {
     @Autowired

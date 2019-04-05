@@ -39,6 +39,8 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 @Slf4j
 @Component
 @RequiredArgsConstructor

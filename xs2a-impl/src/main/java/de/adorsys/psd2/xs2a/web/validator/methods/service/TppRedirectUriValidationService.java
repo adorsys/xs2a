@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.common;
+package de.adorsys.psd2.xs2a.web.validator.methods.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

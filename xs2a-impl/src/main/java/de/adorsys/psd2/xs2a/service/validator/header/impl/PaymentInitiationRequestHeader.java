@@ -26,6 +26,8 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Pattern;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "Payment initiation request header", value = "PaymentInitiationRequestHeader")

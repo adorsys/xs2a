@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 public class HeadersFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeadersFactory.class);
 
