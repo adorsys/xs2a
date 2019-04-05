@@ -16,18 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
-import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
 
 /**
  * Validator to be used for validating get account list request according to some business rules
@@ -36,7 +31,7 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
 @RequiredArgsConstructor
 public class GetAccountListValidator extends AbstractAisTppValidator<GetAccountListConsentObject> {
     private final AccountConsentValidator accountConsentValidator;
-
+    private final AccountAccessValidator accountAccessValidator;
     /**
      * Validates get account list request  by checking whether:
      * <ul>
@@ -55,21 +50,11 @@ public class GetAccountListValidator extends AbstractAisTppValidator<GetAccountL
             return accountConsentValidationResult;
         }
 
-        if (hasInvalidAccess(consentObject)) {
-            return ValidationResult.invalid(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
+        ValidationResult accountAccessValidationResult = accountAccessValidator.validate(consentObject.getAccountConsent(), consentObject.isWithBalance());
+        if (accountAccessValidationResult.isNotValid()) {
+            return accountAccessValidationResult;
         }
 
         return ValidationResult.valid();
-    }
-
-    private boolean hasInvalidAccess(GetAccountListConsentObject consentObject) {
-        if (consentObject.isWithBalance()) {
-            Xs2aAccountAccess accountAccess = consentObject.getAccountConsent().getAccess();
-
-            return accountAccess == null
-                       || CollectionUtils.isEmpty(accountAccess.getBalances());
-        }
-
-        return false;
     }
 }
