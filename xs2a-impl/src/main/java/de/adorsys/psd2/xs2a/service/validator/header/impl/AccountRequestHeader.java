@@ -27,6 +27,8 @@ import org.springframework.http.MediaType;
 
 import javax.validation.constraints.NotNull;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 @Data
 @ApiModel(description = "Account request header", value = "AccountRequestHeader")
 @JsonIgnoreProperties(ignoreUnknown = true)

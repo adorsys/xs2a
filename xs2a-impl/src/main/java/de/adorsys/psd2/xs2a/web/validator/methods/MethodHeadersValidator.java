@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.constants;
+package de.adorsys.psd2.xs2a.web.validator.methods;
 
-public class Xs2aHeaderConstant {
-    public static final String X_REQUEST_ID = "X-Request-ID";
-    public static final String PSU_IP_ADDRESS = "PSU-IP-Address";
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-    public static final String TPP_REDIRECT_PREFERRED = "TPP-Redirect-Preferred";
-    public static final String TPP_REDIRECT_URI = "TPP-Redirect-URI";
-
-    private Xs2aHeaderConstant() {
-    }
+/**
+ * Common interface for specific methods headers validation. Please note, that all implementations of this interface
+ * should be marked by '@Service("_methodName")' annotation, where method name corresponds to the controller method name.
+ */
+public interface MethodHeadersValidator {
+    boolean validate(HttpServletRequest request, HttpServletResponse response) throws IOException;
 }

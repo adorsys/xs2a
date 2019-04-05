@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.common;
+package de.adorsys.psd2.xs2a.web.validator.common.service;
 
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;

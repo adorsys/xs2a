@@ -25,6 +25,8 @@ import lombok.Data;
 
 import java.util.Date;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 @Data
 @ApiModel(description = "Account request parameter", value = "AccountRequestParameter")
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -25,6 +25,8 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 @Data
 @ApiModel(description = "Common request header", value = "CommonRequestHeader")
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -22,6 +22,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+// TODO: should be removed in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/782
+@Deprecated
 @Data
 @ApiModel(description = "Payment request header", value = "PaymentRequestHeader")
 @JsonIgnoreProperties(ignoreUnknown = true)
