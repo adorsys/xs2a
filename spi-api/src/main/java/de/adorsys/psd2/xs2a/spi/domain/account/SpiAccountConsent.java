@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -45,4 +46,5 @@ public class SpiAccountConsent {
     private List<SpiPsuData> psuData;
     private TppInfo tppInfo;
     private AisConsentRequestType aisConsentRequestType;
+    private OffsetDateTime statusChangeTimestamp;
 }

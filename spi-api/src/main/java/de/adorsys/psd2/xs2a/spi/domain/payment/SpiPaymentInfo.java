@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -35,6 +36,7 @@ public class SpiPaymentInfo implements SpiPayment {
     private TransactionStatus status;
     private byte[] paymentData;
     private List<SpiPsuData> psuDataList;
+    private OffsetDateTime statusChangeTimestamp;
 
     public SpiPaymentInfo(String paymentProduct) {
         this.paymentProduct = paymentProduct;

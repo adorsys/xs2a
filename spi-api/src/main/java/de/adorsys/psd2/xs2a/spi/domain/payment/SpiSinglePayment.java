@@ -44,6 +44,7 @@ public class SpiSinglePayment implements SpiPayment {
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
     private List<SpiPsuData> psuDataList;
+    private OffsetDateTime statusChangeTimestamp;
 
     public SpiSinglePayment(String paymentProduct) {
         this.paymentProduct = paymentProduct;

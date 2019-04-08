@@ -77,4 +77,6 @@
     <include relativeToChangelogFile="true" file="migration/0051-change-column-types-in-tpp-info-from-clob-to-varchar.xml"/>
     <include relativeToChangelogFile="true" file="migration/0052-add-ais-consent-usage-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0053-add-columns-to-event-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0054-add-columns-to-pis-ais-piis-tables.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0055-add-card-columns-to-piis_consent.xml"/>
 </databaseChangeLog>

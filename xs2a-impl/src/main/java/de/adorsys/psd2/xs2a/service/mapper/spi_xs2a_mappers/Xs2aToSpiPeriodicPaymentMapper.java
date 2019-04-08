@@ -57,6 +57,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setRequestedExecutionTime(payment.getRequestedExecutionTime());
         periodic.setRequestedExecutionDate(payment.getRequestedExecutionDate());
         periodic.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
+        periodic.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
         return periodic;
     }
 }

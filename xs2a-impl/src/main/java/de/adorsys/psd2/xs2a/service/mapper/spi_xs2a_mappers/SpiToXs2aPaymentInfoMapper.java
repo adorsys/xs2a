@@ -30,6 +30,7 @@ public class SpiToXs2aPaymentInfoMapper {
         info.setPaymentType(paymentInfo.getPaymentType());
         info.setTransactionStatus(paymentInfo.getStatus());
         info.setPaymentData(paymentInfo.getPaymentData());
+        info.setStatusChangeTimestamp(paymentInfo.getStatusChangeTimestamp());
         return info;
     }
 }

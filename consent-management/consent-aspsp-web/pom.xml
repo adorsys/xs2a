@@ -21,7 +21,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>2.2-SNAPSHOT</version>
+        <version>2.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -35,12 +35,12 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-core-web</artifactId>
-            <version>2.2-SNAPSHOT</version>
+            <version>2.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-aspsp-api</artifactId>
-            <version>2.2-SNAPSHOT</version>
+            <version>2.3-SNAPSHOT</version>
         </dependency>
 
         <!-- other dependencies -->

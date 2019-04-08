@@ -17,6 +17,9 @@
 package de.adorsys.psd2.xs2a.web.validator.constants;
 
 public class Xs2aHeaderConstant {
+    public static final String X_REQUEST_ID = "X-Request-ID";
+    public static final String PSU_IP_ADDRESS = "PSU-IP-Address";
+
     public static final String TPP_REDIRECT_PREFERRED = "TPP-Redirect-Preferred";
     public static final String TPP_REDIRECT_URI = "TPP-Redirect-URI";
 

@@ -70,7 +70,7 @@ public class AccountSpiImpl implements AccountSpi {
             }
 
             return SpiResponse.<List<SpiAccountDetails>>builder()
-                       .payload(filterAccountDetailsByWithBalance(withBalance, accountDetailsList))
+                       .payload(filterAccountDetailsByWithBalance(withBalance, accountDetailsList, accountConsent.getAccess()))
                        .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .success();
         } catch (RestException e) {
@@ -314,11 +314,24 @@ public class AccountSpiImpl implements AccountSpi {
                    .findFirst();
     }
 
-    private List<SpiAccountDetails> filterAccountDetailsByWithBalance(boolean withBalance, List<SpiAccountDetails> details) {
-        if (!withBalance) {
-            details.forEach(SpiAccountDetails::emptyBalances);
+    private List<SpiAccountDetails> filterAccountDetailsByWithBalance(boolean withBalance, List<SpiAccountDetails> details,
+                                                                      SpiAccountAccess spiAccountAccess) {
+
+        List<SpiAccountReference> balanceReferences = spiAccountAccess.getBalances();
+
+        for (SpiAccountDetails spiAccountDetails : details) {
+            if (!withBalance || !isValidAccountByAccess(spiAccountDetails.getResourceId(), balanceReferences)) {
+                spiAccountDetails.emptyBalances();
+            }
         }
 
         return details;
     }
+
+    private boolean isValidAccountByAccess(String accountId, List<SpiAccountReference> allowedAccountData) {
+        return CollectionUtils.isNotEmpty(allowedAccountData)
+                   && allowedAccountData.stream()
+                          .anyMatch(a -> accountId.equals(a.getResourceId()));
+    }
+
 }

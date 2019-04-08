@@ -87,6 +87,8 @@ public class SinglePayment implements AccountReferenceCollector {
 
     private List<PsuIdData> psuDataList;
 
+    private OffsetDateTime statusChangeTimestamp;
+
     @JsonIgnore
     @Override
     public Set<AccountReference> getAccountReferences() {

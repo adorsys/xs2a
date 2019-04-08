@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity(name = "piis_consent")
@@ -92,4 +93,41 @@ public class PiisConsentEntity extends InstanceDependableEntity {
 
     @Column(name = "creation_timestamp", nullable = false)
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();
+
+    @Column(name = "card_number", length = 35)
+    private String cardNumber;
+
+    @Column(name = "card_expiry_date")
+    private LocalDate cardExpiryDate;
+
+    @Column(name = "card_information", length = 140)
+    private String cardInformation;
+
+    @Column(name = "registration_information", length = 140)
+    private String registrationInformation;
+
+    @Column(name = "status_change_timestamp")
+    private OffsetDateTime statusChangeTimestamp;
+
+    @Transient
+    private ConsentStatus previousConsentStatus;
+
+    @PostLoad
+    public void piisConsentPostLoad() {
+        previousConsentStatus = consentStatus;
+    }
+
+    @PreUpdate
+    public void piisConsentPreUpdate() {
+        if (previousConsentStatus != consentStatus) {
+            statusChangeTimestamp = OffsetDateTime.now();
+        }
+    }
+
+    @PrePersist
+    public void piisConsentPrePersist() {
+        if (Objects.isNull(statusChangeTimestamp)) {
+            statusChangeTimestamp = creationTimestamp;
+        }
+    }
 }

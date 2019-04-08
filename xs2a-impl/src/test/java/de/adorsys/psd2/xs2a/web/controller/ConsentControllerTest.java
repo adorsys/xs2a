@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
-import de.adorsys.psd2.xs2a.web.validator.ConsentControllerHeadersValidationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +44,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -71,8 +71,6 @@ public class ConsentControllerTest {
     private static final MessageError MESSAGE_ERROR_AIS_400 = new MessageError(ErrorType.AIS_400, of(MessageErrorCode.CONSENT_UNKNOWN_400));
     private static final MessageError MESSAGE_ERROR_AIS_403 = new MessageError(ErrorType.AIS_403, of(MessageErrorCode.RESOURCE_UNKNOWN_403));
     private static final MessageError MESSAGE_ERROR_AIS_404 = new MessageError(ErrorType.AIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404));
-    private static final ValidationResult VALID_VALIDATION_RESULT = ValidationResult.valid();
-    private static final ValidationResult INVALID_VALIDATION_RESULT = ValidationResult.invalid(MESSAGE_ERROR_AIS_400_FORMAT_ERROR);
 
     @InjectMocks
     private ConsentController consentController;
@@ -88,9 +86,6 @@ public class ConsentControllerTest {
     private TppRedirectUriMapper tppRedirectUriMapper;
     @Mock
     private ResponseErrorMapper responseErrorMapper;
-    @Mock
-    private ConsentControllerHeadersValidationService headersValidationService;
-
 
     @Before
     public void setUp() {
@@ -112,7 +107,6 @@ public class ConsentControllerTest {
     @Test
     public void createAccountConsent_Success() {
         doReturn(new ResponseEntity<>(createConsentResponse(CONSENT_ID).getBody(), HttpStatus.CREATED)).when(responseMapper).created(any(), any());
-        when(headersValidationService.validateCreateConsent()).thenReturn(VALID_VALIDATION_RESULT);
         //Given:
         Consents consents = getConsents();
         //When:
@@ -131,24 +125,7 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void createAccountConsent_Failure_InvalidHeaders() {
-        when(headersValidationService.validateCreateConsent()).thenReturn(INVALID_VALIDATION_RESULT);
-        //Given:
-        Consents consents = getConsents();
-        //When:
-        ResponseEntity responseEntity = consentController.createConsent(null, consents,
-            null, null, null, CORRECT_PSU_ID, null, null,
-            null, true, null, null,
-            EXPLICIT_PREFERRED, null, null, null, null,
-            null, null, null, null, null,
-            null);
-        //Then:
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
     public void createAccountConsent_Failure() {
-        when(headersValidationService.validateCreateConsent()).thenReturn(VALID_VALIDATION_RESULT);
         //Given:
         Consents consents = getConsents();
         //When:
@@ -340,7 +317,7 @@ public class ConsentControllerTest {
     private ResponseObject<AccountConsent> getConsent(String consentId) {
         AccountConsent accountConsent = consentId.equals(WRONG_CONSENT_ID)
                                             ? null
-                                            : new AccountConsent(consentId, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), 0);
+                                            : new AccountConsent(consentId, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), 0);
         return isEmpty(accountConsent)
                    ? ResponseObject.<AccountConsent>builder().fail(MESSAGE_ERROR_AIS_404).build()
                    : ResponseObject.<AccountConsent>builder().body(accountConsent).build();

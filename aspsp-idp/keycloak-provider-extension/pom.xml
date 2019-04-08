@@ -22,13 +22,13 @@
 	<parent>
 		<groupId>de.adorsys.psd2</groupId>
 		<artifactId>aspsp-idp</artifactId>
-		<version>2.2-SNAPSHOT</version>
+		<version>2.3-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<groupId>de.adorsys.keycloak</groupId>
 	<artifactId>keycloak-provider-extension</artifactId>
-	<version>2.2-SNAPSHOT</version>
+	<version>2.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
     <properties>

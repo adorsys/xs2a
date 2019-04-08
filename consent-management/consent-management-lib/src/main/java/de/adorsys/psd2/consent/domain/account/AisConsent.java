@@ -36,6 +36,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -151,6 +152,31 @@ public class AisConsent extends InstanceDependableEntity {
     @Column(name = "multilevel_sca_required", nullable = false)
     private boolean multilevelScaRequired;
 
+    @Column(name = "status_change_timestamp")
+    private OffsetDateTime statusChangeTimestamp;
+
+    @Transient
+    private ConsentStatus previousConsentStatus;
+
+    @PostLoad
+    public void aisConsentPostLoad() {
+        previousConsentStatus = consentStatus;
+    }
+
+    @PreUpdate
+    public void aisConsentPreUpdate() {
+        if (previousConsentStatus != consentStatus) {
+            statusChangeTimestamp = OffsetDateTime.now();
+        }
+    }
+
+    @PrePersist
+    public void aisConsentPrePersist() {
+        if (Objects.isNull(statusChangeTimestamp)) {
+            statusChangeTimestamp = creationTimestamp;
+        }
+    }
+
     public List<TppAccountAccess> getAccesses() {
         return new ArrayList<>(accesses);
     }
@@ -192,6 +218,7 @@ public class AisConsent extends InstanceDependableEntity {
         return CollectionUtils.isEmpty(psuDataList)
                    || tppInfo == null;
     }
+
     public void addUsage(AisConsentUsage aisConsentUsage) {
         if (usages == null) {
             usages = new ArrayList<>();

@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.BalanceType;
@@ -26,9 +25,11 @@ import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
+import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -42,14 +43,20 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AccountModelMapperTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
+    private static final String HREF = "href";
 
     @Mock
     private AmountModelMapper amountModelMapper;
+
+    @Mock
+    private HrefLinkMapper hrefLinkMapper;
+
+    @InjectMocks
     private AccountModelMapper accountModelMapper;
 
     @Before
     public void setUp() {
-        accountModelMapper = new AccountModelMapper(new ObjectMapper(), amountModelMapper);
+        when(hrefLinkMapper.mapToLinksMap(createLinks())).thenReturn(createHrefLinkMap());
         when(amountModelMapper.mapToXs2aAmount(createAmount())).thenReturn(createXs2aAmount());
         when(amountModelMapper.mapToAmount(createXs2aAmount())).thenReturn(createAmount());
     }
@@ -97,9 +104,9 @@ public class AccountModelMapperTest {
                                                                    AccountStatus.ENABLED, "y11", "linked3", Xs2aUsageType.PRIV, "details3", new ArrayList<>());
         accountDetails.setLinks(createLinks());
         accountDetailsList.add(accountDetails);
-        Map<String, List<Xs2aAccountDetails>> accountDetailsMap = Collections.singletonMap("TEST", accountDetailsList);
 
-        AccountList result = accountModelMapper.mapToAccountList(accountDetailsMap);
+        Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(accountDetailsList, null);
+        AccountList result = accountModelMapper.mapToAccountList(xs2aAccountListHolder);
         assertNotNull(result);
 
         List<AccountDetails> accounts = result.getAccounts();
@@ -139,9 +146,9 @@ public class AccountModelMapperTest {
         Map links = thirdAccount.getLinks();
         assertNotNull(links);
 
-        assertEquals("http://scaOAuth.xx", links.get("scaOAuth"));
-        assertEquals("http://linkToStatus.xx", links.get("status"));
-        assertEquals("http://linkToSelf.xx", links.get("self"));
+        assertEquals("{" + HREF + "=http://scaOAuth.xx}", links.get("scaOAuth").toString());
+        assertEquals("{" + HREF + "=http://linkToStatus.xx}", links.get("status").toString());
+        assertEquals("{" + HREF + "=http://linkToSelf.xx}", links.get("self").toString());
 
         assertEquals("CACC", secondAccount.getCashAccountType());
         assertEquals("details2", secondAccount.getDetails());
@@ -177,7 +184,7 @@ public class AccountModelMapperTest {
         AccountReference expectedCreditorAccount = transactions.getCreditorAccount();
         assertNotNull(expectedCreditorAccount);
 
-        de.adorsys.psd2.model.AccountReference actualCreditorAccount =  transactionDetails.getCreditorAccount();
+        de.adorsys.psd2.model.AccountReference actualCreditorAccount = transactionDetails.getCreditorAccount();
         assertNotNull(actualCreditorAccount);
 
         assertEquals(expectedCreditorAccount.getIban(), actualCreditorAccount.getIban());
@@ -237,7 +244,7 @@ public class AccountModelMapperTest {
         assertEquals(expectedPending.size(), actualPending.size());
 
         Map links = result.getLinks();
-        assertEquals(accountReport.getLinks().getScaOAuth(), links.get("scaOAuth"));
+        assertEquals("{" + HREF + "=" + accountReport.getLinks().getScaOAuth() + "}", links.get("scaOAuth").toString());
     }
 
     private Xs2aBalance createBalance() {
@@ -314,6 +321,14 @@ public class AccountModelMapperTest {
         links.setStatus("http://linkToStatus.xx");
         links.setSelf("http://linkToSelf.xx");
         return links;
+    }
+
+    private Map createHrefLinkMap() {
+        Map<String, Map> hrefLinkMap = new HashMap<>();
+        hrefLinkMap.put("scaOAuth", Collections.singletonMap(HREF, "http://scaOAuth.xx"));
+        hrefLinkMap.put("status", Collections.singletonMap(HREF, "http://linkToStatus.xx"));
+        hrefLinkMap.put("self", Collections.singletonMap(HREF, "http://linkToSelf.xx"));
+        return hrefLinkMap;
     }
 
     private Xs2aExchangeRate createExchangeRate() {

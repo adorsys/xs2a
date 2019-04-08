@@ -121,6 +121,7 @@ public class PisCommonPaymentMapper {
                        response.setPsuData(psuDataMapper.mapToPsuIdDataList(cmd.getPsuDataList()));
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
+                       response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
                        return response;
                    });
     }

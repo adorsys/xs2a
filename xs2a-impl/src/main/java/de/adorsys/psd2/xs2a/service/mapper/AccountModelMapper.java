@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.AccountStatus;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -27,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
+import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,18 +42,25 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class AccountModelMapper {
-    private final ObjectMapper objectMapper;
     private final AmountModelMapper amountModelMapper;
+    private final HrefLinkMapper hrefLinkMapper;
 
-    public AccountList mapToAccountList(Map<String, List<Xs2aAccountDetails>> accountDetailsList) {
-        List<AccountDetails> details = accountDetailsList.values().stream()
-                                           .flatMap(ad -> ad.stream().map(this::mapToAccountDetails))
+    public AccountList mapToAccountList(Xs2aAccountListHolder xs2aAccountListHolder) {
+        List<Xs2aAccountDetails> accountDetailsList = xs2aAccountListHolder.getAccountDetails();
+
+        List<AccountDetails> details = accountDetailsList.stream()
+                                           .map(this::mapToAccountDetails)
                                            .collect(Collectors.toList());
         return new AccountList().accounts(details);
     }
 
-    public AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
+    public AccountDetails mapToAccountDetails(Xs2aAccountDetailsHolder xs2aAccountDetailsHolder) {
+        return mapToAccountDetails(xs2aAccountDetailsHolder.getAccountDetails());
+    }
+
+    private AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
         AccountDetails target = new AccountDetails();
+
         BeanUtils.copyProperties(accountDetails, target);
 
         target.resourceId(accountDetails.getResourceId())
@@ -65,7 +72,7 @@ public class AccountModelMapper {
             .status(mapToAccountStatus(accountDetails.getAccountStatus()));
         return target
                    .balances(mapToBalanceList(accountDetails.getBalances()))
-                   ._links(objectMapper.convertValue(accountDetails.getLinks(), Map.class));
+                   ._links(hrefLinkMapper.mapToLinksMap(accountDetails.getLinks()));
     }
 
     private BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
@@ -139,7 +146,7 @@ public class AccountModelMapper {
         return new AccountReport()
                    .booked(booked)
                    .pending(pending)
-                   ._links(objectMapper.convertValue(accountReport.getLinks(), Map.class));
+                   ._links(hrefLinkMapper.mapToLinksMap(accountReport.getLinks()));
     }
 
     public TransactionDetails mapToTransaction(Transactions transactions) {
@@ -220,7 +227,7 @@ public class AccountModelMapper {
         transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));
         transactionsResponse200Json.setBalances(mapToBalanceList(transactionsReport.getBalances()));
         transactionsResponse200Json.setAccount(mapToAccountReference12(transactionsReport.getAccountReference()));
-        transactionsResponse200Json.setLinks(objectMapper.convertValue(transactionsReport.getLinks(), Map.class));
+        transactionsResponse200Json.setLinks(hrefLinkMapper.mapToLinksMap(transactionsReport.getLinks()));
         return transactionsResponse200Json;
 
     }
