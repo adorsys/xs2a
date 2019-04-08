@@ -76,7 +76,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledInitiation_by_request_payment_success() {
+    public void proceedDecoupledInitiation_success() {
         //Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
@@ -90,7 +90,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledInitiation_by_request_payment_failed() {
+    public void proceedDecoupledInitiation_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
                                         .messages(Collections.singletonList("Payment not found"))
@@ -110,7 +110,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledInitiation_by_request_payment_authenticationMethodId_success() {
+    public void proceedDecoupledInitiation_authenticationMethodId_success() {
         //Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
@@ -124,7 +124,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledInitiation_by_request_payment_authenticationMethodId_failed() {
+    public void proceedDecoupledInitiation_authenticationMethodId_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
                                         .messages(Collections.singletonList("Payment not found"))
@@ -144,7 +144,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledCancellation_by_request_payment_success() {
+    public void proceedDecoupledCancellation_success() {
         //Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
@@ -158,7 +158,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledCancellation_by_request_payment_failed() {
+    public void proceedDecoupledCancellation_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
                                         .messages(Collections.singletonList("Payment not found"))
@@ -178,7 +178,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledCancellation_by_request_payment_authenticationMethodId_success() {
+    public void proceedDecoupledCancellation_authenticationMethodId_success() {
         //Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, ASPSP_CONSENT_DATA))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
@@ -192,7 +192,7 @@ public class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    public void proceedDecoupledCancellation_by_request_payment_authenticationMethodId_failed() {
+    public void proceedDecoupledCancellation_authenticationMethodId_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(MessageErrorCode.RESOURCE_UNKNOWN_404)
                                         .messages(Collections.singletonList("Payment not found"))
