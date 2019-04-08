@@ -352,19 +352,6 @@ public class AccountControllerTest {
                    .body(xs2aAccountDetailsHolder).build();
     }
 
-    private ResponseObject<Map<String, List<Xs2aAccountDetails>>> buildAccountDetailsListWithError(MessageError messageError) throws IOException {
-        List<Xs2aAccountDetails> accountDetails = Collections.singletonList(
-            new Xs2aAccountDetails(ASPSP_ACCOUNT_ID, "33333-999999999", "DE371234599997", null, null, null,
-                                   null, Currency.getInstance("EUR"), "Schmidt", null,
-                                   CashAccountType.CACC, AccountStatus.ENABLED, "GENODEF1N02", "", Xs2aUsageType.PRIV, "", null));
-        Map<String, List<Xs2aAccountDetails>> result = new HashMap<>();
-        result.put("accountList", accountDetails);
-
-        return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
-                   .fail(messageError)
-                   .body(result).build();
-    }
-
     private ResponseObject<Xs2aAccountDetailsHolder> buildXs2aAccountDetailsWithError(MessageError messageError) {
         return ResponseObject.<Xs2aAccountDetailsHolder>builder().fail(messageError)
                    .build();
