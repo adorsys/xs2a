@@ -146,7 +146,7 @@ public class PisCommonPaymentServiceInternalTest {
     public void getAuthorisationByPaymentIdSuccess() {
         //When
         when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID));
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID, Arrays.asList(RCVD, PATC))).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
+        when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
         //Then
         Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID, CmsAuthorisationType.CANCELLED);
@@ -160,8 +160,8 @@ public class PisCommonPaymentServiceInternalTest {
     public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
         when(securityDataService.decryptId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID_WRONG, Arrays.asList(RCVD, PATC))).thenReturn(Optional.empty());
-        when(pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatusIn(PAYMENT_ID_WRONG, Arrays.asList(RCVD, PATC))).thenReturn(Optional.empty());
+        when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
+        when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         //Then
         Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID_WRONG, CmsAuthorisationType.CANCELLED);
         //Assert
@@ -172,8 +172,8 @@ public class PisCommonPaymentServiceInternalTest {
     public void getAuthorisationByPaymentIdWrongTransactionStatus() {
         //When
         when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID_WRONG_TRANSACTION_STATUS));
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PAYMENT_ID_WRONG_TRANSACTION_STATUS, Arrays.asList(RCVD, PATC))).thenReturn(Optional.empty());
-        when(pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatusIn(PAYMENT_ID_WRONG_TRANSACTION_STATUS, Arrays.asList(RCVD, PATC))).thenReturn(Optional.empty());
+        when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
+        when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
         //Then
         Optional<List<String>> authorizationByPaymentId = pisCommonPaymentService.getAuthorisationsByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS, CmsAuthorisationType.CREATED);
         //Assert
