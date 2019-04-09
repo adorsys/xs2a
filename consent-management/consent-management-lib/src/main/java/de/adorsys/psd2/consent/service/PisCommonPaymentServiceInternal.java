@@ -269,7 +269,8 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
      */
     @Override
     public Optional<List<String>> getAuthorisationsByPaymentId(String paymentId, CmsAuthorisationType authorisationType) {
-        return readReceivedCommonPaymentDataByPaymentId(paymentId)
+        return readPisCommonPaymentDataByPaymentId(paymentId)
+                   .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
                    .map(pmt -> readAuthorisationsFromPaymentCommonData(pmt, authorisationType));
     }
 
