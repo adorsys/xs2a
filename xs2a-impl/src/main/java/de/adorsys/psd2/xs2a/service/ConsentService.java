@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,6 +90,7 @@ public class ConsentService {
     private final GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
     private final GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
 
+    //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/791
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
     /**

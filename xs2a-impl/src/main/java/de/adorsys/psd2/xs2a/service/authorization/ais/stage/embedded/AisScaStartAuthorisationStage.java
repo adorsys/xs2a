@@ -131,7 +131,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
             return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages());
         }
 
-        // TODO Extract common consent validation from AIS Embedded and Decoupled stages https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/677
+        // TODO Extract common consent validation from AIS Embedded and Decoupled stages https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/716
         if (isOneFactorAuthorisation(accountConsent)) {
 
             aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.VALID);

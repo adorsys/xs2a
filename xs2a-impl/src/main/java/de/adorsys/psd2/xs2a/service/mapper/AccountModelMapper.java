@@ -177,7 +177,6 @@ public class AccountModelMapper {
         return target;
     }
 
-    // TODO rename class to avoid putting full path https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/603
     public de.adorsys.psd2.model.AccountReference mapToAccountReference12(AccountReference reference) {
         if (reference == null) {
             return null;
@@ -238,7 +237,7 @@ public class AccountModelMapper {
 
 
     public Map<String, TransactionDetails> mapToTransactionDetails(Transactions transactions) {
-        //TODO Change to an appropriate object when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/574
+        //TODO Change to an appropriate object when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/645
         Map<String, TransactionDetails> transactionDetails = new HashMap<>();
         transactionDetails.put("transactionsDetails", mapToTransaction(transactions));
         return transactionDetails;

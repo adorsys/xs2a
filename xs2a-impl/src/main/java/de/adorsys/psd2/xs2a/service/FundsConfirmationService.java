@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ public class FundsConfirmationService {
 
     private @NotNull AspspConsentData getAspspConsentData(@Nullable PiisConsent consent) {
         if (consent == null) {
-            // TODO Do not pass AspspConsentData at all if there is no PIIS consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/526
+            // TODO Do not pass AspspConsentData at all if there is no PIIS consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/796
             return AspspConsentData.emptyConsentData();
         }
 
