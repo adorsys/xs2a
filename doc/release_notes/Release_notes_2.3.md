@@ -29,3 +29,8 @@ with the links.
 
 ## Bugfix: Fix update PSU Data without unnecessary PSU_ID in header
 From now on, `update PSU Data` request for selecting SCA method doesn’t need to contain PSU-ID header and will be processed correctly even without it.
+
+## Bugfix: empty arrays are included in all responses
+From now on, empty arrays in the HTTP responses are included in the bodies. For example, before the response was: 
+`"access": {}`, now it is: `"access": { "accounts": [], "balances": [], "transactions": []}`.
+
