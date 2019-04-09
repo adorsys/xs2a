@@ -16,7 +16,7 @@ Please refer to the documentation pages of each service to perform its configura
 
 ## Services for OAuth2 SCA Approach
 Following our services are required to be deployed for OAuth2 approach:
-* Identity provider. You can use any provider that supports OAuth2 protocol. We recommend to use our **[aspsp-idp](../aspsp-idp/README.md)** module, which is based on a Keycloak with some extensions. Our solution is being tested using this module as IDP.
+* Identity provider. You can use any provider that supports OAuth2 protocol.
 * **[aspsp-profile](../aspsp-profile/README.md)** - A service that provides a static configuration of optional PSD2 features and corresponding internal configuration that your ASPSP supports. I.e. one can configure redirect URLs or supported payment types.
 More information about optional features you can find in the Berlin Group XS2A Guidelines and Operational rules.
 * **[xs2a-impl](../xs2a-impl/README.md)** - The XS2A service itself
@@ -31,8 +31,5 @@ More information about optional features you can find in the Berlin Group XS2A G
 * **[consent-management-system](../consent-management-system/README.md)** - Consents storage and corresponding managing services. A key component for PSD2 Compliance.
 Requires underlying relative database (We use PostgreSQL for development and testing).
 * You would also need to implement a consent confirmation and consent listing pages on your local online application to be able to redirect TPP requests to that pages.
-
-## Services for development and testing purposes
-* [aspsp-mock-server](../aspsp-mock-server/README.md) To have a quick start you may deploy the mock server (requires undelying MongoDB). In that case you'd need to use mock-qwac profile in xs2a service
 
 

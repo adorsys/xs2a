@@ -41,13 +41,6 @@ All mandatory API endpoints defined in Berlin Group specification are implemente
 
 * **Logging System** is the system that allows ASPSP operators to track all logically related calls in XS2A, starting from the requests from TPP to the final responses to TPP. This module is not in the Berlin Group specification.
 
-### Test services
-
-* **ASPSP-Mock** is a simple example of ASPSP implementation. Mock-implementation of ASPSP exists for the purposes of testing and introspection of XS2A functionality. This module is not in the Berlin Group specification.
-
-* **Prototype Online Banking** is a Web Demo application to show how the PSU - ASPSP Interface works. Through this Interface PSU passes SCA and provides the consents to TTP. This module is not in the Berlin Group specification.
-
-
 ## Getting Started
 
 [These instructions](doc/GETTING_STARTED.md) will get you a copy of the project up and running on your local machine for development and testing purposes. 

@@ -4,81 +4,30 @@ networks:
   xs2a-net:
 
 volumes:
-  keycloak-data:
-  aspsp-mock-mongo-config:
-  aspsp-mock-mongo-data:
   consent-management-data:
 
 services:
-# ASPSP-IDP
-  xs2a-idp:
-    image: adorsys/xs2a-idp
+  # xs2a standalone starter
+  xs2a-standalone-starter:
+    image: adorsys/xs2a-standalone-starter
     build:
-      context: aspsp-idp
+      context: xs2a-standalone-starter
       dockerfile: Dockerfile
     restart: on-failure
     environment:
-      - JAVA_TOOL_OPTIONS="-Xmx512M"
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin123
-      - POSTGRES_USER=keycloak
-      - POSTGRES_PASSWORD=keycloak
-      - POSTGRES_PORT_5432_TCP_ADDR=keycloak-postgres
-    depends_on:
-      - keycloak-postgres
-    ports:
-      - "8081:8080"
-    networks:
-      - xs2a-net
-
-  keycloak-postgres:
-    image: centos/postgresql-95-centos7
-    volumes:
-      - keycloak-data:/var/lib/pgsql/data
-    restart: on-failure
-    networks:
-      - xs2a-net
-    environment:
-      - POSTGRESQL_ADMIN_PASSWORD=postgres
-      - POSTGRESQL_DATABASE=keycloak
-      - POSTGRESQL_USER=keycloak
-      - POSTGRESQL_PASSWORD=keycloak
-    expose:
-      - 5432
-
-# ASPSP-MOCK-SERVER
-  aspsp-mock-server:
-    image: adorsys/xs2a-mock-server
-    build:
-      context: aspsp-mock-server
-      dockerfile: Dockerfile
-    restart: on-failure
-    ports:
-      - "28080:8080"
-    networks:
-      - xs2a-net
-    environment:
-      - JAVA_TOOL_OPTIONS="-Xmx512M"
-      - SPRING_DATA_MONGODB_HOST=aspsp-mock-mongo
-      - SPRING_DATA_MONGODB_DATABASE=spimock
+      - JAVA_TOOL_OPTIONS="-Xmx256M"
+      - SPRING_PROFILES_ACTIVE=mock-qwac
       - ASPSP_PROFILE_BASEURL=${ASPSP_PROFILE_BASEURL:-http://aspsp-profile:8080/api/v1}
-      - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
-      - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_ASPSP_MOCK_CLIENT_SECRET}"
-    depends_on:
-      - aspsp-mock-mongo
-
-  aspsp-mock-mongo:
-    image: mongo
-    restart: on-failure
-    expose:
-      - 27017
+      - CONSENT_SERVICE_BASEURL=${CONSENT_SERVICE_BASEURL:-http://consent-management:8080/api/v1}
+    ports:
+      - "8080:8080"
     networks:
       - xs2a-net
-    volumes:
-      - aspsp-mock-mongo-config:/data/configdb
-      - aspsp-mock-mongo-data:/data/db
+    depends_on:
+      - aspsp-profile
+      - consent-management
 
-# ASPSP-PROFILE
+  # ASPSP-PROFILE
   aspsp-profile:
     image: adorsys/xs2a-aspsp-profile
     build:
@@ -93,7 +42,7 @@ services:
     networks:
       - xs2a-net
 
-# CONSENT-MANAGEMENT-SYSTEM
+  # CONSENT-MANAGEMENT-SYSTEM
   consent-management:
     image: adorsys/xs2a-consent-management
     build:
@@ -110,9 +59,12 @@ services:
       - SPRING_DATASOURCE_USERNAME=cms
       - SPRING_DATASOURCE_PASSWORD=cms
       - ASPSP_PROFILE_BASEURL=${ASPSP_PROFILE_BASEURL:-http://aspsp-profile:8080/api/v1}
-      - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
-      - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_CMS_CLIENT_SECRET}"
       - SERVER_KEY=my_secret_for_cms
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=consent
+      - LIQUIBASE_ENABLED=true
+      - LIQUIBASE_URL=jdbc:postgresql://consent-management-postgres/consent?currentSchema=consent
+      - LIQUIBASE_USER=cms
+      - LIQUIBASE_PASSWORD=cms
     depends_on:
       - consent-management-postgres
 
@@ -133,23 +85,3 @@ services:
       - POSTGRESQL_PASSWORD=cms
     expose:
       - 5432
-
-  online-banking-demo-ui:
-    image: adorsys/xs2a-mock-online-banking-ui
-    build:
-      context: online-banking-demo-ui
-      dockerfile: Dockerfile
-    restart: on-failure
-    ports:
-      - "4200:4200"
-    networks:
-      - xs2a-net
-    environment:
-      - XS2A_URL=http://localhost:8080
-      - MOCKSERVER_URL=http://localhost:28080
-      - ONLINE_BANKING_SERVER_URL=http://localhost:28081
-      - CONSENT_MANAGEMENT_URL=http://localhost:38080
-      - PROFILE_SERVER_URL=http://localhost:48080
-    expose:
-      - 4200
-

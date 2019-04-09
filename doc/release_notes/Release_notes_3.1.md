@@ -33,3 +33,13 @@ Depending on this subtype, the link names would be different in the following re
  - payment cancellation authorisation
 
 In case of OAUTH subtype scaOAuth link will be used instead of scaRedirect.
+
+## Take out ASPSP Mock Server and corresponding Connector out of XS2A
+From now on several modules are no longer present in the repository :
+ - aspsp-idp
+ - aspsp-mock-api
+ - aspsp-mock-server
+ - online-banking-demo
+ - online-banking-demo-ui
+ - spi-mock 
+In XS2A version 2.x these modules are available for usage.

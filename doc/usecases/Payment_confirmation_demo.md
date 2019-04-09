@@ -11,7 +11,7 @@ To test the flow of payment confirmation locally, follow next steps:
                                                                                                   
 * Choose one of the product and press "Buy now".
 
-* You will be redirected to the login page. Enter the credentials for your keycloak user. By default it is `aspsp` for login and `zzz` for password.
+* You will be redirected to the login page. 
 
 * After successful login you will be redirected to TAN confirmation page. You should receive TAN number on the email you added while creating PSU. Copy TAN and enter in the the field, then press "Validate".
 
@@ -29,7 +29,7 @@ To test the flow of payment confirmation locally, follow next steps:
   
    * Choose one of the product and press "Buy now".
    
-   * You will be redirected to the login page. Enter wrong credentials for your keycloak user, for example `wrong password` and `wrong login`.
+   * You will be redirected to the login page.
    
    * You should see a message from keycloak about wrong login or password.
    
