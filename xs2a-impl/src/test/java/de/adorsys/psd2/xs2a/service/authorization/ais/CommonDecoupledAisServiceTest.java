@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -51,7 +52,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CommonDecoupledAisServiceTest {
     private static final String CONSENT_ID = "Test consentId";
-    private static final String PASSWORD = "Test password";
     private static final String PSU_ID = "Test psuId";
     private static final String AUTHORISATION_ID = "Test authorisationId";
     private static final String PSU_SUCCESS_MESSAGE = "Test psuSuccessMessage";
@@ -65,6 +65,7 @@ public class CommonDecoupledAisServiceTest {
     private static final MessageErrorCode FORMAT_ERROR_CODE = MessageErrorCode.FORMAT_ERROR;
     private static final ScaStatus METHOD_SELECTED_SCA_STATUS = ScaStatus.SCAMETHODSELECTED;
     private static final String AUTHENTICATION_METHOD_ID = "Test authentication method id";
+    private static final UpdateConsentPsuDataResponse UPDATE_CONSENT_PSU_DATA_RESPONSE = buildUpdateConsentPsuDataResponse();
 
     @InjectMocks
     private CommonDecoupledAisService commonDecoupledAisService;
@@ -97,6 +98,19 @@ public class CommonDecoupledAisServiceTest {
 
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
+    }
+
+    @Test
+    public void proceedDecoupledApproach_by_request_spiAccountConsent_psuData_success() {
+        // Given
+        when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
+
+        // When
+        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(request, spiAccountConsent, PSU_ID_DATA);
+
+        // Then
+        assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
     }
 
     @Test
@@ -160,5 +174,13 @@ public class CommonDecoupledAisServiceTest {
                    .payload(payload)
                    .aspspConsentData(ASPSP_CONSENT_DATA)
                    .fail(RESPONSE_STATUS);
+    }
+
+    private static UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+        response.setPsuMessage(PSU_SUCCESS_MESSAGE);
+        response.setScaStatus(METHOD_SELECTED_SCA_STATUS);
+        response.setChosenScaMethod(new Xs2aAuthenticationObject());
+        return response;
     }
 }
