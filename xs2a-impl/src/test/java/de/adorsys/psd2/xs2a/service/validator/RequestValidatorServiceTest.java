@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.psd2.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -70,6 +72,19 @@ public class RequestValidatorServiceTest {
         //Given:
         HttpServletRequest request = getCorrectRequest();
         HandlerMethod handler = getInitiatePaymentHandler();
+
+        //When:
+        Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
+
+        //Then:
+        assertThat(actualViolations.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void getRequestViolationMap_handler_cors_validRequest() throws Exception {
+        //Given:
+        HttpServletRequest request = getCorrectRequest();
+        UrlBasedCorsConfigurationSource handler = getInitiatePaymentHandlerCors();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestViolationMap(request, handler);
@@ -257,6 +272,10 @@ public class RequestValidatorServiceTest {
     private HandlerMethod getInitiatePaymentHandler() throws NoSuchMethodException {
         Method method = getPaymentControllerMethodByName("initiatePayment");
         return new HandlerMethod(paymentController, method);
+    }
+
+    private UrlBasedCorsConfigurationSource getInitiatePaymentHandlerCors() throws NoSuchMethodException {
+        return new UrlBasedCorsConfigurationSource();
     }
 
     private Method getPaymentControllerMethodByName(String methodName) throws NoSuchMethodException {
