@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,14 +59,12 @@ public class CmsAspspEventServiceInternal implements CmsAspspEventService {
         return eventMapper.mapToEventList(eventEntity);
     }
 
-    // TODO: create specification for this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/571
     @Override
     public List<Event> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId) {
         List<EventEntity> eventEntity = eventRepository.findByTimestampBetweenAndEventTypeOrderByTimestampAsc(start, end, eventType);
         return eventMapper.mapToEventList(eventEntity);
     }
 
-    // TODO: create specification for this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/571
     @Override
     public List<Event> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId) {
         List<EventEntity> eventEntity = eventRepository.findByTimestampBetweenAndEventOriginOrderByTimestampAsc(start, end, eventOrigin);

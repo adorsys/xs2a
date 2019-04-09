@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ public class PiisConsentServiceInternal implements PiisConsentService {
         return piisConsentMapper.mapToPiisConsentList(consents);
     }
 
-    // TODO refactor according to https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/580
     private List<PiisConsentEntity> extractPiisConsentList(Currency currency, AccountReferenceSelector accountReferenceSelector) {
         AccountReferenceType accountReferenceType = accountReferenceSelector.getAccountReferenceType();
         String accountReferenceValue = accountReferenceSelector.getAccountValue();

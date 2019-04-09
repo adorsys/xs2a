@@ -43,6 +43,7 @@ import java.util.List;
 @Service
 public class AisConsentSpiMockImpl implements AisConsentSpi {
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
+    //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/merge_requests/1190
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
 
     @Override

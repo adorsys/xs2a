@@ -37,6 +37,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
+    //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/merge_requests/1190
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
 
     @Override
