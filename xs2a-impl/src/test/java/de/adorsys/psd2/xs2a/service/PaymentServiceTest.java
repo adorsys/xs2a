@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -49,6 +48,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
+import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.validator.PaymentValidationService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.*;
@@ -91,7 +91,6 @@ public class PaymentServiceTest {
     private static final String WRONG_PAYMENT_ID_TEXT = "Payment not found";
     private static final String FINALISED_TRANSACTION_STATUS_ERROR_TEXT = "Payment is finalised already and cannot be cancelled";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], PAYMENT_ID);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
@@ -140,6 +139,7 @@ public class PaymentServiceTest {
     private ReadPaymentStatusFactory readPaymentStatusFactory;
     @Mock
     private ReadPaymentStatusService readPaymentStatusService;
+    @SuppressWarnings("unused")
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
@@ -166,6 +166,8 @@ public class PaymentServiceTest {
     private GetPaymentStatusByIdValidator getPaymentStatusByIdValidator;
     @Mock
     private CancelPaymentValidator cancelPaymentValidator;
+    @Mock
+    private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider;
 
     @Before
     public void setUp() {
@@ -180,7 +182,6 @@ public class PaymentServiceTest {
         when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK), getTppInfoServiceModified()))
             .thenReturn(getValidResponse());
 
-        when(pisAspspDataService.getAspspConsentData(anyString())).thenReturn(ASPSP_CONSENT_DATA);
         when(tppService.getTppInfo()).thenReturn(getTppInfo());
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(getPisCommonPayment());
@@ -438,9 +439,8 @@ public class PaymentServiceTest {
         when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
         when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
-        when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(SpiContextData.class), eq(ASPSP_CONSENT_DATA)))
+        when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(SpiContextData.class), any(String.class)))
             .thenReturn(new ReadPaymentStatusResponse(RCVD));
-        doNothing().when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
             .thenReturn(true);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -591,7 +591,7 @@ public class PaymentServiceTest {
     }
 
     private SpiResponse<TransactionStatus> buildSpiResponseTransactionStatus() {
-        return new SpiResponse<>(TransactionStatus.ACCP, ASPSP_CONSENT_DATA);
+        return new SpiResponse<>(TransactionStatus.ACCP, null);
     }
 
     private static SinglePayment getSinglePayment(String iban, String amountToPay) {
@@ -705,7 +705,7 @@ public class PaymentServiceTest {
         SinglePaymentInitiationResponse response = new SinglePaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
-        response.setAspspConsentData(ASPSP_CONSENT_DATA);
+        response.setAspspConsentDataProvider(initialSpiAspspConsentDataProvider);
         return response;
     }
 
@@ -717,7 +717,7 @@ public class PaymentServiceTest {
         PeriodicPaymentInitiationResponse response = new PeriodicPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
-        response.setAspspConsentData(ASPSP_CONSENT_DATA);
+        response.setAspspConsentDataProvider(initialSpiAspspConsentDataProvider);
         return response;
     }
 

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.payment;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -26,12 +25,13 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
-import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentInfoMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -50,6 +50,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,7 +62,7 @@ public class ReadCommonPaymentServiceTest {
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final PisPaymentInfo PIS_PAYMENT_INFO = getPisPaymentInfo();
-    private static final AspspConsentData SOME_ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "some consent id");
+    private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
 
     @InjectMocks
     private ReadCommonPaymentService readCommonPaymentService;
@@ -69,31 +70,35 @@ public class ReadCommonPaymentServiceTest {
     @Mock
     private CommonPaymentSpi commonPaymentSpi;
     @Mock
-    private PisAspspDataService pisAspspDataService;
-    @Mock
     private SpiContextDataProvider spiContextDataProvider;
-    @Mock
-    private SpiErrorMapper spiErrorMapper;
     @Mock
     private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
     @Mock
     private SpiToXs2aPaymentInfoMapper spiToXs2aPaymentInfoMapper;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private SpiErrorMapper spiErrorMapper;
 
     @Before
     public void init() {
         when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT)).thenReturn(SPI_PAYMENT_INFO);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(spiToXs2aPaymentInfoMapper.mapToXs2aPaymentInfo(any())).thenReturn(PIS_PAYMENT_INFO);
-        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, SOME_ASPSP_CONSENT_DATA)).thenReturn(SpiResponse.<SpiPaymentInfo>builder()
-                                                                                                                          .aspspConsentData(SOME_ASPSP_CONSENT_DATA.respondWith("some data".getBytes()))
-                                                                                                                          .payload(SPI_PAYMENT_INFO)
-                                                                                                                          .success());
+        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiPaymentInfo>builder()
+                            .payload(SPI_PAYMENT_INFO)
+                            .success());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
     }
 
     @Test
     public void getPayment_success() {
         //When
-        PaymentInformationResponse<PisPaymentInfo> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
+        PaymentInformationResponse<PisPaymentInfo> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -107,15 +112,14 @@ public class ReadCommonPaymentServiceTest {
                                         .messages(Collections.singletonList("Payment not found"))
                                         .build();
         SpiResponse<SpiPaymentInfo> failSpiResponse = SpiResponse.<SpiPaymentInfo>builder()
-                                                          .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
                                                           .fail(SpiResponseStatus.LOGICAL_FAILURE);
 
-        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, SOME_ASPSP_CONSENT_DATA)).thenReturn(failSpiResponse);
+        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, spiAspspConsentDataProvider)).thenReturn(failSpiResponse);
         when(spiErrorMapper.mapToErrorHolder(failSpiResponse, ServiceType.PIS))
             .thenReturn(expectedError);
 
         //When
-        PaymentInformationResponse<PisPaymentInfo> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ASPSP_CONSENT_DATA);
+        PaymentInformationResponse<PisPaymentInfo> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
         //Then
         assertThat(actualResponse.hasError()).isTrue();

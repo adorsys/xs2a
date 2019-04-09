@@ -10,6 +10,8 @@ import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -28,6 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,6 +45,7 @@ public class ReadBulkPaymentStatusServiceTest {
     private static final SpiResponse<TransactionStatus> TRANSACTION_RESPONSE = buildSpiResponseTransactionStatus();
     private static final SpiResponse<TransactionStatus> TRANSACTION_RESPONSE_FAILURE = buildFailSpiResponseTransactionStatus();
     private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_RESPONSE.getPayload());
+    private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
 
     @InjectMocks
     private ReadBulkPaymentStatusService readBulkPaymentStatusService;
@@ -53,17 +57,23 @@ public class ReadBulkPaymentStatusServiceTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private BulkPaymentSpi bulkPaymentSpi;
+    @Mock
+    private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
     @Test
     public void readPaymentStatus_success() {
         //Given
+        when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
         when(spiPaymentFactory.createSpiBulkPayment(PIS_PAYMENTS, PRODUCT))
             .thenReturn(Optional.of(SPI_BULK_PAYMENT));
-        when(bulkPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, ASPSP_CONSENT_DATA))
+        when(bulkPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE);
 
         //When
-        ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, ASPSP_CONSENT_DATA);
+        ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
         //Then
         assertThat(actualResponse).isEqualTo(READ_PAYMENT_STATUS_RESPONSE);
@@ -80,7 +90,7 @@ public class ReadBulkPaymentStatusServiceTest {
             .thenReturn(Optional.empty());
 
         //When
-        ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, ASPSP_CONSENT_DATA);
+        ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
         //Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -96,13 +106,15 @@ public class ReadBulkPaymentStatusServiceTest {
 
         when(spiPaymentFactory.createSpiBulkPayment(PIS_PAYMENTS, PRODUCT))
             .thenReturn(Optional.of(SPI_BULK_PAYMENT));
-        when(bulkPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, ASPSP_CONSENT_DATA))
+        when(bulkPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE_FAILURE);
         when(spiErrorMapper.mapToErrorHolder(TRANSACTION_RESPONSE_FAILURE, ServiceType.PIS))
             .thenReturn(expectedError);
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
 
         //When
-        ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, ASPSP_CONSENT_DATA);
+        ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(PIS_PAYMENTS, PRODUCT, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID);
 
         //Then
         assertThat(actualResponse.hasError()).isTrue();

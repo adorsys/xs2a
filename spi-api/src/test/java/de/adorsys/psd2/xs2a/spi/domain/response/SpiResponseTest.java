@@ -50,15 +50,6 @@ public class SpiResponseTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void builder_should_fail_on_success_without_aspsp_data() {
-        SpiResponse.SpiResponseBuilder<Object> builder = SpiResponse.builder();
-
-        builder
-            .payload(SOME_PAYLOAD)
-            .success();
-    }
-
-    @Test(expected = IllegalStateException.class)
     public void builder_should_fail_on_null_payload() {
         SpiResponse.SpiResponseBuilder<Object> builder = SpiResponse.builder();
 
@@ -80,18 +71,6 @@ public class SpiResponseTest {
     public void constructor_should_fail_without_payload() {
         //noinspection ConstantConditions
         new SpiResponse<>(null, SOME_ASPSP_CONSENT_DATA);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void constructor_should_fail_without_aspsp_consent_data() {
-        //noinspection ConstantConditions
-        new SpiResponse<>(SOME_PAYLOAD, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void second_constructor_should_fail_without_aspsp_consent_data() {
-        //noinspection ConstantConditions
-        new SpiResponse<>(SOME_PAYLOAD, null, SOME_STATUS, null);
     }
 
     @Test

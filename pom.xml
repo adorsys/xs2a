@@ -28,13 +28,13 @@
         <module>aspsp-profile</module>
         <module>xs2a-impl</module>
         <module>spi-api</module>
-        <module>spi-mock</module>
+        <!--<module>spi-mock</module>-->
         <module>consent-management</module>
-        <module>aspsp-idp</module>
-        <module>aspsp-mock-api</module>
-        <module>aspsp-mock-server</module>
+        <!--<module>aspsp-idp</module>-->
+        <!--<module>aspsp-mock-api</module>-->
+        <!--<module>aspsp-mock-server</module>-->
         <module>psd2-validator</module>
-        <module>online-banking-demo</module>
+        <!--<module>online-banking-demo</module>-->
         <module>xs2a-standalone-starter</module>
         <module>spi-stub</module>
     </modules>

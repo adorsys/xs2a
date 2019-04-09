@@ -44,6 +44,8 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticat
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentStatusAfterSpiService;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -136,6 +138,10 @@ public class PisScaStartAuthorisationStageTest {
     private Xs2aAuthenticationObject xs2aAuthenticationObject;
     @Mock
     private ChallengeData challengeData;
+    @Mock
+    private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
     @Before
     public void setUp() {
@@ -149,6 +155,14 @@ public class PisScaStartAuthorisationStageTest {
 
         when(pisAspspDataService.getAspspConsentData(PAYMENT_ID)).thenReturn(ASPSP_CONSENT_DATA);
         when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
+
+
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
+
+        doNothing()
+            .when(spiAspspConsentDataProvider).updateAspspConsentData(any());
+
     }
 
     @Test
