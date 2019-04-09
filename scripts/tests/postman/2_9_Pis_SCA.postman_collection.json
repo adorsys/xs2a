@@ -300,7 +300,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"Some AGENT\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"49\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+                  "raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
                 },
                 "url": {
                   "raw": "{{protocol}}://{{url_xs2a}}/v1/payments/sepa-credit-transfers",
@@ -332,7 +332,7 @@
                       "",
                       "const jsonData = pm.response.json();",
                       "",
-                      "const authorisationId = jsonData.links.startAuthorisationWithPsuAuthentication.split('/').pop();",
+                      "const authorisationId = jsonData.authorisationId;",
                       "pm.globals.set(\"authorisation_id\", authorisationId);"
                     ],
                     "type": "text/javascript"
@@ -375,7 +375,7 @@
                   "raw": ""
                 },
                 "url": {
-                  "raw": "{{protocol}}://{{url_xs2a}}/v1/payments/{{payment_id}}/authorisations",
+                  "raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
                   "protocol": "{{protocol}}",
                   "host": [
                     "{{url_xs2a}}"

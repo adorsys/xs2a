@@ -16,6 +16,9 @@ From now on, the following rules are applied to choose SCA Approach from the lis
  * If header "tpp-redirect-preferred" is not provided, the first approach from the list will be chosen.
  * If ASPSP has only one SCA approach in profile, header "tpp-redirect-preferred" will be ignored and only approach from profile will be used
 
+## Bugfix: Get authorisations of payment when one is already finalised
+From now on, the GET authorisations request(`GET /v1/payments/sepa-credit-transfers/{PAYMENT_ID}/authorisations`) works with all payments statuses (not only with RCVD or PATC )
+
 ## Bugfix: links building while getting account list and account details
 Implemented the new mechanism for links generation in the `getAccoutList` request (GET `/v1/accounts/{withBalance}`) and 
 `readAccountDetails` request (GET `/v1/accounts/{account-id}/{withBalance}`).
