@@ -17,10 +17,12 @@
 package de.adorsys.psd2.xs2a.spi.domain.response;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import lombok.Value;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +41,13 @@ public class SpiResponse<T> {
     /**
      * Consent data - a binary data that is stored in a consent management system. Is not parsed by XS2A layer. May be
      * used by SPI layer to store state information linked to a workflow. May be encrypted in case of need.
+     *
+     * @deprecated since 3.0. Use SpiAspspConsentDataProvider instead.
+     * @see SpiAspspConsentDataProvider
+     * // TODO remove aspspConsentData from SPI Response in version 3.4 or later https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/786
      */
-    @NotNull
+    @Nullable
+    @Deprecated
     private AspspConsentData aspspConsentData;
 
     /**
@@ -66,13 +73,9 @@ public class SpiResponse<T> {
      * @param messages
      *         - Optional messages to be provided to the TPP.
      */
-    public SpiResponse(T payload, @NotNull AspspConsentData aspspConsentData,
+    public SpiResponse(T payload, @Nullable @Deprecated AspspConsentData aspspConsentData,
                        SpiResponseStatus responseStatus, List<String> messages
                       ) {
-        //noinspection ConstantConditions - we cannot be sure that @NotNull annotation will be processed be external developer
-        if (aspspConsentData == null) {
-            throw new IllegalArgumentException("aspspConsentData cannot be null");
-        }
         if (responseStatus == SUCCESS && payload == null) {
             throw new IllegalArgumentException("Payload must be filled by successful result");
         }
@@ -84,7 +87,7 @@ public class SpiResponse<T> {
         }
     }
 
-    public SpiResponse(@NotNull T payload, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse(@NotNull T payload, @Nullable @Deprecated AspspConsentData aspspConsentData) {
         this(payload, aspspConsentData, SUCCESS, null);
     }
 
@@ -125,11 +128,14 @@ public class SpiResponse<T> {
             return this;
         }
 
-        public SpiResponseBuilder<T> aspspConsentData(@NotNull AspspConsentData aspspConsentData) {
-            //noinspection ConstantConditions - we cannot be sure that @NotNull annotation will be processed be external developer
-            if (aspspConsentData == null) {
-                throw new IllegalArgumentException("aspspConsentData cannot be null");
-            }
+        /**
+         * @deprecated since 3.0. Use SpiAspspConsentDataProvider instead.
+         * @see SpiAspspConsentDataProvider
+         * @param aspspConsentData aspspConsentData
+         * @return SpiResponseBuilder
+         */
+        @Deprecated
+        public SpiResponseBuilder<T> aspspConsentData(@Nullable AspspConsentData aspspConsentData) {
             this.aspspConsentData = aspspConsentData;
             return this;
         }
@@ -152,9 +158,6 @@ public class SpiResponse<T> {
             if (payload == null) {
                 throw new IllegalStateException("Response payload cannot be null");
             }
-            if (aspspConsentData == null) {
-                throw new IllegalStateException("Response aspspConsentData cannot be null");
-            }
             this.responseStatus = SUCCESS;
             return new SpiResponse<>(this);
         }
@@ -163,9 +166,6 @@ public class SpiResponse<T> {
             //noinspection ConstantConditions - we cannot be sure that @NotNull annotation will be processed be external developer
             if (responseStatus == null) {
                 throw new IllegalArgumentException("responseStatus cannot be null");
-            }
-            if (aspspConsentData == null) {
-                throw new IllegalStateException("Response aspspConsentData cannot be null");
             }
             this.responseStatus = responseStatus;
             return new SpiResponse<>(this);

@@ -12,6 +12,8 @@ import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
@@ -104,10 +106,16 @@ public class ScaPaymentServiceTest {
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private SpiErrorMapper spiErrorMapper;
+    @Mock
+    private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider;
+    @Mock
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
     @Before
     public void init() {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
     }
 
     @Test
@@ -115,9 +123,9 @@ public class ScaPaymentServiceTest {
         //Given
         when(xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
-        when(singlePaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, AspspConsentData.emptyConsentData()))
+        when(singlePaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_SINGLE_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_SINGLE_PAYMENT_RESPONSE), Matchers.<Supplier<SinglePaymentInitiationResponse>>any(), eq(SPI_SINGLE_RESPONSE.getAspspConsentData())))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_SINGLE_PAYMENT_RESPONSE), Matchers.<Supplier<SinglePaymentInitiationResponse>>any(), eq(initialSpiAspspConsentDataProvider)))
             .thenReturn(SINGLE_PAYMENT_RESPONSE);
 
         //When
@@ -141,7 +149,7 @@ public class ScaPaymentServiceTest {
 
         when(xs2AToSpiSinglePaymentMapper.mapToSpiSinglePayment(SINGLE_PAYMENT, PRODUCT))
             .thenReturn(SPI_SINGLE_PAYMENT);
-        when(singlePaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, AspspConsentData.emptyConsentData()))
+        when(singlePaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);
@@ -160,9 +168,9 @@ public class ScaPaymentServiceTest {
         //Given
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
-        when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, AspspConsentData.emptyConsentData()))
+        when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_PERIODIC_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_PERIODIC_PAYMENT_RESPONSE), Matchers.<Supplier<PeriodicPaymentInitiationResponse>>any(), eq(SPI_PERIODIC_RESPONSE.getAspspConsentData())))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_PERIODIC_PAYMENT_RESPONSE), Matchers.<Supplier<PeriodicPaymentInitiationResponse>>any(), eq(initialSpiAspspConsentDataProvider)))
             .thenReturn(PERIODIC_PAYMENT_RESPONSE);
 
         //When
@@ -186,7 +194,7 @@ public class ScaPaymentServiceTest {
 
         when(xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(PERIODIC_PAYMENT, PRODUCT))
             .thenReturn(SPI_PERIODIC_PAYMENT);
-        when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, AspspConsentData.emptyConsentData()))
+        when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);
@@ -205,9 +213,9 @@ public class ScaPaymentServiceTest {
         //Given
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
-        when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, AspspConsentData.emptyConsentData()))
+        when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_BULK_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_BULK_PAYMENT_RESPONSE), Matchers.<Supplier<BulkPaymentInitiationResponse>>any(), eq(SPI_PERIODIC_RESPONSE.getAspspConsentData())))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_BULK_PAYMENT_RESPONSE), Matchers.<Supplier<BulkPaymentInitiationResponse>>any(), eq(initialSpiAspspConsentDataProvider)))
             .thenReturn(BULK_PAYMENT_RESPONSE);
 
         //When
@@ -231,7 +239,7 @@ public class ScaPaymentServiceTest {
 
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
-        when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, AspspConsentData.emptyConsentData()))
+        when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);
@@ -251,9 +259,9 @@ public class ScaPaymentServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(COMMON_PAYMENT, PRODUCT))
             .thenReturn(SPI_PAYMENT_INFO);
-        when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, AspspConsentData.emptyConsentData()))
+        when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_COMMON_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToCommonPaymentInitiateResponse(SPI_COMMON_RESPONSE.getPayload(), COMMON_PAYMENT.getPaymentType(), SPI_COMMON_RESPONSE.getAspspConsentData()))
+        when(spiToXs2aPaymentMapper.mapToCommonPaymentInitiateResponse(SPI_COMMON_RESPONSE.getPayload(), COMMON_PAYMENT.getPaymentType(), initialSpiAspspConsentDataProvider))
             .thenReturn(COMMON_PAYMENT_RESPONSE);
 
         //When
@@ -279,7 +287,7 @@ public class ScaPaymentServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(xs2aToSpiPaymentInfo.mapToSpiPaymentRequest(COMMON_PAYMENT, PRODUCT))
             .thenReturn(SPI_PAYMENT_INFO);
-        when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, AspspConsentData.emptyConsentData()))
+        when(commonPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, initialSpiAspspConsentDataProvider))
             .thenReturn(expectedFailureResponse);
         when(spiErrorMapper.mapToErrorHolder(expectedFailureResponse, ServiceType.PIS))
             .thenReturn(expectedError);

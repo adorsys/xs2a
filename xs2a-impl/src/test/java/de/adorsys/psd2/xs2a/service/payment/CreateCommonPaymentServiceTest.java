@@ -17,9 +17,9 @@
 
 package de.adorsys.psd2.xs2a.service.payment;
 
+import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -44,6 +44,8 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequ
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.sca.ScaPaymentServiceResolver;
+import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +59,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -68,17 +71,15 @@ public class CreateCommonPaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final CommonPayment COMMON_PAYMENT = buildCommonPayment();
     private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT = new Xs2aPisCommonPayment(PAYMENT_ID, PSU_DATA);
-    private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_DATA);
     private static final PaymentInitiationParameters PARAM = buildPaymentInitiationParameters();
     private static final CreatePisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID);
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
-    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
-    private static final CommonPaymentInitiationResponse RESPONSE = buildCommonPaymentInitiationResponse();
     private static final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
+    private static final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_DATA);
     private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null);
     private static final TppInfo WRONG_TPP_INFO = new TppInfo();
     private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null);
-
+    private CommonPaymentInitiationResponse commonPaymentInitiationResponse;
 
     @InjectMocks
     private CreateCommonPaymentService createCommonPaymentService;
@@ -87,9 +88,9 @@ public class CreateCommonPaymentServiceTest {
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
     @Mock
-    private AuthorisationMethodDecider authorisationMethodDecider;
-    @Mock
     private PisAspspDataService pisAspspDataService;
+    @Mock
+    private AspspDataService aspspDataService;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
     @Mock
@@ -100,18 +101,26 @@ public class CreateCommonPaymentServiceTest {
     private Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
     @Mock
     private ScaPaymentServiceResolver scaPaymentServiceResolver;
+    @SuppressWarnings("unused") //mocks boolean value that returns false by default
+    @Mock
+    private AuthorisationMethodDecider authorisationMethodDecider;
 
     @Before
     public void init() {
-        when(scaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA)).thenReturn(RESPONSE);
+        InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider =
+            new SpiAspspConsentDataProviderFactory(aspspDataService).getInitialAspspConsentDataProvider();
+        commonPaymentInitiationResponse = buildCommonPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
+
+        when(scaPaymentService.createCommonPayment(COMMON_PAYMENT, TPP_INFO, PRODUCT, PSU_DATA)).thenReturn(commonPaymentInitiationResponse);
         when(scaPaymentService.createCommonPayment(COMMON_PAYMENT, WRONG_TPP_INFO, PRODUCT, WRONG_PSU_DATA)).thenReturn(buildSpiErrorForCommonPayment());
         when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString())).thenReturn(PAYMENT_ID);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, RESPONSE, COMMON_PAYMENT.getPaymentData()))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, commonPaymentInitiationResponse, COMMON_PAYMENT.getPaymentData()))
             .thenReturn(PAYMENT_INFO);
         when(scaPaymentServiceResolver.getService())
             .thenReturn(scaPaymentService);
+        when(aspspDataService.updateAspspConsentData(any())).thenReturn(true);
     }
 
     @Test
@@ -171,7 +180,7 @@ public class CreateCommonPaymentServiceTest {
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getBody()).isEqualTo(RESPONSE);
+        assertThat(actualResponse.getBody()).isEqualTo(commonPaymentInitiationResponse);
     }
 
     @Test
@@ -192,6 +201,7 @@ public class CreateCommonPaymentServiceTest {
         assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.PAYMENT_FAILED);
     }
 
+
     private static CommonPayment buildCommonPayment() {
         CommonPayment request = new CommonPayment();
         request.setPaymentType(PaymentType.SINGLE);
@@ -210,11 +220,11 @@ public class CreateCommonPaymentServiceTest {
         return parameters;
     }
 
-    private static CommonPaymentInitiationResponse buildCommonPaymentInitiationResponse() {
+    private static CommonPaymentInitiationResponse buildCommonPaymentInitiationResponse(InitialSpiAspspConsentDataProvider initialSpiAspcpConsentDataProvider) {
         CommonPaymentInitiationResponse response = new CommonPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
-        response.setAspspConsentData(ASPSP_CONSENT_DATA);
+        response.setAspspConsentDataProvider(initialSpiAspcpConsentDataProvider);
         return response;
     }
 
@@ -229,9 +239,9 @@ public class CreateCommonPaymentServiceTest {
 
     private static CommonPaymentInitiationResponse buildSpiErrorForCommonPayment() {
         ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-            .errorType(ErrorType.PIIS_400)
-            .messages(ERROR_MESSAGE_TEXT)
-            .build();
+                                      .errorType(ErrorType.PIIS_400)
+                                      .messages(ERROR_MESSAGE_TEXT)
+                                      .build();
 
         return new CommonPaymentInitiationResponse(errorHolder);
     }

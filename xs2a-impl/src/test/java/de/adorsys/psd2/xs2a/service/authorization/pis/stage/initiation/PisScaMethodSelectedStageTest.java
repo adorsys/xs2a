@@ -36,6 +36,8 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentStatusAfterSpiService;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -58,8 +60,7 @@ import java.util.UUID;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.FINALISED;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -96,6 +97,10 @@ public class PisScaMethodSelectedStageTest {
     private ApplicationContext applicationContext;
     @Mock
     private Xs2aUpdatePaymentStatusAfterSpiService updatePaymentStatusAfterSpiService;
+    @Mock
+    private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
     @Before
     public void setUp() {
@@ -110,8 +115,11 @@ public class PisScaMethodSelectedStageTest {
 
         when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class))).thenReturn(CONTEXT_DATA);
 
+        when((spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString())))
+            .thenReturn(spiAspspConsentDataProvider);
+
         doNothing()
-            .when(pisAspspDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
+            .when(spiAspspConsentDataProvider).updateAspspConsentData(any());
     }
 
     @Test

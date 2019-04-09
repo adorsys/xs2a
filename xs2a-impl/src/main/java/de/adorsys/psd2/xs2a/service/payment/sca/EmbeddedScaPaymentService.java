@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.payment.sca;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
@@ -27,8 +28,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmbeddedScaPaymentService extends ScaPaymentService {
-    public EmbeddedScaPaymentService(SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, BulkPaymentSpi bulkPaymentSpi, CommonPaymentSpi commonPaymentSpi, Xs2aToSpiSinglePaymentMapper xs2AToSpiSinglePaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper) {
-        super(singlePaymentSpi, periodicPaymentSpi, bulkPaymentSpi, commonPaymentSpi, xs2AToSpiSinglePaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiBulkPaymentMapper, xs2aToSpiPaymentInfo, spiToXs2aPaymentMapper, spiContextDataProvider, spiErrorMapper);
+    public EmbeddedScaPaymentService(SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, BulkPaymentSpi bulkPaymentSpi, CommonPaymentSpi commonPaymentSpi, Xs2aToSpiSinglePaymentMapper xs2AToSpiSinglePaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, Xs2aToSpiBulkPaymentMapper xs2aToSpiBulkPaymentMapper, Xs2aToSpiPaymentInfo xs2aToSpiPaymentInfo, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper, SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory) {
+        super(singlePaymentSpi, periodicPaymentSpi, bulkPaymentSpi, commonPaymentSpi, xs2AToSpiSinglePaymentMapper, xs2aToSpiPeriodicPaymentMapper, xs2aToSpiBulkPaymentMapper, xs2aToSpiPaymentInfo, spiToXs2aPaymentMapper, spiContextDataProvider, spiErrorMapper, spiAspspConsentDataProviderFactory);
     }
 
     @Override

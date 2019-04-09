@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AspspConsentDataRemoteUrls {
+    private static final String ASPSP_CONSENT_DATA_ENDPOINT = "/aspsp-consent-data/consents/{consent-id}";
+
     @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
@@ -30,7 +32,7 @@ public class AspspConsentDataRemoteUrls {
      * @return String
      */
     public String getAspspConsentData() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
+        return consentServiceBaseUrl + ASPSP_CONSENT_DATA_ENDPOINT;
     }
 
     /**
@@ -39,7 +41,7 @@ public class AspspConsentDataRemoteUrls {
      * @return String
      */
     public String updateAspspConsentData() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
+        return consentServiceBaseUrl + ASPSP_CONSENT_DATA_ENDPOINT;
     }
 
     /**
@@ -48,6 +50,6 @@ public class AspspConsentDataRemoteUrls {
      * @return String
      */
     public String deleteAspspConsentData() {
-        return consentServiceBaseUrl + "/aspsp-consent-data/consents/{consent-id}";
+        return consentServiceBaseUrl + ASPSP_CONSENT_DATA_ENDPOINT;
     }
 }
