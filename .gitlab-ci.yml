@@ -44,35 +44,13 @@ variables: &variables
   GITLAB_IMAGE_NAME_CNT_MGMNT: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/cnt-mgmnt"
   OPENSHIFT_IMAGE_NAME_CNT_MGMNT: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-cnt-mgmnt"
 
-  # ASPSP Mock Server
-  GITLAB_IMAGE_NAME_MOCKSRV: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/aspsp-mock-server"
-  OPENSHIFT_IMAGE_NAME_MOCKSRV: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-mock-server"
-
-  # XS2A IDP Keycloak
-  GITLAB_IMAGE_NAME_KEYCLOAK: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/keycloak-xs2a"
-  OPENSHIFT_IMAGE_NAME_KEYCLOAK: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/keycloak-xs2a"
-
   # XS2A IDP ASPSP Profile
   GITLAB_IMAGE_NAME_ASPSP_PROFILE: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-aspsp-profile"
   OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-aspsp-profile"
 
-  # Online banking demo
-  GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-demo"
-  OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-demo"
-
-  # Online banking UIapp
-  GITLAB_IMAGE_NAME_ONLINE_BANKING_UI: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-ui"
-  OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-ui"
-
-
   DOCKER_IMAGE_NAME_XS2A: "docker.io/adorsys/xs2a-service"
   DOCKER_IMAGE_NAME_CNT_MGMNT: "docker.io/adorsys/xs2a-consent-management"
-  DOCKER_IMAGE_NAME_MOCKSRV: "docker.io/adorsys/xs2a-mock-server"
-  DOCKER_IMAGE_NAME_KEYCLOAK: "docker.io/adorsys/xs2a-idp"
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "docker.io/adorsys/xs2a-aspsp-profile"
-  DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND: "docker.io/adorsys/xs2a-mock-online-banking-backend"
-  DOCKER_IMAGE_NAME_ONLINE_BANKING_UI: "docker.io/adorsys/xs2a-mock-online-banking-ui"
-  DOCKER_IMAGE_NAME_ONLINE_BANKING: "docker.io/adorsys/xs2a-online-banking"
 
   ###########################
   # Build variables         #
@@ -98,14 +76,9 @@ variables: &variables
 
 .java_artifacts: &java_artifacts
   paths:
-    - "xs2a-standalone-starter/target/xs2a-standalone-starter*jar"
+    - "xs2a-standalone-starter/target/xs2a-standalone-starter*-exec.jar"
     - "consent-management/cms-standalone-service/target/consent-management*jar"
     - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
-  name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
-
-.angular_artifacts: &angular_artifacts
-  paths:
-    - "online-banking-demo-ui/dist"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
 .build_java: &build_java
@@ -116,14 +89,6 @@ variables: &variables
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -DskipTests clean install
-
-.build_angular: &build_angular
-  stage: "build:src"
-  image: "adorsys/ci-build"
-  script:
-    - cd online-banking-demo-ui
-    - npm install
-    - npm run build --prod
 
 .java_tests: &java_tests
   stage: "build:qa"
@@ -137,14 +102,9 @@ variables: &variables
 # Test building docker images
 .test_docker_image: &test_docker_image
   script:
-#    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" spi-mock
-#    - docker build -t "$GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG" aspsp-mock-server
-#    - docker build -t "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
+    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" xs2a-standalone-starter
     - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
     - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
-#    - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
-#    - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-demo-ui
-
 
 # Build docker images and put them to GITLAB repo
 # TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
@@ -152,14 +112,8 @@ variables: &variables
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
 
-#    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" spi-mock
-#    - docker push "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG"
-
-#    - docker build -t "$GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG" aspsp-mock-server
-#    - docker push "$GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG"
-
-#    - docker build -t "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
-#    - docker push "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG"
+    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" xs2a-standalone-starter
+    - docker push "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG"
 
     - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
     - docker push "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
@@ -167,33 +121,19 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
     - docker push "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
 
-#    - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
-#    - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
-
-#    - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-demo-ui
-#    - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
-
 
 # Build docker images and put them to DOCKER HUB repo
 .build_dockerhub_image: &build_dockerhub_image
   script:
-#    - docker build -t "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG" spi-mock
-#    - docker build -t "$DOCKER_IMAGE_NAME_MOCKSRV:$DOCKER_TAG" aspsp-mock-server
-#    - docker build -t "$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
+    - docker build -t "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG" xs2a-standalone-starter
     - docker build -t "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
     - docker build -t "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
-#    - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND:$DOCKER_TAG" online-banking-demo
-#    - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-demo-ui
 
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASS
 
-#    - docker push "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG"
-#    - docker push "$DOCKER_IMAGE_NAME_MOCKSRV:$DOCKER_TAG"
-#    - docker push "$DOCKER_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG"
     - docker push "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
     - docker push "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
-#    - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_BACKEND:$DOCKER_TAG"
-#    - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
 
     - docker logout
 
@@ -204,17 +144,9 @@ variables: &variables
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
     - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
 
-#    - docker pull $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG
-#    - docker tag $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
-#    - docker push $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
-
-#    - docker pull $GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG
-#    - docker tag $GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_MOCKSRV:$DOCKER_TAG
-#    - docker push $OPENSHIFT_IMAGE_NAME_MOCKSRV:$DOCKER_TAG
-
-#    - docker pull $GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG
-#    - docker tag $GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG
-#    - docker push $OPENSHIFT_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG
+    - docker pull $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
 
     - docker pull $GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG
     - docker tag $GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG
@@ -223,14 +155,6 @@ variables: &variables
     - docker pull $GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
     - docker tag $GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
-
-#    - docker pull $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
-#    - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
-#    - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
-
-#    - docker pull $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
-#    - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
-#    - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
 
 .helm_env_deploy: &helm_env_deploy
   image: adorsys/ci-helm:2.10
@@ -279,12 +203,6 @@ build_package_java11:
   <<: *build_java
   artifacts:
     <<: *java_artifacts
-    expire_in: "1 day"
-
-build_frontend:
-  <<: *build_angular
-  artifacts:
-    <<: *angular_artifacts
     expire_in: "1 day"
 
 pmd_report:

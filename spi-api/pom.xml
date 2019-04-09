@@ -131,7 +131,7 @@ Use it manually to generate javadocs. Don't commit it
                                         <exclude>de.adorsys.psd2:cms-client</exclude>
                                         <exclude>de.adorsys.psd2:xs2a-server-api</exclude>
                                         <exclude>de.adorsys.psd2:xs2a-impl</exclude>
-                                        <exclude>de.adorsys.psd2:spi-mock</exclude>
+                                        <exclude>de.adorsys.psd2:xs2a-standalone-starter</exclude>
                                     </excludes>
                                 </bannedDependencies>
                             </rules>

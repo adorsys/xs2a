@@ -246,7 +246,6 @@
                                         <exclude>de.adorsys.psd2:consent-management-lib</exclude>
                                         <exclude>de.adorsys.psd2:consent-management-remote</exclude>
                                         <exclude>de.adorsys.psd2:cms-client</exclude>
-                                        <exclude>de.adorsys.psd2:spi-mock</exclude>
                                         <exclude>de.adorsys.psd2:consent-psu-api</exclude>
                                         <exclude>de.adorsys.psd2:consent-aspsp-api</exclude>
                                     </excludes>
