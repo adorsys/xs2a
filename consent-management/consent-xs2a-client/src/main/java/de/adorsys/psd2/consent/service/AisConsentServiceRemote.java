@@ -16,23 +16,18 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -97,29 +92,8 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
     @Override
     public Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
         CreateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
-            new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
+                                                                         new HttpEntity<>(request), CreateAisConsentResponse.class, consentId).getBody();
         return Optional.ofNullable(response.getConsentId());
-    }
-
-    @Override
-    public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
-        CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
-            request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
-
-        return Optional.ofNullable(response)
-                   .map(CreateAisConsentAuthorizationResponse::getAuthorizationId);
-    }
-
-    @Override
-    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId)
-                                       .getBody());
-    }
-
-    @Override
-    public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
-        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, authorizationId);
-        return true;
     }
 
     @Override
@@ -134,61 +108,9 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
     }
 
     @Override
-    public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
-        try {
-            ResponseEntity<List<String>> request = consentRestTemplate.exchange(
-                remoteAisConsentUrls.getAuthorisationSubResources(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
-                }, encryptedConsentId);
-            return Optional.ofNullable(request.getBody());
-        } catch (CmsRestException cmsRestException) {
-            log.warn("No authorisation found by consentId {}", encryptedConsentId);
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
-        try {
-            ResponseEntity<ScaStatus> request = consentRestTemplate.getForEntity(
-                remoteAisConsentUrls.getAuthorisationScaStatus(), ScaStatus.class, encryptedConsentId, authorisationId);
-            return Optional.ofNullable(request.getBody());
-        } catch (CmsRestException cmsRestException) {
-            log.warn("Couldn't get authorisation SCA Status by consentId {} and authorisationId {}");
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        return consentRestTemplate.getForEntity(remoteAisConsentUrls.isAuthenticationMethodDecoupled(), Boolean.class, authorisationId, authenticationMethodId)
-                   .getBody();
-    }
-
-    @Override
-    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
-        try {
-            ResponseEntity<Void> responseEntity = consentRestTemplate.exchange(remoteAisConsentUrls.saveAuthenticationMethods(), HttpMethod.POST, new HttpEntity<>(methods), Void.class, authorisationId);
-
-            if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
-                return true;
-            }
-        } catch (CmsRestException cmsRestException) {
-            log.warn("Couldn't save authentication methods {} by authorisationId {}", methods, authorisationId);
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        return consentRestTemplate.exchange(remoteAisConsentUrls.updateScaApproach(), HttpMethod.PUT, null, Boolean.class, authorisationId, scaApproach)
-                   .getBody();
-    }
-
-    @Override
     public boolean updateMultilevelScaRequired(String encryptedConsentId, boolean multilevelScaRequired) {
         return consentRestTemplate.exchange(remoteAisConsentUrls.updateMultilevelScaRequired(),
-            HttpMethod.PUT, null, Boolean.class, encryptedConsentId, multilevelScaRequired)
+                                            HttpMethod.PUT, null, Boolean.class, encryptedConsentId, multilevelScaRequired)
                    .getBody();
     }
 }
