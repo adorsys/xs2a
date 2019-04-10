@@ -31,7 +31,7 @@
       }
     ]
   },
-  "combinedServiceIndicator": true,
+  "combinedServiceIndicator": false,
   "frequencyPerDay": 15,
   "recurringIndicator": true,
   "validUntil": "2019-10-10"

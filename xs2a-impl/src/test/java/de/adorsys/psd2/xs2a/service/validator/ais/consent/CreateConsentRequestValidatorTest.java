@@ -19,8 +19,10 @@ package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -37,13 +39,15 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PERIOD_INVALID;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateConsentRequestValidatorTest {
+    private static final MessageError COMBINED_SERVICE_VALIDATION_ERROR =
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(SESSIONS_NOT_SUPPORTED));
+
     @InjectMocks
     private CreateConsentRequestValidator createConsentRequestValidator;
     @Mock
@@ -179,7 +183,65 @@ public class CreateConsentRequestValidatorTest {
         assertValidationResultNotValid_FORMAT_ERROR(validationResult);
     }
 
-    @NotNull
+    @Test
+    public void validate_withSupportedCombinedServiceIndicator_shouldReturnValid() {
+        //Given
+        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(true);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(true);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
+
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validate_withoutSupportedCombinedServiceIndicator_shouldReturnValid() {
+        //Given
+        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(true);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(false);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
+
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validate_withoutNotSupportedCombinedServiceIndicator_shouldReturnValid() {
+        //Given
+        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(false);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(false);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
+
+        //Then
+        assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    public void validate_withNotSupportedCombinedServiceIndicator_shouldReturnFormatError() {
+        //Given
+        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(false);
+        CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(true);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(createConsentReq);
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(COMBINED_SERVICE_VALIDATION_ERROR);
+    }
+
+    private CreateConsentReq buildCreateConsentReqWithCombinedServiceIndicator(boolean combinedServiceIndicator) {
+        CreateConsentReq createConsentReq = buildCreateConsentReq(true, 2);
+        createConsentReq.setCombinedServiceIndicator(combinedServiceIndicator);
+        return createConsentReq;
+    }
+
     private CreateConsentReq buildCreateConsentReq(boolean recurringIndicator, int frequencyPerDay) {
         return buildCreateConsentReq(recurringIndicator, frequencyPerDay, LocalDate.now().plusDays(1));
     }

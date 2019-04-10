@@ -5,7 +5,7 @@
     "allPsd2": "allAccounts",
     "transactions": []
   },
-  "combinedServiceIndicator": true,
+  "combinedServiceIndicator": false,
   "frequencyPerDay": 10,
   "recurringIndicator": true,
   "validUntil": "2019-10-10"
