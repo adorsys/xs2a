@@ -1,4 +1,4 @@
-FROM adorsys/openjdk-jre-base:8-minideb
+FROM adorsys/java:8
 
 MAINTAINER https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a
 
