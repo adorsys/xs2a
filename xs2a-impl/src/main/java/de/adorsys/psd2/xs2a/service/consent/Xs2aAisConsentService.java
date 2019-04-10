@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -43,6 +44,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Xs2aAisConsentService {
     private final AisConsentServiceEncrypted aisConsentService;
+    private final AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
@@ -137,7 +139,7 @@ public class Xs2aAisConsentService {
      */
     public Optional<String> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
         AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData, scaApproachResolver.resolveScaApproach());
-        return aisConsentService.createAuthorization(consentId, request);
+        return aisConsentAuthorisationServiceEncrypted.createAuthorization(consentId, request);
     }
 
     /**
@@ -149,7 +151,7 @@ public class Xs2aAisConsentService {
      */
 
     public Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId)
+        return aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorizationId, consentId)
                    .map(aisConsentAuthorisationMapper::mapToAccountConsentAuthorization);
     }
 
@@ -164,7 +166,7 @@ public class Xs2aAisConsentService {
                 final String authorizationId = req.getAuthorizationId();
                 final AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorizationRequest(req);
 
-                aisConsentService.updateConsentAuthorization(authorizationId, request);
+                aisConsentAuthorisationServiceEncrypted.updateConsentAuthorization(authorizationId, request);
             });
     }
 
@@ -185,7 +187,7 @@ public class Xs2aAisConsentService {
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String consentId) {
-        return aisConsentService.getAuthorisationsByConsentId(consentId);
+        return aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(consentId);
     }
 
     /**
@@ -196,7 +198,7 @@ public class Xs2aAisConsentService {
      * @return SCA status of the authorisation
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
+        return aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(consentId, authorisationId);
     }
 
     /**
@@ -207,7 +209,7 @@ public class Xs2aAisConsentService {
      * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
      */
     public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        return aisConsentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        return aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
     }
 
     /**
@@ -218,7 +220,7 @@ public class Xs2aAisConsentService {
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
     public boolean saveAuthenticationMethods(String authorisationId, List<Xs2aAuthenticationObject> methods) {
-        return aisConsentService.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+        return aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
     }
 
     /**
@@ -228,7 +230,7 @@ public class Xs2aAisConsentService {
      * @param scaApproach     Chosen SCA approach
      */
     public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        aisConsentService.updateScaApproach(authorisationId, scaApproach);
+        aisConsentAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
     }
 
     /**

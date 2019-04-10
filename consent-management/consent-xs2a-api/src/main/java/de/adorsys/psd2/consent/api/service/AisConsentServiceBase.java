@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-import de.adorsys.psd2.consent.api.CmsScaMethod;
-import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -101,78 +101,7 @@ interface AisConsentServiceBase {
      */
     Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request);
 
-    /**
-     * Creates consent authorization
-     *
-     * @param consentId id of consent
-     * @param request   needed parameters for creating consent authorization
-     * @return String authorization id
-     */
-    Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request);
-
-    /**
-     * Gets consent authorization
-     *
-     * @param consentId       id of consent
-     * @param authorizationId id of authorisation session
-     * @return AisConsentAuthorizationResponse
-     */
-    Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId);
-
-    /**
-     * Updates consent authorization
-     *
-     * @param authorizationId id of authorisation session
-     * @param request         needed parameters for updating consent authorization
-     * @return boolean
-     */
-    boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request);
-
     Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId);
-
-    /**
-     * Gets list of consent authorisation IDs by consent ID
-     *
-     * @param consentId id of consent
-     * @return list of consent authorisation IDs
-     */
-    Optional<List<String>> getAuthorisationsByConsentId(String consentId);
-
-    /**
-     * Gets SCA status of the authorisation by consent ID and authorisation ID
-     *
-     * @param consentId       String representation of the consent identifier
-     * @param authorisationId String representation of the authorisation identifier
-     * @return SCA status of the authorisation
-     */
-    Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
-
-    /**
-     * Checks if requested authentication method is decoupled.
-     *
-     * @param authorisationId        String representation of the authorisation identifier
-     * @param authenticationMethodId String representation of the available authentication method identifier
-     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
-     */
-    boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId);
-
-    /**
-     * Saves authentication methods in provided authorisation
-     *
-     * @param authorisationId String representation of the authorisation identifier
-     * @param methods         List of authentication methods to be saved
-     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
-     */
-    boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods);
-
-    /**
-     * Updates AIS SCA approach in authorisation
-     *
-     * @param authorisationId String representation of the authorisation identifier
-     * @param scaApproach     Chosen SCA approach
-     * @return <code>true</code> if authorisation was found and SCA approach updated, <code>false</code> otherwise
-     */
-    boolean updateScaApproach(String authorisationId, ScaApproach scaApproach);
 
     /**
      * Updates multilevel SCA required field
