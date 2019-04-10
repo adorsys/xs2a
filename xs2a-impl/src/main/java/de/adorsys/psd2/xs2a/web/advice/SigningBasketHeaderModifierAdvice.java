@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.advice;
 
+import de.adorsys.psd2.model.HrefType;
 import de.adorsys.psd2.model.LinksSigningBasket;
 import de.adorsys.psd2.model.SigningBasketResponse201;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -51,6 +52,7 @@ public class SigningBasketHeaderModifierAdvice extends CommonHeaderModifierAdvic
                 SigningBasketResponse201 signingBasketResponse = (SigningBasketResponse201) body;
                 response.getHeaders().add("Location", Optional.ofNullable(signingBasketResponse.getLinks())
                                                           .map(LinksSigningBasket::getSelf)
+                                                          .map(HrefType::getHref)
                                                           .orElse(null));
             }
         } else if ("_startSigningBasketAuthorisation".equals(methodName) || "_updateSigningBasketPsuData".equals(methodName)) {

@@ -95,6 +95,7 @@ public class CmsToXs2aPaymentMapper {
         bulk.setBatchBookingPreferred(false);
         bulk.setDebtorAccount(firstPayment.getDebtorAccount());
         bulk.setRequestedExecutionDate(firstPayment.getRequestedExecutionDate());
+        bulk.setRequestedExecutionTime(firstPayment.getRequestedExecutionTime());
         List<SinglePayment> paymentList = payments.stream()
                                               .map(this::mapToSinglePayment)
                                               .collect(Collectors.toList());

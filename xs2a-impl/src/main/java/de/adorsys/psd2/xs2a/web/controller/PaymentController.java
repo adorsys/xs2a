@@ -17,7 +17,9 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.PaymentApi;
-import de.adorsys.psd2.model.PaymentInitiationCancelResponse204202;
+import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
+import de.adorsys.psd2.model.PaymentInitiationCancelResponse202;
+import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -47,6 +49,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Map;
 import java.util.UUID;
 
@@ -107,13 +110,14 @@ public class PaymentController implements PaymentApi {
 
     //Method for JSON format payments
     @Override
-    public ResponseEntity initiatePayment(Object body, UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct,
+    public ResponseEntity initiatePayment(@Valid Object body, UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct,
                                           String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType,
-                                          String psUCorporateID, String psUCorporateIDType, String consentID, boolean tppRedirectPreferred,
-                                          String tpPRedirectURI, String tpPNokRedirectURI, boolean tpPExplicitAuthorisationPreferred,
+                                          String psUCorporateID, String psUCorporateIDType, String consentID, Boolean tpPRedirectPreferred,
+                                          String tpPRedirectURI, String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
+                                          String tpPRejectionNoFundsPreferred, String tpPNotificationURI, String tpPNotificationContentPreferred,
                                           String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
-                                          String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
-                                          String psUGeoLocation) {
+                                          String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
+                                          UUID psUDeviceID, String psUGeoLocation) {
 
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
         if (!PaymentType.getByValue(paymentService).isPresent()) {
@@ -135,16 +139,22 @@ public class PaymentController implements PaymentApi {
                                                 .build());
     }
 
-    //Method for pain.001 and other ray payment products
+    //Method for pain.001 payment products
     @Override
-    public ResponseEntity<Object> initiatePayment(UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct,
-                                                  String xmlSct, String jsonStandingorderType, String digest, String signature,
-                                                  byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID,
-                                                  String psUCorporateIDType, String consentID, String tpPRedirectPreferred, String tpPRedirectURI,
-                                                  String tpPNokRedirectURI, boolean tpPExplicitAuthorisationPreferred, String psUIPPort,
-                                                  String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
-                                                  String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-
+    public ResponseEntity<PaymentInitationRequestResponse201> initiatePayment(UUID xRequestID, String psUIPAddress,
+                                                                              String paymentService, String paymentProduct, Object xmlSct,
+                                                                              PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonStandingorderType,
+                                                                              String digest, String signature, byte[] tpPSignatureCertificate,
+                                                                              String PSU_ID, String psUIDType, String psUCorporateID,
+                                                                              String psUCorporateIDType, String consentID,
+                                                                              Boolean tpPRedirectPreferred, String tpPRedirectURI,
+                                                                              String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
+                                                                              String tpPRejectionNoFundsPreferred, String tpPNotificationURI,
+                                                                              String tpPNotificationContentPreferred, String psUIPPort,
+                                                                              String psUAccept, String psUAcceptCharset,
+                                                                              String psUAcceptEncoding, String psUAcceptLanguage,
+                                                                              String psUUserAgent, String psUHttpMethod,
+                                                                              UUID psUDeviceID, String psUGeoLocation) {
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
         if (!PaymentType.getByValue(paymentService).isPresent()) {
             ResponseObject<TransactionStatus> responseObject = ResponseObject.<TransactionStatus>builder()
@@ -165,13 +175,36 @@ public class PaymentController implements PaymentApi {
                                                 .build());
     }
 
+    // Method for raw payment products
+    @Override
+    public ResponseEntity<PaymentInitationRequestResponse201> initiatePayment(String body, UUID xRequestID, String psUIPAddress, String paymentService, String paymentProduct, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String consentID, Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred, String tpPRejectionNoFundsPreferred, String tpPNotificationURI, String tpPNotificationContentPreferred, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
+        if (!PaymentType.getByValue(paymentService).isPresent()) {
+            ResponseObject<TransactionStatus> responseObject = ResponseObject.<TransactionStatus>builder()
+                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404)).build();
+            return responseErrorMapper.generateErrorResponse(responseObject.getError());
+        }
+
+        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), psuData);
+        ResponseObject serviceResponse =
+            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aRawPayment(body), paymentInitiationParameters);
+
+        return serviceResponse.hasError()
+                   ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
+                   : responseMapper.created(ResponseObject
+                                                .builder()
+                                                .body(paymentModelMapperPsd2.mapToPaymentInitiationResponse12(serviceResponse.getBody()))
+                                                .build());
+    }
+
     @Override
     public ResponseEntity cancelPayment(String paymentService, String paymentProduct, String paymentId,
                                         UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate,
-                                        String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset,
-                                        String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
-                                        String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-
+                                        Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI,
+                                        String psUIPAddress, String psUIPPort, String psUAccept,
+                                        String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
+                                        String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
                                                                     .map(type -> xs2aPaymentService.cancelPayment(type, paymentProduct, paymentId))
                                                                     .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
@@ -182,7 +215,7 @@ public class PaymentController implements PaymentApi {
         }
 
         CancelPaymentResponse cancelPayment = serviceResponse.getBody();
-        PaymentInitiationCancelResponse204202 response = paymentModelMapperPsd2.mapToPaymentInitiationCancelResponse(cancelPayment);
+        PaymentInitiationCancelResponse202 response = paymentModelMapperPsd2.mapToPaymentInitiationCancelResponse(cancelPayment);
 
         return cancelPayment.isStartAuthorisationRequired()
                    ? responseMapper.accepted(ResponseObject.builder().body(response).build())
@@ -244,14 +277,15 @@ public class PaymentController implements PaymentApi {
     }
 
     @Override
-    public ResponseEntity startPaymentAuthorisation(String paymentService, String paymentProduct, String paymentId,
-                                                    UUID xRequestID, String PSU_ID, String psUIDType, String psUCorporateID,
-                                                    String psUCorporateIDType, String digest, String signature,
+    public ResponseEntity startPaymentAuthorisation(UUID xRequestID, String paymentService, String paymentProduct,
+                                                    String paymentId, Object body, String PSU_ID, String psUIDType,
+                                                    String psUCorporateID, String psUCorporateIDType, Boolean tpPRedirectPreferred,
+                                                    String tpPRedirectURI, String tpPNokRedirectURI, String tpPNotificationURI,
+                                                    String tpPNotificationContentPreferred, String digest, String signature,
                                                     byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort,
                                                     String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                                     String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
                                                     UUID psUDeviceID, String psUGeoLocation) {
-
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
         ResponseObject<Xs2aCreatePisAuthorisationResponse> serviceResponse = paymentAuthorisationService.createPisAuthorization(paymentId, PaymentType.getByValue(paymentService).get(), paymentProduct, psuData);
@@ -265,12 +299,14 @@ public class PaymentController implements PaymentApi {
                                                                           String paymentId, UUID xRequestID, String digest,
                                                                           String signature, byte[] tpPSignatureCertificate,
                                                                           String PSU_ID, String psUIDType, String psUCorporateID,
-                                                                          String psUCorporateIDType, String psUIPAddress,
-                                                                          String psUIPPort, String psUAccept, String psUAcceptCharset,
-                                                                          String psUAcceptEncoding, String psUAcceptLanguage,
-                                                                          String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
+                                                                          String psUCorporateIDType, Boolean tpPRedirectPreferred,
+                                                                          String tpPRedirectURI, String tpPNokRedirectURI,
+                                                                          String tpPNotificationURI, String tpPNotificationContentPreferred,
+                                                                          String psUIPAddress, String psUIPPort, String psUAccept,
+                                                                          String psUAcceptCharset, String psUAcceptEncoding,
+                                                                          String psUAcceptLanguage, String psUUserAgent,
+                                                                          String psUHttpMethod, UUID psUDeviceID,
                                                                           String psUGeoLocation) {
-
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> serviceResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorization(paymentId, psuData, PaymentType.getByValue(paymentService).get(), paymentProduct);
         return serviceResponse.hasError()

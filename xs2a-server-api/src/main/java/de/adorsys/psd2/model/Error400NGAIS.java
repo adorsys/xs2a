@@ -16,25 +16,23 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.TppMessage400AIS;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 400. 
  */
 @ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 400. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class Error400NGAIS   {
   @JsonProperty("tppMessages")
@@ -65,6 +63,8 @@ public class Error400NGAIS   {
 
   @Valid
 
+
+  @JsonProperty("tppMessages")
   public List<TppMessage400AIS> getTppMessages() {
     return tppMessages;
   }
@@ -85,6 +85,8 @@ public class Error400NGAIS   {
   @ApiModelProperty(value = "")
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;

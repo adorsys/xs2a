@@ -256,7 +256,7 @@ public class CmsToXs2aPaymentMapperTest {
 
         assertEquals(DEBTOR_ACCOUNT_REFERENCE, bulkPayment.getDebtorAccount());
         assertEquals(REQUESTED_EXECUTION_DATE, bulkPayment.getRequestedExecutionDate());
-
+        assertEquals(REQUESTED_EXECUTION_TIME, bulkPayment.getRequestedExecutionTime());
 
         assertEquals(TRANSACTION_STATUS, bulkPayment.getTransactionStatus());
         assertEquals(PSU_ID_DATA_LIST, bulkPayment.getPsuDataList());

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -30,7 +31,6 @@ import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,23 +54,28 @@ public class PaymentModelMapperXs2a {
     private final AccountModelMapper accountModelMapper;
     private final HttpServletRequest httpServletRequest;
     private final AmountModelMapper amountModelMapper;
+    private final JsonConverter jsonConverter;
 
     public Object mapToXs2aPayment(Object payment, PaymentInitiationParameters requestParameters) {
         if (requestParameters.getPaymentType() == SINGLE) {
-            return mapToXs2aSinglePayment(validatePayment(payment, PaymentInitiationSctJson.class));
+            return mapToXs2aSinglePayment(validatePayment(payment, PaymentInitiationJson.class));
         } else if (requestParameters.getPaymentType() == PERIODIC) {
-            return mapToXs2aPeriodicPayment(validatePayment(payment, PeriodicPaymentInitiationSctJson.class));
+            return mapToXs2aPeriodicPayment(validatePayment(payment, PeriodicPaymentInitiationJson.class));
         } else {
-            return mapToXs2aBulkPayment(validatePayment(payment, BulkPaymentInitiationSctJson.class));
+            return mapToXs2aBulkPayment(validatePayment(payment, BulkPaymentInitiationJson.class));
         }
     }
 
-    public Object mapToXs2aRawPayment(PaymentInitiationParameters requestParameters, String xmlSct, String jsonStandingorderType) {
+    public Object mapToXs2aRawPayment(PaymentInitiationParameters requestParameters, Object xmlSct, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonStandingOrderType) {
         if (requestParameters.getPaymentType() == PERIODIC) {
-            return buildPeriodicBinaryBodyData(xmlSct, jsonStandingorderType);
+            return buildPeriodicBinaryBodyData(xmlSct, jsonStandingOrderType);
         }
 
         return buildBinaryBodyData(httpServletRequest);
+    }
+
+    public Object mapToXs2aRawPayment(String payment) {
+        return payment.getBytes();
     }
 
     private <R> R validatePayment(Object payment, Class<R> clazz) {
@@ -79,7 +84,7 @@ public class PaymentModelMapperXs2a {
         return result;
     }
 
-    private SinglePayment mapToXs2aSinglePayment(PaymentInitiationSctJson paymentRequest) {
+    private SinglePayment mapToXs2aSinglePayment(PaymentInitiationJson paymentRequest) {
         SinglePayment payment = new SinglePayment();
 
         payment.setEndToEndIdentification(paymentRequest.getEndToEndIdentification());
@@ -95,7 +100,6 @@ public class PaymentModelMapperXs2a {
         payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
         payment.setRemittanceInformationStructured(new Remittance());
         payment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
-        payment.setRequestedExecutionTime(paymentRequest.getRequestedExecutionTime());
         return payment;
     }
 
@@ -103,7 +107,7 @@ public class PaymentModelMapperXs2a {
         return mapper.convertValue(reference12, AccountReference.class);
     }
 
-    private PeriodicPayment mapToXs2aPeriodicPayment(PeriodicPaymentInitiationSctJson paymentRequest) {
+    private PeriodicPayment mapToXs2aPeriodicPayment(PeriodicPaymentInitiationJson paymentRequest) {
         PeriodicPayment payment = new PeriodicPayment();
 
         payment.setEndToEndIdentification(paymentRequest.getEndToEndIdentification());
@@ -145,16 +149,17 @@ public class PaymentModelMapperXs2a {
         return Xs2aFrequencyCode.valueOf(frequency.name());
     }
 
-    private BulkPayment mapToXs2aBulkPayment(BulkPaymentInitiationSctJson paymentRequest) {
+    private BulkPayment mapToXs2aBulkPayment(BulkPaymentInitiationJson paymentRequest) {
         BulkPayment bulkPayment = new BulkPayment();
         bulkPayment.setBatchBookingPreferred(paymentRequest.getBatchBookingPreferred());
         bulkPayment.setDebtorAccount(mapToXs2aAccountReference(paymentRequest.getDebtorAccount()));
         bulkPayment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
+        bulkPayment.setRequestedExecutionTime(paymentRequest.getRequestedExecutionTime());
         bulkPayment.setPayments(mapBulkPaymentToSinglePayments(paymentRequest));
         return bulkPayment;
     }
 
-    private List<SinglePayment> mapBulkPaymentToSinglePayments(BulkPaymentInitiationSctJson paymentRequest) {
+    private List<SinglePayment> mapBulkPaymentToSinglePayments(BulkPaymentInitiationJson paymentRequest) {
         return paymentRequest.getPayments().stream()
                    .map(p -> {
                        SinglePayment payment = new SinglePayment();
@@ -171,7 +176,7 @@ public class PaymentModelMapperXs2a {
                        payment.setPurposeCode(new Xs2aPurposeCode(null));
                        payment.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
                        payment.setRemittanceInformationStructured(new Remittance());
-                       payment.setRequestedExecutionTime(OffsetDateTime.now().plusHours(1));
+                       payment.setRequestedExecutionTime(paymentRequest.getRequestedExecutionTime());
                        return payment;
                    })
                    .collect(Collectors.toList());
@@ -187,15 +192,16 @@ public class PaymentModelMapperXs2a {
         return null;
     }
 
-    private byte[] buildPeriodicBinaryBodyData(String xmlPart, String jsonPart) {
-        if (StringUtils.isBlank(xmlPart) || StringUtils.isBlank(jsonPart)) {
+    private byte[] buildPeriodicBinaryBodyData(Object xmlPart, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonPart) {
+        Optional<String> serialisedJsonPart = jsonConverter.toJson(jsonPart);
+        if (xmlPart == null || !serialisedJsonPart.isPresent()) {
             throw new IllegalArgumentException("Invalid body of the multipart request!");
         }
 
         String body = new StringBuilder()
                           .append(xmlPart)
                           .append("\n")
-                          .append(jsonPart)
+                          .append(serialisedJsonPart.get())
                           .toString();
         return body.getBytes(Charset.forName("UTF-8"));
     }

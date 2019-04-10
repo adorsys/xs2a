@@ -16,40 +16,38 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * LinksCardAccountReport
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
-public class LinksCardAccountReport extends HashMap<String, String>  {
+public class LinksCardAccountReport extends HashMap<String, HrefType>  {
   @JsonProperty("cardAccount")
-  private String cardAccount = null;
+  private HrefType cardAccount = null;
 
   @JsonProperty("first")
-  private String first = null;
+  private HrefType first = null;
 
   @JsonProperty("next")
-  private String next = null;
+  private HrefType next = null;
 
   @JsonProperty("previous")
-  private String previous = null;
+  private HrefType previous = null;
 
   @JsonProperty("last")
-  private String last = null;
+  private HrefType last = null;
 
-  public LinksCardAccountReport cardAccount(String cardAccount) {
+  public LinksCardAccountReport cardAccount(HrefType cardAccount) {
     this.cardAccount = cardAccount;
     return this;
   }
@@ -61,16 +59,19 @@ public class LinksCardAccountReport extends HashMap<String, String>  {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
+  @Valid
 
-  public String getCardAccount() {
+
+  @JsonProperty("cardAccount")
+  public HrefType getCardAccount() {
     return cardAccount;
   }
 
-  public void setCardAccount(String cardAccount) {
+  public void setCardAccount(HrefType cardAccount) {
     this.cardAccount = cardAccount;
   }
 
-  public LinksCardAccountReport first(String first) {
+  public LinksCardAccountReport first(HrefType first) {
     this.first = first;
     return this;
   }
@@ -81,16 +82,19 @@ public class LinksCardAccountReport extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getFirst() {
+
+  @JsonProperty("first")
+  public HrefType getFirst() {
     return first;
   }
 
-  public void setFirst(String first) {
+  public void setFirst(HrefType first) {
     this.first = first;
   }
 
-  public LinksCardAccountReport next(String next) {
+  public LinksCardAccountReport next(HrefType next) {
     this.next = next;
     return this;
   }
@@ -101,16 +105,19 @@ public class LinksCardAccountReport extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getNext() {
+
+  @JsonProperty("next")
+  public HrefType getNext() {
     return next;
   }
 
-  public void setNext(String next) {
+  public void setNext(HrefType next) {
     this.next = next;
   }
 
-  public LinksCardAccountReport previous(String previous) {
+  public LinksCardAccountReport previous(HrefType previous) {
     this.previous = previous;
     return this;
   }
@@ -121,16 +128,19 @@ public class LinksCardAccountReport extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getPrevious() {
+
+  @JsonProperty("previous")
+  public HrefType getPrevious() {
     return previous;
   }
 
-  public void setPrevious(String previous) {
+  public void setPrevious(HrefType previous) {
     this.previous = previous;
   }
 
-  public LinksCardAccountReport last(String last) {
+  public LinksCardAccountReport last(HrefType last) {
     this.last = last;
     return this;
   }
@@ -141,12 +151,15 @@ public class LinksCardAccountReport extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getLast() {
+
+  @JsonProperty("last")
+  public HrefType getLast() {
     return last;
   }
 
-  public void setLast(String last) {
+  public void setLast(HrefType last) {
     this.last = last;
   }
 

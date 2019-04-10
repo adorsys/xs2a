@@ -16,23 +16,23 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Body of the JSON response for a successful update PSU Identification request.
  */
 @ApiModel(description = "Body of the JSON response for a successful update PSU Identification request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class UpdatePsuIdenticationResponse   {
   @JsonProperty("_links")
@@ -57,6 +57,8 @@ public class UpdatePsuIdenticationResponse   {
   @NotNull
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;
@@ -80,6 +82,8 @@ public class UpdatePsuIdenticationResponse   {
 
   @Valid
 
+
+  @JsonProperty("scaStatus")
   public ScaStatus getScaStatus() {
     return scaStatus;
   }
@@ -100,6 +104,8 @@ public class UpdatePsuIdenticationResponse   {
   @ApiModelProperty(value = "")
 
 @Size(max=512) 
+
+  @JsonProperty("psuMessage")
   public String getPsuMessage() {
     return psuMessage;
   }

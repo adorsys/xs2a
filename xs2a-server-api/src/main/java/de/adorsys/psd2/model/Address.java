@@ -29,7 +29,7 @@ import java.util.Objects;
  * Address
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class Address   {
   @JsonProperty("street")
@@ -59,6 +59,8 @@ public class Address   {
   @ApiModelProperty(value = "")
 
 @Size(max=70) 
+
+  @JsonProperty("street")
   public String getStreet() {
     return street;
   }
@@ -79,6 +81,8 @@ public class Address   {
   @ApiModelProperty(value = "")
 
 
+
+  @JsonProperty("buildingNumber")
   public String getBuildingNumber() {
     return buildingNumber;
   }
@@ -99,6 +103,8 @@ public class Address   {
   @ApiModelProperty(value = "")
 
 
+
+  @JsonProperty("city")
   public String getCity() {
     return city;
   }
@@ -119,6 +125,8 @@ public class Address   {
   @ApiModelProperty(value = "")
 
 
+
+  @JsonProperty("postalCode")
   public String getPostalCode() {
     return postalCode;
   }
@@ -140,6 +148,8 @@ public class Address   {
   @NotNull
 
 @Pattern(regexp="[A-Z]{2}") 
+
+  @JsonProperty("country")
   public String getCountry() {
     return country;
   }

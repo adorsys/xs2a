@@ -16,22 +16,21 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import java.util.Objects;
 
 /**
  * It is contained in addition to the data element &#39;chosenScaMethod&#39; if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the &#39;startAuthorisationWithPsuAuthentication&#39; link. 
  */
 @ApiModel(description = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class ChallengeData   {
   @JsonProperty("image")
@@ -95,6 +94,8 @@ public class ChallengeData   {
   @ApiModelProperty(value = "PNG data (max. 512 kilobyte) to be displayed to the PSU, Base64 encoding, cp. [RFC4648]. This attribute is used only, when PHOTO_OTP or CHIP_OTP is the selected SCA method. ")
 
 
+
+  @JsonProperty("image")
   public byte[] getImage() {
     return image;
   }
@@ -115,6 +116,8 @@ public class ChallengeData   {
   @ApiModelProperty(value = "String challenge data")
 
 
+
+  @JsonProperty("data")
   public String getData() {
     return data;
   }
@@ -135,6 +138,8 @@ public class ChallengeData   {
   @ApiModelProperty(value = "A link where the ASPSP will provides the challenge image for the TPP.")
 
 
+
+  @JsonProperty("imageLink")
   public String getImageLink() {
     return imageLink;
   }
@@ -155,6 +160,8 @@ public class ChallengeData   {
   @ApiModelProperty(value = "The maximal length for the OTP to be typed in by the PSU.")
 
 
+
+  @JsonProperty("otpMaxLength")
   public Integer getOtpMaxLength() {
     return otpMaxLength;
   }
@@ -175,6 +182,7 @@ public class ChallengeData   {
   @ApiModelProperty(value = "The format type of the OTP to be typed in. The admitted values are \"characters\" or \"integer\".")
 
 
+  @JsonProperty("otpFormat")
   public OtpFormatEnum getOtpFormat() {
     return otpFormat;
   }
@@ -195,6 +203,8 @@ public class ChallengeData   {
   @ApiModelProperty(value = "Additional explanation for the PSU to explain e.g. fallback mechanism for the chosen SCA method. The TPP is obliged to show this to the PSU. ")
 
 
+
+  @JsonProperty("additionalInformation")
   public String getAdditionalInformation() {
     return additionalInformation;
   }

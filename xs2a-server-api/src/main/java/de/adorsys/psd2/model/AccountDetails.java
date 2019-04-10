@@ -16,25 +16,26 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.adorsys.psd2.model.AccountStatus;
-import de.adorsys.psd2.model.BalanceList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \&quot;currency\&quot; is set to \&quot;XXX\&quot;. 
  */
 @ApiModel(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class AccountDetails   {
   @JsonProperty("resourceId")
@@ -125,6 +126,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "This shall be filled, if addressable resource are created by the ASPSP on the /accounts or /card-accounts endpoint.")
 
 
+
+  @JsonProperty("resourceId")
   public String getResourceId() {
     return resourceId;
   }
@@ -145,6 +148,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "")
 
 @Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}") 
+
+  @JsonProperty("iban")
   public String getIban() {
     return iban;
   }
@@ -165,6 +170,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "")
 
 @Pattern(regexp="[a-zA-Z0-9]{1,30}") 
+
+  @JsonProperty("bban")
   public String getBban() {
     return bban;
   }
@@ -185,6 +192,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("msisdn")
   public String getMsisdn() {
     return msisdn;
   }
@@ -206,6 +215,8 @@ public class AccountDetails   {
   @NotNull
 
 @Pattern(regexp="[A-Z]{3}") 
+
+  @JsonProperty("currency")
   public String getCurrency() {
     return currency;
   }
@@ -226,6 +237,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "Name of the account given by the bank or the PSU in online-banking.")
 
 @Size(max=35) 
+
+  @JsonProperty("name")
   public String getName() {
     return name;
   }
@@ -246,6 +259,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "Product name of the bank for this account, proprietary definition.")
 
 @Size(max=35) 
+
+  @JsonProperty("product")
   public String getProduct() {
     return product;
   }
@@ -266,6 +281,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "")
 
 
+
+  @JsonProperty("cashAccountType")
   public String getCashAccountType() {
     return cashAccountType;
   }
@@ -287,6 +304,8 @@ public class AccountDetails   {
 
   @Valid
 
+
+  @JsonProperty("status")
   public AccountStatus getStatus() {
     return status;
   }
@@ -307,6 +326,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "")
 
 @Pattern(regexp="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}") 
+
+  @JsonProperty("bic")
   public String getBic() {
     return bic;
   }
@@ -327,6 +348,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "Case of a set of pending card transactions, the APSP will provide the relevant cash account the card is set up on.")
 
 @Size(max=70) 
+
+  @JsonProperty("linkedAccounts")
   public String getLinkedAccounts() {
     return linkedAccounts;
   }
@@ -346,7 +369,8 @@ public class AccountDetails   {
   **/
   @ApiModelProperty(value = "Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account ")
 
-@Size(max=4) 
+
+  @JsonProperty("usage")
   public UsageEnum getUsage() {
     return usage;
   }
@@ -367,6 +391,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "Specifications that might be provided by the ASPSP   - characteristics of the account   - characteristics of the relevant card ")
 
 @Size(max=140) 
+
+  @JsonProperty("details")
   public String getDetails() {
     return details;
   }
@@ -388,6 +414,8 @@ public class AccountDetails   {
 
   @Valid
 
+
+  @JsonProperty("balances")
   public BalanceList getBalances() {
     return balances;
   }
@@ -408,6 +436,8 @@ public class AccountDetails   {
   @ApiModelProperty(value = "")
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;

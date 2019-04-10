@@ -29,7 +29,7 @@ import java.util.Objects;
  * TppMessage429AIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class TppMessage429AIS   {
   @JsonProperty("category")
@@ -58,6 +58,8 @@ public class TppMessage429AIS   {
 
   @Valid
 
+
+  @JsonProperty("category")
   public TppMessageCategory getCategory() {
     return category;
   }
@@ -80,6 +82,8 @@ public class TppMessage429AIS   {
 
   @Valid
 
+
+  @JsonProperty("code")
   public MessageCode429AIS getCode() {
     return code;
   }
@@ -100,6 +104,8 @@ public class TppMessage429AIS   {
   @ApiModelProperty(value = "")
 
 
+
+  @JsonProperty("path")
   public String getPath() {
     return path;
   }
@@ -120,6 +126,8 @@ public class TppMessage429AIS   {
   @ApiModelProperty(value = "")
 
 @Size(max=512) 
+
+  @JsonProperty("text")
   public String getText() {
     return text;
   }

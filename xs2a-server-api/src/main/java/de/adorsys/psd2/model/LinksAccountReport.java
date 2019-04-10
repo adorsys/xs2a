@@ -16,40 +16,38 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * LinksAccountReport
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
-public class LinksAccountReport extends HashMap<String, String>  {
+public class LinksAccountReport extends HashMap<String, HrefType>  {
   @JsonProperty("account")
-  private String account = null;
+  private HrefType account = null;
 
   @JsonProperty("first")
-  private String first = null;
+  private HrefType first = null;
 
   @JsonProperty("next")
-  private String next = null;
+  private HrefType next = null;
 
   @JsonProperty("previous")
-  private String previous = null;
+  private HrefType previous = null;
 
   @JsonProperty("last")
-  private String last = null;
+  private HrefType last = null;
 
-  public LinksAccountReport account(String account) {
+  public LinksAccountReport account(HrefType account) {
     this.account = account;
     return this;
   }
@@ -61,16 +59,19 @@ public class LinksAccountReport extends HashMap<String, String>  {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
+  @Valid
 
-  public String getAccount() {
+
+  @JsonProperty("account")
+  public HrefType getAccount() {
     return account;
   }
 
-  public void setAccount(String account) {
+  public void setAccount(HrefType account) {
     this.account = account;
   }
 
-  public LinksAccountReport first(String first) {
+  public LinksAccountReport first(HrefType first) {
     this.first = first;
     return this;
   }
@@ -81,16 +82,19 @@ public class LinksAccountReport extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getFirst() {
+
+  @JsonProperty("first")
+  public HrefType getFirst() {
     return first;
   }
 
-  public void setFirst(String first) {
+  public void setFirst(HrefType first) {
     this.first = first;
   }
 
-  public LinksAccountReport next(String next) {
+  public LinksAccountReport next(HrefType next) {
     this.next = next;
     return this;
   }
@@ -101,16 +105,19 @@ public class LinksAccountReport extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getNext() {
+
+  @JsonProperty("next")
+  public HrefType getNext() {
     return next;
   }
 
-  public void setNext(String next) {
+  public void setNext(HrefType next) {
     this.next = next;
   }
 
-  public LinksAccountReport previous(String previous) {
+  public LinksAccountReport previous(HrefType previous) {
     this.previous = previous;
     return this;
   }
@@ -121,16 +128,19 @@ public class LinksAccountReport extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getPrevious() {
+
+  @JsonProperty("previous")
+  public HrefType getPrevious() {
     return previous;
   }
 
-  public void setPrevious(String previous) {
+  public void setPrevious(HrefType previous) {
     this.previous = previous;
   }
 
-  public LinksAccountReport last(String last) {
+  public LinksAccountReport last(HrefType last) {
     this.last = last;
     return this;
   }
@@ -141,12 +151,15 @@ public class LinksAccountReport extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getLast() {
+
+  @JsonProperty("last")
+  public HrefType getLast() {
     return last;
   }
 
-  public void setLast(String last) {
+  public void setLast(HrefType last) {
     this.last = last;
   }
 

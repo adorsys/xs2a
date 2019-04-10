@@ -16,113 +16,111 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * A _link object with all availabel link types 
  */
 @ApiModel(description = "A _link object with all availabel link types ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
-public class LinksAll extends HashMap<String, String>  {
+public class LinksAll extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
-  private String scaRedirect = null;
+  private HrefType scaRedirect = null;
 
   @JsonProperty("scaOAuth")
-  private String scaOAuth = null;
+  private HrefType scaOAuth = null;
 
   @JsonProperty("startAuthorisation")
-  private String startAuthorisation = null;
+  private HrefType startAuthorisation = null;
 
   @JsonProperty("startAuthorisationWithPsuIdentification")
-  private String startAuthorisationWithPsuIdentification = null;
+  private HrefType startAuthorisationWithPsuIdentification = null;
 
   @JsonProperty("updatePsuIdentification")
-  private String updatePsuIdentification = null;
+  private HrefType updatePsuIdentification = null;
 
   @JsonProperty("startAuthorisationWithProprietaryData")
-  private String startAuthorisationWithProprietaryData = null;
+  private HrefType startAuthorisationWithProprietaryData = null;
 
   @JsonProperty("updateProprietaryData")
-  private String updateProprietaryData = null;
+  private HrefType updateProprietaryData = null;
 
   @JsonProperty("startAuthorisationWithPsuAuthentication")
-  private String startAuthorisationWithPsuAuthentication = null;
+  private HrefType startAuthorisationWithPsuAuthentication = null;
 
   @JsonProperty("updatePsuAuthentication")
-  private String updatePsuAuthentication = null;
+  private HrefType updatePsuAuthentication = null;
 
   @JsonProperty("startAuthorisationWithEncryptedPsuAuthentication")
-  private String startAuthorisationWithEncryptedPsuAuthentication = null;
+  private HrefType startAuthorisationWithEncryptedPsuAuthentication = null;
 
   @JsonProperty("updateEncryptedPsuAuthentication")
-  private String updateEncryptedPsuAuthentication = null;
+  private HrefType updateEncryptedPsuAuthentication = null;
 
   @JsonProperty("startAuthorisationWithAuthenticationMethodSelection")
-  private String startAuthorisationWithAuthenticationMethodSelection = null;
+  private HrefType startAuthorisationWithAuthenticationMethodSelection = null;
 
   @JsonProperty("selectAuthenticationMethod")
-  private String selectAuthenticationMethod = null;
+  private HrefType selectAuthenticationMethod = null;
 
   @JsonProperty("startAuthorisationWithTransactionAuthorisation")
-  private String startAuthorisationWithTransactionAuthorisation = null;
+  private HrefType startAuthorisationWithTransactionAuthorisation = null;
 
   @JsonProperty("authoriseTransaction")
-  private String authoriseTransaction = null;
+  private HrefType authoriseTransaction = null;
 
   @JsonProperty("self")
-  private String self = null;
+  private HrefType self = null;
 
   @JsonProperty("status")
-  private String status = null;
+  private HrefType status = null;
 
   @JsonProperty("scaStatus")
-  private String scaStatus = null;
+  private HrefType scaStatus = null;
 
   @JsonProperty("account")
-  private String account = null;
+  private HrefType account = null;
 
   @JsonProperty("balances")
-  private String balances = null;
+  private HrefType balances = null;
 
   @JsonProperty("transactions")
-  private String transactions = null;
+  private HrefType transactions = null;
 
   @JsonProperty("transactionDetails")
-  private String transactionDetails = null;
+  private HrefType transactionDetails = null;
 
   @JsonProperty("cardAccount")
-  private String cardAccount = null;
+  private HrefType cardAccount = null;
 
   @JsonProperty("cardTransactions")
-  private String cardTransactions = null;
+  private HrefType cardTransactions = null;
 
   @JsonProperty("first")
-  private String first = null;
+  private HrefType first = null;
 
   @JsonProperty("next")
-  private String next = null;
+  private HrefType next = null;
 
   @JsonProperty("previous")
-  private String previous = null;
+  private HrefType previous = null;
 
   @JsonProperty("last")
-  private String last = null;
+  private HrefType last = null;
 
   @JsonProperty("download")
-  private String download = null;
+  private HrefType download = null;
 
-  public LinksAll scaRedirect(String scaRedirect) {
+  public LinksAll scaRedirect(HrefType scaRedirect) {
     this.scaRedirect = scaRedirect;
     return this;
   }
@@ -133,16 +131,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getScaRedirect() {
+
+  @JsonProperty("scaRedirect")
+  public HrefType getScaRedirect() {
     return scaRedirect;
   }
 
-  public void setScaRedirect(String scaRedirect) {
+  public void setScaRedirect(HrefType scaRedirect) {
     this.scaRedirect = scaRedirect;
   }
 
-  public LinksAll scaOAuth(String scaOAuth) {
+  public LinksAll scaOAuth(HrefType scaOAuth) {
     this.scaOAuth = scaOAuth;
     return this;
   }
@@ -153,16 +154,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getScaOAuth() {
+
+  @JsonProperty("scaOAuth")
+  public HrefType getScaOAuth() {
     return scaOAuth;
   }
 
-  public void setScaOAuth(String scaOAuth) {
+  public void setScaOAuth(HrefType scaOAuth) {
     this.scaOAuth = scaOAuth;
   }
 
-  public LinksAll startAuthorisation(String startAuthorisation) {
+  public LinksAll startAuthorisation(HrefType startAuthorisation) {
     this.startAuthorisation = startAuthorisation;
     return this;
   }
@@ -173,16 +177,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getStartAuthorisation() {
+
+  @JsonProperty("startAuthorisation")
+  public HrefType getStartAuthorisation() {
     return startAuthorisation;
   }
 
-  public void setStartAuthorisation(String startAuthorisation) {
+  public void setStartAuthorisation(HrefType startAuthorisation) {
     this.startAuthorisation = startAuthorisation;
   }
 
-  public LinksAll startAuthorisationWithPsuIdentification(String startAuthorisationWithPsuIdentification) {
+  public LinksAll startAuthorisationWithPsuIdentification(HrefType startAuthorisationWithPsuIdentification) {
     this.startAuthorisationWithPsuIdentification = startAuthorisationWithPsuIdentification;
     return this;
   }
@@ -193,16 +200,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getStartAuthorisationWithPsuIdentification() {
+
+  @JsonProperty("startAuthorisationWithPsuIdentification")
+  public HrefType getStartAuthorisationWithPsuIdentification() {
     return startAuthorisationWithPsuIdentification;
   }
 
-  public void setStartAuthorisationWithPsuIdentification(String startAuthorisationWithPsuIdentification) {
+  public void setStartAuthorisationWithPsuIdentification(HrefType startAuthorisationWithPsuIdentification) {
     this.startAuthorisationWithPsuIdentification = startAuthorisationWithPsuIdentification;
   }
 
-  public LinksAll updatePsuIdentification(String updatePsuIdentification) {
+  public LinksAll updatePsuIdentification(HrefType updatePsuIdentification) {
     this.updatePsuIdentification = updatePsuIdentification;
     return this;
   }
@@ -213,16 +223,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getUpdatePsuIdentification() {
+
+  @JsonProperty("updatePsuIdentification")
+  public HrefType getUpdatePsuIdentification() {
     return updatePsuIdentification;
   }
 
-  public void setUpdatePsuIdentification(String updatePsuIdentification) {
+  public void setUpdatePsuIdentification(HrefType updatePsuIdentification) {
     this.updatePsuIdentification = updatePsuIdentification;
   }
 
-  public LinksAll startAuthorisationWithProprietaryData(String startAuthorisationWithProprietaryData) {
+  public LinksAll startAuthorisationWithProprietaryData(HrefType startAuthorisationWithProprietaryData) {
     this.startAuthorisationWithProprietaryData = startAuthorisationWithProprietaryData;
     return this;
   }
@@ -233,16 +246,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getStartAuthorisationWithProprietaryData() {
+
+  @JsonProperty("startAuthorisationWithProprietaryData")
+  public HrefType getStartAuthorisationWithProprietaryData() {
     return startAuthorisationWithProprietaryData;
   }
 
-  public void setStartAuthorisationWithProprietaryData(String startAuthorisationWithProprietaryData) {
+  public void setStartAuthorisationWithProprietaryData(HrefType startAuthorisationWithProprietaryData) {
     this.startAuthorisationWithProprietaryData = startAuthorisationWithProprietaryData;
   }
 
-  public LinksAll updateProprietaryData(String updateProprietaryData) {
+  public LinksAll updateProprietaryData(HrefType updateProprietaryData) {
     this.updateProprietaryData = updateProprietaryData;
     return this;
   }
@@ -253,16 +269,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getUpdateProprietaryData() {
+
+  @JsonProperty("updateProprietaryData")
+  public HrefType getUpdateProprietaryData() {
     return updateProprietaryData;
   }
 
-  public void setUpdateProprietaryData(String updateProprietaryData) {
+  public void setUpdateProprietaryData(HrefType updateProprietaryData) {
     this.updateProprietaryData = updateProprietaryData;
   }
 
-  public LinksAll startAuthorisationWithPsuAuthentication(String startAuthorisationWithPsuAuthentication) {
+  public LinksAll startAuthorisationWithPsuAuthentication(HrefType startAuthorisationWithPsuAuthentication) {
     this.startAuthorisationWithPsuAuthentication = startAuthorisationWithPsuAuthentication;
     return this;
   }
@@ -273,16 +292,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getStartAuthorisationWithPsuAuthentication() {
+
+  @JsonProperty("startAuthorisationWithPsuAuthentication")
+  public HrefType getStartAuthorisationWithPsuAuthentication() {
     return startAuthorisationWithPsuAuthentication;
   }
 
-  public void setStartAuthorisationWithPsuAuthentication(String startAuthorisationWithPsuAuthentication) {
+  public void setStartAuthorisationWithPsuAuthentication(HrefType startAuthorisationWithPsuAuthentication) {
     this.startAuthorisationWithPsuAuthentication = startAuthorisationWithPsuAuthentication;
   }
 
-  public LinksAll updatePsuAuthentication(String updatePsuAuthentication) {
+  public LinksAll updatePsuAuthentication(HrefType updatePsuAuthentication) {
     this.updatePsuAuthentication = updatePsuAuthentication;
     return this;
   }
@@ -293,16 +315,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getUpdatePsuAuthentication() {
+
+  @JsonProperty("updatePsuAuthentication")
+  public HrefType getUpdatePsuAuthentication() {
     return updatePsuAuthentication;
   }
 
-  public void setUpdatePsuAuthentication(String updatePsuAuthentication) {
+  public void setUpdatePsuAuthentication(HrefType updatePsuAuthentication) {
     this.updatePsuAuthentication = updatePsuAuthentication;
   }
 
-  public LinksAll startAuthorisationWithEncryptedPsuAuthentication(String startAuthorisationWithEncryptedPsuAuthentication) {
+  public LinksAll startAuthorisationWithEncryptedPsuAuthentication(HrefType startAuthorisationWithEncryptedPsuAuthentication) {
     this.startAuthorisationWithEncryptedPsuAuthentication = startAuthorisationWithEncryptedPsuAuthentication;
     return this;
   }
@@ -313,16 +338,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getStartAuthorisationWithEncryptedPsuAuthentication() {
+
+  @JsonProperty("startAuthorisationWithEncryptedPsuAuthentication")
+  public HrefType getStartAuthorisationWithEncryptedPsuAuthentication() {
     return startAuthorisationWithEncryptedPsuAuthentication;
   }
 
-  public void setStartAuthorisationWithEncryptedPsuAuthentication(String startAuthorisationWithEncryptedPsuAuthentication) {
+  public void setStartAuthorisationWithEncryptedPsuAuthentication(HrefType startAuthorisationWithEncryptedPsuAuthentication) {
     this.startAuthorisationWithEncryptedPsuAuthentication = startAuthorisationWithEncryptedPsuAuthentication;
   }
 
-  public LinksAll updateEncryptedPsuAuthentication(String updateEncryptedPsuAuthentication) {
+  public LinksAll updateEncryptedPsuAuthentication(HrefType updateEncryptedPsuAuthentication) {
     this.updateEncryptedPsuAuthentication = updateEncryptedPsuAuthentication;
     return this;
   }
@@ -333,16 +361,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getUpdateEncryptedPsuAuthentication() {
+
+  @JsonProperty("updateEncryptedPsuAuthentication")
+  public HrefType getUpdateEncryptedPsuAuthentication() {
     return updateEncryptedPsuAuthentication;
   }
 
-  public void setUpdateEncryptedPsuAuthentication(String updateEncryptedPsuAuthentication) {
+  public void setUpdateEncryptedPsuAuthentication(HrefType updateEncryptedPsuAuthentication) {
     this.updateEncryptedPsuAuthentication = updateEncryptedPsuAuthentication;
   }
 
-  public LinksAll startAuthorisationWithAuthenticationMethodSelection(String startAuthorisationWithAuthenticationMethodSelection) {
+  public LinksAll startAuthorisationWithAuthenticationMethodSelection(HrefType startAuthorisationWithAuthenticationMethodSelection) {
     this.startAuthorisationWithAuthenticationMethodSelection = startAuthorisationWithAuthenticationMethodSelection;
     return this;
   }
@@ -353,16 +384,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getStartAuthorisationWithAuthenticationMethodSelection() {
+
+  @JsonProperty("startAuthorisationWithAuthenticationMethodSelection")
+  public HrefType getStartAuthorisationWithAuthenticationMethodSelection() {
     return startAuthorisationWithAuthenticationMethodSelection;
   }
 
-  public void setStartAuthorisationWithAuthenticationMethodSelection(String startAuthorisationWithAuthenticationMethodSelection) {
+  public void setStartAuthorisationWithAuthenticationMethodSelection(HrefType startAuthorisationWithAuthenticationMethodSelection) {
     this.startAuthorisationWithAuthenticationMethodSelection = startAuthorisationWithAuthenticationMethodSelection;
   }
 
-  public LinksAll selectAuthenticationMethod(String selectAuthenticationMethod) {
+  public LinksAll selectAuthenticationMethod(HrefType selectAuthenticationMethod) {
     this.selectAuthenticationMethod = selectAuthenticationMethod;
     return this;
   }
@@ -373,16 +407,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getSelectAuthenticationMethod() {
+
+  @JsonProperty("selectAuthenticationMethod")
+  public HrefType getSelectAuthenticationMethod() {
     return selectAuthenticationMethod;
   }
 
-  public void setSelectAuthenticationMethod(String selectAuthenticationMethod) {
+  public void setSelectAuthenticationMethod(HrefType selectAuthenticationMethod) {
     this.selectAuthenticationMethod = selectAuthenticationMethod;
   }
 
-  public LinksAll startAuthorisationWithTransactionAuthorisation(String startAuthorisationWithTransactionAuthorisation) {
+  public LinksAll startAuthorisationWithTransactionAuthorisation(HrefType startAuthorisationWithTransactionAuthorisation) {
     this.startAuthorisationWithTransactionAuthorisation = startAuthorisationWithTransactionAuthorisation;
     return this;
   }
@@ -393,16 +430,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getStartAuthorisationWithTransactionAuthorisation() {
+
+  @JsonProperty("startAuthorisationWithTransactionAuthorisation")
+  public HrefType getStartAuthorisationWithTransactionAuthorisation() {
     return startAuthorisationWithTransactionAuthorisation;
   }
 
-  public void setStartAuthorisationWithTransactionAuthorisation(String startAuthorisationWithTransactionAuthorisation) {
+  public void setStartAuthorisationWithTransactionAuthorisation(HrefType startAuthorisationWithTransactionAuthorisation) {
     this.startAuthorisationWithTransactionAuthorisation = startAuthorisationWithTransactionAuthorisation;
   }
 
-  public LinksAll authoriseTransaction(String authoriseTransaction) {
+  public LinksAll authoriseTransaction(HrefType authoriseTransaction) {
     this.authoriseTransaction = authoriseTransaction;
     return this;
   }
@@ -413,16 +453,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getAuthoriseTransaction() {
+
+  @JsonProperty("authoriseTransaction")
+  public HrefType getAuthoriseTransaction() {
     return authoriseTransaction;
   }
 
-  public void setAuthoriseTransaction(String authoriseTransaction) {
+  public void setAuthoriseTransaction(HrefType authoriseTransaction) {
     this.authoriseTransaction = authoriseTransaction;
   }
 
-  public LinksAll self(String self) {
+  public LinksAll self(HrefType self) {
     this.self = self;
     return this;
   }
@@ -433,16 +476,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getSelf() {
+
+  @JsonProperty("self")
+  public HrefType getSelf() {
     return self;
   }
 
-  public void setSelf(String self) {
+  public void setSelf(HrefType self) {
     this.self = self;
   }
 
-  public LinksAll status(String status) {
+  public LinksAll status(HrefType status) {
     this.status = status;
     return this;
   }
@@ -453,16 +499,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getStatus() {
+
+  @JsonProperty("status")
+  public HrefType getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(HrefType status) {
     this.status = status;
   }
 
-  public LinksAll scaStatus(String scaStatus) {
+  public LinksAll scaStatus(HrefType scaStatus) {
     this.scaStatus = scaStatus;
     return this;
   }
@@ -473,16 +522,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getScaStatus() {
+
+  @JsonProperty("scaStatus")
+  public HrefType getScaStatus() {
     return scaStatus;
   }
 
-  public void setScaStatus(String scaStatus) {
+  public void setScaStatus(HrefType scaStatus) {
     this.scaStatus = scaStatus;
   }
 
-  public LinksAll account(String account) {
+  public LinksAll account(HrefType account) {
     this.account = account;
     return this;
   }
@@ -493,16 +545,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getAccount() {
+
+  @JsonProperty("account")
+  public HrefType getAccount() {
     return account;
   }
 
-  public void setAccount(String account) {
+  public void setAccount(HrefType account) {
     this.account = account;
   }
 
-  public LinksAll balances(String balances) {
+  public LinksAll balances(HrefType balances) {
     this.balances = balances;
     return this;
   }
@@ -513,16 +568,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getBalances() {
+
+  @JsonProperty("balances")
+  public HrefType getBalances() {
     return balances;
   }
 
-  public void setBalances(String balances) {
+  public void setBalances(HrefType balances) {
     this.balances = balances;
   }
 
-  public LinksAll transactions(String transactions) {
+  public LinksAll transactions(HrefType transactions) {
     this.transactions = transactions;
     return this;
   }
@@ -533,16 +591,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getTransactions() {
+
+  @JsonProperty("transactions")
+  public HrefType getTransactions() {
     return transactions;
   }
 
-  public void setTransactions(String transactions) {
+  public void setTransactions(HrefType transactions) {
     this.transactions = transactions;
   }
 
-  public LinksAll transactionDetails(String transactionDetails) {
+  public LinksAll transactionDetails(HrefType transactionDetails) {
     this.transactionDetails = transactionDetails;
     return this;
   }
@@ -553,16 +614,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getTransactionDetails() {
+
+  @JsonProperty("transactionDetails")
+  public HrefType getTransactionDetails() {
     return transactionDetails;
   }
 
-  public void setTransactionDetails(String transactionDetails) {
+  public void setTransactionDetails(HrefType transactionDetails) {
     this.transactionDetails = transactionDetails;
   }
 
-  public LinksAll cardAccount(String cardAccount) {
+  public LinksAll cardAccount(HrefType cardAccount) {
     this.cardAccount = cardAccount;
     return this;
   }
@@ -573,16 +637,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getCardAccount() {
+
+  @JsonProperty("cardAccount")
+  public HrefType getCardAccount() {
     return cardAccount;
   }
 
-  public void setCardAccount(String cardAccount) {
+  public void setCardAccount(HrefType cardAccount) {
     this.cardAccount = cardAccount;
   }
 
-  public LinksAll cardTransactions(String cardTransactions) {
+  public LinksAll cardTransactions(HrefType cardTransactions) {
     this.cardTransactions = cardTransactions;
     return this;
   }
@@ -593,16 +660,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getCardTransactions() {
+
+  @JsonProperty("cardTransactions")
+  public HrefType getCardTransactions() {
     return cardTransactions;
   }
 
-  public void setCardTransactions(String cardTransactions) {
+  public void setCardTransactions(HrefType cardTransactions) {
     this.cardTransactions = cardTransactions;
   }
 
-  public LinksAll first(String first) {
+  public LinksAll first(HrefType first) {
     this.first = first;
     return this;
   }
@@ -613,16 +683,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getFirst() {
+
+  @JsonProperty("first")
+  public HrefType getFirst() {
     return first;
   }
 
-  public void setFirst(String first) {
+  public void setFirst(HrefType first) {
     this.first = first;
   }
 
-  public LinksAll next(String next) {
+  public LinksAll next(HrefType next) {
     this.next = next;
     return this;
   }
@@ -633,16 +706,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getNext() {
+
+  @JsonProperty("next")
+  public HrefType getNext() {
     return next;
   }
 
-  public void setNext(String next) {
+  public void setNext(HrefType next) {
     this.next = next;
   }
 
-  public LinksAll previous(String previous) {
+  public LinksAll previous(HrefType previous) {
     this.previous = previous;
     return this;
   }
@@ -653,16 +729,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getPrevious() {
+
+  @JsonProperty("previous")
+  public HrefType getPrevious() {
     return previous;
   }
 
-  public void setPrevious(String previous) {
+  public void setPrevious(HrefType previous) {
     this.previous = previous;
   }
 
-  public LinksAll last(String last) {
+  public LinksAll last(HrefType last) {
     this.last = last;
     return this;
   }
@@ -673,16 +752,19 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getLast() {
+
+  @JsonProperty("last")
+  public HrefType getLast() {
     return last;
   }
 
-  public void setLast(String last) {
+  public void setLast(HrefType last) {
     this.last = last;
   }
 
-  public LinksAll download(String download) {
+  public LinksAll download(HrefType download) {
     this.download = download;
     return this;
   }
@@ -693,12 +775,15 @@ public class LinksAll extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getDownload() {
+
+  @JsonProperty("download")
+  public HrefType getDownload() {
     return download;
   }
 
-  public void setDownload(String download) {
+  public void setDownload(HrefType download) {
     this.download = download;
   }
 

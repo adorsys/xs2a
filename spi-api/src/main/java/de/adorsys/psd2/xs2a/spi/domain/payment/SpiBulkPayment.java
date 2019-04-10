@@ -33,6 +33,7 @@ public class SpiBulkPayment implements SpiPayment {
     private Boolean batchBookingPreferred;
     private SpiAccountReference debtorAccount;
     private LocalDate requestedExecutionDate;
+    private OffsetDateTime requestedExecutionTime;
     private TransactionStatus paymentStatus;
     private List<SpiSinglePayment> payments;
     private String paymentProduct;
