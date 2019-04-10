@@ -449,7 +449,11 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         PisCommonPaymentData paymentData = authorisation.getPaymentData();
         CmsAuthorisationType authorizationType = authorisation.getAuthorizationType();
 
-        closePreviousAuthorisationsByPsu(paymentData.getAuthorizations(), authorizationType, psuIdData);
+        List<PisAuthorization> previousAuthorisations = paymentData.getAuthorizations().stream()
+                                                            .filter(a -> !a.getExternalId().equals(authorisation.getExternalId()))
+                                                            .collect(Collectors.toList());
+
+        closePreviousAuthorisationsByPsu(previousAuthorisations, authorizationType, psuIdData);
     }
 
     private void closePreviousAuthorisationsByPsu(List<PisAuthorization> authorisations, CmsAuthorisationType authorisationType, PsuIdData psuIdData) {

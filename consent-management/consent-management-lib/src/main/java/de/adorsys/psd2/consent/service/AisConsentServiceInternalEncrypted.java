@@ -16,15 +16,15 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.CmsScaMethod;
-import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -118,60 +118,11 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
                    .flatMap(securityDataService::encryptId);
     }
 
-    @Override
-    @Transactional
-    public Optional<String> createAuthorization(String encryptedConsentId, AisConsentAuthorizationRequest request) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(id -> aisConsentService.createAuthorization(id, request));
-    }
-
-    @Override
-    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorisationId,
-                                                                                        String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(id -> aisConsentService.getAccountConsentAuthorizationById(authorisationId, id));
-    }
-
-    @Override
-    @Transactional
-    public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
-        return aisConsentService.updateConsentAuthorization(authorizationId, request);
-    }
 
     @Override
     public Optional<List<PsuIdData>> getPsuDataByConsentId(String encryptedConsentId) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(aisConsentService::getPsuDataByConsentId);
-    }
-
-    @Override
-    public Optional<List<String>> getAuthorisationsByConsentId(String encryptedConsentId) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(aisConsentService::getAuthorisationsByConsentId);
-    }
-
-    @Override
-    @Transactional
-    public Optional<ScaStatus> getAuthorisationScaStatus(String encryptedConsentId, String authorisationId) {
-        return securityDataService.decryptId(encryptedConsentId)
-                   .flatMap(consentId -> aisConsentService.getAuthorisationScaStatus(consentId, authorisationId));
-    }
-
-    @Override
-    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        return aisConsentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
-    }
-
-    @Override
-    @Transactional
-    public boolean saveAuthenticationMethods(String authorisationId, List<CmsScaMethod> methods) {
-        return aisConsentService.saveAuthenticationMethods(authorisationId, methods);
-    }
-
-    @Override
-    @Transactional
-    public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        return aisConsentService.updateScaApproach(authorisationId, scaApproach);
     }
 
     @Override
