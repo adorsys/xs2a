@@ -16,44 +16,42 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in  the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.   **Remark:** This method can be applied before or after PSU identification.  This leads to many possible hyperlink responses. Type of links admitted in this response, (further links might be added for ASPSP defined  extensions):  - \&quot;scaRedirect\&quot;:    In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to    redirect the PSU browser. - \&quot;scaOAuth\&quot;:    In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the    configuration of the Authorisation Server can be retrieved.    The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. - \&quot;updatePsuIdentification\&quot;:    The link to the authorisation or cancellation authorisation sub-resource,    where PSU identification data needs to be uploaded. - \&quot;updatePsuAuthentication\&quot;:   The link to the authorisation or cancellation authorisation sub-resource,    where PSU authentication data needs to be uploaded. \&quot;authoriseTransaction\&quot;:   The link to the authorisation or cancellation authorisation sub-resource,    where the authorisation data has to be uploaded, e.g. the TOP received by SMS.  \&quot;scaStatus\&quot;:    The link to retrieve the scaStatus of the corresponding authorisation sub-resource. 
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in  the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.   **Remark:** This method can be applied before or after PSU identification.  This leads to many possible hyperlink responses. Type of links admitted in this response, (further links might be added for ASPSP defined  extensions):  - \"scaRedirect\":    In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to    redirect the PSU browser. - \"scaOAuth\":    In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the    configuration of the Authorisation Server can be retrieved.    The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. - \"updatePsuIdentification\":    The link to the authorisation or cancellation authorisation sub-resource,    where PSU identification data needs to be uploaded. - \"updatePsuAuthentication\":   The link to the authorisation or cancellation authorisation sub-resource,    where PSU authentication data needs to be uploaded. \"authoriseTransaction\":   The link to the authorisation or cancellation authorisation sub-resource,    where the authorisation data has to be uploaded, e.g. the TOP received by SMS.  \"scaStatus\":    The link to retrieve the scaStatus of the corresponding authorisation sub-resource. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
-public class LinksSelectPsuAuthenticationMethod extends HashMap<String, String>  {
+public class LinksSelectPsuAuthenticationMethod extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
-  private String scaRedirect = null;
+  private HrefType scaRedirect = null;
 
   @JsonProperty("scaOAuth")
-  private String scaOAuth = null;
+  private HrefType scaOAuth = null;
 
   @JsonProperty("updatePsuIdentification")
-  private String updatePsuIdentification = null;
+  private HrefType updatePsuIdentification = null;
 
   @JsonProperty("updatePsuAuthentication")
-  private String updatePsuAuthentication = null;
+  private HrefType updatePsuAuthentication = null;
 
   @JsonProperty("authoriseTransaction")
-  private String authoriseTransaction = null;
+  private HrefType authoriseTransaction = null;
 
   @JsonProperty("scaStatus")
-  private String scaStatus = null;
+  private HrefType scaStatus = null;
 
-  public LinksSelectPsuAuthenticationMethod scaRedirect(String scaRedirect) {
+  public LinksSelectPsuAuthenticationMethod scaRedirect(HrefType scaRedirect) {
     this.scaRedirect = scaRedirect;
     return this;
   }
@@ -64,16 +62,19 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, String> 
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getScaRedirect() {
+
+  @JsonProperty("scaRedirect")
+  public HrefType getScaRedirect() {
     return scaRedirect;
   }
 
-  public void setScaRedirect(String scaRedirect) {
+  public void setScaRedirect(HrefType scaRedirect) {
     this.scaRedirect = scaRedirect;
   }
 
-  public LinksSelectPsuAuthenticationMethod scaOAuth(String scaOAuth) {
+  public LinksSelectPsuAuthenticationMethod scaOAuth(HrefType scaOAuth) {
     this.scaOAuth = scaOAuth;
     return this;
   }
@@ -84,16 +85,19 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, String> 
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getScaOAuth() {
+
+  @JsonProperty("scaOAuth")
+  public HrefType getScaOAuth() {
     return scaOAuth;
   }
 
-  public void setScaOAuth(String scaOAuth) {
+  public void setScaOAuth(HrefType scaOAuth) {
     this.scaOAuth = scaOAuth;
   }
 
-  public LinksSelectPsuAuthenticationMethod updatePsuIdentification(String updatePsuIdentification) {
+  public LinksSelectPsuAuthenticationMethod updatePsuIdentification(HrefType updatePsuIdentification) {
     this.updatePsuIdentification = updatePsuIdentification;
     return this;
   }
@@ -104,16 +108,19 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, String> 
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getUpdatePsuIdentification() {
+
+  @JsonProperty("updatePsuIdentification")
+  public HrefType getUpdatePsuIdentification() {
     return updatePsuIdentification;
   }
 
-  public void setUpdatePsuIdentification(String updatePsuIdentification) {
+  public void setUpdatePsuIdentification(HrefType updatePsuIdentification) {
     this.updatePsuIdentification = updatePsuIdentification;
   }
 
-  public LinksSelectPsuAuthenticationMethod updatePsuAuthentication(String updatePsuAuthentication) {
+  public LinksSelectPsuAuthenticationMethod updatePsuAuthentication(HrefType updatePsuAuthentication) {
     this.updatePsuAuthentication = updatePsuAuthentication;
     return this;
   }
@@ -124,16 +131,19 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, String> 
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getUpdatePsuAuthentication() {
+
+  @JsonProperty("updatePsuAuthentication")
+  public HrefType getUpdatePsuAuthentication() {
     return updatePsuAuthentication;
   }
 
-  public void setUpdatePsuAuthentication(String updatePsuAuthentication) {
+  public void setUpdatePsuAuthentication(HrefType updatePsuAuthentication) {
     this.updatePsuAuthentication = updatePsuAuthentication;
   }
 
-  public LinksSelectPsuAuthenticationMethod authoriseTransaction(String authoriseTransaction) {
+  public LinksSelectPsuAuthenticationMethod authoriseTransaction(HrefType authoriseTransaction) {
     this.authoriseTransaction = authoriseTransaction;
     return this;
   }
@@ -144,16 +154,19 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, String> 
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getAuthoriseTransaction() {
+
+  @JsonProperty("authoriseTransaction")
+  public HrefType getAuthoriseTransaction() {
     return authoriseTransaction;
   }
 
-  public void setAuthoriseTransaction(String authoriseTransaction) {
+  public void setAuthoriseTransaction(HrefType authoriseTransaction) {
     this.authoriseTransaction = authoriseTransaction;
   }
 
-  public LinksSelectPsuAuthenticationMethod scaStatus(String scaStatus) {
+  public LinksSelectPsuAuthenticationMethod scaStatus(HrefType scaStatus) {
     this.scaStatus = scaStatus;
     return this;
   }
@@ -164,12 +177,15 @@ public class LinksSelectPsuAuthenticationMethod extends HashMap<String, String> 
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getScaStatus() {
+
+  @JsonProperty("scaStatus")
+  public HrefType getScaStatus() {
     return scaStatus;
   }
 
-  public void setScaStatus(String scaStatus) {
+  public void setScaStatus(HrefType scaStatus) {
     this.scaStatus = scaStatus;
   }
 

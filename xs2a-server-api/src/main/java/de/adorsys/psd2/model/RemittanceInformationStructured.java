@@ -16,21 +16,21 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 /**
  * Structured remittance information 
  */
 @ApiModel(description = "Structured remittance information ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class RemittanceInformationStructured   {
   @JsonProperty("reference")
@@ -55,6 +55,8 @@ public class RemittanceInformationStructured   {
   @NotNull
 
 @Size(max=35) 
+
+  @JsonProperty("reference")
   public String getReference() {
     return reference;
   }
@@ -75,6 +77,8 @@ public class RemittanceInformationStructured   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("referenceType")
   public String getReferenceType() {
     return referenceType;
   }
@@ -95,6 +99,8 @@ public class RemittanceInformationStructured   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("referenceIssuer")
   public String getReferenceIssuer() {
     return referenceIssuer;
   }

@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2.sb;
 
-import de.adorsys.psd2.model.Error400NGSB;
-import de.adorsys.psd2.model.MessageCode400SB;
-import de.adorsys.psd2.model.TppMessage400SB;
+import de.adorsys.psd2.model.Error400NGSBS;
+import de.adorsys.psd2.model.MessageCode400SBS;
+import de.adorsys.psd2.model.TppMessage400SBS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -32,10 +32,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class SB400ErrorMapper extends Psd2ErrorMapper<MessageError, Error400NGSB> {
+public class SB400ErrorMapper extends Psd2ErrorMapper<MessageError, Error400NGSBS> {
 
     @Override
-    public Function<MessageError, Error400NGSB> getMapper() {
+    public Function<MessageError, Error400NGSBS> getMapper() {
         return this::mapToPsd2Error;
     }
 
@@ -44,15 +44,15 @@ public class SB400ErrorMapper extends Psd2ErrorMapper<MessageError, Error400NGSB
         return HttpStatus.BAD_REQUEST;
     }
 
-    private Error400NGSB mapToPsd2Error(MessageError messageError) {
-        return new Error400NGSB().tppMessages(mapToTppMessage400SB(messageError.getTppMessages()));
+    private Error400NGSBS mapToPsd2Error(MessageError messageError) {
+        return new Error400NGSBS().tppMessages(mapToTppMessage400SB(messageError.getTppMessages()));
     }
 
-    private List<TppMessage400SB> mapToTppMessage400SB(Set<TppMessageInformation> tppMessages) {
+    private List<TppMessage400SBS> mapToTppMessage400SB(Set<TppMessageInformation> tppMessages) {
         return tppMessages.stream()
-                   .map(m -> new TppMessage400SB()
+                   .map(m -> new TppMessage400SBS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode400SB.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(MessageCode400SBS.fromValue(m.getMessageErrorCode().getName()))
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

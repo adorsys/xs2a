@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 403 for PIIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class Error403PIIS   {
   @JsonProperty("type")
@@ -69,6 +69,8 @@ public class Error403PIIS   {
   @NotNull
 
 @Size(max=70) 
+
+  @JsonProperty("type")
   public String getType() {
     return type;
   }
@@ -89,6 +91,8 @@ public class Error403PIIS   {
   @ApiModelProperty(value = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
 
 @Size(max=70) 
+
+  @JsonProperty("title")
   public String getTitle() {
     return title;
   }
@@ -109,6 +113,8 @@ public class Error403PIIS   {
   @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
 @Size(max=512) 
+
+  @JsonProperty("detail")
   public String getDetail() {
     return detail;
   }
@@ -131,6 +137,8 @@ public class Error403PIIS   {
 
   @Valid
 
+
+  @JsonProperty("code")
   public MessageCode403PIIS getCode() {
     return code;
   }
@@ -160,6 +168,8 @@ public class Error403PIIS   {
 
   @Valid
 
+
+  @JsonProperty("additionalErrors")
   public List<Error403PIISAdditionalErrors> getAdditionalErrors() {
     return additionalErrors;
   }
@@ -180,6 +190,8 @@ public class Error403PIIS   {
   @ApiModelProperty(value = "")
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;

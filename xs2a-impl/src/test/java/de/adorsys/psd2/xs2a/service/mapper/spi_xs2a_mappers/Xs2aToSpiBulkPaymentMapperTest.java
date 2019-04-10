@@ -55,6 +55,7 @@ public class Xs2aToSpiBulkPaymentMapperTest {
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.RCVD;
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
+    private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
     private static final List<PsuIdData> psuDataList = new ArrayList<>();
     private static final List<SpiPsuData> spiPsuDataList = new ArrayList<>();
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(REQUESTED_EXECUTION_DATE,
@@ -90,6 +91,7 @@ public class Xs2aToSpiBulkPaymentMapperTest {
         assertTrue(spiBulkPayment.getBatchBookingPreferred());
         assertEquals(buildSpiAccountReference(), spiBulkPayment.getDebtorAccount());
         assertEquals(REQUESTED_EXECUTION_DATE, spiBulkPayment.getRequestedExecutionDate());
+        assertEquals(REQUESTED_EXECUTION_TIME, spiBulkPayment.getRequestedExecutionTime());
         assertEquals(TRANSACTION_STATUS, spiBulkPayment.getPaymentStatus());
         assertFalse(spiBulkPayment.getPayments().isEmpty());
         assertEquals(PAYMENT_PRODUCT, spiBulkPayment.getPaymentProduct());
@@ -107,6 +109,7 @@ public class Xs2aToSpiBulkPaymentMapperTest {
         payment.setDebtorAccount(buildAccountReference(DEB_ACCOUNT_ID));
         payment.setTransactionStatus(TRANSACTION_STATUS);
         payment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
+        payment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         payment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         return payment;
     }

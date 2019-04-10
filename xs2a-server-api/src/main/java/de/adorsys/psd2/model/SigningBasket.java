@@ -16,23 +16,20 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ConsentIdList;
-import de.adorsys.psd2.model.PaymentIdList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * JSON Body of a establish signing basket request. The body shall contain at least one entry. 
  */
 @ApiModel(description = "JSON Body of a establish signing basket request. The body shall contain at least one entry. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class SigningBasket   {
   @JsonProperty("paymentIds")
@@ -54,6 +51,8 @@ public class SigningBasket   {
 
   @Valid
 
+
+  @JsonProperty("paymentIds")
   public PaymentIdList getPaymentIds() {
     return paymentIds;
   }
@@ -75,6 +74,8 @@ public class SigningBasket   {
 
   @Valid
 
+
+  @JsonProperty("consentIds")
   public ConsentIdList getConsentIds() {
     return consentIds;
   }

@@ -16,26 +16,25 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.Error405PIISAdditionalErrors;
-import de.adorsys.psd2.model.MessageCode405PIIS;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 405 for PIIS. 
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807]  in case of a HTTP error code 405 for PIIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class Error405PIIS   {
   @JsonProperty("type")
@@ -70,6 +69,8 @@ public class Error405PIIS   {
   @NotNull
 
 @Size(max=70) 
+
+  @JsonProperty("type")
   public String getType() {
     return type;
   }
@@ -90,6 +91,8 @@ public class Error405PIIS   {
   @ApiModelProperty(value = "Short human readable description of error type.  Could be in local language.  To be provided by ASPSPs. ")
 
 @Size(max=70) 
+
+  @JsonProperty("title")
   public String getTitle() {
     return title;
   }
@@ -110,6 +113,8 @@ public class Error405PIIS   {
   @ApiModelProperty(value = "Detailed human readable text specific to this instance of the error.  XPath might be used to point to the issue generating the error in addition. Remark for Future: In future, a dedicated field might be introduced for the XPath. ")
 
 @Size(max=512) 
+
+  @JsonProperty("detail")
   public String getDetail() {
     return detail;
   }
@@ -132,6 +137,8 @@ public class Error405PIIS   {
 
   @Valid
 
+
+  @JsonProperty("code")
   public MessageCode405PIIS getCode() {
     return code;
   }
@@ -161,6 +168,8 @@ public class Error405PIIS   {
 
   @Valid
 
+
+  @JsonProperty("additionalErrors")
   public List<Error405PIISAdditionalErrors> getAdditionalErrors() {
     return additionalErrors;
   }
@@ -181,6 +190,8 @@ public class Error405PIIS   {
   @ApiModelProperty(value = "")
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;

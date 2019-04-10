@@ -16,18 +16,17 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import io.swagger.annotations.ApiModel;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import java.util.Objects;
 
 /**
  * This parameter is requesting a valid until date for the requested consent.  The content is the local ASPSP date in ISO-Date Format, e.g. 2017-10-30.   Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \&quot;9999-12-31\&quot;.   In both cases the consent object to be retrieved by the GET Consent Request will contain the adjusted date. 
  */
 @ApiModel(description = "This parameter is requesting a valid until date for the requested consent.  The content is the local ASPSP date in ISO-Date Format, e.g. 2017-10-30.   Future dates might get adjusted by ASPSP.   If a maximal available date is requested, a date in far future is to be used: \"9999-12-31\".   In both cases the consent object to be retrieved by the GET Consent Request will contain the adjusted date. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class ValidUntil   {
 

@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2.sb;
 
-import de.adorsys.psd2.model.Error405NGSB;
-import de.adorsys.psd2.model.MessageCode405SB;
-import de.adorsys.psd2.model.TppMessage405SB;
+import de.adorsys.psd2.model.Error405NGSBS;
+import de.adorsys.psd2.model.MessageCode405SBS;
+import de.adorsys.psd2.model.TppMessage405SBS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -32,10 +32,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class SB405ErrorMapper extends Psd2ErrorMapper<MessageError, Error405NGSB> {
+public class SB405ErrorMapper extends Psd2ErrorMapper<MessageError, Error405NGSBS> {
 
     @Override
-    public Function<MessageError, Error405NGSB> getMapper() {
+    public Function<MessageError, Error405NGSBS> getMapper() {
         return this::mapToPsd2Error;
     }
 
@@ -44,15 +44,15 @@ public class SB405ErrorMapper extends Psd2ErrorMapper<MessageError, Error405NGSB
         return HttpStatus.METHOD_NOT_ALLOWED;
     }
 
-    private Error405NGSB mapToPsd2Error(MessageError messageError) {
-        return new Error405NGSB().tppMessages(mapToTppMessage405SB(messageError.getTppMessages()));
+    private Error405NGSBS mapToPsd2Error(MessageError messageError) {
+        return new Error405NGSBS().tppMessages(mapToTppMessage405SB(messageError.getTppMessages()));
     }
 
-    private List<TppMessage405SB> mapToTppMessage405SB(Set<TppMessageInformation> tppMessages) {
+    private List<TppMessage405SBS> mapToTppMessage405SB(Set<TppMessageInformation> tppMessages) {
         return tppMessages.stream()
-                   .map(m -> new TppMessage405SB()
+                   .map(m -> new TppMessage405SBS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode405SB.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(MessageCode405SBS.fromValue(m.getMessageErrorCode().getName()))
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

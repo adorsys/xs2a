@@ -23,9 +23,39 @@ import java.time.LocalDate;
 @Value
 public class SpiExchangeRate {
     private String sourceCurrency;
-    private String rate;
+    private String exchangeRate;
     private String unitCurrency;
     private String targetCurrency;
-    private LocalDate rateDate;
-    private String rateContract;
+    private LocalDate quotationDate;
+    private String contractIdentification;
+
+    /**
+     * @return exchange rate
+     *
+     * @deprecated since 2.3 and will be removed in 2.6, use getExchangeRate instead
+     */
+    @Deprecated // TODO remove deprecated getters in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/785
+    public String getRate() {
+        return exchangeRate;
+    }
+
+    /**
+     * @return date at which an exchange rate is quoted
+     *
+     * @deprecated since 2.3 and will be removed in 2.6, use getQuotationDate instead
+     */
+    @Deprecated  // TODO remove deprecated getters in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/785
+    public LocalDate getRateDate() {
+        return quotationDate;
+    }
+
+    /**
+     * @return unique contract identification
+     *
+     * @deprecated since 2.3 and will be removed in 2.6, use getContractIdentification instead
+     */
+    @Deprecated  // TODO remove deprecated getters in 2.6 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/785
+    public String getRateContract() {
+        return contractIdentification;
+    }
 }

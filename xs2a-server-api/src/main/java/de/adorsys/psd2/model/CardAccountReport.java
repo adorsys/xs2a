@@ -16,23 +16,22 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.CardTransactionList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * JSON based card account report.  This card account report contains transactions resulting from the query parameters. 
  */
 @ApiModel(description = "JSON based card account report.  This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class CardAccountReport   {
   @JsonProperty("booked")
@@ -58,6 +57,8 @@ public class CardAccountReport   {
 
   @Valid
 
+
+  @JsonProperty("booked")
   public CardTransactionList getBooked() {
     return booked;
   }
@@ -79,6 +80,8 @@ public class CardAccountReport   {
 
   @Valid
 
+
+  @JsonProperty("pending")
   public CardTransactionList getPending() {
     return pending;
   }
@@ -100,6 +103,8 @@ public class CardAccountReport   {
   @NotNull
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;

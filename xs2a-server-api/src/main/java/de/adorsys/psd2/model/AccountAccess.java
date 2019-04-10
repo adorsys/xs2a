@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Requested access services for a consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class AccountAccess   {
   @JsonProperty("accounts")
@@ -135,6 +135,8 @@ public class AccountAccess   {
 
   @Valid
 
+
+  @JsonProperty("accounts")
   public List<AccountReference> getAccounts() {
     return accounts;
   }
@@ -164,6 +166,8 @@ public class AccountAccess   {
 
   @Valid
 
+
+  @JsonProperty("balances")
   public List<AccountReference> getBalances() {
     return balances;
   }
@@ -193,6 +197,8 @@ public class AccountAccess   {
 
   @Valid
 
+
+  @JsonProperty("transactions")
   public List<AccountReference> getTransactions() {
     return transactions;
   }
@@ -213,6 +219,7 @@ public class AccountAccess   {
   @ApiModelProperty(value = "Optional if supported by API provider.  Only the values \"allAccounts\" or \"allAccountsWithBalances\" is admitted. ")
 
 
+  @JsonProperty("availableAccounts")
   public AvailableAccountsEnum getAvailableAccounts() {
     return availableAccounts;
   }
@@ -233,6 +240,7 @@ public class AccountAccess   {
   @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
 
 
+  @JsonProperty("allPsd2")
   public AllPsd2Enum getAllPsd2() {
     return allPsd2;
   }

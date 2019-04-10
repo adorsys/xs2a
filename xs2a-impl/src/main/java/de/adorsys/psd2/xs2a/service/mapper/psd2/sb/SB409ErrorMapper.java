@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2.sb;
 
-import de.adorsys.psd2.model.Error409NGSB;
-import de.adorsys.psd2.model.MessageCode409SB;
-import de.adorsys.psd2.model.TppMessage409SB;
+import de.adorsys.psd2.model.Error409NGSBS;
+import de.adorsys.psd2.model.MessageCode409SBS;
+import de.adorsys.psd2.model.TppMessage409SBS;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -32,10 +32,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class SB409ErrorMapper extends Psd2ErrorMapper<MessageError, Error409NGSB> {
+public class SB409ErrorMapper extends Psd2ErrorMapper<MessageError, Error409NGSBS> {
 
     @Override
-    public Function<MessageError, Error409NGSB> getMapper() {
+    public Function<MessageError, Error409NGSBS> getMapper() {
         return this::mapToPsd2Error;
     }
 
@@ -44,15 +44,15 @@ public class SB409ErrorMapper extends Psd2ErrorMapper<MessageError, Error409NGSB
         return HttpStatus.CONFLICT;
     }
 
-    private Error409NGSB mapToPsd2Error(MessageError messageError) {
-        return new Error409NGSB().tppMessages(mapToTppMessage409SB(messageError.getTppMessages()));
+    private Error409NGSBS mapToPsd2Error(MessageError messageError) {
+        return new Error409NGSBS().tppMessages(mapToTppMessage409SB(messageError.getTppMessages()));
     }
 
-    private List<TppMessage409SB> mapToTppMessage409SB(Set<TppMessageInformation> tppMessages) {
+    private List<TppMessage409SBS> mapToTppMessage409SB(Set<TppMessageInformation> tppMessages) {
         return tppMessages.stream()
-                   .map(m -> new TppMessage409SB()
+                   .map(m -> new TppMessage409SBS()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
-                                 .code(MessageCode409SB.fromValue(m.getMessageErrorCode().getName()))
+                                 .code(MessageCode409SBS.fromValue(m.getMessageErrorCode().getName()))
                                  .path(m.getPath())
                                  .text(getErrorText(m))
                    ).collect(Collectors.toList());

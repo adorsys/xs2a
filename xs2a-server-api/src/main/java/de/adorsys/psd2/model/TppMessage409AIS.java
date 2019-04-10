@@ -16,22 +16,20 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.MessageCode409AIS;
-import de.adorsys.psd2.model.TppMessageCategory;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 /**
  * TppMessage409AIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class TppMessage409AIS   {
   @JsonProperty("category")
@@ -60,6 +58,8 @@ public class TppMessage409AIS   {
 
   @Valid
 
+
+  @JsonProperty("category")
   public TppMessageCategory getCategory() {
     return category;
   }
@@ -82,6 +82,8 @@ public class TppMessage409AIS   {
 
   @Valid
 
+
+  @JsonProperty("code")
   public MessageCode409AIS getCode() {
     return code;
   }
@@ -102,6 +104,8 @@ public class TppMessage409AIS   {
   @ApiModelProperty(value = "")
 
 
+
+  @JsonProperty("path")
   public String getPath() {
     return path;
   }
@@ -122,6 +126,8 @@ public class TppMessage409AIS   {
   @ApiModelProperty(value = "")
 
 @Size(max=512) 
+
+  @JsonProperty("text")
   public String getText() {
     return text;
   }

@@ -33,11 +33,11 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successful create signing basket request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class SigningBasketResponse201   {
   @JsonProperty("transactionStatus")
-  private TransactionStatus transactionStatus = null;
+  private TransactionStatusSBS transactionStatus = null;
 
   @JsonProperty("basketId")
   private String basketId = null;
@@ -61,7 +61,7 @@ public class SigningBasketResponse201   {
   @Valid
   private List<TppMessage2XX> tppMessages = null;
 
-  public SigningBasketResponse201 transactionStatus(TransactionStatus transactionStatus) {
+  public SigningBasketResponse201 transactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;
     return this;
   }
@@ -75,11 +75,13 @@ public class SigningBasketResponse201   {
 
   @Valid
 
-  public TransactionStatus getTransactionStatus() {
+
+  @JsonProperty("transactionStatus")
+  public TransactionStatusSBS getTransactionStatus() {
     return transactionStatus;
   }
 
-  public void setTransactionStatus(TransactionStatus transactionStatus) {
+  public void setTransactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;
   }
 
@@ -96,6 +98,8 @@ public class SigningBasketResponse201   {
   @NotNull
 
 
+
+  @JsonProperty("basketId")
   public String getBasketId() {
     return basketId;
   }
@@ -117,6 +121,8 @@ public class SigningBasketResponse201   {
 
   @Valid
 
+
+  @JsonProperty("scaMethods")
   public ScaMethods getScaMethods() {
     return scaMethods;
   }
@@ -138,6 +144,8 @@ public class SigningBasketResponse201   {
 
   @Valid
 
+
+  @JsonProperty("chosenScaMethod")
   public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
@@ -159,6 +167,8 @@ public class SigningBasketResponse201   {
 
   @Valid
 
+
+  @JsonProperty("challengeData")
   public ChallengeData getChallengeData() {
     return challengeData;
   }
@@ -180,6 +190,8 @@ public class SigningBasketResponse201   {
   @NotNull
 
   @Valid
+
+
   @JsonProperty("_links")
   public LinksSigningBasket getLinks() {
     return _links;
@@ -201,6 +213,8 @@ public class SigningBasketResponse201   {
   @ApiModelProperty(value = "")
 
 @Size(max=512) 
+
+  @JsonProperty("psuMessage")
   public String getPsuMessage() {
     return psuMessage;
   }
@@ -230,6 +244,8 @@ public class SigningBasketResponse201   {
 
   @Valid
 
+
+  @JsonProperty("tppMessages")
   public List<TppMessage2XX> getTppMessages() {
     return tppMessages;
   }

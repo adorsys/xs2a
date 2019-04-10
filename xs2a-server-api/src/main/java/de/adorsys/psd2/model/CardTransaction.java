@@ -16,25 +16,23 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.Address;
-import de.adorsys.psd2.model.Amount;
-import de.adorsys.psd2.model.ExchangeRateList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Card transaction information
  */
 @ApiModel(description = "Card transaction information")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class CardTransaction   {
   @JsonProperty("cardTransactionId")
@@ -52,8 +50,8 @@ public class CardTransaction   {
   @JsonProperty("transactionAmount")
   private Amount transactionAmount = null;
 
-  @JsonProperty("exchangeRate")
-  private ExchangeRateList exchangeRate = null;
+  @JsonProperty("currencyExchange")
+  private ReportExchangeRateList currencyExchange = null;
 
   @JsonProperty("originalAmount")
   private Amount originalAmount = null;
@@ -70,8 +68,8 @@ public class CardTransaction   {
   @JsonProperty("cardAcceptorAddress")
   private Address cardAcceptorAddress = null;
 
-  @JsonProperty("cardAcceptorCategoryCode")
-  private String cardAcceptorCategoryCode = null;
+  @JsonProperty("merchantCategoryCode")
+  private String merchantCategoryCode = null;
 
   @JsonProperty("maskedPAN")
   private String maskedPAN = null;
@@ -97,6 +95,8 @@ public class CardTransaction   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("cardTransactionId")
   public String getCardTransactionId() {
     return cardTransactionId;
   }
@@ -117,6 +117,8 @@ public class CardTransaction   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("terminalId")
   public String getTerminalId() {
     return terminalId;
   }
@@ -138,6 +140,8 @@ public class CardTransaction   {
 
   @Valid
 
+
+  @JsonProperty("transactionDate")
   public LocalDate getTransactionDate() {
     return transactionDate;
   }
@@ -159,6 +163,8 @@ public class CardTransaction   {
 
   @Valid
 
+
+  @JsonProperty("bookingDate")
   public LocalDate getBookingDate() {
     return bookingDate;
   }
@@ -181,6 +187,8 @@ public class CardTransaction   {
 
   @Valid
 
+
+  @JsonProperty("transactionAmount")
   public Amount getTransactionAmount() {
     return transactionAmount;
   }
@@ -189,25 +197,27 @@ public class CardTransaction   {
     this.transactionAmount = transactionAmount;
   }
 
-  public CardTransaction exchangeRate(ExchangeRateList exchangeRate) {
-    this.exchangeRate = exchangeRate;
+  public CardTransaction currencyExchange(ReportExchangeRateList currencyExchange) {
+    this.currencyExchange = currencyExchange;
     return this;
   }
 
   /**
-   * Get exchangeRate
-   * @return exchangeRate
+   * Get currencyExchange
+   * @return currencyExchange
   **/
   @ApiModelProperty(value = "")
 
   @Valid
 
-  public ExchangeRateList getExchangeRate() {
-    return exchangeRate;
+
+  @JsonProperty("currencyExchange")
+  public ReportExchangeRateList getCurrencyExchange() {
+    return currencyExchange;
   }
 
-  public void setExchangeRate(ExchangeRateList exchangeRate) {
-    this.exchangeRate = exchangeRate;
+  public void setCurrencyExchange(ReportExchangeRateList currencyExchange) {
+    this.currencyExchange = currencyExchange;
   }
 
   public CardTransaction originalAmount(Amount originalAmount) {
@@ -223,6 +233,8 @@ public class CardTransaction   {
 
   @Valid
 
+
+  @JsonProperty("originalAmount")
   public Amount getOriginalAmount() {
     return originalAmount;
   }
@@ -244,6 +256,8 @@ public class CardTransaction   {
 
   @Valid
 
+
+  @JsonProperty("markupFee")
   public Amount getMarkupFee() {
     return markupFee;
   }
@@ -261,9 +275,11 @@ public class CardTransaction   {
    * Get markupFeePercentage
    * @return markupFeePercentage
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(example = "0.3", value = "")
 
 
+
+  @JsonProperty("markupFeePercentage")
   public String getMarkupFeePercentage() {
     return markupFeePercentage;
   }
@@ -284,6 +300,8 @@ public class CardTransaction   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("cardAcceptorId")
   public String getCardAcceptorId() {
     return cardAcceptorId;
   }
@@ -305,6 +323,8 @@ public class CardTransaction   {
 
   @Valid
 
+
+  @JsonProperty("cardAcceptorAddress")
   public Address getCardAcceptorAddress() {
     return cardAcceptorAddress;
   }
@@ -313,24 +333,26 @@ public class CardTransaction   {
     this.cardAcceptorAddress = cardAcceptorAddress;
   }
 
-  public CardTransaction cardAcceptorCategoryCode(String cardAcceptorCategoryCode) {
-    this.cardAcceptorCategoryCode = cardAcceptorCategoryCode;
+  public CardTransaction merchantCategoryCode(String merchantCategoryCode) {
+    this.merchantCategoryCode = merchantCategoryCode;
     return this;
   }
 
   /**
-   * Get cardAcceptorCategoryCode
-   * @return cardAcceptorCategoryCode
+   * Get merchantCategoryCode
+   * @return merchantCategoryCode
   **/
   @ApiModelProperty(value = "")
 
+@Size(min=4,max=4) 
 
-  public String getCardAcceptorCategoryCode() {
-    return cardAcceptorCategoryCode;
+  @JsonProperty("merchantCategoryCode")
+  public String getMerchantCategoryCode() {
+    return merchantCategoryCode;
   }
 
-  public void setCardAcceptorCategoryCode(String cardAcceptorCategoryCode) {
-    this.cardAcceptorCategoryCode = cardAcceptorCategoryCode;
+  public void setMerchantCategoryCode(String merchantCategoryCode) {
+    this.merchantCategoryCode = merchantCategoryCode;
   }
 
   public CardTransaction maskedPAN(String maskedPAN) {
@@ -345,6 +367,8 @@ public class CardTransaction   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("maskedPAN")
   public String getMaskedPAN() {
     return maskedPAN;
   }
@@ -365,6 +389,8 @@ public class CardTransaction   {
   @ApiModelProperty(value = "")
 
 @Size(max=140) 
+
+  @JsonProperty("transactionDetails")
   public String getTransactionDetails() {
     return transactionDetails;
   }
@@ -385,6 +411,8 @@ public class CardTransaction   {
   @ApiModelProperty(value = "")
 
 
+
+  @JsonProperty("invoiced")
   public Boolean isInvoiced() {
     return invoiced;
   }
@@ -405,6 +433,8 @@ public class CardTransaction   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("proprietaryBankTransactionCode")
   public String getProprietaryBankTransactionCode() {
     return proprietaryBankTransactionCode;
   }
@@ -428,13 +458,13 @@ public class CardTransaction   {
         Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
         Objects.equals(this.bookingDate, cardTransaction.bookingDate) &&
         Objects.equals(this.transactionAmount, cardTransaction.transactionAmount) &&
-        Objects.equals(this.exchangeRate, cardTransaction.exchangeRate) &&
+        Objects.equals(this.currencyExchange, cardTransaction.currencyExchange) &&
         Objects.equals(this.originalAmount, cardTransaction.originalAmount) &&
         Objects.equals(this.markupFee, cardTransaction.markupFee) &&
         Objects.equals(this.markupFeePercentage, cardTransaction.markupFeePercentage) &&
         Objects.equals(this.cardAcceptorId, cardTransaction.cardAcceptorId) &&
         Objects.equals(this.cardAcceptorAddress, cardTransaction.cardAcceptorAddress) &&
-        Objects.equals(this.cardAcceptorCategoryCode, cardTransaction.cardAcceptorCategoryCode) &&
+        Objects.equals(this.merchantCategoryCode, cardTransaction.merchantCategoryCode) &&
         Objects.equals(this.maskedPAN, cardTransaction.maskedPAN) &&
         Objects.equals(this.transactionDetails, cardTransaction.transactionDetails) &&
         Objects.equals(this.invoiced, cardTransaction.invoiced) &&
@@ -443,7 +473,7 @@ public class CardTransaction   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cardTransactionId, terminalId, transactionDate, bookingDate, transactionAmount, exchangeRate, originalAmount, markupFee, markupFeePercentage, cardAcceptorId, cardAcceptorAddress, cardAcceptorCategoryCode, maskedPAN, transactionDetails, invoiced, proprietaryBankTransactionCode);
+    return Objects.hash(cardTransactionId, terminalId, transactionDate, bookingDate, transactionAmount, currencyExchange, originalAmount, markupFee, markupFeePercentage, cardAcceptorId, cardAcceptorAddress, merchantCategoryCode, maskedPAN, transactionDetails, invoiced, proprietaryBankTransactionCode);
   }
 
   @Override
@@ -456,13 +486,13 @@ public class CardTransaction   {
     sb.append("    transactionDate: ").append(toIndentedString(transactionDate)).append("\n");
     sb.append("    bookingDate: ").append(toIndentedString(bookingDate)).append("\n");
     sb.append("    transactionAmount: ").append(toIndentedString(transactionAmount)).append("\n");
-    sb.append("    exchangeRate: ").append(toIndentedString(exchangeRate)).append("\n");
+    sb.append("    currencyExchange: ").append(toIndentedString(currencyExchange)).append("\n");
     sb.append("    originalAmount: ").append(toIndentedString(originalAmount)).append("\n");
     sb.append("    markupFee: ").append(toIndentedString(markupFee)).append("\n");
     sb.append("    markupFeePercentage: ").append(toIndentedString(markupFeePercentage)).append("\n");
     sb.append("    cardAcceptorId: ").append(toIndentedString(cardAcceptorId)).append("\n");
     sb.append("    cardAcceptorAddress: ").append(toIndentedString(cardAcceptorAddress)).append("\n");
-    sb.append("    cardAcceptorCategoryCode: ").append(toIndentedString(cardAcceptorCategoryCode)).append("\n");
+    sb.append("    merchantCategoryCode: ").append(toIndentedString(merchantCategoryCode)).append("\n");
     sb.append("    maskedPAN: ").append(toIndentedString(maskedPAN)).append("\n");
     sb.append("    transactionDetails: ").append(toIndentedString(transactionDetails)).append("\n");
     sb.append("    invoiced: ").append(toIndentedString(invoiced)).append("\n");

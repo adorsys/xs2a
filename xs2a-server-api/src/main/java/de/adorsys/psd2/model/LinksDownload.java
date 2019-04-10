@@ -16,29 +16,28 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response:   - \&quot;download\&quot;: a link to a resource, where the transaction report might be downloaded from in    case where transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested which has a huge size. 
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP.  Type of links admitted in this response:   - \"download\": a link to a resource, where the transaction report might be downloaded from in    case where transaction reports have a huge size.  Remark: This feature shall only be used where camt-data is requested which has a huge size. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
-public class LinksDownload extends HashMap<String, String>  {
+public class LinksDownload extends HashMap<String, HrefType>  {
   @JsonProperty("download")
-  private String download = null;
+  private HrefType download = null;
 
-  public LinksDownload download(String download) {
+  public LinksDownload download(HrefType download) {
     this.download = download;
     return this;
   }
@@ -50,12 +49,15 @@ public class LinksDownload extends HashMap<String, String>  {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
+  @Valid
 
-  public String getDownload() {
+
+  @JsonProperty("download")
+  public HrefType getDownload() {
     return download;
   }
 
-  public void setDownload(String download) {
+  public void setDownload(HrefType download) {
     this.download = download;
   }
 

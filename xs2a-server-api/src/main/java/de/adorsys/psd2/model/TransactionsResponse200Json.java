@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successful read transaction list request. This account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class TransactionsResponse200Json   {
   @JsonProperty("account")
@@ -58,6 +58,8 @@ public class TransactionsResponse200Json   {
 
   @Valid
 
+
+  @JsonProperty("account")
   public AccountReference getAccount() {
     return account;
   }
@@ -79,6 +81,8 @@ public class TransactionsResponse200Json   {
 
   @Valid
 
+
+  @JsonProperty("transactions")
   public AccountReport getTransactions() {
     return transactions;
   }
@@ -100,6 +104,8 @@ public class TransactionsResponse200Json   {
 
   @Valid
 
+
+  @JsonProperty("balances")
   public BalanceList getBalances() {
     return balances;
   }
@@ -120,6 +126,8 @@ public class TransactionsResponse200Json   {
   @ApiModelProperty(value = "")
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;

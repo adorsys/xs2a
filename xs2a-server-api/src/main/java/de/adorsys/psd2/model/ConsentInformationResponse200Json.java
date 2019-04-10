@@ -16,24 +16,23 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.AccountAccess;
-import de.adorsys.psd2.model.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Body of the JSON response for a successfull get consent request.
  */
 @ApiModel(description = "Body of the JSON response for a successfull get consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class ConsentInformationResponse200Json   {
   @JsonProperty("access")
@@ -54,6 +53,9 @@ public class ConsentInformationResponse200Json   {
   @JsonProperty("consentStatus")
   private ConsentStatus consentStatus = null;
 
+  @JsonProperty("_links")
+  private Map _links = null;
+
   public ConsentInformationResponse200Json access(AccountAccess access) {
     this.access = access;
     return this;
@@ -68,6 +70,8 @@ public class ConsentInformationResponse200Json   {
 
   @Valid
 
+
+  @JsonProperty("access")
   public AccountAccess getAccess() {
     return access;
   }
@@ -89,6 +93,8 @@ public class ConsentInformationResponse200Json   {
   @NotNull
 
 
+
+  @JsonProperty("recurringIndicator")
   public Boolean getRecurringIndicator() {
     return recurringIndicator;
   }
@@ -111,6 +117,8 @@ public class ConsentInformationResponse200Json   {
 
   @Valid
 
+
+  @JsonProperty("validUntil")
   public LocalDate getValidUntil() {
     return validUntil;
   }
@@ -132,6 +140,8 @@ public class ConsentInformationResponse200Json   {
   @NotNull
 
 
+
+  @JsonProperty("frequencyPerDay")
   public Integer getFrequencyPerDay() {
     return frequencyPerDay;
   }
@@ -154,6 +164,8 @@ public class ConsentInformationResponse200Json   {
 
   @Valid
 
+
+  @JsonProperty("lastActionDate")
   public LocalDate getLastActionDate() {
     return lastActionDate;
   }
@@ -176,12 +188,37 @@ public class ConsentInformationResponse200Json   {
 
   @Valid
 
+
+  @JsonProperty("consentStatus")
   public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
 
   public void setConsentStatus(ConsentStatus consentStatus) {
     this.consentStatus = consentStatus;
+  }
+
+  public ConsentInformationResponse200Json _links(Map _links) {
+    this._links = _links;
+    return this;
+  }
+
+  /**
+   * Get _links
+   * @return _links
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("_links")
+  public Map getLinks() {
+    return _links;
+  }
+
+  public void setLinks(Map _links) {
+    this._links = _links;
   }
 
 
@@ -199,12 +236,13 @@ public class ConsentInformationResponse200Json   {
         Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) &&
         Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) &&
         Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) &&
-        Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus);
+        Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus) &&
+        Objects.equals(this._links, consentInformationResponse200Json._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(access, recurringIndicator, validUntil, frequencyPerDay, lastActionDate, consentStatus);
+    return Objects.hash(access, recurringIndicator, validUntil, frequencyPerDay, lastActionDate, consentStatus, _links);
   }
 
   @Override
@@ -218,6 +256,7 @@ public class ConsentInformationResponse200Json   {
     sb.append("    frequencyPerDay: ").append(toIndentedString(frequencyPerDay)).append("\n");
     sb.append("    lastActionDate: ").append(toIndentedString(lastActionDate)).append("\n");
     sb.append("    consentStatus: ").append(toIndentedString(consentStatus)).append("\n");
+    sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("}");
     return sb.toString();
   }
