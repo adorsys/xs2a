@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Reference to an account by either   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class AccountReference   {
   @JsonProperty("iban")
@@ -63,6 +63,8 @@ public class AccountReference   {
   @ApiModelProperty(value = "")
 
 @Pattern(regexp="[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}") 
+
+  @JsonProperty("iban")
   public String getIban() {
     return iban;
   }
@@ -83,6 +85,8 @@ public class AccountReference   {
   @ApiModelProperty(value = "")
 
 @Pattern(regexp="[a-zA-Z0-9]{1,30}") 
+
+  @JsonProperty("bban")
   public String getBban() {
     return bban;
   }
@@ -103,6 +107,8 @@ public class AccountReference   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("pan")
   public String getPan() {
     return pan;
   }
@@ -123,6 +129,8 @@ public class AccountReference   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("maskedPan")
   public String getMaskedPan() {
     return maskedPan;
   }
@@ -143,6 +151,8 @@ public class AccountReference   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("msisdn")
   public String getMsisdn() {
     return msisdn;
   }
@@ -163,6 +173,8 @@ public class AccountReference   {
   @ApiModelProperty(value = "")
 
 @Pattern(regexp="[A-Z]{3}") 
+
+  @JsonProperty("currency")
   public String getCurrency() {
     return currency;
   }

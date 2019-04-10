@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a Start SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class StartScaprocessResponse   {
   @JsonProperty("scaStatus")
@@ -67,7 +67,11 @@ public class StartScaprocessResponse   {
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
+
   @Valid
+
+
+  @JsonProperty("scaStatus")
   public ScaStatus getScaStatus() {
     return scaStatus;
   }
@@ -76,37 +80,44 @@ public class StartScaprocessResponse   {
     this.scaStatus = scaStatus;
   }
 
+  public StartScaprocessResponse authorisationId(String authorisationId) {
+    this.authorisationId = authorisationId;
+    return this;
+  }
+
+  /**
+   * Get authorisationId
+   * @return authorisationId
+  **/
+  @ApiModelProperty(required = true, value = "")
+  @NotNull
+
+
+
+  @JsonProperty("authorisationId")
+  public String getAuthorisationId() {
+    return authorisationId;
+  }
+
+  public void setAuthorisationId(String authorisationId) {
+    this.authorisationId = authorisationId;
+  }
+
   public StartScaprocessResponse scaMethods(ScaMethods scaMethods) {
     this.scaMethods = scaMethods;
     return this;
   }
-
-    /**
-     * Get authorisationId
-     * @return authorisationId
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-    @Valid
-    public String getAuthorisationId() {
-        return authorisationId;
-    }
-
-    public void setAuthorisationId(String authorisationId) {
-        this.authorisationId = authorisationId;
-    }
-
-    public StartScaprocessResponse authorisationId(String authorisationId) {
-        this.authorisationId = authorisationId;
-        return this;
-    }
 
   /**
    * Get scaMethods
    * @return scaMethods
   **/
   @ApiModelProperty(value = "")
+
   @Valid
+
+
+  @JsonProperty("scaMethods")
   public ScaMethods getScaMethods() {
     return scaMethods;
   }
@@ -125,7 +136,11 @@ public class StartScaprocessResponse   {
    * @return chosenScaMethod
   **/
   @ApiModelProperty(value = "")
+
   @Valid
+
+
+  @JsonProperty("chosenScaMethod")
   public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
@@ -147,6 +162,8 @@ public class StartScaprocessResponse   {
 
   @Valid
 
+
+  @JsonProperty("challengeData")
   public ChallengeData getChallengeData() {
     return challengeData;
   }
@@ -168,6 +185,8 @@ public class StartScaprocessResponse   {
   @NotNull
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;
@@ -188,7 +207,9 @@ public class StartScaprocessResponse   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=512)
+@Size(max=512) 
+
+  @JsonProperty("psuMessage")
   public String getPsuMessage() {
     return psuMessage;
   }
@@ -208,6 +229,7 @@ public class StartScaprocessResponse   {
     }
     StartScaprocessResponse startScaprocessResponse = (StartScaprocessResponse) o;
     return Objects.equals(this.scaStatus, startScaprocessResponse.scaStatus) &&
+        Objects.equals(this.authorisationId, startScaprocessResponse.authorisationId) &&
         Objects.equals(this.scaMethods, startScaprocessResponse.scaMethods) &&
         Objects.equals(this.chosenScaMethod, startScaprocessResponse.chosenScaMethod) &&
         Objects.equals(this.challengeData, startScaprocessResponse.challengeData) &&
@@ -217,15 +239,16 @@ public class StartScaprocessResponse   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(scaStatus, scaMethods, chosenScaMethod, challengeData, _links, psuMessage);
+    return Objects.hash(scaStatus, authorisationId, scaMethods, chosenScaMethod, challengeData, _links, psuMessage);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class StartScaprocessResponse {\n");
-
+    
     sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
+    sb.append("    authorisationId: ").append(toIndentedString(authorisationId)).append("\n");
     sb.append("    scaMethods: ").append(toIndentedString(scaMethods)).append("\n");
     sb.append("    chosenScaMethod: ").append(toIndentedString(chosenScaMethod)).append("\n");
     sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");

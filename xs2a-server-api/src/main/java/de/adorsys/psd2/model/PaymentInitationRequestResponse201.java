@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful payment initiation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class PaymentInitationRequestResponse201   {
   @JsonProperty("transactionStatus")
@@ -79,7 +79,11 @@ public class PaymentInitationRequestResponse201   {
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
+
   @Valid
+
+
+  @JsonProperty("transactionStatus")
   public TransactionStatus getTransactionStatus() {
     return transactionStatus;
   }
@@ -99,6 +103,10 @@ public class PaymentInitationRequestResponse201   {
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
+
+
+
+  @JsonProperty("paymentId")
   public String getPaymentId() {
     return paymentId;
   }
@@ -117,7 +125,11 @@ public class PaymentInitationRequestResponse201   {
    * @return transactionFees
   **/
   @ApiModelProperty(value = "")
+
   @Valid
+
+
+  @JsonProperty("transactionFees")
   public Amount getTransactionFees() {
     return transactionFees;
   }
@@ -136,6 +148,10 @@ public class PaymentInitationRequestResponse201   {
    * @return transactionFeeIndicator
   **/
   @ApiModelProperty(value = "")
+
+
+
+  @JsonProperty("transactionFeeIndicator")
   public Boolean getTransactionFeeIndicator() {
     return transactionFeeIndicator;
   }
@@ -154,7 +170,11 @@ public class PaymentInitationRequestResponse201   {
    * @return scaMethods
   **/
   @ApiModelProperty(value = "")
+
   @Valid
+
+
+  @JsonProperty("scaMethods")
   public ScaMethods getScaMethods() {
     return scaMethods;
   }
@@ -173,7 +193,11 @@ public class PaymentInitationRequestResponse201   {
    * @return chosenScaMethod
   **/
   @ApiModelProperty(value = "")
+
   @Valid
+
+
+  @JsonProperty("chosenScaMethod")
   public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
@@ -192,7 +216,11 @@ public class PaymentInitationRequestResponse201   {
    * @return challengeData
   **/
   @ApiModelProperty(value = "")
+
   @Valid
+
+
+  @JsonProperty("challengeData")
   public ChallengeData getChallengeData() {
     return challengeData;
   }
@@ -212,7 +240,10 @@ public class PaymentInitationRequestResponse201   {
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
+
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;
@@ -232,7 +263,10 @@ public class PaymentInitationRequestResponse201   {
    * @return psuMessage
   **/
   @ApiModelProperty(value = "")
-  @Size(max=512)
+
+@Size(max=512) 
+
+  @JsonProperty("psuMessage")
   public String getPsuMessage() {
     return psuMessage;
   }
@@ -259,7 +293,11 @@ public class PaymentInitationRequestResponse201   {
    * @return tppMessages
   **/
   @ApiModelProperty(value = "")
+
   @Valid
+
+
+  @JsonProperty("tppMessages")
   public List<TppMessage2XX> getTppMessages() {
     return tppMessages;
   }

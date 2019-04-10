@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @JsonProperty("startDate")
@@ -63,6 +63,8 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   @Valid
 
+
+  @JsonProperty("startDate")
   public LocalDate getStartDate() {
     return startDate;
   }
@@ -84,6 +86,8 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   @Valid
 
+
+  @JsonProperty("endDate")
   public LocalDate getEndDate() {
     return endDate;
   }
@@ -105,6 +109,8 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   @Valid
 
+
+  @JsonProperty("executionRule")
   public ExecutionRule getExecutionRule() {
     return executionRule;
   }
@@ -127,6 +133,8 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   @Valid
 
+
+  @JsonProperty("frequency")
   public FrequencyCode getFrequency() {
     return frequency;
   }
@@ -147,6 +155,8 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @ApiModelProperty(value = "")
 
   @Valid
+
+  @JsonProperty("dayOfExecution")
   public DayOfExecution getDayOfExecution() {
     return dayOfExecution;
   }

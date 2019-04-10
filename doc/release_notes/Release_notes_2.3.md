@@ -37,3 +37,18 @@ From now on, empty arrays in the HTTP responses are included in the bodies. For 
 ## Bugfix: Return correct value of "frequencyPerDay" property on get Consent request
 From now on, "frequencyPerDay" property in get AIS Consent(`GET /v1/consents/{consentId}`) response contains initial value or adjusted by ASPSP, according to profile settings.
 Before that, this field always had initial value that was sent by TPP.
+
+## Migrate to .yaml OpenAPI v. 1.3.3
+XS2A models and interfaces were updated in accordance with version 1.3.3 of OpenAPI 3.0 file by Berlin Group.
+
+The migration process caused several changes to the SPI level:
+ - New property `requestedExecutionTime` was added to the `de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment`.
+ - Some properties in `de.adorsys.psd2.xs2a.spi.domain.account.SpiExchangeRate` were renamed in accordance with the 
+specification. Getters that used old names of these properties were marked as deprecated and will be removed in 2.6.
+New getters should be used to access these properties instead.
+
+| Old method name | New method name           |
+|-----------------|---------------------------|
+| getRate         | getExchangeRate           |
+| getRateDate     | getQuotationDate          |
+| getRateContract | getContractIdentification |

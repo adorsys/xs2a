@@ -16,29 +16,27 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP  defined extensions):  - &#39;scaStatus&#39;: The link to retrieve the scaStatus of the corresponding authorisation sub-resource. 
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP  defined extensions):  - 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
-public class LinksUpdatePsuIdentification extends HashMap<String, String>  {
+public class LinksUpdatePsuIdentification extends HashMap<String, HrefType>  {
   @JsonProperty("scaStatus")
-  private String scaStatus = null;
+  private HrefType scaStatus = null;
 
-  public LinksUpdatePsuIdentification scaStatus(String scaStatus) {
+  public LinksUpdatePsuIdentification scaStatus(HrefType scaStatus) {
     this.scaStatus = scaStatus;
     return this;
   }
@@ -49,12 +47,15 @@ public class LinksUpdatePsuIdentification extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getScaStatus() {
+
+  @JsonProperty("scaStatus")
+  public HrefType getScaStatus() {
     return scaStatus;
   }
 
-  public void setScaStatus(String scaStatus) {
+  public void setScaStatus(HrefType scaStatus) {
     this.scaStatus = scaStatus;
   }
 

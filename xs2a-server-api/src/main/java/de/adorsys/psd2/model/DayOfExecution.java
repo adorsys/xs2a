@@ -16,14 +16,8 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
-import io.swagger.annotations.ApiModel;
-import com.fasterxml.jackson.annotation.JsonValue;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Day of execution as string.  This string consists of up two characters. Leading zeroes are not allowed.  31 is ultimo of the month. 

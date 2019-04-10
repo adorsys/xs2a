@@ -16,31 +16,16 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
-@ApiModel(description = "Exchange Rate ", value = "ExchangeRate")
 public class Xs2aExchangeRate {
-
-    @ApiModelProperty(value = "sourceCurrency")
     private String sourceCurrency;
-
-    @ApiModelProperty(value = "rate")
-    private String rate;
-
-    @ApiModelProperty(value = "unitCurrency")
+    private String exchangeRate;
     private String unitCurrency;
-
-    @ApiModelProperty(value = "targetCurrency")
     private String targetCurrency;
-
-    @ApiModelProperty(value = "rateDate")
-    private LocalDate rateDate;
-
-    @ApiModelProperty(value = "rateContract")
-    private String rateContract;
+    private LocalDate quotationDate;
+    private String contractIdentification;
 }

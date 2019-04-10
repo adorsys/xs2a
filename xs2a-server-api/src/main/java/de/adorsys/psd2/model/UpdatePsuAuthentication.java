@@ -16,22 +16,21 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.PsuData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Content of the body of a Update PSU Authentication Request  Password subfield is used. 
  */
 @ApiModel(description = "Content of the body of a Update PSU Authentication Request  Password subfield is used. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class UpdatePsuAuthentication   {
   @JsonProperty("psuData")
@@ -51,6 +50,8 @@ public class UpdatePsuAuthentication   {
 
   @Valid
 
+
+  @JsonProperty("psuData")
   public PsuData getPsuData() {
     return psuData;
   }

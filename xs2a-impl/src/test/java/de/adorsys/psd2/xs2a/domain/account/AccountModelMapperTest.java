@@ -334,10 +334,10 @@ public class AccountModelMapperTest {
     private Xs2aExchangeRate createExchangeRate() {
         Xs2aExchangeRate exchangeRate = new Xs2aExchangeRate();
         exchangeRate.setUnitCurrency("unit currency");
-        exchangeRate.setRate("rate");
+        exchangeRate.setExchangeRate("rate");
         exchangeRate.setSourceCurrency("source currency");
-        exchangeRate.setRateDate(LocalDate.of(2017, 1, 1));
-        exchangeRate.setRateContract("Rate contract");
+        exchangeRate.setQuotationDate(LocalDate.of(2017, 1, 1));
+        exchangeRate.setContractIdentification("Rate contract");
         return exchangeRate;
     }
 }

@@ -16,22 +16,21 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.MessageCode429AIS;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 /**
  * This is a data element to support the declaration of additional errors in the context of [RFC7807]  in case of a HTTP error code 429 for.  
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807]  in case of a HTTP error code 429 for.  ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class Error429AISAdditionalErrors   {
   @JsonProperty("title")
@@ -55,6 +54,8 @@ public class Error429AISAdditionalErrors   {
   @ApiModelProperty(value = "")
 
 @Size(max=70) 
+
+  @JsonProperty("title")
   public String getTitle() {
     return title;
   }
@@ -75,6 +76,8 @@ public class Error429AISAdditionalErrors   {
   @ApiModelProperty(value = "")
 
 @Size(max=512) 
+
+  @JsonProperty("detail")
   public String getDetail() {
     return detail;
   }
@@ -96,6 +99,8 @@ public class Error429AISAdditionalErrors   {
 
   @Valid
 
+
+  @JsonProperty("code")
   public MessageCode429AIS getCode() {
     return code;
   }
