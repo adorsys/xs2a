@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.web.xs2a.controller.AisConsentController;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -65,6 +66,8 @@ public class AisConsentControllerTest {
 
     @Mock
     private AisConsentServiceEncrypted aisConsentService;
+    @Mock
+    private AisConsentAuthorisationServiceEncrypted aisAuthorisationServiceEncrypted;
 
     @Before
     public void setUp() {
@@ -72,15 +75,15 @@ public class AisConsentControllerTest {
         when(aisConsentService.getConsentStatusById(eq(WRONG_CONSENT_ID))).thenReturn(Optional.empty());
         when(aisConsentService.updateConsentStatusById(eq(CONSENT_ID), eq(CONSENT_STATUS))).thenReturn(true);
         when(aisConsentService.updateConsentStatusById(eq(WRONG_CONSENT_ID), eq(WRONG_CONSENT_STATUS))).thenReturn(false);
-        when(aisConsentService.createAuthorization(eq(CONSENT_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.of(AUTHORIZATION_ID));
-        when(aisConsentService.createAuthorization(eq(WRONG_CONSENT_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.empty());
-        when(aisConsentService.createAuthorization(eq(CONSENT_ID), eq(WRONG_CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.empty());
-        when(aisConsentService.updateConsentAuthorization(eq(AUTHORIZATION_ID_1), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(true);
-        when(aisConsentService.updateConsentAuthorization(eq(AUTHORIZATION_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(false);
-        when(aisConsentService.updateConsentAuthorization(eq(WRONG_AUTHORIZATION_ID), eq(WRONG_CONSENT_AUTHORIZATION_REQUEST))).thenReturn(false);
-        when(aisConsentService.getAccountConsentAuthorizationById(eq(AUTHORIZATION_ID), eq(CONSENT_ID))).thenReturn(Optional.of(CONSENT_AUTHORIZATION_RESPONSE));
-        when(aisConsentService.getAccountConsentAuthorizationById(eq(AUTHORIZATION_ID), eq(WRONG_CONSENT_ID))).thenReturn(Optional.empty());
-        when(aisConsentService.getAccountConsentAuthorizationById(eq(WRONG_AUTHORIZATION_ID), eq(CONSENT_ID))).thenReturn(Optional.empty());
+        when(aisAuthorisationServiceEncrypted.createAuthorization(eq(CONSENT_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.of(AUTHORIZATION_ID));
+        when(aisAuthorisationServiceEncrypted.createAuthorization(eq(WRONG_CONSENT_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.empty());
+        when(aisAuthorisationServiceEncrypted.createAuthorization(eq(CONSENT_ID), eq(WRONG_CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.empty());
+        when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(eq(AUTHORIZATION_ID_1), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(true);
+        when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(eq(AUTHORIZATION_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(false);
+        when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(eq(WRONG_AUTHORIZATION_ID), eq(WRONG_CONSENT_AUTHORIZATION_REQUEST))).thenReturn(false);
+        when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(AUTHORIZATION_ID), eq(CONSENT_ID))).thenReturn(Optional.of(CONSENT_AUTHORIZATION_RESPONSE));
+        when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(AUTHORIZATION_ID), eq(WRONG_CONSENT_ID))).thenReturn(Optional.empty());
+        when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(WRONG_AUTHORIZATION_ID), eq(CONSENT_ID))).thenReturn(Optional.empty());
     }
 
     @Test
@@ -167,7 +170,7 @@ public class AisConsentControllerTest {
     @Test
     public void updateConsentAuthorization_Success() {
         doReturn(true)
-            .when(aisConsentService).updateConsentAuthorization(anyString(), any(AisConsentAuthorizationRequest.class));
+            .when(aisAuthorisationServiceEncrypted).updateConsentAuthorization(anyString(), any(AisConsentAuthorizationRequest.class));
 
         //Given:
         AisConsentAuthorizationRequest expectedRequest = getConsentAuthorizationRequest();
@@ -251,7 +254,7 @@ public class AisConsentControllerTest {
 
     @Test
     public void getConsentAuthorizationScaStatus_success() {
-        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORIZATION_ID))
+        when(aisAuthorisationServiceEncrypted.getAuthorisationScaStatus(CONSENT_ID, AUTHORIZATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
 
         // When
@@ -264,7 +267,7 @@ public class AisConsentControllerTest {
 
     @Test
     public void getConsentAuthorizationScaStatus_failure_wrongIds() {
-        when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORIZATION_ID))
+        when(aisAuthorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORIZATION_ID))
             .thenReturn(Optional.empty());
 
         // When

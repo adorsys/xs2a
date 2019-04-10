@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
@@ -79,6 +80,8 @@ public class Xs2aAisConsentServiceTest {
     private Xs2aAisConsentService xs2aAisConsentService;
     @Mock
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+    @Mock
+    private AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
     @Mock
@@ -243,7 +246,7 @@ public class Xs2aAisConsentServiceTest {
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH))
             .thenReturn(AIS_CONSENT_AUTHORIZATION_REQUEST);
-        when(aisConsentServiceEncrypted.createAuthorization(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
+        when(aisConsentAuthorisationServiceEncrypted.createAuthorization(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
             .thenReturn(Optional.of(NEW_ID));
 
         //When
@@ -261,7 +264,7 @@ public class Xs2aAisConsentServiceTest {
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH))
             .thenReturn(AIS_CONSENT_AUTHORIZATION_REQUEST);
-        when(aisConsentServiceEncrypted.createAuthorization(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
+        when(aisConsentAuthorisationServiceEncrypted.createAuthorization(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
             .thenReturn(Optional.empty());
 
         //When
@@ -274,7 +277,7 @@ public class Xs2aAisConsentServiceTest {
     @Test
     public void getAccountConsentAuthorizationById_success() {
         //Given
-        when(aisConsentServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+        when(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.of(AIS_CONSENT_AUTHORIZATION_RESPONSE));
         when(aisConsentAuthorisationMapper.mapToAccountConsentAuthorization(AIS_CONSENT_AUTHORIZATION_RESPONSE))
             .thenReturn(ACCOUNT_CONSENT_AUTHORIZATION);
@@ -290,7 +293,7 @@ public class Xs2aAisConsentServiceTest {
     @Test
     public void getAccountConsentAuthorizationById_failed() {
         //Given
-        when(aisConsentServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+        when(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.empty());
 
         //When
@@ -303,7 +306,7 @@ public class Xs2aAisConsentServiceTest {
     @Test
     public void getAuthorisationSubResources_success() {
         //Given
-        when(aisConsentServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
+        when(aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
             .thenReturn(Optional.of(STRING_LIST));
 
         //When
@@ -317,7 +320,7 @@ public class Xs2aAisConsentServiceTest {
     @Test
     public void getAuthorisationSubResources_failed() {
         //Given
-        when(aisConsentServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
+        when(aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
             .thenReturn(Optional.empty());
 
         //When
@@ -330,7 +333,7 @@ public class Xs2aAisConsentServiceTest {
     @Test
     public void getAuthorisationScaStatus_success() {
         //Given
-        when(aisConsentServiceEncrypted.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+        when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
 
         //When
@@ -344,7 +347,7 @@ public class Xs2aAisConsentServiceTest {
     @Test
     public void getAuthorisationScaStatus_failed() {
         //Given
-        when(aisConsentServiceEncrypted.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
+        when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         //When
@@ -357,7 +360,7 @@ public class Xs2aAisConsentServiceTest {
     @Test
     public void isAuthenticationMethodDecoupled_success() {
         //Given
-        when(aisConsentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
+        when(aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(true);
 
         //When
@@ -370,7 +373,7 @@ public class Xs2aAisConsentServiceTest {
     @Test
     public void isAuthenticationMethodDecoupled_failed() {
         //Given
-        when(aisConsentServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
+        when(aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(false);
 
         //When
@@ -385,7 +388,7 @@ public class Xs2aAisConsentServiceTest {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
-        when(aisConsentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
+        when(aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(true);
 
         //When
@@ -400,7 +403,7 @@ public class Xs2aAisConsentServiceTest {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
-        when(aisConsentServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
+        when(aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(false);
 
         //When
@@ -434,7 +437,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     private static AccountConsent createConsent(String id) {
-        return  new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), 0);
+        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), 0);
     }
 
     private static Xs2aAccountAccess createEmptyAccountAccess() {
