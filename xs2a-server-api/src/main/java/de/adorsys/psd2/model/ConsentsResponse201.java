@@ -16,26 +16,23 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ChallengeData;
-import de.adorsys.psd2.model.ChosenScaMethod;
-import de.adorsys.psd2.model.ConsentStatus;
-import de.adorsys.psd2.model.ScaMethods;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Body of the JSON response for a successful conset request.
  */
 @ApiModel(description = "Body of the JSON response for a successful conset request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class ConsentsResponse201   {
   @JsonProperty("consentStatus")
@@ -73,6 +70,8 @@ public class ConsentsResponse201   {
 
   @Valid
 
+
+  @JsonProperty("consentStatus")
   public ConsentStatus getConsentStatus() {
     return consentStatus;
   }
@@ -94,6 +93,8 @@ public class ConsentsResponse201   {
   @NotNull
 
 
+
+  @JsonProperty("consentId")
   public String getConsentId() {
     return consentId;
   }
@@ -115,6 +116,8 @@ public class ConsentsResponse201   {
 
   @Valid
 
+
+  @JsonProperty("scaMethods")
   public ScaMethods getScaMethods() {
     return scaMethods;
   }
@@ -136,6 +139,8 @@ public class ConsentsResponse201   {
 
   @Valid
 
+
+  @JsonProperty("chosenScaMethod")
   public ChosenScaMethod getChosenScaMethod() {
     return chosenScaMethod;
   }
@@ -157,6 +162,8 @@ public class ConsentsResponse201   {
 
   @Valid
 
+
+  @JsonProperty("challengeData")
   public ChallengeData getChallengeData() {
     return challengeData;
   }
@@ -178,6 +185,8 @@ public class ConsentsResponse201   {
   @NotNull
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;
@@ -199,6 +208,8 @@ public class ConsentsResponse201   {
   @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach.")
 
 @Size(max=512) 
+
+  @JsonProperty("message")
   public String getMessage() {
     return message;
   }

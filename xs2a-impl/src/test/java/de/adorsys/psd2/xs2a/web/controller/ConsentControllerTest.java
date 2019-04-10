@@ -30,7 +30,6 @@ import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
@@ -115,7 +114,7 @@ public class ConsentControllerTest {
                                                                         null, false, null, null,
                                                                         EXPLICIT_PREFERRED, null, null, null, null,
                                                                         null, null, null, null, null,
-                                                                        null);
+                                                                        null, null, null);
         ConsentsResponse201 resp = (ConsentsResponse201) responseEntity.getBody();
 
         //Then:
@@ -134,7 +133,7 @@ public class ConsentControllerTest {
                                                                         null, false, null, null,
                                                                         EXPLICIT_PREFERRED, null, null, null, null,
                                                                         null, null, null, null, null,
-                                                                        null);
+                                                                        null, null, null);
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -176,11 +175,11 @@ public class ConsentControllerTest {
         CreateConsentAuthorizationResponse expectedResponse = getCreateConsentAuthorizationResponse(CONSENT_ID);
 
         // When
-        ResponseEntity responseEntity = consentController.startConsentAuthorisation(CONSENT_ID, null,
-                                                                                    null, null, null, CORRECT_PSU_ID, null, null,
+        ResponseEntity responseEntity = consentController.startConsentAuthorisation(null, CONSENT_ID,
+                                                                                    null, null, null, null, CORRECT_PSU_ID, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null, null, null,
-                                                                                    null);
+                                                                                    null, null, null, null, null, null);
 
         // Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -195,11 +194,11 @@ public class ConsentControllerTest {
                             .build());
 
         // When
-        ResponseEntity responseEntity = consentController.startConsentAuthorisation(WRONG_CONSENT_ID, null,
-                                                                                    null, null, null, CORRECT_PSU_ID, null, null,
+        ResponseEntity responseEntity = consentController.startConsentAuthorisation(null, WRONG_CONSENT_ID,
+                                                                                    null, null, null, null, CORRECT_PSU_ID, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null, null, null,
-                                                                                    null);
+                                                                                    null, null, null, null, null, null, null);
 
         // Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

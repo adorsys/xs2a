@@ -16,22 +16,22 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.AuthenticationType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 /**
  * Authentication Object 
  */
 @ApiModel(description = "Authentication Object ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class AuthenticationObject   {
   @JsonProperty("authenticationType")
@@ -63,6 +63,8 @@ public class AuthenticationObject   {
 
   @Valid
 
+
+  @JsonProperty("authenticationType")
   public AuthenticationType getAuthenticationType() {
     return authenticationType;
   }
@@ -83,6 +85,8 @@ public class AuthenticationObject   {
   @ApiModelProperty(value = "Depending on the \"authenticationType\". This version can be used by differentiating authentication tools used within performing OTP generation in the same authentication type. This version can be referred to in the ASPSP?s documentation. ")
 
 
+
+  @JsonProperty("authenticationVersion")
   public String getAuthenticationVersion() {
     return authenticationVersion;
   }
@@ -104,6 +108,8 @@ public class AuthenticationObject   {
   @NotNull
 
 @Size(max=35) 
+
+  @JsonProperty("authenticationMethodId")
   public String getAuthenticationMethodId() {
     return authenticationMethodId;
   }
@@ -124,6 +130,8 @@ public class AuthenticationObject   {
   @ApiModelProperty(example = "SMS OTP on phone +49160 xxxxx 28", value = "This is the name of the authentication method defined by the PSU in the Online Banking frontend of the ASPSP. Alternatively this could be a description provided by the ASPSP like \"SMS OTP on phone +49160 xxxxx 28\". This name shall be used by the TPP when presenting a list of authentication methods to the PSU, if available. ")
 
 
+
+  @JsonProperty("name")
   public String getName() {
     return name;
   }
@@ -144,6 +152,8 @@ public class AuthenticationObject   {
   @ApiModelProperty(example = "Detailed information about the SCA method for the PSU.", value = "Detailed information about the SCA method for the PSU. ")
 
 
+
+  @JsonProperty("explanation")
   public String getExplanation() {
     return explanation;
   }

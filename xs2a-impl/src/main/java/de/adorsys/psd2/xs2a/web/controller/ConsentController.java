@@ -59,8 +59,9 @@ public class ConsentController implements ConsentApi {
     @Override
     public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature,
                                         byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID,
-                                        String psUCorporateIDType, boolean tpPRedirectPreferred, String tpPRedirectURI,
-                                        String tpPNokRedirectURI, boolean tpPExplicitAuthorisationPreferred, String psUIPAddress,
+                                        String psUCorporateIDType, Boolean tpPRedirectPreferred, String tpPRedirectURI,
+                                        String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred,
+                                        String tpPNotificationURI, String tpPNotificationContentPreferred, String psUIPAddress,
                                         String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                         String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                         String psUGeoLocation) {
@@ -103,13 +104,17 @@ public class ConsentController implements ConsentApi {
     }
 
     @Override
-    public ResponseEntity startConsentAuthorisation(String consentId, UUID xRequestID, String digest, String signature,
-                                                    byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType,
-                                                    String psUCorporateID, String psUCorporateIDType, String psUIPAddress,
-                                                    String psUIPPort, String psUAccept, String psUAcceptCharset,
-                                                    String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
-                                                    String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-
+    public ResponseEntity startConsentAuthorisation(UUID xRequestID, String consentId, Object body,
+                                                    String digest, String signature, byte[] tpPSignatureCertificate,
+                                                    String PSU_ID, String psUIDType, String psUCorporateID,
+                                                    String psUCorporateIDType, Boolean tpPRedirectPreferred,
+                                                    String tpPRedirectURI, String tpPNokRedirectURI,
+                                                    String tpPNotificationURI, String tpPNotificationContentPreferred,
+                                                    String psUIPAddress, String psUIPPort, String psUAccept,
+                                                    String psUAcceptCharset, String psUAcceptEncoding,
+                                                    String psUAcceptLanguage, String psUUserAgent,
+                                                    String psUHttpMethod, UUID psUDeviceID,
+                                                    String psUGeoLocation) {
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         ResponseObject<CreateConsentAuthorizationResponse> consentAuthorizationWithResponse =
             consentService.createConsentAuthorizationWithResponse(psuData, consentId);

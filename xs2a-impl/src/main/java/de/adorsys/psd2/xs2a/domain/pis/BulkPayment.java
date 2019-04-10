@@ -33,6 +33,7 @@ public class BulkPayment {
     @NotNull
     private AccountReference debtorAccount;
     private LocalDate requestedExecutionDate;
+    private OffsetDateTime requestedExecutionTime;
     private List<SinglePayment> payments;
     private TransactionStatus transactionStatus;
     private List<PsuIdData> psuDataList;

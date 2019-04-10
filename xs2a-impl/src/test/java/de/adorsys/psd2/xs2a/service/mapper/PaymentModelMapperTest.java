@@ -47,6 +47,8 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.LinkedHashMap;
@@ -73,6 +75,7 @@ public class PaymentModelMapperTest {
     private static final LocalDate START_DATE = LocalDate.of(2020, 1, 2);
     private static final LocalDate END_DATE = LocalDate.of(2020, 6, 2);
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.of(2020, 2, 15);
+    private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.of(2020, 2, 15, 12, 0, 0, 0, ZoneOffset.UTC);
     private static final DayOfExecution PSD2_DAY_OF_EXECUTION = DayOfExecution._2;
     private static final ExecutionRule PSD2_EXECUTION_RULE = ExecutionRule.FOLLOWING;
     private static final FrequencyCode PSD2_FREQUENCY_CODE = FrequencyCode.DAILY;
@@ -111,7 +114,7 @@ public class PaymentModelMapperTest {
 
     @Test
     public void mapToXs2aPayment_Single_success() {
-        when(objectMapper.convertValue(getSinglePayment(true, true, true, true, true, true, true), PaymentInitiationSctJson.class)).thenReturn(getSinglePayment12(true, true, true, true, true, true, true));
+        when(objectMapper.convertValue(getSinglePayment(true, true, true, true, true, true, true), PaymentInitiationJson.class)).thenReturn(getSinglePayment12(true, true, true, true, true, true, true));
         when(objectMapper.convertValue(getPsd2AccountReference(true, true), AccountReference.class)).thenReturn(getAccountReference(true, true));
         //Given
         Object payment = getSinglePayment(true, true, true, true, true, true, true);
@@ -141,7 +144,7 @@ public class PaymentModelMapperTest {
     public void mapToXs2aPayment_Periodic_success() {
         when(objectMapper.convertValue(getPeriodicPayment(true, true, true, true,
                                                           true, true, true, true, true, true,
-                                                          true, true), PeriodicPaymentInitiationSctJson.class))
+                                                          true, true), PeriodicPaymentInitiationJson.class))
             .thenReturn(getPeriodicPayment(true, true, true, true, true,
                                            true, true, true, true, true, true,
                                            true));
@@ -175,7 +178,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToXs2aPayment_Bulk_success() {
         when(objectMapper.convertValue(getBulkPayment(true, true, true,
-                                                      true), BulkPaymentInitiationSctJson.class))
+                                                      true), BulkPaymentInitiationJson.class))
             .thenReturn(getBulkPayment(true, true, true, true));
         when(objectMapper.convertValue(getPsd2AccountReference(true, true), AccountReference.class))
             .thenReturn(getAccountReference(true, true));
@@ -187,6 +190,7 @@ public class PaymentModelMapperTest {
         assertThat(result.getBatchBookingPreferred()).isEqualTo(BATCH_BOOKING_PREFERRED);
         assertThat(result.getDebtorAccount()).isNotNull();
         assertThat(result.getRequestedExecutionDate()).isNotNull();
+        assertThat(result.getRequestedExecutionTime()).isEqualTo(REQUESTED_EXECUTION_TIME);
         assertThat(result.getPayments()).isNotEmpty();
         assertThat(result.getPayments().get(0).getEndToEndIdentification()).isEqualTo(END_TO_END_IDENTIFICATION);
     }
@@ -194,7 +198,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToGetPaymentResponse12_Single_success() {
         //When
-        PaymentInitiationTarget2WithStatusResponse result = (PaymentInitiationTarget2WithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildSinglePayment(TransactionStatus.RCVD), SINGLE, STANDARD_PAYMENT_TYPE);
+        PaymentInitiationWithStatusResponse result = (PaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildSinglePayment(TransactionStatus.RCVD), SINGLE, STANDARD_PAYMENT_TYPE);
 
         //Then
         assertThat(result).isNotNull();
@@ -212,7 +216,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToGetPaymentResponse12_Periodic_success() {
         //When
-        PeriodicPaymentInitiationTarget2WithStatusResponse result = (PeriodicPaymentInitiationTarget2WithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildPeriodicPayment(TransactionStatus.RCVD), PERIODIC, STANDARD_PAYMENT_TYPE);
+        PeriodicPaymentInitiationWithStatusResponse result = (PeriodicPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildPeriodicPayment(TransactionStatus.RCVD), PERIODIC, STANDARD_PAYMENT_TYPE);
 
         //Then
         assertThat(result).isNotNull();
@@ -235,7 +239,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToGetPaymentResponse12_Bulk_success() {
         //When
-        BulkPaymentInitiationTarget2WithStatusResponse result = (BulkPaymentInitiationTarget2WithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildBulkPayment(TransactionStatus.RCVD), BULK, STANDARD_PAYMENT_TYPE);
+        BulkPaymentInitiationWithStatusResponse result = (BulkPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildBulkPayment(TransactionStatus.RCVD), BULK, STANDARD_PAYMENT_TYPE);
 
         //Then
         assertThat(result).isNotNull();
@@ -246,8 +250,7 @@ public class PaymentModelMapperTest {
         assertThat(result.getRequestedExecutionDate()).isEqualTo(REQUESTED_EXECUTION_DATE);
         assertThat(result.getTransactionStatus()).isEqualTo(de.adorsys.psd2.model.TransactionStatus.RCVD);
 
-        PaymentInitiationTarget2Json bulkPaymentPart = result.getPayments().get(0);
-        assertThat(bulkPaymentPart.getDebtorAccount()).isEqualTo(getPsd2AccountReference(true, true));
+        PaymentInitiationBulkElementJson bulkPaymentPart = result.getPayments().get(0);
         assertThat(bulkPaymentPart.getInstructedAmount()).isEqualTo(getAmount12(true, true));
         assertThat(bulkPaymentPart.getCreditorAccount()).isEqualTo(getPsd2AccountReference(true, true));
         assertThat(bulkPaymentPart.getCreditorAgent()).isEqualTo(CREDITOR_AGENT);
@@ -280,8 +283,8 @@ public class PaymentModelMapperTest {
         return payment;
     }
 
-    private PaymentInitiationSctJson getSinglePayment12(boolean id, boolean acc, boolean amount, boolean agent, boolean creditorName, boolean credAddres, boolean remitance) {
-        PaymentInitiationSctJson payment = new PaymentInitiationSctJson();
+    private PaymentInitiationJson getSinglePayment12(boolean id, boolean acc, boolean amount, boolean agent, boolean creditorName, boolean credAddres, boolean remitance) {
+        PaymentInitiationJson payment = new PaymentInitiationJson();
         payment.setEndToEndIdentification(id ? END_TO_END_IDENTIFICATION : null);
         payment.setDebtorAccount(acc ? getPsd2AccountReference(true, true) : null);
         payment.setInstructedAmount(amount ? getAmount12(true, true) : null);
@@ -293,14 +296,15 @@ public class PaymentModelMapperTest {
         return payment;
     }
 
-    private BulkPaymentInitiationSctJson getBulkPayment(boolean batchBooking, boolean executionDate,
-                                                        boolean debtorAcc, boolean payments) {
-        BulkPaymentInitiationSctJson payment = new BulkPaymentInitiationSctJson();
+    private BulkPaymentInitiationJson getBulkPayment(boolean batchBooking, boolean executionDate,
+                                                     boolean debtorAcc, boolean payments) {
+        BulkPaymentInitiationJson payment = new BulkPaymentInitiationJson();
         payment.setBatchBookingPreferred(batchBooking ? BATCH_BOOKING_PREFERRED : null);
         payment.setRequestedExecutionDate(executionDate ? REQUESTED_EXECUTION_DATE : null);
+        payment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         payment.setDebtorAccount(debtorAcc ? getPsd2AccountReference(true, true) : null);
 
-        PaymentInitiationSctBulkElementJson element = new PaymentInitiationSctBulkElementJson();
+        PaymentInitiationBulkElementJson element = new PaymentInitiationBulkElementJson();
         element.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
         element.setInstructedAmount(getAmount12(true, true));
         element.setCreditorAccount(getPsd2AccountReference(true, true));
@@ -308,18 +312,18 @@ public class PaymentModelMapperTest {
         element.setCreditorName("CreditorName");
         element.setCreditorAddress(getAddress12(true, true, true, true, true));
         element.setRemittanceInformationUnstructured("some info");
-        List<PaymentInitiationSctBulkElementJson> elements = Collections.singletonList(element);
+        List<PaymentInitiationBulkElementJson> elements = Collections.singletonList(element);
 
         payment.setPayments(payments ? elements : null);
         return payment;
     }
 
-    private PeriodicPaymentInitiationSctJson getPeriodicPayment(boolean id, boolean acc, boolean amount, boolean agent,
-                                                                boolean creditorName, boolean credAddres,
-                                                                boolean remitance, boolean startDate, boolean endDate,
-                                                                boolean execution, boolean frequency,
-                                                                boolean dayOfExecution) {
-        PeriodicPaymentInitiationSctJson payment = new PeriodicPaymentInitiationSctJson();
+    private PeriodicPaymentInitiationJson getPeriodicPayment(boolean id, boolean acc, boolean amount, boolean agent,
+                                                             boolean creditorName, boolean credAddres,
+                                                             boolean remitance, boolean startDate, boolean endDate,
+                                                             boolean execution, boolean frequency,
+                                                             boolean dayOfExecution) {
+        PeriodicPaymentInitiationJson payment = new PeriodicPaymentInitiationJson();
         payment.setEndToEndIdentification(id ? END_TO_END_IDENTIFICATION : null);
         payment.setDebtorAccount(acc ? getPsd2AccountReference(true, true) : null);
         payment.setInstructedAmount(amount ? getAmount12(true, true) : null);

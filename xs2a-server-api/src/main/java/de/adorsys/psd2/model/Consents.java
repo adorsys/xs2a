@@ -16,23 +16,22 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.AccountAccess;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Content of the body of a consent request. 
  */
 @ApiModel(description = "Content of the body of a consent request. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class Consents   {
   @JsonProperty("access")
@@ -64,6 +63,8 @@ public class Consents   {
 
   @Valid
 
+
+  @JsonProperty("access")
   public AccountAccess getAccess() {
     return access;
   }
@@ -85,6 +86,8 @@ public class Consents   {
   @NotNull
 
 
+
+  @JsonProperty("recurringIndicator")
   public Boolean getRecurringIndicator() {
     return recurringIndicator;
   }
@@ -107,6 +110,8 @@ public class Consents   {
 
   @Valid
 
+
+  @JsonProperty("validUntil")
   public LocalDate getValidUntil() {
     return validUntil;
   }
@@ -128,6 +133,8 @@ public class Consents   {
   @NotNull
 
 
+
+  @JsonProperty("frequencyPerDay")
   public Integer getFrequencyPerDay() {
     return frequencyPerDay;
   }
@@ -149,6 +156,8 @@ public class Consents   {
   @NotNull
 
 
+
+  @JsonProperty("combinedServiceIndicator")
   public Boolean isCombinedServiceIndicator() {
     return combinedServiceIndicator;
   }

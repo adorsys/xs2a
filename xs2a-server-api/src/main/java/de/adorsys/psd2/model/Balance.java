@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "A single balance element ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class Balance   {
   @JsonProperty("balanceAmount")
@@ -65,6 +65,8 @@ public class Balance   {
 
   @Valid
 
+
+  @JsonProperty("balanceAmount")
   public Amount getBalanceAmount() {
     return balanceAmount;
   }
@@ -87,6 +89,8 @@ public class Balance   {
 
   @Valid
 
+
+  @JsonProperty("balanceType")
   public BalanceType getBalanceType() {
     return balanceType;
   }
@@ -108,6 +112,8 @@ public class Balance   {
 
   @Valid
 
+
+  @JsonProperty("lastChangeDateTime")
   public OffsetDateTime getLastChangeDateTime() {
     return lastChangeDateTime;
   }
@@ -129,6 +135,8 @@ public class Balance   {
 
   @Valid
 
+
+  @JsonProperty("referenceDate")
   public LocalDate getReferenceDate() {
     return referenceDate;
   }
@@ -149,6 +157,8 @@ public class Balance   {
   @ApiModelProperty(value = "\"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known. ")
 
 @Size(max=35) 
+
+  @JsonProperty("lastCommittedTransaction")
   public String getLastCommittedTransaction() {
     return lastCommittedTransaction;
   }

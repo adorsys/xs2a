@@ -16,32 +16,30 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Links to the account, which can be directly used for retrieving account information from this dedicated account.  Links to \&quot;balances\&quot; and/or \&quot;transactions\&quot;  These links are only supported, when the corresponding consent has been already granted. 
  */
 @ApiModel(description = "Links to the account, which can be directly used for retrieving account information from this dedicated account.  Links to \"balances\" and/or \"transactions\"  These links are only supported, when the corresponding consent has been already granted. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
-public class LinksAccountDetails extends HashMap<String, String>  {
+public class LinksAccountDetails extends HashMap<String, HrefType>  {
   @JsonProperty("balances")
-  private String balances = null;
+  private HrefType balances = null;
 
   @JsonProperty("transactions")
-  private String transactions = null;
+  private HrefType transactions = null;
 
-  public LinksAccountDetails balances(String balances) {
+  public LinksAccountDetails balances(HrefType balances) {
     this.balances = balances;
     return this;
   }
@@ -52,16 +50,19 @@ public class LinksAccountDetails extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getBalances() {
+
+  @JsonProperty("balances")
+  public HrefType getBalances() {
     return balances;
   }
 
-  public void setBalances(String balances) {
+  public void setBalances(HrefType balances) {
     this.balances = balances;
   }
 
-  public LinksAccountDetails transactions(String transactions) {
+  public LinksAccountDetails transactions(HrefType transactions) {
     this.transactions = transactions;
     return this;
   }
@@ -72,12 +73,15 @@ public class LinksAccountDetails extends HashMap<String, String>  {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getTransactions() {
+
+  @JsonProperty("transactions")
+  public HrefType getTransactions() {
     return transactions;
   }
 
-  public void setTransactions(String transactions) {
+  public void setTransactions(HrefType transactions) {
     this.transactions = transactions;
   }
 

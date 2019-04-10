@@ -158,10 +158,10 @@ public class AccountModelMapper {
 
         Optional.ofNullable(transactions.getExchangeRate())
             .ifPresent(xs2aExchangeRates -> {
-                ExchangeRateList exchangeRates = xs2aExchangeRates.stream()
-                                                     .map(this::mapToExchangeRate)
-                                                     .collect(Collectors.toCollection(ExchangeRateList::new));
-                target.setExchangeRate(exchangeRates);
+                ReportExchangeRateList exchangeRates = xs2aExchangeRates.stream()
+                                                           .map(this::mapToReportExchangeRate)
+                                                           .collect(Collectors.toCollection(ReportExchangeRateList::new));
+                target.setCurrencyExchange(exchangeRates);
             });
 
         Optional.ofNullable(transactions.getAmount())
@@ -271,15 +271,15 @@ public class AccountModelMapper {
                    .orElse(null);
     }
 
-    private ExchangeRate mapToExchangeRate(Xs2aExchangeRate xs2aExchangeRate) {
-        ExchangeRate exchangeRate = new ExchangeRate();
+    private ReportExchangeRate mapToReportExchangeRate(Xs2aExchangeRate xs2aExchangeRate) {
+        ReportExchangeRate exchangeRate = new ReportExchangeRate();
 
-        exchangeRate.setRateContract(xs2aExchangeRate.getRateContract());
+        exchangeRate.setContractIdentification(xs2aExchangeRate.getContractIdentification());
         exchangeRate.setUnitCurrency(xs2aExchangeRate.getUnitCurrency());
-        exchangeRate.setRate(xs2aExchangeRate.getRate());
+        exchangeRate.setExchangeRate(xs2aExchangeRate.getExchangeRate());
         exchangeRate.setSourceCurrency(xs2aExchangeRate.getSourceCurrency());
         exchangeRate.setTargetCurrency(xs2aExchangeRate.getTargetCurrency());
-        exchangeRate.setRateDate(xs2aExchangeRate.getRateDate());
+        exchangeRate.quotationDate(xs2aExchangeRate.getQuotationDate());
 
         return exchangeRate;
     }

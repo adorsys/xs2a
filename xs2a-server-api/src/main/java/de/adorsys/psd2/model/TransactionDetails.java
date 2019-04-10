@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Transaction details")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class TransactionDetails   {
   @JsonProperty("transactionId")
@@ -63,8 +63,8 @@ public class TransactionDetails   {
   @JsonProperty("transactionAmount")
   private Amount transactionAmount = null;
 
-  @JsonProperty("exchangeRate")
-  private ExchangeRateList exchangeRate = null;
+  @JsonProperty("currencyExchange")
+  private ReportExchangeRateList currencyExchange = null;
 
   @JsonProperty("creditorName")
   private String creditorName = null;
@@ -90,6 +90,9 @@ public class TransactionDetails   {
   @JsonProperty("remittanceInformationStructured")
   private String remittanceInformationStructured = null;
 
+  @JsonProperty("additionalInformation")
+  private String additionalInformation = null;
+
   @JsonProperty("purposeCode")
   private PurposeCode purposeCode = null;
 
@@ -114,6 +117,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered.  If this data attribute is provided this shows that the AIS can get access on more details about this  transaction using the GET Transaction Details Request  ")
 
 
+
+  @JsonProperty("transactionId")
   public String getTransactionId() {
     return transactionId;
   }
@@ -134,6 +139,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "Is the identification of the transaction as used e.g. for reference for deltafunction on application level.  The same identification as for example used within camt.05x messages. ")
 
 @Size(max=35) 
+
+  @JsonProperty("entryReference")
   public String getEntryReference() {
     return entryReference;
   }
@@ -154,6 +161,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "Unique end to end identity.")
 
 @Size(max=35) 
+
+  @JsonProperty("endToEndId")
   public String getEndToEndId() {
     return endToEndId;
   }
@@ -174,6 +183,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "Identification of Mandates, e.g. a SEPA Mandate ID.")
 
 @Size(max=35) 
+
+  @JsonProperty("mandateId")
   public String getMandateId() {
     return mandateId;
   }
@@ -194,6 +205,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "Identification of a Cheque.")
 
 @Size(max=35) 
+
+  @JsonProperty("checkId")
   public String getCheckId() {
     return checkId;
   }
@@ -214,6 +227,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "Identification of Creditors, e.g. a SEPA Creditor ID.")
 
 @Size(max=35) 
+
+  @JsonProperty("creditorId")
   public String getCreditorId() {
     return creditorId;
   }
@@ -235,6 +250,8 @@ public class TransactionDetails   {
 
   @Valid
 
+
+  @JsonProperty("bookingDate")
   public LocalDate getBookingDate() {
     return bookingDate;
   }
@@ -256,6 +273,8 @@ public class TransactionDetails   {
 
   @Valid
 
+
+  @JsonProperty("valueDate")
   public LocalDate getValueDate() {
     return valueDate;
   }
@@ -278,6 +297,8 @@ public class TransactionDetails   {
 
   @Valid
 
+
+  @JsonProperty("transactionAmount")
   public Amount getTransactionAmount() {
     return transactionAmount;
   }
@@ -286,25 +307,27 @@ public class TransactionDetails   {
     this.transactionAmount = transactionAmount;
   }
 
-  public TransactionDetails exchangeRate(ExchangeRateList exchangeRate) {
-    this.exchangeRate = exchangeRate;
+  public TransactionDetails currencyExchange(ReportExchangeRateList currencyExchange) {
+    this.currencyExchange = currencyExchange;
     return this;
   }
 
   /**
-   * Get exchangeRate
-   * @return exchangeRate
+   * Get currencyExchange
+   * @return currencyExchange
   **/
   @ApiModelProperty(value = "")
 
   @Valid
 
-  public ExchangeRateList getExchangeRate() {
-    return exchangeRate;
+
+  @JsonProperty("currencyExchange")
+  public ReportExchangeRateList getCurrencyExchange() {
+    return currencyExchange;
   }
 
-  public void setExchangeRate(ExchangeRateList exchangeRate) {
-    this.exchangeRate = exchangeRate;
+  public void setCurrencyExchange(ReportExchangeRateList currencyExchange) {
+    this.currencyExchange = currencyExchange;
   }
 
   public TransactionDetails creditorName(String creditorName) {
@@ -319,6 +342,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "")
 
 @Size(max=70) 
+
+  @JsonProperty("creditorName")
   public String getCreditorName() {
     return creditorName;
   }
@@ -340,6 +365,8 @@ public class TransactionDetails   {
 
   @Valid
 
+
+  @JsonProperty("creditorAccount")
   public AccountReference getCreditorAccount() {
     return creditorAccount;
   }
@@ -360,6 +387,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "")
 
 @Size(max=70) 
+
+  @JsonProperty("ultimateCreditor")
   public String getUltimateCreditor() {
     return ultimateCreditor;
   }
@@ -380,6 +409,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "")
 
 @Size(max=70) 
+
+  @JsonProperty("debtorName")
   public String getDebtorName() {
     return debtorName;
   }
@@ -401,6 +432,8 @@ public class TransactionDetails   {
 
   @Valid
 
+
+  @JsonProperty("debtorAccount")
   public AccountReference getDebtorAccount() {
     return debtorAccount;
   }
@@ -421,6 +454,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "")
 
 @Size(max=70) 
+
+  @JsonProperty("ultimateDebtor")
   public String getUltimateDebtor() {
     return ultimateDebtor;
   }
@@ -441,6 +476,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "")
 
 @Size(max=140) 
+
+  @JsonProperty("remittanceInformationUnstructured")
   public String getRemittanceInformationUnstructured() {
     return remittanceInformationUnstructured;
   }
@@ -461,12 +498,36 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "Reference as contained in the structured remittance reference structure (without the surrounding XML structure).  Different from other places the content is containt in plain form not in form of a structered field. ")
 
 @Size(max=140) 
+
+  @JsonProperty("remittanceInformationStructured")
   public String getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
   public void setRemittanceInformationStructured(String remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
+  }
+
+  public TransactionDetails additionalInformation(String additionalInformation) {
+    this.additionalInformation = additionalInformation;
+    return this;
+  }
+
+  /**
+   * Might be used by the ASPSP to transport additional transaction related information to the PSU. 
+   * @return additionalInformation
+  **/
+  @ApiModelProperty(value = "Might be used by the ASPSP to transport additional transaction related information to the PSU. ")
+
+@Size(max=512) 
+
+  @JsonProperty("additionalInformation")
+  public String getAdditionalInformation() {
+    return additionalInformation;
+  }
+
+  public void setAdditionalInformation(String additionalInformation) {
+    this.additionalInformation = additionalInformation;
   }
 
   public TransactionDetails purposeCode(PurposeCode purposeCode) {
@@ -482,6 +543,8 @@ public class TransactionDetails   {
 
   @Valid
 
+
+  @JsonProperty("purposeCode")
   public PurposeCode getPurposeCode() {
     return purposeCode;
   }
@@ -502,6 +565,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "")
 
 
+
+  @JsonProperty("bankTransactionCode")
   public String getBankTransactionCode() {
     return bankTransactionCode;
   }
@@ -522,6 +587,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "")
 
 @Size(max=35) 
+
+  @JsonProperty("proprietaryBankTransactionCode")
   public String getProprietaryBankTransactionCode() {
     return proprietaryBankTransactionCode;
   }
@@ -542,6 +609,8 @@ public class TransactionDetails   {
   @ApiModelProperty(value = "")
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;
@@ -570,7 +639,7 @@ public class TransactionDetails   {
         Objects.equals(this.bookingDate, transactionDetails.bookingDate) &&
         Objects.equals(this.valueDate, transactionDetails.valueDate) &&
         Objects.equals(this.transactionAmount, transactionDetails.transactionAmount) &&
-        Objects.equals(this.exchangeRate, transactionDetails.exchangeRate) &&
+        Objects.equals(this.currencyExchange, transactionDetails.currencyExchange) &&
         Objects.equals(this.creditorName, transactionDetails.creditorName) &&
         Objects.equals(this.creditorAccount, transactionDetails.creditorAccount) &&
         Objects.equals(this.ultimateCreditor, transactionDetails.ultimateCreditor) &&
@@ -579,6 +648,7 @@ public class TransactionDetails   {
         Objects.equals(this.ultimateDebtor, transactionDetails.ultimateDebtor) &&
         Objects.equals(this.remittanceInformationUnstructured, transactionDetails.remittanceInformationUnstructured) &&
         Objects.equals(this.remittanceInformationStructured, transactionDetails.remittanceInformationStructured) &&
+        Objects.equals(this.additionalInformation, transactionDetails.additionalInformation) &&
         Objects.equals(this.purposeCode, transactionDetails.purposeCode) &&
         Objects.equals(this.bankTransactionCode, transactionDetails.bankTransactionCode) &&
         Objects.equals(this.proprietaryBankTransactionCode, transactionDetails.proprietaryBankTransactionCode) &&
@@ -587,7 +657,7 @@ public class TransactionDetails   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, exchangeRate, creditorName, creditorAccount, ultimateCreditor, debtorName, debtorAccount, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationStructured, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, _links);
+    return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, ultimateCreditor, debtorName, debtorAccount, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationStructured, additionalInformation, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, _links);
   }
 
   @Override
@@ -604,7 +674,7 @@ public class TransactionDetails   {
     sb.append("    bookingDate: ").append(toIndentedString(bookingDate)).append("\n");
     sb.append("    valueDate: ").append(toIndentedString(valueDate)).append("\n");
     sb.append("    transactionAmount: ").append(toIndentedString(transactionAmount)).append("\n");
-    sb.append("    exchangeRate: ").append(toIndentedString(exchangeRate)).append("\n");
+    sb.append("    currencyExchange: ").append(toIndentedString(currencyExchange)).append("\n");
     sb.append("    creditorName: ").append(toIndentedString(creditorName)).append("\n");
     sb.append("    creditorAccount: ").append(toIndentedString(creditorAccount)).append("\n");
     sb.append("    ultimateCreditor: ").append(toIndentedString(ultimateCreditor)).append("\n");
@@ -613,6 +683,7 @@ public class TransactionDetails   {
     sb.append("    ultimateDebtor: ").append(toIndentedString(ultimateDebtor)).append("\n");
     sb.append("    remittanceInformationUnstructured: ").append(toIndentedString(remittanceInformationUnstructured)).append("\n");
     sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
+    sb.append("    additionalInformation: ").append(toIndentedString(additionalInformation)).append("\n");
     sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
     sb.append("    bankTransactionCode: ").append(toIndentedString(bankTransactionCode)).append("\n");
     sb.append("    proprietaryBankTransactionCode: ").append(toIndentedString(proprietaryBankTransactionCode)).append("\n");

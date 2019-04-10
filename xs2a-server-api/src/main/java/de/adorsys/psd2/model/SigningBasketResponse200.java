@@ -16,24 +16,21 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ConsentIdList;
-import de.adorsys.psd2.model.PaymentIdList;
-import de.adorsys.psd2.model.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
- * Body of the JSON response for a successful get signing basket request.    * &#39;payments&#39;: payment initiations which shall be authorised through this signing basket.   * &#39;consents&#39;: consent objects which shall be authorised through this signing basket.   * &#39;transactionStatus&#39;: Only the codes RCVD, ACTC, RJCT are used. 
+ * Body of the JSON response for a successful get signing basket request.    * &#39;payments&#39;: payment initiations which shall be authorised through this signing basket.   * &#39;consents&#39;: consent objects which shall be authorised through this signing basket.   * &#39;transactionStatus&#39;: Only the codes RCVD, ACTC, RJCT are used.   * &#39;_links&#39;: The ASPSP might integrate hyperlinks to indicate next (authorisation) steps to be taken. 
  */
-@ApiModel(description = "Body of the JSON response for a successful get signing basket request.    * 'payments': payment initiations which shall be authorised through this signing basket.   * 'consents': consent objects which shall be authorised through this signing basket.   * 'transactionStatus': Only the codes RCVD, ACTC, RJCT are used. ")
+@ApiModel(description = "Body of the JSON response for a successful get signing basket request.    * 'payments': payment initiations which shall be authorised through this signing basket.   * 'consents': consent objects which shall be authorised through this signing basket.   * 'transactionStatus': Only the codes RCVD, ACTC, RJCT are used.   * '_links': The ASPSP might integrate hyperlinks to indicate next (authorisation) steps to be taken. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class SigningBasketResponse200   {
   @JsonProperty("payments")
@@ -43,7 +40,10 @@ public class SigningBasketResponse200   {
   private ConsentIdList consents = null;
 
   @JsonProperty("transactionStatus")
-  private TransactionStatus transactionStatus = null;
+  private TransactionStatusSBS transactionStatus = null;
+
+  @JsonProperty("_links")
+  private LinksSigningBasket _links = null;
 
   public SigningBasketResponse200 payments(PaymentIdList payments) {
     this.payments = payments;
@@ -58,6 +58,8 @@ public class SigningBasketResponse200   {
 
   @Valid
 
+
+  @JsonProperty("payments")
   public PaymentIdList getPayments() {
     return payments;
   }
@@ -79,6 +81,8 @@ public class SigningBasketResponse200   {
 
   @Valid
 
+
+  @JsonProperty("consents")
   public ConsentIdList getConsents() {
     return consents;
   }
@@ -87,7 +91,7 @@ public class SigningBasketResponse200   {
     this.consents = consents;
   }
 
-  public SigningBasketResponse200 transactionStatus(TransactionStatus transactionStatus) {
+  public SigningBasketResponse200 transactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;
     return this;
   }
@@ -101,12 +105,37 @@ public class SigningBasketResponse200   {
 
   @Valid
 
-  public TransactionStatus getTransactionStatus() {
+
+  @JsonProperty("transactionStatus")
+  public TransactionStatusSBS getTransactionStatus() {
     return transactionStatus;
   }
 
-  public void setTransactionStatus(TransactionStatus transactionStatus) {
+  public void setTransactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;
+  }
+
+  public SigningBasketResponse200 _links(LinksSigningBasket _links) {
+    this._links = _links;
+    return this;
+  }
+
+  /**
+   * Get _links
+   * @return _links
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("_links")
+  public LinksSigningBasket getLinks() {
+    return _links;
+  }
+
+  public void setLinks(LinksSigningBasket _links) {
+    this._links = _links;
   }
 
 
@@ -121,12 +150,13 @@ public class SigningBasketResponse200   {
     SigningBasketResponse200 signingBasketResponse200 = (SigningBasketResponse200) o;
     return Objects.equals(this.payments, signingBasketResponse200.payments) &&
         Objects.equals(this.consents, signingBasketResponse200.consents) &&
-        Objects.equals(this.transactionStatus, signingBasketResponse200.transactionStatus);
+        Objects.equals(this.transactionStatus, signingBasketResponse200.transactionStatus) &&
+        Objects.equals(this._links, signingBasketResponse200._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(payments, consents, transactionStatus);
+    return Objects.hash(payments, consents, transactionStatus, _links);
   }
 
   @Override
@@ -137,6 +167,7 @@ public class SigningBasketResponse200   {
     sb.append("    payments: ").append(toIndentedString(payments)).append("\n");
     sb.append("    consents: ").append(toIndentedString(consents)).append("\n");
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
+    sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class AccountReport   {
   @JsonProperty("booked")
@@ -56,6 +56,8 @@ public class AccountReport   {
 
   @Valid
 
+
+  @JsonProperty("booked")
   public TransactionList getBooked() {
     return booked;
   }
@@ -77,6 +79,8 @@ public class AccountReport   {
 
   @Valid
 
+
+  @JsonProperty("pending")
   public TransactionList getPending() {
     return pending;
   }
@@ -98,6 +102,8 @@ public class AccountReport   {
   @NotNull
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;

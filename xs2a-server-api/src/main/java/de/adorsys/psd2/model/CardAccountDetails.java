@@ -16,26 +16,26 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.adorsys.psd2.model.AccountStatus;
-import de.adorsys.psd2.model.Amount;
-import de.adorsys.psd2.model.BalanceList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Card account details 
  */
 @ApiModel(description = "Card account details ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class CardAccountDetails   {
   @JsonProperty("resourceId")
@@ -114,6 +114,8 @@ public class CardAccountDetails   {
   @ApiModelProperty(value = "This is the data element to be used in the path when retrieving data from a dedicated account. This shall be filled, if addressable resource are created by the ASPSP on the /card-accounts endpoint. ")
 
 
+
+  @JsonProperty("resourceId")
   public String getResourceId() {
     return resourceId;
   }
@@ -135,6 +137,8 @@ public class CardAccountDetails   {
   @NotNull
 
 @Size(max=35) 
+
+  @JsonProperty("maskedPan")
   public String getMaskedPan() {
     return maskedPan;
   }
@@ -156,6 +160,8 @@ public class CardAccountDetails   {
   @NotNull
 
 @Pattern(regexp="[A-Z]{3}") 
+
+  @JsonProperty("currency")
   public String getCurrency() {
     return currency;
   }
@@ -176,6 +182,8 @@ public class CardAccountDetails   {
   @ApiModelProperty(value = "Name of the account given by the bank or the PSU in online-banking.")
 
 @Size(max=35) 
+
+  @JsonProperty("name")
   public String getName() {
     return name;
   }
@@ -196,6 +204,8 @@ public class CardAccountDetails   {
   @ApiModelProperty(value = "Product name of the bank for this account, proprietary definition.")
 
 @Size(max=35) 
+
+  @JsonProperty("product")
   public String getProduct() {
     return product;
   }
@@ -217,6 +227,8 @@ public class CardAccountDetails   {
 
   @Valid
 
+
+  @JsonProperty("status")
   public AccountStatus getStatus() {
     return status;
   }
@@ -236,7 +248,8 @@ public class CardAccountDetails   {
   **/
   @ApiModelProperty(value = "Specifies the usage of the account   * PRIV: private personal account   * ORGA: professional account ")
 
-@Size(max=4) 
+
+  @JsonProperty("usage")
   public UsageEnum getUsage() {
     return usage;
   }
@@ -257,6 +270,8 @@ public class CardAccountDetails   {
   @ApiModelProperty(value = "Specifications that might be provided by the ASPSP   - characteristics of the account   - characteristics of the relevant card ")
 
 @Size(max=140) 
+
+  @JsonProperty("details")
   public String getDetails() {
     return details;
   }
@@ -278,6 +293,8 @@ public class CardAccountDetails   {
 
   @Valid
 
+
+  @JsonProperty("creditLimit")
   public Amount getCreditLimit() {
     return creditLimit;
   }
@@ -299,6 +316,8 @@ public class CardAccountDetails   {
 
   @Valid
 
+
+  @JsonProperty("balances")
   public BalanceList getBalances() {
     return balances;
   }
@@ -319,6 +338,8 @@ public class CardAccountDetails   {
   @ApiModelProperty(value = "")
 
   @Valid
+
+
   @JsonProperty("_links")
   public Map getLinks() {
     return _links;

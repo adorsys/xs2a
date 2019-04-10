@@ -16,25 +16,26 @@
 
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import java.util.Objects;
 
 /**
  * PSU Data for Update PSU Authentication.
  */
 @ApiModel(description = "PSU Data for Update PSU Authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-01-11T12:48:04.675377+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
 
 public class PsuData   {
   @JsonProperty("password")
   private String password = null;
+
+  @JsonProperty("encryptedPassword")
+  private String encryptedPassword = null;
 
   public PsuData password(String password) {
     this.password = password;
@@ -45,16 +46,39 @@ public class PsuData   {
    * Password
    * @return password
   **/
-  @ApiModelProperty(required = true, value = "Password")
-  @NotNull
+  @ApiModelProperty(value = "Password")
 
 
+
+  @JsonProperty("password")
   public String getPassword() {
     return password;
   }
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public PsuData encryptedPassword(String encryptedPassword) {
+    this.encryptedPassword = encryptedPassword;
+    return this;
+  }
+
+  /**
+   * Encrypted password.
+   * @return encryptedPassword
+  **/
+  @ApiModelProperty(value = "Encrypted password.")
+
+
+
+  @JsonProperty("encryptedPassword")
+  public String getEncryptedPassword() {
+    return encryptedPassword;
+  }
+
+  public void setEncryptedPassword(String encryptedPassword) {
+    this.encryptedPassword = encryptedPassword;
   }
 
 
@@ -67,12 +91,13 @@ public class PsuData   {
       return false;
     }
     PsuData psuData = (PsuData) o;
-    return Objects.equals(this.password, psuData.password);
+    return Objects.equals(this.password, psuData.password) &&
+        Objects.equals(this.encryptedPassword, psuData.encryptedPassword);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(password);
+    return Objects.hash(password, encryptedPassword);
   }
 
   @Override
@@ -81,6 +106,7 @@ public class PsuData   {
     sb.append("class PsuData {\n");
     
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
+    sb.append("    encryptedPassword: ").append(toIndentedString(encryptedPassword)).append("\n");
     sb.append("}");
     return sb.toString();
   }
