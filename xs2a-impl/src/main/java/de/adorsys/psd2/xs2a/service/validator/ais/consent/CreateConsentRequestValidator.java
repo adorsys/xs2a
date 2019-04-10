@@ -49,9 +49,13 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
     /**
      * Validates Create consent request according to:
      * <ul>
-     * <li>supporting of global consent for All Psd2</li>
-     * <li>supporting of bank offered consent</li>
-     * <li>expiration date of consent</li>
+     * <li>support of global consent for All Psd2</li>
+     * <li>support of bank offered consent</li>
+     * <li>expiration date of the consent</li>
+     * <li>requested frequency per day of the consent</li>
+     * <li>support of available account access</li>
+     * <li>requested access of the consent</li>
+     * <li>support of combined service indicator</li>
      * </ul>
      * If there are new consent requirements, this method has to be updated.
      *
@@ -80,6 +84,11 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
         if (areFlagsAndAccountsInvalid(request)) {
             return ValidationResult.invalid(ErrorType.AIS_400, FORMAT_ERROR);
         }
+
+        if (isNotSupportedCombinedServiceIndicator(request)) {
+            return ValidationResult.invalid(ErrorType.AIS_400, SESSIONS_NOT_SUPPORTED);
+        }
+
         return ValidationResult.valid();
     }
 
@@ -139,5 +148,10 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
         }
 
         return !aspspProfileService.isAvailableAccountsConsentSupported();
+    }
+
+    private boolean isNotSupportedCombinedServiceIndicator(CreateConsentReq request) {
+        return request.isCombinedServiceIndicator()
+                   && !aspspProfileService.isCombinedServiceIndicator();
     }
 }

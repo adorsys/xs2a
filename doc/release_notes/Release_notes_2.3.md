@@ -52,3 +52,9 @@ New getters should be used to access these properties instead.
 | getRate         | getExchangeRate           |
 | getRateDate     | getQuotationDate          |
 | getRateContract | getContractIdentification |
+
+## Bugfix: Validate the value of the combinedServiceIndicator property on consent creation
+From now on, the value of the `combinedServiceIndicator` property in consent creation request(`POST /v1/consents`) will
+be properly validated. If `combinedServiceIndicator` in the request body is set to `true`, but the ASPSP doesn't support it
+(i. e. `combinedServiceIndicator` property in the ASPSP profile is set to `false`), `400 SESSIONS_NOT_SUPPORTED` error
+will be returned in the response.

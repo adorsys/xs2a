@@ -217,6 +217,15 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().getXs2aBaseUrl();
     }
 
+    /**
+     * Reads whether a payment initiation service will be addressed in the same "session" or not
+     *
+     * @return true if a payment initiation service will be addressed in the same session
+     */
+    public boolean isCombinedServiceIndicator() {
+        return readAspspSettings().isCombinedServiceIndicator();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }
