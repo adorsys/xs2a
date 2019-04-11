@@ -1,13 +1,13 @@
 # Release notes v.3.1
 
-## New Consept: SpiAspspConsentDataProvider
+## New Concept: SpiAspspConsentDataProvider
 In previous versions SPI-API provided a possibility to store some information, such as access tokens or any other 
 workflow-relevant data in encrypted consent object. For that purpose in every SPI-Call there were `AspspConsentData` parameter,
 that provided access to `AspspConsentData` byte-array. Since it was plain POJO, unnecessary reads/updates were invoked.
 
 Now we change this concept by providing instead `AspspConsentData` object an `SpiAspspConsentDataProvider` interface.
 Within the SPI-call now developer can access `AspspConsentData` byte-array using the `loadAspspConsentData` method.
-And in case of saving the data, `updateAspspConsentData` may be used, that invokes immidiate save of consent data to the database.
+And in case of saving the data, `updateAspspConsentData` may be used, that invokes immediate save of consent data to the database.
 
 **Please note**: from now on the SPI-Developer is responsible to save the AspspConsentData to the database. XS2A-Core provides
 this possibility, but if no `updateAspspConsentData` call happens, no data will be saved.
@@ -43,3 +43,11 @@ From now on several modules are no longer present in the repository :
  - online-banking-demo-ui
  - spi-mock 
 In XS2A version 2.x these modules are available for usage.
+
+In order to test the actual version of XS2A you can use `xs2a-standalone-starter` component that starts XS2A
+with stub implementation of `spi-api`. Thus it can be reused with your `spi-api` implementation.
+To get a full functional Sandbox environment consider using our projects based on XS2A:
+* [PSD2 Accelerator](https://github.com/adorsys/psd2-accelerator) - a static XS2A Sandbox that is 
+compliant to the NISP Sandbox requirements.
+* [XS2ABank](https://github.com/adorsys/xs2a-sandbox) - a dynamic XS2A Sandbox that simulates 
+work of simple core banking system by ledgers project.
