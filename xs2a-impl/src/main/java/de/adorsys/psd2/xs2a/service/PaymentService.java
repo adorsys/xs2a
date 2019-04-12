@@ -58,6 +58,8 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 @Service
 @AllArgsConstructor
 public class PaymentService {
+    private static final String PAYMENT_NOT_FOUND_MESSAGE = "Payment not found"; //TODO: move to bundle https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/791
+
     private final ReadPaymentFactory readPaymentFactory;
     private final ReadPaymentStatusFactory readPaymentStatusFactory;
     private final SpiPaymentFactory spiPaymentFactory;
@@ -138,7 +140,7 @@ public class PaymentService {
 
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
         }
 
@@ -160,7 +162,7 @@ public class PaymentService {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(commonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
                 return ResponseObject.builder()
-                           .fail(PIS_400, of(FORMAT_ERROR, "Payment not found"))
+                           .fail(PIS_400, of(FORMAT_ERROR, PAYMENT_NOT_FOUND_MESSAGE))
                            .build();
             }
 
@@ -192,7 +194,7 @@ public class PaymentService {
 
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<TransactionStatus>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
         }
 
@@ -221,7 +223,7 @@ public class PaymentService {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
                 return ResponseObject.<TransactionStatus>builder()
-                           .fail(PIS_400, of(FORMAT_ERROR, "Payment not found"))
+                           .fail(PIS_400, of(FORMAT_ERROR, PAYMENT_NOT_FOUND_MESSAGE))
                            .build();
             }
 
@@ -266,7 +268,7 @@ public class PaymentService {
 
         if (!pisCommonPaymentOptional.isPresent()) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                       .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                        .build();
         }
 
@@ -284,7 +286,7 @@ public class PaymentService {
                        .build();
         }
 
-        SpiPayment spiPayment;
+        SpiPayment spiPayment = null;
 
         if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
             CommonPayment commonPayment = cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentResponse);
@@ -293,11 +295,18 @@ public class PaymentService {
             List<PisPayment> pisPayments = getPisPaymentFromCommonPaymentResponse(pisCommonPaymentResponse);
             if (CollectionUtils.isEmpty(pisPayments)) {
                 return ResponseObject.<CancelPaymentResponse>builder()
-                           .fail(PIS_404, of(RESOURCE_UNKNOWN_404, "Payment not found"))
+                           .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
                            .build();
             }
 
             Optional<? extends SpiPayment> spiPaymentOptional = spiPaymentFactory.createSpiPaymentByPaymentType(pisPayments, pisCommonPaymentResponse.getPaymentProduct(), paymentType);
+            if (!spiPaymentOptional.isPresent()) {
+                log.info("X-Request-ID: [{}], Payment ID: [{}]. Cancelling payment has failed: couldn't create SPI payment from CMS payments",
+                         requestProviderService.getRequestId(), encryptedPaymentId);
+                return ResponseObject.<CancelPaymentResponse>builder()
+                           .fail(PIS_404, of(RESOURCE_UNKNOWN_404, PAYMENT_NOT_FOUND_MESSAGE))
+                           .build();
+            }
             spiPayment = spiPaymentOptional.get();
         }
 

@@ -43,7 +43,8 @@ public class PisDecoupledScaIdentifiedAuthorisationStage extends PisScaStage<Xs2
 
     @Override
     public Xs2aUpdatePisCommonPaymentPsuDataResponse apply(Xs2aUpdatePisCommonPaymentPsuDataRequest request, GetPisAuthorisationResponse pisAuthorisationResponse) {
-        PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> service = pisScaStageAuthorisationFactory.getService(PisScaStageAuthorisationFactory.INITIATION_PREFIX + PisScaStageAuthorisationFactory.SEPARATOR + ScaApproach.DECOUPLED + PisScaStageAuthorisationFactory.SEPARATOR + ScaStatus.STARTED.name());
+        PisScaStage<Xs2aUpdatePisCommonPaymentPsuDataRequest, GetPisAuthorisationResponse, Xs2aUpdatePisCommonPaymentPsuDataResponse> service =
+            pisScaStageAuthorisationFactory.getService(PisScaStageAuthorisationFactory.getServiceName(ScaApproach.DECOUPLED, ScaStatus.STARTED));
         return service.apply(request, pisAuthorisationResponse);
     }
 }

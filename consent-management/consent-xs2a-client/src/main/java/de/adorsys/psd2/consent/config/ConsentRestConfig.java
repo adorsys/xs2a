@@ -34,7 +34,7 @@ public class ConsentRestConfig {
     @Bean
     public RestTemplate consentRestTemplate() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
-        rest.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2XmlHttpMessageConverter.class.getName()));
+        rest.getMessageConverters().removeIf(m -> m.getClass().isAssignableFrom(MappingJackson2XmlHttpMessageConverter.class));
         rest.setErrorHandler(new ConsentRestErrorHandler());
         return rest;
     }
