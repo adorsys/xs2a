@@ -308,9 +308,8 @@ public class AccountSpiImpl implements AccountSpi {
         )
                                                      .orElseGet(Collections::emptyList);
 
-        // TODO don't use currency as an account identifier https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
         return accountDetails.stream()
-                   .filter(acc -> acc.getCurrency() == reference.getCurrency())
+                   .filter(acc -> acc.getResourceId().equals(reference.getResourceId()))
                    .findFirst();
     }
 
