@@ -66,14 +66,12 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
     public boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId) {
         Optional<TppStopListEntity> stopListEntityOptional = stopListRepository.findByTppAuthorisationNumberAndNationalAuthorityIdAndInstanceId(tppAuthorisationNumber, nationalAuthorityId, instanceId);
 
-        if (!stopListEntityOptional.isPresent()) {
-            return true;
+        if (stopListEntityOptional.isPresent()) {
+            TppStopListEntity entityToBeUnblocked = stopListEntityOptional.get();
+            entityToBeUnblocked.unblock();
+
+            stopListRepository.save(entityToBeUnblocked);
         }
-
-        TppStopListEntity entityToBeUnblocked = stopListEntityOptional.get();
-        entityToBeUnblocked.unblock();
-
-        stopListRepository.save(entityToBeUnblocked);
         return true;
     }
 }

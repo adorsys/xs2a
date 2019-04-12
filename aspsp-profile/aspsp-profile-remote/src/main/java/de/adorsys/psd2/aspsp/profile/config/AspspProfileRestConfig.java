@@ -33,7 +33,7 @@ public class AspspProfileRestConfig {
     @Bean(name = "aspspProfileRestTemplate")
     public RestTemplate aspspProfileRestTemplate() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
-        rest.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2XmlHttpMessageConverter.class.getName()));
+        rest.getMessageConverters().removeIf(m -> m.getClass().isAssignableFrom(MappingJackson2XmlHttpMessageConverter.class));
         rest.setErrorHandler(new AspspProfileRestErrorHandler());
         return rest;
     }

@@ -19,8 +19,10 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -446,6 +448,18 @@ public class AisConsentServiceInternalTest {
         // Then
         assertFalse(result);
         verify(aisConsentRepository, never()).save(any(AisConsent.class));
+    }
+
+    @Test
+    public void checkConsentAndSaveActionLog() {
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.empty());
+
+        try {
+            aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest("tppId", EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS));
+            assertTrue("Method works without exceptions", true);
+        } catch (Exception ex) {
+            fail("Exception should not be appeared.");
+        }
     }
 
     private AisConsentAuthorization buildAisConsentAuthorisation(String externalId, ScaStatus scaStatus) {

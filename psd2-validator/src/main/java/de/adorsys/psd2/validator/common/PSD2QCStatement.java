@@ -65,9 +65,12 @@ public class PSD2QCStatement {
 
 		ASN1Sequence qcStatements;
 		try {
-			DEROctetString oct = (DEROctetString) (new ASN1InputStream(new ByteArrayInputStream(extensionValue))
-					.readObject());
-			qcStatements = (ASN1Sequence) new ASN1InputStream(oct.getOctets()).readObject();
+            try (ASN1InputStream derAsn1InputStream = new ASN1InputStream(new ByteArrayInputStream(extensionValue))) {
+                DEROctetString oct = (DEROctetString) (derAsn1InputStream.readObject());
+                try (ASN1InputStream asn1InputStream = new ASN1InputStream(oct.getOctets())) {
+                    qcStatements = (ASN1Sequence) asn1InputStream.readObject();
+                }
+            }
 		} catch (IOException e) {
 			log.debug("Error reading qcstatement " + e);
 			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
