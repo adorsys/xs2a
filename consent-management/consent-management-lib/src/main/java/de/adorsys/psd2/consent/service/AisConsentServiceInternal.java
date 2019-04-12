@@ -223,7 +223,7 @@ public class AisConsentServiceInternal implements AisConsentService {
             AisConsent consent = consentOpt.get();
             aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent);
             checkAndUpdateOnExpiration(consent);
-            updateAisConsentUsage(consent);
+            updateAisConsentUsage(consent); //NOSONAR
             logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
         }
     }
@@ -297,7 +297,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         //Expire date is inclusive and TPP can access AIS consent from current date
-        LocalDate lifeTimeDate = LocalDate.now().plusDays(lifetime - 1);
+        LocalDate lifeTimeDate = LocalDate.now().plusDays(lifetime - 1L);
         return lifeTimeDate.isBefore(validUntil) ? lifeTimeDate : validUntil;
     }
 

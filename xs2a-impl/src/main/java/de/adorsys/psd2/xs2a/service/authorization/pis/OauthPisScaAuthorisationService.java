@@ -34,7 +34,7 @@ import java.util.Optional;
 public class OauthPisScaAuthorisationService implements PisScaAuthorisationService {
     @Override
     public Optional<Xs2aCreatePisAuthorisationResponse> createCommonPaymentAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
-        return null;
+        return Optional.empty();
     }
 
     @Override

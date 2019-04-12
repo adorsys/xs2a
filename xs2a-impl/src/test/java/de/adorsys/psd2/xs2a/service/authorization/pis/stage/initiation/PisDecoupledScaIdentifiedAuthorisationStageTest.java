@@ -28,15 +28,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory.INITIATION_PREFIX;
-import static de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory.SEPARATOR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisDecoupledScaIdentifiedAuthorisationStageTest {
-    private final static String DECOUPLED_SERVICE_NAME = buildDecoupledServiceName();
+    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getServiceName(ScaApproach.DECOUPLED, ScaStatus.STARTED);
 
     @InjectMocks
     private PisDecoupledScaIdentifiedAuthorisationStage pisDecoupledScaIdentifiedAuthorisationStage;
@@ -69,7 +67,4 @@ public class PisDecoupledScaIdentifiedAuthorisationStageTest {
         verify(pisDecoupledScaStartAuthorisationStage).apply(request, response);
     }
 
-    private static String buildDecoupledServiceName() {
-        return INITIATION_PREFIX + SEPARATOR + ScaApproach.DECOUPLED + SEPARATOR + ScaStatus.STARTED.name();
-    }
 }
