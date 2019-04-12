@@ -299,6 +299,7 @@ public class AisConsentSpiImpl implements AisConsentSpi {
         if (reference == null) {
             return Optional.empty();
         }
+        // TODO don't use IBAN as an account identifier https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/440
         List<SpiAccountDetails> accountDetails = Optional.ofNullable(
             aspspRestTemplate.exchange(
                 remoteSpiUrls.getAccountDetailsByIban(),
@@ -311,6 +312,7 @@ public class AisConsentSpiImpl implements AisConsentSpi {
 
         return accountDetails.stream()
                    .filter(acc -> acc.getCurrency() == reference.getCurrency())
+                   .filter(acc -> acc.getIban().equals(reference.getIban()))
                    .findFirst();
     }
 }
