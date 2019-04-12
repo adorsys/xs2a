@@ -37,7 +37,7 @@ public class OauthPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = oauthPisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse).isNull();
+        assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test

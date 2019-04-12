@@ -16,23 +16,18 @@
 
 package de.adorsys.psd2.validator.common;
 
+import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
+import lombok.extern.slf4j.Slf4j;
+import no.difi.certvalidator.api.CertificateValidationException;
+import org.apache.commons.collections4.iterators.FilterIterator;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.qualified.QCStatement;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.Optional;
-
-import org.apache.commons.collections4.iterators.FilterIterator;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.qualified.QCStatement;
-
-import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
-import lombok.extern.slf4j.Slf4j;
-import no.difi.certvalidator.api.CertificateValidationException;
 
 @Slf4j
 public class PSD2QCStatement {
@@ -65,9 +60,12 @@ public class PSD2QCStatement {
 
 		ASN1Sequence qcStatements;
 		try {
-			DEROctetString oct = (DEROctetString) (new ASN1InputStream(new ByteArrayInputStream(extensionValue))
-					.readObject());
-			qcStatements = (ASN1Sequence) new ASN1InputStream(oct.getOctets()).readObject();
+            try (ASN1InputStream derAsn1InputStream = new ASN1InputStream(new ByteArrayInputStream(extensionValue))) {
+                DEROctetString oct = (DEROctetString) (derAsn1InputStream.readObject());
+                try (ASN1InputStream asn1InputStream = new ASN1InputStream(oct.getOctets())) {
+                    qcStatements = (ASN1Sequence) asn1InputStream.readObject();
+                }
+            }
 		} catch (IOException e) {
 			log.debug("Error reading qcstatement " + e);
 			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
