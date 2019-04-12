@@ -35,9 +35,9 @@ public class DateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 
     {
         formatter = new DateTimeFormatterBuilder()
-                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_OFFSET))
-                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_LOCAL))
-                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN))
+                        .append(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_LOCAL))
+                        .appendOptional(DateTimeFormatter.ofPattern(ZONE_PART))
+                        .appendOptional(DateTimeFormatter.ofPattern(OFFSET_PART))
                         .toFormatter();
     }
 
