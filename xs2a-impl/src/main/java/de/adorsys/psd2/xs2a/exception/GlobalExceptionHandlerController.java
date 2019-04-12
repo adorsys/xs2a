@@ -32,6 +32,7 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ValidationException;
 
@@ -109,6 +110,12 @@ public class GlobalExceptionHandlerController {
         log.warn("Can't find tpp id in SecurityContextHolder in: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
         return responseErrorMapper.generateErrorResponse(createMessageError(CERTIFICATE_INVALID));
+    }
+
+    @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
+    public ResponseEntity methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, HandlerMethod handlerMethod) {
+        log.warn("MethodArgumentTypeMismatchException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
     private MessageError createMessageError(MessageErrorCode messageErrorCode) {

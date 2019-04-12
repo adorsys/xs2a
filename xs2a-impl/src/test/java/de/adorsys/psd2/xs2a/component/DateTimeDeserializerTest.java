@@ -30,10 +30,10 @@ import static org.junit.Assert.assertEquals;
 public class DateTimeDeserializerTest {
 
     private final String UTC_DATETIME = "2018-10-03T23:40:40.324Z";
-    private final String WRONG_UTC_DATETIME = "2018-10-03T23:40:40.324";
+    private final String WRONG_UTC_DATETIME = "2018-10-03T23:40:40.324C";
     private final String OFFSET_DATETIME = "2018-10-03T23:40:40.324-04:00";
     private final String WRONG_OFFSET_DATETIME = "2018-1003T23:40:40.324-04:00";
-    private final String LOCAL_DATETIME = "2018-1003T23:40:40.324";
+    private final String LOCAL_DATETIME = "2018-10-03T23:40:40.324";
     private final String WRONG_LOCAL_DATETIME = "2018-1003T23:40:40.32454";
 
     private final LocalDateTime EXPECTED_RESULT = LocalDateTime.parse("2018-10-03T23:40:40.324");
@@ -42,9 +42,9 @@ public class DateTimeDeserializerTest {
     @Before
     public void init() {
         FORMATTER = new DateTimeFormatterBuilder()
-                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN))
-                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_LOCAL))
-                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_OFFSET))
+                        .append(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_LOCAL))
+                        .appendOptional(DateTimeFormatter.ofPattern(ZONE_PART))
+                        .appendOptional(DateTimeFormatter.ofPattern(OFFSET_PART))
                         .toFormatter();
     }
 
