@@ -24,10 +24,10 @@ component "PSD2 XS2A Service \n" {
     interface "SPI-API" as spi #white
     component "ASPSP-Connector" as connector #lightblue
     interface "XS2A" as XS2AI #white
-    interface "CMS PSU API" as cms_psu
-    interface "CMS ASPSP API" as cms_aspsp
+    interface "CMS PSU API" as cms_psu #white
+    interface "CMS ASPSP API" as cms_aspsp #white
 
-    CA <.. GW : validate\nTPP
+    CA <.. GW : validate\nTPP QWAC\ncertificate
 
     profile <.. xs2aimpl : access\nprofile
     profile <.. cms : access\nprofile
@@ -38,13 +38,14 @@ component "PSD2 XS2A Service \n" {
     xs2aimpl -- spi
     spi <|--connector
     xs2aimpl .> cms : manage\nconsent
-    cms - cms_psu
-    cms -- cms_aspsp
 
+    cms - cms_psu
+    cms_psu <. auth : update status
+
+    cms -- cms_aspsp
 
     connector .> ASPSP : process\nrequest
 
-    cms_psu <. auth : update status
     cms_aspsp <. ASPSP : access\nconsents
 }
 
