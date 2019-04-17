@@ -322,4 +322,4 @@ Deploy to Openshift (release):
   variables:
     DOCKER_TAG: $CI_COMMIT_TAG # Dockerhub source tag
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
-  <<: *push_docker_openshift
+  <<: *deploy_openshift
