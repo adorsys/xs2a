@@ -26,8 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(of = {"authorisationNumber", "authorityId"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class TppInfo {
+    @EqualsAndHashCode.Include
     @ApiModelProperty(value = "Authorization number", required = true, example = "12345987")
     private String authorisationNumber;
 
@@ -37,6 +38,7 @@ public class TppInfo {
     @ApiModelProperty(value = "Tpp role", required = true)
     private List<TppRole> tppRoles;
 
+    @EqualsAndHashCode.Include
     @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
     private String authorityId;
 
