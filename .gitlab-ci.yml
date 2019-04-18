@@ -13,11 +13,10 @@ image: "adorsys/ci-build"
 # ------------------------------------------------------------------
 
 stages:
-- "Compile" # build jar and provide as artifact
-- "Test"    # run tests and code quality checks
-- "Package" # dockerize jar and push to docker registry
-- "Deploy"  # push to openshift registry (snapshot deployment) or release registry
-
+  - "Compile" # build jar and provide as artifact
+  - "Test"    # run tests and code quality checks
+  - "Package" # dockerize jar and push to docker registry
+  - "Deploy"  # push to openshift registry (snapshot deployment) or release registry
 
 # ------------------------------------------------------------------
 # variables
@@ -44,8 +43,9 @@ variables: &variables
 
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
 
-  OPENSHIFT_NAMESPACE_DEV: "adorsys-psd2-develop"
   OPENSHIFT_NAMESPACE_SUPPORT: "multibanking-xs2a"
+
+  OPENSHIFT_NAMESPACE_DEV: "adorsys-psd2-develop"
   OPENSHIFT_NAMESPACE_INTEG: "adorsys-psd2-integ"
   OPENSHIFT_NAMESPACE_DEMO: "adorsys-psd2-demo"
 
@@ -97,12 +97,12 @@ variables: &variables
 # Copy Dockerhub images to Openshift (depending on ${DOCKER_TAG} and ${OPENSHIFT_NAMESPACE})
 .deploy_openshift: &deploy_openshift
   script:
-# XS2A Standalone Starter
-#    - >-
-#      skopeo copy
-#      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-#      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}"
-#      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:latest"
+# XS2A Standalone Starter #TODO: replace by xs2a-connector-examples
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:latest"
     - >-
       skopeo copy
       --dest-creds=openshift:${OPENSHIFT_TOKEN}
@@ -228,7 +228,7 @@ Sonarcube Tests:
     - mvn --fail-at-end clean install
     - mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
 
-# Build DEVELOP and deploy to DEV
+# Build DEVELOP image and deploy to DEV
 
 Push to DockerHub (develop):
   stage: "Package"
@@ -247,7 +247,7 @@ Deploy to Openshift (develop):
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEV} # Openshift target namespace
   <<: *deploy_openshift
 
-# Build SUPPORT and deploy to SUPPORT
+# Build SUPPORT image and deploy to SUPPORT
 
 Push to DockerHub (support):
   stage: "Package"
@@ -266,7 +266,7 @@ Deploy to Openshift (support):
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT} # Openshift target namespace
   <<: *deploy_openshift
 
-# Build NIGHTLY and deploy to INTEG (scheduled)
+# Build NIGHTLY image and deploy (scheduled) to INTEG
 
 Push to DockerHub (nightly):
   stage: "Package"
@@ -285,7 +285,7 @@ Deploy to Openshift (nightly):
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_INTEG} # Openshift target namespace
   <<: *deploy_openshift
 
-# Build MASTER and deploy to DEMO
+# Build MASTER image and deploy to DEMO
 
 Push to DockerHub (master):
   stage: "Package"
@@ -304,7 +304,7 @@ Deploy to Openshift (master):
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
   <<: *deploy_openshift
 
-# Build RELEASE and deploy to DEMO (manual)
+# Build RELEASE image and deploy (manual) to DEMO
 
 Push to DockerHub (release):
   stage: "Package"
