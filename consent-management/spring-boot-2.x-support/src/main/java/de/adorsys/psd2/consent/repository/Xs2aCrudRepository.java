@@ -43,4 +43,8 @@ public interface Xs2aCrudRepository<T, ID extends Serializable> extends CrudRepo
     default <S extends T> Iterable<S> save(Iterable<S> entities){
         return saveAll(entities);
     }
+
+    default <S extends T> boolean exists(ID id) {
+        return existsById(id);
+    }
 }
