@@ -154,9 +154,13 @@ public class CmsPsuPisController {
         @ApiParam(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised', 'failed', 'exempted'. These values might be extended by ASPSP by more values.", allowableValues = "RECEIVED, PSUIDENTIFIED, PSUAUTHENTICATED, SCAMETHODSELECTED,  STARTED,  FINALISED, FAILED, EXEMPTED")
         @PathVariable("status") String status,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        ScaStatus scaStatus = ScaStatus.fromValue(status);
+        if (scaStatus == null) {
+            return ResponseEntity.badRequest().build();
+        }
 
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsPsuPisService.updateAuthorisationStatus(psuIdData, paymentId, authorisationId, ScaStatus.valueOf(status), instanceId)
+        return cmsPsuPisService.updateAuthorisationStatus(psuIdData, paymentId, authorisationId, scaStatus, instanceId)
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }
