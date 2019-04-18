@@ -9,6 +9,7 @@ For upcoming versions see our [Roadmap](roadmap.md).
 * [Version 3.0   (release date: 28.03.2019)](release_notes/Release_notes_3.0.md)
 
 ## Mainline 2.x (Stable. Supported minimum till 01.08.2019)
+* [Version 2.4   (release date: ?)](release_notes/Release_notes_2.4.md)
 * [Version 2.3   (release date: 12.04.2019)](release_notes/Release_notes_2.3.md)
 * [Version 2.2   (release date: 28.03.2019)](release_notes/Release_notes_2.2.md)
 * [Version 2.1   (release date: 15.03.2019)](release_notes/Release_notes_2.1.md)
