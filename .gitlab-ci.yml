@@ -82,12 +82,10 @@ variables: &variables
 # Build docker images and push them to Dockerhub (depending on ${DOCKER_TAG})
 .build_dockerhub_image: &build_dockerhub_image
   script:
-    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}" xs2a-standalone-starter
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:${DOCKER_TAG}" consent-management/cms-standalone-service
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
 
     - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
-    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
     - docker logout
@@ -95,12 +93,6 @@ variables: &variables
 # Copy Dockerhub images to Openshift (depending on ${DOCKER_TAG} and ${OPENSHIFT_NAMESPACE})
 .deploy_openshift: &deploy_openshift
   script:
-# XS2A Standalone Starter #TODO: replace by xs2a-connector-examples
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:latest"
     - >-
       skopeo copy
       --dest-creds=openshift:${OPENSHIFT_TOKEN}
@@ -245,24 +237,48 @@ Deploy to Openshift (develop):
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEV} # Openshift target namespace
   <<: *deploy_openshift
 
+# temporary for testing
+Deploy to Openshift (tne-test):
+  stage: "Deploy"
+  only:
+    - TNE_gitlab_issue_779
+  variables:
+    DOCKER_TAG: develop
+    OPENSHIFT_NAMESPACE: "tne-test"
+  <<: *deploy_openshift
+
 # Build SUPPORT image and deploy to SUPPORT
 
 Push to DockerHub (support):
   stage: "Package"
   only:
     - support-2.x
-  variables:
-    DOCKER_TAG: support
-  <<: *build_dockerhub_image
+  script:
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support" xs2a-standalone-starter
+    - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support"
+    - docker logout
 
 Deploy to Openshift (support):
   stage: "Deploy"
   only:
     - support-2.x
-  variables:
-    DOCKER_TAG: support
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT} # Openshift target namespace
-  <<: *deploy_openshift
+  script:
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_XS2A}:latest"
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:support"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:latest"
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:support"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:latest"
 
 # Build NIGHTLY image and deploy (scheduled) to INTEG
 
