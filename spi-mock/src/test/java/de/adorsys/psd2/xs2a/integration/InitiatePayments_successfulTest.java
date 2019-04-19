@@ -161,12 +161,12 @@ public class InitiatePayments_successfulTest {
         responseMap.put(httpHeadersImplicit, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/implicit/BulkPaymentInitiate_redirect_implicit_response.json");
         responseMap.put(httpHeadersImplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/implicit/BulkPaymentInitiate_embedded_implicit_response.json");
 
-        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.REDIRECT, "/json/payment/res/explicit/SinglePaymentInitiateExplicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.EMBEDDED, "/json/payment/res/explicit/SinglePaymentInitiateExplicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.REDIRECT, "/json/payment/res/explicit/PeriodicPaymentInitiateExplicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.EMBEDDED, "/json/payment/res/explicit/PeriodicPaymentInitiateExplicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/explicit/BulkPaymentInitiateExplicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/explicit/BulkPaymentInitiateExplicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.REDIRECT, "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.EMBEDDED, "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.REDIRECT, "/json/payment/res/explicit/PeriodicPaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.EMBEDDED, "/json/payment/res/explicit/PeriodicPaymentInitiate_embedded_explicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/explicit/BulkPaymentInitiate_redirect_explicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/explicit/BulkPaymentInitiate_embedded_explicit_response.json");
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
