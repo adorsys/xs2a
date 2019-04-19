@@ -41,6 +41,8 @@ variables: &variables
   # Private Openshift Images #
   ############################
 
+  OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
+
   OPENSHIFT_NAMESPACE_SUPPORT: "multibanking-xs2a"
 
   OPENSHIFT_NAMESPACE_DEV: "adorsys-psd2-develop"
