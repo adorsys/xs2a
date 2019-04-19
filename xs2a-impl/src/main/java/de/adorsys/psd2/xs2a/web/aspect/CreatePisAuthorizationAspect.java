@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -32,16 +33,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
 
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.DECOUPLED;
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
 @Slf4j
 @Aspect
 @Component
 public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentController> {
+    private RedirectLinkBuilder redirectLinkBuilder;
 
-    public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileService aspspProfileService) {
+    public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileService aspspProfileService, RedirectLinkBuilder redirectLinkBuilder) {
         super(scaApproachResolver, messageService, aspspProfileService);
+        this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorization(..)) && args(paymentId, paymentType, paymentProduct, psuData)", returning = "result", argNames = "result,paymentId,paymentType,paymentProduct,psuData")
@@ -54,17 +56,20 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLink(String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
+    private Links buildLink(String paymentService, String paymentProduct, String paymentId, String authorisationId, PsuIdData psuData) {
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentService, paymentProduct, paymentId));
-        links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentService, paymentProduct, paymentId));
+        links.setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
+        links.setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
-            String path = "/v1/{paymentService}/{paymentProduct}/{paymentId}/authorisations/{authorisationId}";
+            String path = UrlHolder.PIS_AUTHORISATION_LINK_URL;
             if (psuData.isEmpty()) {
-                links.setStartAuthorisationWithPsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
+                links.setUpdatePsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorisationId));
             } else {
-                links.setStartAuthorisationWithPsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
+                links.setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorisationId));
             }
+        } else if (scaApproachResolver.resolveScaApproach() == REDIRECT) {
+            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId);
+            links.setScaRedirect(scaRedirectLink);
         }
 
         return links;
