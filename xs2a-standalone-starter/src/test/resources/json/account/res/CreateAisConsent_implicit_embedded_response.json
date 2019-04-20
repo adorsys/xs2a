@@ -8,7 +8,7 @@
     "status": {
       "href": "http://localhost/v1/consents/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/status"
     },
-    "startAuthorisationWithPsuAuthentication": {
+    "updatePsuAuthentication": {
       "href": "http://localhost/v1/consents/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations/e8356ea7-8e3e-474f-b5ea-2b89346cb2dc"
     },
     "scaStatus": {

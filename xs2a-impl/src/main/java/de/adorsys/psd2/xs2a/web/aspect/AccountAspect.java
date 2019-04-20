@@ -71,7 +71,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
                 // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
                 // TODO further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
                 Links links = new Links();
-                links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
+                links.setDownload(buildPath(UrlHolder.ACCOUNT_TRANSACTIONS_DOWNLOAD_URL, accountId));
                 transactionsReport.setLinks(links);
             } else {
                 Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
@@ -93,7 +93,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
     private Links buildLinksForAccountReport(String accountId) {
         Links links = new Links();
-        links.setAccount(buildPath("/v1/accounts/{accountId}", accountId));
+        links.setAccount(buildPath(UrlHolder.ACCOUNT_LINK_URL, accountId));
 
         return links;
     }
@@ -106,11 +106,11 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         Links links = new Links();
 
         if (isValidAccountByAccess(accountId, xs2aAccountAccess.getBalances())) {
-            links.setBalances(buildPath("/v1/accounts/{accountId}/balances", accountId));
+            links.setBalances(buildPath(UrlHolder.ACCOUNT_BALANCES_URL, accountId));
         }
 
         if (isValidAccountByAccess(accountId, xs2aAccountAccess.getTransactions())) {
-            links.setTransactions(buildPath("/v1/accounts/{accountId}/transactions", accountId));
+            links.setTransactions(buildPath(UrlHolder.ACCOUNT_TRANSACTIONS_URL, accountId));
         }
 
         return links;

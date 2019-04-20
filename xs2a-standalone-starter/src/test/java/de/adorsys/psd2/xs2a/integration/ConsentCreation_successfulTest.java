@@ -87,7 +87,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 public class ConsentCreation_successfulTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
-    private static final String HREF = "href";
     private static final String DEDICATED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/DedicatedConsent.json";
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";
     private static final String GLOBAL_CONSENT_REQUEST_JSON_PATH = "/json/account/req/GlobalConsent.json";

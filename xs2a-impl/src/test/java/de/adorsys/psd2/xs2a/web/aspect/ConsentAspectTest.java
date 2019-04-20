@@ -406,12 +406,15 @@ public class ConsentAspectTest {
         String expectedStatusLink = String.format("%s/v1/consents/%s/status", baseUrl, CONSENT_ID);
         assertEquals(expectedStatusLink, links.getStatus());
 
-        String expectedStartAuthorisationWithPsuIdentificationLink = String.format("%s/v1/consents/%s/authorisations/%s", baseUrl, CONSENT_ID, AUTHORISATION_ID);
-        assertEquals(expectedStartAuthorisationWithPsuIdentificationLink, links.getStartAuthorisationWithPsuIdentification());
+        String expectedUpdatePsuLink = String.format("%s/v1/consents/%s/authorisations/%s", baseUrl, CONSENT_ID, AUTHORISATION_ID);
+
+        assertEquals(expectedUpdatePsuLink, links.getUpdatePsuIdentification());
+        assertNull(links.getUpdatePsuAuthentication());
 
         String expectedScaStatusLink = String.format("%s/v1/consents/%s/authorisations/%s", baseUrl, CONSENT_ID, AUTHORISATION_ID);
         assertEquals(expectedScaStatusLink, links.getScaStatus());
 
+        assertNull(links.getStartAuthorisationWithPsuIdentification());
         assertNull(links.getStartAuthorisationWithPsuAuthentication());
         assertNull(links.getScaRedirect());
     }
@@ -425,13 +428,15 @@ public class ConsentAspectTest {
         String expectedStatusLink = String.format("%s/v1/consents/%s/status", baseUrl, CONSENT_ID);
         assertEquals(expectedStatusLink, links.getStatus());
 
-        String expectedStartAuthorisationWithPsuAuthenticationLink = String.format("%s/v1/consents/%s/authorisations/%s", baseUrl, CONSENT_ID, AUTHORISATION_ID);
-        assertEquals(expectedStartAuthorisationWithPsuAuthenticationLink, links.getStartAuthorisationWithPsuAuthentication());
+        String expectedUpdatePsuLink = String.format("%s/v1/consents/%s/authorisations/%s", baseUrl, CONSENT_ID, AUTHORISATION_ID);
+        assertEquals(expectedUpdatePsuLink, links.getUpdatePsuAuthentication());
+        assertNull(links.getUpdatePsuIdentification());
 
         String expectedScaStatusLink = String.format("%s/v1/consents/%s/authorisations/%s", baseUrl, CONSENT_ID, AUTHORISATION_ID);
         assertEquals(expectedScaStatusLink, links.getScaStatus());
 
         assertNull(links.getStartAuthorisationWithPsuIdentification());
+        assertNull(links.getStartAuthorisationWithPsuAuthentication());
         assertNull(links.getScaRedirect());
     }
 

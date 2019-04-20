@@ -58,8 +58,8 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
 
     private Links buildLink(String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}", paymentService, paymentProduct, paymentId));
-        links.setStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/status", paymentService, paymentProduct, paymentId));
+        links.setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
+        links.setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
 
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
             return addEmbeddedDecoupledRelatedLinks(links, paymentService, paymentProduct, paymentId, authorizationId, psuData);
@@ -72,18 +72,18 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     }
 
     private Links addEmbeddedDecoupledRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
-        String path = "/v1/{paymentService}/{payment-product}/{paymentId}/cancellation-authorisations/{authorisationId}";
+        String path = UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL;
         if (psuData.isEmpty()) {
-            links.setStartAuthorisationWithPsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
+            links.setUpdatePsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
         } else {
-            links.setStartAuthorisationWithPsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
+            links.setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
         }
         return links;
     }
 
     private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId) {
         links.setScaRedirectOAuthLink(getScaRedirectFlow(), redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorizationId));
-        links.setScaStatus(buildPath("/v1/{payment-service}/{payment-product}/{payment-id}/cancellation-authorisations/{authorisation-id}", paymentService, paymentProduct, paymentId, authorizationId));
+        links.setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
 
         return links;
     }

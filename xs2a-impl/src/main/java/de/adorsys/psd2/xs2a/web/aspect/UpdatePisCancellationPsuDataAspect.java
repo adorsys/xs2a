@@ -34,8 +34,6 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<PaymentController> {
-    private static final String PSU_CANCELLATION_AUTHORISATION_URL = "/v1/{paymentService}/{paymentProduct}/{paymentId}/cancellation-authorisations/{authorisationId}";
-
     public UpdatePisCancellationPsuDataAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileService aspspProfileService) {
         super(scaApproachResolver, messageService, aspspProfileService);
     }
@@ -64,13 +62,13 @@ public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<Payme
 
     private Links buildLink(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{paymentService}/{paymentProduct}/{paymentId}", request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
-        links.setStatus(buildPath("/v1/{paymentService}/{paymentProduct}/{paymentId}/status", request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
+        links.setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
+        links.setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
         return links;
     }
 
     private String buildAuthorisationLink(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
-        return buildPath(PSU_CANCELLATION_AUTHORISATION_URL, paymentService, paymentProduct, paymentId, authorisationId);
+        return buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId);
     }
 
     private boolean isScaStatusFinalised(ScaStatus scaStatus) {
