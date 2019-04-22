@@ -48,7 +48,7 @@ public class ConsentScheduleTask {
 
         List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID)))
                                                  .orElse(Collections.emptyList());
-        aisConsentRepository.save(updateConsent(availableConsents));
+        aisConsentRepository.saveAll(updateConsent(availableConsents));
     }
 
     private List<AisConsent> updateConsent(List<AisConsent> availableConsents) {

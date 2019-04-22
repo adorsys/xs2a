@@ -40,7 +40,7 @@ public class CommonPaymentDataService {
                                                                 .map(i -> pisCommonPaymentDataSpecification.byPaymentIdAndInstanceId(paymentId, i))
                                                                 .orElseGet(() -> pisCommonPaymentDataSpecification.byPaymentId(paymentId));
 
-        return Optional.ofNullable(pisCommonPaymentDataRepository.findOne(specification));
+        return pisCommonPaymentDataRepository.findOne(specification);
 
     }
 

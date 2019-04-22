@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
@@ -126,8 +126,6 @@ public class GetAccountDetailsValidatorTest {
     public void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
-        when(permittedAccountReferenceValidator.validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE))
-            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE));

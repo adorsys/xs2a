@@ -37,7 +37,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToX
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -49,7 +48,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -119,9 +118,6 @@ public class AisScaAuthenticatedStageTest {
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
 
-        when(psuDataMapper.mapToSpiPsuData(any(PsuIdData.class)))
-            .thenReturn(SPI_PSU_DATA);
-
         when(aisConsentMapper.mapToSpiScaConfirmation(eq(request), any()))
             .thenReturn(scaConfirmation);
 
@@ -164,9 +160,6 @@ public class AisScaAuthenticatedStageTest {
     public void apply_Failure_SpiResponseWithError() {
         when(aisConsentSpi.verifyScaAuthorisation(SPI_CONTEXT_DATA, scaConfirmation, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse());
-
-        when(messageErrorCodeMapper.mapToMessageErrorCode(RESPONSE_STATUS))
-            .thenReturn(ERROR_CODE);
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(ERROR_CODE).errorType(ErrorType.AIS_400).build());
@@ -274,9 +267,6 @@ public class AisScaAuthenticatedStageTest {
 
         when(accountConsent.getConsentStatus())
             .thenReturn(PARTIALLY_AUTHORISED_CONSENT_STATUS);
-
-        doNothing()
-            .when(aisConsentService).updateConsentStatus(CONSENT_ID, VALID_CONSENT_STATUS);
 
         when(request.getScaAuthenticationData())
             .thenReturn(TEST_AUTHENTICATION_DATA);

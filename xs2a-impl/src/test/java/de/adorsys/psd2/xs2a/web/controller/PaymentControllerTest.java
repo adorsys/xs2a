@@ -45,7 +45,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -126,13 +126,6 @@ public class PaymentControllerTest {
     public void setUp() {
         when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
-        when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
-            .thenReturn(ResponseObject.builder().fail(PIS_403,
-                                                      of(RESOURCE_UNKNOWN_403)).build());
-        when(aspspProfileService.getPisRedirectUrlToAspsp())
-            .thenReturn(REDIRECT_LINK);
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(ResponseObject.builder().build());
     }
 
     @Before
@@ -221,8 +214,6 @@ public class PaymentControllerTest {
 
     @Test
     public void getTransactionStatusById_WrongId() {
-        doReturn(new ResponseEntity<>(new MessageError(PIS_403,
-                                                       of(RESOURCE_UNKNOWN_403)), FORBIDDEN)).when(responseMapper).ok(any(), any());
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().fail(createMessageError(PIS_403, RESOURCE_UNKNOWN_403)).build());
         //Given:

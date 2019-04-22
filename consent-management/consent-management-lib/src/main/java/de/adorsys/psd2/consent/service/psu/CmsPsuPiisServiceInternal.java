@@ -48,7 +48,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
 
     @Override
     public @NotNull Optional<PiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
-        return Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)))
+        return piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId))
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentMapper::mapToPiisConsent);
     }
@@ -64,7 +64,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     @Override
     @Transactional
     public boolean revokeConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
-        Optional<PiisConsentEntity> piisConsentEntity = Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)))
+        Optional<PiisConsentEntity> piisConsentEntity = piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId))
                                                             .filter(con -> isPsuIdDataContentEquals(con, psuIdData) && !con.getConsentStatus().isFinalisedStatus());
         if (piisConsentEntity.isPresent()) {
             revokeConsent(piisConsentEntity.get());

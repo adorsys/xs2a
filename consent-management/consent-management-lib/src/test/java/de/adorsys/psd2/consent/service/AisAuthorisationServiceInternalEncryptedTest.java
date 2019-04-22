@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,8 +55,6 @@ public class AisAuthorisationServiceInternalEncryptedTest {
 
     @Before
     public void setUp() {
-        when(securityDataService.encryptId(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(ENCRYPTED_CONSENT_ID));
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID))
             .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID))

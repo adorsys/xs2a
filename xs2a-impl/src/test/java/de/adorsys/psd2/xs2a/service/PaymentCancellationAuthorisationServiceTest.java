@@ -45,7 +45,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -53,8 +53,10 @@ import java.util.Optional;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentCancellationAuthorisationServiceTest {
@@ -125,7 +127,6 @@ public class PaymentCancellationAuthorisationServiceTest {
     public void createPisCancellationAuthorization_Success_ShouldRecordEvent() {
         when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(anyString(), any(), any()))
             .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(null, null, null)));
-        when(pisPsuDataService.getPsuDataByPaymentId(anyString())).thenReturn(Collections.singletonList(PSU_ID_DATA));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -141,9 +142,6 @@ public class PaymentCancellationAuthorisationServiceTest {
     @Test
     public void createPisCancellationAuthorization_withInvalidPayment_shouldReturnValidationError() {
         // Given:
-        when(pisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(anyString(), any(), any()))
-            .thenReturn(Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(null, null, null)));
-
         when(createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationPO(INVALID_PIS_COMMON_PAYMENT_RESPONSE, INVALID_PSU_ID_DATA)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -213,8 +211,6 @@ public class PaymentCancellationAuthorisationServiceTest {
     @Test
     public void getPaymentInitiationCancellationAuthorisationInformation_withInvalidPayment_shouldReturnValidationError() {
         // Given:
-        when(pisScaAuthorisationService.getCancellationAuthorisationSubResources(anyString()))
-            .thenReturn(Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.emptyList())));
         when(getPaymentCancellationAuthorisationsValidator.validate(new CommonPaymentObject(INVALID_PIS_COMMON_PAYMENT_RESPONSE)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 

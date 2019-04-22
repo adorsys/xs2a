@@ -44,7 +44,7 @@ public class TppStopListScheduleTask {
         List<TppStopListEntity> unblockedTpps = unblockTpps(blockedWithExpirationTpps);
 
         if (!unblockedTpps.isEmpty()) {
-            tppStopListRepository.save(unblockedTpps);
+            tppStopListRepository.saveAll(unblockedTpps);
         }
     }
 

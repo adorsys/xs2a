@@ -27,13 +27,13 @@ By default, allow credentials, all origins and all headers are disabled.
 You can override CORS settings by changing values in `application.properties`
 ```
 # Whether credentials are supported. When not set, credentials are not supported.
-endpoints.cors.allow-credentials=true
+management.endpoints.web.cors.allow-credentials=true
 # Comma-separated list of origins to allow. '*' allows all origins. When not set, CORS support is disabled.
-endpoints.cors.allowed-origins=*
+management.endpoints.web.cors.allowed-origins=*
 # Comma-separated list of headers to include in a response.
-endpoints.cors.allowed-headers=Origin,Authorization,Content-Type
+management.endpoints.web.cors.allowed-headers=Origin,Authorization,Content-Type
 # Comma-separated list of methods to allow. '*' allows all methods. When not set, defaults to GET.
-endpoints.cors.allowed-methods=GET,POST,PUT,DELETE
+management.endpoints.web.cors.allowed-methods=GET,POST,PUT,DELETE
 ```
 
 

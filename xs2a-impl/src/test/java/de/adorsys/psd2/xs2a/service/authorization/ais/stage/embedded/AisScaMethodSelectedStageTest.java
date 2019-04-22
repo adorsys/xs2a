@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
@@ -51,7 +50,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -135,14 +134,8 @@ public class AisScaMethodSelectedStageTest {
         when(aisConsentMapper.mapToSpiAccountConsent(accountConsent))
             .thenReturn(spiAccountConsent);
 
-        when(psuDataMapper.mapToSpiPsuData(any(PsuIdData.class)))
-            .thenReturn(SPI_PSU_DATA);
-
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
-
-        when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, ASPSP_CONSENT_DATA))
-            .thenReturn(buildAvailableListSpiResponse());
 
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(buildSpiAuthenticationObject()))
             .thenReturn(buildXs2aAuthenticationObject());
@@ -169,8 +162,6 @@ public class AisScaMethodSelectedStageTest {
 
     @Test
     public void apply_Success_DecoupledApproach() {
-        when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(buildSpiAuthorizationCodeResult()));
         when(aisConsentService.isAuthenticationMethodDecoupled(anyString(), anyString()))
             .thenReturn(true);
         when(commonDecoupledAisService.proceedDecoupledApproach(any(), any(), eq(AUTHENTICATION_METHOD_ID), any()))
@@ -187,8 +178,6 @@ public class AisScaMethodSelectedStageTest {
     @Test
     public void apply_DecoupledApproach_ShouldChangeScaApproach() {
         when(aisConsentService.isAuthenticationMethodDecoupled(anyString(), anyString())).thenReturn(true);
-        when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(buildSpiAuthorisationDecoupledScaResponse()));
 
         scaMethodSelectedStage.apply(request);
 
@@ -199,8 +188,6 @@ public class AisScaMethodSelectedStageTest {
     public void apply_Failure_SpiResponseWithError() {
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse());
-        when(messageErrorCodeMapper.mapToMessageErrorCode(RESPONSE_STATUS))
-            .thenReturn(ERROR_CODE);
 
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(ERROR_CODE).errorType(ErrorType.AIS_400).build());
@@ -255,21 +242,10 @@ public class AisScaMethodSelectedStageTest {
                    .fail(RESPONSE_STATUS);
     }
 
-    private SpiResponse<List<SpiAuthenticationObject>> buildAvailableListSpiResponse() {
-        return SpiResponse.<List<SpiAuthenticationObject>>builder()
-                   .payload(Collections.singletonList(buildSpiAuthenticationObject()))
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
-                   .success();
-    }
-
     private SpiAuthorizationCodeResult buildSpiAuthorizationCodeResult() {
         SpiAuthorizationCodeResult codeResult = new SpiAuthorizationCodeResult();
         codeResult.setSelectedScaMethod(buildSpiAuthenticationObject());
         return codeResult;
-    }
-
-    private SpiAuthorisationDecoupledScaResponse buildSpiAuthorisationDecoupledScaResponse() {
-        return new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE);
     }
 
     private UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {

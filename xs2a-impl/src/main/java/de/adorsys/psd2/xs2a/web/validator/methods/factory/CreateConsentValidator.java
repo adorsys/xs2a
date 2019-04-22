@@ -44,7 +44,7 @@ public class CreateConsentValidator implements MethodHeadersValidator {
     public boolean validate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ValidationResult creteConsentValidationResult = validateCreateConsent(request);
 
-        if (creteConsentValidationResult.isNotValid()) {
+         if (creteConsentValidationResult.isNotValid()) {
             errorBuildingService.buildErrorResponse(response, creteConsentValidationResult.getMessageError());
             return false;
         }

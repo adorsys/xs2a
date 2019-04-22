@@ -111,7 +111,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     @Override
     @Transactional
     public boolean terminateConsent(@NotNull String consentId, @NotNull String instanceId) {
-        Optional<PiisConsentEntity> entityOptional = Optional.ofNullable(piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId)));
+        Optional<PiisConsentEntity> entityOptional = piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId));
 
         if (!entityOptional.isPresent()) {
             log.info("Consent ID: [{}], Instance ID: [{}]. Consent cannot be terminated, because not found by consentId and instanceId",

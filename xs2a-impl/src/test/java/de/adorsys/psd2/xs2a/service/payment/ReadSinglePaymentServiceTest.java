@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -96,8 +96,6 @@ public class ReadSinglePaymentServiceTest {
     @Test
     public void getPayment_success() {
         //Given
-        when(updatePaymentStatusAfterSpiService.updatePaymentStatus("SOME_ASPSP_CONSENT_DATA.getConsentId()", SINGLE_PAYMENT.getTransactionStatus()))
-            .thenReturn(true);
 
         //When
         PaymentInformationResponse<SinglePayment> actualResponse = readSinglePaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);

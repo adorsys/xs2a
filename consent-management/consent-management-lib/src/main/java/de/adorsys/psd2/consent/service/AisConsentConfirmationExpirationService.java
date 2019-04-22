@@ -59,7 +59,7 @@ public class AisConsentConfirmationExpirationService {
 
     @Transactional
     public List<AisConsent> updateConsentListOnConfirmationExpiration(List<AisConsent> consents) {
-        return IterableUtils.toList(aisConsentRepository.save(obsoleteConsentList(consents)));
+        return IterableUtils.toList(aisConsentRepository.saveAll(obsoleteConsentList(consents)));
     }
 
     private List<AisConsent> obsoleteConsentList(List<AisConsent> consents) {

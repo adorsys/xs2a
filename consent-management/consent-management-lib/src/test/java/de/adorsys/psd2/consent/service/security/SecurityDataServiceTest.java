@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.env.Environment;
 
 import java.util.Base64;
@@ -183,9 +183,6 @@ public class SecurityDataServiceTest {
 
     @Test
     public void encryptConsentData_Failure_NonExistingAlgorithm() {
-        when(cryptoProviderFactory.actualConsentDataCryptoProvider())
-            .thenReturn(CRYPTO_PROVIDER);
-
         // Given
         String encryptedId = getEncryptedConsentId(NON_EXISTING_CRYPT_PROVIDER_ID);
 

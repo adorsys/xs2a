@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.UUID;
 
@@ -70,8 +70,6 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     public void setUp() {
         // Inject pisTppInfoValidator via setter
         updatePisCancellationPsuDataValidator.setPisTppInfoValidator(pisTppInfoValidator);
-
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
         when(pisTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());

@@ -18,12 +18,11 @@ package de.adorsys.psd2.xs2a.web.validator.methods.factory;
 
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.methods.service.TppRedirectUriValidationService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -31,8 +30,10 @@ import java.io.IOException;
 
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_PREFERRED;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_URI;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,10 +54,11 @@ public class CreateConsentValidatorTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
+        String tppRedirectUri = "Any URI";
         request.addHeader(TPP_REDIRECT_PREFERRED, true);
-        request.addHeader(TPP_REDIRECT_URI, "Any URI");
+        request.addHeader(TPP_REDIRECT_URI, tppRedirectUri);
 
-        when(tppRedirectUriValidationService.isNotValid(anyBoolean(), any(String.class)))
+        when(tppRedirectUriValidationService.isNotValid(eq(true), eq(tppRedirectUri)))
             .thenReturn(false);
 
         // When
@@ -74,7 +76,7 @@ public class CreateConsentValidatorTest {
 
         request.addHeader(TPP_REDIRECT_PREFERRED, true);
 
-        when(tppRedirectUriValidationService.isNotValid(anyBoolean(), any(String.class)))
+        when(tppRedirectUriValidationService.isNotValid(eq(true), isNull()))
             .thenReturn(true);
 
         // When

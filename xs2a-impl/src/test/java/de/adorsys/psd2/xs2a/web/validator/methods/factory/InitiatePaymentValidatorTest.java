@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -62,12 +62,13 @@ public class InitiatePaymentValidatorTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
+        String tppRedirectUri = "Any URI";
         request.addHeader(TPP_REDIRECT_PREFERRED, true);
-        request.addHeader(TPP_REDIRECT_URI, "Any URI");
+        request.addHeader(TPP_REDIRECT_URI, tppRedirectUri);
 
-        when(psuIpAddressValidationService.validatePsuIdAddress(anyString()))
+        when(psuIpAddressValidationService.validatePsuIdAddress(any()))
             .thenReturn(ValidationResult.valid());
-        when(tppRedirectUriValidationService.isNotValid(anyBoolean(), any(String.class)))
+        when(tppRedirectUriValidationService.isNotValid(eq(true), eq(tppRedirectUri)))
             .thenReturn(false);
 
         // When
@@ -85,11 +86,8 @@ public class InitiatePaymentValidatorTest {
 
         request.addHeader(TPP_REDIRECT_PREFERRED, true);
 
-        when(psuIpAddressValidationService.validatePsuIdAddress(anyString()))
+        when(psuIpAddressValidationService.validatePsuIdAddress(any()))
             .thenReturn(ValidationResult.invalid(new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))));
-
-        when(tppRedirectUriValidationService.isNotValid(anyBoolean(), any(String.class)))
-            .thenReturn(true);
 
         // When
         boolean actual = initiatePaymentValidator.validate(request, response);
@@ -106,10 +104,10 @@ public class InitiatePaymentValidatorTest {
 
         request.addHeader(TPP_REDIRECT_PREFERRED, true);
 
-        when(psuIpAddressValidationService.validatePsuIdAddress(anyString()))
+        when(psuIpAddressValidationService.validatePsuIdAddress(any()))
             .thenReturn(ValidationResult.valid());
 
-        when(tppRedirectUriValidationService.isNotValid(anyBoolean(), any(String.class)))
+        when(tppRedirectUriValidationService.isNotValid(eq(true), isNull()))
             .thenReturn(true);
 
         // When

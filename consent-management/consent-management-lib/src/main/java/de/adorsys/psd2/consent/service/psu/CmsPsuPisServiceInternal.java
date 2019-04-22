@@ -66,11 +66,9 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) {
-        PisAuthorization authorisation =
-            pisAuthorisationRepository.findOne(
-                pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)
-            );
-        return Optional.ofNullable(authorisation)
+        return pisAuthorisationRepository.findOne(
+            pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)
+        )
                    .map(auth -> updatePsuData(auth, psuIdData))
                    .orElseGet(() -> {
                        log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in Payment failed, because authorisation not found",
@@ -100,7 +98,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+        Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
                                                                .filter(a -> !a.getScaStatus().isFinalisedStatus());
 
         if (optionalAuthorisation.isPresent()) {
@@ -127,7 +125,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull String redirectId, @NotNull String instanceId) {
-        Optional<PisAuthorization> optionalAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+        Optional<PisAuthorization> optionalAuthorisation = pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
                                                                .filter(a -> !a.getScaStatus().isFinalisedStatus());
 
         if (!optionalAuthorisation.isPresent()) {
@@ -155,7 +153,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Transactional
     public boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId,
                                              @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId) {
-        Optional<PisAuthorization> pisAuthorisation = Optional.ofNullable(pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)));
+        Optional<PisAuthorization> pisAuthorisation = pisAuthorisationRepository.findOne(pisAuthorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
 
         if (!pisAuthorisation.isPresent()) {
             log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found.",

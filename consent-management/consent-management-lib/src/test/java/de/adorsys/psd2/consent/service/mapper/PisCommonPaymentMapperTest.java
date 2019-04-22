@@ -17,9 +17,7 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
@@ -28,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
@@ -52,10 +50,8 @@ public class PisCommonPaymentMapperTest {
     @Test
     public void mapToGetPisAuthorizationResponse() {
         //Given
-        when(accountReferenceMapper.mapToCmsAccountReference(any(AccountReferenceEntity.class))).thenReturn(null);
         when(psuDataMapper.mapToPsuIdDataList(any())).thenReturn(null);
         when(psuDataMapper.mapToPsuIdData(any())).thenReturn(new PsuIdData(PSU_ID, null, null, null));
-        when(tppInfoMapper.mapToTppInfo(any(TppInfoEntity.class))).thenReturn(null);
         PisAuthorization pisAuthorization = buildPisAuthorization();
         PsuData psuData = new PsuData();
         psuData.setPsuId(PSU_ID);

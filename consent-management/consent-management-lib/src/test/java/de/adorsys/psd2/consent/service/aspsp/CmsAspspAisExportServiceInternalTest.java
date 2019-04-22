@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -84,8 +84,7 @@ public class CmsAspspAisExportServiceInternalTest {
     public void exportConsentsByTpp_success() {
         // Given
         //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildAisConsent()));
+        when(aisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         AisAccountConsent expectedConsent = buildAisAccountConsent();
 
         // When
@@ -104,9 +103,6 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
-        //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
 
         // When
         Collection<AisAccountConsent> aisConsents =
@@ -137,8 +133,7 @@ public class CmsAspspAisExportServiceInternalTest {
     public void exportConsentsByPsu_success() {
         // Given
         //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildAisConsent()));
+        when(aisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         AisAccountConsent expectedConsent = buildAisAccountConsent();
 
         // When
@@ -156,9 +151,6 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByPsu_failure_wrongPsuIdData() {
         // Given
-        //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
 
         // When
         Collection<AisAccountConsent> aisConsents =
@@ -203,8 +195,7 @@ public class CmsAspspAisExportServiceInternalTest {
     public void exportConsentsByAccountId_success() {
         // Given
         //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildAisConsent()));
+        when(aisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         AisAccountConsent expectedConsent = buildAisAccountConsent();
 
         // When
@@ -222,9 +213,6 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByAccountId_failure_wrongAspspAccountId() {
         // Given
-        //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
 
         // When
         Collection<AisAccountConsent> aisConsents =

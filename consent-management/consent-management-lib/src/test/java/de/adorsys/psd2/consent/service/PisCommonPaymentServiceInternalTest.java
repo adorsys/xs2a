@@ -46,7 +46,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
@@ -146,7 +146,6 @@ public class PisCommonPaymentServiceInternalTest {
     @Test
     public void getAuthorisationByPaymentIdSuccess() {
         //When
-        when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID));
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
         //Then
@@ -160,7 +159,6 @@ public class PisCommonPaymentServiceInternalTest {
     @Test
     public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
-        when(securityDataService.decryptId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         //Then
@@ -172,7 +170,6 @@ public class PisCommonPaymentServiceInternalTest {
     @Test
     public void getAuthorisationByPaymentIdWrongTransactionStatus() {
         //When
-        when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID_WRONG_TRANSACTION_STATUS));
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
         //Then
@@ -291,7 +288,7 @@ public class PisCommonPaymentServiceInternalTest {
         //Then
         assertTrue(response.isPresent());
 
-        verify(pisAuthorisationRepository).save(savedAuthorisationsCaptor.capture());
+        verify(pisAuthorisationRepository).saveAll(savedAuthorisationsCaptor.capture());
 
         Iterable<PisAuthorization> savedAuthorisationsIterable = savedAuthorisationsCaptor.getValue();
         List<PisAuthorization> savedAuthorisations = IteratorUtils.toList(savedAuthorisationsIterable.iterator());
