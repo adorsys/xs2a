@@ -30,7 +30,7 @@ import java.time.OffsetDateTime;
 public class EventEntity extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_generator")
-    @SequenceGenerator(name = "event_generator", sequenceName = "event_id_seq")
+    @SequenceGenerator(name = "event_generator", sequenceName = "event_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "timestamp", nullable = false)

@@ -28,7 +28,7 @@ import java.time.LocalDate;
 public class AisConsentUsage {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_usage_generator")
-    @SequenceGenerator(name = "ais_consent_usage_generator", sequenceName = "ais_consent_usage_id_seq")
+    @SequenceGenerator(name = "ais_consent_usage_generator", sequenceName = "ais_consent_usage_id_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)

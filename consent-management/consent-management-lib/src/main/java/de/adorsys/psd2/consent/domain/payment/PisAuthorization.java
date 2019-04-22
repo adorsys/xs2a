@@ -37,7 +37,7 @@ public class PisAuthorization extends InstanceDependableEntity {
     @Id
     @Column(name = "authorization_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_consent_authorization_generator")
-    @SequenceGenerator(name = "pis_consent_authorization_generator", sequenceName = "pis_consent_auth_id_seq")
+    @SequenceGenerator(name = "pis_consent_authorization_generator", sequenceName = "pis_consent_auth_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "external_id", nullable = false)

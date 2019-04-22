@@ -34,7 +34,7 @@ public class TppStopListEntity extends InstanceDependableEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpp_stop_list_generator")
-    @SequenceGenerator(name = "tpp_stop_list_generator", sequenceName = "tpp_stop_list_id_seq")
+    @SequenceGenerator(name = "tpp_stop_list_generator", sequenceName = "tpp_stop_list_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "tpp_authorisation_number", nullable = false)

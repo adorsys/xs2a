@@ -34,7 +34,7 @@ public class AisConsentAuthorization extends InstanceDependableEntity {
     @Id
     @Column(name = "authorization_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_authorization_generator")
-    @SequenceGenerator(name = "ais_consent_authorization_generator", sequenceName = "ais_consent_auth_id_seq")
+    @SequenceGenerator(name = "ais_consent_authorization_generator", sequenceName = "ais_consent_auth_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "external_id", nullable = false)

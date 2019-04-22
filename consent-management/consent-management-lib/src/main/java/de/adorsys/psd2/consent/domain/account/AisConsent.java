@@ -47,7 +47,7 @@ import java.util.Set;
 public class AisConsent extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_generator")
-    @SequenceGenerator(name = "ais_consent_generator", sequenceName = "ais_consent_id_seq")
+    @SequenceGenerator(name = "ais_consent_generator", sequenceName = "ais_consent_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "external_id", nullable = false)
