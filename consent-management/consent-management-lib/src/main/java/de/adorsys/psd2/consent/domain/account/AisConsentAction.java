@@ -30,7 +30,7 @@ import java.time.LocalDate;
 public class AisConsentAction {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_action_generator")
-    @SequenceGenerator(name = "ais_consent_action_generator", sequenceName = "ais_consent_action_id_seq")
+    @SequenceGenerator(name = "ais_consent_action_generator", sequenceName = "ais_consent_action_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "request_date", nullable = false)

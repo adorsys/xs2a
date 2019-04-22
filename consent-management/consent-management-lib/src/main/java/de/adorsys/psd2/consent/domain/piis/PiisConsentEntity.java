@@ -39,7 +39,7 @@ import java.util.Objects;
 public class PiisConsentEntity extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "piis_consent_generator")
-    @SequenceGenerator(name = "piis_consent_generator", sequenceName = "piis_consent_id_seq")
+    @SequenceGenerator(name = "piis_consent_generator", sequenceName = "piis_consent_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "external_id", nullable = false)

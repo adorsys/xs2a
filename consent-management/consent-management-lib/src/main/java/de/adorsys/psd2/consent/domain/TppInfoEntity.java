@@ -30,7 +30,7 @@ public class TppInfoEntity extends InstanceDependableEntity {
     @Id
     @Column(name = "tpp_info_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpp_info_generator")
-    @SequenceGenerator(name = "tpp_info_generator", sequenceName = "tpp_info_id_seq")
+    @SequenceGenerator(name = "tpp_info_generator", sequenceName = "tpp_info_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "authorisation_number", nullable = false)

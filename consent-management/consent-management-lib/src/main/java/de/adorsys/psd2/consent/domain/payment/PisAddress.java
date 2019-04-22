@@ -31,7 +31,7 @@ public class PisAddress {
     @Id
     @Column(name = "address_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_address_generator")
-    @SequenceGenerator(name = "pis_address_generator", sequenceName = "pis_address_id_seq")
+    @SequenceGenerator(name = "pis_address_generator", sequenceName = "pis_address_id_seq", allocationSize = 1)
     private Long id;
 
     @ApiModelProperty(value = "Street", example = "Herrnstraße")

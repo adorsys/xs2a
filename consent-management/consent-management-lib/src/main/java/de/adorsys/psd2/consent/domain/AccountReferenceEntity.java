@@ -30,7 +30,7 @@ public class AccountReferenceEntity {
     @Id
     @Column(name = "account_reference_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_reference_generator")
-    @SequenceGenerator(name = "account_reference_generator", sequenceName = "account_reference_id_seq")
+    @SequenceGenerator(name = "account_reference_generator", sequenceName = "account_reference_id_seq", allocationSize = 1)
     private Long id;
 
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")

@@ -35,7 +35,7 @@ import java.util.Objects;
 public class PisCommonPaymentData extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_common_payment_generator")
-    @SequenceGenerator(name = "pis_common_payment_generator", sequenceName = "pis_common_payment_id_seq")
+    @SequenceGenerator(name = "pis_common_payment_generator", sequenceName = "pis_common_payment_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "payment_id", nullable = false)

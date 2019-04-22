@@ -31,7 +31,7 @@ public class PisRemittance {
     @Id
     @Column(name = "remittance_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_remittance_generator")
-    @SequenceGenerator(name = "pis_remittance_generator", sequenceName = "pis_remittance_id_seq")
+    @SequenceGenerator(name = "pis_remittance_generator", sequenceName = "pis_remittance_id_seq", allocationSize = 1)
     private Long id;
 
     @ApiModelProperty(value = "The actual reference", required = true, example = "Ref Number Merchant")

@@ -30,7 +30,7 @@ public class PsuData extends InstanceDependableEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "psu_data_generator")
-    @SequenceGenerator(name = "psu_data_generator", sequenceName = "psu_data_id_seq")
+    @SequenceGenerator(name = "psu_data_generator", sequenceName = "psu_data_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "psu_id")

@@ -31,7 +31,7 @@ public class CryptoAlgorithm {
     @Id
     @Column(name = "algorithm_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "crypto_algorithm_generator")
-    @SequenceGenerator(name = "crypto_algorithm_generator", sequenceName = "crypto_algorithm_id_seq")
+    @SequenceGenerator(name = "crypto_algorithm_generator", sequenceName = "crypto_algorithm_id_seq", allocationSize = 1)
     private Long id;
 
     @ApiModelProperty(value = "External Id", required = true, example = "nML0IXWdMa")

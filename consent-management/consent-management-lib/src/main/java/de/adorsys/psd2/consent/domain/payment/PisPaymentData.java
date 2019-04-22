@@ -39,7 +39,7 @@ import java.util.Currency;
 public class PisPaymentData extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_payment_data_generator")
-    @SequenceGenerator(name = "pis_payment_data_generator", sequenceName = "pis_payment_data_id_seq")
+    @SequenceGenerator(name = "pis_payment_data_generator", sequenceName = "pis_payment_data_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "payment_id", nullable = false)
