@@ -24,7 +24,7 @@ import java.util.List;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "endpoints.cors")
+@ConfigurationProperties(prefix = "management.endpoints.web.cors")
 public class CorsConfigProperties {
     private Boolean allowCredentials;
     private List<String> allowedOrigins;

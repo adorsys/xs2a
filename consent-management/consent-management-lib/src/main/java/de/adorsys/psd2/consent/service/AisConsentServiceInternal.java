@@ -206,7 +206,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         oldConsentsWithExactPsuDataLists.forEach(c -> c.setConsentStatus(TERMINATED_BY_TPP));
-        aisConsentRepository.save(oldConsentsWithExactPsuDataLists);
+        aisConsentRepository.saveAll(oldConsentsWithExactPsuDataLists);
         return true;
     }
 

@@ -44,7 +44,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -93,8 +93,6 @@ public class PaymentAuthorisationServiceTest {
     public void setUp() {
         when(pisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
-        when(pisScaAuthorisationService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID))
-            .thenReturn(Optional.empty());
         when(pisScaAuthorisationServiceResolver.getService())
             .thenReturn(pisScaAuthorisationService);
 
@@ -132,9 +130,6 @@ public class PaymentAuthorisationServiceTest {
     @Test
     public void createPisAuthorization_withInvalidPayment_shouldReturnValidationError() {
         // Given
-        when(pisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA))
-            .thenReturn(Optional.of(new Xs2aCreatePisAuthorisationResponse(null, null, null)));
-
         PisCommonPaymentResponse invalidPisCommonPaymentResponse = buildInvalidPisCommonPaymentResponse();
 
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
@@ -178,9 +173,6 @@ public class PaymentAuthorisationServiceTest {
     @Test
     public void updatePisPsuData_withInvalidPayment_shouldReturnValidationError() {
         // Given
-        when(pisScaAuthorisationService.updateCommonPaymentPsuData(any()))
-            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.STARTED, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
-
         PisCommonPaymentResponse invalidPisCommonPaymentResponse = buildInvalidPisCommonPaymentResponse();
 
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
@@ -230,9 +222,6 @@ public class PaymentAuthorisationServiceTest {
     @Test
     public void getPaymentInitiationAuthorisation_withInvalidPayment_shouldReturnValidationError() {
         // Given
-        when(pisScaAuthorisationService.getAuthorisationSubResources(anyString()))
-            .thenReturn(Optional.of(new Xs2aAuthorisationSubResources(Collections.singletonList(PAYMENT_ID))));
-
         PisCommonPaymentResponse invalidPisCommonPaymentResponse = buildInvalidPisCommonPaymentResponse();
 
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))

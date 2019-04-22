@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -55,11 +55,6 @@ public class PsuIpAddressValidationServiceTest {
     @Test
     public void validatePsuIdAddress_success() {
         // Given
-        when(serviceTypeDiscoveryService.getServiceType())
-            .thenReturn(SERVICE_TYPE_PIS);
-
-        when(errorTypeMapper.mapToErrorType(any(), any(Integer.class)))
-            .thenReturn(ERROR_TYPE_PIS_400);
 
         // When
         ValidationResult actual = psuIpAddressValidationService.validatePsuIdAddress(CORRECT_IP_ADDRESS);
@@ -72,11 +67,6 @@ public class PsuIpAddressValidationServiceTest {
     @Test
     public void validatePsuIdAddressV6_success() {
         // Given
-        when(serviceTypeDiscoveryService.getServiceType())
-            .thenReturn(SERVICE_TYPE_PIS);
-
-        when(errorTypeMapper.mapToErrorType(any(), any(Integer.class)))
-            .thenReturn(ERROR_TYPE_PIS_400);
 
         // When
         ValidationResult actual = psuIpAddressValidationService.validatePsuIdAddress(CORRECT_V6_IP_ADDRESS);

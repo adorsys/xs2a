@@ -60,7 +60,7 @@ public class PisCommonPaymentConfirmationExpirationService {
 
     @Transactional
     public List<PisCommonPaymentData> updatePaymentDataListOnConfirmationExpiration(List<PisCommonPaymentData> pisCommonPaymentDataList) {
-        return IterableUtils.toList(pisCommonPaymentDataRepository.save(obsoletePaymentDataList(pisCommonPaymentDataList)));
+        return IterableUtils.toList(pisCommonPaymentDataRepository.saveAll(obsoletePaymentDataList(pisCommonPaymentDataList)));
     }
 
     private void failAuthorisation(PisAuthorization authorisation) {

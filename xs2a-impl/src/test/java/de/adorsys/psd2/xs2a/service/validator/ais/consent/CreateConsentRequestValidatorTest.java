@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -57,7 +57,6 @@ public class CreateConsentRequestValidatorTest {
 
     @Before
     public void setUp() {
-        when(aspspProfileService.getAllPsd2Support()).thenReturn(false);
         when(aspspProfileService.isBankOfferedConsentSupported()).thenReturn(true);
         when(aspspProfileService.isAvailableAccountsConsentSupported()).thenReturn(true);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
@@ -199,7 +198,6 @@ public class CreateConsentRequestValidatorTest {
     @Test
     public void validate_withoutSupportedCombinedServiceIndicator_shouldReturnValid() {
         //Given
-        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(true);
         CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(false);
 
         //When
@@ -212,7 +210,6 @@ public class CreateConsentRequestValidatorTest {
     @Test
     public void validate_withoutNotSupportedCombinedServiceIndicator_shouldReturnValid() {
         //Given
-        when(aspspProfileService.isCombinedServiceIndicator()).thenReturn(false);
         CreateConsentReq createConsentReq = buildCreateConsentReqWithCombinedServiceIndicator(false);
 
         //When

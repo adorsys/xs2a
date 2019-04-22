@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -90,7 +90,7 @@ public class CmsAspspPisExportServiceInternalTest {
     public void exportPaymentsByTpp_success() {
         // Given
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
+        when(pisCommonPaymentDataRepository.findAll(any()))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
         CmsPayment expectedPayment = buildCmsPayment();
 
@@ -110,8 +110,6 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
-        //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
         // When
         Collection<CmsPayment> payments =
@@ -128,8 +126,6 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByTpp_failure_nullTppAuthorisationNumber() {
         // Given
-        //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
         // When
         Collection<CmsPayment> payments =
@@ -147,7 +143,7 @@ public class CmsAspspPisExportServiceInternalTest {
     public void exportPaymentsByPsu_success() {
         // Given
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
+        when(pisCommonPaymentDataRepository.findAll(any()))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
         CmsPayment expectedPayment = buildCmsPayment();
 
@@ -167,9 +163,6 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByPsu_failure_wrongPsuIdData() {
         // Given
-        //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
 
         // When
         Collection<CmsPayment> payments =
@@ -216,7 +209,7 @@ public class CmsAspspPisExportServiceInternalTest {
     public void exportPaymentsByAccountId_success() {
         // Given
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
+        when(pisCommonPaymentDataRepository.findAll(any()))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
         CmsPayment expectedPayment = buildCmsPayment();
 
@@ -236,9 +229,6 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByAccountId_failure_wrongAspspAccountId() {
         // Given
-        //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
 
         // When
         Collection<CmsPayment> payments =

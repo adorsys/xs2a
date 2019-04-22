@@ -71,9 +71,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) {
-        AisConsentAuthorization authorisation = aisConsentAuthorisationRepository.findOne(
-            aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
-        return Optional.ofNullable(authorisation)
+        return aisConsentAuthorisationRepository.findOne(
+            aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId))
                    .map(auth -> updatePsuData(auth, psuIdData))
                    .orElseGet(() -> {
                        log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, because authorisation not found",
@@ -85,7 +84,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull Optional<AisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
-        return Optional.ofNullable(aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId)))
+        return aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToAisAccountConsent);
     }
@@ -100,7 +99,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return false;
         }
 
-        return Optional.ofNullable(aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId)))
+        return aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId))
                    .map(auth -> updateScaStatus(status, auth))
                    .orElseGet(() -> {
                        log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found",
@@ -147,7 +146,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     @Transactional
     public @NotNull Optional<CmsAisConsentResponse> checkRedirectAndGetConsent(@NotNull String redirectId, @NotNull String instanceId) {
-        Optional<AisConsentAuthorization> optionalAuthorisation = Optional.ofNullable(aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId)))
+        Optional<AisConsentAuthorization> optionalAuthorisation = aisConsentAuthorisationRepository.findOne(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(redirectId, instanceId))
                                                                       .filter(a -> a.getScaStatus().isNotFinalisedStatus());
 
         if (optionalAuthorisation.isPresent()) {
@@ -213,7 +212,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private boolean changeConsentStatus(String consentId, ConsentStatus status, String instanceId) {
-        return Optional.ofNullable(aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId)))
+        return aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
                    .map(con -> updateConsentStatus(con, status))
                    .orElseGet(() -> {
                        log.info("Consent ID [{}], Instance ID: [{}]. Change consent status failed, because AIS consent not found",
@@ -235,7 +234,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private Optional<AisConsent> getActualAisConsent(String consentId, String instanceId) {
-        return Optional.ofNullable(aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId)))
+        return aisConsentRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 

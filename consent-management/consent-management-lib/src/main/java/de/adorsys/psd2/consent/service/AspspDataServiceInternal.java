@@ -103,8 +103,8 @@ public class AspspDataServiceInternal implements AspspDataService {
     }
 
     private boolean deleteAspspConsentDataIfExist(@NotNull String consentId) {
-        if (aspspConsentDataRepository.exists(consentId)) {
-            aspspConsentDataRepository.delete(consentId);
+        if (aspspConsentDataRepository.existsById(consentId)) {
+            aspspConsentDataRepository.deleteById(consentId);
             return true;
         }
         log.info("Consent ID: [{}]. Delete Aspsp consent data failed, because aspsp consent data for this consent id does not exist.", consentId);

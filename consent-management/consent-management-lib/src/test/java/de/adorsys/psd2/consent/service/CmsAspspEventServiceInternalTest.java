@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -57,8 +57,6 @@ public class CmsAspspEventServiceInternalTest {
 
         when(eventMapper.mapToEventList(any()))
             .thenReturn(Collections.singletonList(buildCmsEvent(between)));
-        when(eventRepository.findByTimestampBetweenOrderByTimestampAsc(start, end))
-            .thenReturn(Collections.singletonList(buildEventEntity(between)));
 
         // Given
         Event expected = buildCmsEvent(between);
@@ -77,8 +75,6 @@ public class CmsAspspEventServiceInternalTest {
         OffsetDateTime end = OffsetDateTime.parse("2018-12-01T00:00:00Z");
 
         when(eventMapper.mapToEventList(any()))
-            .thenReturn(Collections.emptyList());
-        when(eventRepository.findByTimestampBetweenOrderByTimestampAsc(start, end))
             .thenReturn(Collections.emptyList());
 
         // When

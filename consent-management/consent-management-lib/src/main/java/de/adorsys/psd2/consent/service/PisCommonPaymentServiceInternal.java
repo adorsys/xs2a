@@ -402,7 +402,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         if (isCommonPayment) {
             pisCommonPaymentDataRepository.save(pisCommonPaymentMapper.mapToPisCommonPaymentData(request.getPaymentInfo()));
         } else {
-            pisPaymentDataRepository.save(pisCommonPaymentMapper.mapToPisPaymentDataList(request.getPayments(), pisCommonPayment));
+            pisPaymentDataRepository.saveAll(pisCommonPaymentMapper.mapToPisPaymentDataList(request.getPayments(), pisCommonPayment));
         }
     }
 
@@ -472,7 +472,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                                                           .map(this::makeAuthorisationFailedAndExpired)
                                                           .collect(Collectors.toList());
 
-        pisAuthorisationRepository.save(pisAuthorisationList);
+        pisAuthorisationRepository.saveAll(pisAuthorisationList);
     }
 
     private PisAuthorization makeAuthorisationFailedAndExpired(PisAuthorization auth) {

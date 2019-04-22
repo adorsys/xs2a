@@ -62,7 +62,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
@@ -73,7 +73,6 @@ import java.util.UUID;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -390,9 +389,6 @@ public class PisScaStartAuthorisationStageTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(availableScaMethodsResponse);
 
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
-
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
             .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
 
@@ -432,9 +428,6 @@ public class PisScaStartAuthorisationStageTest {
 
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(availableScaMethodsResponse);
-
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
 
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
             .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
@@ -489,14 +482,8 @@ public class PisScaStartAuthorisationStageTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any()))
             .thenReturn(availableScaMethodsResponse);
 
-        when(applicationContext.getBean(SinglePaymentSpi.class))
-            .thenReturn(singlePaymentSpi);
-
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(any(), any()))
             .thenReturn(new SpiSinglePayment(PAYMENT_PRODUCT));
-
-        when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), eq(Collections.emptyList())))
-            .thenReturn(true);
 
         List<Xs2aAuthenticationObject> xs2aAuthenticationObjects = Arrays.asList(buildXs2aSmsAuthenticationObject(false), buildXs2aPushAuthenticationObject(true));
 

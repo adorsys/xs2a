@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collections;
@@ -75,14 +75,13 @@ public class CmsPsuPiisServiceInternalTest {
         psuData = psuDataMapper.mapToPsuData(psuIdData);
         piisConsentEntity = buildPiisConsentEntity(ConsentStatus.VALID);
         piisConsent = buildConsent();
-        when(piisConsentRepository.save(piisConsentEntity)).thenReturn(piisConsentEntity);
         when(piisConsentMapper.mapToPiisConsent(piisConsentEntity)).thenReturn(piisConsent);
     }
 
     @Test
     public void getConsent_success() {
         //noinspection unchecked
-        when(piisConsentRepository.findOne(any(Specification.class))).thenReturn(piisConsentEntity);
+        when(piisConsentRepository.findOne(any())).thenReturn(Optional.ofNullable(piisConsentEntity));
 
         // When
         Optional<PiisConsent> consent = cmsPsuPiisServiceInternal.getConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -105,7 +104,7 @@ public class CmsPsuPiisServiceInternalTest {
     public void getConsentsForPsu_success() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.singletonList(piisConsentEntity));
+        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(piisConsentEntity));
         // When
         List<PiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
         // Then

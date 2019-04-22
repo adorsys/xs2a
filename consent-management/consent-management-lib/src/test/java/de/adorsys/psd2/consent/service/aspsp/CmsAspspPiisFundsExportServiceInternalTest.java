@@ -28,8 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.data.jpa.domain.Specification;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -84,8 +83,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByTpp_success() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
 
         // When
@@ -105,8 +103,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByTpp_success_nullInstanceId() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
 
         // When
@@ -125,8 +122,6 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
         // When
         Collection<PiisConsent> piisConsents =
@@ -170,8 +165,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByPsu_success() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
 
         // When
@@ -191,8 +185,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByPsu_success_nullInstanceId() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
 
         // When
@@ -211,8 +204,6 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByPsu_failure_wrongPsuIdData() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
         // When
         Collection<PiisConsent> piisConsents =
@@ -256,8 +247,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByAccountId_success() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
 
         // When
@@ -277,8 +267,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     public void exportConsentsByAccountId__success_nullInstanceId() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
 
         // When
@@ -297,8 +286,6 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByAccountId_wrongAspspAccountId() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
         // When
         Collection<PiisConsent> piisConsents =

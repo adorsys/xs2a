@@ -298,7 +298,7 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
                                                                      .map(this::makeAuthorisationFailedAndExpired)
                                                                      .collect(Collectors.toList());
 
-        aisConsentAuthorisationRepository.save(aisConsentAuthorisations);
+        aisConsentAuthorisationRepository.saveAll(aisConsentAuthorisations);
     }
 
     private AisConsentAuthorization makeAuthorisationFailedAndExpired(AisConsentAuthorization auth) {

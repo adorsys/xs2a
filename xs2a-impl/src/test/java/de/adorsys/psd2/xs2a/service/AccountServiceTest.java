@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
@@ -24,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
@@ -59,7 +57,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
@@ -171,10 +169,7 @@ public class AccountServiceTest {
         doNothing()
             .when(aisConsentDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
 
-        doNothing()
-            .when(aisConsentService).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
-
-        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class)))
+        when(spiContextDataProvider.provideWithPsuIdData(any()))
             .thenReturn(SPI_CONTEXT_DATA);
 
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
@@ -562,12 +557,6 @@ public class AccountServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
-
-        when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
-
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID);
 
         assertThat(actualResponse).isNotNull();
@@ -623,8 +612,6 @@ public class AccountServiceTest {
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
         when(balanceReportMapper.mapToXs2aBalancesReport(Collections.emptyList(), SPI_ACCOUNT_REFERENCE))
             .thenReturn(xs2aBalancesReport);
-        when(xs2aBalancesReport.getXs2aAccountReference())
-            .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -935,9 +922,6 @@ public class AccountServiceTest {
         when(accountSpi.requestTransactionForAccountByTransactionId(SPI_CONTEXT_DATA, TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
 
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
-
         when(spiToXs2aTransactionMapper.mapToXs2aTransaction(spiTransaction))
             .thenReturn(transactions);
 
@@ -966,8 +950,6 @@ public class AccountServiceTest {
             .thenReturn(SPI_ACCOUNT_CONSENT);
         when(accountSpi.requestTransactionForAccountByTransactionId(SPI_CONTEXT_DATA, TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
         when(spiToXs2aTransactionMapper.mapToXs2aTransaction(spiTransaction))
             .thenReturn(transactions);
 

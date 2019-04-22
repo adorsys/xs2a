@@ -41,7 +41,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -80,21 +80,8 @@ public class CancelPaymentServiceTest {
 
     @Before
     public void setUp() {
-        when(paymentCancellationSpi.cancelPaymentWithoutSca(any(), eq(getSpiPayment(WRONG_PAYMENT_ID)), any()))
-            .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
-                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
-                            .message(ERROR_MESSAGE_TEXT)
-                            .fail(SpiResponseStatus.LOGICAL_FAILURE));
-        when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(WRONG_PAYMENT_ID)), any()))
-            .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
-                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
-                            .message(ERROR_MESSAGE_TEXT)
-                            .fail(SpiResponseStatus.LOGICAL_FAILURE));
-
         when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.CANC))))
             .thenReturn(getCancelPaymentResponse(false, CANC));
-        when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.CANC))))
-            .thenReturn(getCancelPaymentResponse(true, CANC));
         when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(false, TransactionStatus.ACTC))))
             .thenReturn(getCancelPaymentResponse(false, ACTC));
         when(spiToXs2aCancelPaymentMapper.mapToCancelPaymentResponse(eq(getSpiCancelPaymentResponse(true, TransactionStatus.ACTC))))
@@ -204,13 +191,6 @@ public class CancelPaymentServiceTest {
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(getSpiPayment(PAYMENT_ID)), any()))
             .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
                             .payload(getSpiCancelPaymentResponse(false, ACSC))
-                            .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
-                            .success());
-
-
-        when(paymentCancellationSpi.cancelPaymentWithoutSca(any(), any(), any()))
-            .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
-                            .payload(SpiResponse.voidResponse())
                             .aspspConsentData(SOME_ASPSP_CONSENT_DATA)
                             .success());
 

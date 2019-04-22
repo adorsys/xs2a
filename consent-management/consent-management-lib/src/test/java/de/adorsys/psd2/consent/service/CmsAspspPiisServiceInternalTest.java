@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -96,9 +96,6 @@ public class CmsAspspPiisServiceInternalTest {
         tppInfo = buildTppInfo();
         when(psuDataMapper.mapToPsuData(buildPsuIdData())).thenReturn(buildPsuData());
         when(piisConsentMapper.mapToPiisConsent(buildPiisConsentEntity())).thenReturn(buildPiisConsent());
-        when(piisConsentRepository.findByPsuDataPsuId(eq(PSU_ID))).thenReturn(buildPiisConsentEntityList());
-        when(piisConsentRepository.findByExternalId(CONSENT_EXTERNAL_ID)).thenReturn(Optional.of(buildPiisConsentEntity()));
-        when(piisConsentRepository.findByExternalId(CONSENT_EXTERNAL_ID_WRONG)).thenReturn(Optional.empty());
         when(piisConsentRepository.save(any(PiisConsentEntity.class))).thenReturn(buildPiisConsentEntity());
         when(tppInfoMapper.mapToTppInfoEntity(tppInfo)).thenReturn(buildTppInfoEntity());
         when(accountReferenceMapper.mapToAccountReferenceEntityList(buildAccountReferenceList())).thenReturn(buildAccountReferenceEntityList());
@@ -194,9 +191,6 @@ public class CmsAspspPiisServiceInternalTest {
 
     @Test
     public void createConsent_withEmptyPsuIdDate_shouldFail() {
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
-            .thenReturn(buildConsent());
-
         // Given
         PsuIdData emptyPsuIdData = new PsuIdData(null, null, null, null);
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest(tppInfo, Collections.emptyList(), EXPIRE_DATE);
@@ -211,9 +205,6 @@ public class CmsAspspPiisServiceInternalTest {
 
     @Test
     public void createConsent_withEmptyTppInfo_shouldFail() {
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
-            .thenReturn(buildConsent());
-
         // Given
         PsuIdData psuIdData = buildPsuIdData();
         List<AccountReference> accounts = buildAccountReferenceList();
@@ -256,9 +247,6 @@ public class CmsAspspPiisServiceInternalTest {
 
     @Test
     public void createConsent_withInvalidExpireDate_shouldFail() {
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
-            .thenReturn(buildConsent());
-
         // Given
         PsuIdData psuIdData = buildPsuIdData();
         LocalDate yesterdayDate = LocalDate.now().minusDays(1);
@@ -274,9 +262,6 @@ public class CmsAspspPiisServiceInternalTest {
 
     @Test
     public void createConsent_withNullExpireDate_shouldFail() {
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
-            .thenReturn(buildConsent());
-
         // Given
         List<AccountReference> accounts = buildAccountReferenceList();
         PsuIdData psuIdData = buildPsuIdData();
@@ -292,9 +277,6 @@ public class CmsAspspPiisServiceInternalTest {
 
     @Test
     public void createConsent_withCardExpireDate_shouldFail() {
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
-            .thenReturn(buildConsent());
-
         // Given
         PsuIdData psuIdData = buildPsuIdData();
         LocalDate yesterdayDate = LocalDate.now().minusDays(1);
@@ -313,8 +295,7 @@ public class CmsAspspPiisServiceInternalTest {
     public void getConsentsForPsu_Success() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PsuIdData psuIdData = buildPsuIdData(PSU_ID);
         PiisConsent expected = buildPiisConsent();
 
@@ -331,8 +312,6 @@ public class CmsAspspPiisServiceInternalTest {
     @Test
     public void getConsentsForPsu_Failure_WrongPsuId() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
         PsuIdData psuIdData = buildPsuIdData(PSU_ID_WRONG);
 
         // When
@@ -348,7 +327,7 @@ public class CmsAspspPiisServiceInternalTest {
     public void terminateConsent_Success() {
         // Given
         //noinspection unchecked
-        when(piisConsentRepository.findOne(any(Specification.class))).thenReturn(buildPiisConsentEntity());
+        when(piisConsentRepository.findOne(any())).thenReturn(Optional.ofNullable(buildPiisConsentEntity()));
         ArgumentCaptor<PiisConsentEntity> argumentCaptor = ArgumentCaptor.forClass(PiisConsentEntity.class);
 
         // When
@@ -365,8 +344,6 @@ public class CmsAspspPiisServiceInternalTest {
     @Test
     public void terminateConsent_Failure_WrongConsentId() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findOne(any(Specification.class))).thenReturn(null);
 
         // When
         boolean actual = cmsAspspPiisServiceInternal.terminateConsent(CONSENT_EXTERNAL_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);

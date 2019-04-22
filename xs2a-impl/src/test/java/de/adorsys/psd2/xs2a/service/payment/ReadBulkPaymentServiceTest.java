@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -92,8 +92,6 @@ public class ReadBulkPaymentServiceTest {
     @Test
     public void getPayment_success() {
         //Given
-        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(ASPSP_CONSENT_DATA.getConsentId(), BULK_PAYMENT.getTransactionStatus()))
-            .thenReturn(true);
 
         //When
         PaymentInformationResponse<BulkPayment> actualResponse = readBulkPaymentService.getPayment(PIS_PAYMENTS, PRODUCT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID);
@@ -108,8 +106,6 @@ public class ReadBulkPaymentServiceTest {
     @Test
     public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
         //Given
-        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(ASPSP_CONSENT_DATA.getConsentId(), BULK_PAYMENT.getTransactionStatus()))
-            .thenReturn(false);
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
         //When

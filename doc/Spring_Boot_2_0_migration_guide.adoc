@@ -1,0 +1,35 @@
+
+=== Inquiry
+Migration was done within the task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/487
+
+=== Affected versions
+
+|===
+|Maven dependency|Previous version|Migrated
+|Spring-boot|1.5.8.RELEASE|2.1.4.RELEASE
+|Spring|4.3.21.RELEASE|5.1.6.RELEASE
+|spring-data-commons|1.13.17.RELEASE|2.1.4.RELEASE
+|spring-data-jpa|1.11.17.RELEASE|2.1.4.RELEASE
+|hibernate-core|5.3.7.Final|5.4.2.Final
+|hibernate-validator|6.0.8.Final|6.0.16.Final
+|mockito-core|1.10.19|2.27.0
+|byte-buddy|1.8.12, 1.8.17|1.9.10
+|===
+
+
+=== Description
+
+Migration was implemented according to Spring Boot documentation https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide
+
+
+=== Instruction
+
+* change _spring-boot_ dependency version
+* change _spring_ libraries dependency versions
+* adjust configuration properties in _application.properties/application.yml_ (many of them were renamed/removed)
+|===
+|Old property|New property
+|endpoints.cors.*|management.endpoints.web.cors.*
+|liquibase.*|spring.liquibase.*
+|===
+* change mockito-core to Mockito 2.x (now mockito tests have become more strict), fix tests

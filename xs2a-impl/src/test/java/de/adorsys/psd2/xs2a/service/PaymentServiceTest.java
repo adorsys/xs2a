@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
@@ -63,14 +62,11 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
@@ -78,7 +74,8 @@ import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -94,6 +91,7 @@ public class PaymentServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(null, null, null, null);
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
+    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
 
     private final SinglePayment SINGLE_PAYMENT_OK = getSinglePayment(IBAN, AMOUNT);
     private final PeriodicPayment PERIODIC_PAYMENT_OK = getPeriodicPayment(IBAN, AMOUNT);
@@ -139,7 +137,6 @@ public class PaymentServiceTest {
     private ReadPaymentStatusFactory readPaymentStatusFactory;
     @Mock
     private ReadPaymentStatusService readPaymentStatusService;
-    @SuppressWarnings("unused")
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
@@ -172,11 +169,6 @@ public class PaymentServiceTest {
     @Before
     public void setUp() {
         //Mapper
-        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(any(), any())).thenReturn(getXs2aPisCommonPayment());
-        when(psuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
-            .thenReturn(SPI_PSU_DATA);
-        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(new CreatePisCommonPaymentResponse("TEST"), PSU_ID_DATA)).thenReturn(getXs2aPisCommonPayment());
-        when(pisAspspDataService.getInternalPaymentIdByEncryptedString("TEST")).thenReturn("TEST");
         when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
         //Status by ID
         when(createBulkPaymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK), getTppInfoServiceModified()))
@@ -185,7 +177,6 @@ public class PaymentServiceTest {
         when(tppService.getTppInfo()).thenReturn(getTppInfo());
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(getPisCommonPayment());
-        when(readPaymentFactory.getService(anyString())).thenReturn(readPaymentService);
         when(standardPaymentProductsResolver.isRawPaymentProduct(anyString()))
             .thenReturn(false);
 
@@ -202,8 +193,6 @@ public class PaymentServiceTest {
     @Test
     public void createSinglePayment_Success() {
         // Given
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(getValidResponse());
         when(createSinglePaymentService.createPayment(any(), any(), any()))
             .thenReturn(ResponseObject.<SinglePaymentInitiationResponse>builder()
                             .body(buildSinglePaymentInitiationResponse())
@@ -223,8 +212,6 @@ public class PaymentServiceTest {
     @Test
     public void createPeriodicPayment_Success() {
         // Given
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(getValidResponse());
         when(createPeriodicPaymentService.createPayment(any(), any(), any()))
             .thenReturn(ResponseObject.<PeriodicPaymentInitiationResponse>builder()
                             .body(buildPeriodicPaymentInitiationResponse())
@@ -244,12 +231,6 @@ public class PaymentServiceTest {
     @Test
     public void createSinglePayment_Failure_ShouldReturnError() {
         // Given
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(buildFailedSinglePaymentInitiationResponse());
-        when(createSinglePaymentService.createPayment(any(), any(), any()))
-            .thenReturn(ResponseObject.<SinglePaymentInitiationResponse>builder()
-                            .body(buildSinglePaymentInitiationResponse())
-                            .build());
         when(paymentValidationService.validateSinglePayment(any()))
             .thenReturn(buildFailedSinglePaymentInitiationResponse());
 
@@ -263,12 +244,6 @@ public class PaymentServiceTest {
     @Test
     public void createSinglePayment_withInvalidInitiationParameters_shouldReturnValidationError() {
         // Given
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(buildFailedSinglePaymentInitiationResponse());
-        when(createSinglePaymentService.createPayment(any(), any(), any()))
-            .thenReturn(ResponseObject.<SinglePaymentInitiationResponse>builder()
-                            .body(buildSinglePaymentInitiationResponse())
-                            .build());
         when(createPaymentValidator.validate(buildInvalidPaymentInitiationParameters()))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -286,12 +261,6 @@ public class PaymentServiceTest {
     @Test
     public void createPeriodicPayment_Failure_ShouldReturnError() {
         // Given
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(buildFailedPeriodicPaymentInitiationResponse());
-        when(createPeriodicPaymentService.createPayment(any(), any(), any()))
-            .thenReturn(ResponseObject.<PeriodicPaymentInitiationResponse>builder()
-                            .body(buildPeriodicPaymentInitiationResponse())
-                            .build());
         when(paymentValidationService.validatePeriodicPayment(any()))
             .thenReturn(buildFailedPeriodicPaymentInitiationResponse());
 
@@ -305,12 +274,6 @@ public class PaymentServiceTest {
     @Test
     public void createPeriodicPayment_withInvalidInitiationParameters_shouldReturnValidationError() {
         // Given
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(buildFailedSinglePaymentInitiationResponse());
-        when(createSinglePaymentService.createPayment(any(), any(), any()))
-            .thenReturn(ResponseObject.<SinglePaymentInitiationResponse>builder()
-                            .body(buildSinglePaymentInitiationResponse())
-                            .build());
         when(createPaymentValidator.validate(buildInvalidPaymentInitiationParameters()))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
@@ -328,8 +291,6 @@ public class PaymentServiceTest {
     @Test
     public void createBulkPayments() {
         // Given
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(getValidResponse());
         when(paymentValidationService.validateBulkPayment(any()))
             .thenReturn(getValidResponse());
 
@@ -364,8 +325,6 @@ public class PaymentServiceTest {
         // Given
         PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(getValidResponse());
         when(paymentValidationService.validateSinglePayment(any()))
             .thenReturn(getValidResponse());
 
@@ -380,8 +339,6 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentById_Success_ShouldRecordEvent() {
         // Given
-        when(readPaymentService.getPayment(any(), any(), any(), any()))
-            .thenReturn(new PaymentInformationResponse(SINGLE_PAYMENT_OK));
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
             .thenReturn(Optional.of(pisCommonPaymentResponse));
         when(cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(pisCommonPaymentResponse))
@@ -434,16 +391,15 @@ public class PaymentServiceTest {
     public void getPaymentStatusById_Success_ShouldRecordEvent() {
         // Given
         SpiResponse<TransactionStatus> spiResponse = buildSpiResponseTransactionStatus();
-        when(singlePaymentSpi.getPaymentStatusById(any(), any(), any())).thenReturn(spiResponse);
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
-        when(readPaymentStatusFactory.getService(anyString())).thenReturn(readPaymentStatusService);
         when(readPaymentStatusService.readPaymentStatus(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(SpiContextData.class), any(String.class)))
             .thenReturn(new ReadPaymentStatusResponse(RCVD));
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
             .thenReturn(true);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(SPI_CONTEXT_DATA);
 
         // When
         paymentService.getPaymentStatusById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
@@ -490,11 +446,8 @@ public class PaymentServiceTest {
     @Test
     public void cancelPayment_Success() {
         //Given
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Collections.singletonList(PSU_ID_DATA));
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisCommonPaymentResponse.getPaymentType()).thenReturn(PaymentType.SINGLE);
         when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(ACCP);
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
         doReturn(Optional.of(spiPayment))
@@ -516,16 +469,8 @@ public class PaymentServiceTest {
     @Test
     public void cancelPayment_Success_ShouldRecordEvent() {
         // Given
-        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Collections.singletonList(PSU_ID_DATA));
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
-        when(pisCommonPaymentResponse.getPayments()).thenReturn(Collections.singletonList(pisPayment));
-        when(pisPayment.getTransactionStatus()).thenReturn(TransactionStatus.ACCP);
-        when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
         when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(TransactionStatus.ACCC);
-        doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(PaymentType.class));
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -573,13 +518,8 @@ public class PaymentServiceTest {
     @Test
     public void cancelPayment_Fail__FinalisedTransactionStatus() {
         // Given
-        when(aspspProfileService.isPaymentCancellationAuthorizationMandated()).thenReturn(Boolean.FALSE);
-        when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID))
-            .thenReturn(Collections.singletonList(PSU_ID_DATA));
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(getFinalisedPisCommonPayment()));
-        doReturn(Optional.of(spiPayment))
-            .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(getFinalisedPisPayment()), eq(PAYMENT_PRODUCT), any(PaymentType.class));
 
         // When
         ResponseObject<CancelPaymentResponse> actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
