@@ -18,11 +18,12 @@ package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
 public interface AisConsentAuthorisationRepository
-    extends Xs2aCrudRepository<AisConsentAuthorization, Long>, JpaSpecificationExecutor<AisConsentAuthorization> {
+    extends CrudRepository<AisConsentAuthorization, Long>, JpaSpecificationExecutor<AisConsentAuthorization> {
 
     Optional<AisConsentAuthorization> findByExternalId(String externalId);
 }

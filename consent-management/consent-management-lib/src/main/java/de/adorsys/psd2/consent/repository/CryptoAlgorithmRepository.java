@@ -18,9 +18,10 @@ package de.adorsys.psd2.consent.repository;
 
 
 import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface CryptoAlgorithmRepository extends Xs2aCrudRepository<CryptoAlgorithm, Long> {
+public interface CryptoAlgorithmRepository extends CrudRepository<CryptoAlgorithm, Long> {
     Optional<CryptoAlgorithm> findByExternalId(String externalId);
 }

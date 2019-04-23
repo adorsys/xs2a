@@ -59,12 +59,6 @@
             <version>3.2-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>spring-boot-1.5.x-support</artifactId>
-            <version>3.2-SNAPSHOT</version>
-        </dependency>
-
         <!-- spring dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>

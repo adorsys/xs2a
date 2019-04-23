@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.account.AisConsentAction;
+import org.springframework.data.repository.CrudRepository;
 
-public interface AisConsentActionRepository extends Xs2aCrudRepository<AisConsentAction, Long> {
+public interface AisConsentActionRepository extends CrudRepository<AisConsentAction, Long> {
 }
