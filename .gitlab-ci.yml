@@ -25,9 +25,10 @@ stages:
 variables: &variables
   SONAR_HOST: "https://psd2-quality.cloud.adorsys.de"
 
-  DOCKER_IMAGE_NAME_XS2A: "xs2a-service"
   DOCKER_IMAGE_NAME_CNT_MGMNT: "xs2a-consent-management"
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
+  # The following image is only used for support-2.x
+  DOCKER_IMAGE_NAME_XS2A: "xs2a-service"
 
   ###########################
   # Public Dockerhub Images #
@@ -235,16 +236,6 @@ Deploy to Openshift (develop):
   variables:
     DOCKER_TAG: develop # Dockerhub source tag
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEV} # Openshift target namespace
-  <<: *deploy_openshift
-
-# temporary for testing
-Deploy to Openshift (tne-test):
-  stage: "Deploy"
-  only:
-    - TNE_gitlab_issue_779
-  variables:
-    DOCKER_TAG: develop
-    OPENSHIFT_NAMESPACE: "tne-test"
   <<: *deploy_openshift
 
 # Build SUPPORT image and deploy to SUPPORT
