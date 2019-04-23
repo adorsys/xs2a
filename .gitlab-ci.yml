@@ -369,7 +369,8 @@ check_javadoc_java11:
     - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
+    # JavaDocs are broken in Java 11 and fixed only in Java 12 : https://bugs.openjdk.java.net/browse/JDK-8212233
+    #- mvn -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
 unit_tests_java8:
   <<: *java_tests
