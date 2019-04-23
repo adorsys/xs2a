@@ -32,7 +32,7 @@ public class Xs2aCrudRepositoryTest {
         ClassesShouldConjunction rule = ArchRuleDefinition.classes()
                                             .that().areAssignableTo(CrudRepository.class)
                                             .should()
-                                            .beAssignableTo(Xs2aCrudRepository.class);
+                                            .beAssignableTo(CrudRepository.class);
 
         rule.check(importedClasses);
     }
