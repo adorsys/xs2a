@@ -21,9 +21,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -40,13 +38,7 @@ public class AccountReferenceMapper {
                    ).orElse(null);
     }
 
-    public List<AccountReference> mapToAccountReferenceList(List<AccountReferenceEntity> accountReferenceEntities) {
-        return accountReferenceEntities.stream()
-                   .map(this::mapToAccountReferenceEntity)
-                   .collect(Collectors.toList());
-    }
-
-    private AccountReference mapToAccountReferenceEntity(AccountReferenceEntity accountReferenceEntity) {
+    AccountReference mapToAccountReferenceEntity(AccountReferenceEntity accountReferenceEntity) {
         return Optional.ofNullable(accountReferenceEntity)
                    .map(ref -> {
                        AccountReference accountReference = new AccountReference();
@@ -59,12 +51,6 @@ public class AccountReferenceMapper {
 
                        return accountReference;
                    }).orElse(null);
-    }
-
-    public List<AccountReferenceEntity> mapToAccountReferenceEntityList(List<AccountReference> cmsAccountReferences) {
-        return cmsAccountReferences.stream()
-                   .map(this::mapToAccountReferenceEntity)
-                   .collect(Collectors.toList());
     }
 
     public AccountReferenceEntity mapToAccountReferenceEntity(AccountReference accountReference) {

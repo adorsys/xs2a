@@ -48,7 +48,6 @@ public class CmsAspspPiisControllerTest {
     private static final String PSU_ID = "PSU-ID-1";
     private static final String WRONG_PSU_ID = "PSU-ID-2";
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-    private static final List<AccountReference> ACCOUNTS = Collections.emptyList();
     private static final LocalDate VALID_UNTIL = LocalDate.now();
 
     @Mock
@@ -131,7 +130,7 @@ public class CmsAspspPiisControllerTest {
 
     private CreatePiisConsentRequest buildCreatePiisConsentRequest() {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest();
-        request.setAccounts(ACCOUNTS);
+        request.setAccount(new AccountReference());
         request.setValidUntil(VALID_UNTIL);
         return request;
     }
