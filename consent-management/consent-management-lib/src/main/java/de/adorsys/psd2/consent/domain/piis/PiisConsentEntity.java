@@ -76,11 +76,17 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
 
+    //TODO 2.7 Remove this field and db column https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
+    @Deprecated
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "piis_consent_acc_reference",
         joinColumns = @JoinColumn(name = "piis_consent_id"),
         inverseJoinColumns = @JoinColumn(name = "account_reference_id"))
     private List<AccountReferenceEntity> accounts = new ArrayList<>();
+
+    @JoinColumn(name = "acc_reference_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    private AccountReferenceEntity account;
 
     @Column(name = "tpp_access_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

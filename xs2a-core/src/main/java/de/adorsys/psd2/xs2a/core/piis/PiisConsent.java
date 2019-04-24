@@ -23,9 +23,11 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -40,7 +42,7 @@ public class PiisConsent {
     private PsuIdData psuData;
     private TppInfo tppInfo;
     private ConsentStatus consentStatus;
-    private List<AccountReference> accounts;
+    private AccountReference account;
     private PiisConsentTppAccessType tppAccessType;
     private int allowedFrequencyPerDay;
     private OffsetDateTime creationTimestamp;
@@ -50,4 +52,29 @@ public class PiisConsent {
     private String cardInformation;
     private String registrationInformation;
     private OffsetDateTime statusChangeTimestamp;
+
+    /**
+     * @return Account Reference list
+     *
+     * @deprecated since 2.4 and will be removed in 2.7, use getAccount instead
+     */
+    @Deprecated //TODO 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
+    public List<AccountReference> getAccounts() {
+        return Collections.singletonList(account);
+    }
+
+    /**
+     *
+     * @param accounts Account Reference list
+     *
+     * @deprecated since 2.4 and will be removed in 2.7, use setAccount instead
+     */
+    @Deprecated //TODO 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
+    public void setAccounts(List<AccountReference> accounts) {
+        if (CollectionUtils.isEmpty(accounts)) {
+            account = null;
+        }
+
+        account = accounts.get(0);
+    }
 }

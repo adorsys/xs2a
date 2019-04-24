@@ -21,8 +21,10 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -31,8 +33,8 @@ public class CreatePiisConsentRequest {
     @ApiModelProperty(value = "Tpp for which the consent will be created. If the property is omitted, the consent will be created for all TPPs")
     private TppInfo tppInfo;
 
-    @ApiModelProperty(value = "Accounts for which the consent is created")
-    private List<AccountReference> accounts;
+    @ApiModelProperty(value = "Account, where the confirmation of funds service is aimed to be submitted to.")
+    private AccountReference account;
 
     @ApiModelProperty(value = "Consent`s expiration date. The content is the local ASPSP date in ISODate Format", example = "2020-10-10")
     private LocalDate validUntil;
@@ -51,5 +53,30 @@ public class CreatePiisConsentRequest {
 
     @ApiModelProperty(value = "Additional information about the registration process for the PSU, e.g. a reference to the TPP / PSU contract.", example = "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.")
     private String registrationInformation;
+
+    /**
+     * @return Account Reference list
+     *
+     * @deprecated since 2.4 and will be removed in 2.7, use getAccount instead
+     */
+    @Deprecated //TODO 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
+    public List<AccountReference> getAccounts() {
+        return Collections.singletonList(account);
+    }
+
+    /**
+     *
+     * @param accounts Account Reference list
+     *
+     * @deprecated since 2.4 and will be removed in 2.7, use setAccount instead
+     */
+    @Deprecated //TODO 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
+    public void setAccounts(List<AccountReference> accounts) {
+        if (CollectionUtils.isEmpty(accounts)) {
+            account = null;
+        }
+
+        account = accounts.get(0);
+    }
 }
 
