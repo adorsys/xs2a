@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,6 +63,8 @@ public class PiisConsentIT {
     private static final String MASKED_PAN = "Test MASKED_PAN";
     private static final String MSISDN = "Test MSISDN";
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
+    private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
+    private static final String TPP_AUTHORITY_ID = "authority id";
 
     @Autowired
     private CmsAspspPiisService cmsAspspPiisServiceInternal;
@@ -73,7 +76,7 @@ public class PiisConsentIT {
     @Test
     public void createPiisConsent_successWithNewStatus() {
         // When
-        cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), null, buildAccountReferenceList(), LocalDate.now().plusDays(1), 1);
+        cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildTppInfo(), buildAccountReferenceList(), LocalDate.now().plusDays(1), 1);
         flushAndClearPersistenceContext();
         Iterable<PiisConsentEntity> entities = piisConsentRepository.findAll();
         PiisConsentEntity savedEntity = entities.iterator().next();
@@ -127,9 +130,10 @@ public class PiisConsentIT {
     @NotNull
     private CreatePiisConsentRequest buildCreatePiisConsentRequest() {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest();
-        request.setAccounts(buildAccountReferenceList());
+        request.setAccount(buildAccountReference());
         request.setValidUntil(LocalDate.now().plusDays(1));
         request.setAllowedFrequencyPerDay(1);
+        request.setTppInfo(buildTppInfo());
         return request;
     }
 
@@ -147,6 +151,13 @@ public class PiisConsentIT {
 
     private List<AccountReference> buildAccountReferenceList() {
         return Collections.singletonList(buildAccountReference());
+    }
+
+    private TppInfo buildTppInfo() {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
+        tppInfo.setAuthorityId(TPP_AUTHORITY_ID);
+        return tppInfo;
     }
 
     /**

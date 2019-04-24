@@ -18,7 +18,10 @@ package de.adorsys.psd2.consent.repository.specification;
 
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
@@ -80,7 +83,7 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
     }
 
     /**
-     * Returns specification for PiisConsentEntity for filtering consents by aspsp account id, creation date and instance ID.
+     * Returns specification for PiisConsentEntity for filtering consents by aspsp account id in Accounts, creation date and instance ID.
      *
      * @param aspspAccountId mandatory bank specific account identifier
      * @param createDateFrom optional creation date that limits resulting data to consents created after this date(inclusive)
@@ -88,13 +91,50 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
      * @param instanceId     optional instance ID
      * @return resulting specification for PiisConsentEntity
      */
-    public Specification<PiisConsentEntity> byAspspAccountIdAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
+    //TODO 2.7 Remove this https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
+    @Deprecated
+    public Specification<PiisConsentEntity> byAspspAccountIdInAccountsAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
                                                                                            @Nullable LocalDate createDateFrom,
                                                                                            @Nullable LocalDate createDateTo,
                                                                                            @Nullable String instanceId) {
         return Specifications.where(byAspspAccountIdInAccounts(aspspAccountId))
                    .and(byCreationTimestamp(createDateFrom, createDateTo))
                    .and(byInstanceId(instanceId));
+    }
+
+    /**
+     * Returns specification for PiisConsentEntity for filtering consents by aspsp account id in Account, creation date and instance ID.
+     *
+     * @param aspspAccountId mandatory bank specific account identifier
+     * @param createDateFrom optional creation date that limits resulting data to consents created after this date(inclusive)
+     * @param createDateTo   optional creation date that limits resulting data to consents created before this date(inclusive)
+     * @param instanceId     optional instance ID
+     * @return resulting specification for PiisConsentEntity
+     */
+
+    public Specification<PiisConsentEntity> byAspspAccountIdAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
+                                                                                           @Nullable LocalDate createDateFrom,
+                                                                                           @Nullable LocalDate createDateTo,
+                                                                                           @Nullable String instanceId) {
+        return Specifications.where(byAspspAccountIdInAccount(aspspAccountId))
+                   .and(byCreationTimestamp(createDateFrom, createDateTo))
+                   .and(byInstanceId(instanceId));
+    }
+
+    /**
+     * Returns specification for PiisConsentEntity for filtering consents by PsuIdData, TppInfo and AccountReference.
+     *
+     * @param psuIdData        mandatory PSU ID data
+     * @param tppInfo          mandatory TPP Info
+     * @param accountReference mandatory PIIS Account Reference
+     * @return resulting specification for PiisConsentEntity
+     */
+    public Specification<PiisConsentEntity> byPsuIdDataAndTppInfoAndAccountReference(@NotNull PsuIdData psuIdData,
+                                                                                     @NotNull TppInfo tppInfo,
+                                                                                     @NotNull AccountReference accountReference) {
+        return Specifications.<PiisConsentEntity>where(byPsuIdData(psuIdData))
+                   .and(byTppInfo(tppInfo))
+                   .and(byAccountReference(accountReference));
     }
 
     /**
@@ -110,6 +150,43 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
         return (root, query, cb) -> {
             Join<PiisConsentEntity, AccountReferenceEntity> accountsJoin = root.join(ACCOUNTS_ATTRIBUTE);
             return provideSpecificationForJoinedEntityAttribute(accountsJoin, ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId)
+                       .toPredicate(root, query, cb);
+        };
+    }
+
+    /**
+     * Returns specification for PiisConsentEntity for filtering data by aspsp account id.
+     *
+     * <p>
+     * If optional parameter is not provided, this specification will not affect resulting data.
+     *
+     * @param aspspAccountId Bank specific account identifier
+     * @return resulting specification
+     */
+    private Specification<PiisConsentEntity> byAspspAccountIdInAccount(@Nullable String aspspAccountId) {
+        return (root, query, cb) -> {
+            Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
+            return provideSpecificationForJoinedEntityAttribute(accountJoin, ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId)
+                       .toPredicate(root, query, cb);
+        };
+    }
+
+    /**
+     * Returns specification for PiisConsentEntity for filtering data by AccountReference.
+     *
+     * <p>
+     * If optional parameter is not provided, this specification will not affect resulting data.
+     *
+     * @param accountReference PIIS Account Reference
+     * @return resulting specification
+     */
+    private Specification<PiisConsentEntity> byAccountReference(@NotNull AccountReference accountReference) {
+        return (root, query, cb) -> {
+            AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
+            Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
+            return Specifications
+                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().name().toLowerCase(), selector.getAccountValue()))
+                       .and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, accountReference.getCurrency()))
                        .toPredicate(root, query, cb);
         };
     }

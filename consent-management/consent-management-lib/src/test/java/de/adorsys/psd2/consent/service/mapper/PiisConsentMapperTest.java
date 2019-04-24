@@ -75,7 +75,7 @@ public class PiisConsentMapperTest {
     public void setUp() {
         when(psuDataMapper.mapToPsuIdData(buildPsuData())).thenReturn(buildPsuIdData());
         when(tppInfoMapper.mapToTppInfo(buildTppInfoEntity())).thenReturn(buildTppInfo());
-        when(accountReferenceMapper.mapToAccountReferenceList(buildAccountReferenceEntityList())).thenReturn(buildAccountReferenceList());
+        when(accountReferenceMapper.mapToAccountReferenceEntity(buildAccountReferenceEntity())).thenReturn(buildAccountReference());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class PiisConsentMapperTest {
         Assert.assertEquals(buildPsuIdData(), piisConsent.getPsuData());
         Assert.assertEquals(buildTppInfo(), piisConsent.getTppInfo());
         Assert.assertEquals(piisConsentEntity.getConsentStatus(), piisConsent.getConsentStatus());
-        Assert.assertEquals(buildAccountReferenceList(), piisConsent.getAccounts());
+        Assert.assertEquals(buildAccountReference(), piisConsent.getAccount());
         Assert.assertEquals(piisConsentEntity.getTppAccessType(), piisConsent.getTppAccessType());
         Assert.assertEquals(piisConsentEntity.getAllowedFrequencyPerDay(), piisConsent.getAllowedFrequencyPerDay());
         Assert.assertEquals(piisConsentEntity.getCreationTimestamp(), piisConsent.getCreationTimestamp());
@@ -123,7 +123,7 @@ public class PiisConsentMapperTest {
         piisConsentEntity.setPsuData(buildPsuData());
         piisConsentEntity.setTppInfo(buildTppInfoEntity());
         piisConsentEntity.setConsentStatus(CONSENT_STATUS);
-        piisConsentEntity.setAccounts(buildAccountReferenceEntityList());
+        piisConsentEntity.setAccount(buildAccountReferenceEntity());
         piisConsentEntity.setTppAccessType(PiisConsentTppAccessType.SINGLE_TPP);
         piisConsentEntity.setAllowedFrequencyPerDay(ALLOWED_FREQUENCY_PER_DAY);
         piisConsentEntity.setCreationTimestamp(CREATION_TIMESTAMP);
@@ -167,14 +167,6 @@ public class PiisConsentMapperTest {
                                     null,
                                     null,
                                     null);
-    }
-
-    private List<AccountReference> buildAccountReferenceList() {
-        return Collections.singletonList(buildAccountReference());
-    }
-
-    private List<AccountReferenceEntity> buildAccountReferenceEntityList() {
-        return Collections.singletonList(buildAccountReferenceEntity());
     }
 
     private AccountReferenceEntity buildAccountReferenceEntity() {
