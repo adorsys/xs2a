@@ -164,7 +164,8 @@ public class ConsentService {
         xs2aAccountAccess.ifPresent(accountAccess ->
                                         accountReferenceUpdater.rewriteAccountAccess(consentId, accountAccess));
 
-        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, multilevelScaRequired)).build();
+        CreateConsentResponse createConsentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, multilevelScaRequired);
+        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
         if (isEmbeddedOrRedirectScaApproach()
                 && authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
@@ -324,7 +325,27 @@ public class ConsentService {
                    .build();
     }
 
-    public ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuData, String consentId) {
+    public ResponseObject createAisAuthorisation(PsuIdData psuData, String consentId, String password) {
+        ResponseObject<CreateConsentAuthorizationResponse> createAisAuthorizationResponse = createConsentAuthorizationWithResponse(psuData, consentId);
+
+        if (createAisAuthorizationResponse.hasError()
+                || psuData.isEmpty()
+                || StringUtils.isBlank(password)) {
+            return createAisAuthorizationResponse;
+        }
+
+        String authorisationId = createAisAuthorizationResponse.getBody().getAuthorizationId();
+
+        UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
+        updatePsuData.setPsuData(psuData);
+        updatePsuData.setConsentId(consentId);
+        updatePsuData.setAuthorizationId(authorisationId);
+        updatePsuData.setPassword(password);
+
+        return updateConsentPsuData(updatePsuData);
+    }
+
+    private ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuData, String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
         // TODO temporary solution: CMS should be refactored to return response objects instead of Strings, Enums, Booleans etc., so we should receive this error from CMS https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/581
@@ -380,7 +401,7 @@ public class ConsentService {
                        .build();
         }
 
-        if ( accountConsent.get().isExpired()) {
+        if (accountConsent.get().isExpired()) {
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_401, of(CONSENT_EXPIRED))
                        .build();

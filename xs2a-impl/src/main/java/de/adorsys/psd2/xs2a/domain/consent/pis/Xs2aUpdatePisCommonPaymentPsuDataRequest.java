@@ -18,9 +18,12 @@ package de.adorsys.psd2.xs2a.domain.consent.pis;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class Xs2aUpdatePisCommonPaymentPsuDataRequest {
     private String paymentId;
     private String authorisationId;
@@ -32,4 +35,13 @@ public class Xs2aUpdatePisCommonPaymentPsuDataRequest {
     private String scaAuthenticationData;
     private String paymentProduct;
     private boolean updatePsuIdentification;
+
+    public Xs2aUpdatePisCommonPaymentPsuDataRequest(Xs2aCreatePisAuthorisationRequest createRequest, String authorisationId) {
+        this.psuData = createRequest.getPsuData();
+        this.paymentId = createRequest.getPaymentId();
+        this.authorisationId = authorisationId;
+        this.paymentService = createRequest.getPaymentService();
+        this.paymentProduct = createRequest.getPaymentProduct();
+        this.password = createRequest.getPassword();
+    }
 }

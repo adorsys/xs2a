@@ -25,6 +25,8 @@ public enum ConsentAuthorizationResponseLinkType {
     START_AUTHORISATION_WITH_PSU_AUTHENTICATION("startAuthorisationWithPsuAuthentication"),
     START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION("startAuthorisationWithAuthentication"),
     START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION("startAuthorisationWithTransactionAuthorisation"),
+    UPDATE_PSU_IDENTIFICATION("updatePsuIdentification"),
+    UPDATE_PSU_AUTHENTICATION("updatePsuAuthentication"),
     SCA_REDIRECT("scaRedirect");
 
     private static final Map<String, ConsentAuthorizationResponseLinkType> container = new HashMap<>();

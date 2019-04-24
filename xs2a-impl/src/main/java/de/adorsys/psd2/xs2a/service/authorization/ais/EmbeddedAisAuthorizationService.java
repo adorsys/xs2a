@@ -32,8 +32,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
+import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.*;
 
 /**
  * AisAuthorizationService implementation to be used in case of embedded approach
@@ -142,8 +141,8 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     private ConsentAuthorizationResponseLinkType getResponseLinkType(PsuIdData psuIdDataConsent, PsuIdData psuIdDataAuthorisation) {
         return isPsuExist(psuIdDataConsent) || isPsuExist(psuIdDataAuthorisation)
-                   ? START_AUTHORISATION_WITH_PSU_AUTHENTICATION
-                   : START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
+                   ? UPDATE_PSU_AUTHENTICATION
+                   : UPDATE_PSU_IDENTIFICATION;
     }
 
     private boolean isPsuExist(PsuIdData psuIdData) {

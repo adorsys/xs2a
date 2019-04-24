@@ -1,7 +1,6 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
-import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -199,7 +198,7 @@ public class DecoupledAisAuthorizationServiceTest {
         resp.setConsentId(CONSENT_ID);
         resp.setAuthorizationId(AUTHORISATION_ID);
         resp.setScaStatus(ScaStatus.STARTED);
-        resp.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+        resp.setResponseLinkType(ConsentAuthorizationResponseLinkType.UPDATE_PSU_AUTHENTICATION);
         return resp;
     }
 

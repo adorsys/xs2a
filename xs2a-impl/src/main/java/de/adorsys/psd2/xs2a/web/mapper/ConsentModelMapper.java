@@ -24,10 +24,8 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
@@ -62,37 +60,10 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisAuthorisationResponse response) {
-        return Optional.ofNullable(response)
-                   .map(r -> new StartScaprocessResponse()
-                                 .scaStatus(coreObjectsMapper.mapToModelScaStatus(r.getScaStatus()))
-                                 .authorisationId(r.getAuthorisationId())
-                                 ._links(hrefLinkMapper.mapToLinksMap(r.getLinks())))
-                   .orElse(null);
-    }
-
     public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisCancellationAuthorisationResponse response) {
         return new StartScaprocessResponse()
                    .scaStatus(coreObjectsMapper.mapToModelScaStatus(response.getScaStatus()))
                    ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()));
-    }
-
-    public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
-        return Optional.ofNullable(response)
-                   .map(r ->
-                            new UpdatePsuAuthenticationResponse()
-                                ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
-                                .scaMethods(getAvailableScaMethods(r.getAvailableScaMethods()))
-                                .scaStatus(
-                                    Optional.ofNullable(r.getScaStatus())
-                                        .map(s -> ScaStatus.valueOf(s.name()))
-                                        .orElse(null)
-                                )
-                                .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
-                                .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethodForPsd2Response()))
-                                .psuMessage(r.getPsuMessage())
-                   )
-                   .orElse(null);
     }
 
     public ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
@@ -120,14 +91,6 @@ public class ConsentModelMapper {
                                 .consentStatus(ConsentStatus.fromValue(consent.getConsentStatus().getValue()))
                    )
                    .orElse(null);
-    }
-
-    public Authorisations mapToAuthorisations(Xs2aAuthorisationSubResources xs2AAuthorisationSubResources) {
-        Authorisations authorisations = new Authorisations();
-        AuthorisationsList authorisationsList = new AuthorisationsList();
-        authorisationsList.addAll(xs2AAuthorisationSubResources.getAuthorisationIds());
-        authorisations.setAuthorisationIds(authorisationsList);
-        return authorisations;
     }
 
     private ScaMethods mapToScaMethodsOuter(CreateConsentResponse createConsentResponse) {
@@ -268,43 +231,5 @@ public class ConsentModelMapper {
             request.setUpdatePsuIdentification(true);
         }
         return request;
-    }
-
-    public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {
-        return new UpdatePsuAuthenticationResponse()
-                   ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
-                   .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
-                   .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethodForPsd2Response()))
-                   .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
-                   .psuMessage(response.getPsuMessage())
-                   .scaStatus(Optional.ofNullable(response.getScaStatus())
-                                  .map(s -> ScaStatus.fromValue(s.getValue()))
-                                  .orElse(ScaStatus.FAILED));
-    }
-
-    private ScaMethods getAvailableScaMethods(List<Xs2aAuthenticationObject> availableScaMethods) {
-        ScaMethods scaMethods = new ScaMethods();
-        if (CollectionUtils.isNotEmpty(availableScaMethods)) {
-            availableScaMethods.forEach(a -> scaMethods.add(new AuthenticationObject()
-                                                                .authenticationMethodId(a.getAuthenticationMethodId())
-                                                                .authenticationType(AuthenticationType.fromValue(a.getAuthenticationType()))
-                                                                .authenticationVersion(a.getAuthenticationVersion())
-                                                                .name(a.getName())
-                                                                .explanation(a.getExplanation())));
-        }
-        return scaMethods;
-    }
-
-    private ChosenScaMethod mapToChosenScaMethod(Xs2aAuthenticationObject xs2aAuthenticationObject) {
-        return Optional.ofNullable(xs2aAuthenticationObject)
-                   .map(ch -> {
-                       ChosenScaMethod method = new ChosenScaMethod();
-                       method.setAuthenticationMethodId(ch.getAuthenticationMethodId());
-                       method.setAuthenticationType(AuthenticationType.fromValue(ch.getAuthenticationType()));
-                       method.setAuthenticationVersion(ch.getAuthenticationVersion());
-                       method.setName(ch.getName());
-                       method.setExplanation(ch.getExplanation());
-                       return method;
-                   }).orElse(null);
     }
 }
