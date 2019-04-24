@@ -40,7 +40,7 @@ public class PiisConsentMapper {
                                psuDataMapper.mapToPsuIdData(piisConsentEntity.getPsuData()),
                                tppInfoMapper.mapToTppInfo(piisConsentEntity.getTppInfo()),
                                piisConsentEntity.getConsentStatus(),
-                               accountReferenceMapper.mapToAccountReferenceList(piisConsentEntity.getAccounts()),
+                               accountReferenceMapper.mapToAccountReferenceEntity(piisConsentEntity.getAccount()),
                                piisConsentEntity.getTppAccessType(),
                                piisConsentEntity.getAllowedFrequencyPerDay(),
                                piisConsentEntity.getCreationTimestamp(),

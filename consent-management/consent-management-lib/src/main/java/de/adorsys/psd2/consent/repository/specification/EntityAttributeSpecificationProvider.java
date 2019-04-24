@@ -66,4 +66,19 @@ public class EntityAttributeSpecificationProvider {
             return criteriaBuilder.and(criteriaBuilder.equal(join.get(attribute), value));
         };
     }
+
+    /**
+     * Provides specification for the attribute in a joined entity.
+     *
+     * @param join      join to an entity
+     * @param attribute name of the attribute in joined entity
+     * @param value     optional value of the attribute as Object
+     * @param <T>       type of the entity, for which this specification will be created
+     * @return resulting specification, or <code>null</code> if the attribute's value was omitted
+     */
+    public static <T> Specification<T> provideSpecificationForJoinedEntityAttribute(@NotNull Join<T, ?> join,
+                                                                                    @NotNull String attribute,
+                                                                                    @NotNull Object value) {
+        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.and(criteriaBuilder.equal(join.get(attribute), value));
+    }
 }

@@ -6,3 +6,10 @@ From now on, CMS-PSU-API endpoints for updating authorisation status for payment
 (`PUT /psu-api/v1/ais/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}`) will work correctly with
 lowercase status values. Also trying to provide an invalid status value will result in `400 Bad Request` error being 
 returned instead of `500 Internal Server Error`.
+
+## Bugfix: Fixed process of creating PIIS consent for the same account, PSU and TPP
+From now on, PIIS consent is dedicated for one account and only one consent can be `VALID` for the same account, PSU and TPP.
+On new consent creation, previous PIIS consents with the same parameters will change status to `REVOKED_BY_PSU`.
+To create PIIS consent (`POST /aspsp-api/v1/piis/consents/`) provide account in `account` field instead of using `accounts` field for several accounts.
+When retrieving PIIS consent, `account` field will represent actual account of the consent or first created account for previously created PIIS consents with several accounts.
+Also starting from this version ASPSP is not able to create PIIS consent without TPP. Previous PIIS consents without concrete TPP are closed.
