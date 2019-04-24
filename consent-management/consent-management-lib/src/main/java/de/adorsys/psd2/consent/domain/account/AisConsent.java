@@ -107,12 +107,6 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int tppFrequencyPerDay;
 
-    //TODO 2.3 Remove this field and db column https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/728
-    @Deprecated
-    @Column(name = "usage_counter", nullable = false)
-    @ApiModelProperty(value = "Usage counter for the consent", required = true, example = "7")
-    private int usageCounter;
-
     @OneToMany(mappedBy = "consent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AisConsentUsage> usages = new ArrayList<>();
 
