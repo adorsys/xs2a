@@ -4,53 +4,49 @@
 
 cache:
   paths:
-    - /builds/adorsys/xs2a/aspsp-xs2a/.m2/repository
+    - .m2/repository
+
+image: "adorsys/ci-build"
 
 # ------------------------------------------------------------------
 # stages
 # ------------------------------------------------------------------
 
 stages:
-- "build:src"    # build jar and provide as artifact
-- "build:qa"     # run tests and code quality checks
-- "build:image"  # dockerize jar and push to docker registry
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-- "deploy"       # push to openshift registry (snapshot deployment) or release registry
-- "deploy:static"  # push to openshift deployment helm configuration
-
+  - "Compile" # build jar and provide as artifact
+  - "Test"    # run tests and code quality checks
+  - "Package" # dockerize jar and push to docker registry
+  - "Deploy"  # push to openshift registry (snapshot deployment) or release registry
 
 # ------------------------------------------------------------------
 # variables
 # ------------------------------------------------------------------
 
 variables: &variables
-
-  ###########################
-  # Docker images variables #
-  ###########################
-
-  GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
-  GITLAB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
-  OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
-  OPENSHIFT_NAMESPACE: "multibanking-xs2a"
-
   SONAR_HOST: "https://psd2-quality.cloud.adorsys.de"
 
-  # XS2A Service
-  GITLAB_IMAGE_NAME_XS2A: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}"
-  OPENSHIFT_IMAGE_NAME_XS2A: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-xs2a"
+  DOCKER_IMAGE_NAME_CNT_MGMNT: "xs2a-consent-management"
+  DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
+  # The following image is only used for support-2.x
+  DOCKER_IMAGE_NAME_XS2A: "xs2a-service"
 
-  # Content management service
-  GITLAB_IMAGE_NAME_CNT_MGMNT: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/cnt-mgmnt"
-  OPENSHIFT_IMAGE_NAME_CNT_MGMNT: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-cnt-mgmnt"
+  ###########################
+  # Public Dockerhub Images #
+  ###########################
 
-  # XS2A IDP ASPSP Profile
-  GITLAB_IMAGE_NAME_ASPSP_PROFILE: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-aspsp-profile"
-  OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-aspsp-profile"
+  DOCKERHUB_REGISTRY: "docker.io"
 
-  DOCKER_IMAGE_NAME_XS2A: "docker.io/adorsys/xs2a-service"
-  DOCKER_IMAGE_NAME_CNT_MGMNT: "docker.io/adorsys/xs2a-consent-management"
-  DOCKER_IMAGE_NAME_ASPSP_PROFILE: "docker.io/adorsys/xs2a-aspsp-profile"
+  DOCKERHUB_NAMESPACE: "adorsys"
+
+  ############################
+  # Private Openshift Images #
+  ############################
+
+  OPENSHIFT_NAMESPACE_SUPPORT: "multibanking-xs2a"
+
+  OPENSHIFT_NAMESPACE_DEV: "adorsys-psd2-develop"
+  OPENSHIFT_NAMESPACE_INTEG: "adorsys-psd2-integ"
+  OPENSHIFT_NAMESPACE_DEMO: "adorsys-psd2-demo"
 
   ###########################
   # Build variables         #
@@ -59,144 +55,68 @@ variables: &variables
   JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-
-  ###########################
-  # Deployment variables    #
-  ###########################
-
-  DEV_NAMESPACE: adorsys-psd2-develop
-  INTEG_NAMESPACE: adorsys-psd2-integ
-  DEMO_NAMESPACE: adorsys-psd2-demo
-  TILLER_NAMESPACE: adorsys-psd2-tiller
-  ANSIBLE_VAULT_PASSWORD_FILE: /tmp/vault_pass
-
 # ------------------------------------------------------------------
 # reusable yaml anchors
 # ------------------------------------------------------------------
+
+.build_java: &build_java
+  script:
+    - jabba use ${JAVA_VERSION}
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - mvn -DskipTests clean install
 
 .java_artifacts: &java_artifacts
   paths:
     - "xs2a-standalone-starter/target/xs2a-standalone-starter*-exec.jar"
     - "consent-management/cms-standalone-service/target/consent-management*jar"
     - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
-  name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
-
-.build_java: &build_java
-  stage: "build:src"
-  image: "adorsys/ci-build"
-  script:
-    - jabba use $JAVA_VERSION
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -DskipTests clean install
+  name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}"
 
 .java_tests: &java_tests
-  stage: "build:qa"
-  image: "adorsys/ci-build"
   script:
     - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn --fail-at-end clean install
 
-# Test building docker images
-.test_docker_image: &test_docker_image
-  script:
-    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" xs2a-standalone-starter
-    - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
-    - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
-
-# Build docker images and put them to GITLAB repo
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-.build_gitlab_docker_image: &build_gitlab_docker_image
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
-
-    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" xs2a-standalone-starter
-    - docker push "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG"
-
-    - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
-    - docker push "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
-
-    - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
-    - docker push "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
-
-
-# Build docker images and put them to DOCKER HUB repo
+# Build docker images and push them to Dockerhub (depending on ${DOCKER_TAG})
 .build_dockerhub_image: &build_dockerhub_image
   script:
-    - docker build -t "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG" xs2a-standalone-starter
-    - docker build -t "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/cms-standalone-service
-    - docker build -t "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:${DOCKER_TAG}" consent-management/cms-standalone-service
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
 
-    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASS
-
-    - docker push "$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG"
-    - docker push "$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
-    - docker push "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
-
+    - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
     - docker logout
 
-# Pull docker images and put them to OPENSHIFT repo
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-.push_docker_openshift: &push_docker_openshift
+# Copy Dockerhub images to Openshift (depending on ${DOCKER_TAG} and ${OPENSHIFT_NAMESPACE})
+.deploy_openshift: &deploy_openshift
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
-    - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
-
-    - docker pull $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG
-    - docker tag $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
-    - docker push $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
-
-    - docker pull $GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG
-    - docker tag $GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG
-    - docker push $OPENSHIFT_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG
-
-    - docker pull $GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
-    - docker tag $GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
-    - docker push $OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
-
-.helm_env_deploy: &helm_env_deploy
-  image: adorsys/ci-helm:2.10
-  before_script:
-    - eval $(gpg-agent --daemon --quiet --allow-preset-passphrase)
-    - echo -n "${GPG_KEY}" | gpg --quiet --batch --import -
-  script:
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.adorsys.de/adorsys/xs2a/xs2a-openshift.git .helm
-    - cd .helm/charts/xs2a
-    - oc login openshift.adorsys.de --token=${HELM_TOKEN}
-      # get docker image commit hashes
-    - SHA_XS2A=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_XS2A:$DOCKER_TAG | jq -r .Digest)
-    - SHA_CNT_MGMNT=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG | jq -r .Digest)
-    - SHA_ASPSP_PROFILE=$(skopeo inspect docker://$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG | jq -r .Digest)
-    - IMAGE_WITH_SHA_XS2A="$DOCKER_IMAGE_NAME_XS2A@$SHA_XS2A"
-    - IMAGE_WITH_SHA_CNT_MGMNT="$DOCKER_IMAGE_NAME_CNT_MGMNT@$SHA_CNT_MGMNT"
-    - IMAGE_WITH_SHA_ASPSP_PROFILE="$DOCKER_IMAGE_NAME_ASPSP_PROFILE@$SHA_ASPSP_PROFILE"
-    - |-
-      HELM_ARGS=(
-        "--set dockerImageXs2a=$IMAGE_WITH_SHA_XS2A"
-        "--set dockerImageCntMgmnt=$IMAGE_WITH_SHA_CNT_MGMNT"
-        "--set dockerImageAspspProfile=$IMAGE_WITH_SHA_ASPSP_PROFILE"
-        "-f env/${HELM_STAGE}/env.yaml"
-        "-f env/${HELM_STAGE}/secrets.yaml"
-      )
-      # diff helm changes
-    - helm-wrapper diff upgrade ${HELM_RELEASE} . --allow-unreleased -q ${HELM_ARGS[@]} || true
-      # apply helm changes
-    - helm-wrapper upgrade -i ${HELM_RELEASE} . --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600 --force ${HELM_ARGS[@]}
-  after_script:
-    - pkill gpg-agent
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:${DOCKER_TAG}"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:latest"
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:latest"
 
 # ------------------------------------------------------------------
 # jobs
 # ------------------------------------------------------------------
 
-build_package_java8:
+Compile Java8:
+  stage: "Compile"
   variables:
     JAVA_VERSION: "system@1.8"
   <<: *build_java
 
-build_package_java11:
+Compile Java11:
+  stage: "Compile"
   variables:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
@@ -205,11 +125,10 @@ build_package_java11:
     <<: *java_artifacts
     expire_in: "1 day"
 
-pmd_report:
-  stage: "build:src"
-  image: "adorsys/ci-build"
+PMD Report:
+  stage: "Compile"
   script:
-    - jabba use $JAVA_VERSION
+    - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:pmd
@@ -220,281 +139,192 @@ pmd_report:
     - "qa/pmd/pmd-ruleset.xml"
     - "**/**/*/pmd.html"
     - "**/*/pmd.xml"
-    name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-pmd"
+    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
 
-check_pmd_java8:
-  stage: "build:qa"
-  image: "adorsys/ci-build"
+PMD Check Java8:
+  stage: "Test"
   variables:
     JAVA_VERSION: "system@1.8"
   script:
-    - jabba use $JAVA_VERSION
+    - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:check
 
-check_pmd_java11:
-  stage: "build:qa"
-  image: "adorsys/ci-build"
+PMD Check Java11:
+  stage: "Test"
   variables:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   script:
-    - jabba use $JAVA_VERSION
+    - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true package pmd:check
 
-check_javadoc_java8:
-  stage: "build:qa"
-  image: "adorsys/ci-build"
+Doc Check Java8:
+  stage: "Test"
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     JAVA_VERSION: "system@1.8"
   script:
-    - jabba use $JAVA_VERSION
+    - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
   artifacts:
     paths:
     - "**/target/site/*"
-    name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-javadoc"
+    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-javadoc"
     expire_in: "10 day"
 
-check_javadoc_java11:
-  stage: "build:qa"
-  image: "adorsys/ci-build"
+Doc Check Java11:
+  stage: "Test"
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
     JAVA_VERSION: "system@1.11"
   script:
-    - jabba use $JAVA_VERSION
+    - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
-unit_tests_java8:
+Unit Tests Java8:
+  stage: "Test"
   <<: *java_tests
   variables:
     JAVA_VERSION: "system@1.8"
   artifacts:
     paths:
     - "**/target/surefire-reports/*"
-    name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-*"
+    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-*"
     expire_in: "10 day"
 
-unit_tests_java11:
+Unit Tests Java11:
+  stage: "Test"
   <<: *java_tests
   variables:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
-test_build_docker:
-  stage: "build:qa"
-  <<: *test_docker_image
-  variables:
-    DOCKER_TAG: "snapshot"
+Sonarcube Tests:
+  stage: "Test"
+  only:
+    - develop
+  script:
+    - jabba use system@1.8
+    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - mvn --fail-at-end clean install
+    - mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
 
+# Build DEVELOP image and deploy to DEV
 
-# Develop / Support
-
-deploy_dockerhub_stage_develop:
-  stage: "build:image"
+Push to DockerHub (develop):
+  stage: "Package"
   only:
     - develop
   variables:
     DOCKER_TAG: develop
   <<: *build_dockerhub_image
 
-deploy_dockerhub_stage_support:
-  stage: "build:image"
-  only:
-    - support-2.x
-  variables:
-    DOCKER_TAG: develop2
-  <<: *build_dockerhub_image
-
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-build_image_integ:
-  stage: "build:image"
-  only:
-    - support-2.x
-  variables:
-    DOCKER_TAG: integ
-  environment:
-    name: integ
-    url: https://xs2a.integ.cloud.adorsys.de
-  <<: *build_gitlab_docker_image
-
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-deploy_image_integ:
-  stage: deploy
-  only:
-    - support-2.x
-  environment:
-    name: integ
-    url: https://xs2a.integ.cloud.adorsys.de
-  variables:
-    DOCKER_TAG: integ
-  <<: *push_docker_openshift
-
-deploy_develop_stage:
-  stage: "deploy:static"
-  <<: *helm_env_deploy
+Deploy to Openshift (develop):
+  stage: "Deploy"
   only:
     - develop
   variables:
-    <<: *variables
-    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
-    DOCKER_TAG: "develop"
-    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
-    HELM_STAGE: "develop"
-  environment:
-    name: dev
-    url: ~
+    DOCKER_TAG: develop # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEV} # Openshift target namespace
+  <<: *deploy_openshift
 
-sonar_code_coverage:
-  stage: "build:qa"
-  image: "adorsys/ci-build"
+# Build SUPPORT image and deploy to SUPPORT
+
+Push to DockerHub (support):
+  stage: "Package"
+  only:
+    - support-2.x
   script:
-    - jabba use system@1.8
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn package sonar:sonar -Dsonar.host.url=$SONAR_HOST -Dsonar.login=${SONAR_TOKEN}
-  except:
-    - tags
-    - schedules
-    - master
-    - release*
-    - hotfix*
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support" xs2a-standalone-starter
+    - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support"
+    - docker logout
 
-# Master
-
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-build_image_master:
-  stage: "build:image"
+Deploy to Openshift (support):
+  stage: "Deploy"
   only:
-    - master
-  variables:
-    DOCKER_TAG: latest
-  environment:
-    name: demo
-  <<: *build_gitlab_docker_image
+    - support-2.x
+  script:
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_XS2A}:latest"
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:support"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:latest"
+    - >-
+      skopeo copy
+      --dest-creds=openshift:${OPENSHIFT_TOKEN}
+      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:support"
+      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:latest"
 
-build_dockerhub_image_master:
-  stage: "build:image"
-  only:
-    - master
-  variables:
-    DOCKER_TAG: latest
-  environment:
-    name: demo
-  <<: *build_dockerhub_image
+# Build NIGHTLY image and deploy (scheduled) to INTEG
 
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-deploy_image_master:
-  stage: deploy
-  only:
-    - master
-  variables:
-    DOCKER_TAG: latest
-  environment:
-    name: demo
-  <<: *push_docker_openshift
-
-# Release
-
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-build_image_release:
-  stage: "build:image"
-  only:
-    - tags
-  variables:
-    DOCKER_TAG: $CI_COMMIT_TAG
-  <<: *build_gitlab_docker_image
-
-build_dockerhub_image_release:
-  stage: "build:image"
-  only:
-    - tags
-  variables:
-    DOCKER_TAG: $CI_COMMIT_TAG
-  <<: *build_dockerhub_image
-
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-deploy_image_release:
-  stage: deploy
-  only:
-    - tags
-  when: manual
-  variables:
-    DOCKER_TAG: $CI_COMMIT_TAG
-  <<: *push_docker_openshift
-
-# Integ tests
-
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-build_image_integtest:
-  stage: "build:image"
-  only:
-    - schedules
-  variables:
-    DOCKER_TAG: nightly
-  <<: *build_gitlab_docker_image
-
-push_dockerhub_image_nightly:
-  stage: "build:image"
+Push to DockerHub (nightly):
+  stage: "Package"
   only:
     - schedules
   variables:
     DOCKER_TAG: nightly
   <<: *build_dockerhub_image
 
-# TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
-deploy_image_integtest:
-  stage: deploy
+Deploy to Openshift (nightly):
+  stage: "Deploy"
   only:
   - schedules
   variables:
-    DOCKER_TAG: nightly
-  <<: *push_docker_openshift
+    DOCKER_TAG: nightly # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_INTEG} # Openshift target namespace
+  <<: *deploy_openshift
 
+# Build MASTER image and deploy to DEMO
 
-# Branches with -helm- in naming are used for testing deployment scripts
-deploy_branch_stage:
-  stage: "deploy:static"
-  <<: *helm_env_deploy
-  when: manual
+Push to DockerHub (master):
+  stage: "Package"
   only:
-  - /^.*-helm-.*$/
+    - master
   variables:
-    <<: *variables
-    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
-    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
-    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
-    HELM_VALUE: develop.yaml
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    url: https://${CI_ENVIRONMENT_SLUG}-backend-datev-sb.cloud.adorsys.de
-    on_stop: remove_deploy_review_branch
+    DOCKER_TAG: latest
+  <<: *build_dockerhub_image
 
-remove_deploy_review_branch:
-  stage: "deploy:static"
-  when: manual
+Deploy to Openshift (master):
+  stage: "Deploy"
   only:
-  - /^.*-helm-.*$/
-  image: adorsys/ci-helm:2.10
-  dependencies: []
-  script:
-    - oc login openshift.adorsys.de --token=${HELM_TOKEN}
-    - helm init --client-only
-    - helm del --purge "${HELM_RELEASE}"
+    - master
   variables:
-    <<: *variables
-    GIT_STRATEGY: none
-    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    action: stop
+    DOCKER_TAG: latest # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
+  <<: *deploy_openshift
+
+# Build RELEASE image and deploy (manual) to DEMO
+
+Push to DockerHub (release):
+  stage: "Package"
+  only:
+    - tags
+  variables:
+    DOCKER_TAG: ${CI_COMMIT_TAG}
+  <<: *build_dockerhub_image
+
+Deploy to Openshift (release):
+  stage: "Deploy"
+  only:
+    - tags
+  when: manual
+  variables:
+    DOCKER_TAG: $CI_COMMIT_TAG # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
+  <<: *deploy_openshift
