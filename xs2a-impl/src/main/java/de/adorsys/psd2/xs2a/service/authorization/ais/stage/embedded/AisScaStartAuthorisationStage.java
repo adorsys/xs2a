@@ -155,7 +155,7 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
             aisConsentService.saveAuthenticationMethods(request.getAuthorizationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
 
             if (availableScaMethods.size() > 1) {
-                return createResponseForMultipleAvailableMethods(availableScaMethods);
+                return createResponseForMultipleAvailableMethods(availableScaMethods,request.getAuthorizationId(), request.getConsentId() );
             } else {
                 return createResponseForOneAvailableMethod(request, spiAccountConsent, availableScaMethods.get(0), psuData);
             }
@@ -187,11 +187,13 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         return response;
     }
 
-    private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(List<SpiAuthenticationObject> availableScaMethods) {
+    private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(List<SpiAuthenticationObject> availableScaMethods, String authorisationId, String consentId) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
         response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
+        response.setAuthorizationId(authorisationId);
+        response.setConsentId(consentId);
         return response;
     }
 
@@ -223,6 +225,8 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(scaMethod));
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
+        response.setAuthorizationId(request.getAuthorizationId());
+        response.setConsentId(request.getConsentId());
         response.setChallengeData(challengeData);
         return response;
     }

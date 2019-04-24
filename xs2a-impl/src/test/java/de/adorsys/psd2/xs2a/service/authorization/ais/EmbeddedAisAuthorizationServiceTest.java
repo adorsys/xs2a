@@ -20,12 +20,10 @@ import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaStartAuthorisationStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,8 +37,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
+import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -188,7 +185,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_AUTHENTICATION);
     }
 
 
@@ -219,7 +216,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_AUTHENTICATION);
     }
 
     @Test
@@ -238,7 +235,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_PSU_IDENTIFICATION);
+        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_IDENTIFICATION);
     }
 
     @Test

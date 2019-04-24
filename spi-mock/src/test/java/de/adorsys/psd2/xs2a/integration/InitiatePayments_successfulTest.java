@@ -24,8 +24,8 @@ import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
@@ -161,12 +161,13 @@ public class InitiatePayments_successfulTest {
         responseMap.put(httpHeadersImplicit, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/implicit/BulkPaymentInitiate_redirect_implicit_response.json");
         responseMap.put(httpHeadersImplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/implicit/BulkPaymentInitiate_embedded_implicit_response.json");
 
+        // TODO make 'SigningBasket support' case for each payment type https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/810
         responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.REDIRECT, "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.EMBEDDED, "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.SINGLE, ScaApproach.EMBEDDED, "/json/payment/res/explicit/SinglePaymentInitiate_redirect_explicit_response.json");
         responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.REDIRECT, "/json/payment/res/explicit/PeriodicPaymentInitiate_redirect_explicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.EMBEDDED, "/json/payment/res/explicit/PeriodicPaymentInitiate_embedded_explicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.PERIODIC, ScaApproach.EMBEDDED, "/json/payment/res/explicit/PeriodicPaymentInitiate_redirect_explicit_response.json");
         responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.REDIRECT, "/json/payment/res/explicit/BulkPaymentInitiate_redirect_explicit_response.json");
-        responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/explicit/BulkPaymentInitiate_embedded_explicit_response.json");
+        responseMap.put(httpHeadersExplicit, PaymentType.BULK, ScaApproach.EMBEDDED, "/json/payment/res/explicit/BulkPaymentInitiate_redirect_explicit_response.json");
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());

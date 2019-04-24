@@ -45,6 +45,7 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -59,6 +60,8 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class ConsentControllerTest {
     private static final String CORRECT_PSU_ID = "ID 777";
     private static final String WRONG_PSU_ID = "ID 666";
+    private static final String PASSWORD = "password";
+    private static final Map BODY = Collections.singletonMap("psuData", Collections.singletonMap("password", PASSWORD));
     private static final String CONSENT_ID = "XXXX-YYYY-XXXX-YYYY";
     private static final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
     private static final String WRONG_CONSENT_ID = "YYYY-YYYY-YYYY-YYYY";
@@ -164,19 +167,22 @@ public class ConsentControllerTest {
 
     @Test
     public void startConsentAuthorisation_Success() {
-        doReturn(new ResponseEntity<>(getCreateConsentAuthorizationResponse(CONSENT_ID), HttpStatus.CREATED))
-            .when(responseMapper).created(any(), any());
-        when(consentService.createConsentAuthorizationWithResponse(PSU_ID_DATA, CONSENT_ID))
-            .thenReturn(ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                            .body(getCreateConsentAuthorizationResponse(CONSENT_ID))
-                            .build());
-
         // Given
         CreateConsentAuthorizationResponse expectedResponse = getCreateConsentAuthorizationResponse(CONSENT_ID);
+        ResponseObject<CreateConsentAuthorizationResponse> responseObject = ResponseObject.<CreateConsentAuthorizationResponse>builder()
+                                                                      .body(expectedResponse)
+                                                                      .build();
+        doReturn(new ResponseEntity<>(getCreateConsentAuthorizationResponse(CONSENT_ID), HttpStatus.CREATED))
+            .when(responseMapper).created(any());
+        when(authorisationMapper.mapToPasswordFromBody(BODY)).thenReturn(PASSWORD);
+        when(authorisationMapper.mapToAisCreateOrUpdateAuthorisationResponse(responseObject)).thenReturn(new StartScaprocessResponse());
+
+        when(consentService.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD))
+            .thenReturn(responseObject);
 
         // When
         ResponseEntity responseEntity = consentController.startConsentAuthorisation(null, CONSENT_ID,
-                                                                                    null, null, null, null, CORRECT_PSU_ID, null, null,
+                                                                                    BODY, null, null, null, CORRECT_PSU_ID, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null, null, null, null);
@@ -188,14 +194,15 @@ public class ConsentControllerTest {
 
     @Test
     public void startConsentAuthorisation_Failure() {
-        when(consentService.createConsentAuthorizationWithResponse(PSU_ID_DATA, WRONG_CONSENT_ID))
+        when(authorisationMapper.mapToPasswordFromBody(BODY)).thenReturn(PASSWORD);
+        when(consentService.createAisAuthorisation(PSU_ID_DATA, WRONG_CONSENT_ID, PASSWORD))
             .thenReturn(ResponseObject.<CreateConsentAuthorizationResponse>builder()
                             .fail(MESSAGE_ERROR_AIS_400)
                             .build());
 
         // When
         ResponseEntity responseEntity = consentController.startConsentAuthorisation(null, WRONG_CONSENT_ID,
-                                                                                    null, null, null, null, CORRECT_PSU_ID, null,
+                                                                                    BODY, null, null, null, CORRECT_PSU_ID, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null, null, null, null, null);

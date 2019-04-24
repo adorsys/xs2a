@@ -64,8 +64,29 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
         return enrichErrorTextMessage(result);
     }
 
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createAisAuthorisation(..)) && args( psuData,  consentId,  password)", returning = "result", argNames = "result, psuData,  consentId,  password")
+    public ResponseObject invokeCreateConsentPsuDataAspect(ResponseObject result, PsuIdData psuData, String consentId, String password) {
+        if (!result.hasError()) {
+            if (result.getBody() instanceof UpdateConsentPsuDataResponse) {
+                UpdateConsentPsuDataResponse body = (UpdateConsentPsuDataResponse) result.getBody();
+
+                String authorisationId = body.getAuthorizationId();
+
+                UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
+                updatePsuData.setPsuData(psuData);
+                updatePsuData.setConsentId(consentId);
+                updatePsuData.setAuthorizationId(authorisationId);
+                updatePsuData.setPassword(password);
+
+                body.setLinks(buildLinksForUpdateConsentResponse(body, updatePsuData));
+            }
+            return result;
+        }
+        return enrichErrorTextMessage(result);
+    }
+
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updateConsentPsuData(..)) && args(updatePsuData)", returning = "result", argNames = "result,updatePsuData")
-    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq updatePsuData) {
+    public ResponseObject invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq updatePsuData) {
         if (!result.hasError()) {
             UpdateConsentPsuDataResponse body = result.getBody();
             body.setLinks(buildLinksForUpdateConsentResponse(body, updatePsuData));
@@ -99,8 +120,13 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
         String consentId = response.getConsentId();
 
         if (authorisationMethodDecider.isExplicitMethod(explicitPreferred, response.isMultilevelScaRequired())) {
-            if (psuData.isEmpty()) {
+            // TODO refactor isSigningBasketSupported https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/811
+            boolean isSigningBasketSupported = !response.isMultilevelScaRequired();
+
+            if (isSigningBasketSupported) { // no more data needs to be updated
                 links.setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
+            } else if (psuData.isEmpty()) {
+                links.setStartAuthorisationWithPsuIdentification(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             } else {
                 links.setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             }
@@ -119,7 +145,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private Links buildLinksForUpdateConsentResponse(UpdateConsentPsuDataResponse response, UpdateConsentPsuDataReq request) {
         return Optional.ofNullable(response.getScaStatus())
                    .map(status -> {
-                       Links links = null;
+                       Links links = new Links();
 
                        if (status == ScaStatus.PSUAUTHENTICATED) {
                            links = buildLinksForPsuAuthenticatedConsentResponse(request);
@@ -130,6 +156,9 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
                        } else if (status == ScaStatus.PSUIDENTIFIED) {
                            links = buildLinksForPsuIdentifiedConsentResponse(request);
                        }
+
+                       links.setSelf(buildPath(UrlHolder.CONSENT_LINK_URL, request.getConsentId()));
+                       links.setStatus(buildPath(UrlHolder.CONSENT_STATUS_URL, request.getConsentId()));
 
                        return links;
                    })

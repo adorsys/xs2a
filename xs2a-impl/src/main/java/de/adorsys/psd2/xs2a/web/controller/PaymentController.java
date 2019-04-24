@@ -26,10 +26,8 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
@@ -101,7 +99,6 @@ public class PaymentController implements PaymentApi {
                                              .orElseGet(ResponseObject.builder()
                                                             .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))::build);
 
-        //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse12(serviceResponse.getBody(), PaymentType.getByValue(paymentService).get(),
@@ -245,7 +242,7 @@ public class PaymentController implements PaymentApi {
         ResponseObject<Xs2aAuthorisationSubResources> serviceResponse = paymentAuthorisationService.getPaymentInitiationAuthorisations(paymentId);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.ok(serviceResponse, consentModelMapper::mapToAuthorisations);
+                   : responseMapper.ok(serviceResponse, authorisationMapper::mapToAuthorisations);
     }
 
     @Override
@@ -287,11 +284,17 @@ public class PaymentController implements PaymentApi {
                                                     String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
                                                     UUID psUDeviceID, String psUGeoLocation) {
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
-        //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
-        ResponseObject<Xs2aCreatePisAuthorisationResponse> serviceResponse = paymentAuthorisationService.createPisAuthorization(paymentId, PaymentType.getByValue(paymentService).get(), paymentProduct, psuData);
-        return serviceResponse.hasError()
-                   ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.created(serviceResponse, consentModelMapper::mapToStartScaProcessResponse);
+        Xs2aCreatePisAuthorisationRequest createRequest = authorisationMapper.mapToXs2aCreatePisAuthorisationRequest(psuData, paymentId, paymentService, paymentProduct, (Map) body);
+
+        ResponseObject createAuthResponse = paymentAuthorisationService.createPisAuthorisation(createRequest);
+
+        if (createAuthResponse.hasError()) {
+            return responseErrorMapper.generateErrorResponse(createAuthResponse.getError());
+        }
+
+        return responseMapper.created(ResponseObject.builder()
+                                          .body(authorisationMapper.mapToPisCreateOrUpdateAuthorisationResponse(createAuthResponse))
+                                          .build());
     }
 
     @Override
@@ -327,7 +330,7 @@ public class PaymentController implements PaymentApi {
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = paymentCancellationAuthorisationService.updatePisCancellationPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, cancellationId, paymentService, paymentProduct, (Map) body));
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.ok(serviceResponse, consentModelMapper::mapToUpdatePsuAuthenticationResponse);
+                   : responseMapper.ok(serviceResponse, authorisationMapper::mapToPisUpdatePsuAuthenticationResponse);
     }
 
     @Override
@@ -339,9 +342,15 @@ public class PaymentController implements PaymentApi {
                                                UUID psUDeviceID, String psUGeoLocation) {
 
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
-        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = paymentAuthorisationService.updatePisCommonPaymentPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, paymentService, paymentProduct, (Map) body));
+        return updatePisAuthorisation(psuData, authorisationId, paymentService, paymentProduct, paymentId, body);
+    }
+
+    private ResponseEntity updatePisAuthorisation(PsuIdData psuData, String authorisationId, String paymentService, String paymentProduct, String paymentId, Object body) {
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, paymentService, paymentProduct, (Map) body);
+
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.ok(serviceResponse, consentModelMapper::mapToUpdatePsuAuthenticationResponse);
+                   : responseMapper.ok(serviceResponse, authorisationMapper::mapToPisUpdatePsuAuthenticationResponse);
     }
 }

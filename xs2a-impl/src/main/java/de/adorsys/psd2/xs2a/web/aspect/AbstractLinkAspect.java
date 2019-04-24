@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -82,5 +83,12 @@ public abstract class AbstractLinkAspect<T> {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Class isn't parametrized with generic type! Use <>");
         }
+    }
+
+    Links buildDefaultPaymentLinks(String paymentService, String paymentProduct, String paymentId) {
+        Links links = new Links();
+        links.setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
+        links.setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
+        return links;
     }
 }

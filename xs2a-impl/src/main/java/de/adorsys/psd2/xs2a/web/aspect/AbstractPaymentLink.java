@@ -61,9 +61,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String paymentProduct = paymentRequestParameters.getPaymentProduct();
         String paymentId = body.getPaymentId();
 
-        Links links = new Links();
-        links.setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
-        links.setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
+        Links links = buildDefaultPaymentLinks(paymentService, paymentProduct, paymentId);
 
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
             return addEmbeddedDecoupledRelatedLinks(links, paymentRequestParameters, body);
@@ -82,8 +80,14 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String authorizationId = body.getAuthorizationId();
 
         if (authorisationMethodDecider.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred(), body.isMultilevelScaRequired())) {
-            if (paymentRequestParameters.getPsuData().isEmpty()) {
+            // TODO refactor isSigningBasketSupported https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/811
+            boolean isSigningBasketSupported = !body.isMultilevelScaRequired();
+
+            if (isSigningBasketSupported) { // no more data needs to be updated
                 links.setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
+
+            } else if (paymentRequestParameters.getPsuData().isEmpty()) {
+                links.setStartAuthorisationWithPsuIdentification(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
             } else {
                 links.setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
             }

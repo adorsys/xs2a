@@ -77,7 +77,7 @@ public class CreateCommonPaymentServiceTest {
     private static final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private static final PsuIdData WRONG_PSU_DATA = new PsuIdData("wrong_psu", null, null, null);
     private static final TppInfo WRONG_TPP_INFO = new TppInfo();
-    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null);
+    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null);
 
 
     @InjectMocks
