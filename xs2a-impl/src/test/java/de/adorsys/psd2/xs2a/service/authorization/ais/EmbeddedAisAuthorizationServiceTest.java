@@ -37,8 +37,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
-import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
+import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -186,7 +185,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_AUTHENTICATION);
     }
 
 
@@ -217,7 +216,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_AUTHENTICATION);
     }
 
     @Test
@@ -235,7 +234,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
-        assertThat(actualResponse.getResponseLinkType()).isEqualTo(START_AUTHORISATION_WITH_PSU_IDENTIFICATION);
+        assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_IDENTIFICATION);
     }
 
     @Test

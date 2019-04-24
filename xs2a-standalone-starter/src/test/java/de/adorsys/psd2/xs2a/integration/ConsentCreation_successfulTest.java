@@ -207,7 +207,8 @@ public class ConsentCreation_successfulTest {
     //
     @Test
     public void creation_dedicated_consent_explicit_embedded_successful() throws Exception {
-        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
+        // TODO make 'SigningBasket support' case for each consent type https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/810
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
@@ -217,7 +218,8 @@ public class ConsentCreation_successfulTest {
 
     @Test
     public void creation_global_consent_explicit_embedded_successful() throws Exception {
-        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
+        // TODO make 'SigningBasket support' case for each consent type https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/810
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
@@ -232,7 +234,8 @@ public class ConsentCreation_successfulTest {
 
     @Test
     public void creation_all_available_account_consent_explicit_embedded_successful() throws Exception {
-        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
+        // TODO make 'SigningBasket support' case for each consent type https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/810
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test

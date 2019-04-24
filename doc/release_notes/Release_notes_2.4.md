@@ -16,3 +16,11 @@ Also starting from this version ASPSP is not able to create PIIS consent without
 
 ## Delete column `usage_counter` from table `ais_consent`
 Deprecated column `usage_counter` was removed from table `ais_consent`
+
+## Bugfix: Separate links for start authorisation and create consent and initiate payment
+From now on, response has corrected Links:
+- when authorization sub-resource is already created then response contains link `updatePsuIdentification` (if PSU-ID is not given in request)
+and `updatePsuAuthentication` (if PSU-ID is given in request).
+- when authorization sub-resource is not created yet and no more additional data should be expected from PSU then response contains link `startAuthorisation`
+- when authorization sub-resource is not created yet and some additional data should be expected from PSU then response contains link `startAuthorisationWithPsuIdentification` (if PSU-ID is not given in request)
+and `startAuthorisationWithPsuAuthentication` (if PSU-ID is given in request).

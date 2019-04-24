@@ -76,8 +76,8 @@ public class CreateSinglePaymentServiceTest {
     private static final PisPaymentInfo PAYMENT_INFO = buildPisPaymentInfoRequest();
     private static final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
     private final Xs2aPisCommonPayment PIS_COMMON_PAYMENT_FAIL = new Xs2aPisCommonPayment(null, PSU_DATA);
-    private  SinglePaymentInitiationResponse singlePaymentInitiationResponse;
-    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null);
+    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null);
+    private SinglePaymentInitiationResponse singlePaymentInitiationResponse;
 
     @InjectMocks
     private CreateSinglePaymentService createSinglePaymentService;
@@ -110,7 +110,7 @@ public class CreateSinglePaymentServiceTest {
         when(scaPaymentService.createSinglePayment(buildSinglePayment(), WRONG_TPP_INFO, "sepa-credit-transfers", WRONG_PSU_DATA)).thenReturn(buildSpiErrorForSinglePayment());
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, singlePaymentInitiationResponse ))
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, singlePaymentInitiationResponse))
             .thenReturn(PAYMENT_INFO);
         when(scaPaymentServiceResolver.getService())
             .thenReturn(scaPaymentService);
@@ -251,9 +251,9 @@ public class CreateSinglePaymentServiceTest {
 
     private static SinglePaymentInitiationResponse buildSpiErrorForSinglePayment() {
         ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-            .errorType(ErrorType.PIIS_400)
-            .messages(ERROR_MESSAGE_TEXT)
-            .build();
+                                      .errorType(ErrorType.PIIS_400)
+                                      .messages(ERROR_MESSAGE_TEXT)
+                                      .build();
 
         return new SinglePaymentInitiationResponse(errorHolder);
     }

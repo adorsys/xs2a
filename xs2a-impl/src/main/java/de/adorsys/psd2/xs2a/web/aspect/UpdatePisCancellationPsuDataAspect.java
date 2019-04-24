@@ -46,7 +46,6 @@ public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<Payme
 
             if (isScaStatusMethodAuthenticated(body.getScaStatus())) {
                 links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
-                links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), body.getScaStatus()) || scaApproachResolver.resolveScaApproach() == ScaApproach.DECOUPLED) {
                 links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             } else if (isScaStatusFinalised(body.getScaStatus())) {
