@@ -77,7 +77,7 @@ public class CreateSinglePaymentServiceTest {
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
     private final SinglePaymentInitiationResponse RESPONSE = buildSinglePaymentInitiationResponse();
     private final List<String> ERROR_MESSAGE_TEXT = Arrays.asList("message 1", "message 2", "message 3");
-    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null);
+    private static final Xs2aCreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(null, null, null, null);
 
     @InjectMocks
     private CreateSinglePaymentService createSinglePaymentService;
@@ -249,9 +249,9 @@ public class CreateSinglePaymentServiceTest {
 
     private SinglePaymentInitiationResponse buildSpiErrorForSinglePayment() {
         ErrorHolder errorHolder = ErrorHolder.builder(MessageErrorCode.FORMAT_ERROR)
-            .errorType(ErrorType.PIIS_400)
-            .messages(ERROR_MESSAGE_TEXT)
-            .build();
+                                      .errorType(ErrorType.PIIS_400)
+                                      .messages(ERROR_MESSAGE_TEXT)
+                                      .build();
 
         return new SinglePaymentInitiationResponse(errorHolder);
     }

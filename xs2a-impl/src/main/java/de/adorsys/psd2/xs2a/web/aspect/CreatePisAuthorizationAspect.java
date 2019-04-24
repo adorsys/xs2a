@@ -17,11 +17,14 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -46,20 +49,32 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
         this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorization(..)) && args(paymentId, paymentType, paymentProduct, psuData)", returning = "result", argNames = "result,paymentId,paymentType,paymentProduct,psuData")
-    public ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xs2aCreatePisAuthorisationResponse> result, String paymentId, PaymentType paymentType, String paymentProduct, PsuIdData psuData) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorisation(..)) && args(createRequest)", returning = "result", argNames = "result,createRequest")
+    public ResponseObject createPisAuthorizationAspect(ResponseObject result, Xs2aCreatePisAuthorisationRequest createRequest) {
+        String paymentId = createRequest.getPaymentId();
+        String paymentType = createRequest.getPaymentService();
+
+        String paymentProduct = createRequest.getPaymentProduct();
+        PsuIdData psuData = createRequest.getPsuData();
+
         if (!result.hasError()) {
-            Xs2aCreatePisAuthorisationResponse body = result.getBody();
-            body.setLinks(buildLink(paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId(), psuData));
+            if (result.getBody() instanceof Xs2aCreatePisAuthorisationResponse) {
+                Xs2aCreatePisAuthorisationResponse response = (Xs2aCreatePisAuthorisationResponse) result.getBody();
+
+                response.setLinks(buildLink(paymentType, paymentProduct, paymentId, response.getAuthorisationId(), psuData));
+            } else if (result.getBody() instanceof Xs2aUpdatePisCommonPaymentPsuDataResponse) {
+                Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
+                response.setLinks(updateLink(response, createRequest));
+            }
+
             return result;
         }
         return enrichErrorTextMessage(result);
     }
 
     private Links buildLink(String paymentService, String paymentProduct, String paymentId, String authorisationId, PsuIdData psuData) {
-        Links links = new Links();
-        links.setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
-        links.setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
+        Links links = buildDefaultPaymentLinks(paymentService, paymentProduct, paymentId);
+
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
             String path = UrlHolder.PIS_AUTHORISATION_LINK_URL;
             if (psuData.isEmpty()) {
@@ -73,5 +88,48 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
         }
 
         return links;
+    }
+
+    public Links updateLink(Xs2aUpdatePisCommonPaymentPsuDataResponse response, Xs2aCreatePisAuthorisationRequest createRequest) {
+        Links links = buildDefaultPaymentLinks(createRequest.getPaymentService(), createRequest.getPaymentProduct(), response.getPaymentId());
+        ScaStatus scaStatus = response.getScaStatus();
+
+        if (isScaStatusMethodAuthenticated(scaStatus)) {
+            links.setSelectAuthenticationMethod(buildAuthorisationLink(createRequest.getPaymentService(), createRequest.getPaymentProduct(), response.getPaymentId(), response.getAuthorisationId()));
+
+            // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
+        } else if (isScaStatusMethodSelected(response.getChosenScaMethod(), scaStatus) && scaApproachResolver.resolveScaApproach() == EMBEDDED) {
+            links.setAuthoriseTransaction(buildAuthorisationLink(createRequest.getPaymentService(), createRequest.getPaymentProduct(), response.getPaymentId(), response.getAuthorisationId()));
+        } else if (isScaStatusFinalised(scaStatus)) {
+
+            links.setScaStatus(buildAuthorisationLink(createRequest.getPaymentService(), createRequest.getPaymentProduct(), response.getPaymentId(), response.getAuthorisationId()));
+        } else if (isScaStatusMethodIdentified(scaStatus)) {
+            links.setUpdatePsuAuthentication(buildAuthorisationLink(createRequest.getPaymentService(), createRequest.getPaymentProduct(), response.getPaymentId(), response.getAuthorisationId()));
+        }
+
+        return links;
+    }
+
+
+
+    private String buildAuthorisationLink(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
+        return buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId);
+    }
+
+    private boolean isScaStatusFinalised(ScaStatus scaStatus) {
+        return scaStatus == ScaStatus.FINALISED;
+    }
+
+    private boolean isScaStatusMethodSelected(Xs2aAuthenticationObject chosenScaMethod, ScaStatus scaStatus) {
+        return chosenScaMethod != null
+                   && scaStatus == ScaStatus.SCAMETHODSELECTED;
+    }
+
+    private boolean isScaStatusMethodAuthenticated(ScaStatus scaStatus) {
+        return scaStatus == ScaStatus.PSUAUTHENTICATED;
+    }
+
+    private boolean isScaStatusMethodIdentified(ScaStatus scaStatus) {
+        return scaStatus == ScaStatus.PSUIDENTIFIED;
     }
 }

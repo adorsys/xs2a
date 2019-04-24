@@ -74,7 +74,16 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
             ResponseEntity<AspspSinglePayment> aspspResponse =
                 aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, AspspSinglePayment.class);
             AspspConsentData resultAspspData = initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes());
-            List<AspspPsuData> psuDataList = aspspResponse.getBody().getPsuDataList();
+
+            AspspSinglePayment aspspPayment = aspspResponse.getBody();
+
+            if (aspspPayment == null) {
+                return SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
+                           .aspspConsentData(resultAspspData)
+                           .fail(SpiResponseStatus.LOGICAL_FAILURE);
+            }
+
+            List<AspspPsuData> psuDataList = aspspPayment.getPsuDataList();
 
             if (CollectionUtils.size(psuDataList) > 1) {
                 Map<String, Boolean> authMap = psuDataList.stream()
@@ -89,7 +98,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
             return SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
                        .aspspConsentData(resultAspspData)
-                       .payload(spiSinglePaymentMapper.mapToSpiSinglePaymentResponse(aspspResponse.getBody()))
+                       .payload(spiSinglePaymentMapper.mapToSpiSinglePaymentResponse(aspspPayment))
                        .success();
 
         } catch (RestException e) {

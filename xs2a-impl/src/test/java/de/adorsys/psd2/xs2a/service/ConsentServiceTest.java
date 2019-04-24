@@ -93,6 +93,7 @@ import static org.mockito.Mockito.*;
 public class ConsentServiceTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
+    private static final String PASSWORD = "password";
     private static final String CONSENT_ID_FINALISED = "finalised_consent_id";
     private static final String TPP_ID = "Test TppId";
     private static final String CORRECT_PSU_ID = "123456789";
@@ -818,7 +819,7 @@ public class ConsentServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        consentService.createConsentAuthorizationWithResponse(PSU_ID_DATA, CONSENT_ID);
+        consentService.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
 
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
@@ -832,7 +833,7 @@ public class ConsentServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<CreateConsentAuthorizationResponse> actualResponse = consentService.createConsentAuthorizationWithResponse(PSU_ID_DATA, CONSENT_ID);
+        ResponseObject<CreateConsentAuthorizationResponse> actualResponse = consentService.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
 
         // Then
         AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);

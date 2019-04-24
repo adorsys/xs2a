@@ -43,20 +43,19 @@ public class UpdatePisPsuDataAspect extends AbstractLinkAspect<PaymentController
         if (!result.hasError()) {
             Xs2aUpdatePisCommonPaymentPsuDataResponse body = result.getBody();
             Links links = buildLink(request);
+            ScaStatus scaStatus = body.getScaStatus();
 
-            if (isScaStatusMethodAuthenticated(body.getScaStatus())) {
-
+            if (isScaStatusMethodAuthenticated(scaStatus)) {
                 links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
-                links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
 
                 // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
-            } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), body.getScaStatus()) && scaApproachResolver.resolveScaApproach() == ScaApproach.EMBEDDED) {
+            } else if (isScaStatusMethodSelected(body.getChosenScaMethod(), scaStatus) && scaApproachResolver.resolveScaApproach() == ScaApproach.EMBEDDED) {
                 links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
-            } else if (isScaStatusFinalised(body.getScaStatus())) {
+            } else if (isScaStatusFinalised(scaStatus)) {
 
                 links.setScaStatus(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
-            } else if (isScaStatusMethodIdentified(body.getScaStatus())) {
-                links.setStartAuthorisationWithPsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
+            } else if (isScaStatusMethodIdentified(scaStatus)) {
+                links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId()));
             }
 
             body.setLinks(links);
@@ -74,7 +73,7 @@ public class UpdatePisPsuDataAspect extends AbstractLinkAspect<PaymentController
     }
 
     private String buildAuthorisationLink(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
-        return buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId);
+        return buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId);
     }
 
     private boolean isScaStatusFinalised(ScaStatus scaStatus) {
