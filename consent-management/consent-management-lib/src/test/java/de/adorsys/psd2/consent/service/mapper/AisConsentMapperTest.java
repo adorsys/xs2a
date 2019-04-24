@@ -76,6 +76,7 @@ public class AisConsentMapperTest {
     private static final List<PsuData> PSU_DATA_LIST = Collections.singletonList(PSU_DATA);
     private static final PsuIdData PSU_ID_DATA = buildPsuIdData();
     private static final List<PsuIdData> PSU_ID_DATA_LIST = Collections.singletonList(PSU_ID_DATA);
+    private static final int USAGE_COUNTER = 9;
 
     @Mock
     private PsuDataMapper psuDataMapper;
@@ -110,7 +111,7 @@ public class AisConsentMapperTest {
         // Given
         AisConsent aisConsent = buildAisConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();
-        when(aisConsentUsageService.getUsageCounter(aisConsent)).thenReturn(aisConsent.getUsageCounter());
+        when(aisConsentUsageService.getUsageCounter(aisConsent)).thenReturn(USAGE_COUNTER);
 
         // When
         AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent);
@@ -124,7 +125,7 @@ public class AisConsentMapperTest {
         // Given
         AisConsent aisConsent = buildAisConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccounts();
-        when(aisConsentUsageService.getUsageCounter(aisConsent)).thenReturn(aisConsent.getUsageCounter());
+        when(aisConsentUsageService.getUsageCounter(aisConsent)).thenReturn(USAGE_COUNTER);
 
         // When
         AisAccountConsent result = aisConsentMapper.mapToInitialAisAccountConsent(aisConsent);
@@ -154,7 +155,7 @@ public class AisConsentMapperTest {
         assertEquals(aisConsent.getAuthorizations().size(), aisAccountConsent.getAccountConsentAuthorizations().size());
         assertEquals(PSU_ID_DATA, aisAccountConsentAuthorisation.getPsuIdData());
         assertEquals(aisConsentAuthorization.getScaStatus(), aisAccountConsentAuthorisation.getScaStatus());
-        assertEquals(aisConsent.getUsageCounter(), aisAccountConsent.getUsageCounter());
+        assertEquals(USAGE_COUNTER, aisAccountConsent.getUsageCounter());
         assertEquals(aisConsent.getCreationTimestamp(), aisAccountConsent.getCreationTimestamp());
         assertEquals(aisConsent.getStatusChangeTimestamp(), aisAccountConsent.getStatusChangeTimestamp());
     }
@@ -181,7 +182,6 @@ public class AisConsentMapperTest {
         aisConsent.setTppInfo(TPP_INFO_ENTITY);
         aisConsent.setConsentStatus(ConsentStatus.VALID);
         aisConsent.setAllowedFrequencyPerDay(7);
-        aisConsent.setUsageCounter(9);
         aisConsent.setAuthorizations(Collections.singletonList(buildAisConsentAuthorization()));
         aisConsent.setMultilevelScaRequired(true);
         aisConsent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
