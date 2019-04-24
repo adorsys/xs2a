@@ -73,7 +73,6 @@ public class IpAddressValidationAspect {
                 requestParameterMap.put(headerParam.value().toLowerCase(), String.valueOf(args[argIndex]));
             }
         }
-        requestParameterMap.putIfAbsent("date", "Sun, 11 Aug 2019 15:02:37 GMT");
 
         return requestParameterMap;
     }
