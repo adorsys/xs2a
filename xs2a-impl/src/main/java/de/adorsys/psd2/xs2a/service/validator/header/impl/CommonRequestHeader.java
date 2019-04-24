@@ -36,7 +36,6 @@ abstract class CommonRequestHeader implements RequestHeader {
     @JsonProperty(value = "x-request-id")
     private UUID xRequestId;
 
-    @NotNull
     private String date;
 
     @JsonProperty(value = "signature")
