@@ -85,7 +85,8 @@ public class PisTppInfoValidatorTest {
         assertTrue(validationResult.isNotValid());
 
         MessageError expectedError = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(MessageErrorCode.UNAUTHORIZED, "Invalid TPP"));
-        assertEquals(expectedError, validationResult.getMessageError());
+        assertEquals(expectedError.getErrorType(), validationResult.getMessageError().getErrorType());
+        assertEquals(expectedError.getTppMessage().getMessageErrorCode(), validationResult.getMessageError().getTppMessage().getMessageErrorCode());
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

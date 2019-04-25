@@ -23,85 +23,81 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
+import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
+import de.adorsys.psd2.xs2a.service.validator.SupportedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SERVICE_INVALID_405;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SESSIONS_NOT_SUPPORTED;
 
 /**
  * Validator to be used for validating create consent request according to some business rules
  */
 @Component
 @RequiredArgsConstructor
-public class CreateConsentRequestValidator implements BusinessValidator<CreateConsentReq> {
+public class CreateConsentRequestValidator implements BusinessValidator<CreateConsentRequestObject> {
+    // TODO move messages to the message bundle https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/791
+    private static final String MESSAGE_ERROR_GLOBAL_CONSENT_NOT_SUPPORTED = "Global Consent is not supported by ASPSP";
+
     private final AspspProfileServiceWrapper aspspProfileService;
     private final ScaApproachResolver scaApproachResolver;
+    private final PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
+    private final SupportedAccountReferenceValidator supportedAccountReferenceValidator;
 
     /**
      * Validates Create consent request according to:
      * <ul>
+     * <li>the presence of PSU Data in the request if it's mandated by the profile</li>
+     * <li>support of account reference types</li>
      * <li>support of global consent for All Psd2</li>
      * <li>support of bank offered consent</li>
-     * <li>expiration date of the consent</li>
-     * <li>requested frequency per day of the consent</li>
      * <li>support of available account access</li>
-     * <li>requested access of the consent</li>
      * <li>support of combined service indicator</li>
      * </ul>
      * If there are new consent requirements, this method has to be updated.
      *
-     * @param request CreateConsentReq request for consent creating
+     * @param requestObject create consent request object
      * @return ValidationResult instance, that contains boolean isValid, that shows if request is valid
      * and MessageError for invalid case
      */
     @NotNull
     @Override
-    public ValidationResult validate(@NotNull CreateConsentReq request) {
+    public ValidationResult validate(@NotNull CreateConsentRequestObject requestObject) {
+        ValidationResult psuDataValidationResult = psuDataInInitialRequestValidator.validate(requestObject.getPsuIdData());
+        if (psuDataValidationResult.isNotValid()) {
+            return psuDataValidationResult;
+        }
+
+        CreateConsentReq request = requestObject.getCreateConsentReq();
+
+        ValidationResult supportedAccountReferenceValidationResult = supportedAccountReferenceValidator.validate(request.getAccountReferences());
+        if (supportedAccountReferenceValidationResult.isNotValid()) {
+            return supportedAccountReferenceValidationResult;
+        }
+
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return ValidationResult.invalid(ErrorType.AIS_400, PARAMETER_NOT_SUPPORTED);
+            return ValidationResult.invalid(ErrorType.AIS_405, TppMessageInformation.of(SERVICE_INVALID_405, MESSAGE_ERROR_GLOBAL_CONSENT_NOT_SUPPORTED));
         }
         if (isNotSupportedBankOfferedConsent(request)) {
             return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_405);
         }
-        if (isNotValidExpirationDate(request.getValidUntil())) {
-            return ValidationResult.invalid(ErrorType.AIS_400, PERIOD_INVALID);
-        }
-        if (isNotValidFrequencyPerDay(request.isRecurringIndicator(), request.getFrequencyPerDay())) {
-            return ValidationResult.invalid(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, "Value of frequencyPerDay is not correct"));
-        }
         if (isNotSupportedAvailableAccounts(request)) {
             return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_405);
         }
-        if (areFlagsAndAccountsInvalid(request)) {
-            return ValidationResult.invalid(ErrorType.AIS_400, FORMAT_ERROR);
-        }
-
         if (isNotSupportedCombinedServiceIndicator(request)) {
             return ValidationResult.invalid(ErrorType.AIS_400, SESSIONS_NOT_SUPPORTED);
         }
 
         return ValidationResult.valid();
-    }
-
-    private boolean areFlagsAndAccountsInvalid(CreateConsentReq request) {
-        Xs2aAccountAccess access = request.getAccess();
-        if (access.isNotEmpty()) {
-            return !(CollectionUtils.isEmpty(request.getAccountReferences()) || areFlagsEmpty(access));
-        }
-        return false;
-    }
-
-    private boolean areFlagsEmpty(Xs2aAccountAccess access) {
-        return Objects.isNull(access.getAvailableAccounts()) && Objects.isNull(access.getAllPsd2());
     }
 
     private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {
@@ -121,10 +117,6 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
         return !aspspProfileService.isBankOfferedConsentSupported();
     }
 
-    private boolean isNotValidExpirationDate(LocalDate validUntil) {
-        return validUntil.isBefore(LocalDate.now());
-    }
-
     private boolean isConsentGlobal(CreateConsentReq request) {
         return isNotEmptyAccess(request.getAccess())
                    && request.getAccess().getAllPsd2() == ALL_ACCOUNTS;
@@ -134,12 +126,6 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
         return Optional.ofNullable(access)
                    .map(Xs2aAccountAccess::isNotEmpty)
                    .orElse(false);
-    }
-
-    private boolean isNotValidFrequencyPerDay(boolean recurringIndicator, int frequencyPerDay) {
-        return recurringIndicator
-                   ? frequencyPerDay <= 0
-                   : frequencyPerDay != 1;
     }
 
     private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {

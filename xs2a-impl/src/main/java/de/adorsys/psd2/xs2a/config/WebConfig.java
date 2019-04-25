@@ -27,7 +27,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
-import de.adorsys.psd2.xs2a.web.interceptor.HeaderValidationInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.RequestValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +64,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
     private final ErrorMapperContainer errorMapperContainer;
     private final ObjectMapper objectMapper;
-    private final HeaderValidationInterceptor headerValidationInterceptor;
+    private final RequestValidationInterceptor requestValidationInterceptor;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -90,7 +90,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, objectMapper))
             .addPathPatterns(getAllXs2aEndpointPaths());
 
-        registry.addInterceptor(headerValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
+        registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
 
         registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), serviceTypeDiscoveryService, errorTypeMapper, errorMapperContainer, objectMapper))
             .addPathPatterns(getAllXs2aEndpointPaths());
