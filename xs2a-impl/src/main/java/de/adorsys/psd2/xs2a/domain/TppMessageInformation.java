@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
 
 @Data
-@EqualsAndHashCode(exclude = "text")
+@EqualsAndHashCode
 public class TppMessageInformation {
     private MessageCategory category;
     private MessageErrorCode messageErrorCode;

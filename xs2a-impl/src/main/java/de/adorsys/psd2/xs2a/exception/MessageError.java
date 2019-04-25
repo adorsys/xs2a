@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static java.util.Collections.singletonList;
 
 @Data
+@NoArgsConstructor
 public class MessageError {
     @JsonUnwrapped
     private Set<TppMessageInformation> tppMessages = new HashSet<>();
@@ -42,6 +44,10 @@ public class MessageError {
     public MessageError(ErrorType errorType, TppMessageInformation... tppMessageInformation) {
         this.errorType = errorType;
         fillTppMessage(tppMessageInformation);
+    }
+
+    public void addTppMessage(TppMessageInformation tppMessageInformation) {
+        this.tppMessages.add(tppMessageInformation);
     }
 
     public MessageError(ErrorHolder errorHolder) {

@@ -38,11 +38,11 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.*;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentStatusResponse;
@@ -79,7 +79,6 @@ public class ConsentService {
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiErrorMapper spiErrorMapper;
     private final ScaApproachResolver scaApproachResolver;
-    private final AspspProfileServiceWrapper aspspProfileService;
 
     private final CreateConsentRequestValidator createConsentRequestValidator;
     private final GetAccountConsentsStatusByIdValidator getAccountConsentsStatusByIdValidator;
@@ -89,9 +88,6 @@ public class ConsentService {
     private final UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
     private final GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
     private final GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
-
-    private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
-
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
      * account details or by getting account details from ASPSP by psuId and filling the appropriate fields in
@@ -105,14 +101,8 @@ public class ConsentService {
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred, TppRedirectUri tppRedirectUri) { // NOPMD // TODO we need to refactor this method and class. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/749
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
-        if (aspspProfileService.isPsuInInitialRequestMandated()
-                && psuData.isEmpty()) {
-            return ResponseObject.<CreateConsentResponse>builder()
-                       .fail(AIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU))
-                       .build();
-        }
 
-        ValidationResult validationResult = createConsentRequestValidator.validate(request);
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(request, psuData));
         if (validationResult.isNotValid()) {
             return ResponseObject.<CreateConsentResponse>builder()
                        .fail(validationResult.getMessageError())
