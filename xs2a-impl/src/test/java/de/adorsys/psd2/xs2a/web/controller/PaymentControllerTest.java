@@ -29,7 +29,10 @@ import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.*;
+import de.adorsys.psd2.xs2a.service.ConsentService;
+import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
+import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
+import de.adorsys.psd2.xs2a.service.PaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
@@ -103,8 +106,6 @@ public class PaymentControllerTest {
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
     @Mock
-    private AccountReferenceValidationService referenceValidationService;
-    @Mock
     private ConsentService consentService;
     @Mock
     private ConsentModelMapper consentModelMapper;
@@ -131,8 +132,6 @@ public class PaymentControllerTest {
                                                       of(RESOURCE_UNKNOWN_403)).build());
         when(aspspProfileService.getPisRedirectUrlToAspsp())
             .thenReturn(REDIRECT_LINK);
-        when(referenceValidationService.validateAccountReferences(any()))
-            .thenReturn(ResponseObject.builder().build());
     }
 
     @Before

@@ -29,12 +29,9 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 
 @Component
 @RequiredArgsConstructor
@@ -49,15 +46,34 @@ public class ErrorBuildingService {
         response.resetBuffer();
         response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        Set<TppMessageInformation> tppMessages = messageError.getTppMessages();
 
-        TppMessageInformation tppMessageInformation = messageError.getTppMessage();
-        response.setStatus(tppMessageInformation.getMessageErrorCode().getCode());
-        response.getWriter().write(objectMapper.writeValueAsString(createError(Collections.singleton(tppMessageInformation.getText()))));
+        response.setStatus(tppMessages.iterator().next().getMessageErrorCode().getCode());
+        response.getWriter().write(objectMapper.writeValueAsString(createError(tppMessages)));
 
         response.flushBuffer();
     }
 
-    private Object createError(Collection<String> errorMessages) {
+    public void enrichMessageError(MessageError messageError, String errorMessage) {
+        enrichMessageError(messageError, new MessageError(buildErrorType(), TppMessageInformation.of(FORMAT_ERROR, errorMessage)));
+    }
+
+    public void enrichMessageError(MessageError messageError, MessageError validationMessageError) {
+        enrichMessageError(messageError, validationMessageError.getTppMessage());
+    }
+
+    public void enrichMessageError(MessageError messageError, TppMessageInformation tppMessageInformation) {
+        messageError.addTppMessage(tppMessageInformation);
+    }
+
+    public ErrorType buildErrorType() {
+        return errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), FORMAT_ERROR.getCode());
+    }
+
+    private Object createError(Set<TppMessageInformation> tppMessageInformations) {
+        List<String> errorMessages = new ArrayList<>();
+        tppMessageInformations.forEach(tmi -> errorMessages.add(tmi.getText()));
+
         MessageError messageError = getMessageError(errorMessages);
         return Optional.ofNullable(errorMapperContainer.getErrorBody(messageError))
                    .map(ErrorMapperContainer.ErrorBody::getBody)
@@ -68,9 +84,10 @@ public class ErrorBuildingService {
         ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), FORMAT_ERROR.getCode());
 
         TppMessageInformation[] tppMessages = errorMessages.stream()
-                                                  .map(e -> of(FORMAT_ERROR, e))
+                                                  .map(e -> TppMessageInformation.of(FORMAT_ERROR, e))
                                                   .toArray(TppMessageInformation[]::new);
 
         return new MessageError(errorType, tppMessages);
     }
+
 }

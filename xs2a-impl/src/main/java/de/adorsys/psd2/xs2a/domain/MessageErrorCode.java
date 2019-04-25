@@ -60,7 +60,7 @@ public enum MessageErrorCode {
 
     // AIS specific error code
     //todo task: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/38
-    SESSIONS_NOT_SUPPORTED(400),  //The combined service flag may not be used with this ASPSP
+    SESSIONS_NOT_SUPPORTED(400),  //Sessions are not supported by ASPSP
     ACCESS_EXCEEDED(429),  //The access on the account has been exceeding the consented multiplicity per day
     REQUESTED_FORMATS_INVALID(401),  //The requested formats in the Accept header entry are not matching the formats offered by the ASPSP.");
 

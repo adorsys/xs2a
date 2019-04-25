@@ -19,15 +19,18 @@ package de.adorsys.psd2.xs2a.domain.pis;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
-public class BulkPayment {
+public class BulkPayment implements AccountReferenceCollector {
     private String paymentId;
     private Boolean batchBookingPreferred;
     @NotNull
@@ -38,4 +41,15 @@ public class BulkPayment {
     private TransactionStatus transactionStatus;
     private List<PsuIdData> psuDataList;
     private OffsetDateTime statusChangeTimestamp;
+
+    @Override
+    public Set<AccountReference> getAccountReferences() {
+        Set<AccountReference> accountReferences = payments.stream()
+                                                      .map(SinglePayment::getAccountReferences)
+                                                      .flatMap(Set::stream)
+                                                      .collect(Collectors.toSet());
+        accountReferences.add(debtorAccount);
+
+        return accountReferences;
+    }
 }

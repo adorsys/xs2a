@@ -21,7 +21,6 @@ import de.adorsys.psd2.model.ConfirmationOfFunds;
 import de.adorsys.psd2.model.InlineResponse200;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
-import de.adorsys.psd2.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.psd2.xs2a.service.FundsConfirmationService;
 import de.adorsys.psd2.xs2a.service.mapper.FundsConfirmationModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -57,13 +56,10 @@ public class FundsConfirmationControllerTest {
     private ResponseMapper responseMapper;
     @Mock
     private FundsConfirmationModelMapper fundsConfirmationModelMapper;
-    @Mock
-    private AccountReferenceValidationService referenceValidationService;
 
     @Before
     public void setUp() {
         when(fundsConfirmationService.fundsConfirmation(any())).thenReturn(readResponseObject());
-        when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 
     @Test
@@ -85,13 +81,13 @@ public class FundsConfirmationControllerTest {
 
     private ResponseObject<FundsConfirmationResponse> readResponseObject() {
         return ResponseObject.<FundsConfirmationResponse>builder()
-            .body(new FundsConfirmationResponse(true)).build();
+                   .body(new FundsConfirmationResponse(true)).build();
     }
 
     private ResponseEntity getInlineResponse() {
         return new ResponseEntity<>(new InlineResponse200().fundsAvailable(true), HttpStatus.OK);
     }
-    
+
     private ConfirmationOfFunds getConfirmationOfFunds() throws IOException {
         return new Gson().fromJson(IOUtils.resourceToString(FUNDS_REQ_DATA, UTF_8), ConfirmationOfFunds.class);
     }

@@ -24,3 +24,19 @@ and `updatePsuAuthentication` (if PSU-ID is given in request).
 - when authorization sub-resource is not created yet and no more additional data should be expected from PSU then response contains link `startAuthorisation`
 - when authorization sub-resource is not created yet and some additional data should be expected from PSU then response contains link `startAuthorisationWithPsuIdentification` (if PSU-ID is not given in request)
 and `startAuthorisationWithPsuAuthentication` (if PSU-ID is given in request).
+
+## Feature: Validation for payment initiation and consent creation
+From now on, the endpoints for payment initiation and consent creation
+(POST `/v1/{payment-service}/{payment-product}`, POST `/v1/consents`) have multi-layered validation:
+- HTTP headers and bodies are validated before the initial request reaches the Spring RestController layer (interceptor is used);
+- Business validation is implemented after the RestController layer.
+
+First stage check the format of headers and fields and returns the response with the list of human-readable errors.
+This response always has `400 FORMAT ERROR` HTTP code in case of any errors. If any new error occurs - it is added to
+the list. The second stage (business validation) is launched only after first stage succeeded and returns the appropriate
+HTTP code and error information according to the documentation. 
+
+## Bugfix: Fix global consent creation returning wrong error code
+From now on, attempting to create global consent(i. e. consent that contains only `"allPsd2": "allAccounts"` in its 
+`access` property) with `allPsd2Support` property in ASPSP profile set to `false` will result in `405 SERVICE_INVALID` 
+error( instead of previous `400 PARAMETER_NOT_SUPPORTED`) being returned in the response.
