@@ -58,6 +58,14 @@ public class AisConsentAuthorisationServiceRemote implements AisConsentAuthorisa
     }
 
     @Override
+    public Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request){
+        CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
+                                                                                           request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
+
+        return Optional.ofNullable(response);
+    }
+
+    @Override
     public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
         return Optional.ofNullable(consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId)
                                        .getBody());

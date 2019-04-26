@@ -78,7 +78,7 @@ public class PisDecoupledScaStartAuthorisationStageTest {
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = buildSpiPaymentInfo();
 
     @InjectMocks
-    private PisDecoupledScaStartAuthorisationStage pisDecoupledScaStartAuthorisationStage;
+    private PisDecoupledScaReceivedAuthorisationStage pisDecoupledScaStartAuthorisationStage;
 
     @Mock
     private PaymentAuthorisationSpi paymentAuthorisationSpi;

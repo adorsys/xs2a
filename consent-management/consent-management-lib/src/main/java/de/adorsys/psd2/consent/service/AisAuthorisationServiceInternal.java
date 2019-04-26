@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationService;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
@@ -70,12 +71,34 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
      */
     @Override
     @Transactional
+    @Deprecated //TODO in sprint 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
     public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
         return aisConsentRepository.findByExternalId(consentId)
                    .filter(con -> !con.getConsentStatus().isFinalisedStatus())
                    .map(aisConsent -> {
                        closePreviousAuthorisationsByPsu(aisConsent.getAuthorizations(), request.getPsuData());
-                       return saveNewAuthorization(aisConsent, request);
+                       AisConsentAuthorization newAuthorisation = saveNewAuthorization(aisConsent, request);
+                       return newAuthorisation.getExternalId();
+                   });
+    }
+
+    /**
+     * Create consent authorization
+     *
+     * @param consentId id of consent
+     * @param request   needed parameters for creating consent authorization
+     * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
+     */
+    @Override
+    @Transactional
+    public Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) {
+        return aisConsentRepository.findByExternalId(consentId)
+                   .filter(con -> !con.getConsentStatus().isFinalisedStatus())
+                   .map(aisConsent -> {
+                       closePreviousAuthorisationsByPsu(aisConsent.getAuthorizations(), request.getPsuData());
+                       AisConsentAuthorization newAuthorisation = saveNewAuthorization(aisConsent, request);
+
+                       return new CreateAisConsentAuthorizationResponse(newAuthorisation.getExternalId(), newAuthorisation.getScaStatus());
                    });
     }
 
@@ -198,7 +221,7 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
             return false;
         }
 
-        if (ScaStatus.STARTED == aisConsentAuthorisation.getScaStatus()) {
+        if (ScaStatus.RECEIVED == aisConsentAuthorisation.getScaStatus()) {
             PsuData psuRequest = psuDataMapper.mapToPsuData(psuDataFromRequest);
 
             if (!cmsPsuService.isPsuDataRequestCorrect(psuRequest, aisConsentAuthorisation.getPsuData())) {
@@ -248,22 +271,25 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
         return true;
     }
 
-    private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
+    private AisConsentAuthorization saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
         Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), aisConsent.getPsuDataList());
+
+        ScaStatus scaStatus = request.getScaStatus();
 
         if (psuDataOptional.isPresent()) {
             PsuData psuData = psuDataOptional.get();
             aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, aisConsent.getPsuDataList()));
             consentAuthorization.setPsuData(psuData);
+            scaStatus = ScaStatus.PSUIDENTIFIED;
         }
 
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
         consentAuthorization.setConsent(aisConsent);
-        consentAuthorization.setScaStatus(request.getScaStatus());
+        consentAuthorization.setScaStatus(scaStatus);
         consentAuthorization.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(aspspProfileService.getAspspSettings().getRedirectUrlExpirationTimeMs(), ChronoUnit.MILLIS));
         consentAuthorization.setScaApproach(request.getScaApproach());
-        return aisConsentAuthorisationRepository.save(consentAuthorization).getExternalId();
+        return aisConsentAuthorisationRepository.save(consentAuthorization);
     }
 
     private Optional<AisConsentAuthorization> findAuthorisationInConsent(String authorisationId, AisConsent consent) {

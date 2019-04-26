@@ -29,7 +29,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation.PisScaStartAuthorisationStage;
+import de.adorsys.psd2.xs2a.service.authorization.pis.stage.initiation.PisScaReceivedAuthorisationStage;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +61,7 @@ public class PisAuthorisationServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST_CANCELLED = buildCreatePisAuthorisationRequestCancelled();
     private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST_CREATED = buildCreatePisAuthorisationRequestCreated();
-    private static final CreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreatePisAuthorisationResponse(AUTHORISATION_ID);
+    private static final CreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS);
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = buildXs2aUpdatePisCommonPaymentPsuDataRequest();
     private static final GetPisAuthorisationResponse GET_PIS_AUTHORISATION_RESPONSE = buildGetPisAuthorisationResponse();
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse STAGE_RESPONSE = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCA_STATUS, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
@@ -79,7 +79,7 @@ public class PisAuthorisationServiceTest {
     @Mock
     private ScaApproachResolver scaApproachResolver;
     @Mock
-    private PisScaStartAuthorisationStage pisScaStartAuthorisationStage;
+    private PisScaReceivedAuthorisationStage pisScaReceivedAuthorisationStage;
 
     @Before
     public void setUp() {
@@ -129,8 +129,8 @@ public class PisAuthorisationServiceTest {
         when(pisCommonPaymentServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
         when(pisScaStageAuthorisationFactory.getService(any(String.class)))
-            .thenReturn(pisScaStartAuthorisationStage);
-        when(pisScaStartAuthorisationStage.apply(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, GET_PIS_AUTHORISATION_RESPONSE))
+            .thenReturn(pisScaReceivedAuthorisationStage);
+        when(pisScaReceivedAuthorisationStage.apply(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, GET_PIS_AUTHORISATION_RESPONSE))
             .thenReturn(STAGE_RESPONSE);
         when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(STAGE_RESPONSE))
             .thenReturn(UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
@@ -148,8 +148,8 @@ public class PisAuthorisationServiceTest {
         when(pisCommonPaymentServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(GET_PIS_AUTHORISATION_RESPONSE));
         when(pisScaStageAuthorisationFactory.getService(any(String.class)))
-            .thenReturn(pisScaStartAuthorisationStage);
-        when(pisScaStartAuthorisationStage.apply(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, GET_PIS_AUTHORISATION_RESPONSE))
+            .thenReturn(pisScaReceivedAuthorisationStage);
+        when(pisScaReceivedAuthorisationStage.apply(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, GET_PIS_AUTHORISATION_RESPONSE))
             .thenReturn(STAGE_RESPONSE);
         when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(STAGE_RESPONSE))
             .thenReturn(UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);

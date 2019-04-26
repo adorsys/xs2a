@@ -335,7 +335,7 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     private CreatePisAuthorisationResponse buildCreatePisAuthorisationResponse() {
-        return new CreatePisAuthorisationResponse(AUTHORISATION_ID);
+        return new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED);
     }
 
     private UpdatePisCommonPaymentPsuDataRequest buildUpdatePisCommonPaymentPsuDataRequest() {

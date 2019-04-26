@@ -75,9 +75,9 @@ public class AisConsentControllerTest {
         when(aisConsentService.getConsentStatusById(eq(WRONG_CONSENT_ID))).thenReturn(Optional.empty());
         when(aisConsentService.updateConsentStatusById(eq(CONSENT_ID), eq(CONSENT_STATUS))).thenReturn(true);
         when(aisConsentService.updateConsentStatusById(eq(WRONG_CONSENT_ID), eq(WRONG_CONSENT_STATUS))).thenReturn(false);
-        when(aisAuthorisationServiceEncrypted.createAuthorization(eq(CONSENT_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.of(AUTHORIZATION_ID));
-        when(aisAuthorisationServiceEncrypted.createAuthorization(eq(WRONG_CONSENT_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.empty());
-        when(aisAuthorisationServiceEncrypted.createAuthorization(eq(CONSENT_ID), eq(WRONG_CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.empty());
+        when(aisAuthorisationServiceEncrypted.createAuthorizationWithResponse(eq(CONSENT_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
+        when(aisAuthorisationServiceEncrypted.createAuthorizationWithResponse(eq(WRONG_CONSENT_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.empty());
+        when(aisAuthorisationServiceEncrypted.createAuthorizationWithResponse(eq(CONSENT_ID), eq(WRONG_CONSENT_AUTHORIZATION_REQUEST))).thenReturn(Optional.empty());
         when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(eq(AUTHORIZATION_ID_1), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(true);
         when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(eq(AUTHORIZATION_ID), eq(CONSENT_AUTHORIZATION_REQUEST))).thenReturn(false);
         when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(eq(WRONG_AUTHORIZATION_ID), eq(WRONG_CONSENT_AUTHORIZATION_REQUEST))).thenReturn(false);
@@ -304,5 +304,8 @@ public class AisConsentControllerTest {
         return authorizationResponse;
     }
 
+    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
+        return new CreateAisConsentAuthorizationResponse(AUTHORIZATION_ID, ScaStatus.RECEIVED);
+    }
 
 }

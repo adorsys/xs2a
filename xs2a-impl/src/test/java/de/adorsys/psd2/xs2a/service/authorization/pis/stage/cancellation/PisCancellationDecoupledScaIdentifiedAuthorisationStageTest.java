@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisCancellationDecoupledScaIdentifiedAuthorisationStageTest {
-    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getServiceName(ScaApproach.DECOUPLED, ScaStatus.STARTED);
+    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getServiceName(ScaApproach.DECOUPLED, ScaStatus.RECEIVED);
 
     @InjectMocks
     private PisCancellationDecoupledScaIdentifiedAuthorisationStage pisCancellationDecoupledScaIdentifiedAuthorisationStage;
@@ -47,16 +47,16 @@ public class PisCancellationDecoupledScaIdentifiedAuthorisationStageTest {
     @Mock
     private GetPisAuthorisationResponse response;
     @Mock
-    private PisCancellationDecoupledScaStartAuthorisationStage pisCancellationDecoupledScaStartAuthorisationStage;
+    private PisCancellationDecoupledScaReceivedAuthorisationStage pisCancellationDecoupledScaReceivedAuthorisationStage;
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResponse;
 
     @Test
     public void apply_Success() {
         when(pisScaStageAuthorisationFactory.getService(DECOUPLED_SERVICE_NAME))
-            .thenReturn(pisCancellationDecoupledScaStartAuthorisationStage);
+            .thenReturn(pisCancellationDecoupledScaReceivedAuthorisationStage);
 
-        when(pisCancellationDecoupledScaStartAuthorisationStage.apply(request, response))
+        when(pisCancellationDecoupledScaReceivedAuthorisationStage.apply(request, response))
             .thenReturn(expectedResponse);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaIdentifiedAuthorisationStage.apply(request, response);
@@ -64,7 +64,7 @@ public class PisCancellationDecoupledScaIdentifiedAuthorisationStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(expectedResponse);
         verify(pisScaStageAuthorisationFactory).getService(DECOUPLED_SERVICE_NAME);
-        verify(pisCancellationDecoupledScaStartAuthorisationStage).apply(request, response);
+        verify(pisCancellationDecoupledScaReceivedAuthorisationStage).apply(request, response);
     }
 
 }

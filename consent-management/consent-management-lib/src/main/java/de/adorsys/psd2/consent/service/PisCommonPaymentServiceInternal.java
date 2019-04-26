@@ -55,8 +55,6 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.PATC;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
-import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
-import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.STARTED;
 
 @Slf4j
 @Service
@@ -154,7 +152,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                        closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
                        return saveNewAuthorisation(pmt, request);
                    })
-                   .map(c -> new CreatePisAuthorisationResponse(c.getExternalId()));
+                   .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus()));
     }
 
     @Override
@@ -166,7 +164,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
                        closePreviousAuthorisationsByPsu(pmt.getAuthorizations(), request.getAuthorizationType(), request.getPsuData());
                        return saveNewAuthorisation(pmt, request);
                    })
-                   .map(c -> new CreatePisAuthorisationResponse(c.getExternalId()));
+                   .map(c -> new CreatePisAuthorisationResponse(c.getExternalId(), c.getScaStatus()));
     }
 
     /**
@@ -417,14 +415,17 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         PisAuthorization consentAuthorisation = new PisAuthorization();
         Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), paymentData.getPsuDataList());
 
+        ScaStatus scaStatus = ScaStatus.RECEIVED;
+
         if (psuDataOptional.isPresent()) {
             PsuData psuData = psuDataOptional.get();
             paymentData.setPsuDataList(cmsPsuService.enrichPsuData(psuData, paymentData.getPsuDataList()));
             consentAuthorisation.setPsuData(psuData);
+            scaStatus = ScaStatus.PSUIDENTIFIED;
         }
 
         consentAuthorisation.setExternalId(UUID.randomUUID().toString());
-        consentAuthorisation.setScaStatus(STARTED);
+        consentAuthorisation.setScaStatus(scaStatus);
         consentAuthorisation.setAuthorizationType(request.getAuthorizationType());
         consentAuthorisation.setRedirectUrlExpirationTimestamp(countRedirectUrlExpirationTimestampForAuthorisationType(request.getAuthorizationType()));
         consentAuthorisation.setScaApproach(request.getScaApproach());
@@ -497,7 +498,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         PsuData psuDataInAuthorisation = pisAuthorisation.getPsuData();
         PsuData psuDataInRequest = psuDataMapper.mapToPsuData(request.getPsuData());
 
-        if (STARTED == pisAuthorisation.getScaStatus()) {
+        if (ScaStatus.RECEIVED == pisAuthorisation.getScaStatus()) {
 
             if (!cmsPsuService.isPsuDataRequestCorrect(psuDataInRequest, psuDataInAuthorisation)) {
                 log.info("Authorisation ID: [{}], SCA status: [{}]. Update consent authorisation failed, because psu data request does not match stored psu data",
@@ -526,7 +527,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
             }
         }
 
-        if (SCAMETHODSELECTED == request.getScaStatus()) {
+        if (ScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
             String chosenMethod = request.getAuthenticationMethodId();
             if (StringUtils.isNotBlank(chosenMethod)) {
                 pisAuthorisation.setChosenScaMethod(chosenMethod);

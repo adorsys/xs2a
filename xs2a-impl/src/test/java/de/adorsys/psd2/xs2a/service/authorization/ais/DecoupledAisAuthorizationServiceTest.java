@@ -1,5 +1,6 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -38,7 +39,7 @@ public class DecoupledAisAuthorizationServiceTest {
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType");
     private static final AccountConsentAuthorization ACCOUNT_CONSENT_AUTHORIZATION = buildAccountConsentAuthorization();
-    private static final ScaStatus SCA_STATUS = ScaStatus.STARTED;
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
     private static final List<String> STRING_LIST = Collections.singletonList(AUTHORISATION_ID);
     private static final AccountConsent ACCOUNT_CONSENT = buildConsent(CONSENT_ID);
@@ -65,7 +66,7 @@ public class DecoupledAisAuthorizationServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(ACCOUNT_CONSENT));
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA))
-            .thenReturn(Optional.of(AUTHORISATION_ID));
+            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
 
         // When
         Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
@@ -197,7 +198,7 @@ public class DecoupledAisAuthorizationServiceTest {
         CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
         resp.setConsentId(CONSENT_ID);
         resp.setAuthorizationId(AUTHORISATION_ID);
-        resp.setScaStatus(ScaStatus.STARTED);
+        resp.setScaStatus(ScaStatus.RECEIVED);
         resp.setResponseLinkType(ConsentAuthorizationResponseLinkType.UPDATE_PSU_AUTHENTICATION);
         return resp;
     }
@@ -213,11 +214,15 @@ public class DecoupledAisAuthorizationServiceTest {
 
     private static AccountConsentAuthorization buildAccountConsentAuthorization() {
         AccountConsentAuthorization accountConsentAuthorization = new AccountConsentAuthorization();
-        accountConsentAuthorization.setScaStatus(ScaStatus.STARTED);
+        accountConsentAuthorization.setScaStatus(ScaStatus.RECEIVED);
         return accountConsentAuthorization;
     }
 
     private static AccountConsent buildConsent(String id) {
         return  new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), 0);
+    }
+
+    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse(){
+        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED);
     }
 }

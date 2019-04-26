@@ -92,7 +92,7 @@ public class PisCommonPaymentServiceInternalTest {
     private static final String FINALISED_CANCELLATION_AUTHORISATION_ID = "2a112130-6a96-4941-a220-2da8a4af2c65";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
-    private static final ScaStatus SCA_STATUS = ScaStatus.STARTED;
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("id", "type", "corporate ID", "corporate type");
     private final static PsuData PSU_DATA = new PsuData("id", "type", "corporate ID", "corporate type");
 
@@ -183,7 +183,7 @@ public class PisCommonPaymentServiceInternalTest {
     @Test
     public void updateConsentAuthorisation_FinalisedStatus_Fail() {
         //Given
-        ScaStatus expectedScaStatus = ScaStatus.STARTED;
+        ScaStatus expectedScaStatus = ScaStatus.RECEIVED;
         ScaStatus actualScaStatus = ScaStatus.FINALISED;
 
         UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(expectedScaStatus);
@@ -205,7 +205,7 @@ public class PisCommonPaymentServiceInternalTest {
         //Given
         PsuIdData psuIdData = new PsuIdData("new id", "new type", "new corporate ID", "new corporate type");
         ArgumentCaptor<PisAuthorization> argument = ArgumentCaptor.forClass(PisAuthorization.class);
-        UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus.STARTED);
+        UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus.RECEIVED);
         updatePisCommonPaymentPsuDataRequest.setPsuData(psuIdData);
         PsuData expectedPsu = psuDataMapper.mapToPsuData(psuIdData);
 
@@ -225,11 +225,11 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void updatePisAuthorisation_startedStatus_shouldUpdatePsuDataInPayment() {
+    public void updatePisAuthorisation_receivedStatus_shouldUpdatePsuDataInPayment() {
         //Given
         ArgumentCaptor<PisAuthorization> savedAuthorisationCaptor = ArgumentCaptor.forClass(PisAuthorization.class);
         UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest =
-            buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus.STARTED, PSU_ID_DATA);
+            buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus.RECEIVED, PSU_ID_DATA);
         List<PsuData> psuDataList = Collections.singletonList(PSU_DATA);
 
         when(cmsPsuService.enrichPsuData(PSU_DATA, Collections.emptyList()))
@@ -305,7 +305,7 @@ public class PisCommonPaymentServiceInternalTest {
     @Test
     public void updateConsentCancellationAuthorisation_FinalisedStatus_Fail() {
         //Given
-        ScaStatus expectedScaStatus = ScaStatus.STARTED;
+        ScaStatus expectedScaStatus = ScaStatus.RECEIVED;
         ScaStatus actualScaStatus = ScaStatus.FINALISED;
 
         PisAuthorization finalisedCancellationAuthorization = buildFinalisedConsentAuthorisation(actualScaStatus);
@@ -342,7 +342,7 @@ public class PisCommonPaymentServiceInternalTest {
         // Then
         assertTrue(actual.isPresent());
         verify(pisAuthorisationRepository).save(argument.capture());
-        assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
+        assertSame(argument.getValue().getScaStatus(), ScaStatus.PSUIDENTIFIED);
     }
 
     @NotNull

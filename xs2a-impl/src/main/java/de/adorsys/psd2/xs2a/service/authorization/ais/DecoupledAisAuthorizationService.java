@@ -57,13 +57,13 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
             return Optional.empty();
         }
 
-        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.STARTED, psuData)
-                   .map(authId -> {
+        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.RECEIVED, psuData)
+                   .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
                        resp.setConsentId(consentId);
-                       resp.setAuthorizationId(authId);
-                       resp.setScaStatus(ScaStatus.STARTED);
+                       resp.setAuthorizationId(auth.getAuthorizationId());
+                       resp.setScaStatus(auth.getScaStatus());
                        resp.setResponseLinkType(getResponseLinkType(psuData, psuData));
 
                        return resp;

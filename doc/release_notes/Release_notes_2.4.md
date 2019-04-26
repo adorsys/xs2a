@@ -40,3 +40,6 @@ HTTP code and error information according to the documentation.
 From now on, attempting to create global consent(i. e. consent that contains only `"allPsd2": "allAccounts"` in its 
 `access` property) with `allPsd2Support` property in ASPSP profile set to `false` will result in `405 SERVICE_INVALID` 
 error( instead of previous `400 PARAMETER_NOT_SUPPORTED`) being returned in the response.
+
+## Bugfix: Initial SCA-Status 'started' is changed to 'received'
+From now on, all authorisations (AIS and PIS) are created with `RECEIVED` ScaStatus instead of 'STARTED'. 

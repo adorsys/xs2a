@@ -110,7 +110,7 @@ public class AisAuthorisationServiceInternalTest {
 
     @Before
     public void setUp() {
-        aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.STARTED);
+        aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.RECEIVED);
         aisConsentAuthorisationList.add(aisConsentAuthorisation);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
         when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
@@ -187,7 +187,7 @@ public class AisAuthorisationServiceInternalTest {
         // Then
         assertTrue(actual.isPresent());
         verify(aisConsentAuthorisationRepository).save(argument.capture());
-        assertSame(argument.getValue().getScaStatus(), ScaStatus.STARTED);
+        assertSame(argument.getValue().getScaStatus(), ScaStatus.PSUIDENTIFIED);
 
         verify(aisConsentAuthorisationRepository).save(failedAuthorisationsArgument.capture());
         List<AisConsentAuthorization> failedAuthorisations = failedAuthorisationsArgument.getValue();
