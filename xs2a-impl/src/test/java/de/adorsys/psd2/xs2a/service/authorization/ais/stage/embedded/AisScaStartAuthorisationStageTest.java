@@ -91,7 +91,7 @@ public class AisScaStartAuthorisationStageTest {
     private static final String DECOUPLED_AUTHENTICATION_METHOD_ID = "decoupled method";
 
     @InjectMocks
-    private AisScaStartAuthorisationStage scaStartAuthorisationStage;
+    private AisScaReceivedAuthorisationStage scaReceivedAuthorisationStage;
 
     @Mock
     private Xs2aAisConsentService aisConsentService;
@@ -176,7 +176,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
         //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
@@ -197,14 +197,14 @@ public class AisScaStartAuthorisationStageTest {
             .thenReturn(errorHolder);
 
         SpiResponse<SpiAuthorisationStatus> spiResponse = SpiResponse.<SpiAuthorisationStatus>builder()
-                                                    .aspspConsentData(ASPSP_CONSENT_DATA)
-                                                    .message(ERROR_MESSAGE_TEXT)
-                                                    .fail(SpiResponseStatus.LOGICAL_FAILURE);
+                                                              .aspspConsentData(ASPSP_CONSENT_DATA)
+                                                              .message(ERROR_MESSAGE_TEXT)
+                                                              .fail(SpiResponseStatus.LOGICAL_FAILURE);
 
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(spiResponse);
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
@@ -225,7 +225,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(any(UpdateConsentPsuDataResponse.class),
                                                               any(UpdateConsentPsuDataReq.class))).thenReturn(request);
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
@@ -242,7 +242,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(MULTIPLE_SPI_SCA_METHODS));
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getAvailableScaMethods()).isEqualTo(MULTIPLE_CMS_SCA_METHODS);
@@ -266,7 +266,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAuthorisationCode(SPI_CONTEXT_DATA, TEST_AUTHENTICATION_METHOD_ID, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorizationCodeResult()));
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getChosenScaMethod()).isEqualTo(buildXs2aSmsAuthenticationObject());
@@ -289,7 +289,7 @@ public class AisScaStartAuthorisationStageTest {
         when(commonDecoupledAisService.proceedDecoupledApproach(any(), any(), eq(DECOUPLED_AUTHENTICATION_METHOD_ID), any()))
             .thenReturn(buildUpdateConsentPsuDataResponse());
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getPsuMessage()).isEqualTo(PSU_SUCCESS_MESSAGE);
@@ -308,7 +308,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(availableScaMethods));
 
-        scaStartAuthorisationStage.apply(request);
+        scaReceivedAuthorisationStage.apply(request);
 
         verify(scaApproachResolver).forceDecoupledScaApproach();
     }
@@ -329,7 +329,7 @@ public class AisScaStartAuthorisationStageTest {
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(new SpiAuthorizationCodeResult()), ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
@@ -346,7 +346,7 @@ public class AisScaStartAuthorisationStageTest {
         when(aisConsentSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(NONE_SPI_SCA_METHOD));
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
@@ -359,7 +359,7 @@ public class AisScaStartAuthorisationStageTest {
         when(request.isUpdatePsuIdentification()).thenReturn(true);
         when(request.getPsuData()).thenReturn(PSU_ID_DATA);
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
@@ -371,7 +371,7 @@ public class AisScaStartAuthorisationStageTest {
         when(request.isUpdatePsuIdentification()).thenReturn(true);
         when(request.getPsuData()).thenReturn(null);
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);
         assertThat(actualResponse.getMessageError().getErrorType()).isEqualTo(ErrorType.AIS_400);
@@ -384,7 +384,7 @@ public class AisScaStartAuthorisationStageTest {
         when(request.getConsentId()).thenReturn(WRONG_CONSENT_ID);
 
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);

@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationService;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -42,9 +43,17 @@ public class AisAuthorisationServiceInternalEncrypted implements AisConsentAutho
 
     @Override
     @Transactional
+    @Deprecated //TODO in sprint 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
     public Optional<String> createAuthorization(String encryptedConsentId, AisConsentAuthorizationRequest request) {
         return securityDataService.decryptId(encryptedConsentId)
                    .flatMap(id -> aisConsentAuthorisationService.createAuthorization(id, request));
+    }
+
+    @Override
+    @Transactional
+    public Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String encryptedConsentId, AisConsentAuthorizationRequest request) {
+        return securityDataService.decryptId(encryptedConsentId)
+                   .flatMap(id -> aisConsentAuthorisationService.createAuthorizationWithResponse(id, request));
     }
 
     @Override

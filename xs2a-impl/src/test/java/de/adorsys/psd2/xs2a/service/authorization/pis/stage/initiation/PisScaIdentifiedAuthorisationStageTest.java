@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisScaIdentifiedAuthorisationStageTest {
-    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getServiceName(ScaApproach.EMBEDDED, ScaStatus.STARTED);
+    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getServiceName(ScaApproach.EMBEDDED, ScaStatus.RECEIVED);
 
     @InjectMocks
     private PisScaIdentifiedAuthorisationStage pisScaIdentifiedAuthorisationStage;
@@ -47,16 +47,16 @@ public class PisScaIdentifiedAuthorisationStageTest {
     @Mock
     private GetPisAuthorisationResponse response;
     @Mock
-    private PisDecoupledScaStartAuthorisationStage pisDecoupledScaStartAuthorisationStage;
+    private PisDecoupledScaReceivedAuthorisationStage pisDecoupledScaReceivedAuthorisationStage;
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResponse;
 
     @Test
     public void apply_Success() {
         when(pisScaStageAuthorisationFactory.getService(DECOUPLED_SERVICE_NAME))
-            .thenReturn(pisDecoupledScaStartAuthorisationStage);
+            .thenReturn(pisDecoupledScaReceivedAuthorisationStage);
 
-        when(pisDecoupledScaStartAuthorisationStage.apply(request, response))
+        when(pisDecoupledScaReceivedAuthorisationStage.apply(request, response))
             .thenReturn(expectedResponse);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaIdentifiedAuthorisationStage.apply(request, response);
@@ -64,7 +64,7 @@ public class PisScaIdentifiedAuthorisationStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(expectedResponse);
         verify(pisScaStageAuthorisationFactory).getService(DECOUPLED_SERVICE_NAME);
-        verify(pisDecoupledScaStartAuthorisationStage).apply(request, response);
+        verify(pisDecoupledScaReceivedAuthorisationStage).apply(request, response);
     }
 
 }

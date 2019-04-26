@@ -146,8 +146,8 @@ public class AisConsentController {
         @ApiParam(name = "consent-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
-        return aisConsentAuthorisationServiceEncrypted.createAuthorization(consentId, consentAuthorization)
-                   .map(authorizationId -> new ResponseEntity<>(new CreateAisConsentAuthorizationResponse(authorizationId), HttpStatus.CREATED))
+        return aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, consentAuthorization)
+                   .map(auth -> new ResponseEntity<>(auth, HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

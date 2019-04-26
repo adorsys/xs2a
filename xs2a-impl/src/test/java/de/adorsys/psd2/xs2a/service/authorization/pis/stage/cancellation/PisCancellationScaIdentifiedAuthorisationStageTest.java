@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisCancellationScaIdentifiedAuthorisationStageTest {
-    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getServiceName(ScaApproach.EMBEDDED, ScaStatus.STARTED);
+    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getServiceName(ScaApproach.EMBEDDED, ScaStatus.RECEIVED);
 
     @InjectMocks
     private PisCancellationScaIdentifiedAuthorisationStage pisCancellationScaIdentifiedAuthorisationStage;
@@ -47,16 +47,16 @@ public class PisCancellationScaIdentifiedAuthorisationStageTest {
     @Mock
     private GetPisAuthorisationResponse response;
     @Mock
-    private PisCancellationScaStartAuthorisationStage pisCancellationScaStartAuthorisationStage;
+    private PisCancellationScaReceivedAuthorisationStage pisCancellationScaReceivedAuthorisationStage;
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResponse;
 
     @Test
     public void apply_Success() {
         when(pisScaStageAuthorisationFactory.getService(DECOUPLED_SERVICE_NAME))
-            .thenReturn(pisCancellationScaStartAuthorisationStage);
+            .thenReturn(pisCancellationScaReceivedAuthorisationStage);
 
-        when(pisCancellationScaStartAuthorisationStage.apply(request, response))
+        when(pisCancellationScaReceivedAuthorisationStage.apply(request, response))
             .thenReturn(expectedResponse);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaIdentifiedAuthorisationStage.apply(request, response);
@@ -64,7 +64,7 @@ public class PisCancellationScaIdentifiedAuthorisationStageTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse).isEqualTo(expectedResponse);
         verify(pisScaStageAuthorisationFactory).getService(DECOUPLED_SERVICE_NAME);
-        verify(pisCancellationScaStartAuthorisationStage).apply(request, response);
+        verify(pisCancellationScaReceivedAuthorisationStage).apply(request, response);
     }
 
 }

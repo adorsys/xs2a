@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -55,7 +54,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -156,8 +158,7 @@ public class ConsentService {
         CreateConsentResponse createConsentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, multilevelScaRequired);
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
-        if (isEmbeddedOrRedirectScaApproach()
-                && authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
+        if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
             proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, consentId);
         }
 
@@ -497,11 +498,6 @@ public class ConsentService {
     private void proceedImplicitCaseForCreateConsent(CreateConsentResponse response, PsuIdData psuData, String consentId) {
         aisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
             .ifPresent(a -> response.setAuthorizationId(a.getAuthorizationId()));
-    }
-
-    private boolean isEmbeddedOrRedirectScaApproach() {
-        return EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.REDIRECT)
-                   .contains(scaApproachResolver.resolveScaApproach());
     }
 
     private SpiContextData getSpiContextData(List<PsuIdData> psuIdDataList) {

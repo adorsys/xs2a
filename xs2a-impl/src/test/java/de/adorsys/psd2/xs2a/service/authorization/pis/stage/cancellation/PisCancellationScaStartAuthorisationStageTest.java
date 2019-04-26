@@ -88,7 +88,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
     private static final SinglePayment XS2A_PAYMENT = new SinglePayment();
 
     @InjectMocks
-    private PisCancellationScaStartAuthorisationStage pisCancellationScaStartAuthorisationStage;
+    private PisCancellationScaReceivedAuthorisationStage pisCancellationScaReceivedAuthorisationStage;
     @Mock
     private PaymentCancellationSpi paymentCancellationSpi;
     @Mock
@@ -141,7 +141,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPsuData()).thenReturn(PSU_ID_DATA);
         when(pisPsuDataService.getPsuDataByPaymentId(PAYMENT_ID)).thenReturn(Collections.singletonList(PSU_ID_DATA));
         //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisCancellationScaReceivedAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
         //Then
         assertThat(response.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
     }
@@ -152,7 +152,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(true);
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPsuData()).thenReturn(null);
         //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisCancellationScaReceivedAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
         //Then
         assertThat(response.getScaStatus()).isEqualTo(ScaStatus.FAILED);
         assertThat(response.getErrorHolder().getErrorType()).isEqualTo(ErrorType.PIS_400);
@@ -165,7 +165,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(true);
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPsuData()).thenReturn(PSU_ID_DATA_WRONG);
         //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisCancellationScaReceivedAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
         //Then
         assertThat(response.getScaStatus()).isEqualTo(ScaStatus.FAILED);
         assertThat(response.getErrorHolder().getErrorType()).isEqualTo(ErrorType.PIS_401);
@@ -182,7 +182,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.CANC)).thenReturn(true);
 
         //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaReceivedAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
 
         //Then
         assertThat(actualResponse).isNotNull();
@@ -200,7 +200,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(buildSpiSmsAuthenticationObject())).thenReturn(buildXs2aSmsAuthenticationObject());
 
         //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaReceivedAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
 
         //Then
         assertThat(actualResponse).isNotNull();
@@ -217,7 +217,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(MULTIPLE_SPI_SCA_METHODS)).thenReturn(MULTIPLE_XS2A_SCA_METHODS);
 
         //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaStartAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaReceivedAuthorisationStage.apply(xs2aUpdatePisCommonPaymentPsuDataRequest, getPisAuthorisationResponse);
 
         //Then
         assertThat(actualResponse).isNotNull();

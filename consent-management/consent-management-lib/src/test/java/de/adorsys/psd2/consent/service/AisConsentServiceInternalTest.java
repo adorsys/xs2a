@@ -35,7 +35,6 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
-import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
@@ -115,7 +114,7 @@ public class AisConsentServiceInternalTest {
 
     @Before
     public void setUp() {
-        aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.STARTED);
+        aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.RECEIVED);
         aisConsentAuthorisationList.add(aisConsentAuthorisation);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
     }

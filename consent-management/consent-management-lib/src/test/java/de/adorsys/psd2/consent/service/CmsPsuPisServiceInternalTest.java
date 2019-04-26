@@ -48,7 +48,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -588,7 +587,7 @@ public class CmsPsuPisServiceInternalTest {
 
     private PisAuthorization buildExpiredAuthorisation() {
         PisAuthorization pisAuthorisation = new PisAuthorization();
-        pisAuthorisation.setScaStatus(ScaStatus.STARTED);
+        pisAuthorisation.setScaStatus(ScaStatus.RECEIVED);
         pisAuthorisation.setAuthorizationType(CmsAuthorisationType.CREATED);
         pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
         pisAuthorisation.setExternalId(EXPIRED_AUTHORISATION_ID);

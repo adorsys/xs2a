@@ -46,13 +46,13 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
-        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.STARTED, psuData)
-                   .map(authId -> {
+        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.RECEIVED, psuData)
+                   .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
                        resp.setConsentId(consentId);
-                       resp.setAuthorizationId(authId);
-                       resp.setScaStatus(ScaStatus.STARTED);
+                       resp.setAuthorizationId(auth.getAuthorizationId());
+                       resp.setScaStatus(auth.getScaStatus());
                        resp.setResponseLinkType(SCA_REDIRECT);
 
                        return resp;

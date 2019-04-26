@@ -93,7 +93,7 @@ public class PisScaStartAuthorisationStageTest {
     private static final List<SpiAuthenticationObject> NONE_SPI_SCA_METHOD = Collections.emptyList();
 
     @InjectMocks
-    private PisScaStartAuthorisationStage pisScaStartAuthorisationStage;
+    private PisScaReceivedAuthorisationStage pisScaReceivedAuthorisationStage;
 
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
@@ -170,7 +170,7 @@ public class PisScaStartAuthorisationStageTest {
         when(request.isUpdatePsuIdentification()).thenReturn(true);
         when(request.getPsuData()).thenReturn(PSU_ID_DATA);
         //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(request, response);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(request, response);
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
     }
@@ -181,7 +181,7 @@ public class PisScaStartAuthorisationStageTest {
         when(request.isUpdatePsuIdentification()).thenReturn(true);
         when(request.getPsuData()).thenReturn(null);
         //When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(request, response);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(request, response);
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);
         assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.PIS_400);
@@ -201,7 +201,7 @@ public class PisScaStartAuthorisationStageTest {
             .thenReturn(spiErrorMessage);
 
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -229,7 +229,7 @@ public class PisScaStartAuthorisationStageTest {
             .thenReturn(spiErrorMessage);
 
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
         // Then
 
         assertThat(actualResponse.hasError()).isTrue();
@@ -270,7 +270,7 @@ public class PisScaStartAuthorisationStageTest {
             .thenReturn(spiErrorMessage);
 
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
         // Then
 
         assertThat(actualResponse.hasError()).isTrue();
@@ -315,7 +315,7 @@ public class PisScaStartAuthorisationStageTest {
             .thenReturn(spiErrorMessage);
 
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -361,7 +361,7 @@ public class PisScaStartAuthorisationStageTest {
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACCP))
             .thenReturn(true);
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
@@ -401,7 +401,7 @@ public class PisScaStartAuthorisationStageTest {
         when(pisCommonDecoupledService.proceedDecoupledInitiation(eq(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID)), any(), eq(AUTHENTICATION_METHOD_ID)))
             .thenReturn(mockedExpectedResponse);
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         assertThat(actualResponse).isNotNull();
         verify(scaApproachResolver).forceDecoupledScaApproach();
@@ -452,7 +452,7 @@ public class PisScaStartAuthorisationStageTest {
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(any()))
             .thenReturn(xs2aAuthenticationObject);
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
@@ -490,7 +490,7 @@ public class PisScaStartAuthorisationStageTest {
         when(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(MULTIPLE_SPI_SCA_METHODS))
             .thenReturn(xs2aAuthenticationObjects);
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaStartAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisScaReceivedAuthorisationStage.apply(buildRequest(AUTHENTICATION_METHOD_ID, PAYMENT_ID), buildResponse(PAYMENT_ID));
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
