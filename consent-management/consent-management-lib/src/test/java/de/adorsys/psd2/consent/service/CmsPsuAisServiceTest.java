@@ -52,7 +52,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -200,7 +199,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentAuthorisationRepository.findOne(any())).thenReturn(Optional.ofNullable(aisConsentAuthorization));
 
         // Then
-        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.STARTED, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Assert
         assertTrue(updateAuthorisationStatus);
@@ -217,7 +216,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentRepository.findOne(any())).thenReturn(Optional.ofNullable(aisConsent));
 
         // Then
-        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID_NOT_EXIST, ScaStatus.STARTED, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID_NOT_EXIST, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Assert
         assertFalse(updateAuthorisationStatus);

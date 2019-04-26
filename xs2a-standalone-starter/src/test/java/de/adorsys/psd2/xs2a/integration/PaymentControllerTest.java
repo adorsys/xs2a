@@ -81,6 +81,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PaymentControllerTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
@@ -125,7 +126,7 @@ public class PaymentControllerTest {
             .willReturn(Optional.of(Collections.singletonList(getPsuIdData())));
 
         given(pisCommonPaymentServiceEncrypted.createAuthorizationCancellation(any(), any()))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(CANCELLATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(CANCELLATION_ID, SCA_STATUS)));
 
         httpHeadersExplicit.add("Content-Type", "application/json");
         httpHeadersExplicit.add("tpp-qwac-certificate", "qwac certificate");

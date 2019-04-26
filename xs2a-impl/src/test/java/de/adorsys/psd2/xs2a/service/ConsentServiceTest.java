@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -220,9 +219,6 @@ public class ConsentServiceTest {
             .thenReturn(ASPSP_CONSENT_DATA);
 
         doNothing().when(aspspConsentDataService).updateAspspConsentData(any(AspspConsentData.class));
-
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.EMBEDDED);
 
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);

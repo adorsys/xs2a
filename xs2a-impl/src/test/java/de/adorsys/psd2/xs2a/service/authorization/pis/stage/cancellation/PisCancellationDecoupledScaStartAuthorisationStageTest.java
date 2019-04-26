@@ -78,7 +78,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = buildSpiPaymentInfo();
 
     @InjectMocks
-    private PisCancellationDecoupledScaStartAuthorisationStage pisCancellationDecoupledScaStartAuthorisationStage;
+    private PisCancellationDecoupledScaReceivedAuthorisationStage pisCancellationDecoupledScaReceivedAuthorisationStage;
 
     @Mock
     private PaymentCancellationSpi paymentCancellationSpi;
@@ -150,7 +150,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
         when(spiErrorMapper.mapToErrorHolder(expectedResponse, PIS_SERVICE_TYPE))
             .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(PIS_400_ERROR_TYPE).build());
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaStartAuthorisationStage.apply(request, response);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaReceivedAuthorisationStage.apply(request, response);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
@@ -167,7 +167,7 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
         when(pisCommonDecoupledService.proceedDecoupledCancellation(request, SPI_PAYMENT_INFO))
             .thenReturn(mockedExpectedResponse);
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaStartAuthorisationStage.apply(request, response);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaReceivedAuthorisationStage.apply(request, response);
 
         assertThat(actualResponse).isNotNull();
         verify(pisCommonDecoupledService).proceedDecoupledCancellation(request, SPI_PAYMENT_INFO);

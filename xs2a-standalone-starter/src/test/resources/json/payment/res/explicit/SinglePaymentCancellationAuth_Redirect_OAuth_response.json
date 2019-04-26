@@ -1,5 +1,5 @@
 {
-  "scaStatus": "started",
+  "scaStatus": "received",
   "_links": {
     "scaOAuth": {
       "href": "http://localhost:4200/pis/cancellation/cancellationId/"

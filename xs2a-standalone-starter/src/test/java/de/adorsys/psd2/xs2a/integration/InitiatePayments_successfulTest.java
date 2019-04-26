@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
@@ -108,6 +109,8 @@ public class InitiatePayments_successfulTest {
     private static final String ASPSP_ACCOUNT_ID = "33333-33333";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
     private HttpHeaders httpHeadersImplicit = new HttpHeaders();
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
@@ -195,14 +198,14 @@ public class InitiatePayments_successfulTest {
     @Test
     public void initiateSinglePayment_implicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateSinglePayment_successful(httpHeadersImplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiateSinglePayment_implicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateSinglePayment_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
     }
 
@@ -213,35 +216,35 @@ public class InitiatePayments_successfulTest {
         given(aspspProfileService.getAspspSettings())
             .willReturn(aspspSettings);
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED)));
         initiateSinglePaymentOauth_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
     }
 
     @Test
     public void initiatePeriodicPayment_implicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiatePeriodicPayment_successful(httpHeadersImplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiatePeriodicPayment_implicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiatePeriodicPayment_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
     }
 
     @Test
     public void initiateBulkPayment_implicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateBulkPayment_successful(httpHeadersImplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiateBulkPayment_implicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateBulkPayment_successful(httpHeadersImplicit, ScaApproach.REDIRECT);
     }
 
@@ -251,41 +254,41 @@ public class InitiatePayments_successfulTest {
     @Test
     public void initiateSinglePayment_explicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED);
     }
     @Test
     public void initiateSinglePayment_explicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.REDIRECT);
     }
 
     @Test
     public void initiatePeriodicPayment_explicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiatePeriodicPayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiatePeriodicPayment_explicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiatePeriodicPayment_successful(httpHeadersExplicit, ScaApproach.REDIRECT);
     }
 
     @Test
     public void initiateBulkPayment_explicit_embedded_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.EMBEDDED)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateBulkPayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED);
     }
 
     @Test
     public void initiateBulkPayment_explicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
-            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID)));
+            .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateBulkPayment_successful(httpHeadersExplicit, ScaApproach.REDIRECT);
     }
 

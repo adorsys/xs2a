@@ -61,7 +61,7 @@ public class AisScaIdentifiedAuthorisationStage extends AisScaStage<UpdateConsen
      */
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
-        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + ScaStatus.STARTED.name());
+        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + ScaStatus.RECEIVED.name());
         return service.apply(request);
     }
 }

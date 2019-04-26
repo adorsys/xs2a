@@ -17,10 +17,7 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -123,7 +120,7 @@ public class Xs2aAisConsentService {
      *
      * @param tppId        String representation of TPP`s identifier from TPP Certificate
      * @param consentId    String representation of identifier of stored consent
-     * @param actionStatus Enum value representing whether the acition is successful or errors occured
+     * @param actionStatus Enum value representing whether the action is successful or errors occurred
      */
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus) {
         aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus));
@@ -135,11 +132,11 @@ public class Xs2aAisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @param scaStatus Enum for status of the SCA method applied
      * @param psuData   authorisation data about PSU
-     * @return long representation of identifier of stored consent authorization
+     * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
      */
-    public Optional<String> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
+    public Optional<CreateAisConsentAuthorizationResponse> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
         AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData, scaApproachResolver.resolveScaApproach());
-        return aisConsentAuthorisationServiceEncrypted.createAuthorization(consentId, request);
+        return aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, request);
     }
 
     /**
