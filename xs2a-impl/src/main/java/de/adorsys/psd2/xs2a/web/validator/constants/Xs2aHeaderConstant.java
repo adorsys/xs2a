@@ -16,12 +16,34 @@
 
 package de.adorsys.psd2.xs2a.web.validator.constants;
 
-public class Xs2aHeaderConstant {
-    public static final String X_REQUEST_ID = "X-Request-ID";
-    public static final String PSU_IP_ADDRESS = "PSU-IP-Address";
+import java.util.HashMap;
+import java.util.Map;
 
-    public static final String TPP_REDIRECT_PREFERRED = "TPP-Redirect-Preferred";
-    public static final String TPP_REDIRECT_URI = "TPP-Redirect-URI";
+public class Xs2aHeaderConstant {
+    // HTTP headers that are used in validation:
+    public static final String CONTENT_TYPE = "content-type";
+    public static final String X_REQUEST_ID = "x-request-id";
+    public static final String PSU_IP_ADDRESS = "psu-ip-address";
+
+    public static final String PSU_ID = "psu-id";
+    public static final String PSU_ID_TYPE = "psu-id-Type";
+    public static final String PSU_CORPORATE_ID = "psu-corporate-id";
+    public static final String PSU_CORPORATE_ID_TYPE = "psu-corporate-id-type";
+    public static final String AUTHORISATION = "authorization";
+
+    public static final String TPP_REDIRECT_PREFERRED = "tpp-redirect-preferred";
+    public static final String TPP_REDIRECT_URI = "tpp-redirect-uri";
+
+    public static final String TPP_NOK_REDIRECT_URI = "tpp-nok-redirect-uri";
+    public static final String TPP_EXPLICIT_AUTHORISATION_PREFERRED = "tpp-explicit-authorisation-preferred";
+
+    public static final String TPP_REJECTION_NO_FUNDS_PREFERRED = "tpp-rejection-no funds-preferred";
+
+    // This map holds arrays of HTTP headers to be validated for max length. Key is the maximum length of the header.
+    public static final Map<Integer, String[]> HEADERS_MAP = new HashMap<Integer, String[]>() {{
+        put(50, new String[]{PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE});
+        put(140, new String[]{AUTHORISATION, TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI, PSU_IP_ADDRESS});
+    }};
 
     private Xs2aHeaderConstant() {
     }

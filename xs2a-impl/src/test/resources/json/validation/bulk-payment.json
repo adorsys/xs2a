@@ -1,0 +1,37 @@
+{
+  "batchBookingPreferred": "false",
+  "requestedExecutionDate": "2020-02-02",
+  "debtorAccount": {
+    "currency": "EUR",
+    "iban": "DE52500105173911841934"
+  },
+  "payments": [
+    {
+      "endToEndIdentification": "WBG-123456789",
+      "debtorAccount": {
+        "currency": "EUR",
+        "iban": "DE52500105173911841934"
+      },
+      "instructedAmount": {
+        "amount": "520.00",
+        "currency": "EUR"
+      },
+      "creditorAccount": {
+        "currency": "EUR",
+        "iban": "DE15500105172295759744"
+      },
+      "creditorAgent": "AAAADEBBXXX",
+      "creditorName": "WBG",
+      "creditorAddress": {
+        "buildingNumber": "56",
+        "city": "Nürnberg",
+        "country": {
+          "code": "DE"
+        },
+        "postalCode": "90543",
+        "street": "WBG Straße"
+      },
+      "remittanceInformationUnstructured": "Ref. Number WBG-1234"
+    }
+  ]
+}

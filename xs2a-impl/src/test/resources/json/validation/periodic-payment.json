@@ -1,0 +1,48 @@
+{
+  "creditorAccount": {
+    "currency": "EUR",
+    "iban": "DE52500105173911841934",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "pan": "1111"
+  },
+  "creditorAddress": {
+    "buildingNumber": "123-34",
+    "city": "Nürnberg",
+    "country": {
+      "code": "DE"
+    },
+    "postalCode": "90431",
+    "street": "Herrnstraße"
+  },
+  "creditorAgent": "BCENECEQ",
+  "creditorName": "Telekom",
+  "dayOfExecution": 14,
+  "debtorAccount": {
+    "currency": "EUR",
+    "iban": "DE52500105173911841934",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "pan": "1111"
+  },
+  "endDate": "2018-03-03",
+  "endToEndIdentification": "RI-123456789",
+  "executionRule": "preceeding",
+  "frequency": "ANNUAL",
+  "instructedAmount": {
+    "amount": "1000.00",
+    "currency": "EUR"
+  },
+  "purposeCode": {
+    "code": "BCENECEQ"
+  },
+  "remittanceInformationStructured": {
+    "reference": "Ref Number Merchant",
+    "referenceIssuer": "string",
+    "referenceType": "string"
+  },
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "startDate": "2017-03-03",
+  "ultimateCreditor": "Telekom",
+  "ultimateDebtor": "Mueller"
+}

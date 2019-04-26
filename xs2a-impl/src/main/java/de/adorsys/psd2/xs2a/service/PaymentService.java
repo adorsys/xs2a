@@ -36,9 +36,9 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentInfoMapper;
 import de.adorsys.psd2.xs2a.service.payment.*;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import de.adorsys.psd2.xs2a.service.validator.PaymentValidationService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.*;
+import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.AllArgsConstructor;
@@ -79,7 +79,6 @@ public class PaymentService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final ReadCommonPaymentStatusService readCommonPaymentStatusService;
     private final RequestProviderService requestProviderService;
-    private final PaymentValidationService paymentValidationService;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final CreatePaymentValidator createPaymentValidator;
     private final GetPaymentByIdValidator getPaymentByIdValidator;
@@ -96,7 +95,7 @@ public class PaymentService {
     public ResponseObject createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters) {
         xs2aEventService.recordTppRequest(EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, payment);
 
-        ValidationResult validationResult = createPaymentValidator.validate(paymentInitiationParameters);
+        ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(payment, paymentInitiationParameters));
         if (validationResult.isNotValid()) {
             return ResponseObject.builder()
                        .fail(validationResult.getMessageError())
@@ -341,29 +340,14 @@ public class PaymentService {
     }
 
     private ResponseObject processSinglePayment(SinglePayment singePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
-
-        ResponseObject singlePaymentValidationResult = paymentValidationService.validateSinglePayment(singePayment);
-
-        return singlePaymentValidationResult.hasError()
-                   ? singlePaymentValidationResult
-                   : createSinglePaymentService.createPayment(singePayment, paymentInitiationParameters, tppInfo);
+        return createSinglePaymentService.createPayment(singePayment, paymentInitiationParameters, tppInfo);
     }
 
     private ResponseObject processPeriodicPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
-
-        ResponseObject periodicPaymentValidationResponse = paymentValidationService.validatePeriodicPayment(periodicPayment);
-
-        return periodicPaymentValidationResponse.hasError()
-                   ? periodicPaymentValidationResponse
-                   : createPeriodicPaymentService.createPayment(periodicPayment, paymentInitiationParameters, tppInfo);
+        return createPeriodicPaymentService.createPayment(periodicPayment, paymentInitiationParameters, tppInfo);
     }
 
     private ResponseObject processBulkPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo) {
-
-        ResponseObject bulkPaymentValidationResponse = paymentValidationService.validateBulkPayment(bulkPayment);
-
-        return bulkPaymentValidationResponse.hasError()
-                   ? bulkPaymentValidationResponse
-                   : createBulkPaymentService.createPayment(bulkPayment, paymentInitiationParameters, tppInfo);
+        return createBulkPaymentService.createPayment(bulkPayment, paymentInitiationParameters, tppInfo);
     }
 }
