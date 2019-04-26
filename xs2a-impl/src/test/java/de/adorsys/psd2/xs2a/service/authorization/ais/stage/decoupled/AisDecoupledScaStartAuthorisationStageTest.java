@@ -78,7 +78,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID());
 
     @InjectMocks
-    private AisDecoupledScaStartAuthorisationStage scaStartAuthorisationStage;
+    private AisDecoupledScaReceivedAuthorisationStage scaReceivedAuthorisationStage;
 
     @Mock
     private Xs2aAisConsentService aisConsentService;
@@ -154,7 +154,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
         //Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
@@ -167,7 +167,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildErrorSpiResponse(SpiAuthorisationStatus.FAILURE));
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
@@ -184,7 +184,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(spiErrorMapper.mapToErrorHolder(response, ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(MessageErrorCode.CONSENT_INVALID).errorType(ErrorType.AIS_401).build());
         // When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         // Then
         assertThat(actualResponse).isNotNull();
@@ -203,7 +203,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(commonDecoupledAisService.proceedDecoupledApproach(eq(request), eq(spiAccountConsent), any(PsuIdData.class)))
             .thenReturn(buildUpdateConsentPsuDataResponse());
 
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         assertThat(actualResponse).isNotNull();
         verify(commonDecoupledAisService).proceedDecoupledApproach(eq(request), eq(spiAccountConsent), any(PsuIdData.class));
@@ -216,7 +216,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(request.getPsuData()).thenReturn(PSU_ID_DATA);
 
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
@@ -230,7 +230,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(request.getPsuData()).thenReturn(null);
 
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);
@@ -244,7 +244,7 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         when(request.getConsentId()).thenReturn(WRONG_CONSENT_ID);
 
         //When
-        UpdateConsentPsuDataResponse actualResponse = scaStartAuthorisationStage.apply(request);
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
 
         //Then
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FAILED);

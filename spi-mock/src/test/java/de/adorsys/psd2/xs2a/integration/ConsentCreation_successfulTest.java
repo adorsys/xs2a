@@ -22,10 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.spi.ASPSPXs2aApplication;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
@@ -230,8 +227,8 @@ public class ConsentCreation_successfulTest {
     private void consentCreation_successful(HttpHeaders headers, ScaApproach scaApproach, String requestJsonPath) throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
-        given(aisConsentAuthorisationServiceEncrypted.createAuthorization(any(String.class), any(AisConsentAuthorizationRequest.class)))
-            .willReturn(Optional.of(AUTHORISATION_ID));
+        given(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(any(String.class), any(AisConsentAuthorizationRequest.class)))
+            .willReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
         given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
             .willReturn(Optional.of(ENCRYPT_CONSENT_ID));
         given(aisConsentServiceEncrypted.getInitialAisAccountConsentById(any(String.class)))
@@ -278,5 +275,9 @@ public class ConsentCreation_successfulTest {
 
         AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisConsent(consentReq, ENCRYPT_CONSENT_ID, scaApproach);
         return aisAccountConsent;
+    }
+
+    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
+        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED);
     }
 }

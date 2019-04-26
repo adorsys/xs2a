@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api.service;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
@@ -40,7 +41,17 @@ interface AisConsentAuthorisationServiceBase {
      * @param request   needed parameters for creating consent authorization
      * @return String authorization id
      */
+    @Deprecated //TODO in sprint 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
     Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request);
+
+    /**
+     * Creates consent authorization and return response object
+     *
+     * @param consentId id of consent
+     * @param request   needed parameters for creating consent authorization
+     * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
+     */
+    Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request);
 
     /**
      * Gets consent authorization

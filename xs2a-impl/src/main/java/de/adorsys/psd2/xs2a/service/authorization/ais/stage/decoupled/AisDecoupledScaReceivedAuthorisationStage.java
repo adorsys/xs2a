@@ -55,25 +55,25 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PSU_CREDENTIALS_INVAL
 import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
 
 
-@Service("AIS_DECOUPLED_STARTED")
-public class AisDecoupledScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
+@Service("AIS_DECOUPLED_RECEIVED")
+public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
     private final SpiContextDataProvider spiContextDataProvider;
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
     private final CommonDecoupledAisService commonDecoupledAisService;
 
-    public AisDecoupledScaStartAuthorisationStage(Xs2aAisConsentService aisConsentService,
-                                                  AisConsentDataService aisConsentDataService,
-                                                  AisConsentSpi aisConsentSpi,
-                                                  Xs2aAisConsentMapper aisConsentMapper,
-                                                  SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper,
-                                                  Xs2aToSpiPsuDataMapper psuDataMapper,
-                                                  SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
-                                                  SpiErrorMapper spiErrorMapper,
-                                                  SpiContextDataProvider spiContextDataProvider,
-                                                  AspspProfileServiceWrapper aspspProfileServiceWrapper,
-                                                  CommonDecoupledAisService commonDecoupledAisService) {
+    public AisDecoupledScaReceivedAuthorisationStage(Xs2aAisConsentService aisConsentService,
+                                                     AisConsentDataService aisConsentDataService,
+                                                     AisConsentSpi aisConsentSpi,
+                                                     Xs2aAisConsentMapper aisConsentMapper,
+                                                     SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper,
+                                                     Xs2aToSpiPsuDataMapper psuDataMapper,
+                                                     SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
+                                                     SpiErrorMapper spiErrorMapper,
+                                                     SpiContextDataProvider spiContextDataProvider,
+                                                     AspspProfileServiceWrapper aspspProfileServiceWrapper,
+                                                     CommonDecoupledAisService commonDecoupledAisService) {
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
         this.spiContextDataProvider = spiContextDataProvider;
         this.aspspProfileServiceWrapper = aspspProfileServiceWrapper;

@@ -204,7 +204,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(aisConsentAuthorization);
 
         // Then
-        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.STARTED, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Assert
         assertTrue(updateAuthorisationStatus);
@@ -223,7 +223,7 @@ public class CmsPsuAisServiceTest {
         when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(null);
 
         // Then
-        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID_NOT_EXIST, ScaStatus.STARTED, DEFAULT_SERVICE_INSTANCE_ID);
+        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID_NOT_EXIST, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Assert
         assertFalse(updateAuthorisationStatus);

@@ -26,7 +26,7 @@ public class AisDecoupledScaIdentifiedAuthorisationStageTest {
     @Mock
     private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
     @Mock
-    private AisDecoupledScaStartAuthorisationStage aisScaStage;
+    private AisDecoupledScaReceivedAuthorisationStage aisScaStage;
 
     @Test
     public void apply_ShouldExecuteStartedStage() {
@@ -35,7 +35,7 @@ public class AisDecoupledScaIdentifiedAuthorisationStageTest {
 
         aisDecoupledScaIdentifiedAuthorisationStage.apply(request);
 
-        verify(scaStageAuthorisationFactory).getService(SERVICE_PREFIX + SEPARATOR + ScaApproach.DECOUPLED + SEPARATOR + ScaStatus.STARTED.name());
+        verify(scaStageAuthorisationFactory).getService(SERVICE_PREFIX + SEPARATOR + ScaApproach.DECOUPLED + SEPARATOR + ScaStatus.RECEIVED.name());
         verify(aisScaStage).apply(request);
     }
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -57,8 +58,8 @@ public class RedirectAisAuthorizationServiceTest {
     @Test
     public void createConsentAuthorization_success() {
         // Given
-        when(xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, ScaStatus.STARTED, PSU_ID_DATA))
-            .thenReturn(Optional.of(AUTHORISATION_ID));
+        when(xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, ScaStatus.RECEIVED, PSU_ID_DATA))
+            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
 
         // When
         Optional<CreateConsentAuthorizationResponse> actualResponse = redirectAisAuthorisationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
@@ -71,7 +72,7 @@ public class RedirectAisAuthorizationServiceTest {
     @Test
     public void createConsentAuthorization_wrongConsentId_fail() {
         // Given
-        when(xs2aAisConsentService.createAisConsentAuthorization(WRONG_CONSENT_ID, ScaStatus.STARTED, PSU_ID_DATA))
+        when(xs2aAisConsentService.createAisConsentAuthorization(WRONG_CONSENT_ID, ScaStatus.RECEIVED, PSU_ID_DATA))
             .thenReturn(Optional.empty());
 
         // When
@@ -167,8 +168,12 @@ public class RedirectAisAuthorizationServiceTest {
         CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
         response.setConsentId(CONSENT_ID);
         response.setAuthorizationId(AUTHORISATION_ID);
-        response.setScaStatus(ScaStatus.STARTED);
+        response.setScaStatus(ScaStatus.RECEIVED);
         response.setResponseLinkType(ConsentAuthorizationResponseLinkType.SCA_REDIRECT);
         return response;
+    }
+
+    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse(){
+        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED);
     }
 }

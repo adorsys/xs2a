@@ -366,7 +366,7 @@ public class ConsentControllerTest {
         CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
         response.setConsentId(consentId);
         response.setAuthorizationId(AUTHORISATION_ID);
-        response.setScaStatus(ScaStatus.STARTED);
+        response.setScaStatus(ScaStatus.RECEIVED);
         return response;
     }
 

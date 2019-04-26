@@ -159,7 +159,7 @@ public class PaymentAuthorisationServiceTest {
     public void updatePisPsuData_Success_ShouldRecordEvent() {
         // Given:
         when(pisScaAuthorisationService.updateCommonPaymentPsuData(any()))
-            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.STARTED, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
+            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.RECEIVED, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
 
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
 
@@ -181,7 +181,7 @@ public class PaymentAuthorisationServiceTest {
     public void updatePisPsuData_withInvalidPayment_shouldReturnValidationError() {
         // Given
         when(pisScaAuthorisationService.updateCommonPaymentPsuData(any()))
-            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.STARTED, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
+            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.RECEIVED, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
 
         PisCommonPaymentResponse invalidPisCommonPaymentResponse = buildInvalidPisCommonPaymentResponse();
 

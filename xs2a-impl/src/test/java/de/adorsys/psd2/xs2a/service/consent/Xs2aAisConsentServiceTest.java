@@ -17,10 +17,7 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.CmsScaMethod;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
@@ -246,15 +243,15 @@ public class Xs2aAisConsentServiceTest {
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH))
             .thenReturn(AIS_CONSENT_AUTHORIZATION_REQUEST);
-        when(aisConsentAuthorisationServiceEncrypted.createAuthorization(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
-            .thenReturn(Optional.of(NEW_ID));
+        when(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
+            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
 
         //When
-        Optional<String> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
+        Optional<CreateAisConsentAuthorizationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
 
         //Then
         assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(NEW_ID);
+        assertThat(actualResponse.get()).isEqualTo(buildCreateAisConsentAuthorizationResponse());
     }
 
     @Test
@@ -264,11 +261,11 @@ public class Xs2aAisConsentServiceTest {
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAisConsentAuthorization(SCA_STATUS, PSU_DATA, SCA_APPROACH))
             .thenReturn(AIS_CONSENT_AUTHORIZATION_REQUEST);
-        when(aisConsentAuthorisationServiceEncrypted.createAuthorization(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
+        when(aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(CONSENT_ID, AIS_CONSENT_AUTHORIZATION_REQUEST))
             .thenReturn(Optional.empty());
 
         //When
-        Optional<String> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
+        Optional<CreateAisConsentAuthorizationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -442,5 +439,9 @@ public class Xs2aAisConsentServiceTest {
 
     private static Xs2aAccountAccess createEmptyAccountAccess() {
         return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES);
+    }
+
+    private static CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse(){
+        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED);
     }
 }
