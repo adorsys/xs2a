@@ -1,5 +1,14 @@
 # Release notes v.2.4
 
+## Table of Contents
+- Bugfix: Fix update authorisation status endpoint in CMS-PSU-API not working with lowercase values for authorisation status
+- Bugfix: Fixed process of creating PIIS consent for the same account, PSU and TPP
+- Delete column `usage_counter` from table `ais_consent`
+- Bugfix: Separate links for start authorisation and create consent and initiate payment
+- Feature: Validation for payment initiation and consent creation
+- Bugfix: Fix global consent creation returning wrong error code
+- Bugfix: Initial SCA-Status `started` is changed to `received`
+
 ## Bugfix: Fix update authorisation status endpoint in CMS-PSU-API not working with lowercase values for authorisation status
 From now on, CMS-PSU-API endpoints for updating authorisation status for payments 
 (`PUT /psu-api/v1/payment/{payment-id}/authorisation/{authorisation-id}/status/{status}`) and consents 
@@ -41,5 +50,5 @@ From now on, attempting to create global consent(i. e. consent that contains onl
 `access` property) with `allPsd2Support` property in ASPSP profile set to `false` will result in `405 SERVICE_INVALID` 
 error( instead of previous `400 PARAMETER_NOT_SUPPORTED`) being returned in the response.
 
-## Bugfix: Initial SCA-Status 'started' is changed to 'received'
-From now on, all authorisations (AIS and PIS) are created with `RECEIVED` ScaStatus instead of 'STARTED'. 
+## Bugfix: Initial SCA-Status `started` is changed to `received`
+From now on, all authorisations (AIS and PIS) are created with `RECEIVED` ScaStatus instead of `STARTED`. 
