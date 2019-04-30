@@ -146,7 +146,7 @@ public class BulkPaymentTypeValidatorImplTest {
 
         validator.doSingleValidation(singlePayment, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'creditorName' should not be null", messageError.getTppMessage().getText());
+        assertEquals("Value 'creditorName' cannot be empty", messageError.getTppMessage().getText());
     }
 
     @Test

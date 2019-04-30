@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -38,16 +39,26 @@ public class AbstractBodyValidatorImpl {
         this.objectMapper = objectMapper;
     }
 
-    protected void checkFieldForMaxLength(String fieldToCheck, String fieldName, int maxLength, MessageError messageError) {
-        if (fieldToCheck.length() > maxLength) {
-            String text = String.format("Value '%s' should not be more than %s symbols", fieldName, maxLength);
+    protected void checkRequiredFieldForMaxLength(String fieldToCheck, String fieldName, int maxLength, MessageError messageError) {
+        if (StringUtils.isBlank(fieldToCheck)) {
+            String text = String.format("Value '%s' cannot be empty", fieldName);
             errorBuildingService.enrichMessageError(messageError, text);
+        } else {
+            checkFieldForMaxLength(fieldToCheck, fieldName, maxLength, messageError);
         }
     }
 
-    protected void checkForMaxLengthIfNotNull(String field, String fieldName, int maxLength, MessageError messageError) {
+    protected void checkOptionalFieldForMaxLength(String field, String fieldName, int maxLength, MessageError messageError) {
         if (StringUtils.isNotBlank(field)) {
             checkFieldForMaxLength(field, fieldName, maxLength, messageError);
+        }
+    }
+
+
+    private void checkFieldForMaxLength(@NotNull String fieldToCheck, String fieldName, int maxLength, MessageError messageError) {
+        if (fieldToCheck.length() > maxLength) {
+            String text = String.format("Value '%s' should not be more than %s symbols", fieldName, maxLength);
+            errorBuildingService.enrichMessageError(messageError, text);
         }
     }
 

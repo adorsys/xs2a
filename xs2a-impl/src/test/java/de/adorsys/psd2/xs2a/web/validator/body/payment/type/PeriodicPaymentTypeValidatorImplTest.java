@@ -149,7 +149,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
 
         validator.doPeriodicValidation(periodicPayment, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'creditorName' should not be null", messageError.getTppMessage().getText());
+        assertEquals("Value 'creditorName' cannot be empty", messageError.getTppMessage().getText());
     }
 
     @Test
@@ -277,7 +277,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
 
         validator.validateAddress(address, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'country' should not be null", messageError.getTppMessage().getText());
+        assertEquals("Value 'address.country' is required", messageError.getTppMessage().getText());
     }
 
     @Test
@@ -286,7 +286,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
 
         validator.validateAddress(address, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'country' should not be blank", messageError.getTppMessage().getText());
+        assertEquals("Value 'address.country' is required", messageError.getTppMessage().getText());
     }
 
     @Test
@@ -295,7 +295,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
 
         validator.validateAddress(address, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'country' should be ISO 3166 ALPHA2 country code", messageError.getTppMessage().getText());
+        assertEquals("Value 'address.country' should be ISO 3166 ALPHA2 country code", messageError.getTppMessage().getText());
     }
 
     @Test
