@@ -145,7 +145,16 @@ public class SinglePaymentTypeValidatorImplTest {
 
         validator.doSingleValidation(singlePayment, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'creditorName' should not be null", messageError.getTppMessage().getText());
+        assertEquals("Value 'creditorName' cannot be empty", messageError.getTppMessage().getText());
+    }
+
+    @Test
+    public void doValidation_creditorName_empty_error() {
+        singlePayment.setCreditorName("   ");
+
+        validator.doSingleValidation(singlePayment, messageError);
+        assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals("Value 'creditorName' cannot be empty", messageError.getTppMessage().getText());
     }
 
     @Test
@@ -273,7 +282,7 @@ public class SinglePaymentTypeValidatorImplTest {
 
         validator.validateAddress(address, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'country' should not be null", messageError.getTppMessage().getText());
+        assertEquals("Value 'address.country' is required", messageError.getTppMessage().getText());
     }
 
     @Test
@@ -282,7 +291,7 @@ public class SinglePaymentTypeValidatorImplTest {
 
         validator.validateAddress(address, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'country' should not be blank", messageError.getTppMessage().getText());
+        assertEquals("Value 'address.country' is required", messageError.getTppMessage().getText());
     }
 
     @Test
@@ -291,6 +300,6 @@ public class SinglePaymentTypeValidatorImplTest {
 
         validator.validateAddress(address, messageError);
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals("Value 'country' should be ISO 3166 ALPHA2 country code", messageError.getTppMessage().getText());
+        assertEquals("Value 'address.country' should be ISO 3166 ALPHA2 country code", messageError.getTppMessage().getText());
     }
 }
