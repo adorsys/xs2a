@@ -156,7 +156,7 @@ public class PaymentMapper {
                        targetAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
                        return targetAddress;
                    })
-                   .orElseGet(Xs2aAddress::new);
+                   .orElse(null);
     }
 
     private BulkPayment mapToXs2aBulkPayment(BulkPaymentInitiationJson paymentRequest) {

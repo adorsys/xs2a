@@ -64,9 +64,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     void doSingleValidation(SinglePayment singlePayment, MessageError messageError) {
-        if (Objects.nonNull(singlePayment.getEndToEndIdentification())) {
-            checkFieldForMaxLength(singlePayment.getEndToEndIdentification(), "endToEndIdentification", 35, messageError);
-        }
+        checkOptionalFieldForMaxLength(singlePayment.getEndToEndIdentification(), "endToEndIdentification", 35, messageError);
 
         if (Objects.isNull(singlePayment.getDebtorAccount())) {
             errorBuildingService.enrichMessageError(messageError, "Value 'debtorAccount' should not be null");
@@ -86,11 +84,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
             validateAccount(singlePayment.getCreditorAccount(), messageError);
         }
 
-        if (Objects.isNull(singlePayment.getCreditorName())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'creditorName' should not be null");
-        } else {
-            checkFieldForMaxLength(singlePayment.getCreditorName(), "creditorName", 70, messageError);
-        }
+        checkRequiredFieldForMaxLength(singlePayment.getCreditorName(), "creditorName", 70, messageError);
 
         if (Objects.nonNull(singlePayment.getCreditorAddress())) {
             validateAddress(singlePayment.getCreditorAddress(), messageError);
@@ -102,17 +96,15 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     }
 
     void validateAddress(Xs2aAddress address, MessageError messageError) {
-        checkFieldForMaxLength(address.getStreet(), "street", 100, messageError);
-        checkFieldForMaxLength(address.getBuildingNumber(), "buildingNumber", 20, messageError);
-        checkFieldForMaxLength(address.getCity(), "city", 100, messageError);
-        checkFieldForMaxLength(address.getPostalCode(), "postalCode", 5, messageError);
+        checkOptionalFieldForMaxLength(address.getStreet(), "street", 100, messageError);
+        checkOptionalFieldForMaxLength(address.getBuildingNumber(), "buildingNumber", 20, messageError);
+        checkOptionalFieldForMaxLength(address.getCity(), "city", 100, messageError);
+        checkOptionalFieldForMaxLength(address.getPostalCode(), "postalCode", 5, messageError);
 
-        if (Objects.isNull(address.getCountry())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'country' should not be null");
-        } else if (StringUtils.isBlank(address.getCountry().getCode())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'country' should not be blank");
+        if ( Objects.isNull(address.getCountry()) || StringUtils.isBlank(address.getCountry().getCode()) ) {
+            errorBuildingService.enrichMessageError(messageError, "Value 'address.country' is required");
         } else if (!Arrays.asList(Locale.getISOCountries()).contains(address.getCountry().getCode())) {
-            errorBuildingService.enrichMessageError(messageError, "Value 'country' should be ISO 3166 ALPHA2 country code");
+            errorBuildingService.enrichMessageError(messageError, "Value 'address.country' should be ISO 3166 ALPHA2 country code");
         }
     }
 
@@ -141,9 +133,9 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
             errorBuildingService.enrichMessageError(messageError, "Invalid BBAN format");
         }
 
-        checkForMaxLengthIfNotNull(accountReference.getPan(), "PAN", 35, messageError);
-        checkForMaxLengthIfNotNull(accountReference.getMaskedPan(), "Masked PAN", 35, messageError);
-        checkForMaxLengthIfNotNull(accountReference.getMsisdn(), "MSISDN", 35, messageError);
+        checkOptionalFieldForMaxLength(accountReference.getPan(), "PAN", 35, messageError);
+        checkOptionalFieldForMaxLength(accountReference.getMaskedPan(), "Masked PAN", 35, messageError);
+        checkOptionalFieldForMaxLength(accountReference.getMsisdn(), "MSISDN", 35, messageError);
     }
 
     private boolean isValidIban(String iban) {
