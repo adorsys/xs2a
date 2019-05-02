@@ -101,9 +101,9 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
         if (StringUtils.isNotBlank(accountReference.getBban()) && !isValidBban(accountReference.getBban())) {
             errorBuildingService.enrichMessageError(messageError, "Invalid BBAN format");
         }
-        checkForMaxLengthIfNotNull(accountReference.getPan(), "PAN", 35, messageError);
-        checkForMaxLengthIfNotNull(accountReference.getMaskedPan(), "Masked PAN", 35, messageError);
-        checkForMaxLengthIfNotNull(accountReference.getMsisdn(), "MSISDN", 35, messageError);
+        checkOptionalFieldForMaxLength(accountReference.getPan(), "PAN", 35, messageError);
+        checkOptionalFieldForMaxLength(accountReference.getMaskedPan(), "Masked PAN", 35, messageError);
+        checkOptionalFieldForMaxLength(accountReference.getMsisdn(), "MSISDN", 35, messageError);
 
         validateCurrency(accountReference, messageError);
     }
