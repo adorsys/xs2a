@@ -76,7 +76,7 @@ public class PiisConsentIT {
     @Test
     public void createPiisConsent_successWithNewStatus() {
         // When
-        cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildTppInfo(), buildAccountReferenceList(), LocalDate.now().plusDays(1), 1);
+        cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildCreatePiisConsentRequest());
         flushAndClearPersistenceContext();
         Iterable<PiisConsentEntity> entities = piisConsentRepository.findAll();
         PiisConsentEntity savedEntity = entities.iterator().next();

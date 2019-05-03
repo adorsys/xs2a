@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,22 +59,6 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private final PsuDataMapper psuDataMapper;
     private final TppInfoMapper tppInfoMapper;
     private final AccountReferenceMapper accountReferenceMapper;
-
-    @Override
-    @Transactional
-    public Optional<String> createConsent(@NotNull PsuIdData psuIdData,
-                                          @Nullable TppInfo tppInfo,
-                                          @NotNull List<AccountReference> accounts,
-                                          @NotNull LocalDate validUntil,
-                                          int allowedFrequencyPerDay) {
-        CreatePiisConsentRequest request = new CreatePiisConsentRequest();
-        request.setTppInfo(tppInfo);
-        request.setAccounts(accounts);
-        request.setValidUntil(validUntil);
-        request.setAllowedFrequencyPerDay(allowedFrequencyPerDay);
-
-        return createConsent(psuIdData, request);
-    }
 
     @Override
     @Transactional
