@@ -22,12 +22,11 @@ stages:
 # variables
 # ------------------------------------------------------------------
 
-variables: &variables
+variables:
   SONAR_HOST: "https://psd2-quality.cloud.adorsys.de"
 
   DOCKER_IMAGE_NAME_CNT_MGMNT: "xs2a-consent-management"
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
-  # The following image is only used for support-2.x
   DOCKER_IMAGE_NAME_XS2A: "xs2a-service"
 
   ###########################
@@ -66,13 +65,6 @@ variables: &variables
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -DskipTests clean install
 
-.java_artifacts: &java_artifacts
-  paths:
-    - "xs2a-standalone-starter/target/xs2a-standalone-starter*-exec.jar"
-    - "consent-management/cms-standalone-service/target/consent-management*jar"
-    - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
-  name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}"
-
 .java_tests: &java_tests
   script:
     - jabba use $JAVA_VERSION
@@ -85,10 +77,12 @@ variables: &variables
   script:
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:${DOCKER_TAG}" consent-management/cms-standalone-service
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}" xs2a-standalone-starter
 
     - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:${DOCKER_TAG}"
     - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}"
+    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}"
     - docker logout
 
 # Copy Dockerhub images to Openshift (depending on ${DOCKER_TAG} and ${OPENSHIFT_NAMESPACE})
@@ -122,7 +116,11 @@ Compile Java11:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
   <<: *build_java
   artifacts:
-    <<: *java_artifacts
+    paths:
+      - "xs2a-standalone-starter/target/xs2a-standalone-starter-exec.jar"
+      - "consent-management/cms-standalone-service/target/consent-management*jar"
+      - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
+    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}"
     expire_in: "1 day"
 
 PMD Report:
@@ -141,6 +139,19 @@ PMD Report:
     - "**/*/pmd.xml"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
+
+
+DOCKER test image build:
+  stage: "Test"
+  script:
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:${DOCKER_TAG}" consent-management/cms-standalone-service
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:${DOCKER_TAG}" aspsp-profile/aspsp-profile-server
+    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}" xs2a-standalone-starter
+  variables:
+    DOCKER_TAG: develop
+  except:
+    - master-2.x
+    - support-2.x
 
 PMD Check Java8:
   stage: "Test"
