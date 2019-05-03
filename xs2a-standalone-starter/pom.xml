@@ -98,6 +98,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>xs2a-standalone-starter</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

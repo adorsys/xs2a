@@ -7,7 +7,11 @@ ENV JAVA_TOOL_OPTIONS -Xmx1024m
 
 WORKDIR /opt/xs2a-starter
 
-COPY ./target/xs2a-standalone-starter*jar /opt/xs2a-starter/xs2a-standalone-starter.jar
+USER 0
+RUN mkdir -p /opt/xs2a-starter/logs/ && chmod 777 /opt/xs2a-starter/logs/
+USER 1001
+
+COPY ./target/xs2a-standalone-starter-exec.jar /opt/xs2a-starter/xs2a-standalone-starter.jar
 
 EXPOSE 8080
 

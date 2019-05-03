@@ -61,10 +61,10 @@ services:
       - ASPSP_PROFILE_BASEURL=${ASPSP_PROFILE_BASEURL:-http://aspsp-profile:8080/api/v1}
       - SERVER_KEY=my_secret_for_cms
       - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=consent
-      - LIQUIBASE_ENABLED=true
-      - LIQUIBASE_URL=jdbc:postgresql://consent-management-postgres/consent?currentSchema=consent
-      - LIQUIBASE_USER=cms
-      - LIQUIBASE_PASSWORD=cms
+      - SPRING_LIQUIBASE_ENABLED=true
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://consent-management-postgres/consent?currentSchema=consent
+      - SPRING_LIQUIBASE_USER=cms
+      - SPRING_LIQUIBASE_PASSWORD=cms
     depends_on:
       - consent-management-postgres
 
