@@ -35,8 +35,8 @@ script:
 
 # Schritte um Release zu veröffentlichen
 before_deploy:
-  - echo $GPG_SECRET_KEY | base64 --decode | $GPG_EXECUTABLE --import || travis_terminate 1
-  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust || travis_terminate 1
+  - echo $GPG_SECRET_KEY | base64 --decode | $GPG_EXECUTABLE --import || true
+  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust || true
 
 deploy:
   - skip_cleanup: true
