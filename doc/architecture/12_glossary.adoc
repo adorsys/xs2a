@@ -1,0 +1,25 @@
+:imagesdir: images
+[[section-glossary]]
+== Glossary
+
+
+
+[options="header"]
+|===
+| Term | Definition
+
+| ASPSP
+| _Account Servicing Payment Service Provider_, a banking system that holds account data of PSU and peforms corresponding operations over it.
+
+| PSD2
+| https://ec.europa.eu/info/law/payment-services-psd-2-directive-eu-2015-2366_en[_Payment Service Directive 2_], a European law for payments services.
+
+| PSU
+| _Payment Service User_, end user, on behalf of and in the interests of which, the interaction is carried out.
+
+| TPP
+| _Third-party Provider_, _Third-party Payment Service provider_, a system that acts on behalf of PSU on its data hold by ASPSP.
+
+| XS2A
+| A name of an interface, defined by https://www.berlin-group.org/psd2-access-to-bank-accounts[Berlin Group] to comply banks to the requirements of PSD2.
+|===

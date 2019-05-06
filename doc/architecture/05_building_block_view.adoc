@@ -1,0 +1,205 @@
+:imagesdir: images
+[[section-building-block-view]]
+//additional style for arc42 help callouts
+ifdef::basebackend-html[]
+++++
+<style>
+.tpp {
+display: block;
+width: 30%;
+border: 1px solid red;
+background: lightyellow;
+color: black;
+text-align: center;
+}
+.aspsp {
+display: block;
+width: 30%;
+border: 1px solid red;
+background: moccasin;
+color: black;
+text-align: center;
+}
+.xs2a {
+display: block;
+width: 30%;
+border: 1px solid red;
+background: white;
+color: black;
+text-align: center;
+}
+.connector {
+display: block;
+width: 30%;
+border: 1px solid red;
+background: lightblue;
+color: black;
+text-align: center;
+}
+</style>
+++++
+:toc: macro
+endif::basebackend-html[]
+
+
+== Building Block View
+
+
+
+=== Whitebox Overall System
+
+
+image::L01-Whitebox.png[Whitebox Overall System Level 1, 80%, title="Whitebox Overall System Level 1", align="center"]
+
+
+Motivation::
+XS2A Service consists of several components that can be deployed as several services or as a modular monolith, depending on the requirements of particular ASPSP and possibilities to interconnection with other ASPSP systems.
+Every service consists of one or more implementation Java libraries that can be started with the help of Spring boot starter modules or integrated into other ASPSP system as a part of bigger deployment.
+
+
+Contained Building Blocks::
+|===
+| Component | Description
+
+| [xs2a]#XS2A Service#
+| Business-logic, validators and services operating to serve TPPs according to a Berlin Group operational rules defined by XS2A Interface.
+
+
+| [xs2a]#ASPSP Profile#
+| A service that provides static configuration of features, those are supported by actual ASPSP.
+
+| [connector]#ASPSP-Connector#
+| An implementation of SPI-API interface to connect XS2A-services with ASPSP internal system to process requests.
+This part is to be implemented for each particular deployment, depending on underlying ASPSP systems.
+
+| [xs2a]#CMS#
+| Consent Management System - Service that persists and manages the PSUs Consents for account accesses and payments and corresponding to these consents data.
+Provides internal CMS-PSU-API and CMS-APSPS-API interfaces for other internal ASPSP systems.
+|===
+
+Important Interfaces::
+|===
+| Interface | Description
+
+| [xs2a]#XS2A#
+| REST interfaces defined by Berlin Group NextgenPSD2 Standards. Serves TPPs to access the ASPSP Systems.
+
+| [xs2a]#SPI-API#
+| Internal Java interface to provide a universal way to implement connectors to underlying ASPSP Systems.
+
+| [xs2a]#CMS-PSU-API#
+| Internal ASPSP Java and/or REST interface to provide a possibility to perform payment/consent authorisation in bank systems.
+
+| [xs2a]#CMS-ASPSP-API#
+| Internal ASPSP Java and/or REST interface to provide an access to CMS-managed data from other ASPSP systems (generally - to read/export data, in some usecases also to manage data).
+
+|===
+
+External systems::
+|===
+| Component | Description
+| [tpp]#TPP#
+| Third-party provider, acting on behalf of PSU, operating the accounts/payment data of PSU provided by ASPSP through XS2A Interface.
+
+| [tpp]#Certification Authority#
+| A QWAC/QSEAL TLS Certificate issuer that operates under the conditions of PSD2 regulations.
+|===
+
+Surrounding ASPSP systems::
+|===
+| Component | Description
+| [aspsp]#Gateway#
+| A front ASPSPs system (Firewall or API Gateway) that performs termination of TLS connection on the ASPSP side. Is responsible for validation of TPP's QWAC TLS Certificate.
+
+| [aspsp]#ASPSP#
+| Represents set of ASPSP Systems that are responsible in particular for payments execution and management of PSU's accounts inside the ASPSP.
+
+| [aspsp]#ASPSP Auth#
+| Represents an ASPSP's System that is responsible for authentication and authorisation of PSU in ASPSP systems, including other online systems, like Online banking portal.
+|===
+
+
+
+==== <Name black box 1>
+
+
+
+_<Purpose/Responsibility>_
+
+_<Interface(s)>_
+
+_<(Optional) Quality/Performance Characteristics>_
+
+_<(Optional) Directory/File Location>_
+
+_<(Optional) Fulfilled Requirements>_
+
+_<(optional) Open Issues/Problems/Risks>_
+
+
+
+
+==== <Name black box 2>
+
+_<black box template>_
+
+==== <Name black box n>
+
+_<black box template>_
+
+
+==== <Name interface 1>
+
+...
+
+==== <Name interface m>
+
+
+
+=== Level 2
+
+
+
+==== White Box _<building block 1>_
+
+
+
+_<white box template>_
+
+==== White Box _<building block 2>_
+
+
+_<white box template>_
+
+...
+
+==== White Box _<building block m>_
+
+
+_<white box template>_
+
+
+
+=== Level 3
+
+
+
+
+==== White Box <_building block x.1_>
+
+
+
+
+_<white box template>_
+
+
+==== White Box <_building block x.2_>
+
+_<white box template>_
+
+
+
+==== White Box <_building block y.1_>
+
+_<white box template>_
+

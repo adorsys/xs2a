@@ -9,36 +9,39 @@ git:
   submodules: false
 
 cache:
+  timeout: 1000
   directories:
-  - $HOME/.m2
+    - $HOME/.m2
 
 # Schritte um Build-Dependencies herunterladen
 before_install:
-  - mvn --version
+  - mvn --version || travis_terminate 1
 
 install:
-  - mvn -DskipTests -Dmaven.javadoc.skip=true -B -V -U install
+  - mvn -DskipTests -Dmaven.javadoc.skip=true -B -V install || travis_terminate 1
 
 # Schritte um Build zu bauen
 before_script:
-  - mvn --version
+  - mvn --version || travis_terminate 1
 
 # JavaDocs are broken in Java 11 and fixed only in Java 12 : https://bugs.openjdk.java.net/browse/JDK-8212233
 script:
-  - mvn -B -V clean install
-  - "if [ $TRAVIS_JDK_VERSION == oraclejdk8 ]; then mvn -B -V javadoc:javadoc; fi;"
-  - mvn -B -V pmd:check
-  - echo "TRAVIS_JDK_VERSION is $TRAVIS_JDK_VERSION"
+  - mvn -B -V clean install || travis_terminate 1
+  - "if [ $TRAVIS_JDK_VERSION == oraclejdk8 ]; then mvn -B -V javadoc:javadoc; fi || travis_terminate 1"
+  - mvn -B -V pmd:check || travis_terminate 1
+  - echo "TRAVIS_JDK_VERSION is $TRAVIS_JDK_VERSION" || travis_terminate 1
+  - docker run -it --rm -v $PWD:/src -w /src -u $(id -u ${USER}):$(id -g ${USER})
+    adorsys/arc42-tools sh -c "make pages" || travis_terminate 1
 
 # Schritte um Release zu veröffentlichen
 before_deploy:
-  - echo $GPG_SECRET_KEY | base64 --decode | $GPG_EXECUTABLE --import
-  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+  - echo $GPG_SECRET_KEY | base64 --decode | $GPG_EXECUTABLE --import || travis_terminate 1
+  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust || travis_terminate 1
 
 deploy:
   - skip_cleanup: true
     provider: script
-    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -B -U deploy
+    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -B -U deploy || travis_terminate 1
     on:
       repo: adorsys/xs2a
       all_branches: true
@@ -47,3 +50,12 @@ deploy:
                   ( ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
                     || "$TRAVIS_BRANCH" = "develop" )
                   && "$TRAVIS_JDK_VERSION" = "oraclejdk8" )
+  - provider: pages
+    skip-cleanup: true
+    github-token: $GITHUB_PAGES_TOKEN
+    keep-history: false
+    local-dir: pages/html
+    on:
+      branch: develop
+      condition: >-
+        ( "$TRAVIS_JDK_VERSION" = "oraclejdk8" )
