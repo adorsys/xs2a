@@ -1,0 +1,4 @@
+:imagesdir: images
+[[section-solution-strategy]]
+== Solution Strategy
+
