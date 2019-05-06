@@ -26,4 +26,5 @@ public class AisConsentActionRequest {
     private String tppId;
     private String consentId;
     private ActionStatus actionStatus;
+    private String requestUri;
 }

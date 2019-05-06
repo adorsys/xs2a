@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -46,7 +47,11 @@ public class AisAccountConsent {
     private TppInfo tppInfo;
     private boolean multilevelScaRequired;
     private List<AisAccountConsentAuthorisation> accountConsentAuthorizations;
+
+    // TODO should be deleted in 2.8: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/817
+    @Deprecated
     private int usageCounter;
+    private Map<String, Integer> usageCounterMap;
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime statusChangeTimestamp;
 }

@@ -45,10 +45,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -76,7 +73,7 @@ public class AisConsentMapperTest {
     private static final List<PsuData> PSU_DATA_LIST = Collections.singletonList(PSU_DATA);
     private static final PsuIdData PSU_ID_DATA = buildPsuIdData();
     private static final List<PsuIdData> PSU_ID_DATA_LIST = Collections.singletonList(PSU_ID_DATA);
-    private static final int USAGE_COUNTER = 9;
+    private static final Map<String, Integer> USAGE_COUNTER = Collections.singletonMap("/accounts", 9);
 
     @Mock
     private PsuDataMapper psuDataMapper;
@@ -111,7 +108,7 @@ public class AisConsentMapperTest {
         // Given
         AisConsent aisConsent = buildAisConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();
-        when(aisConsentUsageService.getUsageCounter(aisConsent)).thenReturn(USAGE_COUNTER);
+        when(aisConsentUsageService.getUsageCounterMap(aisConsent)).thenReturn(USAGE_COUNTER);
 
         // When
         AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent);
@@ -125,7 +122,7 @@ public class AisConsentMapperTest {
         // Given
         AisConsent aisConsent = buildAisConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccounts();
-        when(aisConsentUsageService.getUsageCounter(aisConsent)).thenReturn(USAGE_COUNTER);
+        when(aisConsentUsageService.getUsageCounterMap(aisConsent)).thenReturn(USAGE_COUNTER);
 
         // When
         AisAccountConsent result = aisConsentMapper.mapToInitialAisAccountConsent(aisConsent);
@@ -155,7 +152,8 @@ public class AisConsentMapperTest {
         assertEquals(aisConsent.getAuthorizations().size(), aisAccountConsent.getAccountConsentAuthorizations().size());
         assertEquals(PSU_ID_DATA, aisAccountConsentAuthorisation.getPsuIdData());
         assertEquals(aisConsentAuthorization.getScaStatus(), aisAccountConsentAuthorisation.getScaStatus());
-        assertEquals(USAGE_COUNTER, aisAccountConsent.getUsageCounter());
+        assertEquals(USAGE_COUNTER, aisAccountConsent.getUsageCounterMap());
+        assertEquals(9, aisAccountConsent.getUsageCounter());
         assertEquals(aisConsent.getCreationTimestamp(), aisAccountConsent.getCreationTimestamp());
         assertEquals(aisConsent.getStatusChangeTimestamp(), aisAccountConsent.getStatusChangeTimestamp());
     }

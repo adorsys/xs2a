@@ -223,7 +223,10 @@ public class AisConsentServiceInternal implements AisConsentService {
             AisConsent consent = consentOpt.get();
             aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent);
             checkAndUpdateOnExpiration(consent);
-            updateAisConsentUsage(consent); //NOSONAR
+            // In this method sonar claims that NPE is possible:
+            // https://rules.sonarsource.com/java/RSPEC-3655
+            // but we have isPresent in the code before.
+            updateAisConsentUsage(consent, request.getRequestUri()); //NOSONAR
             logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
         }
     }
@@ -364,8 +367,8 @@ public class AisConsentServiceInternal implements AisConsentService {
                    .isPresent();
     }
 
-    private void updateAisConsentUsage(AisConsent consent) {
-        aisConsentUsageService.incrementUsage(consent);
+    private void updateAisConsentUsage(AisConsent consent, String requestUri) {
+        aisConsentUsageService.incrementUsage(consent, requestUri);
         consent.setLastActionDate(LocalDate.now());
         aisConsentRepository.save(consent);
     }

@@ -20,7 +20,10 @@ import de.adorsys.psd2.api.AccountApi;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.service.AccountService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -28,6 +31,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,7 +54,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity getAccountList(UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Xs2aAccountListHolder> accountList = accountService.getAccountList(consentID, Optional.ofNullable(withBalance).orElse(false));
+        ResponseObject<Xs2aAccountListHolder> accountList = accountService.getAccountList(consentID, Optional.ofNullable(withBalance).orElse(false), trimEndingSlash(request.getRequestURI()));
         return accountList.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountList.getError())
                    : responseMapper.ok(accountList, accountModelMapper::mapToAccountList);
@@ -58,7 +62,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity readAccountDetails(String accountId, UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Xs2aAccountDetailsHolder> accountDetails = accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false));
+        ResponseObject<Xs2aAccountDetailsHolder> accountDetails = accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false), trimEndingSlash(request.getRequestURI()));
         return accountDetails.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountDetails.getError())
                    : responseMapper.ok(accountDetails, accountModelMapper::mapToAccountDetails);
@@ -66,7 +70,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity getBalances(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Xs2aBalancesReport> balancesReport = accountService.getBalancesReport(consentID, accountId);
+        ResponseObject<Xs2aBalancesReport> balancesReport = accountService.getBalancesReport(consentID, accountId, trimEndingSlash(request.getRequestURI()));
         return balancesReport.hasError()
                    ? responseErrorMapper.generateErrorResponse(balancesReport.getError())
                    : responseMapper.ok(balancesReport, accountModelMapper::mapToBalance);
@@ -75,7 +79,7 @@ public class AccountController implements AccountApi {
     @Override
     public ResponseEntity getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<Xs2aTransactionsReport> transactionsReport =
-            accountService.getTransactionsReportByPeriod(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, BookingStatus.forValue(bookingStatus));
+            accountService.getTransactionsReportByPeriod(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, BookingStatus.forValue(bookingStatus), trimEndingSlash(request.getRequestURI()));
 
         if (transactionsReport.hasError()) {
             return responseErrorMapper.generateErrorResponse(transactionsReport.getError());
@@ -88,10 +92,19 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity getTransactionDetails(String accountId, String resourceId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Transactions> transactionDetails = accountService.getTransactionDetails(consentID, accountId, resourceId);
+        ResponseObject<Transactions> transactionDetails = accountService.getTransactionDetails(consentID, accountId, resourceId, trimEndingSlash(request.getRequestURI()));
         return transactionDetails.hasError()
                    ? responseErrorMapper.generateErrorResponse(transactionDetails.getError())
                    : responseMapper.ok(transactionDetails, accountModelMapper::mapToTransactionDetails);
 
+    }
+
+    private String trimEndingSlash(String input) {
+        String result = input;
+
+        while (StringUtils.endsWith(result, "/")) {
+            result = StringUtils.removeEnd(result, "/");
+        }
+        return result;
     }
 }

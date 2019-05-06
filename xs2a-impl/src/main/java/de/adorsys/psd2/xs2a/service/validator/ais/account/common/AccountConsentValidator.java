@@ -32,7 +32,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_429;
 @Component
 public class AccountConsentValidator {
 
-    public ValidationResult validate(AccountConsent accountConsent) {
+    public ValidationResult validate(AccountConsent accountConsent, String requestUri) {
         if (LocalDate.now().compareTo(accountConsent.getValidUntil()) > 0) {
             return ValidationResult.invalid(AIS_401, of(CONSENT_EXPIRED));
         }
@@ -45,10 +45,17 @@ public class AccountConsentValidator {
             return ValidationResult.invalid(AIS_401, of(messageErrorCode));
         }
 
-        if (accountConsent.isAccessExceeded()) {
+        if (isAccessExceeded(accountConsent, requestUri)) {
             return ValidationResult.invalid(AIS_429, of(ACCESS_EXCEEDED));
         }
 
         return ValidationResult.valid();
+    }
+
+    private boolean isAccessExceeded(AccountConsent accountConsent, String requestUri) {
+        if (!accountConsent.getUsageCounterMap().containsKey(requestUri)) {
+            return false;
+        }
+        return accountConsent.getUsageCounterMap().get(requestUri) <= 0;
     }
 }

@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +34,8 @@ public class AisConsentUsageService {
     private final AisConsentUsageRepository aisConsentUsageRepository;
 
     @Transactional
-    public void incrementUsage(AisConsent aisConsent) {
-        AisConsentUsage aisConsentUsage = getUsage(aisConsent);
+    public void incrementUsage(AisConsent aisConsent, String requestUri) {
+        AisConsentUsage aisConsentUsage = getUsage(aisConsent, requestUri);
         int usage = aisConsentUsage.getUsage();
         aisConsentUsage.setUsage(++usage);
         aisConsentUsageRepository.save(aisConsentUsage);
@@ -40,24 +43,23 @@ public class AisConsentUsageService {
 
     @Transactional
     public void resetUsage(AisConsent aisConsent) {
-        AisConsentUsage aisConsentUsage = getUsage(aisConsent);
-        aisConsentUsage.setUsage(0);
-        aisConsentUsageRepository.save(aisConsentUsage);
+        List<AisConsentUsage> aisConsentUsageList = aisConsentUsageRepository.findReadByConsentAndUsageDate(aisConsent, LocalDate.now());
+        aisConsentUsageList.forEach(acu -> acu.setUsage(0));
+        aisConsentUsageRepository.save(aisConsentUsageList);
     }
 
     @Transactional
-    public int getUsageCounter(AisConsent aisConsent) {
-        Integer usage = aisConsentUsageRepository.findReadByConsentAndUsageDate(aisConsent, LocalDate.now())
-                            .map(AisConsentUsage::getUsage)
-                            .orElse(0);
-
-        return Math.max(aisConsent.getAllowedFrequencyPerDay() - usage, 0);
+    public Map<String, Integer> getUsageCounterMap(AisConsent aisConsent) {
+        return aisConsentUsageRepository.findReadByConsentAndUsageDate(aisConsent, LocalDate.now())
+                   .stream()
+                   .collect(Collectors.toMap(AisConsentUsage::getRequestUri,
+                                             u -> Math.max(aisConsent.getAllowedFrequencyPerDay() - u.getUsage(), 0)));
     }
 
-    private AisConsentUsage getUsage(AisConsent aisConsent) {
-        return aisConsentUsageRepository.findWriteByConsentAndUsageDate(aisConsent, LocalDate.now())
+    private AisConsentUsage getUsage(AisConsent aisConsent, String requestUri) {
+        return aisConsentUsageRepository.findWriteByConsentAndUsageDateAndRequestUri(aisConsent, LocalDate.now(), requestUri)
                    .orElseGet(() -> {
-                       AisConsentUsage usage = new AisConsentUsage(aisConsent);
+                       AisConsentUsage usage = new AisConsentUsage(aisConsent, requestUri);
                        aisConsent.addUsage(usage);
                        return usage;
                    });

@@ -87,14 +87,14 @@ public class AccountAccessValidatorTest {
         return new AccountConsent("id", null, false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, 0);
+                                  Collections.emptyList(), null, Collections.emptyMap());
     }
 
     private AccountConsent buildAccountConsentEmptyAccesses() {
         return new AccountConsent("id", new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null), false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
-                                  Collections.emptyList(), null, 0);
+                                  Collections.emptyList(), null, Collections.emptyMap());
     }
 
     private static TppInfo buildTppInfo() {

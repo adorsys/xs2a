@@ -48,6 +48,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class GetAccountListValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
+    private static final String REQUEST_URI = "/accounts";
+
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
 
     private static final MessageError TPP_VALIDATION_ERROR =
@@ -81,13 +83,13 @@ public class GetAccountListValidatorTest {
         // Given
         Xs2aAccountAccess accountAccess = buildXs2aAccountAccess();
         AccountConsent accountConsent = buildAccountConsent(accountAccess, TPP_INFO);
-        when(accountConsentValidator.validate(accountConsent))
+        when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
             .thenReturn(ValidationResult.valid());
         when(accountAccessValidator.validate(accountConsent, accountConsent.isWithBalance()))
             .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, false));
+        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, false, REQUEST_URI));
 
         // Then
         assertNotNull(validationResult);
@@ -100,7 +102,7 @@ public class GetAccountListValidatorTest {
         // Given
         Xs2aAccountAccess accessWithBalances = buildXs2aAccountAccess(true);
         AccountConsent accountConsent = buildAccountConsent(accessWithBalances, TPP_INFO);
-        when(accountConsentValidator.validate(accountConsent))
+        when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
             .thenReturn(ValidationResult.valid());
         when(accountAccessValidator.validate(accountConsent, accountConsent.isWithBalance()))
             .thenReturn(ValidationResult.valid());
@@ -108,7 +110,7 @@ public class GetAccountListValidatorTest {
             .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, true));
+        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, true, REQUEST_URI));
 
         // Then
         assertNotNull(validationResult);
@@ -123,7 +125,7 @@ public class GetAccountListValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(accountAccess, INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, false));
+        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, false, REQUEST_URI));
 
         // Then
         verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -138,13 +140,13 @@ public class GetAccountListValidatorTest {
         // Given
         Xs2aAccountAccess accountAccess = buildXs2aAccountAccess();
         AccountConsent accountConsent = buildAccountConsent(accountAccess, TPP_INFO);
-        when(accountConsentValidator.validate(accountConsent))
+        when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
             .thenReturn(ValidationResult.valid());
         when(accountAccessValidator.validate(any(), anyBoolean()))
             .thenReturn(ValidationResult.invalid(ACCESS_VALIDATION_ERROR));
 
         // When
-        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, true));
+        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, true, REQUEST_URI));
 
         // Then
         assertNotNull(validationResult);
@@ -156,13 +158,13 @@ public class GetAccountListValidatorTest {
     public void validate_withBalanceRequestAndNullAccess_shouldReturnAccessValidationError() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(null, TPP_INFO);
-        when(accountConsentValidator.validate(accountConsent))
+        when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
             .thenReturn(ValidationResult.valid());
         when(accountAccessValidator.validate(any(), anyBoolean()))
             .thenReturn(ValidationResult.invalid(ACCESS_VALIDATION_ERROR));
 
         // When
-        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, true));
+        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, true, REQUEST_URI));
 
         // Then
         assertNotNull(validationResult);
@@ -177,7 +179,7 @@ public class GetAccountListValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(accountAccess, INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, true));
+        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, true, REQUEST_URI));
 
         // Then
         assertNotNull(validationResult);
@@ -195,7 +197,7 @@ public class GetAccountListValidatorTest {
         return new AccountConsent("id", xs2aAccountAccess, false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
-                                  Collections.emptyList(), null, 0);
+                                  Collections.emptyList(), null, Collections.emptyMap());
     }
 
     private Xs2aAccountAccess buildXs2aAccountAccess() {

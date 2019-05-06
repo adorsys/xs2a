@@ -7,8 +7,6 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaAuthenticatedStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -203,15 +201,6 @@ public class DecoupledAisAuthorizationServiceTest {
         return resp;
     }
 
-    private static TppInfo buildTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber("registrationNumber");
-        tppInfo.setTppName("tppName");
-        tppInfo.setTppRoles(Collections.singletonList(TppRole.PISP));
-        tppInfo.setAuthorityId("authorityId");
-        return tppInfo;
-    }
-
     private static AccountConsentAuthorization buildAccountConsentAuthorization() {
         AccountConsentAuthorization accountConsentAuthorization = new AccountConsentAuthorization();
         accountConsentAuthorization.setScaStatus(ScaStatus.RECEIVED);
@@ -219,7 +208,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     private static AccountConsent buildConsent(String id) {
-        return  new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), 0);
+        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap());
     }
 
     private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse(){

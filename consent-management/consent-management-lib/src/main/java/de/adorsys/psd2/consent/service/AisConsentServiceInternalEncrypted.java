@@ -106,7 +106,8 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
 
         AisConsentActionRequest decryptedRequest = new AisConsentActionRequest(encryptedRequest.getTppId(),
                                                                                decryptedConsentId.get(),
-                                                                               encryptedRequest.getActionStatus());
+                                                                               encryptedRequest.getActionStatus(),
+                                                                               encryptedRequest.getRequestUri());
         aisConsentService.checkConsentAndSaveActionLog(decryptedRequest);
     }
 

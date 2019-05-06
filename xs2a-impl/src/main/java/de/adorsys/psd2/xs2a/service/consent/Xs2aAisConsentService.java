@@ -121,9 +121,10 @@ public class Xs2aAisConsentService {
      * @param tppId        String representation of TPP`s identifier from TPP Certificate
      * @param consentId    String representation of identifier of stored consent
      * @param actionStatus Enum value representing whether the action is successful or errors occurred
+     * @param requestUri   target URL of the request
      */
-    public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus) {
-        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus));
+    public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri) {
+        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus, requestUri));
     }
 
     /**
