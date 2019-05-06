@@ -74,7 +74,8 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -102,7 +103,6 @@ public class AccountControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
 
     @MockBean
     private AspspProfileService aspspProfileService;
@@ -182,9 +182,9 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccountList_ShouldFail_WithNoUsageCounter()  throws Exception  {
+    public void getAccountList_ShouldFail_WithNoUsageCounter() throws Exception {
         // Given
-        AccountConsent accountConsent = buildAccountConsent(0);
+        AccountConsent accountConsent = buildAccountConsent(Collections.singletonMap("/v1/accounts", 0));
         given(xs2aAisConsentMapper.mapToAccountConsent(new AisAccountConsent())).willReturn(accountConsent);
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
@@ -200,7 +200,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccountList_TwoRequestSuccessfulThirdRequestFailed()  throws Exception  {
+    public void getAccountList_TwoRequestSuccessfulThirdRequestFailed() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeaders);
@@ -217,9 +217,9 @@ public class AccountControllerTest {
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
 
         for (int usage = 2; usage >= 0; usage--) {
-            AisAccountConsent aisAccountConsent = buildAisAccountConsent(usage);
+            AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", usage));
             given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
-            AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounter());
+            AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
             given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
             given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
 
@@ -247,18 +247,18 @@ public class AccountControllerTest {
 
     private SpiResponse<List<SpiAccountDetails>> buildListSpiResponse(AspspConsentData aspspConsentData) {
         return (SpiResponse<List<SpiAccountDetails>>) SpiResponse.<List<SpiAccountDetails>>builder()
-                                                                .payload(Collections.EMPTY_LIST)
-                                                                .aspspConsentData(aspspConsentData)
-                                                                .success();
+                                                          .payload(Collections.EMPTY_LIST)
+                                                          .aspspConsentData(aspspConsentData)
+                                                          .success();
     }
 
-    private AisAccountConsent buildAisAccountConsent(int usageCounter) {
+    private AisAccountConsent buildAisAccountConsent(Map<String, Integer> usageCounter) {
         AisAccountConsent aisAccountConsent = new AisAccountConsent();
-        aisAccountConsent.setUsageCounter(usageCounter);
+        aisAccountConsent.setUsageCounterMap(usageCounter);
         return aisAccountConsent;
     }
 
-    private AccountConsent buildAccountConsent(int usageCounter) {
+    private AccountConsent buildAccountConsent(Map<String, Integer> usageCounter) {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null);
         return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,

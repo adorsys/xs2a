@@ -16,31 +16,19 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.dto;
 
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import lombok.Value;
 
-import java.util.List;
-
 @Value
-public class CommonAccountRequestObject implements TppInfoProvider {
+public class CommonAccountBalanceRequestObject implements TppInfoProvider {
+
     private AccountConsent accountConsent;
-    private String accountId;
-    private boolean withBalance;
     private String requestUri;
 
     @Override
     public TppInfo getTppInfo() {
         return accountConsent.getTppInfo();
-    }
-
-    public List<AccountReference> getAccounts() {
-        return accountConsent.getAccess().getAccounts();
-    }
-
-    public List<AccountReference> getTransactions() {
-        return accountConsent.getAccess().getTransactions();
     }
 }

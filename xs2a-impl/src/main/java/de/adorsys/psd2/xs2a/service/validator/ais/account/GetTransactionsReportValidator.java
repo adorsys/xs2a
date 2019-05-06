@@ -53,6 +53,6 @@ public class GetTransactionsReportValidator extends AbstractAisTppValidator<Comm
             return permittedAccountReferenceValidationResult;
         }
 
-        return accountConsentValidator.validate(accountConsent);
+        return accountConsentValidator.validate(accountConsent, commonAccountRequestObject.getRequestUri());
     }
 }

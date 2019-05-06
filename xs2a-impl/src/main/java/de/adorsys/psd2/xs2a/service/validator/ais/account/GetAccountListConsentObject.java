@@ -30,6 +30,7 @@ public class GetAccountListConsentObject implements TppInfoProvider {
     @NotNull
     private AccountConsent accountConsent;
     private boolean withBalance;
+    private String requestUri;
 
     @Override
     public TppInfo getTppInfo() {
