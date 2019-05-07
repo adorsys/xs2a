@@ -56,6 +56,8 @@ public class AisConsentMapper {
                                                 ? mapToAisAccountAccess(consent)
                                                 : mapToAspspAisAccountAccess(consent);
 
+        Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
+
         return new AisAccountConsent(
             consent.getExternalId(),
             aisAccountAccess,
@@ -71,7 +73,8 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
-            aisConsentUsageService.getUsageCounter(consent),
+            calculateUsageCounter(usageCounterMap),
+            usageCounterMap,
             consent.getCreationTimestamp(),
             consent.getStatusChangeTimestamp());
     }
@@ -83,6 +86,8 @@ public class AisConsentMapper {
      * @return mapped AIS consent
      */
     public AisAccountConsent mapToInitialAisAccountConsent(AisConsent consent) {
+        Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
+
         return new AisAccountConsent(
             consent.getExternalId(),
             mapToAisAccountAccess(consent),
@@ -98,7 +103,8 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
-            aisConsentUsageService.getUsageCounter(consent),
+            calculateUsageCounter(usageCounterMap),
+            usageCounterMap,
             consent.getCreationTimestamp(),
             consent.getStatusChangeTimestamp());
     }
@@ -200,5 +206,10 @@ public class AisConsentMapper {
         return Optional.ofNullable(aisConsentAuthorisation)
                    .map(auth -> new AisAccountConsentAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()), auth.getScaStatus()))
                    .orElse(null);
+    }
+
+    // TODO should be deleted in 2.8: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/817
+    private int calculateUsageCounter(Map<String, Integer> usageCounterMap) {
+        return usageCounterMap.values().stream().mapToInt(i -> i).sum();
     }
 }

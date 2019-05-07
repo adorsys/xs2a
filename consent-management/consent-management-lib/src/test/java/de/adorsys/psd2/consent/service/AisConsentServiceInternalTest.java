@@ -430,7 +430,7 @@ public class AisConsentServiceInternalTest {
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.empty());
 
         try {
-            aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest("tppId", EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS));
+            aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest("tppId", EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, "request/uri"));
             assertTrue("Method works without exceptions", true);
         } catch (Exception ex) {
             fail("Exception should not be appeared.");
@@ -516,7 +516,7 @@ public class AisConsentServiceInternalTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), 0, OffsetDateTime.now(),
+                                     false, false, null, null, null, false, Collections.emptyList(), 0, Collections.emptyMap(), OffsetDateTime.now(),
                                      OffsetDateTime.now());
 
     }

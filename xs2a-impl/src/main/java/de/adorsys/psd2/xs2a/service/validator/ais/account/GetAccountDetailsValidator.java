@@ -60,6 +60,6 @@ public class GetAccountDetailsValidator extends AbstractAisTppValidator<CommonAc
             return accountAccessValidationResult;
         }
 
-        return accountConsentValidator.validate(accountConsent);
+        return accountConsentValidator.validate(accountConsent, commonAccountRequestObject.getRequestUri());
     }
 }

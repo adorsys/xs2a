@@ -49,6 +49,7 @@ public class GetAccountDetailsValidatorTest {
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo INVALID_TPP_INFO = buildTppInfo("invalid authorisation number");
     private static final String ACCOUNT_ID = "account id";
+    private static final String REQUEST_URI = "/accounts";
     private static final boolean WITH_BALANCE = false;
 
     private static final MessageError TPP_VALIDATION_ERROR =
@@ -90,7 +91,7 @@ public class GetAccountDetailsValidatorTest {
             .thenReturn(ValidationResult.invalid(PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
 
         // When
-        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE));
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
 
         // Then
         verify(permittedAccountReferenceValidator).validate(accountConsent, accountConsent.getAccess().getAccounts(), ACCOUNT_ID, WITH_BALANCE);
@@ -108,11 +109,11 @@ public class GetAccountDetailsValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(accountAccessValidator.validate(accountConsent, accountConsent.isWithBalance()))
             .thenReturn(ValidationResult.valid());
-        when(accountConsentValidator.validate(accountConsent))
+        when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
             .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE));
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
 
         // Then
         verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -128,7 +129,7 @@ public class GetAccountDetailsValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE));
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
 
         // Then
         verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -148,7 +149,7 @@ public class GetAccountDetailsValidatorTest {
         return new AccountConsent("id", buildXs2aAccountAccess(), false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
-                                  Collections.emptyList(), null, 0);
+                                  Collections.emptyList(), null, Collections.emptyMap());
     }
 
     private Xs2aAccountAccess buildXs2aAccountAccess() {

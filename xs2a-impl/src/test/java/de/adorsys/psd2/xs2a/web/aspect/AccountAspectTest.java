@@ -47,6 +47,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
+import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -69,7 +70,9 @@ public class AccountAspectTest {
     private static final String ERROR_TEXT = "Error occurred while processing";
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final String RESOURCE_ID = "33333-999999999";
+    private static final String REQUEST_URI = "/v1/accounts";
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
+    private static final Map<String, Integer> USAGE_COUNTER = Collections.singletonMap("/accounts", 10);
 
     @InjectMocks
     private AccountAspect accountAspect;
@@ -87,7 +90,7 @@ public class AccountAspectTest {
     @Test
     public void invokeGetAccountDetailsListAspect_withBalance_shouldAddBalanceLink() {
         // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(true), CONSENT_ID, true);
+        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(true), CONSENT_ID, true, REQUEST_URI);
 
         // Then
         assertNoErrorsAndAccountListPresent(actualResponse);
@@ -97,7 +100,7 @@ public class AccountAspectTest {
     @Test
     public void invokeGetAccountDetailsListAspect_withoutBalance_shouldAddEmptyLinks() {
         // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(false), CONSENT_ID, true);
+        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(false), CONSENT_ID, true, REQUEST_URI);
 
         // Then
         assertNoErrorsAndAccountListPresent(actualResponse);
@@ -107,7 +110,7 @@ public class AccountAspectTest {
     @Test
     public void invokeGetAccountDetailsListAspect_withBalancesAndTransactions_shouldAddAllLinks() {
         // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObjectWithBalancesAndTransactions(), CONSENT_ID, true);
+        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObjectWithBalancesAndTransactions(), CONSENT_ID, true, REQUEST_URI);
 
         // Then
         assertNoErrorsAndAccountListPresent(actualResponse);
@@ -122,7 +125,7 @@ public class AccountAspectTest {
         when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
         // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderWithError(), CONSENT_ID, true);
+        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderWithError(), CONSENT_ID, true, REQUEST_URI);
 
         // Then
         assertTrue(actualResponse.hasError());
@@ -178,14 +181,14 @@ public class AccountAspectTest {
         }
         return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), 10);
+                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), USAGE_COUNTER);
     }
 
     private AccountConsent buildAccountConsentWithBalancesAndTransactions() {
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(buildReference()), Collections.singletonList(buildReference()), Collections.singletonList(buildReference()), null, null);
         return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
                                   null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), 10);
+                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), USAGE_COUNTER);
     }
 
     private AspspSettings buildAspspSettings() {

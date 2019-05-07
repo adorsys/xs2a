@@ -24,6 +24,9 @@ import java.time.LocalDate;
 
 @Data
 @Entity(name = "ais_consent_usage")
+@Table(uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"consent_id", "request_uri", "usage_date"})
+})
 @NoArgsConstructor
 public class AisConsentUsage {
     @Id
@@ -35,6 +38,9 @@ public class AisConsentUsage {
     @JoinColumn(name = "consent_id", nullable = false)
     private AisConsent consent;
 
+    @Column(name = "request_uri", nullable = false)
+    private String requestUri;
+
     @Column(name = "usage_date", nullable = false)
     private LocalDate usageDate;
 
@@ -45,8 +51,9 @@ public class AisConsentUsage {
     @Column(name = "version")
     private long version;
 
-    public AisConsentUsage(AisConsent consent) {
+    public AisConsentUsage(AisConsent consent, String requestUri) {
         this.usageDate = LocalDate.now();
         this.consent = consent;
+        this.requestUri = requestUri;
     }
 }

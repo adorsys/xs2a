@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="amu@adorsys.com.ua" id="2019-04-26-1">
+        <comment>Truncate data and add new column to ais_consent_usage table</comment>
+
+        <sql>truncate table ais_consent_usage;</sql>
+
+        <addColumn tableName="ais_consent_usage">
+            <column name="request_uri" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
+
+    <changeSet author="amu@adorsys.com.ua" id="2019-04-26-2">
+        <comment>Add composite unique constraint for ais_consent_usage table for consent_id, request_uri</comment>
+
+        <addUniqueConstraint columnNames="consent_id,request_uri,usage_date"
+                             constraintName="uniq_consent_usage"
+                             deferrable="false" initiallyDeferred="false"
+                             tableName="ais_consent_usage"/>
+    </changeSet>
+</databaseChangeLog>

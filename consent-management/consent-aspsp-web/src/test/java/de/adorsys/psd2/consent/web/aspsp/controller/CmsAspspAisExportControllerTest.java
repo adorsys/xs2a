@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -137,6 +138,6 @@ public class CmsAspspAisExportControllerTest {
                                      null, false,
                                      null, 0,
                                      null, null,
-                                     false, false, null, null, null, false, Collections.emptyList(), 0, CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
+                                     false, false, null, null, null, false, Collections.emptyList(), 0, new HashMap<>(), CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
     }
 }

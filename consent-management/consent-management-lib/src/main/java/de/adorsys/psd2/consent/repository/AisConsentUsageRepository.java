@@ -23,12 +23,13 @@ import org.springframework.data.repository.CrudRepository;
 
 import javax.persistence.LockModeType;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface AisConsentUsageRepository extends CrudRepository<AisConsentUsage, Long> {
     @Lock(value = LockModeType.OPTIMISTIC_FORCE_INCREMENT)
-    Optional<AisConsentUsage> findWriteByConsentAndUsageDate(AisConsent aisConsent, LocalDate usageDate);
+    Optional<AisConsentUsage> findWriteByConsentAndUsageDateAndRequestUri(AisConsent aisConsent, LocalDate usageDate, String requestUri);
 
     @Lock(value = LockModeType.OPTIMISTIC)
-    Optional<AisConsentUsage> findReadByConsentAndUsageDate(AisConsent aisConsent, LocalDate usageDate);
+    List<AisConsentUsage> findReadByConsentAndUsageDate(AisConsent aisConsent, LocalDate usageDate);
 }
