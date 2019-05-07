@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountTransactionsRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class GetTransactionDetailsValidator extends AbstractAisTppValidator<CommonConsentObject> {
+public class GetTransactionDetailsValidator extends AbstractAisTppValidator<CommonAccountTransactionsRequestObject> {
     private final AccountConsentValidator accountConsentValidator;
 
     /**
@@ -40,7 +40,7 @@ public class GetTransactionDetailsValidator extends AbstractAisTppValidator<Comm
      */
     @NotNull
     @Override
-    protected ValidationResult executeBusinessValidation(CommonConsentObject consentObject) {
-        return accountConsentValidator.validate(consentObject.getAccountConsent());
+    protected ValidationResult executeBusinessValidation(CommonAccountTransactionsRequestObject consentObject) {
+        return accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());
     }
 }

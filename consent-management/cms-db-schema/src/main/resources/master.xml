@@ -86,5 +86,6 @@
     <!--<include relativeToChangelogFile="true" file="migration/0058-drop-table-piis_consent-acc-reference.xml"/>-->
     <include relativeToChangelogFile="true"
              file="migration/0059-remove-usage-counter-column-from-ais-consent-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0060-add-request-uri-column-to-ais-consent-usage.xml"/>
 
 </databaseChangeLog>

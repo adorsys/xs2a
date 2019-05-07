@@ -44,7 +44,7 @@ public class GetAccountListValidator extends AbstractAisTppValidator<GetAccountL
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(GetAccountListConsentObject consentObject) {
-        ValidationResult accountConsentValidationResult = accountConsentValidator.validate(consentObject.getAccountConsent());
+        ValidationResult accountConsentValidationResult = accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());
 
         if (accountConsentValidationResult.isNotValid()) {
             return accountConsentValidationResult;

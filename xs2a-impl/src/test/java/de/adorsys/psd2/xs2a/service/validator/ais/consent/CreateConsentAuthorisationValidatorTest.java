@@ -105,6 +105,6 @@ public class CreateConsentAuthorisationValidatorTest {
         return new AccountConsent("id", null, false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, null, false,
-                                  Collections.emptyList(), null, 0);
+                                  Collections.emptyList(), null, Collections.emptyMap());
     }
 }

@@ -21,13 +21,17 @@ import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
+@AllArgsConstructor
 public class AccountConsent {
     @JsonIgnore
     private final String id;
@@ -66,12 +70,7 @@ public class AccountConsent {
     private final OffsetDateTime statusChangeTimestamp;
 
     @JsonIgnore
-    private final int usageCounter;
-
-    @JsonIgnore
-    public boolean isAccessExceeded() {
-        return usageCounter <= 0;
-    }
+    private Map<String, Integer> usageCounterMap = new HashMap<>();
 
     @JsonIgnore
     public boolean isExpired() {

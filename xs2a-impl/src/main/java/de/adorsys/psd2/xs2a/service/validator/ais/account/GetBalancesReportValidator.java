@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class GetBalancesReportValidator extends AbstractAisTppValidator<CommonConsentObject> {
+public class GetBalancesReportValidator extends AbstractAisTppValidator<CommonAccountBalanceRequestObject> {
     private final AccountConsentValidator accountConsentValidator;
 
     /**
@@ -40,7 +40,7 @@ public class GetBalancesReportValidator extends AbstractAisTppValidator<CommonCo
      */
     @NotNull
     @Override
-    protected ValidationResult executeBusinessValidation(CommonConsentObject consentObject) {
-        return accountConsentValidator.validate(consentObject.getAccountConsent());
+    protected ValidationResult executeBusinessValidation(CommonAccountBalanceRequestObject consentObject) {
+        return accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());
     }
 }

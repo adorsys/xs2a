@@ -50,7 +50,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,6 +69,7 @@ public class AccountControllerTest {
     private final String ACCOUNT_DETAILS_LIST_SOURCE = "/json/AccountDetailsList.json";
     private final String ACCOUNT_REPORT_SOURCE = "/json/AccountReportTestData.json";
     private final String BALANCES_SOURCE = "/json/ReadBalanceResponse.json";
+    private static final String REQUEST_URI = "/accounts";
     private final Charset UTF_8 = Charset.forName("utf-8");
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final MessageError MESSAGE_ERROR_AIS_404 = new MessageError(ErrorType.AIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404));
@@ -90,10 +93,11 @@ public class AccountControllerTest {
 
     @Before
     public void setUp() {
-        when(accountService.getAccountList(eq(CONSENT_ID), anyBoolean())).thenReturn(getXs2aAccountListHolder());
-        when(accountService.getBalancesReport(eq(CONSENT_ID), eq(ACCOUNT_ID))).thenReturn(getBalanceReport());
-        when(accountService.getAccountDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), anyBoolean())).thenReturn(getXs2aAccountDetailsHolder());
-        when(accountService.getTransactionDetails(any(), eq(ACCOUNT_ID), any())).thenReturn(buildTransaction());
+        when(accountService.getAccountList(eq(CONSENT_ID), anyBoolean(), anyString())).thenReturn(getXs2aAccountListHolder());
+        when(accountService.getBalancesReport(eq(CONSENT_ID), eq(ACCOUNT_ID), anyString())).thenReturn(getBalanceReport());
+        when(accountService.getAccountDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), anyBoolean(), anyString())).thenReturn(getXs2aAccountDetailsHolder());
+        when(accountService.getTransactionDetails(any(), eq(ACCOUNT_ID), any(), anyString())).thenReturn(buildTransaction());
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
     }
 
     @Test
@@ -116,11 +120,11 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void readAccountDetails_wrongId_fail() throws IOException {
+    public void readAccountDetails_wrongId_fail() {
         // Given
         boolean withBalance = true;
         ResponseObject<Xs2aAccountDetailsHolder> responseEntity = buildXs2aAccountDetailsWithError(MESSAGE_ERROR_AIS_404);
-        when(accountService.getAccountDetails(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, withBalance))
+        when(accountService.getAccountDetails(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, withBalance, REQUEST_URI))
             .thenReturn(responseEntity);
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -155,12 +159,12 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccountList_wrongId_fail() throws IOException {
+    public void getAccountList_wrongId_fail() {
         // Given
         boolean withBalance = true;
         ResponseObject<Xs2aAccountListHolder> responseEntity = getXs2aAccountListHolderWithError(MESSAGE_ERROR_AIS_404);
 
-        when(accountService.getAccountList(WRONG_CONSENT_ID, withBalance))
+        when(accountService.getAccountList(WRONG_CONSENT_ID, withBalance, REQUEST_URI))
             .thenReturn(responseEntity);
 
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
@@ -199,7 +203,7 @@ public class AccountControllerTest {
     public void getBalances_wrongId_fail() throws IOException {
         // Given
         ResponseObject<Xs2aBalancesReport> responseEntity = buildBalanceReportWithError(MESSAGE_ERROR_AIS_404);
-        when(accountService.getBalancesReport(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID))
+        when(accountService.getBalancesReport(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, REQUEST_URI))
             .thenReturn(responseEntity);
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -228,7 +232,7 @@ public class AccountControllerTest {
         ;
 
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(any(), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING));
+            .when(accountService).getTransactionsReportByPeriod(any(), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING), anyString());
 
         //When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
@@ -252,7 +256,7 @@ public class AccountControllerTest {
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().fail(MESSAGE_ERROR_AIS_404).body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(any(), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING));
+            .when(accountService).getTransactionsReportByPeriod(any(), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING), anyString());
 
 
         // When
@@ -278,7 +282,7 @@ public class AccountControllerTest {
         transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
         transactionsReport.setResponseContentType("application/json");
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(any(), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING));
+            .when(accountService).getTransactionsReportByPeriod(any(), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING), anyString());
 
 
         // When
@@ -314,7 +318,7 @@ public class AccountControllerTest {
     @Test
     public void getTransactionDetails1_success() throws IOException {
         // Given
-        when(accountService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any())).thenReturn(buildTransactionWithError(MESSAGE_ERROR_AIS_404));
+        when(accountService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), anyString())).thenReturn(buildTransactionWithError(MESSAGE_ERROR_AIS_404));
         doReturn(new ResponseEntity<>(buildAccountReportWithError(ACCOUNT_REPORT_SOURCE, MESSAGE_ERROR_AIS_404).getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
 
@@ -414,7 +418,7 @@ public class AccountControllerTest {
         return ResponseObject.<Xs2aBalancesReport>builder().body(balancesReport).build();
     }
 
-    private ResponseObject<Xs2aBalancesReport> buildBalanceReportWithError(MessageError messageError) throws IOException {
+    private ResponseObject<Xs2aBalancesReport> buildBalanceReportWithError(MessageError messageError) {
         Xs2aBalancesReport balancesReport = new Xs2aBalancesReport();
         balancesReport.setBalances(getXs2aBalances().getBody());
         return ResponseObject.<Xs2aBalancesReport>builder()

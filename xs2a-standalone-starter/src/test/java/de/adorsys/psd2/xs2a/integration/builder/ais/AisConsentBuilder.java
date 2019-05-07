@@ -75,6 +75,7 @@ public class AisConsentBuilder {
                             false,
                             Collections.singletonList(new AisAccountConsentAuthorisation(PSU_DATA, ScaStatus.RECEIVED)),
                             0,
+                            Collections.emptyMap(),
                             OffsetDateTime.now(),
                             OffsetDateTime.now()
                         )

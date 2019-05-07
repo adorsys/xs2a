@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -32,6 +33,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -42,8 +44,8 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         super(scaApproachResolver, messageService, aspspProfileService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountDetails(..)) && args( consentId, accountId, withBalance)", returning = "result", argNames = "result,consentId,accountId,withBalance")
-    public ResponseObject<Xs2aAccountDetailsHolder> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetailsHolder> result, String consentId, String accountId, boolean withBalance) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountDetails(..)) && args( consentId, accountId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,accountId,withBalance,requestUri")
+    public ResponseObject<Xs2aAccountDetailsHolder> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetailsHolder> result, String consentId, String accountId, boolean withBalance, String requestUri) {
         if (!result.hasError()) {
             Xs2aAccountDetails accountDetails = result.getBody().getAccountDetails();
             accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getResourceId(), result.getBody().getAccountConsent().getAccess()));
@@ -52,8 +54,8 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountList(..)) && args( consentId, withBalance)", returning = "result", argNames = "result,consentId,withBalance")
-    public ResponseObject<Xs2aAccountListHolder> getAccountDetailsListAspect(ResponseObject<Xs2aAccountListHolder> result, String consentId, boolean withBalance) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountList(..)) && args( consentId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,withBalance,requestUri")
+    public ResponseObject<Xs2aAccountListHolder> getAccountDetailsListAspect(ResponseObject<Xs2aAccountListHolder> result, String consentId, boolean withBalance, String requestUri) {
         if (!result.hasError()) {
             List<Xs2aAccountDetails> accountDetails = result.getBody().getAccountDetails();
             setLinksToAccounts(accountDetails, result.getBody().getAccountConsent().getAccess());
@@ -62,8 +64,8 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args( consentId, accountId, withBalance, ..)", returning = "result", argNames = "result,consentId,accountId,withBalance")
-    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, String consentId, String accountId, boolean withBalance) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args( consentId, accountId, acceptHeader, withBalance, dateFrom, dateTo, bookingStatus, requestUri)", returning = "result", argNames = "result,consentId,accountId,acceptHeader,withBalance,dateFrom,dateTo,bookingStatus,requestUri")
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, String consentId, String accountId, String acceptHeader, boolean withBalance, LocalDate dateFrom, LocalDate dateTo, BookingStatus bookingStatus, String requestUri) {
         if (!result.hasError()) {
             Xs2aTransactionsReport transactionsReport = result.getBody();
 
@@ -83,8 +85,8 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionDetails(..)) && args( consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
-    public ResponseObject<Transactions> getTransactionDetailsAspect(ResponseObject<Transactions> result, String consentID, String accountId, String resourceId) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionDetails(..)) && args( consentID, accountId, resourceId, requestUri)", returning = "result", argNames = "result,consentID,accountId,resourceId,requestUri")
+    public ResponseObject<Transactions> getTransactionDetailsAspect(ResponseObject<Transactions> result, String consentID, String accountId, String resourceId, String requestUri) {
         if (!result.hasError()) {
             return result;
         }

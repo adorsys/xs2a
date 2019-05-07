@@ -41,9 +41,10 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
-import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.*;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountTransactionsRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -103,9 +104,10 @@ public class AccountService {
      *
      * @param consentId   String representing an AccountConsent identification
      * @param withBalance boolean representing if the responded AccountDetails should contain
+     * @param requestUri  the URI of incoming request
      * @return response with {@link Xs2aAccountListHolder} containing the List of AccountDetails with Balances if requested and granted by consent
      */
-    public ResponseObject<Xs2aAccountListHolder> getAccountList(String consentId, boolean withBalance) {
+    public ResponseObject<Xs2aAccountListHolder> getAccountList(String consentId, boolean withBalance, String requestUri) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_ACCOUNT_LIST_REQUEST_RECEIVED);
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
@@ -117,7 +119,7 @@ public class AccountService {
 
         AccountConsent accountConsent = accountConsentOptional.get();
 
-        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, withBalance));
+        ValidationResult validationResult = getAccountListValidator.validate(new GetAccountListConsentObject(accountConsent, withBalance, requestUri));
         if (validationResult.isNotValid()) {
             return ResponseObject.<Xs2aAccountListHolder>builder()
                        .fail(validationResult.getMessageError())
@@ -146,7 +148,7 @@ public class AccountService {
         ResponseObject<Xs2aAccountListHolder> response =
             ResponseObject.<Xs2aAccountListHolder>builder().body(xs2aAccountListHolder).build();
 
-        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.ACCOUNT, response);
+        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.ACCOUNT, response, requestUri);
 
         return response;
     }
@@ -159,9 +161,10 @@ public class AccountService {
      * @param consentId   String representing an AccountConsent identification
      * @param accountId   String representing a PSU`s Account at ASPSP
      * @param withBalance boolean representing if the responded AccountDetails should contain
+     * @param requestUri  the URI of incoming request
      * @return response with {@link Xs2aAccountDetailsHolder} based on accountId with Balances if requested and granted by consent
      */
-    public ResponseObject<Xs2aAccountDetailsHolder> getAccountDetails(String consentId, String accountId, boolean withBalance) {
+    public ResponseObject<Xs2aAccountDetailsHolder> getAccountDetails(String consentId, String accountId, boolean withBalance, String requestUri) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_ACCOUNT_DETAILS_REQUEST_RECEIVED);
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
@@ -173,7 +176,7 @@ public class AccountService {
 
         AccountConsent accountConsent = accountConsentOptional.get();
 
-        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, accountId, withBalance));
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri));
         if (validationResult.isNotValid()) {
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()
                        .fail(validationResult.getMessageError())
@@ -216,7 +219,7 @@ public class AccountService {
         ResponseObject<Xs2aAccountDetailsHolder> response =
             ResponseObject.<Xs2aAccountDetailsHolder>builder().body(xs2aAccountDetailsHolder).build();
 
-        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.ACCOUNT, response);
+        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.ACCOUNT, response, requestUri);
 
         return response;
     }
@@ -224,11 +227,12 @@ public class AccountService {
     /**
      * Gets Balances Report based on consentId and accountId
      *
-     * @param consentId String representing an AccountConsent identification
-     * @param accountId String representing a PSU`s Account at ASPSP
+     * @param consentId  String representing an AccountConsent identification
+     * @param accountId  String representing a PSU`s Account at ASPSP
+     * @param requestUri the URI of incoming request
      * @return Balances Report based on consentId and accountId
      */
-    public ResponseObject<Xs2aBalancesReport> getBalancesReport(String consentId, String accountId) {
+    public ResponseObject<Xs2aBalancesReport> getBalancesReport(String consentId, String accountId, String requestUri) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_BALANCE_REQUEST_RECEIVED);
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
@@ -240,7 +244,7 @@ public class AccountService {
 
         AccountConsent accountConsent = accountConsentOptional.get();
 
-        ValidationResult validationResult = getBalancesReportValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = getBalancesReportValidator.validate(new CommonAccountBalanceRequestObject(accountConsent, requestUri));
         if (validationResult.isNotValid()) {
             return ResponseObject.<Xs2aBalancesReport>builder()
                        .fail(validationResult.getMessageError())
@@ -280,7 +284,7 @@ public class AccountService {
         ResponseObject<Xs2aBalancesReport> response =
             ResponseObject.<Xs2aBalancesReport>builder().body(balancesReport).build();
 
-        writeLogAndCheckConsent(consentId, false, accountConsent, TypeAccess.BALANCE, response);
+        writeLogAndCheckConsent(consentId, false, accountConsent, TypeAccess.BALANCE, response, requestUri);
 
         return response;
     }
@@ -300,6 +304,7 @@ public class AccountService {
      * @param dateTo        ISO Date representing the value of desired end date of AccountReport (if omitted is set
      *                      to current date)
      * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses
+     * @param requestUri    the URI of incoming request
      * @return TransactionsReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances
      * sections is added
      */
@@ -307,7 +312,8 @@ public class AccountService {
                                                                                 String acceptHeader,
                                                                                 boolean withBalance, LocalDate dateFrom,
                                                                                 LocalDate dateTo,
-                                                                                BookingStatus bookingStatus) {
+                                                                                BookingStatus bookingStatus,
+                                                                                String requestUri) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRANSACTION_LIST_REQUEST_RECEIVED);
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
@@ -319,7 +325,7 @@ public class AccountService {
 
         AccountConsent accountConsent = accountConsentOptional.get();
 
-        ValidationResult validationResult = getTransactionsReportValidator.validate(new CommonAccountRequestObject(accountConsent, accountId, withBalance));
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri));
         if (validationResult.isNotValid()) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(validationResult.getMessageError())
@@ -385,7 +391,7 @@ public class AccountService {
         ResponseObject<Xs2aTransactionsReport> response =
             ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build();
 
-        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.TRANSACTION, response);
+        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.TRANSACTION, response, requestUri);
 
         return response;
     }
@@ -396,10 +402,11 @@ public class AccountService {
      * @param consentId     String representing an AccountConsent identification
      * @param accountId     String representing a PSU`s Account at
      * @param transactionId String representing the ASPSP identification of transaction
+     * @param requestUri    the URI of incoming request
      * @return Transactions based on transaction id.
      */
     public ResponseObject<Transactions> getTransactionDetails(String consentId, String accountId,
-                                                              String transactionId) {
+                                                              String transactionId, String requestUri) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRANSACTION_DETAILS_REQUEST_RECEIVED);
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
@@ -411,7 +418,7 @@ public class AccountService {
 
         AccountConsent accountConsent = accountConsentOptional.get();
 
-        ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(accountConsent, requestUri));
         if (validationResult.isNotValid()) {
             return ResponseObject.<Transactions>builder()
                        .fail(validationResult.getMessageError())
@@ -449,14 +456,20 @@ public class AccountService {
         }
 
         Transactions transactions = spiToXs2aTransactionMapper.mapToXs2aTransaction(payload);
-        checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
-        return ResponseObject.<Transactions>builder()
-                   .body(transactions)
-                   .build();
+
+        ResponseObject<Transactions> response =
+            ResponseObject.<Transactions>builder()
+                .body(transactions)
+                .build();
+
+        writeLogAndCheckConsent(consentId, false, accountConsent, TypeAccess.TRANSACTION, response, requestUri);
+
+        return response;
     }
 
-    private void writeLogAndCheckConsent(String consentId, boolean withBalance, AccountConsent accountConsent, TypeAccess typeAccess, ResponseObject response) {
-        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, typeAccess, response));
+    private void writeLogAndCheckConsent(String consentId, boolean withBalance, AccountConsent accountConsent, TypeAccess typeAccess, ResponseObject response, String requestUri) {
+
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, typeAccess, response), requestUri);
         checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
     }
 
