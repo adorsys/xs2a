@@ -70,6 +70,7 @@ public class AccountAspectTest {
     private static final String ERROR_TEXT = "Error occurred while processing";
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final String RESOURCE_ID = "33333-999999999";
+    private static final String REQUEST_URI = "/v1/accounts";
     private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final Map<String, Integer> USAGE_COUNTER = Collections.singletonMap("/accounts", 10);
 
@@ -89,7 +90,7 @@ public class AccountAspectTest {
     @Test
     public void invokeGetAccountDetailsListAspect_withBalance_shouldAddBalanceLink() {
         // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(true), CONSENT_ID, true);
+        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(true), CONSENT_ID, true, REQUEST_URI);
 
         // Then
         assertNoErrorsAndAccountListPresent(actualResponse);
@@ -99,7 +100,7 @@ public class AccountAspectTest {
     @Test
     public void invokeGetAccountDetailsListAspect_withoutBalance_shouldAddEmptyLinks() {
         // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(false), CONSENT_ID, true);
+        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(false), CONSENT_ID, true, REQUEST_URI);
 
         // Then
         assertNoErrorsAndAccountListPresent(actualResponse);
@@ -109,7 +110,7 @@ public class AccountAspectTest {
     @Test
     public void invokeGetAccountDetailsListAspect_withBalancesAndTransactions_shouldAddAllLinks() {
         // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObjectWithBalancesAndTransactions(), CONSENT_ID, true);
+        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObjectWithBalancesAndTransactions(), CONSENT_ID, true, REQUEST_URI);
 
         // Then
         assertNoErrorsAndAccountListPresent(actualResponse);
@@ -124,7 +125,7 @@ public class AccountAspectTest {
         when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
         // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderWithError(), CONSENT_ID, true);
+        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderWithError(), CONSENT_ID, true, REQUEST_URI);
 
         // Then
         assertTrue(actualResponse.hasError());
