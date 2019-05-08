@@ -18,21 +18,24 @@ package de.adorsys.psd2.xs2a.web.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -60,41 +63,65 @@ public class ErrorBuildingServiceTest {
     private ErrorMapperContainer errorMapperContainer;
     @Mock
     private ObjectMapper objectMapper;
+    private MockHttpServletResponse response;
+
+    @Captor
+    private ArgumentCaptor<MessageError> messageErrorCaptor;
+
+    @Before
+    public void setUp() throws Exception {
+        response = new MockHttpServletResponse();
+
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE_PIS);
+        when(errorTypeMapper.mapToErrorType(any(), any(Integer.class))).thenReturn(ERROR_PIS_400);
+        when(objectMapper.writeValueAsString(any())).thenReturn(RESPONSE_TEXT);
+        when(errorMapperContainer.getErrorBody(messageErrorCaptor.capture())).thenReturn(null);
+    }
 
     @Test
     public void buildErrorResponse_success() throws IOException {
         // Given
-        when(serviceTypeDiscoveryService.getServiceType())
-            .thenReturn(SERVICE_TYPE_PIS);
-        when(errorTypeMapper.mapToErrorType(any(), any(Integer.class)))
-            .thenReturn(ERROR_PIS_400);
-        when(errorMapperContainer.getErrorBody(any()))
-            .thenReturn(null);
-        when(objectMapper.writeValueAsString(any()))
-            .thenReturn(RESPONSE_TEXT);
-
-        ValidationResult validationResult = buildValidationResult();
-
-        HttpServletResponse response = buildResponse();
+        ValidationResult validationResult = buildValidationResult(MessageErrorCode.FORMAT_ERROR);
 
         // When
         errorBuildingService.buildErrorResponse(response, validationResult.getMessageError());
 
         // Then
-        MockHttpServletResponse actualResponse = (MockHttpServletResponse) response;
-        String outputMessage = actualResponse.getContentAsString();
-
+        String outputMessage = response.getContentAsString();
         assertNotNull(outputMessage);
         assertEquals(RESPONSE_TEXT, outputMessage);
-        assertEquals(STATUS_CODE_400, actualResponse.getStatus());
-        assertEquals(JSON, actualResponse.getContentType());
+        assertEquals(STATUS_CODE_400, response.getStatus());
+        assertEquals(JSON, response.getContentType());
+
+        MessageError actualMessageError = messageErrorCaptor.getValue();
+        assertEquals(ERROR_PIS_400, actualMessageError.getErrorType());
+        assertEquals(1, actualMessageError.getTppMessages().size());
+        assertEquals(MessageErrorCode.FORMAT_ERROR, actualMessageError.getTppMessages().iterator().next().getMessageErrorCode());
     }
 
-    private HttpServletResponse buildResponse() {
-        return new MockHttpServletResponse();
+    @Test
+    public void buildErrorResponse_executionDateInvalid() throws IOException {
+        // Given
+        ValidationResult validationResult = buildValidationResult(MessageErrorCode.EXECUTION_DATE_INVALID);
+
+        // When
+        errorBuildingService.buildErrorResponse(response, validationResult.getMessageError());
+
+        // Then
+        String outputMessage = response.getContentAsString();
+        assertNotNull(outputMessage);
+        assertEquals(RESPONSE_TEXT, outputMessage);
+        assertEquals(STATUS_CODE_400, response.getStatus());
+        assertEquals(JSON, response.getContentType());
+        assertEquals(JSON, response.getContentType());
+
+        MessageError actualMessageError = messageErrorCaptor.getValue();
+        assertEquals(ERROR_PIS_400, actualMessageError.getErrorType());
+        assertEquals(1, actualMessageError.getTppMessages().size());
+        assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID, actualMessageError.getTppMessages().iterator().next().getMessageErrorCode());
     }
 
-    private ValidationResult buildValidationResult() {
-        return ValidationResult.invalid(ERROR_PIS_400, MessageErrorCode.FORMAT_ERROR);
+    private ValidationResult buildValidationResult(MessageErrorCode messageErrorCode) {
+        return ValidationResult.invalid(ERROR_PIS_400, messageErrorCode);
     }
 }

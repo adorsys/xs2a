@@ -71,23 +71,16 @@ public class ErrorBuildingService {
     }
 
     private Object createError(Set<TppMessageInformation> tppMessageInformations) {
-        List<String> errorMessages = new ArrayList<>();
-        tppMessageInformations.forEach(tmi -> errorMessages.add(tmi.getText()));
-
-        MessageError messageError = getMessageError(errorMessages);
+        MessageError messageError = getMessageError(tppMessageInformations);
         return Optional.ofNullable(errorMapperContainer.getErrorBody(messageError))
                    .map(ErrorMapperContainer.ErrorBody::getBody)
                    .orElse(null);
     }
 
-    private MessageError getMessageError(Collection<String> errorMessages) {
+    private MessageError getMessageError(Set<TppMessageInformation> tppMessages) {
         ErrorType errorType = errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), FORMAT_ERROR.getCode());
 
-        TppMessageInformation[] tppMessages = errorMessages.stream()
-                                                  .map(e -> TppMessageInformation.of(FORMAT_ERROR, e))
-                                                  .toArray(TppMessageInformation[]::new);
-
-        return new MessageError(errorType, tppMessages);
+        return new MessageError(errorType, tppMessages.toArray(new TppMessageInformation[tppMessages.size()]));
     }
 
 }
