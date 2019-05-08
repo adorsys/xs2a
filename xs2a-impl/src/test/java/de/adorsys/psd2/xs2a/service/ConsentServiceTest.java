@@ -166,7 +166,6 @@ public class ConsentServiceTest {
     private AisEndpointAccessCheckerService endpointAccessCheckerService;
     @Mock
     private SpiErrorMapper spiErrorMapper;
-
     @Mock
     private GetAccountConsentsStatusByIdValidator getAccountConsentsStatusByIdValidator;
     @Mock
@@ -788,7 +787,7 @@ public class ConsentServiceTest {
 
     @Test
     public void updateConsentPsuData_Success_ShouldRecordEvent() {
-        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.of(new AccountConsentAuthorization()));
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
@@ -850,9 +849,8 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentInitiationAuthorisation() {
-        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
-        when(redirectAisAuthorizationService.getAuthorisationSubResources(anyString()))
-            .thenReturn(Optional.of(new Xs2aAuthorisationSubResources(Collections.singletonList(CONSENT_ID))));
+        when(aisConsentService.getAuthorisationSubResources(anyString()))
+            .thenReturn(Optional.of(Collections.singletonList(CONSENT_ID)));
 
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -890,7 +888,7 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentAuthorisationScaStatus_success() {
-        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
 
@@ -904,7 +902,7 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentAuthorisationScaStatus_success_shouldRecordEvent() {
-        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAuthorisationScaStatus(any(), any()))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
 
@@ -921,7 +919,7 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentAuthorisationScaStatus_failure() {
-        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
+        when(aisScaAuthorisationServiceResolver.getServiceInitiation(WRONG_AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 

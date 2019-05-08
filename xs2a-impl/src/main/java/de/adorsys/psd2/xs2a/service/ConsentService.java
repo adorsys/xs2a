@@ -90,6 +90,7 @@ public class ConsentService {
     private final UpdateConsentPsuDataValidator updateConsentPsuDataValidator;
     private final GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
     private final GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
+
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
      * account details or by getting account details from ASPSP by psuId and filling the appropriate fields in
@@ -397,7 +398,8 @@ public class ConsentService {
                        .build();
         }
 
-        return aisScaAuthorisationServiceResolver.getService().getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId())
+        return aisScaAuthorisationServiceResolver.getServiceInitiation(updatePsuData.getAuthorizationId())
+                   .getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId())
                    .map(conAuth -> getUpdateConsentPsuDataResponse(updatePsuData, conAuth))
                    .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                   .fail(AIS_404, of(RESOURCE_UNKNOWN_404))
@@ -405,7 +407,8 @@ public class ConsentService {
     }
 
     private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
-        UpdateConsentPsuDataResponse response = aisScaAuthorisationServiceResolver.getService().updateConsentPsuData(updatePsuData, consentAuthorization);
+        UpdateConsentPsuDataResponse response = aisScaAuthorisationServiceResolver.getServiceInitiation(updatePsuData.getAuthorizationId())
+                                                    .updateConsentPsuData(updatePsuData, consentAuthorization);
 
         return Optional.ofNullable(response)
                    .map(s -> Optional.ofNullable(s.getMessageError())
@@ -434,7 +437,7 @@ public class ConsentService {
                        .build();
         }
 
-        return aisScaAuthorisationServiceResolver.getService().getAuthorisationSubResources(consentId)
+        return getAuthorisationSubResources(consentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
                    .orElseGet(ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                   .fail(AIS_404, of(RESOURCE_UNKNOWN_404))
@@ -464,7 +467,8 @@ public class ConsentService {
                        .build();
         }
 
-        Optional<ScaStatus> scaStatus = aisScaAuthorisationServiceResolver.getService().getAuthorisationScaStatus(consentId, authorisationId);
+        Optional<ScaStatus> scaStatus = aisScaAuthorisationServiceResolver.getServiceInitiation(authorisationId)
+                                            .getAuthorisationScaStatus(consentId, authorisationId);
 
         if (!scaStatus.isPresent()) {
             return ResponseObject.<ScaStatus>builder()
@@ -505,5 +509,10 @@ public class ConsentService {
         return spiContextDataProvider.provideWithPsuIdData(CollectionUtils.isNotEmpty(psuIdDataList)
                                                                ? psuIdDataList.get(0)
                                                                : null);
+    }
+
+    private Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId) {
+        return aisConsentService.getAuthorisationSubResources(consentId)
+                   .map(Xs2aAuthorisationSubResources::new);
     }
 }

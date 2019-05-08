@@ -18,207 +18,203 @@ package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.domain.CashAccountType;
-import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aUsageType;
+import de.adorsys.psd2.xs2a.domain.Transactions;
+import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.link.AccountDetailsLinks;
+import de.adorsys.psd2.xs2a.web.link.TransactionsReportByPeriodHugeLinks;
+import de.adorsys.psd2.xs2a.web.link.TransactionsReportByPeriodLinks;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountAspectTest {
 
     private static final String CONSENT_ID = "some consent id";
-    private static final String FORCED_BASE_URL = "http://base.url";
-    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
-    private static final String TPP_ID = "Test TppId";
-    private static final String AUTHORITY_ID = "Authority id";
-    private static final String IBAN = "DE123456789";
-    private static final String BIC = "GENODEF1N02";
-    private static final String NAME = "Schmidt";
-    private static final String ERROR_TEXT = "Error occurred while processing";
-    private static final TppInfo TPP_INFO = buildTppInfo();
-    private static final String RESOURCE_ID = "33333-999999999";
+    private static final String ACCOUNT_ID = "some account id";
+    private static final String RESOURCE_ID = "some resource id";
     private static final String REQUEST_URI = "/v1/accounts";
-    private final Currency EUR_CURRENCY = Currency.getInstance("EUR");
-    private static final Map<String, Integer> USAGE_COUNTER = Collections.singletonMap("/accounts", 10);
+    private static final String ERROR_TEXT = "Error occurred while processing";
 
     @InjectMocks
-    private AccountAspect accountAspect;
+    private AccountAspect aspect;
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
     private MessageService messageService;
+    @Mock
+    private Xs2aTransactionsReport transactionsReport;
+    @Mock
+    private Xs2aAccountReport accountReport;
+
+    private Xs2aAccountDetails accountDetails;
+    private AccountConsent accountConsent;
+    private AspspSettings aspspSettings;
+    private ResponseObject responseObject;
 
     @Before
     public void setUp() {
-        RequestContextHolder.setRequestAttributes(new ServletWebRequest(buildMockHttpServletRequest()));
-        when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings());
+        JsonReader jsonReader = new JsonReader();
+        aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        accountConsent = jsonReader.getObjectFromFile("json/aspect/account_consent.json", AccountConsent.class);
+        accountDetails = jsonReader.getObjectFromFile("json/aspect/account_details.json", Xs2aAccountDetails.class);
     }
 
     @Test
-    public void invokeGetAccountDetailsListAspect_withBalance_shouldAddBalanceLink() {
-        // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(true), CONSENT_ID, true, REQUEST_URI);
+    public void getAccountDetailsAspect_success() {
+        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
-        // Then
-        assertNoErrorsAndAccountListPresent(actualResponse);
-        assertNotNull(actualResponse.getBody().getAccountDetails().get(0).getLinks().getBalances());
+        responseObject = ResponseObject.<Xs2aAccountDetailsHolder>builder()
+                             .body(new Xs2aAccountDetailsHolder(accountDetails, accountConsent))
+                             .build();
+        ResponseObject actualResponse = aspect.getAccountDetailsAspect(responseObject, CONSENT_ID, ACCOUNT_ID, true, REQUEST_URI);
+
+        verify(aspspProfileService, times(2)).getAspspSettings();
+        assertNotNull(accountDetails.getLinks());
+        assertTrue(accountDetails.getLinks() instanceof AccountDetailsLinks);
+
+        assertFalse(actualResponse.hasError());
     }
 
     @Test
-    public void invokeGetAccountDetailsListAspect_withoutBalance_shouldAddEmptyLinks() {
-        // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObject(false), CONSENT_ID, true, REQUEST_URI);
-
-        // Then
-        assertNoErrorsAndAccountListPresent(actualResponse);
-        assertNull(actualResponse.getBody().getAccountDetails().get(0).getLinks().getBalances());
-    }
-
-    @Test
-    public void invokeGetAccountDetailsListAspect_withBalancesAndTransactions_shouldAddAllLinks() {
-        // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderResponseObjectWithBalancesAndTransactions(), CONSENT_ID, true, REQUEST_URI);
-
-        // Then
-        assertNoErrorsAndAccountListPresent(actualResponse);
-        Links links = actualResponse.getBody().getAccountDetails().get(0).getLinks();
-        assertNotNull(links.getBalances());
-        assertNotNull(links.getTransactions());
-    }
-
-    @Test
-    public void invokeGetAccountDetailsListAspect_withError_shouldAddTextErrorMessage() {
-        // Given
+    public void getAccountDetailsAspect_withError_shouldAddTextErrorMessage() {
         when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
-        // When
-        ResponseObject<Xs2aAccountListHolder> actualResponse = accountAspect.getAccountDetailsListAspect(buildXs2aAccountListHolderWithError(), CONSENT_ID, true, REQUEST_URI);
+        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                             .build();
+        ResponseObject actualResponse = aspect.getAccountDetailsAspect(responseObject, CONSENT_ID, ACCOUNT_ID, true, REQUEST_URI);
 
-        // Then
         assertTrue(actualResponse.hasError());
         assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
-    private void assertNoErrorsAndAccountListPresent(ResponseObject<Xs2aAccountListHolder> actualResponse) {
+    @Test
+    public void getAccountDetailsListAspect_success() {
+        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+
+        responseObject = ResponseObject.<Xs2aAccountListHolder>builder()
+                             .body(new Xs2aAccountListHolder(Collections.singletonList(accountDetails), accountConsent))
+                             .build();
+        ResponseObject actualResponse = aspect.getAccountDetailsListAspect(responseObject, CONSENT_ID, true, REQUEST_URI);
+
+        verify(aspspProfileService, times(2)).getAspspSettings();
+        assertNotNull(accountDetails.getLinks());
+        assertTrue(accountDetails.getLinks() instanceof AccountDetailsLinks);
+
         assertFalse(actualResponse.hasError());
-        assertFalse(actualResponse.getBody().getAccountDetails().isEmpty());
     }
 
-    private ResponseObject<Xs2aAccountListHolder> buildXs2aAccountListHolderResponseObject(boolean isConsentWithBalance) {
-        AccountConsent accountConsent = buildAccountConsent(isConsentWithBalance);
-        List<Xs2aAccountDetails> xs2aAccountDetailsList = buildXs2aAccountDetailsList();
+    @Test
+    public void getAccountDetailsListAspect_withError_shouldAddTextErrorMessage() {
+        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
-        Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(xs2aAccountDetailsList, accountConsent);
+        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                             .build();
+        ResponseObject actualResponse = aspect.getAccountDetailsListAspect(responseObject, CONSENT_ID, true, REQUEST_URI);
 
-        return ResponseObject.<Xs2aAccountListHolder>builder()
-                   .body(xs2aAccountListHolder)
-                   .build();
+        assertTrue(actualResponse.hasError());
+        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
-    private ResponseObject<Xs2aAccountListHolder> buildXs2aAccountListHolderResponseObjectWithBalancesAndTransactions() {
-        AccountConsent accountConsent = buildAccountConsentWithBalancesAndTransactions();
-        List<Xs2aAccountDetails> xs2aAccountDetailsList = buildXs2aAccountDetailsList();
+    @Test
+    public void getTransactionsReportByPeriod_successHugeReport() {
+        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(transactionsReport.isTransactionReportHuge()).thenReturn(true);
 
-        Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(xs2aAccountDetailsList, accountConsent);
+        responseObject = ResponseObject.<Xs2aTransactionsReport>builder()
+                             .body(transactionsReport)
+                             .build();
+        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, CONSENT_ID, ACCOUNT_ID,
+                                                                             null, true, LocalDate.now(),
+                                                                             LocalDate.now(), BookingStatus.BOOKED,
+                                                                             REQUEST_URI);
 
-        return ResponseObject.<Xs2aAccountListHolder>builder()
-                   .body(xs2aAccountListHolder)
-                   .build();
+        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(transactionsReport, times(1)).setLinks(any(TransactionsReportByPeriodHugeLinks.class));
+
+        assertFalse(actualResponse.hasError());
     }
 
-    private List<Xs2aAccountDetails> buildXs2aAccountDetailsList() {
-        return Collections.singletonList(
-            new Xs2aAccountDetails(ASPSP_ACCOUNT_ID, RESOURCE_ID, IBAN, null, null, null,
-                                   null, EUR_CURRENCY, NAME, null,
-                                   CashAccountType.CACC, AccountStatus.ENABLED, BIC, "", Xs2aUsageType.PRIV, "", null));
+    @Test
+    public void getTransactionsReportByPeriod_successNotHugeReport() {
+        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(transactionsReport.isTransactionReportHuge()).thenReturn(false);
+        when(transactionsReport.getAccountReport()).thenReturn(accountReport);
+
+        responseObject = ResponseObject.<Xs2aTransactionsReport>builder()
+                             .body(transactionsReport)
+                             .build();
+        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, CONSENT_ID, ACCOUNT_ID,
+                                                                             null, true, LocalDate.now(),
+                                                                             LocalDate.now(), BookingStatus.BOOKED,
+                                                                             REQUEST_URI);
+
+        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(accountReport, times(1)).setLinks(any(TransactionsReportByPeriodLinks.class));
+
+        assertFalse(actualResponse.hasError());
     }
 
-    private ResponseObject<Xs2aAccountListHolder> buildXs2aAccountListHolderWithError() {
-        return ResponseObject.<Xs2aAccountListHolder>builder()
-                   .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                   .build();
+    @Test
+    public void getTransactionsReportByPeriod_withError_shouldAddTextErrorMessage() {
+        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
+
+        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                             .build();
+        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, CONSENT_ID, ACCOUNT_ID,
+                                                                             null, true, LocalDate.now(),
+                                                                             LocalDate.now(), BookingStatus.BOOKED,
+                                                                             REQUEST_URI);
+
+        assertTrue(actualResponse.hasError());
+        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
-    private AccountConsent buildAccountConsent(boolean isConsentWithBalance) {
-        Xs2aAccountAccess xs2aAccountAccess;
-        if (isConsentWithBalance) {
-            xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.singletonList(buildReference()), Collections.emptyList(), null, null);
-        } else {
-            xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null);
-        }
-        return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
-                                  null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), USAGE_COUNTER);
+    @Test
+    public void getTransactionDetailsAspect_successNotHugeReport() {
+        responseObject = ResponseObject.<Transactions>builder()
+                             .body(new Transactions())
+                             .build();
+        ResponseObject actualResponse = aspect.getTransactionDetailsAspect(responseObject, CONSENT_ID, ACCOUNT_ID,
+                                                                           RESOURCE_ID, REQUEST_URI);
+
+        assertFalse(actualResponse.hasError());
+        assertEquals(responseObject, actualResponse);
     }
 
-    private AccountConsent buildAccountConsentWithBalancesAndTransactions() {
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(buildReference()), Collections.singletonList(buildReference()), Collections.singletonList(buildReference()), null, null);
-        return new AccountConsent(null, xs2aAccountAccess, false, LocalDate.now().plusDays(1), 10,
-                                  null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), USAGE_COUNTER);
-    }
+    @Test
+    public void getTransactionDetailsAspect_withError_shouldAddTextErrorMessage() {
+        when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
-    private AspspSettings buildAspspSettings() {
-        return new AspspSettings(1, false, false, null, null,
-                                 null, false, null, null,
-                                 1, 1, false, false, false,
-                                 false, false, false, 1,
-                                 null, 1, 1,
-                                 null, 1, false,
-                                 false, false, false, FORCED_BASE_URL,null);
-    }
+        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                             .build();
+        ResponseObject actualResponse = aspect.getTransactionDetailsAspect(responseObject, CONSENT_ID, ACCOUNT_ID, RESOURCE_ID, REQUEST_URI);
 
-    private MockHttpServletRequest buildMockHttpServletRequest() {
-        return new MockHttpServletRequest();
-    }
-
-    private AccountReference buildReference() {
-        AccountReference reference = new AccountReference();
-        reference.setResourceId(RESOURCE_ID);
-        reference.setIban(IBAN);
-        reference.setCurrency(EUR_CURRENCY);
-        return reference;
-    }
-
-    public static TppInfo buildTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(TPP_ID);
-        tppInfo.setAuthorityId(AUTHORITY_ID);
-        tppInfo.setTppRedirectUri(new TppRedirectUri("", ""));
-        return tppInfo;
+        assertTrue(actualResponse.hasError());
+        assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
 }

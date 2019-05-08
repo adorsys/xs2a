@@ -3,7 +3,10 @@ package de.adorsys.psd2.xs2a.service.authorization.ais;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -47,15 +50,6 @@ public class OauthAisAuthorizationServiceTest {
     public void getAccountConsentAuthorizationById_success() {
         //When
         Optional<AccountConsentAuthorization>  actualResponse = oauthAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
-
-        //Then
-        assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    public void getAuthorisationSubResources_success() {
-        //When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = oauthAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();

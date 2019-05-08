@@ -196,4 +196,12 @@ public class PisCommonPaymentRemoteUrls {
     public String updateScaApproach() {
         return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}/sca-approach/{sca-approach}";
     }
+
+    public String getAuthorisationScaApproach() {
+        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}/sca-approach";
+    }
+
+    public String getCancellationAuthorisationScaApproach() {
+        return commonPaymentServiceBaseUrl + "/pis/common-payments/cancellation-authorisations/{authorisation-id}/sca-approach";
+    }
 }

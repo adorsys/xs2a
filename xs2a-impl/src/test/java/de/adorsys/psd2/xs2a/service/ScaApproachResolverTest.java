@@ -15,13 +15,17 @@
  */
 
 
-package de.adorsys.psd2.xs2a.service.authorization;
+package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +44,8 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScaApproachResolverTest {
+    private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
+
     @InjectMocks
     private ScaApproachResolver scaApproachResolver;
 
@@ -49,6 +55,12 @@ public class ScaApproachResolverTest {
     private RequestProviderService requestProviderService;
     @Mock
     private ScaApproachHolder scaApproachHolder;
+    @Mock
+    private ServiceTypeDiscoveryService serviceTypeDiscoveryService;
+    @Mock
+    private PisAuthorisationService pisAuthorisationService;
+    @Mock
+    private Xs2aAisConsentService xs2aAisConsentService;
 
     @Before
     public void setUp() {
@@ -367,6 +379,37 @@ public class ScaApproachResolverTest {
         // Then
         verify(scaApproachHolder, times(1)).setScaApproach(scaApproachArgumentCaptor.capture());
         assertThat(scaApproachArgumentCaptor.getValue()).isEqualTo(DECOUPLED);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void resolveScaApproach_scaApproachResponseIsEmpty() {
+        scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID);
+    }
+
+    @Test
+    public void getCancellationScaApproach() {
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.PIS);
+        when(pisAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLATION))
+            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(REDIRECT)));
+
+        ScaApproach scaApproach = scaApproachResolver.getCancellationScaApproach(AUTHORISATION_ID);
+
+        assertThat(scaApproach).isEqualTo(REDIRECT);
+        verify(pisAuthorisationService, times(1))
+            .getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CANCELLATION));
+    }
+
+    @Test
+    public void getInitiationScaApproach() {
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.AIS);
+        when(xs2aAisConsentService.getAuthorisationScaApproach(AUTHORISATION_ID))
+            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(REDIRECT)));
+
+        ScaApproach scaApproach = scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID);
+
+        assertThat(scaApproach).isEqualTo(REDIRECT);
+        verify(xs2aAisConsentService, times(1))
+            .getAuthorisationScaApproach(eq(AUTHORISATION_ID));
     }
 
     private List<ScaApproach> buildScaApproaches(ScaApproach... scaApproaches) {

@@ -29,3 +29,11 @@ change:
 
 ## Bugfix: Wrong error code "requestedExecutionDate" value in the past
 Error code was changed to `400 EXECUTION_DATE_INVALID` from `400 FORMAT_ERROR` when `requestedExecutionDate` field is less then current date.
+
+## Bugfix: Resolve SCA approach for the authorisation only once instead of separate resolving
+From now on, SCA approach is resolved (using setting in ASPSP profile and request headers) only once per one authorisation.
+All consecutive requests for updating PSU Data for the authorisation will use SCA approach from the authorisation instead 
+of resolving it separately.
+
+This fixes the bug that prevented PSU Data from being correctly updated if the authorisation was created with 
+`Tpp-Redirect-Preferred` header set to `false` while the `Redirect` SCA approach has the highest priority in the ASPSP profile. 

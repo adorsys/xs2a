@@ -97,6 +97,8 @@ public class PaymentAuthorisationServiceTest {
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
         when(pisScaAuthorisationServiceResolver.getService())
             .thenReturn(pisScaAuthorisationService);
+        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
+            .thenReturn(pisScaAuthorisationService);
 
         when(createPisAuthorisationValidator.validate(new CommonPaymentObject(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());

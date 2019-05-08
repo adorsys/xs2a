@@ -1,0 +1,4 @@
+{
+  "authenticationType": "SMS_OTP",
+  "authenticationMethodId": "sms"
+}

@@ -18,7 +18,10 @@ package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ScaApproachServiceTypeProvider;
 
 import java.util.Optional;
@@ -29,8 +32,6 @@ public interface AisAuthorizationService extends ScaApproachServiceTypeProvider 
     UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization);
 
     Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId);
-
-    Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String consentId);
 
     Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
 }

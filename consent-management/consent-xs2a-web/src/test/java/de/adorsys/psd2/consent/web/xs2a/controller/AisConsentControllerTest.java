@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.xs2a;
+package de.adorsys.psd2.consent.web.xs2a.controller;
 
 
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
@@ -23,9 +23,10 @@ import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
-import de.adorsys.psd2.consent.web.xs2a.controller.AisConsentController;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,8 +41,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AisConsentControllerTest {
@@ -278,6 +278,31 @@ public class AisConsentControllerTest {
         assertThat(result.getBody()).isNull();
     }
 
+    @Test
+    public void getAuthorisationScaApproach_success() {
+        when(aisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORIZATION_ID))
+            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
+
+        ResponseEntity<AuthorisationScaApproachResponse> response = aisConsentController.getAuthorisationScaApproach(AUTHORIZATION_ID);
+
+        verify(aisAuthorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORIZATION_ID));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getScaApproach()).isEqualTo(ScaApproach.EMBEDDED);
+    }
+
+    @Test
+    public void getAuthorisationScaApproach_error() {
+        when(aisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORIZATION_ID))
+            .thenReturn(Optional.empty());
+
+        ResponseEntity<AuthorisationScaApproachResponse> response = aisConsentController.getAuthorisationScaApproach(AUTHORIZATION_ID);
+
+        verify(aisAuthorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORIZATION_ID));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNull();
+    }
 
     private static AisConsentAuthorizationRequest getConsentAuthorizationRequest() {
         AisConsentAuthorizationRequest request = new AisConsentAuthorizationRequest();

@@ -130,33 +130,6 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAuthorisationSubResources_success() {
-        // Given
-        when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
-            .thenReturn(Optional.of(STRING_LIST));
-
-        // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = decoupledAisAuthorizationService.getAuthorisationSubResources(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(AUTHORISATION_SUB_RESOURCES);
-    }
-
-    @Test
-    public void getAuthorisationSubResources_wrongConsentId_fail() {
-        // Given
-        when(aisConsentService.getAuthorisationSubResources(WRONG_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = decoupledAisAuthorizationService.getAuthorisationSubResources(WRONG_CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
     public void getAuthorisationScaStatus_success() {
         // Given
         when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
