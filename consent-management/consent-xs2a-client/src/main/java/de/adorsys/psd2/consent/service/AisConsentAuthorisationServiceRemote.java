@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypt
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +59,7 @@ public class AisConsentAuthorisationServiceRemote implements AisConsentAuthorisa
     }
 
     @Override
-    public Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request){
+    public Optional<CreateAisConsentAuthorizationResponse> createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) {
         CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
                                                                                            request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
 
@@ -127,5 +128,18 @@ public class AisConsentAuthorisationServiceRemote implements AisConsentAuthorisa
     public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
         return consentRestTemplate.exchange(remoteAisConsentUrls.updateScaApproach(), HttpMethod.PUT, null, Boolean.class, authorisationId, scaApproach)
                    .getBody();
+    }
+
+    @Override
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId) {
+        try {
+            ResponseEntity<AuthorisationScaApproachResponse> request = consentRestTemplate.getForEntity(
+                remoteAisConsentUrls.getAuthorisationScaApproach(), AuthorisationScaApproachResponse.class, authorisationId);
+            return Optional.ofNullable(request.getBody());
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Couldn't get authorisation SCA Approach by authorisationId {}", authorisationId);
+        }
+
+        return Optional.empty();
     }
 }

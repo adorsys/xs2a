@@ -19,30 +19,29 @@ package de.adorsys.psd2.xs2a.web.aspect;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
+import de.adorsys.psd2.xs2a.web.link.PisAuthorisationCancellationLinks;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-import java.util.EnumSet;
-
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
-
 @Slf4j
 @Aspect
 @Component
 public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect<PaymentController> {
+    private ScaApproachResolver scaApproachResolver;
     private final RedirectLinkBuilder redirectLinkBuilder;
 
-    public CreatePisAuthorisationCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, RedirectLinkBuilder redirectLinkBuilder, AspspProfileService aspspProfileService) {
-        super(scaApproachResolver, messageService, aspspProfileService);
+    public CreatePisAuthorisationCancellationAspect(ScaApproachResolver scaApproachResolver, MessageService messageService,
+                                                    RedirectLinkBuilder redirectLinkBuilder, AspspProfileService aspspProfileService) {
+        super(messageService, aspspProfileService);
+        this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
     }
 
@@ -50,42 +49,11 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     public ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> createPisAuthorizationAspect(ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> result, String paymentId, PsuIdData psuData, PaymentType paymentType, String paymentProduct) {
         if (!result.hasError()) {
             Xs2aCreatePisCancellationAuthorisationResponse body = result.getBody();
-            body.setLinks(buildLink(paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId(), psuData));
+            body.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
+                                                                paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId(), psuData));
             return result;
         }
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLink(String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
-        Links links = new Links();
-        links.setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
-        links.setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
-
-        if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproachResolver.resolveScaApproach())) {
-            return addEmbeddedDecoupledRelatedLinks(links, paymentService, paymentProduct, paymentId, authorizationId, psuData);
-        } else if (scaApproachResolver.resolveScaApproach() == REDIRECT) {
-            return addRedirectRelatedLinks(links, paymentService, paymentProduct, paymentId, authorizationId);
-        } else if (scaApproachResolver.resolveScaApproach() == OAUTH) {
-            links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
-        }
-        return links;
-    }
-
-    private Links addEmbeddedDecoupledRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
-        String path = UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL;
-        if (psuData.isEmpty()) {
-            links.setUpdatePsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
-        } else {
-            links.setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
-        }
-        return links;
-    }
-
-    private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentProduct, String paymentId, String authorizationId) {
-        String link = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, authorizationId);
-        links.setScaRedirect(link);
-        links.setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
-
-        return links;
-    }
 }

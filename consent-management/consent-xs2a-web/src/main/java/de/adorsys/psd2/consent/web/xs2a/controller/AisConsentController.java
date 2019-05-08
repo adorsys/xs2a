@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypt
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -265,5 +266,18 @@ public class AisConsentController {
         return aisConsentService.updateMultilevelScaRequired(consentId, multilevelSca)
                    ? new ResponseEntity<>(true, HttpStatus.OK)
                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(path = "/authorisations/{authorisation-id}/sca-approach")
+    @ApiOperation(value = "Gets SCA approach of the consent authorisation by its ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<AuthorisationScaApproachResponse> getAuthorisationScaApproach(
+        @ApiParam(name = "consent-id", value = "The consent authorisation identification.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId) {
+        return aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId)
+                   .map(scaApproachResponse -> new ResponseEntity<>(scaApproachResponse, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

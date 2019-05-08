@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.config.PisCommonPaymentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -210,6 +211,33 @@ public class PisCommonPaymentServiceRemote implements PisCommonPaymentServiceEnc
         return consentRestTemplate.exchange(remotePisCommonPaymentUrls.updateScaApproach(), HttpMethod.PUT,
                                             null, Boolean.class, authorisationId, scaApproach)
                    .getBody();
+    }
+
+    @Override
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, CmsAuthorisationType authorisationType) {
+        String url = getAuthorisationScaApproachUrl(authorisationType);
+
+        try {
+            ResponseEntity<AuthorisationScaApproachResponse> request = consentRestTemplate.getForEntity(
+                url, AuthorisationScaApproachResponse.class, authorisationId);
+            return Optional.ofNullable(request.getBody());
+        } catch (CmsRestException cmsRestException) {
+            log.warn("Couldn't get authorisation SCA Approach by authorisationId {}", authorisationId);
+        }
+
+        return Optional.empty();
+    }
+
+    private String getAuthorisationScaApproachUrl(CmsAuthorisationType authorisationType) {
+        switch (authorisationType) {
+            case CREATED:
+                return remotePisCommonPaymentUrls.getAuthorisationScaApproach();
+            case CANCELLED:
+                return remotePisCommonPaymentUrls.getCancellationAuthorisationScaApproach();
+            default:
+                log.error("Unknown payment authorisation type {}", authorisationType);
+                throw new IllegalArgumentException("Unknown payment authorisation type " + authorisationType);
+        }
     }
 
     private String getAuthorisationScaStatusUrl(CmsAuthorisationType authorisationType) {

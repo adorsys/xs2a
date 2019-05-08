@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -310,6 +311,18 @@ public class PisCommonPaymentServiceInternalEncryptedTest {
         assertTrue(actual.isPresent());
         assertEquals(expected, actual.get());
         verify(pisCommonPaymentService, times(1)).getPsuDataListByPaymentId(DECRYPTED_PAYMENT_ID);
+    }
+
+    @Test
+    public void getAuthorisationScaApproach() {
+        when(pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
+
+        Optional<AuthorisationScaApproachResponse> actual = pisCommonPaymentServiceInternalEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED);
+
+        assertTrue(actual.isPresent());
+        assertEquals(ScaApproach.EMBEDDED, actual.get().getScaApproach());
+        verify(pisCommonPaymentService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(CmsAuthorisationType.CREATED));
     }
 
     private PisPaymentInfo buildPisPaymentInfoRequest() {

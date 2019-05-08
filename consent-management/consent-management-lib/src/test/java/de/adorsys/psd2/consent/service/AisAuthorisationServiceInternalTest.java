@@ -35,7 +35,9 @@ import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +69,7 @@ public class AisAuthorisationServiceInternalTest {
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-
+    private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final String AUTHENTICATION_METHOD_ID = "Method id";
     private static final String WRONG_AUTHENTICATION_METHOD_ID = "Wrong method id";
 
@@ -158,6 +160,35 @@ public class AisAuthorisationServiceInternalTest {
 
         // When
         Optional<ScaStatus> actual = aisAuthorisationServiceInternal.getAuthorisationScaStatus(EXTERNAL_CONSENT_ID, AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.isPresent());
+    }
+
+    @Test
+    public void getAuthorisationScaApproach_success() {
+        //Given
+        AisConsentAuthorization aisConsentAuthorization = new AisConsentAuthorization();
+        aisConsentAuthorization.setScaApproach(SCA_APPROACH);
+        when(aisConsentAuthorisationRepository.findByExternalId(AUTHORISATION_ID))
+            .thenReturn(Optional.of(aisConsentAuthorization));
+
+        // When
+        Optional<AuthorisationScaApproachResponse> actual = aisAuthorisationServiceInternal.getAuthorisationScaApproach(AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.isPresent());
+        assertEquals(SCA_APPROACH, actual.get().getScaApproach());
+    }
+
+    @Test
+    public void getAuthorisationScaApproach_failure_wrongAuthorisationId() {
+        //Given
+        when(aisConsentAuthorisationRepository.findByExternalId(WRONG_AUTHORISATION_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        Optional<AuthorisationScaApproachResponse> actual = aisAuthorisationServiceInternal.getAuthorisationScaApproach(WRONG_AUTHORISATION_ID);
 
         // Then
         assertFalse(actual.isPresent());
@@ -363,6 +394,12 @@ public class AisAuthorisationServiceInternalTest {
     private AisConsentAuthorization buildAisConsentAuthorisationWithMethods(List<ScaMethod> scaMethods) {
         AisConsentAuthorization authorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS);
         authorisation.setAvailableScaMethods(scaMethods);
+        return authorisation;
+    }
+
+    private AisConsentAuthorization buildAisConsentAuthorisationWithScaApproach(ScaApproach scaApproach) {
+        AisConsentAuthorization authorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS);
+        authorisation.setScaApproach(scaApproach);
         return authorisation;
     }
 

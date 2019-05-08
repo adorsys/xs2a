@@ -137,33 +137,6 @@ public class EmbeddedAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAuthorisationSubResources_success() {
-        // Given
-        when(aisConsentService.getAuthorisationSubResources(CONSENT_ID))
-            .thenReturn(Optional.of(STRING_LIST));
-
-        // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = authorizationService.getAuthorisationSubResources(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
-    }
-
-    @Test
-    public void getAuthorisationSubResources_wrongConsentId_fail() {
-        // Given
-        when(aisConsentService.getAuthorisationSubResources(WRONG_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = authorizationService.getAuthorisationSubResources(WRONG_CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
     public void getScaApproachServiceType_success() {
         // When
         ScaApproach actualResponse = authorizationService.getScaApproachServiceType();
