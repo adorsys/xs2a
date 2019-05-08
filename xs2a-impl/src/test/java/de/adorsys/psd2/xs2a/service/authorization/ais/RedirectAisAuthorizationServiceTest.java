@@ -94,34 +94,7 @@ public class RedirectAisAuthorizationServiceTest {
     @Test
     public void getAccountConsentAuthorizationById_success() {
         // When
-        Optional<AccountConsentAuthorization>  actualResponse = redirectAisAuthorisationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    public void getAuthorisationSubResources_success() {
-        // Given
-        when(xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID))
-            .thenReturn(Optional.of(STRING_LIST));
-
-        // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = redirectAisAuthorisationService.getAuthorisationSubResources(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
-    }
-
-    @Test
-    public void getAuthorisationSubResources_wrongConsentId_fail() {
-        // Given
-        when(xs2aAisConsentService.getAuthorisationSubResources(WRONG_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        // When
-        Optional<Xs2aAuthorisationSubResources> actualResponse = redirectAisAuthorisationService.getAuthorisationSubResources(WRONG_CONSENT_ID);
+        Optional<AccountConsentAuthorization> actualResponse = redirectAisAuthorisationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -173,7 +146,7 @@ public class RedirectAisAuthorizationServiceTest {
         return response;
     }
 
-    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse(){
+    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
         return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED);
     }
 }

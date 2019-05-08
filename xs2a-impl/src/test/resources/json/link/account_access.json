@@ -1,0 +1,40 @@
+{
+  "accounts": [
+    {
+      "aspspAccountId": "123-DEDE89370400440532013000-EUR",
+      "bban": 89370400440532010000,
+      "resourceId": "33333-999999999",
+      "currency": "EUR",
+      "iban": "DE80760700240271232400",
+      "maskedPan": "2356xxxxxx1234",
+      "msisdn": "+49(0)911 360698-0",
+      "pan": "2356 5746 3217 1234"
+    }
+  ],
+  "balances": [
+    {
+      "aspspAccountId": "123-DEDE89370400440532013000-EUR",
+      "bban": 89370400440532010000,
+      "resourceId": "33333-999999999",
+      "currency": "EUR",
+      "iban": "DE80760700240271232400",
+      "maskedPan": "2356xxxxxx1234",
+      "msisdn": "+49(0)911 360698-0",
+      "pan": "2356 5746 3217 1234"
+    }
+  ],
+  "transactions": [
+    {
+      "aspspAccountId": "123-DEDE89370400440532013000-EUR",
+      "bban": 89370400440532010000,
+      "resourceId": "33333-999999999",
+      "currency": "EUR",
+      "iban": "DE80760700240271232400",
+      "maskedPan": "2356xxxxxx1234",
+      "msisdn": "+49(0)911 360698-0",
+      "pan": "2356 5746 3217 1234"
+    }
+  ],
+  "availableAccounts": "allAccounts",
+  "allPsd2": "allAccounts"
+}

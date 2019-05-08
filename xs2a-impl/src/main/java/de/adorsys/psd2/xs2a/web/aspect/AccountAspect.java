@@ -18,17 +18,16 @@ package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.controller.AccountController;
+import de.adorsys.psd2.xs2a.web.link.AccountDetailsLinks;
+import de.adorsys.psd2.xs2a.web.link.TransactionsReportByPeriodHugeLinks;
+import de.adorsys.psd2.xs2a.web.link.TransactionsReportByPeriodLinks;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -40,15 +39,17 @@ import java.util.List;
 @Aspect
 @Component
 public class AccountAspect extends AbstractLinkAspect<AccountController> {
-    public AccountAspect(ScaApproachResolver scaApproachResolver, MessageService messageService, AspspProfileService aspspProfileService) {
-        super(scaApproachResolver, messageService, aspspProfileService);
+    public AccountAspect(MessageService messageService, AspspProfileService aspspProfileService) {
+        super(messageService, aspspProfileService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountDetails(..)) && args( consentId, accountId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,accountId,withBalance,requestUri")
     public ResponseObject<Xs2aAccountDetailsHolder> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetailsHolder> result, String consentId, String accountId, boolean withBalance, String requestUri) {
         if (!result.hasError()) {
-            Xs2aAccountDetails accountDetails = result.getBody().getAccountDetails();
-            accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getResourceId(), result.getBody().getAccountConsent().getAccess()));
+            Xs2aAccountDetailsHolder body = result.getBody();
+            Xs2aAccountDetails accountDetails = body.getAccountDetails();
+            accountDetails.setLinks(new AccountDetailsLinks(getHttpUrl(), accountDetails.getResourceId(),
+                                                            body.getAccountConsent().getAccess()));
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -57,8 +58,11 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getAccountList(..)) && args( consentId, withBalance, requestUri)", returning = "result", argNames = "result,consentId,withBalance,requestUri")
     public ResponseObject<Xs2aAccountListHolder> getAccountDetailsListAspect(ResponseObject<Xs2aAccountListHolder> result, String consentId, boolean withBalance, String requestUri) {
         if (!result.hasError()) {
-            List<Xs2aAccountDetails> accountDetails = result.getBody().getAccountDetails();
-            setLinksToAccounts(accountDetails, result.getBody().getAccountConsent().getAccess());
+            Xs2aAccountListHolder body = result.getBody();
+            List<Xs2aAccountDetails> accountDetails = body.getAccountDetails();
+            Xs2aAccountAccess xs2aAccountAccess = body.getAccountConsent().getAccess();
+            accountDetails.forEach(acc -> acc.setLinks(new AccountDetailsLinks(getHttpUrl(), acc.getResourceId(),
+                                                                               xs2aAccountAccess)));
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -70,14 +74,10 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
             Xs2aTransactionsReport transactionsReport = result.getBody();
 
             if (transactionsReport.isTransactionReportHuge()) {
-                // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
-                // TODO further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
-                Links links = new Links();
-                links.setDownload(buildPath(UrlHolder.ACCOUNT_TRANSACTIONS_DOWNLOAD_URL, accountId));
-                transactionsReport.setLinks(links);
+                transactionsReport.setLinks(new TransactionsReportByPeriodHugeLinks(getHttpUrl(), accountId));
             } else {
                 Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
-                accountReport.setLinks(buildLinksForAccountReport(accountId));
+                accountReport.setLinks(new TransactionsReportByPeriodLinks(getHttpUrl(), accountId));
             }
 
             return result;
@@ -93,34 +93,4 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLinksForAccountReport(String accountId) {
-        Links links = new Links();
-        links.setAccount(buildPath(UrlHolder.ACCOUNT_LINK_URL, accountId));
-
-        return links;
-    }
-
-    private void setLinksToAccounts(List<Xs2aAccountDetails> accountDetailsList, Xs2aAccountAccess xs2aAccountAccess) {
-        accountDetailsList.forEach(acc -> acc.setLinks(buildLinksForAccountDetails(acc.getResourceId(), xs2aAccountAccess)));
-    }
-
-    private Links buildLinksForAccountDetails(String accountId, Xs2aAccountAccess xs2aAccountAccess) {
-        Links links = new Links();
-
-        if (isValidAccountByAccess(accountId, xs2aAccountAccess.getBalances())) {
-            links.setBalances(buildPath(UrlHolder.ACCOUNT_BALANCES_URL, accountId));
-        }
-
-        if (isValidAccountByAccess(accountId, xs2aAccountAccess.getTransactions())) {
-            links.setTransactions(buildPath(UrlHolder.ACCOUNT_TRANSACTIONS_URL, accountId));
-        }
-
-        return links;
-    }
-
-    private boolean isValidAccountByAccess(String accountId, List<AccountReference> allowedAccountData) {
-        return CollectionUtils.isNotEmpty(allowedAccountData)
-                   && allowedAccountData.stream()
-                          .anyMatch(a -> accountId.equals(a.getResourceId()));
-    }
 }

@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -281,5 +282,31 @@ public class PisCommonPaymentController {
         return pisCommonPaymentServiceEncrypted.updateScaApproach(authorisationId, scaApproach)
                    ? new ResponseEntity<>(true, HttpStatus.OK)
                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(path = "/authorisations/{authorisation-id}/sca-approach")
+    @ApiOperation(value = "Gets SCA approach of the payment initiation authorisation by its ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<AuthorisationScaApproachResponse> getAuthorisationScaApproach(
+        @ApiParam(name = "authorisation-id", value = "Identification of the payment initiation authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId) {
+        return pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(authorisationId, CmsAuthorisationType.CREATED)
+                   .map(scaApproachResponse -> new ResponseEntity<>(scaApproachResponse, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/cancellation-authorisations/{authorisation-id}/sca-approach")
+    @ApiOperation(value = "Gets SCA approach of the payment cancellation authorisation by its ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<AuthorisationScaApproachResponse> getCancellationAuthorisationScaApproach(
+        @ApiParam(name = "consent-id", value = "Identification of the payment cancellation authorisation.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorisation-id") String authorisationId) {
+        return pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(authorisationId, CmsAuthorisationType.CANCELLED)
+                   .map(scaApproachResponse -> new ResponseEntity<>(scaApproachResponse, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

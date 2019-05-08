@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationService;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,5 +98,10 @@ public class AisAuthorisationServiceInternalEncrypted implements AisConsentAutho
     @Transactional
     public boolean updateScaApproach(String authorisationId, ScaApproach scaApproach) {
         return aisConsentAuthorisationService.updateScaApproach(authorisationId, scaApproach);
+    }
+
+    @Override
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId) {
+        return aisConsentAuthorisationService.getAuthorisationScaApproach(authorisationId);
     }
 }

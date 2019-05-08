@@ -17,31 +17,26 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Collections;
 import java.util.Optional;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public abstract class AbstractLinkAspect<T> {
-    protected final ScaApproachResolver scaApproachResolver;
     private final MessageService messageService;
     private final AspspProfileService aspspProfileService;
 
@@ -63,14 +58,10 @@ public abstract class AbstractLinkAspect<T> {
                    .build();
     }
 
-    String buildPath(String path, Object... params) {
-        UriComponentsBuilder uriComponentsBuilder = aspspProfileService.getAspspSettings().isForceXs2aBaseUrl()
-                                                        ? fromHttpUrl(aspspProfileService.getAspspSettings().getXs2aBaseUrl())
-                                                        : fromHttpUrl(linkTo(getControllerClass()).toString());
-        return uriComponentsBuilder
-                   .path(path)
-                   .buildAndExpand(params)
-                   .toUriString();
+    String getHttpUrl() {
+        return aspspProfileService.getAspspSettings().isForceXs2aBaseUrl()
+                   ? aspspProfileService.getAspspSettings().getXs2aBaseUrl()
+                   : linkTo(getControllerClass()).toString();
     }
 
     @SuppressWarnings("unchecked")
@@ -85,10 +76,4 @@ public abstract class AbstractLinkAspect<T> {
         }
     }
 
-    Links buildDefaultPaymentLinks(String paymentService, String paymentProduct, String paymentId) {
-        Links links = new Links();
-        links.setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
-        links.setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
-        return links;
-    }
 }

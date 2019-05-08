@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -239,5 +240,15 @@ public class Xs2aAisConsentService {
      */
     public void updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
         aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+    }
+
+    /**
+     * Gets SCA approach from the authorisation
+     *
+     * @param authorisationId String representation of the authorisation identifier
+     * @return SCA approach
+     */
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId) {
+        return aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
     }
 }

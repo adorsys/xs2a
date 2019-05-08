@@ -189,4 +189,8 @@ public class AisConsentRemoteUrls {
     public String updateMultilevelScaRequired() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/multilevel-sca?multilevel-sca={multilevel-sca}";
     }
+
+    public String getAuthorisationScaApproach() {
+        return consentServiceBaseUrl + "/ais/consent/authorisations/{authorisation-id}/sca-approach";
+    }
 }

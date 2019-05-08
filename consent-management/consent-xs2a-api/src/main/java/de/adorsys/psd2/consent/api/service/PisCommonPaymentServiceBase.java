@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 
 import java.util.List;
@@ -180,4 +181,13 @@ interface PisCommonPaymentServiceBase {
      * @return <code>true</code> if authorisation was found and sca approach updated, <code>false</code> otherwise
      */
     boolean updateScaApproach(String authorisationId, ScaApproach scaApproach);
+
+    /**
+     * Gets SCA approach from the authorisation by authorisation ID and authorisation type
+     *
+     * @param authorisationId   String representation of the authorisation identifier
+     * @param authorisationType Type of authorisation
+     * @return SCA approach of the authorisation
+     */
+    Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, CmsAuthorisationType authorisationType);
 }

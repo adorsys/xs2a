@@ -21,6 +21,8 @@ import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +46,7 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
     private static final String AUTHORISATION_ID = "b3ecf205-da94-4e83-837b-5cd93ab88120";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final String AUTHENTICATION_METHOD_ID = "Method id";
 
     @InjectMocks
@@ -217,6 +220,21 @@ public class AisAuthorisationServiceInternalEncryptedTest {
         // Then
         assertFalse(actual.isPresent());
         verify(aisConsentAuthorisationService, never()).getAuthorisationsByConsentId(any());
+    }
+
+    @Test
+    public void getAuthorisationScaApproach_success() {
+        //Given
+        when(aisConsentAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID))
+            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(SCA_APPROACH)));
+        // When
+        Optional<AuthorisationScaApproachResponse> actual = aisAuthorisationServiceInternalEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.isPresent());
+        assertEquals(SCA_APPROACH, actual.get().getScaApproach());
+
+        verify(aisConsentAuthorisationService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID));
     }
 
     @Test

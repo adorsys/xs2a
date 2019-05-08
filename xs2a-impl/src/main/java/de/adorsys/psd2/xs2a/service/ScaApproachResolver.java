@@ -18,8 +18,16 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,16 +36,33 @@ import java.util.Optional;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.DECOUPLED;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
 public class ScaApproachResolver {
+    private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
+    private final Xs2aAisConsentService xs2aAisConsentService;
+    private final PisAuthorisationService pisAuthorisationService;
+    private final ScaApproachHolder scaApproachHolder;
     private final AspspProfileService aspspProfileService;
     private final RequestProviderService requestProviderService;
-    private final ScaApproachHolder scaApproachHolder;
+
+    public ScaApproachResolver(ServiceTypeDiscoveryService serviceTypeDiscoveryService,
+                               @Lazy Xs2aAisConsentService xs2aAisConsentService,
+                               @Lazy PisAuthorisationService pisAuthorisationService,
+                               ScaApproachHolder scaApproachHolder,
+                               AspspProfileService aspspProfileService,
+                               RequestProviderService requestProviderService) {
+        this.serviceTypeDiscoveryService = serviceTypeDiscoveryService;
+        this.xs2aAisConsentService = xs2aAisConsentService;
+        this.pisAuthorisationService = pisAuthorisationService;
+        this.scaApproachHolder = scaApproachHolder;
+        this.aspspProfileService = aspspProfileService;
+        this.requestProviderService = requestProviderService;
+    }
 
     /**
      * Resolve which sca approach from sca approaches list in ASPSP-profile should be used for authorisation.
-     *
+     * <p>
      * If header "tpp-redirect-preferred" is provided with value "true" and ASPSP supports Redirect approach, then this approach will be used.
      * If header "tpp-redirect-preferred" is provided with value "false", the first non-Redirect approach from the list will be used.
      * If header "tpp-redirect-preferred" is not provided, the first approach from the list will be chosen.
@@ -73,6 +98,48 @@ public class ScaApproachResolver {
     }
 
     /**
+     * Gets SCA approach from the existing initiation authorisation
+     *
+     * @param authorisationId authorisation identifier
+     * @return SCA approach, stored in the authorisation
+     */
+    @NotNull
+    public ScaApproach getInitiationScaApproach(@NotNull String authorisationId) {
+        return resolveScaApproach(authorisationId, PaymentAuthorisationType.INITIATION);
+    }
+
+    /**
+     * Gets SCA approach from the existing cancellation authorisation
+     *
+     * @param authorisationId authorisation identifier
+     * @return SCA approach, stored in the authorisation
+     */
+    @NotNull
+    public ScaApproach getCancellationScaApproach(@NotNull String authorisationId) {
+        return resolveScaApproach(authorisationId, PaymentAuthorisationType.CANCELLATION);
+    }
+
+    @NotNull
+    private ScaApproach resolveScaApproach(@NotNull String authorisationId, PaymentAuthorisationType authorisationType) {
+        Optional<AuthorisationScaApproachResponse> scaApproachResponse = Optional.empty();
+        ServiceType serviceType = serviceTypeDiscoveryService.getServiceType();
+        if (serviceType == ServiceType.AIS) {
+            scaApproachResponse = xs2aAisConsentService.getAuthorisationScaApproach(authorisationId);
+        } else if (serviceType == ServiceType.PIS) {
+            scaApproachResponse = pisAuthorisationService.getAuthorisationScaApproach(authorisationId, authorisationType);
+        }
+
+        if (!scaApproachResponse.isPresent()) {
+            log.info("X-Request-ID: [{}]. Couldn't retrieve SCA approach from the authorisation with id: {} and type: {}",
+                     requestProviderService.getRequestId(), authorisationId, authorisationType);
+            throw new IllegalArgumentException("Wrong authorisation id: " + authorisationId +
+                                                   " or type: " + authorisationType);
+        }
+
+        return scaApproachResponse.get().getScaApproach();
+    }
+
+    /**
      * Forcefully sets current SCA approach to <code>DECOUPLED</code>.
      * Should ONLY be used for switching from Embedded to Decoupled approach during SCA method selection
      */
@@ -87,4 +154,5 @@ public class ScaApproachResolver {
     private ScaApproach getSecond(List<ScaApproach> scaApproaches) {
         return scaApproaches.get(1);
     }
+
 }
