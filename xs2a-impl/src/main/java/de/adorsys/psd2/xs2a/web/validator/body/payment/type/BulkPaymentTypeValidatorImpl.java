@@ -69,7 +69,7 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
 
         if (isDateInThePast(bulkPayment.getRequestedExecutionDate())) {
             errorBuildingService.enrichMessageError(
-                messageError, TppMessageInformation.of(MessageErrorCode.PERIOD_INVALID, "Value 'requestedExecutionDate' should not be in the past"));
+                messageError, TppMessageInformation.of(MessageErrorCode.EXECUTION_DATE_INVALID, "Value 'requestedExecutionDate' should not be in the past"));
         }
     }
 }

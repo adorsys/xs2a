@@ -26,3 +26,6 @@ change:
   - In consent-psu-api:
     - `de.adorsys.psd2.consent.psu.api.CmsPsuAisService`
     (`GET /psu-api/v1/ais/consent/{consent-id}`, `GET /psu-api/v1/ais/consent/consents`)
+
+## Bugfix: Wrong error code "requestedExecutionDate" value in the past
+Error code was changed to `400 EXECUTION_DATE_INVALID` from `400 FORMAT_ERROR` when `requestedExecutionDate` field is less then current date.

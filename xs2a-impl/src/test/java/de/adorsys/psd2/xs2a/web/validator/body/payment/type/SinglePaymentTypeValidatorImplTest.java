@@ -172,7 +172,7 @@ public class SinglePaymentTypeValidatorImplTest {
         singlePayment.setRequestedExecutionDate(LocalDate.now().minusDays(1));
 
         validator.doSingleValidation(singlePayment, messageError);
-        assertEquals(MessageErrorCode.PERIOD_INVALID, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID, messageError.getTppMessage().getMessageErrorCode());
         assertEquals("Value 'requestedExecutionDate' should not be in the past", messageError.getTppMessage().getText());
     }
 
