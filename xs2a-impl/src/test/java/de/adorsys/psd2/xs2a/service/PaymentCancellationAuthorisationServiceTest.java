@@ -107,6 +107,8 @@ public class PaymentCancellationAuthorisationServiceTest {
             .thenReturn(Optional.empty());
         when(pisScaAuthorisationServiceResolver.getService())
             .thenReturn(pisScaAuthorisationService);
+        when(pisScaAuthorisationServiceResolver.getServiceCancellation(AUTHORISATION_ID))
+            .thenReturn(pisScaAuthorisationService);
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(PIS_COMMON_PAYMENT_RESPONSE));
@@ -193,11 +195,9 @@ public class PaymentCancellationAuthorisationServiceTest {
 
     @Test
     public void getPaymentInitiationCancellationAuthorisationInformation_Success_ShouldRecordEvent() {
+        // Given:
         when(pisScaAuthorisationService.getCancellationAuthorisationSubResources(anyString()))
             .thenReturn(Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.emptyList())));
-
-        // Given:
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
@@ -227,6 +227,10 @@ public class PaymentCancellationAuthorisationServiceTest {
 
     @Test
     public void getPaymentCancellationAuthorisationScaStatus_success() {
+        // Given
+        when(pisScaAuthorisationServiceResolver.getServiceCancellation(CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(pisScaAuthorisationService);
+
         // When
         ResponseObject<ScaStatus> actual =
             paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID,
@@ -241,6 +245,8 @@ public class PaymentCancellationAuthorisationServiceTest {
     public void getPaymentCancellationAuthorisationScaStatus_success_shouldRecordEvent() {
         // Given:
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+        when(pisScaAuthorisationServiceResolver.getServiceCancellation(CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(pisScaAuthorisationService);
 
         // When
         paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID,
@@ -254,6 +260,10 @@ public class PaymentCancellationAuthorisationServiceTest {
 
     @Test
     public void getPaymentCancellationAuthorisationScaStatus_failure_wrongIds() {
+        // Given
+        when(pisScaAuthorisationServiceResolver.getServiceCancellation(WRONG_CANCELLATION_AUTHORISATION_ID))
+            .thenReturn(pisScaAuthorisationService);
+
         // When
         ResponseObject<ScaStatus> actual =
             paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID,

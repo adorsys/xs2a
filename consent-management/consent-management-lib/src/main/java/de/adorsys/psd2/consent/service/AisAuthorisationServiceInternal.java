@@ -34,6 +34,7 @@ import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -269,6 +270,12 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
         aisConsentAuthorisation.setScaApproach(scaApproach);
         aisConsentAuthorisationRepository.save(aisConsentAuthorisation);
         return true;
+    }
+
+    @Override
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationID) {
+        return aisConsentAuthorisationRepository.findByExternalId(authorisationID)
+                   .map(a -> new AuthorisationScaApproachResponse(a.getScaApproach()));
     }
 
     private AisConsentAuthorization saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {

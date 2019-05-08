@@ -46,4 +46,23 @@ public class ScaServiceResolver<T extends ScaApproachServiceTypeProvider> implem
     public T getService() {
         return SERVICE_CONTAINER.get(scaApproachResolver.resolveScaApproach());
     }
+
+    /**
+     * Get particular service for sca approach that was chosen in resolver, works for authorisation initiation
+     *
+     * @return particular service for chosen sca approach
+     */
+    public T getServiceInitiation(String authorisationId) {
+        return SERVICE_CONTAINER.get(scaApproachResolver.getInitiationScaApproach(authorisationId));
+    }
+
+    /**
+     * Get particular service for sca approach that was chosen in resolver, works for authorisation cancellation
+     *
+     * @return particular service for chosen sca approach
+     */
+    public T getServiceCancellation(String authorisationId) {
+        return SERVICE_CONTAINER.get(scaApproachResolver.getCancellationScaApproach(authorisationId));
+    }
+
 }

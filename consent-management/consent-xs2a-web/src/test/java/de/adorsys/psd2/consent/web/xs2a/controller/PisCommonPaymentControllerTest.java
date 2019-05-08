@@ -15,7 +15,7 @@
  */
 
 
-package de.adorsys.psd2.consent.web.xs2a;
+package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +46,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisCommonPaymentControllerTest {
@@ -312,6 +314,58 @@ public class PisCommonPaymentControllerTest {
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(result.getBody()).isNull();
+    }
+
+    @Test
+    public void getAuthorisationScaApproach_success() {
+        when(pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
+
+        ResponseEntity<AuthorisationScaApproachResponse> response = pisCommonPaymentController.getAuthorisationScaApproach(AUTHORISATION_ID);
+
+        verify(pisCommonPaymentService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(CmsAuthorisationType.CREATED));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getScaApproach()).isEqualTo(ScaApproach.EMBEDDED);
+    }
+
+    @Test
+    public void getAuthorisationScaApproach_error() {
+        when(pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.empty());
+
+        ResponseEntity<AuthorisationScaApproachResponse> response = pisCommonPaymentController.getAuthorisationScaApproach(AUTHORISATION_ID);
+
+        verify(pisCommonPaymentService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(CmsAuthorisationType.CREATED));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    public void getCancellationAuthorisationScaApproach_success() {
+        when(pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
+            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
+
+        ResponseEntity<AuthorisationScaApproachResponse> response = pisCommonPaymentController.getCancellationAuthorisationScaApproach(AUTHORISATION_ID);
+
+        verify(pisCommonPaymentService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(CmsAuthorisationType.CANCELLED));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getScaApproach()).isEqualTo(ScaApproach.EMBEDDED);
+    }
+
+    @Test
+    public void getCancellationAuthorisationScaApproach_error() {
+        when(pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CANCELLED))
+            .thenReturn(Optional.empty());
+
+        ResponseEntity<AuthorisationScaApproachResponse> response = pisCommonPaymentController.getCancellationAuthorisationScaApproach(AUTHORISATION_ID);
+
+        verify(pisCommonPaymentService, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(CmsAuthorisationType.CANCELLED));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNull();
     }
 
     private GetPisAuthorisationResponse getGetPisAuthorisationResponse() {

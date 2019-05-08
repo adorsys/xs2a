@@ -118,7 +118,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                        .build();
         }
 
-        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
+        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getServiceCancellation(request.getAuthorisationId());
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = pisScaAuthorisationService.updateCommonPaymentCancellationPsuData(request);
 
         if (response.hasError()) {
@@ -166,12 +166,12 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     /**
      * Gets SCA status of payment cancellation authorisation
      *
-     * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
-     * @param cancellationId cancellation authorisation identifier
+     * @param paymentId       ASPSP identifier of the payment, associated with the authorisation
+     * @param authorisationId cancellation authorisation identifier
      * @return Response containing SCA status of authorisation or corresponding error
      */
     @Override
-    public ResponseObject<ScaStatus> getPaymentCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
+    public ResponseObject<ScaStatus> getPaymentCancellationAuthorisationScaStatus(String paymentId, String authorisationId) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_CANCELLATION_SCA_STATUS_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
@@ -188,8 +188,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                        .build();
         }
 
-        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
-        Optional<ScaStatus> scaStatus = pisScaAuthorisationService.getCancellationAuthorisationScaStatus(paymentId, cancellationId);
+        PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getServiceCancellation(authorisationId);
+        Optional<ScaStatus> scaStatus = pisScaAuthorisationService.getCancellationAuthorisationScaStatus(paymentId, authorisationId);
 
         if (!scaStatus.isPresent()) {
             return ResponseObject.<ScaStatus>builder()

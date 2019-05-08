@@ -36,6 +36,7 @@ import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.apache.commons.collections4.IteratorUtils;
 import org.jetbrains.annotations.NotNull;
@@ -54,8 +55,8 @@ import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.PATC;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisCommonPaymentServiceInternalTest {
@@ -341,6 +342,33 @@ public class PisCommonPaymentServiceInternalTest {
         assertTrue(actual.isPresent());
         verify(pisAuthorisationRepository).save(argument.capture());
         assertSame(argument.getValue().getScaStatus(), ScaStatus.PSUIDENTIFIED);
+    }
+
+    @Test
+    public void getAuthorisationScaApproach() {
+        PisAuthorization pisAuthorization = new PisAuthorization();
+        pisAuthorization.setScaApproach(ScaApproach.DECOUPLED);
+        when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.of(pisAuthorization));
+
+        Optional<AuthorisationScaApproachResponse> actual = pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED);
+
+        // Then
+        assertTrue(actual.isPresent());
+        assertEquals(ScaApproach.DECOUPLED, actual.get().getScaApproach());
+        verify(pisAuthorisationRepository, times(1)).findByExternalIdAndAuthorizationType(eq(AUTHORISATION_ID), eq(CmsAuthorisationType.CREATED));
+    }
+
+    @Test
+    public void getAuthorisationScaApproach_emptyAuthorisation() {
+        when(pisAuthorisationRepository.findByExternalIdAndAuthorizationType(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .thenReturn(Optional.empty());
+
+        Optional<AuthorisationScaApproachResponse> actual = pisCommonPaymentService.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED);
+
+        // Then
+        assertFalse(actual.isPresent());
+        verify(pisAuthorisationRepository, times(1)).findByExternalIdAndAuthorizationType(eq(AUTHORISATION_ID), eq(CmsAuthorisationType.CREATED));
     }
 
     @NotNull

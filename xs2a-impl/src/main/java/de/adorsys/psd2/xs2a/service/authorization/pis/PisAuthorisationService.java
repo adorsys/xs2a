@@ -25,11 +25,13 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.config.factory.PisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.pis.stage.PisScaStage;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
@@ -195,5 +197,20 @@ public class PisAuthorisationService {
      */
     public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
         return pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(paymentId, cancellationId, CmsAuthorisationType.CANCELLED);
+    }
+
+    /**
+     * Gets SCA approach of the authorisation by its id and type
+     *
+     * @param authorisationId   String representation of the authorisation identifier
+     * @param authorisationType Type of authorisation
+     * @return SCA approach of the authorisation
+     */
+    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId, PaymentAuthorisationType authorisationType) {
+        CmsAuthorisationType cmsAuthorisationType = authorisationType == PaymentAuthorisationType.INITIATION
+                                                        ? CmsAuthorisationType.CREATED
+                                                        : CmsAuthorisationType.CANCELLED;
+
+        return pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(authorisationId, cmsAuthorisationType);
     }
 }
