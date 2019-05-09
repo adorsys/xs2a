@@ -7,6 +7,7 @@
 // toc-title definition MUST follow document title without blank line!
 :toc-title: Table of Contents
 :imagesdir: images
+:toc: macro
 
 //additional style for arc42 help callouts
 ifdef::basebackend-html[]
@@ -32,7 +33,7 @@ include::about-arc42.adoc[]
 // horizontal line
 ***
 
-
+toc::[]
 
 
 // numbering from here on

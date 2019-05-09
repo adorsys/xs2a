@@ -230,6 +230,12 @@ Sonarcube Tests:
     - mvn --fail-at-end clean install
     - mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
 
+AsciiDoc Test:
+  stage: "Test"
+  image: adorsys/arc42-tools
+  script:
+    - make pages
+
 # Build DEVELOP image and deploy to DEV
 
 Push to DockerHub (develop):

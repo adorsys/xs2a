@@ -1,3 +1,48 @@
-:ext-relative: .html
+// toc-title definition MUST follow document title without blank line!
+= XS2A Service
+:toc-title: XS2A Documentation
+:imagesdir: images
+:toc: left
 
-link:architecture/index{ext-relative}[Architecture documentation]
+//additional style for arc42 help callouts
+ifdef::basebackend-html[]
+++++
+<style>
+.arc42help {font-size:small; width: 14px; height: 16px; overflow: hidden; position: absolute; right: 0px; padding: 2px 0px 3px 2px;}
+.arc42help::before {content: "?";}
+.arc42help:hover {width:auto; height: auto; z-index: 100; padding: 10px;}
+.arc42help:hover::before {content: "";}
+@media print {
+	.arc42help {display:hidden;}
+}
+</style>
+++++
+endif::basebackend-html[]
+
+// horizontal line
+***
+
+toc::[]
+
+== Architecture
+xref:architecture/index.adoc[Architecture documentation]
+
+
+== Use cases
+
+
+
+include::version_policy.adoc[]
+
+== Upcoming and existing Versions
+=== Roadmap
+xref:roadmap.adoc[Roadmap] contains brief information about upcoming features and bugfixes.
+May be changed without a note.
+
+=== Change log and Release notes
+
+For the versions available, see the https://github.com/adorsys/xs2a/tags[tags on this repository]
+and xref:releasenotes.adoc[Release notes for each version].
+
+xref:releasenotes.adoc[Release notes] contain information about changes included into releases.
+Might contain also important migration information for the developers, how to migrate to a new version and how to use it.

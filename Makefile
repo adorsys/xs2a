@@ -17,8 +17,15 @@ prepare_pages:
 	cd pages && cd html && rm -rf doc
 
 pages : prepare_pages
-	cd pages/doc/architecture && asciidoctor -D ../../html/architecture/ index.adoc
-	cd pages/doc && asciidoctor -D ../html/ index.adoc
+	cd pages && asciidoctor -R doc -D html '**/*.adoc'
 
 clean :
 	-rm -r pages
+	mvn clean
+
+build: maven_build pages
+
+maven_build:
+	mvn install
+
+all: clean build

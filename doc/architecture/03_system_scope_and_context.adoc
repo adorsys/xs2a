@@ -8,7 +8,7 @@
 
 === Business Context
 
-image::L00-Context.png[Business Context diagram, 80%, title="Business Context Diagramm", align="center"]
+image::L00-Context.png[Business Context diagram, title="Business Context Diagramm", align="center"]
 
 |===
 | System | Description
