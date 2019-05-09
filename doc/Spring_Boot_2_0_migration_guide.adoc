@@ -1,6 +1,6 @@
 
 === Inquiry
-Migration was done within the task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/487
+Migration was done within the version 3.2. This guidance is valid for all versions before (including 2.x).
 
 === Affected versions
 

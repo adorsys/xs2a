@@ -27,7 +27,7 @@ XS2A Team processes Tickets in scope of sprints according to versions affected.
 Mainline, like **`2.x`**, **`3.x`** will be set also as a label to mark for which version a fix is to be provided.
 
 If XS2A Team delivers a Hotfix version, a **`HOTFIX`** label will be set.
-Planning ticket to sprints is done using the [Roadmap](roadmap.md).
+Planning ticket to sprints is done using the [Roadmap](roadmap.adoc).
 
 ## Bugfixing (Accepted tickets)
 

@@ -58,19 +58,20 @@ configured through your environment (documentation follows) to interact properly
 
 More details see in [instruction](doc/deployment.md)
 
-### Brief architecture documentation
-Available in [the documentation](doc/architecture/README.md)
+## Project documentation
+We are migrating our documentation pages to our new [Documentation site](https://adorsys.github.io/xs2a/).
+
+There are already available:
+* Architecture documentation
+* Use-cases diagrams
+* Release policy
+* Roadmap
+* Release notes
+
 
 ## Development and contributing
 
 Please read [CONTRIBUTING](doc/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Releases and versions
-
-* [Versioning, Release and Support policy](doc/Version_Policy.md)
- 
-* [Release notes](doc/releasenotes.md) 
-* [Roadmap for next features development](doc/roadmap.md)
  
 ### Testing API with Postman json collections
  
