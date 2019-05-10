@@ -22,10 +22,13 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.web.header.ConsentHeadersBuilder;
+import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
@@ -51,6 +54,7 @@ public class ConsentController implements ConsentApi {
     private final AuthorisationMapper authorisationMapper;
     private final TppRedirectUriMapper tppRedirectUriMapper;
     private final ResponseErrorMapper responseErrorMapper;
+    private final ConsentHeadersBuilder consentHeadersBuilder;
 
     @Override
     public ResponseEntity createConsent(UUID xRequestID, Consents body, String digest, String signature,
@@ -66,12 +70,19 @@ public class ConsentController implements ConsentApi {
 
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI);
-        ResponseObject<CreateConsentResponse> createConsentResponse =
+        ResponseObject<CreateConsentResponse> createResponse =
             consentService.createAccountConsentsWithResponse(createConsent, psuData, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppRedirectUri);
 
-        return createConsentResponse.hasError()
-                   ? responseErrorMapper.generateErrorResponse(createConsentResponse.getError())
-                   : responseMapper.created(createConsentResponse, consentModelMapper::mapToConsentsResponse201);
+        if (createResponse.hasError()) {
+            return responseErrorMapper.generateErrorResponse(createResponse.getError(),
+                                                             consentHeadersBuilder.buildErrorCreateConsentHeaders());
+        }
+
+        CreateConsentResponse createConsentResponse = createResponse.getBody();
+        ResponseHeaders headers = consentHeadersBuilder.buildCreateConsentHeaders(createConsentResponse.getAuthorizationId(),
+                                                                                  createConsentResponse.getLinks().getSelf());
+
+        return responseMapper.created(createResponse, consentModelMapper::mapToConsentsResponse201, headers);
     }
 
     @Override
@@ -102,15 +113,20 @@ public class ConsentController implements ConsentApi {
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType);
         String password = authorisationMapper.mapToPasswordFromBody((Map) body);
 
-        ResponseObject createResponse = consentService.createAisAuthorisation(psuData, consentId, password);
+        ResponseObject<AuthorisationResponse> createResponse = consentService.createAisAuthorisation(psuData, consentId, password);
 
         if (createResponse.hasError()) {
-            return responseErrorMapper.generateErrorResponse(createResponse.getError());
+            return responseErrorMapper.generateErrorResponse(createResponse.getError(),
+                                                             consentHeadersBuilder.buildErrorStartConsentAuthorisationHeaders());
         }
+
+        AuthorisationResponse authorisationResponse = createResponse.getBody();
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildStartConsentAuthorisationHeaders(authorisationResponse.getAuthorisationId());
 
         return responseMapper.created(ResponseObject.builder()
                                           .body(authorisationMapper.mapToAisCreateOrUpdateAuthorisationResponse(createResponse))
-                                          .build());
+                                          .build(),
+                                      responseHeaders);
     }
 
     @Override
@@ -129,9 +145,14 @@ public class ConsentController implements ConsentApi {
         UpdateConsentPsuDataReq updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(psuData, consentId, authorisationId, (Map) body);
         ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataResponse = consentService.updateConsentPsuData(updatePsuDataRequest);
 
-        return updateConsentPsuDataResponse.hasError()
-                   ? responseErrorMapper.generateErrorResponse(updateConsentPsuDataResponse.getError())
-                   : responseMapper.ok(updateConsentPsuDataResponse, authorisationMapper::mapToAisUpdatePsuAuthenticationResponse);
+        if (updateConsentPsuDataResponse.hasError()) {
+            return responseErrorMapper.generateErrorResponse(updateConsentPsuDataResponse.getError(),
+                                                             consentHeadersBuilder.buildErrorUpdateConsentsPsuDataHeaders(authorisationId));
+        }
+
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildUpdateConsentsPsuDataHeaders(authorisationId);
+
+        return responseMapper.ok(updateConsentPsuDataResponse, authorisationMapper::mapToAisUpdatePsuAuthenticationResponse, responseHeaders);
     }
 
     @Override

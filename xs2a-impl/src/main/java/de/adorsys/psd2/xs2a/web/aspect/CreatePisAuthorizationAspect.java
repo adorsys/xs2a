@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -47,7 +48,7 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorisation(..)) && args(createRequest)", returning = "result", argNames = "result,createRequest")
-    public ResponseObject createPisAuthorizationAspect(ResponseObject result, Xs2aCreatePisAuthorisationRequest createRequest) {
+    public ResponseObject<AuthorisationResponse> createPisAuthorizationAspect(ResponseObject<AuthorisationResponse> result, Xs2aCreatePisAuthorisationRequest createRequest) {
         if (!result.hasError()) {
             if (result.getBody() instanceof Xs2aCreatePisAuthorisationResponse) {
                 Xs2aCreatePisAuthorisationResponse response = (Xs2aCreatePisAuthorisationResponse) result.getBody();

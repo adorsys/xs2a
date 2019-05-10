@@ -161,6 +161,7 @@ public class PaymentServiceTest {
     private GetPaymentStatusByIdValidator getPaymentStatusByIdValidator;
     @Mock
     private CancelPaymentValidator cancelPaymentValidator;
+
     @Before
     public void setUp() {
         //Mapper
@@ -200,7 +201,7 @@ public class PaymentServiceTest {
                             .body(buildSinglePaymentInitiationResponse())
                             .build());
         // When
-        ResponseObject<SinglePaymentInitiationResponse> actualResponse = paymentService.createPayment(SINGLE_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.SINGLE));
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(SINGLE_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.SINGLE));
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -216,7 +217,7 @@ public class PaymentServiceTest {
                             .body(buildPeriodicPaymentInitiationResponse())
                             .build());
         // When
-        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = paymentService.createPayment(PERIODIC_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.PERIODIC));
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(PERIODIC_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.PERIODIC));
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -235,7 +236,7 @@ public class PaymentServiceTest {
             .thenReturn(ValidationResult.invalid(new MessageError()));
 
         // When
-        ResponseObject<SinglePaymentInitiationResponse> actualResponse = paymentService.createPayment(SINGLE_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.SINGLE));
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(SINGLE_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.SINGLE));
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -256,7 +257,7 @@ public class PaymentServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<SinglePaymentInitiationResponse> actualResponse = paymentService.createPayment(SINGLE_PAYMENT_OK, invalidPaymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(SINGLE_PAYMENT_OK, invalidPaymentInitiationParameters);
 
         // Then
         verify(createPaymentValidator).validate(createPaymentRequestObject);
@@ -276,7 +277,7 @@ public class PaymentServiceTest {
             .thenReturn(ValidationResult.invalid(new MessageError()));
 
         // When
-        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = paymentService.createPayment(PERIODIC_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.PERIODIC));
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(PERIODIC_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.PERIODIC));
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -297,7 +298,7 @@ public class PaymentServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<SinglePaymentInitiationResponse> actualResponse = paymentService.createPayment(PERIODIC_PAYMENT_OK, invalidPaymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(PERIODIC_PAYMENT_OK, invalidPaymentInitiationParameters);
 
         // Then
         verify(createPaymentValidator).validate(createPaymentRequestObject);
@@ -309,7 +310,7 @@ public class PaymentServiceTest {
     @Test
     public void createBulkPayments() {
         // When
-        ResponseObject<BulkPaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK));
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, buildPaymentInitiationParameters(PaymentType.BULK));
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -327,7 +328,7 @@ public class PaymentServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<SinglePaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, invalidPaymentInitiationParameters);
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment(BULK_PAYMENT_OK, invalidPaymentInitiationParameters);
 
         // Then
         verify(createPaymentValidator).validate(createPaymentRequestObject);
@@ -339,6 +340,10 @@ public class PaymentServiceTest {
     @Test
     public void createPayment_Success_ShouldRecordEvent() {
         // Given
+        when(createSinglePaymentService.createPayment(any(), any(), any()))
+            .thenReturn(ResponseObject.<SinglePaymentInitiationResponse>builder()
+                            .body(buildSinglePaymentInitiationResponse())
+                            .build());
         PaymentInitiationParameters parameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         // When

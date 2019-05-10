@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.consent;
+package de.adorsys.psd2.xs2a.domain.authorisation;
 
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import lombok.Data;
-
-@Data
-public class CreateConsentAuthorizationResponse implements AuthorisationResponse {
-    private String consentId;
-    private String authorisationId;
-    private ScaStatus scaStatus;
-    private ConsentAuthorizationResponseLinkType responseLinkType;
-    private String psuMessage;
+/**
+ * Common authorisation response to be used in AIS and PIS on creating or updating the authorisation
+ */
+public interface AuthorisationResponse {
+    String getAuthorisationId();
 }

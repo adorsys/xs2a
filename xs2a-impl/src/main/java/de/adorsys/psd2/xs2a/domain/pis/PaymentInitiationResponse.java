@@ -46,7 +46,7 @@ public abstract class PaymentInitiationResponse {
     private String psuMessage;
     private MessageErrorCode[] tppMessages;
     @JsonProperty("_links")
-    private Links links;
+    private Links links = new Links();
     private String authorizationId;
     private AspspConsentData aspspConsentData;
     private String aspspAccountId;

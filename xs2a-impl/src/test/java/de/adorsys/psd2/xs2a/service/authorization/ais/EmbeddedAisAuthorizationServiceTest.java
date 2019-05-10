@@ -158,7 +158,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         CreateConsentAuthorizationResponse actualResponse = actualResponseOptional.get();
 
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
-        assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
+        assertThat(actualResponse.getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_AUTHENTICATION);
     }
@@ -189,7 +189,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         CreateConsentAuthorizationResponse actualResponse = actualResponseOptional.get();
 
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
-        assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
+        assertThat(actualResponse.getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_AUTHENTICATION);
     }
@@ -208,7 +208,7 @@ public class EmbeddedAisAuthorizationServiceTest {
         CreateConsentAuthorizationResponse actualResponse = actualResponseOptional.get();
 
         assertThat(actualResponse.getConsentId()).isEqualTo(CONSENT_ID);
-        assertThat(actualResponse.getAuthorizationId()).isEqualTo(AUTHORISATION_ID);
+        assertThat(actualResponse.getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
         assertThat(actualResponse.getResponseLinkType()).isEqualTo(UPDATE_PSU_IDENTIFICATION);
     }

@@ -198,7 +198,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToGetPaymentResponse12_Single_success() {
         //When
-        PaymentInitiationWithStatusResponse result = (PaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildSinglePayment(TransactionStatus.RCVD), SINGLE, STANDARD_PAYMENT_TYPE);
+        PaymentInitiationWithStatusResponse result = (PaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildSinglePayment(TransactionStatus.RCVD), SINGLE, STANDARD_PAYMENT_TYPE);
 
         //Then
         assertThat(result).isNotNull();
@@ -216,7 +216,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToGetPaymentResponse12_Periodic_success() {
         //When
-        PeriodicPaymentInitiationWithStatusResponse result = (PeriodicPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildPeriodicPayment(TransactionStatus.RCVD), PERIODIC, STANDARD_PAYMENT_TYPE);
+        PeriodicPaymentInitiationWithStatusResponse result = (PeriodicPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildPeriodicPayment(TransactionStatus.RCVD), PERIODIC, STANDARD_PAYMENT_TYPE);
 
         //Then
         assertThat(result).isNotNull();
@@ -239,7 +239,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToGetPaymentResponse12_Bulk_success() {
         //When
-        BulkPaymentInitiationWithStatusResponse result = (BulkPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildBulkPayment(TransactionStatus.RCVD), BULK, STANDARD_PAYMENT_TYPE);
+        BulkPaymentInitiationWithStatusResponse result = (BulkPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildBulkPayment(TransactionStatus.RCVD), BULK, STANDARD_PAYMENT_TYPE);
 
         //Then
         assertThat(result).isNotNull();
@@ -262,7 +262,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToGetPaymentResponse12_NonStandardFormat_success() {
         //When
-        String result = (String) paymentModelMapperPsd2.mapToGetPaymentResponse12(buildNonStandardPayment(), any(), NON_STANDARD_PAYMENT_TYPE);
+        String result = (String) paymentModelMapperPsd2.mapToGetPaymentResponse(buildNonStandardPayment(), any(), NON_STANDARD_PAYMENT_TYPE);
 
         //Then
         assertThat(result).isNotNull();

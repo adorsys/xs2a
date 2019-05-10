@@ -168,7 +168,7 @@ public class DecoupledAisAuthorizationServiceTest {
     private static CreateConsentAuthorizationResponse buildCreateConsentAuthorizationResponse() {
         CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
         resp.setConsentId(CONSENT_ID);
-        resp.setAuthorizationId(AUTHORISATION_ID);
+        resp.setAuthorisationId(AUTHORISATION_ID);
         resp.setScaStatus(ScaStatus.RECEIVED);
         resp.setResponseLinkType(ConsentAuthorizationResponseLinkType.UPDATE_PSU_AUTHENTICATION);
         return resp;
