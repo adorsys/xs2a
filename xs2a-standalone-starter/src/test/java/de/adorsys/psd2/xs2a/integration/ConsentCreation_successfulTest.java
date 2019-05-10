@@ -264,7 +264,7 @@ public class ConsentCreation_successfulTest {
             .willReturn(Optional.of(new AspspConsentData(null, ENCRYPT_CONSENT_ID)));
         given(aspspRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(ParameterizedTypeReference.class), any(String.class)))
             .willReturn(ResponseEntity.ok(new ArrayList<SpiAccountDetails>()));
-        when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(any(String.class)))
+        when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildConsentCreation());

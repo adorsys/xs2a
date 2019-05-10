@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
@@ -257,6 +258,7 @@ public class InitiatePayments_successfulTest {
             .willReturn(Optional.of(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS)));
         initiateSinglePayment_successful(httpHeadersExplicit, ScaApproach.EMBEDDED);
     }
+
     @Test
     public void initiateSinglePayment_explicit_redirect_successful() throws Exception {
         given(pisCommonPaymentServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(ScaApproach.REDIRECT)))
@@ -305,6 +307,8 @@ public class InitiatePayments_successfulTest {
 
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
+        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlBuilder.buildInitiatePaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
         requestBuilder.headers(headers);
@@ -328,6 +332,8 @@ public class InitiatePayments_successfulTest {
 
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
+        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(UrlBuilder.buildInitiatePaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
         requestBuilder.headers(headers);
@@ -350,6 +356,8 @@ public class InitiatePayments_successfulTest {
 
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
+        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildInitiatePaymentUrl(PERIODIC_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
         requestBuilder.headers(headers);
@@ -376,6 +384,8 @@ public class InitiatePayments_successfulTest {
 
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
+        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
+            .willReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildInitiatePaymentUrl(BULK_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT));
         requestBuilder.headers(headers);

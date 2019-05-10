@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
@@ -65,19 +66,35 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
      * @return ResponseObject it could contains data after create or update pis authorisation
      */
     @Override
-    public ResponseObject createPisAuthorisation(Xs2aCreatePisAuthorisationRequest createRequest) {
+    public ResponseObject<AuthorisationResponse> createPisAuthorisation(Xs2aCreatePisAuthorisationRequest createRequest) {
         ResponseObject<Xs2aCreatePisAuthorisationResponse> createPisAuthorisationResponse = createPisAuthorisation(createRequest.getPaymentId(), createRequest.getPaymentService(), createRequest.getPsuData());
 
-        if (createPisAuthorisationResponse.hasError()
-                || createRequest.getPsuData().isEmpty()
+        if (createPisAuthorisationResponse.hasError()) {
+            return ResponseObject.<AuthorisationResponse>builder()
+                       .fail(createPisAuthorisationResponse.getError())
+                       .build();
+        }
+
+        if (createRequest.getPsuData().isEmpty()
                 || StringUtils.isBlank(createRequest.getPassword())) {
-            return createPisAuthorisationResponse;
+            return ResponseObject.<AuthorisationResponse>builder()
+                       .body(createPisAuthorisationResponse.getBody())
+                       .build();
         }
 
         String authorisationId = createPisAuthorisationResponse.getBody().getAuthorisationId();
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = new Xs2aUpdatePisCommonPaymentPsuDataRequest(createRequest, authorisationId);
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePsuDataResponse = updatePisCommonPaymentPsuData(updateRequest);
 
-        return updatePisCommonPaymentPsuData(updateRequest);
+        if (updatePsuDataResponse.hasError()) {
+            return ResponseObject.<AuthorisationResponse>builder()
+                       .fail(updatePsuDataResponse.getError())
+                       .build();
+        }
+
+        return ResponseObject.<AuthorisationResponse>builder()
+                   .body(updatePsuDataResponse.getBody())
+                   .build();
     }
 
     /**

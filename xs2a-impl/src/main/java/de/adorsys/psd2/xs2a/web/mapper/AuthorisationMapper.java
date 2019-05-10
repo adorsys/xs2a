@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -76,8 +77,8 @@ public class AuthorisationMapper {
         }
     }
 
-    public Object mapToAisCreateOrUpdateAuthorisationResponse(ResponseObject responseObject) {
-        Object body = responseObject.getBody();
+    public Object mapToAisCreateOrUpdateAuthorisationResponse(ResponseObject<AuthorisationResponse> responseObject) {
+        AuthorisationResponse body = responseObject.getBody();
         if (Objects.isNull(body)) {
             return null;
         }
@@ -152,7 +153,7 @@ public class AuthorisationMapper {
                    .map(csar -> {
                        boolean redirectApproachUsed = scaApproachResolver.resolveScaApproach() == REDIRECT;
                        String link = redirectApproachUsed
-                                         ? redirectLinkBuilder.buildConsentScaRedirectLink(csar.getConsentId(), csar.getAuthorizationId())
+                                         ? redirectLinkBuilder.buildConsentScaRedirectLink(csar.getConsentId(), csar.getAuthorisationId())
                                          : createUpdateConsentsPsuDataLink(csar);
                        return new StartScaprocessResponse()
                                   .scaStatus(coreObjectsMapper.mapToModelScaStatus(csar.getScaStatus()))
@@ -162,7 +163,7 @@ public class AuthorisationMapper {
     }
 
     private String createUpdateConsentsPsuDataLink(CreateConsentAuthorizationResponse csar) {
-        URI uri = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(null, csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null,
+        URI uri = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(null, csar.getConsentId(), csar.getAuthorisationId(), null, null, null, null, null, null, null, null, null,
                                                                            null, null, null, null, null, null, null, null, null)).toUri();
 
         UriComponentsBuilder uriComponentsBuilder = aspspProfileService.getAspspSettings().isForceXs2aBaseUrl()

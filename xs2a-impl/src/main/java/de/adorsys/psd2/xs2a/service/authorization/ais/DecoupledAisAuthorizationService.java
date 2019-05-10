@@ -62,7 +62,7 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
                        resp.setConsentId(consentId);
-                       resp.setAuthorizationId(auth.getAuthorizationId());
+                       resp.setAuthorisationId(auth.getAuthorizationId());
                        resp.setScaStatus(auth.getScaStatus());
                        resp.setResponseLinkType(getResponseLinkType(psuData, psuData));
 
