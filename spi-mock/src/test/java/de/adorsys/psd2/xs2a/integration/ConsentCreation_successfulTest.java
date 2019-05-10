@@ -237,6 +237,8 @@ public class ConsentCreation_successfulTest {
             .willReturn(Optional.of(buildAisAccountConsent(requestJsonPath, scaApproach)));
         given(aisConsentServiceEncrypted.getAisAccountConsentById(any(String.class)))
             .willReturn(Optional.of(buildAisAccountConsent(requestJsonPath, scaApproach)));
+        given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(any(String.class), any(AisAccountAccessInfo.class)))
+            .willReturn(Optional.of(buildAisAccountConsent(requestJsonPath, scaApproach)));
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(any(String.class), any(String.class)))
             .willReturn(Optional.of(getAisConsentAuthorizationResponse(scaApproach)));
         given(aspspDataService.readAspspConsentData(any(String.class)))

@@ -70,7 +70,6 @@ import java.util.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -98,6 +97,7 @@ public class AccountServiceTest {
     private static final List<SpiAccountDetails> EMPTY_ACCOUNT_DETAILS_LIST = Collections.emptyList();
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE = buildSpiAccountReference();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
+    private static final AccountReference XS2A_ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS = buildXs2aAccountReferenceWithoutAspspIds();
     private static final SpiTransactionReport SPI_TRANSACTION_REPORT = buildSpiTransactionReport();
     private static final ResponseObject<AccountConsent> ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE = buildErrorAllowedAccountDataResponse();
     private static final ResponseObject<AccountConsent> SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE = buildSuccessAllowedAccountDataResponse();
@@ -239,6 +239,7 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountDetailsList_Success() {
+        // Given
         AccountConsent accountConsent = createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE));
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
@@ -260,8 +261,12 @@ public class AccountServiceTest {
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
 
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(Optional.of(accountConsent));
+
+        // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
 
@@ -277,12 +282,12 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountDetailsList_shouldUpdateAccountReferences() {
-        AccountConsent accountConsent = createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE));
+        // Given
+        AccountConsent accountConsent = createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS));
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        // Given
         when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
             .thenReturn(ASPSP_CONSENT_DATA);
 
@@ -299,19 +304,19 @@ public class AccountServiceTest {
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
 
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<Xs2aAccountDetails>> argumentCaptor = ArgumentCaptor.forClass((Class) List.class);
+        AccountConsent updatedAccountConsent = createConsent(CONSENT_ID, createAccountAccess(XS2A_ACCOUNT_REFERENCE));
+        when(accountReferenceUpdater.updateAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList))
+            .thenReturn(Optional.of(updatedAccountConsent));
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
         // Then
-        Xs2aAccountAccess access = SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE.getBody().getAccess();
-        verify(accountReferenceUpdater).updateAccountReferences(eq(CONSENT_ID), eq(access), argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(xs2aAccountDetailsList);
-
         Xs2aAccountListHolder responseBody = actualResponse.getBody();
         assertThat(responseBody.getAccountDetails()).isEqualTo(xs2aAccountDetailsList);
+
+        verify(accountReferenceUpdater).updateAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList);
+        assertThat(responseBody.getAccountConsent()).isEqualTo(updatedAccountConsent);
     }
 
     @Test
@@ -329,6 +334,8 @@ public class AccountServiceTest {
         List<Xs2aAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(Optional.of(accountConsent));
 
         // Given
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -1028,6 +1035,10 @@ public class AccountServiceTest {
 
     private static AccountReference buildXs2aAccountReference() {
         return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+    }
+
+    private static AccountReference buildXs2aAccountReferenceWithoutAspspIds() {
+        return new AccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it

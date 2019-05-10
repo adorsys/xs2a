@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -58,8 +60,10 @@ public class AccountReferenceInConsentUpdater {
      * @param consentId      an external ID of consent, where account access to be stored
      * @param existingAccess existing account access of the consent
      * @param accountDetails list of account details with referenceId set
+     *
+     * @return Response containing AIS Consent
      */
-    public void updateAccountReferences(@NotNull String consentId, @NotNull Xs2aAccountAccess existingAccess, @NotNull List<Xs2aAccountDetails> accountDetails) {
+    public Optional<AccountConsent> updateAccountReferences(@NotNull String consentId, @NotNull Xs2aAccountAccess existingAccess, @NotNull List<Xs2aAccountDetails> accountDetails) {
         List<AccountReference> accounts = new ArrayList<>();
         List<AccountReference> transactions = new ArrayList<>();
         List<AccountReference> balances = new ArrayList<>();
@@ -71,7 +75,7 @@ public class AccountReferenceInConsentUpdater {
         }
         Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accounts, balances, transactions, existingAccess.getAvailableAccounts(), existingAccess.getAllPsd2());
 
-        aisConsentService.updateAspspAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(xs2aAccountAccess));
+        return aisConsentService.updateAspspAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(xs2aAccountAccess));
     }
 
     /**

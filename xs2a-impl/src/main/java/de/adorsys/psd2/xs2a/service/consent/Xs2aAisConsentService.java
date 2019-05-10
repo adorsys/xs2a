@@ -174,9 +174,12 @@ public class Xs2aAisConsentService {
      *
      * @param consentId            consentId String representation of identifier of stored consent
      * @param aisAccountAccessInfo AIS account access information
+     *
+     * @return Response containing AIS Consent
      */
-    public void updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
-        aisConsentService.updateAspspAccountAccess(consentId, aisAccountAccessInfo);
+    public Optional<AccountConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
+        return aisConsentService.updateAspspAccountAccessWithResponse(consentId, aisAccountAccessInfo)
+                   .map(aisConsentMapper::mapToAccountConsent);
     }
 
     /**
