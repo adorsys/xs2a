@@ -141,7 +141,16 @@ public class AccountService {
         }
 
         List<Xs2aAccountDetails> accountDetails = accountDetailsMapper.mapToXs2aAccountDetailsList(spiResponse.getPayload());
-        accountReferenceUpdater.updateAccountReferences(consentId, accountConsent.getAccess(), accountDetails);
+
+        Optional<AccountConsent> accountConsentUpdated = accountReferenceUpdater.updateAccountReferences(consentId, accountConsent.getAccess(), accountDetails);
+
+        if (!accountConsentUpdated.isPresent()) {
+            return ResponseObject.<Xs2aAccountListHolder>builder()
+                       .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                       .build();
+        }
+
+        accountConsent = accountConsentUpdated.get();
 
         Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(accountDetails, accountConsent);
 
