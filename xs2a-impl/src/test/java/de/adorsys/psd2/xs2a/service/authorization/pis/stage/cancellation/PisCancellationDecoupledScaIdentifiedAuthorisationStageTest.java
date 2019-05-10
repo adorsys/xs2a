@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PisCancellationDecoupledScaIdentifiedAuthorisationStageTest {
-    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getServiceName(ScaApproach.DECOUPLED, ScaStatus.RECEIVED);
+    private final static String DECOUPLED_SERVICE_NAME = PisScaStageAuthorisationFactory.getCancellationServiceName(ScaApproach.DECOUPLED, ScaStatus.RECEIVED);
 
     @InjectMocks
     private PisCancellationDecoupledScaIdentifiedAuthorisationStage pisCancellationDecoupledScaIdentifiedAuthorisationStage;

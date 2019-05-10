@@ -37,3 +37,13 @@ of resolving it separately.
 
 This fixes the bug that prevented PSU Data from being correctly updated if the authorisation was created with 
 `Tpp-Redirect-Preferred` header set to `false` while the `Redirect` SCA approach has the highest priority in the ASPSP profile. 
+
+## Bugfix: Update PSU Data request for payment cancellation uses wrong SPI interface for authorising PSU
+From now on, XS2A will no longer try to execute `de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi#authorisePsu` 
+instead of `de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi#authorisePsu` on Update PSU Data (Authentication) 
+request in context of payment cancellation (`PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation- authorisations/{cancellationId}`) 
+in `Embedded` or `Decoupled` SCA approach.
+
+## Bugfix: Get account list with balances returns no balances first time
+From now on, response to Get account list request with balances(`GET /v1/accounts?withBalance=true`) will 
+contain balances section and links right away instead of containing them only on the second request to this endpoint.
