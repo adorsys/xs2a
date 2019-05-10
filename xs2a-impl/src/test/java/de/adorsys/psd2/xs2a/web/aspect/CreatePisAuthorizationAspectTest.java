@@ -84,7 +84,7 @@ public class CreatePisAuthorizationAspectTest {
                              .build();
         ResponseObject actualResponse = aspect.createPisAuthorizationAspect(responseObject, request);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(3)).getAspspSettings();
         verify(createPisAuthorisationResponse, times(1)).setLinks(any(CreatePisAuthorisationLinks.class));
 
         assertFalse(actualResponse.hasError());

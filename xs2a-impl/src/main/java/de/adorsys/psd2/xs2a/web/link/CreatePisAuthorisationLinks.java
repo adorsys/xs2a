@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -30,7 +31,7 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 public class CreatePisAuthorisationLinks extends AbstractLinks {
 
     public CreatePisAuthorisationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                       Xs2aCreatePisAuthorisationRequest createRequest, String authorisationId) {
+                                       Xs2aCreatePisAuthorisationRequest createRequest, String authorisationId, ScaRedirectFlow scaRedirectFlow) {
         super(httpUrl);
 
         String paymentId = createRequest.getPaymentId();
@@ -51,7 +52,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
             }
         } else if (initiationScaApproach == REDIRECT) {
             String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId);
-            setScaRedirect(scaRedirectLink);
+            setScaRedirectOAuthLink(scaRedirectFlow, scaRedirectLink);
         }
     }
 }
