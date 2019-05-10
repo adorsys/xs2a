@@ -192,7 +192,7 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
         response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
         response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
-        response.setAuthorizationId(authorisationId);
+        response.setAuthorisationId(authorisationId);
         response.setConsentId(consentId);
         return response;
     }
@@ -225,7 +225,7 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(scaMethod));
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
-        response.setAuthorizationId(request.getAuthorizationId());
+        response.setAuthorisationId(request.getAuthorizationId());
         response.setConsentId(request.getConsentId());
         response.setChallengeData(challengeData);
         return response;

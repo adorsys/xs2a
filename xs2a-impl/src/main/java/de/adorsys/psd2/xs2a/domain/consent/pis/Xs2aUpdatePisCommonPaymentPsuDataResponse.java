@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class Xs2aUpdatePisCommonPaymentPsuDataResponse {
+public class Xs2aUpdatePisCommonPaymentPsuDataResponse implements AuthorisationResponse {
     private ErrorHolder errorHolder;
     private String psuMessage;
     private String paymentId;

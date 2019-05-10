@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
@@ -148,7 +149,7 @@ public class PaymentAuthorisationServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<Xs2aCreatePisAuthorisationResponse> actualResponse = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST);
+        ResponseObject<AuthorisationResponse> actualResponse = paymentAuthorisationService.createPisAuthorisation(CREATE_AUTHORISATION_REQUEST);
 
         // Then
         verify(createPisAuthorisationValidator).validate(new CommonPaymentObject(invalidPisCommonPaymentResponse));

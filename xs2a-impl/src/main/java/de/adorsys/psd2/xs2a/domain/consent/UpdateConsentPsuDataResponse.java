@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.domain.consent;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,10 +29,10 @@ import java.util.List;
 // Class can't be immutable, because it it used in aspect (links setting)
 @Data
 @NoArgsConstructor
-public class UpdateConsentPsuDataResponse {
+public class UpdateConsentPsuDataResponse implements AuthorisationResponse {
 
     private String consentId;
-    private String authorizationId;
+    private String authorisationId;
 
     private ScaStatus scaStatus;
     private List<Xs2aAuthenticationObject> availableScaMethods;

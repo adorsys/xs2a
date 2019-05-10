@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -819,7 +820,7 @@ public class ConsentServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<CreateConsentAuthorizationResponse> actualResponse = consentService.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
+        ResponseObject<AuthorisationResponse> actualResponse = consentService.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
 
         // Then
         AccountConsent accountConsent = getAccountConsent(CONSENT_ID, DATE, 0);
