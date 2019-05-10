@@ -140,7 +140,7 @@ public class RedirectAisAuthorizationServiceTest {
     private static CreateConsentAuthorizationResponse buildCreateConsentAuthResponse() {
         CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
         response.setConsentId(CONSENT_ID);
-        response.setAuthorizationId(AUTHORISATION_ID);
+        response.setAuthorisationId(AUTHORISATION_ID);
         response.setScaStatus(ScaStatus.RECEIVED);
         response.setResponseLinkType(ConsentAuthorizationResponseLinkType.SCA_REDIRECT);
         return response;

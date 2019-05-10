@@ -78,7 +78,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
             if (result.getBody() instanceof UpdateConsentPsuDataResponse) {
                 UpdateConsentPsuDataResponse body = (UpdateConsentPsuDataResponse) result.getBody();
 
-                String authorisationId = body.getAuthorizationId();
+                String authorisationId = body.getAuthorisationId();
 
                 UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
                 updatePsuData.setPsuData(psuData);
