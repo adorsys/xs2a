@@ -119,6 +119,12 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
                    .flatMap(securityDataService::encryptId);
     }
 
+   @Override
+    @Transactional
+    public Optional<AisAccountConsent> updateAspspAccountAccessWithResponse(String encryptedConsentId, AisAccountAccessInfo request) {
+        return securityDataService.decryptId(encryptedConsentId)
+                   .flatMap(decrypted -> aisConsentService.updateAspspAccountAccessWithResponse(decrypted, request));
+    }
 
     @Override
     public Optional<List<PsuIdData>> getPsuDataByConsentId(String encryptedConsentId) {

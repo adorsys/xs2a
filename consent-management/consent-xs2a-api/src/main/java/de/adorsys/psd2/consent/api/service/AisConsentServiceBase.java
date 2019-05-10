@@ -92,6 +92,7 @@ interface AisConsentServiceBase {
      */
     void checkConsentAndSaveActionLog(AisConsentActionRequest request);
 
+
     /**
      * Updates AIS consent aspsp account access by id
      *
@@ -100,6 +101,15 @@ interface AisConsentServiceBase {
      * @return String   consent id
      */
     Optional<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request);
+
+    /**
+     * Updates AIS consent aspsp account access by id and return consent
+     *
+     * @param request   needed parameters for updating AIS consent
+     * @param consentId id of the consent to be updated
+     * @return AisAccountConsent consent
+     */
+    Optional<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request);
 
     Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId);
 

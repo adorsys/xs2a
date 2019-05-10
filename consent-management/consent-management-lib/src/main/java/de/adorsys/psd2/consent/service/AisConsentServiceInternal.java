@@ -251,6 +251,17 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     @Override
+    @Transactional
+    public Optional<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) {
+        return getActualAisConsent(consentId)
+                   .map(consent -> {
+                       consent.addAspspAccountAccess(new AspspAccountAccessHolder(request)
+                                                         .getAccountAccesses());
+                       return consentMapper.mapToAisAccountConsent(aisConsentRepository.save(consent));
+                   });
+    }
+
+    @Override
     public Optional<List<PsuIdData>> getPsuDataByConsentId(String consentId) {
         return getActualAisConsent(consentId)
                    .map(ac -> psuDataMapper.mapToPsuIdDataList(ac.getPsuDataList()));
