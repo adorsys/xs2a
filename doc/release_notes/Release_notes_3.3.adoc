@@ -1,0 +1,64 @@
+= Release notes v.3.3
+
+== Table of Contents
+
+* Deleted deprecated method createConsent in CmsAspspPiisService
+* New mechanism for counting frequencyPerDay
+* Bugfix: Wrong error code "requestedExecutionDate" value in the past
+* Bugfix: Resolve SCA approach for the authorisation only once instead of separate resolving
+* Bugfix: Update PSU Data request for payment cancellation uses wrong SPI interface for authorising PSU
+* Bugfix: Get account list with balances returns no balances first time
+
+== Deleted deprecated method createConsent in CmsAspspPiisService
+
+Method `de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService#createConsent(PsuIdData, TppInfo, List, LocalDate, int)` was removed,
+use `CmsAspspPiisService#createConsent(PsuIdData, CreatePiisConsentRequest)` instead.
+
+== New mechanism for counting frequencyPerDay
+
+From now on, we count the number of consent usages by every endpoint:
+
+* /accounts
+* /accounts/account-id per account-id
+* /accounts/account-id/transactions per account-id
+* /accounts/account-id/balances per account-id
+* /accounts/account-id/transactions/transaction-id per account-id and transaction-id, if applicable.
+
+If the amount of accesses for any of these endpoint is exceeded - the `429 ACCESS_EXCEEDED` is returned. All other
+endpoints are still accessible until their amount is not exceeded.
+
+Also, the `usageCounter` field in `AisAccountConsent` is deprecated - now the new field `usageCounterMap` should be used
+instead. It is a map: key is the endpoint, value is a number of its usage. The following services were affected by this
+change:
+
+  * In consent-aspsp-api:
+     `de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService`
+    (`GET /aspsp-api/v1/ais/consents/tpp/{tpp-id}`, `GET /aspsp-api/v1/ais/consents/psu`, `GET /aspsp-api/v1/ais/consents/account/{account-id}`)
+  * In consent-psu-api:
+     `de.adorsys.psd2.consent.psu.api.CmsPsuAisService`
+    (`GET /psu-api/v1/ais/consent/{consent-id}`, `GET /psu-api/v1/ais/consent/consents`)
+
+== Bugfix: Wrong error code "requestedExecutionDate" value in the past
+
+Error code was changed to `400 EXECUTION_DATE_INVALID` from `400 FORMAT_ERROR` when `requestedExecutionDate` field is less then current date.
+
+== Bugfix: Resolve SCA approach for the authorisation only once instead of separate resolving
+
+From now on, SCA approach is resolved (using setting in ASPSP profile and request headers) only once per one authorisation.
+All consecutive requests for updating PSU Data for the authorisation will use SCA approach from the authorisation instead
+of resolving it separately.
+
+This fixes the bug that prevented PSU Data from being correctly updated if the authorisation was created with
+`Tpp-Redirect-Preferred` header set to `false` while the `Redirect` SCA approach has the highest priority in the ASPSP profile.
+
+== Bugfix: Update PSU Data request for payment cancellation uses wrong SPI interface for authorising PSU
+
+From now on, XS2A will no longer try to execute `de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi#authorisePsu`
+instead of `de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi#authorisePsu` on Update PSU Data (Authentication)
+request in context of payment cancellation (`PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation- authorisations/{cancellationId}`)
+in `Embedded` or `Decoupled` SCA approach.
+
+== Bugfix: Get account list with balances returns no balances first time
+
+From now on, response to Get account list request with balances(`GET /v1/accounts?withBalance=true`) will
+contain balances section and links right away instead of containing them only on the second request to this endpoint.
