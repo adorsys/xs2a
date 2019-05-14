@@ -18,35 +18,35 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
 
 public class UpdateConsentLinks extends AbstractLinks {
 
-    public UpdateConsentLinks(String httpUrl, ScaApproachResolver scaApproachResolver, UpdateConsentPsuDataReq request) {
+    public UpdateConsentLinks(String httpUrl, ScaApproachResolver scaApproachResolver, UpdateConsentPsuDataResponse response) {
         super(httpUrl);
 
-        String consentId = request.getConsentId();
-        String authorizationId = request.getAuthorizationId();
-        ScaStatus scaStatus = request.getScaStatus();
+        String consentId = response.getConsentId();
+        String authorisationId = response.getAuthorisationId();
+        ScaStatus scaStatus = response.getScaStatus();
 
         setSelf(buildPath(UrlHolder.CONSENT_LINK_URL, consentId));
         setStatus(buildPath(UrlHolder.CONSENT_STATUS_URL, consentId));
 
         if (scaStatus == ScaStatus.PSUAUTHENTICATED) {
-            setSelectAuthenticationMethod(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
+            setSelectAuthenticationMethod(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
         } else if (scaStatus == ScaStatus.SCAMETHODSELECTED) {
-            ScaApproach scaApproach = scaApproachResolver.getInitiationScaApproach(authorizationId);
+            ScaApproach scaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
             if (scaApproach == ScaApproach.DECOUPLED) {
-                setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
+                setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
             } else {
-                setAuthoriseTransaction(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
+                setAuthoriseTransaction(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
             }
         } else if (scaStatus == ScaStatus.FINALISED) {
-            setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
+            setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
         } else if (scaStatus == ScaStatus.PSUIDENTIFIED) {
-            setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
+            setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
         }
     }
 }
