@@ -19,9 +19,7 @@ package de.adorsys.psd2.xs2a.integration.builder;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppUniqueParamsHolder;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 public class TppInfoBuilder {
     private static final String TPP_ID = "Test TppId";
     private static final String AUTHORITY_ID = "Authority id";

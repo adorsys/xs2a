@@ -57,7 +57,6 @@ public class AspspSettingsBuilder {
     private static final boolean FORCE_XS2A_BASE_URL = false;
     private static final String XS2A_BASEURL = "http://myhost.com/";
 
-
     public static AspspSettings buildAspspSettings() {
         return new AspspSettings(
             FREQUENCY_PER_DAY,
