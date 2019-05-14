@@ -1,0 +1,9 @@
+# Release notes v.2.5.1
+
+## Bugfix: Payment initiation request fails for non-json payment products
+Executing valid initiate payment request (`POST /v1/{payment-service}/{payment-product}`) with non-json body will no 
+longer result in `400 FORMAT_ERROR` being returned in the response. 
+
+## Bugfix: Missing links in response to update PSU Data for account information consent request
+From now on, response to the update PSU Data for account information consent request
+(`PUT /v1/consents/{consentId}/authorisations/{authorsationId}`) will contain proper links instead of only `self` and `status` links.
