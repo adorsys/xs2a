@@ -2,22 +2,22 @@
 
 ## Versions in progress
 
-### version 2.0.1-Hotfix (Planned date 07.03.2019)
-- Bugfix: No IBAN validation for payment initiation
-- Bugfix: Date of periodic or future dated payments can be in the past
-- Bugfix: List of balances and transactions of Dedicated AIS Consent are updated when the get accounts request is executed
-- Bugfix: Unkown payment-service in GET requests results into wrong response
-- Bugfix: Tpp-Redirect-Uri is not mandatory for REDIRECT approach
-- Bugfix: Validation of frequency per day for consents
-- Bugfix: No appropriate error message is returned when access to balances or transactions is not allowed
-- Bugfix: No Validation for Expired QWAC
+### version 2.6 (Planned date 24.05.2019)
+- FrequencyPerDay should be counted for requests without PSU involvement  
+- Bugfix: Delete a non-existing consent returns wrong http status code
+- Bugfix: "transactionFeeIndicator" tag is provided in payment initiation request even if it is not supported by the bank 
+- Bugfix: Ais consent can be created with invalid "access" tag 
+- Bugfix: RequestedExecutionTime/Date are set to default values by the XS2A core mappers
+- Bugfix: Incorrect property name in the response to the AIS consent creation request 
+- Bugfix: Delete future payment returns 400 PARAMETER_NOT_SUPPORTED
+- Bugfix: AIS consent with missing mandatory PSU-IP-Adress successfully created
+- Bugfix: Sensible data printed in the log
+- Remove deprecated classes in headers validation in v.2.6 
+- Remove deprecated getters in SpiExchangeRate in v. 2.6 
 
-### version 2.1 (Planned date 15.03.2019)
-- Event table new searchable columns: psu info and tpp
-- Store in payments and in consents creation date and time
-- Adjust ValidUntil date according to ConsentLifetime
-- Call Spi for ConsentStatus on GET Consent request
-- Add Logger to CMS
+### version 3.4 (Planned date 24.05.2019)
+- Bugfixing
+- Configure Postman tests for xs2a and xs2a-Connector-examples
 
 # Further development
 Starting 15th of March 2019 XS2A Team is going to provide development within two branches:
@@ -27,61 +27,131 @@ Stable branch will contain bugfixing and possibly necessary changes to support m
 Stable branch 2.x will be supported at least till 01.09.2019
 
 
-### version 2.2 (Planned date 29.03.2019)
-- Extend logging with technical activities 
-- Bugfix: Consents without successful authorisation should expire with status Rejected
-- Payment Authorisations and Payment Cancellation Authorisations should be separated from AIS Consent Authorisations 
-- Optional SCA for Access to all Accounts for all PSD2 defined AIS – Global Consent
-- Multilevel SCA for Payment initiation in Redirect sca approach
-- Multilevel SCA for consents in Redirect sca approach
-- Bugfix: Return a corresponding "Bad Request" error response if consentApi._createConsent receives a consent object that contains both the list of accounts (resp. balances, transaction) and the flag AllPsd2 or AvailableAccounts 
-- Bugfix: Check incoming requests to have required information
-- Bugfix: 500 Error when double Start Cancellation Authorisation
-- Bugfix: Wrong response body for Start Payment Authorisation request Redirect Explicit approach for XS2A connector
-- Bugfix: Wrong response for provision of an invalid TAN or password 
-- Bugfix: "Currency" should be optional while creating AIS consent
-- Bugfix: Retrieve payment data by redirect-id with correct endpoint
+### version 2.7 (Planned date 07.06.2019)
+- Bugfix: CreditorAddress object is provided to SPI even if it was not present in the request
+- Bugfix: Periodic payment can be created with invalid "dayOfExecution" tag 
+- Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
+- Bugfix: Get consent status request do not return mandated lastActionDate attribute in response body
+- Bugfix: Get Cancellation Authorisation Sub-Resources Request returns wrong JSON format
+- Bugfix: fundsConfirmation request with valid PIIS consent returns "NO_PIIS_ACTIVATION"
+- Bugfix: Delete single sepa payment without SCA returns 400 FORMAT_ERROR
+- Bugfix: aspspAccountId no longer available for SPI 
+- Delete "accounts" field in PiisConsentEntity, deprecated methods and "piis_consent_acc_reference" table (0058 script) in v 2.7 
 
+### version 2.8 (Planned date 21.06.2019)
+- Bugfix: "Currency" should be optional in Account Reference
+- Bugfix: Consents without successful authorisation should expire with status Rejected
+- Bugfix: Wrong Error code in payment initiation respond for not supported xml product types 
+- Bugfix: startAuthorisationWithPsuAuthentication link not available in response for start the authorisation process for a payment initiation 
+- Delete unused field in AisAccountConsent in v.2.8 
+
+### version 2.9 (Planned date 05.07.2019)
+- Bugfix: Wrong response body for Start Payment Authorisation request Redirect Explicit approach
+- Bugfix: EndToEndIdentification in CMS DB too short
+- Bugfix: Check incoming requests to have required information
+- Bugfix: Retrieve payment data by redirect-id with correct endpoint
+- Bugfix: Accept Authentication Type from ASPSP
+- Bugfix: Incorrect response for Start authorisation request without psuId in header (Redirect Explicit)
+
+
+### version 2.10 (Planned date 19.07.2019)
+- Bugfix: Incorrect response for Start authorisation request without psuId in header (Embedded Explicit) 
+- Bugfix: Incorrect response for Update PSU data for payment initiation request without psuId in header (Decoupled Implicit/Explicit) 
+- Bugfix: Populating PSU_DATA table with excessive data
+- Bugfix: Provide correct PSU Data to the SPI in SpiContextData
+- Bugfix: scaStatus link not available in response for Update PSU data for payment initiation (Decoupled Implicit) 
+- Bugfix: Bad request when TPP enters an unknown user in the AIS consent embedded approach
+- Bugfix: Wrong response for provision of an invalid TAN or password 
+- Bugfix: PIIS should validate IBAN 
+- Bugfix: SpiAccountConsent shouldn't return real ID (PK from DB)
 
 ### Upcoming features 2.x/3.x (Priorities may be changed)
-- Payment sepa-credit-transfers validator
-- Consent validator
-
+- Bugfix: Get account response is empty for Consent on Account List of Available Accounts 
+- Payment Authorisations and Payment Cancellation Authorisations should be separated from AIS Consent Authorisations 
+- Provide creation date and time in SPIrequest 
+- add the request execution duration to the log 
+- Extend logging with technical activities 
+- Optional fields in JSON structure are commented in yaml 
+ 
 
 ## Development branch 3.x
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 2.x is guaranteed.
 
-### version 3.0 (Planned date 29.03.2019)
-- Migration to dynamic Sandbox, based on ledgers project and corresponding connector.
-- Take out ASPSP Mock Server and corresponding Connector out of XS2A
+### version 3.5 (Planned date 07.06.2019)
+- AspspConsentData refactoring 
+- Refactor CMS: return ResponseObject instead of Strings, Enums, Booleans etc.
 
+### version 3.6 (Planned date 21.06.2019)
+- Execute payment without sca in OAuth approach 
+- Payment Cancellation Request update according to Errata for Specification v.1.3
+- Remove deprecated AspspConsentData updates in v.3.5 
 
+### version 3.7 (Planned date 05.07.2019)
+- Redirect timeout shall not be the same value as authorisation timeout 
+- Multilevel SCA for Payment Initiation in Redirect approach
+- Multilevel SCA for Establish Consent in Redirect approach 
+- Redesign of error handlers on SPI level
 
+### version 3.8 (Planned date 19.07.2019)
+- Restructure profile by services 
+- Move AuthenticationObject to xs2a-core 
+- Move PaymentAuthorisationType to the xs2a-core 
+- Support delta access for transaction list 
+- Support of download link 
 
 ### Upcoming features 3.x (Priorities may be changed)
+- Optional SCA for Access to all Accounts for all PSD2 defined AIS – Global Consent 
+- Go through code and aggregate all messages sent to PSU to message bundle 
+- Support of relative links 
+- Validation of authorisation sub-resources  
+- Component for scheduled batch processing 
+- Support Get Transaction Status Response with xml format 
+- Support Get Payment request for xml 
+- Support of multicurrency accounts in AIS requests 
+- Remove PSU data from CMS by request from ASPSP (for example due to Data protection (GDPR)) 
+- Support sessions: Combination of AIS and PIS services
+- Add a new optional header TPP-Rejection-NoFunds-Preferred 
+- Requirements on TPP URIs  
+- handling for standard pain types 
+- Update enum MessageErrorCode.java 
+- Add instance_id for export PIIS consent 
+- Extend CMS to store sca method and TAN for Redirect approach 
+- Add to events rejected requests 
+- Extract events to separate module in CMS 
+- Refactoring of payment saving Part 2 
+- Refactor field validators (especially IBAN) to perform validation in Spring Component, not in static context 
+- Recoverability 
+- Change the logic of SpiResponseStatus to MessageErrorCode mapping after the discussion with PO 
+- Implement CommonPaymentSpi interface in connector 
+- Support all 3 formats of ISODateTime 
+- Add service to delete consents and payments after period of time 
+- Support OAuth sca for PIS
+- Support OAuth sca for Payment cancellation
+- Support OAuth sca for AIS 
+
+###### Support of Signing Basket
 - Implement Establish Signing Basket request
 - Implement Get Signing Basket request
 - Get Signing Basket Status Request
 - Implement Get Authorisation Sub-resources for Signing Baskets
 - Implement Get SCA Status request for Signing Baskets
 - Implement Cancellation of Signing Baskets
-- Support Signing Basket in Embedded and Decoupled approaches
-- Support Signing Basket in Redirect approach
-- Multilevel SCA for Signing Basket in Embedded sca approach
-- Multilevel SCA for Signing Basket in Redirect sca approach
-- Multilevel SCA for Signing Basket in Decoupled sca approach
+- Support Signing Basket in Embedded approach with multilevel sca
+- Support Signing Basket in Decoupled approach with multilevel sca
+- Support Signing Basket in Redirect approach with multilevel sca
 
-- Support delta access for transaction list
-- Component for scheduled batch processing
-- Support Get Transaction Status Response with xml format
-- Support Get Payment request for xml
-- Support of multicurrency accounts in AIS requests
 
-- Support of download link
-- Remove PSU data from CMS by request from ASPSP (for example due to Data protection (GDPR))
-
-- Support sessions: Combination of AIS and PIS services
+###### Support of FundsConfirmation Consent:
+- Establish FundsConfirmationConsent 
+- Get FundsConfirmationConsent Status + object
+- Revoke FundsConfirmationConsent
+- FundsConfirmationConsent in Redirect approach with multilevel sca
+- FundsConfirmationConsent in Embedded approach with multilevel sca
+- FundsConfirmationConsent in Decoupled approach with multilevel sca
+- Get Authorisation Sub-resource request for FundsConfirmationConsent
+- Get Sca Status request for FundsConfirmationConsent 
+- Create interface in cms-aspsp-api to get FundsConfirmationConsent 
 
 ###### Support of Card Accounts:
 - Implement Read Card Account List request
