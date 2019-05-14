@@ -18,9 +18,6 @@ package de.adorsys.psd2.xs2a.integration;
 
 
 import de.adorsys.aspsp.xs2a.spi.ASPSPXs2aApplication;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspBulkPayment;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspPeriodicPayment;
-import de.adorsys.psd2.aspsp.mock.api.payment.AspspSinglePayment;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
@@ -31,6 +28,7 @@ import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.xs2a.config.*;
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.event.Event;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -38,10 +36,15 @@ import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.*;
-import de.adorsys.psd2.xs2a.integration.builder.payment.AspspBulkPaymentBuilder;
-import de.adorsys.psd2.xs2a.integration.builder.payment.AspspPeriodicPaymentBuilder;
-import de.adorsys.psd2.xs2a.integration.builder.payment.AspspSinglePaymentBuilder;
+import de.adorsys.psd2.xs2a.integration.builder.payment.SpiPaymentInitiationResponseBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -65,7 +68,6 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -75,7 +77,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles({"integration-test", "mockspi"})
+@ActiveProfiles("integration-test")
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
@@ -98,17 +100,9 @@ public class InitiatePayments_successfulTest {
     private static final PaymentType BULK_PAYMENT_TYPE = PaymentType.BULK;
 
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
-
     private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final String PAYMENT_ID = "5c408672d3121704efe90394";
     private static final String ASPSP_ACCOUNT_ID = "33333-33333";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
-
-    private static final Currency CURRENCY = Currency.getInstance("EUR");
-    private static final BigDecimal AMOUNT_OPERATION_113 = new BigDecimal("113");
-    private static final String DEB_IBAN = "LU280019400644750000";
-    private static final String CRED_IBAN = "DE89370400440532013000";
-
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
@@ -130,10 +124,13 @@ public class InitiatePayments_successfulTest {
     private EventServiceEncrypted eventServiceEncrypted;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-
     @MockBean
-    @Qualifier("aspspRestTemplate")
-    private RestTemplate aspspRestTemplate;
+    private SinglePaymentSpi singlePaymentSpi;
+    @MockBean
+    private PeriodicPaymentSpi periodicPaymentSpi;
+    @MockBean
+    private BulkPaymentSpi bulkPaymentSpi;
+
     @MockBean
     @Qualifier("consentRestTemplate")
     private RestTemplate consentRestTemplate;
@@ -285,10 +282,9 @@ public class InitiatePayments_successfulTest {
     private void initiateSinglePayment_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
-        AspspSinglePayment testPayment = AspspSinglePaymentBuilder.buildAspspSinglePayment(PAYMENT_ID, DEB_IBAN, CRED_IBAN, CURRENCY, AMOUNT_OPERATION_113);
+        given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(AspspConsentData.class)))
+            .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse());
 
-        given(aspspRestTemplate.postForEntity(any(String.class), any(AspspSinglePayment.class), any(Class.class)))
-            .willReturn(ResponseEntity.ok(testPayment));
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
@@ -310,10 +306,9 @@ public class InitiatePayments_successfulTest {
     private void initiatePeriodicPayment_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
-        AspspPeriodicPayment testPayment = AspspPeriodicPaymentBuilder.buildAspspPeriodicPayment(PAYMENT_ID, DEB_IBAN, CRED_IBAN, CURRENCY, AMOUNT_OPERATION_113);
+        given(periodicPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiPeriodicPayment.class), any(AspspConsentData.class)))
+            .willReturn(SpiPaymentInitiationResponseBuilder.buildPeriodicPaymentResponse());
 
-        given(aspspRestTemplate.postForEntity(any(String.class), any(AspspPeriodicPayment.class), any(Class.class)))
-            .willReturn(ResponseEntity.ok(testPayment));
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
@@ -337,12 +332,11 @@ public class InitiatePayments_successfulTest {
         HashMap<String, BigDecimal> amountMap = new HashMap<>();
         amountMap.put("DE21500105176194357737", new BigDecimal("666"));
         amountMap.put("DE54500105173424724776", new BigDecimal("888"));
-
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
-        AspspBulkPayment testPayment = AspspBulkPaymentBuilder.buildAspspBulkPayment(PAYMENT_ID, DEB_IBAN, CURRENCY, amountMap);
 
-        given(aspspRestTemplate.postForEntity(any(String.class), any(AspspBulkPayment.class), any(Class.class)))
-            .willReturn(ResponseEntity.ok(testPayment));
+        given(bulkPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiBulkPayment.class), any(AspspConsentData.class)))
+            .willReturn(SpiPaymentInitiationResponseBuilder.buildBulkPaymentResponse());
+
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))

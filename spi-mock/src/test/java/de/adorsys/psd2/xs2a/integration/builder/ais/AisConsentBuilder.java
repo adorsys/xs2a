@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.integration.builder;
+package de.adorsys.psd2.xs2a.integration.builder.ais;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
@@ -28,7 +30,10 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
+import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -36,50 +41,61 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
+import static org.apache.commons.io.IOUtils.resourceToString;
 
 public class AisConsentBuilder {
     private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private final static PsuIdData PSU_DATA = PsuIdDataBuilder.buildPsuIdData();
+    private static final Charset UTF_8 = Charset.forName("utf-8");
 
-    public static AisAccountConsent buildAisConsent(CreateConsentReq consentReq, String consentId, ScaApproach scaApproach) {
+    public static AisAccountConsent buildAisAccountConsent(String jsonPath, ScaApproach scaApproach, String encryptConsentId, ObjectMapper mapper) throws Exception {
+        CreateConsentReq consentReq = mapper.readValue(
+            resourceToString(jsonPath, UTF_8),
+            new TypeReference<CreateConsentReq>() {
+            });
+
+        return buildAisConsent(consentReq, encryptConsentId, scaApproach);
+    }
+
+    private static AisAccountConsent buildAisConsent(CreateConsentReq consentReq, String consentId, ScaApproach scaApproach) {
         return Optional.ofNullable(consentReq)
-            .map(cr -> new AisAccountConsent(
-                    consentId,
-                    mapToAccountAccess(cr.getAccess()),
-                    cr.isRecurringIndicator(),
-                    cr.getValidUntil(),
-                    cr.getFrequencyPerDay(),
-                    LocalDate.now(),
-                    ConsentStatus.RECEIVED,
-                    !cr.getAccess().getBalances().isEmpty(),
-                    ScaApproach.REDIRECT.equals(scaApproach),
-                    getAisConsentRequestType(cr.getAccess()),
-                    Collections.singletonList(PSU_DATA),
-                    TPP_INFO,
-                    false,
-                    Collections.singletonList(new AisAccountConsentAuthorisation(PSU_DATA, ScaStatus.RECEIVED)),
-                    0,
-                    Collections.emptyMap(),
-                    OffsetDateTime.now(),
-                    OffsetDateTime.now()
-                )
-            )
-            .orElse(null);
+                   .map(cr -> new AisAccountConsent(
+                            consentId,
+                            mapToAccountAccess(cr.getAccess()),
+                            cr.isRecurringIndicator(),
+                            cr.getValidUntil(),
+                            cr.getFrequencyPerDay(),
+                            LocalDate.now(),
+                            ConsentStatus.RECEIVED,
+                            !cr.getAccess().getBalances().isEmpty(),
+                            ScaApproach.REDIRECT.equals(scaApproach),
+                            getAisConsentRequestType(cr.getAccess()),
+                            Collections.singletonList(PSU_DATA),
+                            TPP_INFO,
+                            false,
+                            Collections.singletonList(new AisAccountConsentAuthorisation(PSU_DATA, ScaStatus.RECEIVED)),
+                            0,
+                            Collections.emptyMap(),
+                            OffsetDateTime.now(),
+                            OffsetDateTime.now()
+                        )
+                   )
+                   .orElse(null);
     }
 
     private static AisAccountAccess mapToAccountAccess(Xs2aAccountAccess access) {
         AccountAccessType availableAccounts = access.getAvailableAccounts();
         return Optional.ofNullable(access)
-            .map(aa ->
-                new AisAccountAccess(
-                    aa.getAccounts(),
-                    aa.getBalances(),
-                    aa.getTransactions(),
-                    availableAccounts != null ? availableAccounts.name() : null,
-                    access.getAllPsd2() != null ? access.getAllPsd2().name() : null
-                )
-            )
-            .orElse(null);
+                   .map(aa ->
+                            new AisAccountAccess(
+                                aa.getAccounts(),
+                                aa.getBalances(),
+                                aa.getTransactions(),
+                                availableAccounts != null ? availableAccounts.name() : null,
+                                access.getAllPsd2() != null ? access.getAllPsd2().name() : null
+                            )
+                   )
+                   .orElse(null);
     }
 
     private static AisConsentRequestType getAisConsentRequestType(Xs2aAccountAccess access) {

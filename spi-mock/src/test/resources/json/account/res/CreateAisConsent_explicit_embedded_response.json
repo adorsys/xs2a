@@ -1,0 +1,15 @@
+{
+  "consentStatus": "received",
+  "consentId": "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
+  "_links": {
+    "self": {
+      "href": "http://localhost/v1/consents/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI"
+    },
+    "status": {
+      "href": "http://localhost/v1/consents/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/status"
+    },
+    "startAuthorisationWithPsuAuthentication": {
+      "href": "http://localhost/v1/consents/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations"
+    }
+  }
+}

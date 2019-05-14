@@ -79,7 +79,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles({"integration-test", "mockspi"})
+@ActiveProfiles("integration-test")
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
@@ -97,7 +97,7 @@ public class AccountControllerTest {
     private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeaders = new HttpHeaders();
     private static final Charset UTF_8 = Charset.forName("utf-8");
-    private static final String ACCESS_EXCEEDED_JSON_PATH = "/json/account/AccessExceededResponse.json";
+    private static final String ACCESS_EXCEEDED_JSON_PATH = "/json/account/res/AccessExceededResponse.json";
     private final static UUID X_REQUEST_ID = UUID.randomUUID();
 
     @Autowired
