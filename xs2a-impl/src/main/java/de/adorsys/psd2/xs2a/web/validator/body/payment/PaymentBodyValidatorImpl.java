@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.type.PaymentTypeValidator;
@@ -32,19 +33,27 @@ import java.util.Optional;
 
 @Component
 public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implements PaymentBodyValidator {
-
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
+    private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
+    private final StandardPaymentProductsResolver standardPaymentProductsResolver;
 
     @Autowired
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
-                                    PaymentTypeValidatorContext paymentTypeValidatorContext) {
+                                    PaymentTypeValidatorContext paymentTypeValidatorContext,
+                                    StandardPaymentProductsResolver standardPaymentProductsResolver) {
         super(errorBuildingService, objectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
+        this.standardPaymentProductsResolver = standardPaymentProductsResolver;
     }
 
     @Override
     public void validate(HttpServletRequest request, MessageError messageError) {
+        Map<String, String> pathParametersMap = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+
+        if (isRawPaymentProduct(pathParametersMap)) {
+            return;
+        }
 
         Optional<Object> bodyOptional = mapBodyToInstance(request, messageError, Object.class);
 
@@ -53,7 +62,6 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
             return;
         }
 
-        Map<String, String> pathParametersMap = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         validateInitiatePaymentBody(bodyOptional.get(), pathParametersMap, messageError);
     }
 
@@ -65,5 +73,10 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
             throw new IllegalArgumentException("Unsupported payment service");
         }
         validator.get().validate(body, messageError);
+    }
+
+    private boolean isRawPaymentProduct(Map<String, String> pathParametersMap) {
+        String paymentProduct = pathParametersMap.get(PAYMENT_PRODUCT_PATH_VAR);
+        return standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct);
     }
 }

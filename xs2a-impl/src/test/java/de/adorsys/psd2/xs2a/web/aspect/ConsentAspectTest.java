@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
@@ -61,9 +62,10 @@ public class ConsentAspectTest {
     private CreateConsentResponse createConsentResponse;
     @Mock
     private UpdateConsentPsuDataResponse updateConsentPsuDataResponse;
+    @Mock
+    private CreateConsentAuthorizationResponse createConsentAuthorisationResponse;
 
     private AspspSettings aspspSettings;
-    private ResponseObject responseObject;
 
     @Before
     public void setUp() {
@@ -77,9 +79,9 @@ public class ConsentAspectTest {
         when(createConsentResponse.isMultilevelScaRequired()).thenReturn(true);
         when(authorisationMethodDecider.isExplicitMethod(true, true)).thenReturn(true);
 
-        responseObject = ResponseObject.<CreateConsentResponse>builder()
-                             .body(createConsentResponse)
-                             .build();
+        ResponseObject<CreateConsentResponse> responseObject = ResponseObject.<CreateConsentResponse>builder()
+                                                                   .body(createConsentResponse)
+                                                                   .build();
         ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true, null);
 
         verify(aspspProfileService, times(2)).getAspspSettings();
@@ -92,9 +94,9 @@ public class ConsentAspectTest {
     public void invokeCreateAccountConsentAspect_withError_shouldAddTextErrorMessage() {
         when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
-        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
+        ResponseObject<CreateConsentResponse> responseObject = ResponseObject.<CreateConsentResponse>builder()
+                                                                   .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                                                                   .build();
         ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true, null);
 
         assertTrue(actualResponse.hasError());
@@ -106,9 +108,9 @@ public class ConsentAspectTest {
         when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
-        responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                             .body(updateConsentPsuDataResponse)
-                             .build();
+        ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
+                                                                   .body(updateConsentPsuDataResponse)
+                                                                   .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
         verify(aspspProfileService, times(2)).getAspspSettings();
@@ -119,9 +121,9 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeCreateConsentPsuDataAspect_scaStatusIsNull_success() {
-        responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                             .body(updateConsentPsuDataResponse)
-                             .build();
+        ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
+                                                                   .body(updateConsentPsuDataResponse)
+                                                                   .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
         verify(aspspProfileService, never()).getAspspSettings();
@@ -132,9 +134,9 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeCreateConsentPsuDataAspect_wrongResponseType() {
-        responseObject = ResponseObject.<CreateConsentResponse>builder()
-                             .body(createConsentResponse)
-                             .build();
+        ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
+                                                                   .body(createConsentAuthorisationResponse)
+                                                                   .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
         verify(aspspProfileService, never()).getAspspSettings();
@@ -147,9 +149,9 @@ public class ConsentAspectTest {
     public void invokeCreateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
         when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
-        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
+        ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
+                                                                   .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                                                                   .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
         assertTrue(actualResponse.hasError());
@@ -161,9 +163,9 @@ public class ConsentAspectTest {
         when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
 
-        responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                             .body(updateConsentPsuDataResponse)
-                             .build();
+        ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                                                          .body(updateConsentPsuDataResponse)
+                                                                          .build();
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
         verify(aspspProfileService, times(2)).getAspspSettings();
@@ -174,9 +176,9 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeUpdateConsentPsuDataAspect_scaStatusIsNull_success() {
-        responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                             .body(updateConsentPsuDataResponse)
-                             .build();
+        ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                                                          .body(updateConsentPsuDataResponse)
+                                                                          .build();
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
         verify(aspspProfileService, never()).getAspspSettings();
@@ -189,9 +191,9 @@ public class ConsentAspectTest {
     public void invokeUpdateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
         when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
-        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
+        ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                                                          .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                                                                          .build();
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
         assertTrue(actualResponse.hasError());
