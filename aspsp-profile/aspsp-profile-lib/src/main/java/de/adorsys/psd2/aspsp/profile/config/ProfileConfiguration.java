@@ -16,10 +16,9 @@
 
 package de.adorsys.psd2.aspsp.profile.config;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,14 +37,7 @@ public class ProfileConfiguration implements InitializingBean {
     public void afterPropertiesSet() {
         setDefaultScaApproach(ScaApproach.REDIRECT);
         setDefaultBookingStatus(BOOKED);
-        setAvailableAccountReferenceField(SupportedAccountReferenceField.IBAN); //Sets default Account Reference Field
         setDefaultScaRedirectFlow();
-    }
-
-    private void setDefaultScaRedirectFlow() {
-        if (Objects.isNull(setting.getScaRedirectFlow())) {
-            setting.setScaRedirectFlow(ScaRedirectFlow.REDIRECT);
-        }
     }
 
     private void setDefaultScaApproach(ScaApproach scaApproach) {
@@ -54,10 +46,9 @@ public class ProfileConfiguration implements InitializingBean {
         }
     }
 
-    private void setAvailableAccountReferenceField(SupportedAccountReferenceField defaultSupportedAccountReferenceField) {
-        List<SupportedAccountReferenceField> supportedAccountReferenceFields = setting.getSupportedAccountReferenceFields();
-        if (!supportedAccountReferenceFields.contains(defaultSupportedAccountReferenceField)) {
-            supportedAccountReferenceFields.add(defaultSupportedAccountReferenceField);
+    private void setDefaultScaRedirectFlow() {
+        if (Objects.isNull(setting.getScaRedirectFlow())) {
+            setting.setScaRedirectFlow(ScaRedirectFlow.REDIRECT);
         }
     }
 

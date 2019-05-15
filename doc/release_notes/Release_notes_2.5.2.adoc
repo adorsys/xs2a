@@ -2,7 +2,7 @@
 
 == Bugfix: Update PSU Data (Select Authentication Method) for account information consent request fails with an error
 Executing valid Update PSU Data (Select Authentication Method) for account information consent request
- (`PUT /v1/consents/{consentId}/authorisations/{authorisationId}`) with non-json body will no longer result in
+ (`PUT /v1/consents/{consentId}/authorisations/{authorisationId}`) with non-json body will no longer result in 
  `400 FORMAT_ERROR` being returned in the response.
 
 == Bugfix: Increase the length of the `iban` and `end_to_end_identification` columns in the database
@@ -10,3 +10,13 @@ Executing valid Update PSU Data (Select Authentication Method) for account infor
 Types of the `iban` and `end_to_end_identification` columns were changed to increase the value length limit.
 The type of the `iban` column in the `account_reference` table was changed to `VARCHAR(34)` and the type of the
 `end_to_end_identification` column in the `pis_payment_data` table was changed to the `VARCHAR(35)`.
+
+== Bugfix: Enriched AccountReference validation
+From now on, while creating the consent or payment, every account reference must have only one attribute (IBAN, BBAN,
+PAN etc). If there are several attributes in the initial JSON body - the `400 FORMAT ERROR` is returned. The list of
+bank supportable attributes is located in the bank_profile ASPSP configuration file (`supportedAccountReferenceFields`
+parameter). Also, possible errors while creating bank offered AIS consent are fixed.
+
+== IBAN is no longer added to the supported account reference fields by default
+IBAN is no longer added to the `supportedAccountReferenceFields` property of the ASPSP profile in source code by default.
+It should be added to the bank_profile explicitly.

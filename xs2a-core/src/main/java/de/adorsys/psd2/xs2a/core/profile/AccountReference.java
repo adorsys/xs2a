@@ -26,6 +26,8 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Currency;
+import java.util.HashSet;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceType.*;
 
@@ -115,4 +117,27 @@ public class AccountReference {
         }
         throw new IllegalArgumentException("At least one account reference property must be set!");
     }
+
+    @JsonIgnore
+    public Set<AccountReferenceType> getUsedAccountReferenceFields() {
+        Set<AccountReferenceType> usedFields = new HashSet<>();
+
+        if (StringUtils.isNotBlank(iban)) {
+            usedFields.add(IBAN);
+        }
+        if (StringUtils.isNotBlank(bban)) {
+            usedFields.add(BBAN);
+        }
+        if (StringUtils.isNotBlank(pan)) {
+            usedFields.add(PAN);
+        }
+        if (StringUtils.isNotBlank(msisdn)) {
+            usedFields.add(MSISDN);
+        }
+        if (StringUtils.isNotBlank(maskedPan)) {
+            usedFields.add(MASKED_PAN);
+        }
+        return usedFields;
+    }
+
 }
