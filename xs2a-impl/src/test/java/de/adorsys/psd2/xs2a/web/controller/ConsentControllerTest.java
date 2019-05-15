@@ -70,6 +70,7 @@ public class ConsentControllerTest {
     private static final String CONSENT_ID = "XXXX-YYYY-XXXX-YYYY";
     private static final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
     private static final String WRONG_CONSENT_ID = "YYYY-YYYY-YYYY-YYYY";
+    private static final String PSU_MESSAGE_RESPONSE = "test psu message";
     private static final boolean EXPLICIT_PREFERRED = true;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
     private static final PsuIdData PSU_ID_DATA_WRONG = new PsuIdData(WRONG_PSU_ID, null, null, null);
@@ -132,6 +133,7 @@ public class ConsentControllerTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(resp.getConsentStatus().toString()).isEqualTo(ConsentStatus.RECEIVED.getValue());
         assertThat(resp.getConsentId()).isEqualTo(CONSENT_ID);
+        assertThat(resp.getPsuMessage()).isEqualTo(PSU_MESSAGE_RESPONSE);
     }
 
     @Test
@@ -324,6 +326,7 @@ public class ConsentControllerTest {
         ConsentsResponse201 response = new ConsentsResponse201();
         response.setConsentStatus(de.adorsys.psd2.model.ConsentStatus.RECEIVED);
         response.setConsentId(consentId);
+        response.setPsuMessage(PSU_MESSAGE_RESPONSE);
 
         return isEmpty(consentId)
                    ? ResponseObject.<ConsentsResponse201>builder().fail(ErrorType.AIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404)).build()
