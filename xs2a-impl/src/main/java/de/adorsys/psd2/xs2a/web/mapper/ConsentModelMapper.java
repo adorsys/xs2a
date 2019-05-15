@@ -74,7 +74,7 @@ public class ConsentModelMapper {
                                 .consentId(cnst.getConsentId())
                                 .scaMethods(mapToScaMethodsOuter(cnst))
                                 ._links(hrefLinkMapper.mapToLinksMap(cnst.getLinks()))
-                                .message(cnst.getPsuMessage())
+                                .psuMessage(cnst.getPsuMessage())
                    )
                    .orElse(null);
     }

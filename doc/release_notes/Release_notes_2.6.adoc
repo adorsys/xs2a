@@ -1,2 +1,6 @@
 = Release notes v.2.6
 
+
+== Bugfix: Incorrect property name in the response to the AIS consent creation request
+
+From now on,  the endpoint for consent creation (POST `/v1/consents`) returns correct response with field `psuMessage` instead of `message`.
