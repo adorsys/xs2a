@@ -48,17 +48,22 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SupportedAccountReferenceValidatorTest {
     private static final String ATTRIBUTE_NOT_SUPPORTED_MESSAGE = "Attribute %s is not supported by the ASPSP";
+    private static final String ONLY_ONE_ATTRIBUTE_ALLOWED_MESSAGE = "Only one account reference parameter is allowed";
     private static final String IBAN_NOT_SUPPORTED_MESSAGE = String.format(ATTRIBUTE_NOT_SUPPORTED_MESSAGE, "IBAN");
     private static final String BBAN_NOT_SUPPORTED_MESSAGE = String.format(ATTRIBUTE_NOT_SUPPORTED_MESSAGE, "BBAN");
     private static final MessageError IBAN_NOT_SUPPORTED_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, IBAN_NOT_SUPPORTED_MESSAGE));
     private static final MessageError BBAN_NOT_SUPPORTED_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, BBAN_NOT_SUPPORTED_MESSAGE));
+    private static final MessageError ONLY_ONE_ATTRIBUTE_ALLOWED_ERROR =
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, ONLY_ONE_ATTRIBUTE_ALLOWED_MESSAGE));
     private static final ServiceType SERVICE_TYPE = ServiceType.AIS;
     private static final AccountReference ACCOUNT_REFERENCE_IBAN =
         new AccountReference(AccountReferenceType.IBAN, "iban value", Currency.getInstance("EUR"));
     private static final AccountReference ACCOUNT_REFERENCE_BBAN =
         new AccountReference(AccountReferenceType.BBAN, "bban value", Currency.getInstance("EUR"));
+    private static final AccountReference ACCOUNT_REFERENCE_ALL =
+        new AccountReference("account ID", "resource ID", "iban value", "bban value", "pan value", "maskedpan value", "msisdn value", Currency.getInstance("EUR"));
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
@@ -135,6 +140,22 @@ public class SupportedAccountReferenceValidatorTest {
 
         assertTrue(validationResult.isNotValid());
         assertEquals(BBAN_NOT_SUPPORTED_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withSeveralAccountReferences_shouldReturnFormatError() {
+        // Given
+        Collection<AccountReference> accountReferences = Collections.singletonList(ACCOUNT_REFERENCE_ALL);
+
+        //When
+        ValidationResult validationResult = supportedAccountReferenceValidator.validate(accountReferences);
+
+        //Then
+        verify(serviceTypeDiscoveryService).getServiceType();
+        verify(errorTypeMapper).mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode());
+
+        assertTrue(validationResult.isNotValid());
+        assertEquals(ONLY_ONE_ATTRIBUTE_ALLOWED_ERROR, validationResult.getMessageError());
     }
 
     @Test

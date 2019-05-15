@@ -60,7 +60,11 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
 
     @Override
     public void validate(Object body, MessageError messageError) {
-        doSingleValidation(paymentMapper.getSinglePayment(body), messageError);
+        try {
+            doSingleValidation(paymentMapper.getSinglePayment(body), messageError);
+        } catch (IllegalArgumentException e) {
+            errorBuildingService.enrichMessageError(messageError, e.getMessage());
+        }
     }
 
     void doSingleValidation(SinglePayment singlePayment, MessageError messageError) {
@@ -140,7 +144,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
 
     private boolean isValidIban(String iban) {
         IBANValidator validator = IBANValidator.getInstance();
-        return validator.isValid(normalizeString(iban));
+        return validator.isValid(iban);
     }
 
     private boolean isValidBban(String bban) {
