@@ -87,5 +87,8 @@
     <include relativeToChangelogFile="true"
              file="migration/0059-remove-usage-counter-column-from-ais-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0060-add-request-uri-column-to-ais-consent-usage.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0061-change-table-account-reference-extend-iban.xml"/>
+    <include relativeToChangelogFile="true"
+             file="migration/0062-change-table-pis-payment-data-extend-end-to-end-identification.xml"/>
 
 </databaseChangeLog>
