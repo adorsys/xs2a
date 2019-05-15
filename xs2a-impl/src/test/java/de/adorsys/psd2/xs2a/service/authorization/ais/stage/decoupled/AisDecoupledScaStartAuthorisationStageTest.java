@@ -262,9 +262,8 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     }
 
     private UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, CONSENT_ID, AUTHORISATION_ID);
         response.setPsuMessage(PSU_SUCCESS_MESSAGE);
-        response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         return response;
     }
 }

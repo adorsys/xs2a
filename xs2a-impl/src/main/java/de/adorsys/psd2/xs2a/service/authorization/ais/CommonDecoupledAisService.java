@@ -34,18 +34,17 @@ public class CommonDecoupledAisService {
     }
 
     public UpdateConsentPsuDataResponse proceedDecoupledApproach(UpdateConsentPsuDataReq request, SpiAccountConsent spiAccountConsent, String authenticationMethodId, PsuIdData psuData) {
-        SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = aisConsentSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), request.getAuthorizationId(), authenticationMethodId, spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        String consentId = request.getConsentId();
+        String authorisationId = request.getAuthorizationId();
+        SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = aisConsentSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authorisationId, authenticationMethodId, spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
-            return createFailedResponse(messageError, spiResponse.getMessages());
+            return createFailedResponse(messageError, spiResponse.getMessages(), request);
         }
 
-        UpdateConsentPsuDataResponse response = new DecoupledUpdateConsentPsuDataResponse();
+        UpdateConsentPsuDataResponse response = new DecoupledUpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, consentId, authorisationId);
         response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
-        response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
-        response.setAuthorisationId(request.getAuthorizationId());
-        response.setConsentId(request.getConsentId());
         response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(authenticationMethodId));
         return response;
     }
@@ -57,11 +56,14 @@ public class CommonDecoupledAisService {
         return xs2aAuthenticationObject;
     }
 
-    private UpdateConsentPsuDataResponse createFailedResponse(MessageError messageError, List<String> messages) {
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+    private UpdateConsentPsuDataResponse createFailedResponse(MessageError messageError,
+                                                              List<String> messages,
+                                                              UpdateConsentPsuDataReq updateConsentPsuDataReq) {
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FAILED,
+                                                                                 updateConsentPsuDataReq.getConsentId(),
+                                                                                 updateConsentPsuDataReq.getAuthorizationId());
 
         response.setMessageError(messageError);
-        response.setScaStatus(ScaStatus.FAILED);
         response.setPsuMessage(buildPsuMessage(messages));
         return response;
     }
