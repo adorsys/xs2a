@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implements ConsentBodyValidator {
@@ -65,14 +66,16 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
 
     private void validateAccountAccess(Consents consents, MessageError messageError) {
         AccountAccess accountAccess = consents.getAccess();
-        if (Objects.nonNull(accountAccess.getAccounts())) {
-            List<AccountReference> accountAccesses = accountAccess.getAccounts();
-            accountAccesses.addAll(accountAccess.getBalances());
-            accountAccesses.addAll(accountAccess.getTransactions());
 
-            if (CollectionUtils.isNotEmpty(accountAccesses)) {
-                accountAccesses.forEach(ar -> validateAccountReference(ar, messageError));
-            }
+        if (Objects.nonNull(accountAccess.getAccounts())) {
+
+            Stream<AccountReference> allReferences = Stream.of(accountAccess.getAccounts(), accountAccess.getBalances(), accountAccess.getTransactions())
+                                                         .filter(Objects::nonNull)
+                                                         .flatMap(Collection::stream);
+
+            allReferences.distinct()
+                .filter(Objects::nonNull)
+                .forEach(ar -> validateAccountReference(ar, messageError));
 
             CreateConsentReq createConsent = mapToCreateConsentReq(consents, messageError);
 
@@ -105,18 +108,23 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
         checkOptionalFieldForMaxLength(accountReference.getMaskedPan(), "Masked PAN", 35, messageError);
         checkOptionalFieldForMaxLength(accountReference.getMsisdn(), "MSISDN", 35, messageError);
 
-        validateCurrency(accountReference, messageError);
+        if (Objects.nonNull(accountReference.getCurrency())) {
+            validateCurrency(accountReference.getCurrency(), messageError);
+        }
     }
 
-    private void validateCurrency(AccountReference accountReference, MessageError messageError) {
-        if (!isValidCurrency(accountReference.getCurrency())) {
+    private void validateCurrency(String currency, MessageError messageError) {
+        if (!isValidCurrency(currency)) {
             errorBuildingService.enrichMessageError(messageError, "Invalid currency code format");
         }
     }
 
+    // TODO: create an opportunity to disable this IBAN validation for test purposes.
+    // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/839
+    // Example, implement it as separate bean and inject it here.
     private boolean isValidIban(String iban) {
         IBANValidator validator = IBANValidator.getInstance();
-        return validator.isValid(normalizeString(iban));
+        return validator.isValid(iban);
     }
 
     private boolean isValidBban(String bban) {

@@ -20,6 +20,7 @@ setting:
   - PENDING
  supportedAccountReferenceFields:
   - MSISDN
+  - IBAN
  consentLifetime: 0
  transactionLifetime: 0
  allPsd2Support: true
