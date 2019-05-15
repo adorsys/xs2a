@@ -88,11 +88,12 @@ public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<Updat
     }
 
     private UpdateConsentPsuDataResponse applyAuthorisation(UpdateConsentPsuDataReq updateConsentPsuDataReq) {
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(updateConsentPsuDataReq.getConsentId());
+        String consentId = updateConsentPsuDataReq.getConsentId();
+        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (!accountConsentOptional.isPresent()) {
             MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400));
-            return createFailedResponse(messageError, Collections.emptyList());
+            return createFailedResponse(messageError, Collections.emptyList(), updateConsentPsuDataReq);
         }
         AccountConsent accountConsent = accountConsentOptional.get();
 
@@ -106,17 +107,17 @@ public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<Updat
                                                                                                         spiPsuData,
                                                                                                         updateConsentPsuDataReq.getPassword(),
                                                                                                         spiAccountConsent,
-                                                                                                        aisConsentDataService.getAspspConsentDataByConsentId(updateConsentPsuDataReq.getConsentId()));
+                                                                                                        aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData());
 
         if (authorisationStatusSpiResponse.hasError()) {
             if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
                 MessageError messageError = new MessageError(ErrorType.AIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
-                return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages());
+                return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages(), updateConsentPsuDataReq);
             }
 
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
-            return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages());
+            return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages(), updateConsentPsuDataReq);
         }
 
         // TODO Extract common consent validation from AIS Embedded and Decoupled stages https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/716
@@ -124,11 +125,10 @@ public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<Updat
                 && accountConsent.isOneAccessType()
                 && !aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()) {
 
-            aisConsentService.updateConsentStatus(updateConsentPsuDataReq.getConsentId(), ConsentStatus.VALID);
+            aisConsentService.updateConsentStatus(consentId, ConsentStatus.VALID);
 
-            UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+            UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, updateConsentPsuDataReq.getAuthorizationId());
             response.setScaAuthenticationData(updateConsentPsuDataReq.getScaAuthenticationData());
-            response.setScaStatus(ScaStatus.FINALISED);
             return response;
         }
 
@@ -138,11 +138,10 @@ public class AisDecoupledScaReceivedAuthorisationStage extends AisScaStage<Updat
     private UpdateConsentPsuDataResponse applyIdentification(UpdateConsentPsuDataReq request) {
         if (!isPsuExist(request.getPsuData())) {
             MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
-            return createFailedResponse(messageError, Collections.singletonList(MESSAGE_ERROR_NO_PSU));
+            return createFailedResponse(messageError, Collections.singletonList(MESSAGE_ERROR_NO_PSU), request);
         }
 
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setScaStatus(ScaStatus.PSUIDENTIFIED);
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.PSUIDENTIFIED, request.getConsentId(), request.getAuthorizationId());
         response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
 
         return response;

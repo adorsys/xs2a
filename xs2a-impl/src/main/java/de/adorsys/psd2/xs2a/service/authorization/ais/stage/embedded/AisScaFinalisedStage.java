@@ -47,6 +47,6 @@ public class AisScaFinalisedStage extends AisScaStage<UpdateConsentPsuDataReq, U
     // Needed to prevent error in case of trying to update consent PSU data, that already has FINALISED Sca status.
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
-        return new UpdateConsentPsuDataResponse(ScaStatus.FINALISED);
+        return new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, request.getConsentId(), request.getAuthorizationId());
     }
 }

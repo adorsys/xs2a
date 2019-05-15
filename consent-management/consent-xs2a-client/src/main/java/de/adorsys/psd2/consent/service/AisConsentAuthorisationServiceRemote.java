@@ -74,8 +74,13 @@ public class AisConsentAuthorisationServiceRemote implements AisConsentAuthorisa
 
     @Override
     public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
-        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, authorizationId);
-        return true;
+        try {
+            consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, authorizationId);
+            return true;
+        } catch (CmsRestException cmsRestException) {
+            log.info("Couldn't update authorisation by authorisationId {}", authorizationId);
+        }
+        return false;
     }
 
     @Override
@@ -98,7 +103,7 @@ public class AisConsentAuthorisationServiceRemote implements AisConsentAuthorisa
                 remoteAisConsentUrls.getAuthorisationScaStatus(), ScaStatus.class, encryptedConsentId, authorisationId);
             return Optional.ofNullable(request.getBody());
         } catch (CmsRestException cmsRestException) {
-            log.warn("Couldn't get authorisation SCA Status by consentId {} and authorisationId {}");
+            log.info("Couldn't get authorisation SCA Status by consentId {} and authorisationId {}", encryptedConsentId, authorisationId);
         }
         return Optional.empty();
     }

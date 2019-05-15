@@ -36,7 +36,7 @@ public class OauthAisAuthorizationService implements AisAuthorizationService {
 
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
-        return new UpdateConsentPsuDataResponse();
+        return null;
     }
 
     @Override

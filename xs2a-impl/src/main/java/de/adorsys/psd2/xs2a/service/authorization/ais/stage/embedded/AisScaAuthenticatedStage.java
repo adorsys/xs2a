@@ -78,7 +78,7 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
 
         if (!accountConsentOptional.isPresent()) {
             MessageError messageError = new MessageError(ErrorType.AIS_400, of(MessageErrorCode.CONSENT_UNKNOWN_400));
-            return createFailedResponse(messageError, Collections.emptyList());
+            return createFailedResponse(messageError, Collections.emptyList(), request);
         }
         AccountConsent accountConsent = accountConsentOptional.get();
 
@@ -89,7 +89,7 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
-            return createFailedResponse(messageError, spiResponse.getMessages());
+            return createFailedResponse(messageError, spiResponse.getMessages(), request);
         }
 
         ConsentStatus responseConsentStatus = spiResponse.getPayload().getConsentStatus();
@@ -103,9 +103,8 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
         }
         aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
 
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, request.getAuthorizationId());
         response.setScaAuthenticationData(request.getScaAuthenticationData());
-        response.setScaStatus(ScaStatus.FINALISED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
         return response;
     }

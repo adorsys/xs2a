@@ -22,13 +22,11 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 // Class can't be immutable, because it it used in aspect (links setting)
 @Data
-@NoArgsConstructor
 public class UpdateConsentPsuDataResponse implements AuthorisationResponse {
 
     private String consentId;
@@ -47,8 +45,10 @@ public class UpdateConsentPsuDataResponse implements AuthorisationResponse {
 
     private MessageError messageError;
 
-    public UpdateConsentPsuDataResponse(ScaStatus scaStatus) {
+    public UpdateConsentPsuDataResponse(ScaStatus scaStatus, String consentId, String authorisationId) {
         this.scaStatus = scaStatus;
+        this.consentId = consentId;
+        this.authorisationId = authorisationId;
     }
 
     public boolean hasError() {
