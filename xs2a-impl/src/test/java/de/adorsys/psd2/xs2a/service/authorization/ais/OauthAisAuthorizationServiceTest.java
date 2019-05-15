@@ -22,7 +22,6 @@ public class OauthAisAuthorizationServiceTest {
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final UpdateConsentPsuDataReq UPDATE_CONSENT_PSU_DATA_REQ = new UpdateConsentPsuDataReq();
     private static final AccountConsentAuthorization ACCOUNT_CONSENT_AUTHORIZATION = new AccountConsentAuthorization();
-    private static final UpdateConsentPsuDataResponse UPDATE_CONSENT_PSU_DATA_RESPONSE = new UpdateConsentPsuDataResponse();
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);
 
     @InjectMocks
@@ -43,7 +42,7 @@ public class OauthAisAuthorizationServiceTest {
         UpdateConsentPsuDataResponse actualResponse = oauthAisAuthorizationService.updateConsentPsuData(UPDATE_CONSENT_PSU_DATA_REQ, ACCOUNT_CONSENT_AUTHORIZATION);
 
         //Then
-        assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
+        assertThat(actualResponse).isNull();
     }
 
     @Test

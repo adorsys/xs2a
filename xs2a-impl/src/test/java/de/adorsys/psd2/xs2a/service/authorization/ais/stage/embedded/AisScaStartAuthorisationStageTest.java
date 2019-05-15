@@ -69,6 +69,7 @@ import static org.mockito.Mockito.*;
 public class AisScaStartAuthorisationStageTest {
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "wrong consent id";
+    private static final String AUTHORISATION_ID = "Test authorisation id";
     private static final String PASSWORD = "Test password";
     private static final String PSU_ID = "Test psuId";
     private static final String TEST_AUTHENTICATION_METHOD_ID = "sms";
@@ -441,9 +442,8 @@ public class AisScaStartAuthorisationStageTest {
     }
 
     private UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, CONSENT_ID, AUTHORISATION_ID);
         response.setPsuMessage(PSU_SUCCESS_MESSAGE);
-        response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         return response;
     }
 
