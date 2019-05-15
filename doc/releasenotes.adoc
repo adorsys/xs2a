@@ -6,6 +6,7 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 3.x (Development)
 
+* xref:release_notes/Release_notes_3.3.2.adoc[Version 3.3.2   (release date: 15.05.2019)]
 * xref:release_notes/Release_notes_3.3.1.adoc[Version 3.3.1   (release date: 14.05.2019)]
 * xref:release_notes/Release_notes_3.3.adoc[Version 3.3   (release date: 10.05.2019)]
 * xref:release_notes/Release_notes_3.2.adoc[Version 3.2   (release date: 26.04.2019)]
@@ -14,6 +15,7 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 2.x (Stable. Supported minimum till 01.08.2019)
 
+* xref:release_notes/Release_notes_2.5.2.adoc[Version 2.5.2   (release date: 15.05.2019)]
 * xref:release_notes/Release_notes_2.5.1.adoc[Version 2.5.1   (release date: 14.05.2019)]
 * xref:release_notes/Release_notes_2.5.adoc[Version 2.5   (release date: 10.05.2019)]
 * xref:release_notes/Release_notes_2.4.adoc[Version 2.4   (release date: 26.04.2019)]

@@ -1,0 +1,6 @@
+= Release notes v.2.5.2
+
+== Bugfix: Update PSU Data (Select Authentication Method) for account information consent request fails with an error
+Executing valid Update PSU Data (Select Authentication Method) for account information consent request
+ (`PUT /v1/consents/{consentId}/authorisations/{authorisationId}`) with non-json body will no longer result in 
+ `400 FORMAT_ERROR` being returned in the response.

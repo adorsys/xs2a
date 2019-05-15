@@ -104,23 +104,24 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
     }
 
     private UpdateConsentPsuDataResponse applyAuthorisation(UpdateConsentPsuDataReq request) {
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(request.getConsentId());
+        String consentId = request.getConsentId();
+        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsentOptional.isPresent()) {
             MessageError messageError = new MessageError(ErrorType.AIS_400, of(CONSENT_UNKNOWN_400));
-            return createFailedResponse(messageError, Collections.emptyList());
+            return createFailedResponse(messageError, Collections.emptyList(), request);
         }
         PsuIdData psuData = extractPsuIdData(request);
 
         AccountConsent accountConsent = accountConsentOptional.get();
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
 
-        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextDataProvider.provideWithPsuIdData(psuData), psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextDataProvider.provideWithPsuIdData(psuData), psuDataMapper.mapToSpiPsuData(psuData), request.getPassword(), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData());
 
         if (authorisationStatusSpiResponse.hasError()) {
             if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
                 MessageError messageError = new MessageError(AIS_401, of(PSU_CREDENTIALS_INVALID));
-                UpdateConsentPsuDataResponse failedResponse = createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages());
+                UpdateConsentPsuDataResponse failedResponse = createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages(), request);
 
                 aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(failedResponse, request));
 
@@ -128,40 +129,41 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
             }
 
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
-            return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages());
+            return createFailedResponse(messageError, authorisationStatusSpiResponse.getMessages(), request);
         }
 
-        // TODO Extract common consent validation from AIS Embedded and Decoupled stages https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/716
+        String authorisationId = request.getAuthorizationId();
+
+        // TODO Extract common consent validation from AIS Embedded and Decoupled stages https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/677
         if (isOneFactorAuthorisation(accountConsent)) {
 
-            aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.VALID);
+            aisConsentService.updateConsentStatus(consentId, ConsentStatus.VALID);
 
-            UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+            UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, authorisationId);
             response.setScaAuthenticationData(request.getScaAuthenticationData());
-            response.setScaStatus(ScaStatus.FINALISED);
             return response;
         }
 
-        SpiResponse<List<SpiAuthenticationObject>> spiResponse = aisConsentSpi.requestAvailableScaMethods(spiContextDataProvider.provideWithPsuIdData(psuData), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(request.getConsentId()));
+        SpiResponse<List<SpiAuthenticationObject>> spiResponse = aisConsentSpi.requestAvailableScaMethods(spiContextDataProvider.provideWithPsuIdData(psuData), spiAccountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(authorisationStatusSpiResponse, ServiceType.AIS));
-            return createFailedResponse(messageError, spiResponse.getMessages());
+            return createFailedResponse(messageError, spiResponse.getMessages(), request);
         }
 
         List<SpiAuthenticationObject> availableScaMethods = spiResponse.getPayload();
         if (CollectionUtils.isNotEmpty(availableScaMethods)) {
-            aisConsentService.saveAuthenticationMethods(request.getAuthorizationId(), spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
+            aisConsentService.saveAuthenticationMethods(authorisationId, spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
 
             if (availableScaMethods.size() > 1) {
-                return createResponseForMultipleAvailableMethods(availableScaMethods,request.getAuthorizationId(), request.getConsentId() );
+                return createResponseForMultipleAvailableMethods(availableScaMethods, authorisationId, consentId);
             } else {
                 return createResponseForOneAvailableMethod(request, spiAccountConsent, availableScaMethods.get(0), psuData);
             }
         } else {
-            aisConsentService.updateConsentStatus(request.getConsentId(), ConsentStatus.REJECTED);
-            UpdateConsentPsuDataResponse response = createResponseForNoneAvailableScaMethod();
+            aisConsentService.updateConsentStatus(consentId, ConsentStatus.REJECTED);
+            UpdateConsentPsuDataResponse response = createResponseForNoneAvailableScaMethod(consentId, authorisationId);
             aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
             return response;
         }
@@ -177,23 +179,19 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
     private UpdateConsentPsuDataResponse applyIdentification(UpdateConsentPsuDataReq request) {
         if (!isPsuExist(request.getPsuData())) {
             MessageError messageError = new MessageError(ErrorType.AIS_400, of(FORMAT_ERROR, MESSAGE_ERROR_NO_PSU));
-            return createFailedResponse(messageError, Collections.singletonList(MESSAGE_ERROR_NO_PSU));
+            return createFailedResponse(messageError, Collections.singletonList(MESSAGE_ERROR_NO_PSU), request);
         }
 
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setScaStatus(ScaStatus.PSUIDENTIFIED);
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.PSUIDENTIFIED, request.getConsentId(), request.getAuthorizationId());
         response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
 
         return response;
     }
 
     private UpdateConsentPsuDataResponse createResponseForMultipleAvailableMethods(List<SpiAuthenticationObject> availableScaMethods, String authorisationId, String consentId) {
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.PSUAUTHENTICATED, consentId, authorisationId);
         response.setAvailableScaMethods(spiToXs2aAuthenticationObjectMapper.mapToXs2aListAuthenticationObject(availableScaMethods));
-        response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
-        response.setAuthorisationId(authorisationId);
-        response.setConsentId(consentId);
         return response;
     }
 
@@ -215,25 +213,21 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
 
         if (spiResponse.hasError()) {
             MessageError messageError = new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS));
-            return createFailedResponse(messageError, spiResponse.getMessages());
+            return createFailedResponse(messageError, spiResponse.getMessages(), request);
         }
 
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
         ChallengeData challengeData = authorizationCodeResult.getChallengeData();
 
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, request.getConsentId(), request.getAuthorizationId());
         response.setChosenScaMethod(spiToXs2aAuthenticationObjectMapper.mapToXs2aAuthenticationObject(scaMethod));
-        response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
-        response.setAuthorisationId(request.getAuthorizationId());
-        response.setConsentId(request.getConsentId());
         response.setChallengeData(challengeData);
         return response;
     }
 
-    private UpdateConsentPsuDataResponse createResponseForNoneAvailableScaMethod() {
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
-        response.setScaStatus(ScaStatus.FAILED);
+    private UpdateConsentPsuDataResponse createResponseForNoneAvailableScaMethod(String consentId, String authorisationId) {
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FAILED, consentId, authorisationId);
         response.setMessageError(new MessageError(ErrorType.AIS_400, of(SCA_METHOD_UNKNOWN)));
         return response;
     }
