@@ -1,0 +1,2 @@
+= Release notes v.2.6
+
