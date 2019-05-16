@@ -25,7 +25,6 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.Optional;
 
 public interface CryptoProvider {
@@ -39,9 +38,13 @@ public interface CryptoProvider {
 
     default SecretKey getSecretKey(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         byte[] salt = new byte[16];
-        SecretKeyFactory factory = SecretKeyFactory.getInstance(SKF_ALGORITHM);
-        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 1024, 256);
-        SecretKey secretKey = factory.generateSecret(keySpec);
-        return new SecretKeySpec(secretKey.getEncoded(), "AES");
+        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 1024, 256);
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(SKF_ALGORITHM);
+            SecretKey secretKey = factory.generateSecret(keySpec);
+            return new SecretKeySpec(secretKey.getEncoded(), "AES");
+        } finally {
+            keySpec.clearPassword();
+        }
     }
 }
