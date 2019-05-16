@@ -40,7 +40,7 @@ public interface CryptoProvider {
     default SecretKey getSecretKey(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         byte[] salt = new byte[16];
         SecretKeyFactory factory = SecretKeyFactory.getInstance(SKF_ALGORITHM);
-        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 65536, 256);
+        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 1024, 256);
         SecretKey secretKey = factory.generateSecret(keySpec);
         return new SecretKeySpec(secretKey.getEncoded(), "AES");
     }
