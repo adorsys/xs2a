@@ -34,14 +34,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -125,7 +123,7 @@ public class ScaPaymentServiceTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
         when(singlePaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_SINGLE_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_SINGLE_PAYMENT_RESPONSE), Matchers.<Supplier<SinglePaymentInitiationResponse>>any(), eq(initialSpiAspspConsentDataProvider)))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_SINGLE_PAYMENT_RESPONSE), eq(initialSpiAspspConsentDataProvider)))
             .thenReturn(SINGLE_PAYMENT_RESPONSE);
 
         //When
@@ -170,7 +168,7 @@ public class ScaPaymentServiceTest {
             .thenReturn(SPI_PERIODIC_PAYMENT);
         when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_PERIODIC_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_PERIODIC_PAYMENT_RESPONSE), Matchers.<Supplier<PeriodicPaymentInitiationResponse>>any(), eq(initialSpiAspspConsentDataProvider)))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_PERIODIC_PAYMENT_RESPONSE), eq(initialSpiAspspConsentDataProvider)))
             .thenReturn(PERIODIC_PAYMENT_RESPONSE);
 
         //When
@@ -215,7 +213,7 @@ public class ScaPaymentServiceTest {
             .thenReturn(SPI_BULK_PAYMENT);
         when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_BULK_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_BULK_PAYMENT_RESPONSE), Matchers.<Supplier<BulkPaymentInitiationResponse>>any(), eq(initialSpiAspspConsentDataProvider)))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_BULK_PAYMENT_RESPONSE), eq(initialSpiAspspConsentDataProvider)))
             .thenReturn(BULK_PAYMENT_RESPONSE);
 
         //When

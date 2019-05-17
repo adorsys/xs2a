@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,37 +17,52 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.domain.pis.BulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValueMappingStrategy;
 
-import java.util.function.Supplier;
+@Mapper(componentModel = "spring", nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+public interface SpiToXs2aPaymentMapper {
 
-@Component
-@RequiredArgsConstructor
-public class SpiToXs2aPaymentMapper {
+    @Mapping(target = "scaMethods", ignore = true)
+    @Mapping(target = "psuMessage", ignore = true)
+    @Mapping(target = "tppMessages", ignore = true)
+    @Mapping(target = "transactionFeeIndicator", source = "spi.spiTransactionFeeIndicator")
+    @Mapping(target = "aspspConsentDataProvider", source = "aspspConsentDataProvider")
+    SinglePaymentInitiationResponse mapToPaymentInitiateResponse(SpiSinglePaymentInitiationResponse spi,
+                                                                 InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
 
-    public <T extends SpiPaymentInitiationResponse, R extends PaymentInitiationResponse> R mapToPaymentInitiateResponse(T spi, Supplier<R> xs2a, InitialSpiAspspConsentDataProvider aspspConsentDataProvider) {
-        R response = xs2a.get();
-        response.setPaymentId(spi.getPaymentId());
-        response.setMultilevelScaRequired(spi.isMultilevelScaRequired());
-        response.setTransactionStatus(spi.getTransactionStatus());
-        response.setAspspConsentDataProvider(aspspConsentDataProvider);
-        response.setAspspAccountId(spi.getAspspAccountId());
-        return response;
-    }
+    @Mapping(target = "scaMethods", ignore = true)
+    @Mapping(target = "psuMessage", ignore = true)
+    @Mapping(target = "tppMessages", ignore = true)
+    @Mapping(target = "transactionFeeIndicator", source = "spi.spiTransactionFeeIndicator")
+    @Mapping(target = "aspspConsentDataProvider", source = "aspspConsentDataProvider")
+    PeriodicPaymentInitiationResponse mapToPaymentInitiateResponse(SpiPeriodicPaymentInitiationResponse spi,
+                                                                   InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
 
-    public CommonPaymentInitiationResponse mapToCommonPaymentInitiateResponse(SpiPaymentInitiationResponse spiResponse, PaymentType type, InitialSpiAspspConsentDataProvider aspspConsentDataProvider) {
-        CommonPaymentInitiationResponse response = new CommonPaymentInitiationResponse();
-        response.setPaymentType(type);
-        response.setPaymentId(spiResponse.getPaymentId());
-        response.setMultilevelScaRequired(spiResponse.isMultilevelScaRequired());
-        response.setTransactionStatus(spiResponse.getTransactionStatus());
-        response.setAspspConsentDataProvider(aspspConsentDataProvider);
-        response.setAspspAccountId(spiResponse.getAspspAccountId());
-        return response;
-    }
+    @Mapping(target = "scaMethods", ignore = true)
+    @Mapping(target = "psuMessage", ignore = true)
+    @Mapping(target = "tppMessages", ignore = true)
+    @Mapping(target = "transactionFeeIndicator", source = "spi.spiTransactionFeeIndicator")
+    @Mapping(target = "aspspConsentDataProvider", source = "aspspConsentDataProvider")
+    BulkPaymentInitiationResponse mapToPaymentInitiateResponse(SpiBulkPaymentInitiationResponse spi,
+                                                               InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
+
+    @Mapping(target = "scaMethods", ignore = true)
+    @Mapping(target = "psuMessage", ignore = true)
+    @Mapping(target = "tppMessages", ignore = true)
+    @Mapping(target = "paymentType", source = "type")
+    @Mapping(target = "transactionFeeIndicator", source = "spi.spiTransactionFeeIndicator")
+    @Mapping(target = "aspspConsentDataProvider", source = "aspspConsentDataProvider")
+    CommonPaymentInitiationResponse mapToCommonPaymentInitiateResponse(SpiPaymentInitiationResponse spi,
+                                                                       PaymentType type, InitialSpiAspspConsentDataProvider aspspConsentDataProvider);
 }

@@ -70,7 +70,7 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
             return new SinglePaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
-        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), SinglePaymentInitiationResponse::new, aspspConsentDataProvider);
+        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), aspspConsentDataProvider);
     }
 
     public PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment payment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData) {
@@ -89,7 +89,7 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
             return new PeriodicPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
-        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), PeriodicPaymentInitiationResponse::new, aspspConsentDataProvider);
+        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), aspspConsentDataProvider);
     }
 
     public BulkPaymentInitiationResponse createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData) {
@@ -108,7 +108,7 @@ public abstract class ScaPaymentService implements ScaApproachServiceTypeProvide
             return new BulkPaymentInitiationResponse(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
         }
 
-        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), BulkPaymentInitiationResponse::new, aspspConsentDataProvider);
+        return spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(spiResponse.getPayload(), aspspConsentDataProvider);
     }
 
     public CommonPaymentInitiationResponse createCommonPayment(CommonPayment payment, TppInfo tppInfo, String paymentProduct, PsuIdData psuIdData) {

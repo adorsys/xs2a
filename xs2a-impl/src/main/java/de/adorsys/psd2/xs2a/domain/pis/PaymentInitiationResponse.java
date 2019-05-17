@@ -38,7 +38,7 @@ public abstract class PaymentInitiationResponse {
     @JsonUnwrapped
     private TransactionStatus transactionStatus;
     private Xs2aAmount transactionFees;
-    private boolean transactionFeeIndicator;
+    private Boolean transactionFeeIndicator;
     private boolean multilevelScaRequired;
     private String paymentId;
     private Xs2aAuthenticationObject[] scaMethods;
