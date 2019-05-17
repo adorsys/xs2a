@@ -33,11 +33,8 @@ import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperPsd2;
-import de.adorsys.psd2.xs2a.web.mapper.PaymentModelMapperXs2a;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,15 +83,6 @@ public class PaymentModelMapperTest {
     @InjectMocks
     PaymentModelMapperPsd2 paymentModelMapperPsd2;
 
-    @InjectMocks
-    PaymentModelMapperXs2a paymentModelMapperXs2a;
-
-    @Mock
-    ValueValidatorService validatorService;
-
-    @Mock
-    ObjectMapper objectMapper;
-
     @Mock
     private AmountModelMapper amountModelMapper;
 
@@ -110,89 +98,6 @@ public class PaymentModelMapperTest {
         when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
         when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_TYPE)).thenReturn(false);
         when(standardPaymentProductsResolver.isRawPaymentProduct(NON_STANDARD_PAYMENT_TYPE)).thenReturn(true);
-    }
-
-    @Test
-    public void mapToXs2aPayment_Single_success() {
-        when(objectMapper.convertValue(getSinglePayment(true, true, true, true, true, true, true), PaymentInitiationJson.class)).thenReturn(getSinglePayment12(true, true, true, true, true, true, true));
-        when(objectMapper.convertValue(getPsd2AccountReference(true, true), AccountReference.class)).thenReturn(getAccountReference(true, true));
-        //Given
-        Object payment = getSinglePayment(true, true, true, true, true, true, true);
-        //When
-        SinglePayment result = (SinglePayment) paymentModelMapperXs2a.mapToXs2aPayment(payment, getRequestParameters(SINGLE));
-        //Then
-        assertThat(result.getEndToEndIdentification()).isEqualTo(((LinkedHashMap) payment).get("endToEndIdentification"));
-        assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getDebtorAccount().getIban()).isEqualTo(IBAN);
-        assertThat(result.getDebtorAccount().getCurrency()).isEqualTo(Currency.getInstance(CURRENCY));
-        assertThat(result.getUltimateDebtor()).isNotNull();
-        assertThat(result.getInstructedAmount()).isNotNull();
-        assertThat(result.getCreditorAccount()).isNotNull();
-        assertThat(result.getCreditorAgent()).isNotNull();
-        assertThat(StringUtils.isNotBlank(result.getCreditorName())).isTrue();
-        assertThat(result.getCreditorAddress()).isNotNull();
-        assertThat(result.getPurposeCode()).isNotNull();
-        assertThat(result.getRemittanceInformationStructured()).isNotNull();
-        assertThat(result.getUltimateCreditor()).isNotBlank();
-        assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
-        assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getRequestedExecutionDate()).isNull();
-        assertThat(result.getRequestedExecutionTime()).isNull();
-    }
-
-    @Test
-    public void mapToXs2aPayment_Periodic_success() {
-        when(objectMapper.convertValue(getPeriodicPayment(true, true, true, true,
-                                                          true, true, true, true, true, true,
-                                                          true, true), PeriodicPaymentInitiationJson.class))
-            .thenReturn(getPeriodicPayment(true, true, true, true, true,
-                                           true, true, true, true, true, true,
-                                           true));
-        when(objectMapper.convertValue(getPsd2AccountReference(true, true), AccountReference.class))
-            .thenReturn(getAccountReference(true, true));
-        //Given
-        Object payment = getPeriodicPayment(true, true, true, true, true,
-                                            true, true, true, true, true, true,
-                                            true);
-        //When
-        PeriodicPayment result = (PeriodicPayment) paymentModelMapperXs2a.mapToXs2aPayment(payment, getRequestParameters(PaymentType.PERIODIC));
-        //Then
-        assertThat(result.getEndToEndIdentification()).isEqualTo(END_TO_END_IDENTIFICATION);
-        assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getDebtorAccount().getIban()).isEqualTo(IBAN);
-        assertThat(result.getDebtorAccount().getCurrency()).isEqualTo(Currency.getInstance(CURRENCY));
-        assertThat(result.getInstructedAmount()).isNotNull();
-        assertThat(result.getCreditorAccount()).isNotNull();
-        assertThat(result.getCreditorAgent()).isNotNull();
-        assertThat(StringUtils.isNotBlank(result.getCreditorName())).isTrue();
-        assertThat(result.getCreditorAddress()).isNotNull();
-        assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
-        assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getStartDate()).isNotNull();
-        assertThat(result.getExecutionRule().getValue()).isNotBlank();
-        assertThat(result.getEndDate()).isNotNull();
-        assertThat(result.getFrequency()).isNotNull();
-        assertThat(result.getDayOfExecution().name()).isEqualTo(PSD2_DAY_OF_EXECUTION.name());
-    }
-
-    @Test
-    public void mapToXs2aPayment_Bulk_success() {
-        when(objectMapper.convertValue(getBulkPayment(true, true, true,
-                                                      true), BulkPaymentInitiationJson.class))
-            .thenReturn(getBulkPayment(true, true, true, true));
-        when(objectMapper.convertValue(getPsd2AccountReference(true, true), AccountReference.class))
-            .thenReturn(getAccountReference(true, true));
-        //Given
-        Object payment = getBulkPayment(true, true, true, true);
-        //When
-        BulkPayment result = (BulkPayment) paymentModelMapperXs2a.mapToXs2aPayment(payment, getRequestParameters(PaymentType.BULK));
-        //Then
-        assertThat(result.getBatchBookingPreferred()).isEqualTo(BATCH_BOOKING_PREFERRED);
-        assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getRequestedExecutionDate()).isNotNull();
-        assertThat(result.getRequestedExecutionTime()).isEqualTo(REQUESTED_EXECUTION_TIME);
-        assertThat(result.getPayments()).isNotEmpty();
-        assertThat(result.getPayments().get(0).getEndToEndIdentification()).isEqualTo(END_TO_END_IDENTIFICATION);
     }
 
     @Test

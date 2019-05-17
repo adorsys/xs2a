@@ -9,9 +9,7 @@
   "creditorAddress": {
     "buildingNumber": "123-34",
     "city": "Nürnberg",
-    "country": {
-      "code": "DE"
-    },
+    "country": "DE",
     "postalCode": "90431",
     "street": "Herrnstraße"
   },
@@ -28,21 +26,11 @@
   "endDate": "2018-03-03",
   "endToEndIdentification": "RI-123456789",
   "executionRule": "preceding",
-  "frequency": "ANNUAL",
+  "frequency": "Annual",
   "instructedAmount": {
     "amount": "1000.00",
     "currency": "EUR"
   },
-  "purposeCode": {
-    "code": "BCENECEQ"
-  },
-  "remittanceInformationStructured": {
-    "reference": "Ref Number Merchant",
-    "referenceIssuer": "string",
-    "referenceType": "string"
-  },
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
-  "startDate": "2017-03-03",
-  "ultimateCreditor": "Telekom",
-  "ultimateDebtor": "Mueller"
+  "startDate": "2017-03-03"
 }
