@@ -28,7 +28,7 @@ public abstract class SpiPaymentInitiationResponse {
     private TransactionStatus transactionStatus;
     private String paymentId;
     private SpiAmount spiTransactionFees;
-    private boolean spiTransactionFeeIndicator;
+    private Boolean spiTransactionFeeIndicator;
     private boolean multilevelScaRequired;
     private List<String> scaMethods;
     // TODO Make extendable list of scaMethods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/411
@@ -37,4 +37,17 @@ public abstract class SpiPaymentInitiationResponse {
     private String psuMessage;
     private List<String> tppMessages;
     private String aspspAccountId;
+
+    /**
+     * @return spiTransactionFeeIndicator
+     *
+     * @deprecated since 2.6 and will be removed in 2.9, use getTransactionFeeIndicator instead
+     */
+    @Deprecated //TODO remove deprecated method in 2.9 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/844
+    public boolean isTransactionFeeIndicator() {
+        if (spiTransactionFeeIndicator == null) {
+            return false;
+        }
+        return spiTransactionFeeIndicator;
+    }
 }
