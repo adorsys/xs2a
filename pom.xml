@@ -164,7 +164,7 @@
         <spring-jdbc.version>${spring.version}</spring-jdbc.version>
         <spring-hateoas.version>0.25.0.RELEASE</spring-hateoas.version>
         <spring-data-commons.version>1.13.17.RELEASE</spring-data-commons.version>
-        <spring-data-jpa.version>1.11.17.RELEASE</spring-data-jpa.version>
+        <spring-data-jpa.version>1.11.22.RELEASE</spring-data-jpa.version>
         <spring-boot.version>1.5.18.RELEASE</spring-boot.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
