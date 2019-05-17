@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.service.security;
 
 
-import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.AbstractCryptoProvider;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -138,7 +138,7 @@ public class SecurityDataService {
         }
 
         String algorithmVersion = encryptedId.substring(encryptedId.indexOf(SEPARATOR) + SEPARATOR.length());
-        Optional<CryptoProvider> provider = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(algorithmVersion);
+        Optional<AbstractCryptoProvider> provider = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(algorithmVersion);
 
         return provider
                    .flatMap(prd -> prd.decryptData(bytesCompositeId, serverKey))
@@ -164,15 +164,15 @@ public class SecurityDataService {
 
     private String addVersionToEncryptedId(String encryptedId) {
         // external Id is identifier of crypto method
-        String algorithmVersion = identifierCP().getAlgorithmVersion().getExternalId();
+        String algorithmVersion = identifierCP().getExternalId();
         return concatWithSeparator(encryptedId, algorithmVersion);
     }
 
-    private CryptoProvider consentDataCP() {
+    private AbstractCryptoProvider consentDataCP() {
         return cryptoProviderFactory.actualConsentDataCryptoProvider();
     }
 
-    private CryptoProvider identifierCP() {
+    private AbstractCryptoProvider identifierCP() {
         return cryptoProviderFactory.actualIdentifierCryptoProvider();
     }
 

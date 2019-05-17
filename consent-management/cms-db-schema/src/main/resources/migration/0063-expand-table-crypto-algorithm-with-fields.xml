@@ -29,15 +29,20 @@
         <addColumn tableName="crypto_algorithm">
             <column name="hash_iterations" type="INTEGER"/>
         </addColumn>
+
+        <addColumn tableName="crypto_algorithm">
+            <column name="skf_algorithm" type="VARCHAR(35)"/>
+        </addColumn>
     </changeSet>
 
     <changeSet author="rye@adorsys.com.ua" id="2019-05-17-2">
-        <comment>Set fields value to 'hash_iterations' and 'key_length_in_bytes' fields in crypto_algorithm</comment>
+        <comment>Set fields value to 'hash_iterations', 'key_length_in_bytes' and 'skf_algorithm' fields in crypto_algorithm</comment>
 
         <sql>
             UPDATE crypto_algorithm
-            SET key_length_in_bytes = 32,
-            hash_iterations = 65536
+            SET key_length_in_bytes = 256,
+            hash_iterations = 65536,
+            skf_algorithm = 'PBKDF2WithHmacSHA256'
             WHERE external_id = 'gQ8wkMeo93' OR
             external_id = 'nML0IXWdMa' OR
             external_id = 'bS6p6XvTWI'
@@ -54,16 +59,18 @@
             <column name="external_id" value="Ad3lmz9DZY"/>
             <column name="algorithm" value="AES/GCM/NoPadding"/>
             <column name="version" value="4"/>
-            <column name="key_length_in_bytes" value="32"/>
+            <column name="key_length_in_bytes" value="256"/>
             <column name="hash_iterations" value="1024"/>
+            <column name="skf_algorithm" value="PBKDF2WithHmacSHA256"/>
         </insert>
         <insert tableName="crypto_algorithm">
             <column name="algorithm_id" value="1000504"/>
             <column name="external_id" value="psGLvQpt9Q"/>
             <column name="algorithm" value="AES/ECB/PKCS5Padding"/>
             <column name="version" value="5"/>
-            <column name="key_length_in_bytes" value="32"/>
+            <column name="key_length_in_bytes" value="256"/>
             <column name="hash_iterations" value="1024"/>
+            <column name="skf_algorithm" value="PBKDF2WithHmacSHA256"/>
 
         </insert>
     </changeSet>

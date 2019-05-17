@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service.security;
 
-import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.AbstractCryptoProvider;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,8 +47,8 @@ public class SecurityDataServiceTest {
     private static final String CRYPTO_PROVIDER_ID = "mock";
     private static final String FAILING_CRYPTO_PROVIDER_ID = "failing";
     private static final String NON_EXISTING_CRYPT_PROVIDER_ID = "nonExisting";
-    private static final CryptoProvider CRYPTO_PROVIDER = new MockCryptoProvider(CRYPTO_PROVIDER_ID, false);
-    private static final CryptoProvider FAILING_CRYPTO_PROVIDER = new MockCryptoProvider(FAILING_CRYPTO_PROVIDER_ID,
+    private static final AbstractCryptoProvider CRYPTO_PROVIDER = new MockCryptoProvider(CRYPTO_PROVIDER_ID, false);
+    private static final AbstractCryptoProvider FAILING_CRYPTO_PROVIDER = new MockCryptoProvider(FAILING_CRYPTO_PROVIDER_ID,
                                                                                          true);
 
     @Mock

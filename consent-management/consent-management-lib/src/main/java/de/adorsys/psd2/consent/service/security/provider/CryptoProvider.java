@@ -19,32 +19,10 @@ package de.adorsys.psd2.consent.service.security.provider;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
 public interface CryptoProvider {
-    String SKF_ALGORITHM = "PBKDF2WithHmacSHA256";
-
     Optional<EncryptedData> encryptData(byte[] data, String password);
 
     Optional<DecryptedData> decryptData(byte[] data, String password);
-
-    CryptoProviderAlgorithmVersion getAlgorithmVersion();
-
-    default SecretKey getSecretKey(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        byte[] salt = new byte[16];
-        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, 1024, 256);
-        try {
-            SecretKeyFactory factory = SecretKeyFactory.getInstance(SKF_ALGORITHM);
-            SecretKey secretKey = factory.generateSecret(keySpec);
-            return new SecretKeySpec(secretKey.getEncoded(), "AES");
-        } finally {
-            keySpec.clearPassword();
-        }
-    }
 }

@@ -29,35 +29,43 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CryptoProviderFactory {
     private final CryptoAlgorithmRepository cryptoAlgorithmRepository;
-    private CryptoProvider aesEcbCryptoProviderId = new AesEcbCryptoProviderImpl();
-    private CryptoProvider jweCryptoProviderConsentData = new JweCryptoProviderImpl();
+    private final AesEcbCryptoProviderImpl aesEcbCryptoProvider1024 = new AesEcbCryptoProviderImpl("psGLvQpt9Q", "AES/ECB/PKCS5Padding", "5", 256, 1024, "PBKDF2WithHmacSHA256");
+    private final AesEcbCryptoProviderImpl aesEcbCryptoProvider65536 = new AesEcbCryptoProviderImpl("bS6p6XvTWI", "AES/ECB/PKCS5Padding", "2", 256, 65536, "PBKDF2WithHmacSHA256");
+    private final JweCryptoProviderImpl jweCryptoProvider65536 = new JweCryptoProviderImpl("gQ8wkMeo93", "JWE/GCM/256", "3", 256, 65536, "PBKDF2WithHmacSHA256");
 
-    public Optional<CryptoProvider> getCryptoProviderByAlgorithmVersion(String algorithmVersion) {
-        Optional<CryptoProvider> provider = cryptoAlgorithmRepository.findByExternalId(algorithmVersion)
-                                                .map(CryptoAlgorithm::getAlgorithm)
-                                                .flatMap(this::mapCryptoProviderByAlgorithmName);
+    public Optional<AbstractCryptoProvider> getCryptoProviderByAlgorithmVersion(String algorithmVersion) {
+        Optional<AbstractCryptoProvider> provider = cryptoAlgorithmRepository.findByExternalId(algorithmVersion)
+                                                        .map(this::mapCryptoProviderByAlgorithmName);
         if (!provider.isPresent()) {
             log.info("Crypto Algorithm ID: {{}}. Crypto provider can not be identify by id", algorithmVersion);
         }
         return provider;
     }
 
-    public CryptoProvider actualIdentifierCryptoProvider() {
-        return aesEcbCryptoProviderId;
+    public AbstractCryptoProvider actualIdentifierCryptoProvider() {
+        return aesEcbCryptoProvider1024;
     }
 
-    public CryptoProvider actualConsentDataCryptoProvider() {
-        return jweCryptoProviderConsentData;
+    public AbstractCryptoProvider actualConsentDataCryptoProvider() {
+        return jweCryptoProvider65536;
     }
 
-    private Optional<CryptoProvider> mapCryptoProviderByAlgorithmName(String algorithm) {
-        if (algorithm.equals(aesEcbCryptoProviderId.getAlgorithmVersion().getAlgorithmName())) {
-            return Optional.of(aesEcbCryptoProviderId);
-        } else if (algorithm.equals(jweCryptoProviderConsentData.getAlgorithmVersion().getAlgorithmName())) {
-            return Optional.of(jweCryptoProviderConsentData);
-        } else {
-            log.info("Crypto provider can not be identify by algorithm: {}", algorithm);
-            return Optional.empty();
+    private AbstractCryptoProvider mapCryptoProviderByAlgorithmName(CryptoAlgorithm cryptoAlgorithm) {
+        String externalId = cryptoAlgorithm.getExternalId();
+        String algorithm = cryptoAlgorithm.getAlgorithm();
+
+        if (externalId.equals("bS6p6XvTWI")) { // AES/ECB/PKCS5Padding 256 65536
+            return aesEcbCryptoProvider65536;
         }
+        if (externalId.equals("gQ8wkMeo93")) { // JWE/GCM/256	256	65536
+            return jweCryptoProvider65536;
+        }
+        if (externalId.equals("psGLvQpt9Q")) { // AES/ECB/PKCS5Padding 256 1024
+            return aesEcbCryptoProvider1024;
+        }
+
+        log.info("Crypto provider can not be identify by algorithm: {}", algorithm);
+        return null;
+
     }
 }

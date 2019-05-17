@@ -16,20 +16,19 @@
 
 package de.adorsys.psd2.consent.service.security;
 
-import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
-import de.adorsys.psd2.consent.service.security.provider.CryptoProviderAlgorithmVersion;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.consent.service.security.provider.AbstractCryptoProvider;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-@RequiredArgsConstructor
-@AllArgsConstructor
-public class MockCryptoProvider implements CryptoProvider {
-    private final String algorithmId;
-    private String algorithmName;
+
+public class MockCryptoProvider extends AbstractCryptoProvider {
     private final boolean alwaysFail;
+
+    public MockCryptoProvider(String externalId, boolean alwaysFail) {
+        super(externalId, 256, 32, "PBKDF2WithHmacSHA256");
+        this.alwaysFail = alwaysFail;
+    }
 
     @Override
     public Optional<EncryptedData> encryptData(byte[] data, String password) {
@@ -49,10 +48,5 @@ public class MockCryptoProvider implements CryptoProvider {
 
         String decrypted = StringUtils.removeEnd(new String(data), password);
         return Optional.of(new DecryptedData(decrypted.getBytes()));
-    }
-
-    @Override
-    public CryptoProviderAlgorithmVersion getAlgorithmVersion() {
-        return new CryptoProviderAlgorithmVersion(algorithmId, algorithmName);
     }
 }
