@@ -19,27 +19,20 @@ package de.adorsys.psd2.xs2a.core.pis;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * \"following\" or \"preceeding\" supported as values. This data attribute defines the behavior when recurring
- * payment dates falls on a weekend or bank holiday. The payment is then executed either the \"preceeding\" or
+ * \"following\" or \"preceding\" supported as values. This data attribute defines the behavior when recurring
+ * payment dates falls on a weekend or bank holiday. The payment is then executed either the \"preceding\" or
  * \"following\" working day. ASPSP might reject the request due to the communicated value, if rules in
  * Online-Banking are not supporting this execution rule.
  */
+// TODO rename type 'preceeding' to 'preceding' https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/842
 public enum PisExecutionRule {
-    FOLLOWING("following"), PRECEEDING("preceeding");
+    FOLLOWING("following"), PRECEDING("preceding");
+
     private String value;
-
-    private final static Map<String, PisExecutionRule> container = new HashMap<>();
-
-    static {
-        for (PisExecutionRule rule : values()) {
-            container.put(rule.getValue(), rule);
-        }
-    }
 
     @JsonCreator
     PisExecutionRule(String value) {
@@ -51,13 +44,13 @@ public enum PisExecutionRule {
         return value;
     }
 
-    public static Optional<PisExecutionRule> getByValue(String name) {
-        return Optional.ofNullable(container.get(name));
+    public static Optional<PisExecutionRule> getByValue(String value) {
+        return Arrays.stream(values()).filter(doe -> doe.getValue().equals(value)).findAny();
     }
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 }
 
