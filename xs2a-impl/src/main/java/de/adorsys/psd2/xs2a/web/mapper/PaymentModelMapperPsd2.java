@@ -122,7 +122,7 @@ public class PaymentModelMapperPsd2 {
         response201.setTransactionStatus(mapToTransactionStatus(response.getTransactionStatus()));
         response201.setPaymentId(response.getPaymentId());
         response201.setTransactionFees(amountModelMapper.mapToAmount(response.getTransactionFees()));
-        response201.setTransactionFeeIndicator(response.isTransactionFeeIndicator());
+        response201.setTransactionFeeIndicator(response.getTransactionFeeIndicator());
         response201.setScaMethods(mapToScaMethods(response.getScaMethods()));
         response201.setChallengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()));
         response201.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));

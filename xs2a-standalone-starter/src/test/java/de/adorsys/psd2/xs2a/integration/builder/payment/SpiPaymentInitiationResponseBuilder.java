@@ -33,9 +33,16 @@ public class SpiPaymentInitiationResponseBuilder {
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
         response.setAspspAccountId(ASPSP_ACCOUNT_ID);
+        response.setSpiTransactionFeeIndicator(false);
         return buildSpiResponse(response);
     }
 
+    /**
+     * Response field `spiTransactionFeeIndicator` not set.
+     * Pay attention that XS2A will not return `spiTransactionFeeIndicator` at all.
+     *
+     * @return {@link SpiResponse}
+     */
     public static SpiResponse<SpiPeriodicPaymentInitiationResponse> buildPeriodicPaymentResponse() {
         SpiPeriodicPaymentInitiationResponse response = new SpiPeriodicPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
@@ -49,6 +56,7 @@ public class SpiPaymentInitiationResponseBuilder {
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
         response.setAspspAccountId(ASPSP_ACCOUNT_ID);
+        response.setSpiTransactionFeeIndicator(true);
         return buildSpiResponse(response);
     }
 

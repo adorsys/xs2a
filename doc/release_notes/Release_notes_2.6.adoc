@@ -1,5 +1,9 @@
 = Release notes v.2.6
 
+== Bugfix: `transactionFeeIndicator` tag is provided in payment initiation request even if it is not supported by Bank
+
+The tag will not be returned in payment initiation response if it is not supported by Bank.
+From now field SpiPaymentInitiationResponse.spiTransactionFeeIndicator has type Boolean (previous type was boolean).
 
 == Bugfix: Incorrect property name in the response to the AIS consent creation request
 
