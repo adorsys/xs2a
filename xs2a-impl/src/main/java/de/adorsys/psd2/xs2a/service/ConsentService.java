@@ -264,7 +264,7 @@ public class ConsentService {
         }
 
         return ResponseObject.<Void>builder()
-                   .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
+                   .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
     }
 
     /**
