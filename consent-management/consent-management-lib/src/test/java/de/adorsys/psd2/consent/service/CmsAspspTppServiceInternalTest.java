@@ -16,21 +16,32 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.domain.TppStopListEntity;
-import de.adorsys.psd2.consent.repository.TppStopListRepository;
-import de.adorsys.psd2.consent.service.mapper.TppStopListMapper;
-import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Duration;
+import java.util.Optional;
+
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.Duration;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import de.adorsys.psd2.consent.domain.TppStopListEntity;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
+import de.adorsys.psd2.consent.repository.TppStopListRepository;
+import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
+import de.adorsys.psd2.consent.service.mapper.TppStopListMapper;
+import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmsAspspTppServiceInternalTest {
@@ -48,11 +59,19 @@ public class CmsAspspTppServiceInternalTest {
     private TppStopListRepository stopListRepository;
     @Mock
     private TppStopListMapper tppStopListMapper;
+    @Mock
+    private TppInfoRepository tppInfoRepository;
+    @Mock
+    private TppInfoMapper tppInfoMapper;
 
     @Mock
     private TppStopListEntity tppStopListEntity;
     @Mock
     private TppStopListRecord tppStopListRecord;
+    @Mock
+    private TppInfoEntity tppInfoEntity;
+    @Mock
+    private TppInfo tppInfo;
 
     @Test
     public void getTppStopListRecord_Fail_TppEntityIsNotExistInDB() {
@@ -137,6 +156,30 @@ public class CmsAspspTppServiceInternalTest {
 
         assertTrue(isUnblocked);
         verify(stopListRepository).save(tppStopListEntity);
+    }
+
+    @Test
+    public void getTppInfoRecord_Fail_TppEntityIsNotExistInDB() {
+        when(tppInfoRepository.findByAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
+            .thenReturn(Optional.empty());
+
+        Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void getTppInfoRecord_Success_TppEntityIsExistInDB() {
+        when(tppInfoRepository.findByAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
+            .thenReturn(Optional.of(tppInfoEntity));
+
+        when(tppInfoMapper.mapToTppInfo(tppInfoEntity))
+            .thenReturn(tppInfo);
+
+        Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER, INSTANCE_ID);
+
+        assertTrue(result.isPresent());
+        assertEquals(tppInfo, result.get());
     }
 
     private TppStopListEntity buildBlockedTppStopListEntity(String authorisationNumber, String authorityId, String instanceId, Duration blockingDuration) {

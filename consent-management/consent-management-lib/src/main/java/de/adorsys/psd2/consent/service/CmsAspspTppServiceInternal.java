@@ -17,9 +17,13 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
+import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.mapper.TppStopListMapper;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +38,9 @@ import java.util.Optional;
 @Service
 public class CmsAspspTppServiceInternal implements CmsAspspTppService {
     private final TppStopListRepository stopListRepository;
+    private final TppInfoRepository tppInfoRepository;
     private final TppStopListMapper tppStopListMapper;
+    private final TppInfoMapper tppInfoMapper;
 
     @NotNull
     @Override
@@ -73,5 +79,12 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
             stopListRepository.save(entityToBeUnblocked);
         }
         return true;
+    }
+
+    @NotNull
+    @Override
+    public Optional<TppInfo> getTppInfo(@NotNull String tppId, @NotNull String instanceId) {
+        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findByAuthorisationNumberAndInstanceId(tppId, instanceId);
+        return tppInfoEntityOptional.map(tppInfoMapper::mapToTppInfo);
     }
 }
