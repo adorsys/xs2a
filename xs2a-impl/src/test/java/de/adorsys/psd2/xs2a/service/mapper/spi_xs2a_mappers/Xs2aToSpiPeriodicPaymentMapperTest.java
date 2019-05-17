@@ -119,7 +119,7 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         //Then
         assertEquals(START_DATE, spiPeriodicPayment.getStartDate());
         assertEquals(END_DATE, spiPeriodicPayment.getEndDate());
-        assertEquals(PisExecutionRule.PRECEEDING, spiPeriodicPayment.getExecutionRule());
+        assertEquals(PisExecutionRule.PRECEDING, spiPeriodicPayment.getExecutionRule());
         assertEquals(SpiFrequencyCode.MONTHLY, spiPeriodicPayment.getFrequency());
         assertEquals(PisDayOfExecution._13, spiPeriodicPayment.getDayOfExecution());
         assertEquals(PAYMENT_ID, spiPeriodicPayment.getPaymentId());
@@ -144,7 +144,7 @@ public class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setStartDate(START_DATE);
         periodicPayment.setEndDate(END_DATE);
         periodicPayment.setFrequency(Xs2aFrequencyCode.MONTHLY);
-        periodicPayment.setExecutionRule(PisExecutionRule.PRECEEDING);
+        periodicPayment.setExecutionRule(PisExecutionRule.PRECEDING);
         periodicPayment.setDayOfExecution(PisDayOfExecution._13);
         periodicPayment.setPaymentId(PAYMENT_ID);
         periodicPayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);

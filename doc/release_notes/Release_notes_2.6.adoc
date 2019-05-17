@@ -10,3 +10,8 @@ From now on,  the endpoint for consent creation (POST `/v1/consents`) returns co
 Fixed potential security vulnerability in a repository that have been granted security alert access.
 https://nvd.nist.gov/vuln/detail/CVE-2019-3797[Additional information exposure with Spring Data JPA derived queries]
 
+
+== Bugfix: Periodic payment: requestedExecutionTime and requestedExecutionDate properties are set to the default values by mappers
+
+- Payment object has to set these fields to null if they are not present in the initial request
+- PisExecutionRule.PRECEEDING was renamed to PisExecutionRule.PRECEDING
