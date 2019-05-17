@@ -730,7 +730,8 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.deleteAccountConsentsById(WRONG_CONSENT_ID);
         //Than:
-        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.AIS_403);
+        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.CONSENT_UNKNOWN_403);
     }
 
     @Test

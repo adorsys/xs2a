@@ -19,3 +19,7 @@ https://nvd.nist.gov/vuln/detail/CVE-2019-3797[Additional information exposure w
 
 Please use `getExchangeRate` instead of `getRate`, `getQuotationDate` instead of `getRateDate` and `getContractIdentification`
 instead of `getRateContract`.
+
+== Bugfix: Delete a non-existing consent returns wrong http status code
+
+From now on, the response is `403 CONSENT_UNKNOWN` on request ("Delete an Account Information Consent Object" DELETE `/v1/consents/{consentId}`) when consent was not found.
