@@ -19,8 +19,7 @@ package de.adorsys.psd2.xs2a.core.pis;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -92,31 +91,27 @@ public enum PisDayOfExecution {
 
     private String value;
 
-    private final static Map<String, PisDayOfExecution> container = new HashMap<>();
-
-    static {
-        for (PisDayOfExecution day : values()) {
-            container.put(day.getValue(), day);
-        }
-    }
-
-    @JsonCreator
     PisDayOfExecution(String value) {
         this.value = value;
     }
 
-    @JsonValue
     public String getValue() {
         return value;
     }
 
-    public static Optional<PisDayOfExecution> getByValue(String name) {
-        return Optional.ofNullable(container.get(name));
+    public static Optional<PisDayOfExecution> getByValue(String value) {
+        return Optional.ofNullable(fromValue(value));
+    }
+
+    @JsonCreator
+    public static PisDayOfExecution fromValue(String value) {
+        return Arrays.stream(values()).filter(doe -> doe.getValue().equals(value)).findFirst().orElse(null);
     }
 
     @Override
+    @JsonValue
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 }
 
