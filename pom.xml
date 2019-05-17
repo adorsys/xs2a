@@ -199,7 +199,7 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-hateoas.version>0.25.0.RELEASE</spring-hateoas.version>
-        <spring-data-jpa.version>2.1.4.RELEASE</spring-data-jpa.version>
+        <spring-data-jpa.version>2.1.8.RELEASE</spring-data-jpa.version>
         <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>

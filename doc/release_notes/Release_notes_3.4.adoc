@@ -1,0 +1,10 @@
+= Release notes v.3.4
+
+== Table of Contents
+
+* Update version of spring-data-jpa to 2.1.8.RELEASE
+
+== Update version of spring-data-jpa to 2.1.8.RELEASE
+
+Fixed potential security vulnerability in a repository that have been granted security alert access.
+https://nvd.nist.gov/vuln/detail/CVE-2019-3797[Additional information exposure with Spring Data JPA derived queries]
