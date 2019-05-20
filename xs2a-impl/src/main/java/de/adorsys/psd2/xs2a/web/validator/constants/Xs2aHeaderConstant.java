@@ -26,7 +26,7 @@ public class Xs2aHeaderConstant {
     public static final String PSU_IP_ADDRESS = "psu-ip-address";
 
     public static final String PSU_ID = "psu-id";
-    public static final String PSU_ID_TYPE = "psu-id-Type";
+    public static final String PSU_ID_TYPE = "psu-id-type";
     public static final String PSU_CORPORATE_ID = "psu-corporate-id";
     public static final String PSU_CORPORATE_ID_TYPE = "psu-corporate-id-type";
     public static final String AUTHORISATION = "authorization";

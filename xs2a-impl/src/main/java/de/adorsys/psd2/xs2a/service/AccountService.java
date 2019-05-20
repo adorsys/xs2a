@@ -97,6 +97,7 @@ public class AccountService {
     private final GetBalancesReportValidator getBalancesReportValidator;
     private final GetTransactionsReportValidator getTransactionsReportValidator;
     private final GetTransactionDetailsValidator getTransactionDetailsValidator;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
@@ -477,9 +478,12 @@ public class AccountService {
     }
 
     private void writeLogAndCheckConsent(String consentId, boolean withBalance, AccountConsent accountConsent, TypeAccess typeAccess, ResponseObject response, String requestUri) {
-
-        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, typeAccess, response), requestUri);
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, typeAccess, response), requestUri, needsToUpdateUsage(accountConsent));
         checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
+    }
+
+    private boolean needsToUpdateUsage(AccountConsent accountConsent) {
+        return accountConsent.isOneAccessType() || requestProviderService.isRequestFromTPP();
     }
 
     private ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {
