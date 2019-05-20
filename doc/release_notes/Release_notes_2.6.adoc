@@ -27,3 +27,7 @@ instead of `getRateContract`.
 == Bugfix: Delete a non-existing consent returns wrong http status code
 
 From now on, the response is `403 CONSENT_UNKNOWN` on request ("Delete an Account Information Consent Object" DELETE `/v1/consents/{consentId}`) when consent was not found.
+
+== Counting frequencyPerDay only for one-off consent or for recurring consent without PSU IP address
+From now on, we don't count the number of consent usages for recurring consent if the `PSU-IP-Address` header is present in the request.
+

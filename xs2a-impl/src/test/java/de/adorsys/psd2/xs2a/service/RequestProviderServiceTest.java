@@ -16,8 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.RequestData;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,31 +29,19 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequestProviderServiceTest {
     private static final String URI = "http://www.adorsys.de";
     private static final String IP = "192.168.0.26";
-    private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
-
-    private static final String PSU_ID_HEADER = "psu-id";
-    private static final String PSU_ID_TYPE_HEADER = "psu-id-type";
-    private static final String PSU_CORPORATE_ID_HEADER = "psu-corporate-id";
-    private static final String PSU_CORPORATE_ID_TYPE_HEADER = "psu-corporate-id-type";
-
-    private static final String PSU_ID = "ID";
-    private static final String PSU_ID_TYPE = "TYPE";
-    private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
-    private static final String PSU_CORPORATE_ID_TYPE = "CORPORATE_ID_TYPE";
-
     private static PsuIdData PSU_ID_DATA;
-
-    private static final String X_REQUEST_ID_HEADER = "x-request-id";
-    private static final Map<String, String> HEADERS = new HashMap<>();
+    private static final JsonReader jsonReader = new JsonReader();
+    private static final Map<String, String> HEADERS = jsonReader.getObjectFromFile("json/RequestHeaders.json", new TypeReference<Map<String, String>>() {});
 
     @InjectMocks
     private RequestProviderService requestProviderService;
@@ -59,7 +50,6 @@ public class RequestProviderServiceTest {
 
     @Before
     public void setUp() {
-        buildHeaders();
         PSU_ID_DATA = buildPsuIdData();
         HEADERS.forEach((key, value) -> when(httpServletRequest.getHeader(key)).thenReturn(value));
         when(httpServletRequest.getHeaderNames()).thenReturn(Collections.enumeration(HEADERS.keySet()));
@@ -75,23 +65,26 @@ public class RequestProviderServiceTest {
         //Then
         assertEquals(IP, requestData.getIp());
         assertEquals(URI, requestData.getUri());
-        assertEquals(X_REQUEST_ID, requestData.getRequestId().toString());
+        assertEquals(HEADERS.get(Xs2aHeaderConstant.X_REQUEST_ID), requestData.getRequestId().toString());
         assertEquals(PSU_ID_DATA, requestData.getPsuIdData());
         assertEquals(HEADERS, requestData.getHeaders());
     }
 
-    private void buildHeaders() {
-        HEADERS.put(X_REQUEST_ID_HEADER, X_REQUEST_ID);
-        HEADERS.put(PSU_ID_HEADER, PSU_ID);
-        HEADERS.put(PSU_ID_TYPE_HEADER, PSU_ID_TYPE);
-        HEADERS.put(PSU_CORPORATE_ID_HEADER, PSU_CORPORATE_ID);
-        HEADERS.put(PSU_CORPORATE_ID_TYPE_HEADER, PSU_CORPORATE_ID_TYPE);
+    @Test
+    public void getPsuIpAddress() {
+        //Given
+        //When
+        String psuIpAddress = requestProviderService.getPsuIpAddress();
+        //Then
+        assertEquals(HEADERS.get(Xs2aHeaderConstant.PSU_IP_ADDRESS), psuIpAddress);
+        assertTrue(requestProviderService.isRequestFromPsu());
+        assertFalse(requestProviderService.isRequestFromTPP());
     }
 
     private PsuIdData buildPsuIdData() {
-        return new PsuIdData(PSU_ID,
-                             PSU_ID_TYPE,
-                             PSU_CORPORATE_ID,
-                             PSU_CORPORATE_ID_TYPE);
+        return new PsuIdData(HEADERS.get(Xs2aHeaderConstant.PSU_ID),
+                             HEADERS.get(Xs2aHeaderConstant.PSU_ID_TYPE),
+                             HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID),
+                             HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID_TYPE));
     }
 }

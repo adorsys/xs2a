@@ -19,7 +19,9 @@ package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -30,7 +32,9 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_429;
 
 @Component
+@RequiredArgsConstructor
 public class AccountConsentValidator {
+    private final RequestProviderService requestProviderService;
 
     public ValidationResult validate(AccountConsent accountConsent, String requestUri) {
         if (LocalDate.now().compareTo(accountConsent.getValidUntil()) > 0) {
@@ -53,6 +57,10 @@ public class AccountConsentValidator {
     }
 
     private boolean isAccessExceeded(AccountConsent accountConsent, String requestUri) {
+        if (requestProviderService.isRequestFromPsu()) {
+            return false;
+        }
+
         if (!accountConsent.getUsageCounterMap().containsKey(requestUri)) {
             return false;
         }

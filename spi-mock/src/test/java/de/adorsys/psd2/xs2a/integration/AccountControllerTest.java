@@ -96,6 +96,7 @@ public class AccountControllerTest {
     private final static String CONSENT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private final static TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private HttpHeaders httpHeaders = new HttpHeaders();
+    private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String ACCESS_EXCEEDED_JSON_PATH = "/json/account/res/AccessExceededResponse.json";
     private final static UUID X_REQUEST_ID = UUID.randomUUID();
@@ -151,6 +152,9 @@ public class AccountControllerTest {
         httpHeaders.add("PSU-Corporate-ID-Type", "Some corporate id type");
         httpHeaders.add("PSU-IP-Address", "1.1.1.1");
         httpHeaders.add("accept", "application/json, application/xml");
+
+        httpHeadersWithoutPsuIpAddress.putAll(httpHeaders);
+        httpHeadersWithoutPsuIpAddress.remove("PSU-IP-Address");
     }
 
     @Test
@@ -181,13 +185,13 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccountList_ShouldFail_WithNoUsageCounter() throws Exception {
+    public void getAccountList_WithoutPsuIpAddressWithNoUsageCounter_ShouldFail() throws Exception {
         // Given
         AccountConsent accountConsent = buildAccountConsent(Collections.singletonMap("/v1/accounts", 0));
         given(xs2aAisConsentMapper.mapToAccountConsent(new AisAccountConsent())).willReturn(accountConsent);
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
-        requestBuilder.headers(httpHeaders);
+        requestBuilder.headers(httpHeadersWithoutPsuIpAddress);
 
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -199,10 +203,43 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getAccountList_TwoRequestSuccessfulThirdRequestFailed() throws Exception {
+    public void getAccountList_WithPsuIpAddressWithNoUsageCounter_Success() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeaders);
+
+        AspspConsentData aspspConsentData = new AspspConsentData(new byte[0], CONSENT_ID);
+        SpiPsuData spiPsuData = new SpiPsuData(null, null, null, null);
+        SpiContextData spiContextData = new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID);
+        SpiResponse<List<SpiAccountDetails>> response = buildListSpiResponse(aspspConsentData);
+        Xs2aAccountDetails accountDetails = buildXs2aAccountDetails();
+        SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
+
+        given(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID)).willReturn(aspspConsentData);
+        given(accountSpi.requestAccountList(spiContextData, false, spiAccountConsent, aspspConsentData)).willReturn(response);
+        given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
+
+        AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
+        given(aisConsentServiceRemote.getAisAccountConsentById(CONSENT_ID)).willReturn(Optional.of(aisAccountConsent));
+        given(aisConsentServiceRemote.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
+            .willReturn(Optional.of(aisAccountConsent));
+        AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
+        given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
+        given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
+
+        // When
+        ResultActions resultActions = mockMvc.perform(requestBuilder);
+
+        // Then
+        resultActions.andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
+    public void getAccountList_TwoRequestSuccessfulThirdRequestFailed() throws Exception {
+        // Given
+        MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
+        requestBuilder.headers(httpHeadersWithoutPsuIpAddress);
 
         AspspConsentData aspspConsentData = new AspspConsentData(new byte[0], CONSENT_ID);
         SpiPsuData spiPsuData = new SpiPsuData(null, null, null, null);

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.util.reader;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.io.IOUtils;
@@ -47,6 +48,18 @@ public class JsonReader {
      * @return serialized instance read from file
      */
     public <T> T getObjectFromFile(String fileName, Class<T> name) {
+        URL resourcePath = getFileFromClasspath(fileName);
+        try {
+            return objectMapper.readValue(resourcePath, name);
+        } catch (IOException e) {
+            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing.");
+        }
+    }
+
+    /**
+     * @return serialized instance read from file
+     */
+    public <T> T getObjectFromFile(String fileName, TypeReference<T> name) {
         URL resourcePath = getFileFromClasspath(fileName);
         try {
             return objectMapper.readValue(resourcePath, name);

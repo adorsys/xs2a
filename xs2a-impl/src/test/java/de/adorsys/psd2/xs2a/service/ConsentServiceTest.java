@@ -189,7 +189,7 @@ public class ConsentServiceTest {
             .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference(CORRECT_IBAN, CURRENCY)), null, null, false, false)));
 
         //AisReportMock
-        doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), any(ActionStatus.class), anyString());
+        doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), any(ActionStatus.class), anyString(), anyBoolean());
         //ByPSU-ID
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, buildTppInfo()))
             .thenReturn(CONSENT_ID);
