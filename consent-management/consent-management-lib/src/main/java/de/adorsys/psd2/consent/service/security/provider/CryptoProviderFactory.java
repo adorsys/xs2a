@@ -18,24 +18,28 @@ package de.adorsys.psd2.consent.service.security.provider;
 
 import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
 import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class CryptoProviderFactory {
     private final CryptoAlgorithmRepository cryptoAlgorithmRepository;
-    private final AesEcbCryptoProviderImpl aesEcbCryptoProvider1024 = new AesEcbCryptoProviderImpl("psGLvQpt9Q", "AES/ECB/PKCS5Padding", "5", 256, 1024, "PBKDF2WithHmacSHA256");
-    private final AesEcbCryptoProviderImpl aesEcbCryptoProvider65536 = new AesEcbCryptoProviderImpl("bS6p6XvTWI", "AES/ECB/PKCS5Padding", "2", 256, 65536, "PBKDF2WithHmacSHA256");
-    private final JweCryptoProviderImpl jweCryptoProvider65536 = new JweCryptoProviderImpl("gQ8wkMeo93", "JWE/GCM/256", "3", 256, 65536, "PBKDF2WithHmacSHA256");
+    private final Map<String, AbstractCryptoProvider> algorithmMap;
+
+    public CryptoProviderFactory(CryptoAlgorithmRepository cryptoAlgorithmRepository) {
+        this.cryptoAlgorithmRepository = cryptoAlgorithmRepository;
+        this.algorithmMap = generateAlgorithmMap();
+    }
 
     public Optional<AbstractCryptoProvider> getCryptoProviderByAlgorithmVersion(String algorithmVersion) {
         Optional<AbstractCryptoProvider> provider = cryptoAlgorithmRepository.findByExternalId(algorithmVersion)
                                                         .map(this::mapCryptoProviderByAlgorithmName);
+
         if (!provider.isPresent()) {
             log.info("Crypto Algorithm ID: {{}}. Crypto provider can not be identify by id", algorithmVersion);
         }
@@ -43,29 +47,28 @@ public class CryptoProviderFactory {
     }
 
     public AbstractCryptoProvider actualIdentifierCryptoProvider() {
-        return aesEcbCryptoProvider1024;
+        return algorithmMap.get("psGLvQpt9Q"); // AES/ECB/PKCS5Padding 256 1024
     }
 
     public AbstractCryptoProvider actualConsentDataCryptoProvider() {
-        return jweCryptoProvider65536;
+        return algorithmMap.get("JcHZwvJMuc"); // JWE/GCM/256	256	1024
     }
 
     private AbstractCryptoProvider mapCryptoProviderByAlgorithmName(CryptoAlgorithm cryptoAlgorithm) {
-        String externalId = cryptoAlgorithm.getExternalId();
-        String algorithm = cryptoAlgorithm.getAlgorithm();
+        return algorithmMap.get(cryptoAlgorithm.getExternalId());
+    }
 
-        if (externalId.equals("bS6p6XvTWI")) { // AES/ECB/PKCS5Padding 256 65536
-            return aesEcbCryptoProvider65536;
-        }
-        if (externalId.equals("gQ8wkMeo93")) { // JWE/GCM/256	256	65536
-            return jweCryptoProvider65536;
-        }
-        if (externalId.equals("psGLvQpt9Q")) { // AES/ECB/PKCS5Padding 256 1024
-            return aesEcbCryptoProvider1024;
-        }
+    private Map<String, AbstractCryptoProvider> generateAlgorithmMap() {
+        Map<String, AbstractCryptoProvider> algorithmMap = new HashMap<>();
 
-        log.info("Crypto provider can not be identify by algorithm: {}", algorithm);
-        return null;
+        // 65536 hashIterations
+        algorithmMap.put("bS6p6XvTWI", new AesEcbCryptoProviderImpl("bS6p6XvTWI", "AES/ECB/PKCS5Padding", "2", 256, 65536, "PBKDF2WithHmacSHA256"));
+        algorithmMap.put("gQ8wkMeo93", new JweCryptoProviderImpl("gQ8wkMeo93", "JWE/GCM/256", "3", 256, 65536, "PBKDF2WithHmacSHA256"));
 
+        // 1024 hashIterations
+        algorithmMap.put("psGLvQpt9Q", new AesEcbCryptoProviderImpl("psGLvQpt9Q", "AES/ECB/PKCS5Padding", "5", 256, 1024, "PBKDF2WithHmacSHA256"));
+        algorithmMap.put("JcHZwvJMuc", new JweCryptoProviderImpl("JcHZwvJMuc", "JWE/GCM/256", "6", 256, 1024, "PBKDF2WithHmacSHA256"));
+
+        return algorithmMap;
     }
 }

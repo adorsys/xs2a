@@ -71,7 +71,15 @@
             <column name="key_length_in_bytes" value="256"/>
             <column name="hash_iterations" value="1024"/>
             <column name="skf_algorithm" value="PBKDF2WithHmacSHA256"/>
-
+        </insert>
+        <insert tableName="crypto_algorithm">
+            <column name="algorithm_id" value="1000505"/>
+            <column name="external_id" value="JcHZwvJMuc"/>
+            <column name="algorithm" value="JWE/GCM/256"/>
+            <column name="version" value="6"/>
+            <column name="key_length_in_bytes" value="256"/>
+            <column name="hash_iterations" value="1024"/>
+            <column name="skf_algorithm" value="PBKDF2WithHmacSHA256"/>
         </insert>
     </changeSet>
 </databaseChangeLog>
