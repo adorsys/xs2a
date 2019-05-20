@@ -55,6 +55,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
@@ -66,7 +67,6 @@ import java.util.Optional;
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,12 +86,14 @@ public class ConsentCreation_notSuccessfulTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";
     private static final String TPP_ERROR_MESSAGE_JSON_PATH = "/json/account/res/TppErrorMessage.json";
+    private static final String PSU_IP_ADDRESS_MISSING_ERROR_MESSAGE_JSON_PATH = "/json/account/res/PsuIpAddressMissingErrorMessage.json";
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 
     private HttpHeaders httpHeadersImplicit = new HttpHeaders();
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;
@@ -125,6 +127,9 @@ public class ConsentCreation_notSuccessfulTest {
         headerMap.put("PSU-ID-Type", "Some type");
         headerMap.put("PSU-Corporate-ID", "Some corporate id");
         headerMap.put("PSU-Corporate-ID-Type", "Some corporate id type");
+
+        httpHeadersWithoutPsuIpAddress.setAll(headerMap);
+
         headerMap.put("PSU-IP-Address", "1.1.1.1");
 
         httpHeadersImplicit.setAll(headerMap);
@@ -161,8 +166,31 @@ public class ConsentCreation_notSuccessfulTest {
         consentCreation_notSuccessful(httpHeadersExplicit, ScaApproach.EMBEDDED, BANK_OFFERED_CONSENT_REQUEST_JSON_PATH);
     }
 
+    @Test
+    public void creation_consent_withoutPsuIpAddress_notSuccessful() throws Exception {
+        //Given
+        MockHttpServletRequestBuilder requestBuilder = makeRequestBuilder(UrlBuilder.buildConsentCreation(), httpHeadersWithoutPsuIpAddress, resourceToString(BANK_OFFERED_CONSENT_REQUEST_JSON_PATH, UTF_8));
+        //When
+        ResultActions resultActions = mockMvc.perform(requestBuilder);
+        //Then
+        resultActions.andExpect(status().isBadRequest())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(IOUtils.resourceToString(PSU_IP_ADDRESS_MISSING_ERROR_MESSAGE_JSON_PATH, UTF_8)));
+    }
+
     private void consentCreation_notSuccessful(HttpHeaders headers, ScaApproach scaApproach, String requestJsonPath) throws Exception {
-        // Given
+        //Given
+        makePreparations(scaApproach, requestJsonPath);
+        MockHttpServletRequestBuilder requestBuilder = makeRequestBuilder(UrlBuilder.buildConsentCreation(), headers, resourceToString(requestJsonPath, UTF_8));
+        //When
+        ResultActions resultActions = mockMvc.perform(requestBuilder);
+        //Then
+        resultActions.andExpect(status().isMethodNotAllowed())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(IOUtils.resourceToString(TPP_ERROR_MESSAGE_JSON_PATH, UTF_8)));
+    }
+
+    private void makePreparations(ScaApproach scaApproach, String requestJsonPath) throws Exception {
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         given(aisConsentAuthorisationServiceEncrypted.createAuthorization(any(String.class), any(AisConsentAuthorizationRequest.class)))
             .willReturn(Optional.of(AUTHORISATION_ID));
@@ -178,17 +206,11 @@ public class ConsentCreation_notSuccessfulTest {
             .willReturn(Optional.of(new AspspConsentData(null, ENCRYPT_CONSENT_ID)));
         given(aspspRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(ParameterizedTypeReference.class), any(String.class)))
             .willReturn(ResponseEntity.ok(new ArrayList<SpiAccountDetails>()));
+    }
 
-        MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildConsentCreation());
-        requestBuilder.headers(headers);
-        requestBuilder.content(resourceToString(requestJsonPath, UTF_8));
-
-        // When
-        ResultActions resultActions = mockMvc.perform(requestBuilder);
-
-        //Then
-        resultActions.andExpect(status().isMethodNotAllowed())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(content().json(IOUtils.resourceToString(TPP_ERROR_MESSAGE_JSON_PATH, UTF_8)));
+    private MockHttpServletRequestBuilder makeRequestBuilder(String url, HttpHeaders headers, String content) {
+        return MockMvcRequestBuilders.post(url)
+                   .headers(headers)
+                   .content(content);
     }
 }
