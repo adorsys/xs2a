@@ -1,0 +1,46 @@
+{
+  "access": {
+    "accounts": [
+      {
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "iban": "Test IBAN",
+        "bban": "Test BBAN",
+        "pan": "Test PAN",
+        "maskedPan": "Test MASKED_PAN",
+        "msisdn": "Test MSISDN",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "iban": "Test IBAN",
+        "bban": "Test BBAN",
+        "pan": "Test PAN",
+        "maskedPan": "Test MASKED_PAN",
+        "msisdn": "Test MSISDN",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "iban": "Test IBAN",
+        "bban": "Test BBAN",
+        "pan": "Test PAN",
+        "maskedPan": "Test MASKED_PAN",
+        "msisdn": "Test MSISDN",
+        "currency": "EUR"
+      }
+    ],
+    "availableAccounts": "allAccountsWithBalances",
+    "allPsd2": "allAccountsWithBalances"
+  },
+  "recurringIndicator": true,
+  "validUntil": "2020-12-31",
+  "frequencyPerDay": 4,
+  "consentStatus": "VALID",
+  "tppInfo": {
+    "authorisationNumber": "fc488759-d8a2-4a51-b797-7d4cf7ac0447"
+  }
+}

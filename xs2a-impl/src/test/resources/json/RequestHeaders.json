@@ -1,0 +1,8 @@
+{
+  "x-request-id": "0d7f200e-09b4-46f5-85bd-f4ea89fccace",
+  "psu-id": "ID",
+  "psu-id-type": "TYPE",
+  "psu-corporate-id": "CORPORATE_ID",
+  "psu-corporate-id-type": "CORPORATE_ID_TYPE",
+  "psu-ip-address": "192.168.0.26"
+}

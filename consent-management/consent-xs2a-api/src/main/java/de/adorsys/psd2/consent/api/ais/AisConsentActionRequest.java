@@ -27,4 +27,5 @@ public class AisConsentActionRequest {
     private String consentId;
     private ActionStatus actionStatus;
     private String requestUri;
+    private boolean updateUsage;
 }
