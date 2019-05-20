@@ -23,3 +23,7 @@ parameter). Also, possible errors while creating bank offered AIS consent are fi
 
 IBAN is no longer added to the `supportedAccountReferenceFields` property of the ASPSP profile in source code by default.
 It should be added to the bank_profile explicitly.
+
+== Bugfix: SPI-Stub. Remove printing sensitive data in logs
+
+From now on in spi-stub, sensitive data like internal ASPSP Account ID, balances and transactions isn't printed in logs.
