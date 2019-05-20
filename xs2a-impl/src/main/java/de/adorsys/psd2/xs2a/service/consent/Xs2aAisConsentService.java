@@ -123,9 +123,10 @@ public class Xs2aAisConsentService {
      * @param consentId    String representation of identifier of stored consent
      * @param actionStatus Enum value representing whether the action is successful or errors occurred
      * @param requestUri   target URL of the request
+     * @param updateUsage   Update usage indicator
      */
-    public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri) {
-        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus, requestUri));
+    public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri, boolean updateUsage) {
+        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(tppId, consentId, actionStatus, requestUri, updateUsage));
     }
 
     /**

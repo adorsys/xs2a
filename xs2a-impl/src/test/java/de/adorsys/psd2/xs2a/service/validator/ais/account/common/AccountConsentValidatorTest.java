@@ -21,11 +21,13 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.exception.MessageError;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
@@ -34,6 +36,7 @@ import java.util.Collections;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountConsentValidatorTest {
@@ -49,6 +52,8 @@ public class AccountConsentValidatorTest {
 
     @InjectMocks
     private AccountConsentValidator accountConsentValidator;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Test
     public void testValidate_shouldReturnValid() {
@@ -91,6 +96,7 @@ public class AccountConsentValidatorTest {
     @Test
     public void testValidateAccessExceeded_shouldReturnExceededError() {
         // Given
+        when(requestProviderService.isRequestFromPsu()).thenReturn(false);
         AccountConsent accountConsent = buildAccountConsentAccessExceeded();
 
         // When
@@ -99,6 +105,19 @@ public class AccountConsentValidatorTest {
         // Then
         assertTrue(actual.isNotValid());
         assertEquals(AIS_CONSENT_ACCESS_EXCEEDED_ERROR, actual.getMessageError());
+    }
+
+    @Test
+    public void testValidateAccessExceeded_shouldReturnValid() {
+        // Given
+        when(requestProviderService.isRequestFromPsu()).thenReturn(true);
+        AccountConsent accountConsent = buildAccountConsentAccessExceeded();
+
+        // When
+        ValidationResult actual = accountConsentValidator.validate(accountConsent, REQUEST_URI);
+
+        // Then
+        assertTrue(actual.isValid());
     }
 
     private AccountConsent buildAccountConsentValid() {
