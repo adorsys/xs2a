@@ -33,9 +33,13 @@ import java.util.Optional;
 public class JweCryptoProviderImpl extends AbstractCryptoProvider {
     private static final EncryptionMethod METHOD = EncryptionMethod.A256GCM;
     private static final JWEAlgorithm ALGORITHM = JWEAlgorithm.A256GCMKW;
+    private final String algorithm;
+    private final String version;
 
     public JweCryptoProviderImpl(String externalId, String algorithm, String version, int keyLength, int hashIterations, String skfAlgorithm) {
         super(externalId, keyLength, hashIterations, skfAlgorithm);
+        this.algorithm = algorithm;
+        this.version = version;
     }
 
     @Override
