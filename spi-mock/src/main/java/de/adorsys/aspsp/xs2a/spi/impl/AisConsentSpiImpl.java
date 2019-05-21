@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,6 +79,7 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     // TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private static final String TEST_MESSAGE = "Test message";
+    private static final String TEST_PSU_MESSAGE = "This test message is created in ASPSP and directed to PSU";
 
     @Override
     public SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsent(@NotNull SpiContextData spiContextData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
@@ -99,8 +101,13 @@ public class AisConsentSpiImpl implements AisConsentSpi {
                 access = getAccountDetailsFromReferences(accountConsent);
             }
 
+            String psuMessage = Optional.ofNullable(spiContextData.getPsuData())            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                                    .filter(psu -> StringUtils.isNotBlank(psu.getPsuId()))
+                                    .map(psu -> TEST_PSU_MESSAGE)
+                                    .orElse(null);
+
             return SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                       .payload(new SpiInitiateAisConsentResponse(access, false))
+                       .payload(new SpiInitiateAisConsentResponse(access, false, psuMessage))
                        .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .success();
 
