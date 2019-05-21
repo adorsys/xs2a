@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.service.security;
 
 import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
 import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;
-import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.AbstractCryptoProvider;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,8 +40,8 @@ public class CryptoProviderFactoryTest {
     private static final String ALGORITHM_NAME = "AES/ECB/PKCS5Padding";
     private static final String ALGORITHM_NAME_CONSENT_DATA = "JWE/GCM/256";
 
-    private final CryptoProvider cryptoProviderId = getCryptoProvider(ALGORITHM_ID, ALGORITHM_NAME);
-    private final CryptoProvider cryptoProviderConsentData = getCryptoProvider(ALGORITHM_ID_CONSENT_DATA,
+    private final AbstractCryptoProvider cryptoProviderId = getCryptoProvider(ALGORITHM_ID, ALGORITHM_NAME);
+    private final AbstractCryptoProvider cryptoProviderConsentData = getCryptoProvider(ALGORITHM_ID_CONSENT_DATA,
                                                                                ALGORITHM_NAME_CONSENT_DATA);
 
     @Mock
@@ -63,22 +63,22 @@ public class CryptoProviderFactoryTest {
 
     @Test
     public void getCryptoProviderByAlgorithmVersion_Success_IdProvider() {
-        Optional<CryptoProvider> actual = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(ALGORITHM_ID);
+        Optional<AbstractCryptoProvider> actual = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(ALGORITHM_ID);
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getAlgorithmVersion()).isEqualTo(cryptoProviderId.getAlgorithmVersion());
+        assertThat(actual.get().getExternalId()).isEqualTo(cryptoProviderId.getExternalId());
     }
 
     @Test
     public void getCryptoProviderByAlgorithmVersion_Success_ConsentDataProvider() {
-        Optional<CryptoProvider> actual =
+        Optional<AbstractCryptoProvider> actual =
             cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(ALGORITHM_ID_CONSENT_DATA);
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get().getAlgorithmVersion()).isEqualTo(cryptoProviderConsentData.getAlgorithmVersion());
+        assertThat(actual.get().getExternalId()).isEqualTo(cryptoProviderConsentData.getExternalId());
     }
 
     @Test
     public void getCryptoProviderByAlgorithmVersion_Failure_NonExistingAlgorithmVersion() {
-        Optional<CryptoProvider> actual =
+        Optional<AbstractCryptoProvider> actual =
             cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(NON_EXISTING_ALGORITHM_ID);
         assertThat(actual.isPresent()).isFalse();
     }
@@ -90,7 +90,7 @@ public class CryptoProviderFactoryTest {
         return cryptoAlgorithm;
     }
 
-    private CryptoProvider getCryptoProvider(String id, String algorithmName) {
-        return new MockCryptoProvider(id, algorithmName, false);
+    private AbstractCryptoProvider getCryptoProvider(String externalId, String algorithm) {
+        return new MockCryptoProvider(externalId, false);
     }
 }

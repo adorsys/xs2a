@@ -88,5 +88,6 @@
     <include relativeToChangelogFile="true" file="migration/0061-change-table-account-reference-extend-iban.xml"/>
     <include relativeToChangelogFile="true"
              file="migration/0062-change-table-pis-payment-data-extend-end-to-end-identification.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0063-expand-table-crypto-algorithm-with-fields.xml"/>
 
 </databaseChangeLog>

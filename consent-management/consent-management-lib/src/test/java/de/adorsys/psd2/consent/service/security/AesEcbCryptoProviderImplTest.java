@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.service.security.provider.AesEcbCryptoProviderImp
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Optional;
@@ -36,8 +35,7 @@ public class AesEcbCryptoProviderImplTest {
     private final String SERVER_KEY_3 = "mvL";
     private final String SERVER_KEY_80 = "mvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJB";
 
-    @InjectMocks
-    AesEcbCryptoProviderImpl aesGcmCryptoProvider;
+    AesEcbCryptoProviderImpl aesGcmCryptoProvider = new AesEcbCryptoProviderImpl("bS6p6XvTWI", "AES/ECB/PKCS5Padding", "2", 256, 65536, "PBKDF2WithHmacSHA256");
 
     @Test
     public void encryptionDecryptionTest_password_16char() {

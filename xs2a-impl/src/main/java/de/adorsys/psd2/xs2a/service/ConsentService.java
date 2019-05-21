@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -137,7 +138,7 @@ public class ConsentService {
         }
 
         SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
-        SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsentOptional.get()), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsentOptional.get()), AspspConsentData.emptyConsentData());
 
         aisConsentDataService.updateAspspConsentData(initiateAisConsentSpiResponse.getAspspConsentData());
 
