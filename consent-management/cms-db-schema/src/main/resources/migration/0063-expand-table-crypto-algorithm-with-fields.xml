@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="rye@adorsys.com.ua" id="2019-05-17-1">
+        <comment>Extend table crypto_algorithm with columns 'key_length_in_bytes' and 'hash_iterations'</comment>
+
+        <addColumn tableName="crypto_algorithm">
+            <column name="key_length_in_bytes" type="INTEGER" defaultValue="256">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="crypto_algorithm">
+            <column name="hash_iterations" type="INTEGER" defaultValue="65536">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="crypto_algorithm">
+            <column name="skf_algorithm" type="VARCHAR(35)" defaultValue="PBKDF2WithHmacSHA256">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="rye@adorsys.com.ua" id="2019-05-17-2">
+        <comment>Set fields value to 'hash_iterations', 'key_length_in_bytes' and 'skf_algorithm' fields in
+            crypto_algorithm
+        </comment>
+
+        <sql>
+            UPDATE crypto_algorithm
+            SET key_length_in_bytes = 256,
+            hash_iterations = 65536,
+            skf_algorithm = 'PBKDF2WithHmacSHA256'
+            WHERE external_id = 'gQ8wkMeo93' OR
+            external_id = 'nML0IXWdMa' OR
+            external_id = 'bS6p6XvTWI'
+        </sql>
+
+    </changeSet>
+
+    <changeSet author="rye@adorsys.com.ua" id="2019-05-17-3">
+
+        <comment>Fill in new default values for crypto algorithms</comment>
+
+        <insert tableName="crypto_algorithm">
+            <column name="algorithm_id" value="1000503"/>
+            <column name="external_id" value="Ad3lmz9DZY"/>
+            <column name="algorithm" value="AES/GCM/NoPadding"/>
+            <column name="version" value="4"/>
+            <column name="key_length_in_bytes" value="256"/>
+            <column name="hash_iterations" value="1024"/>
+            <column name="skf_algorithm" value="PBKDF2WithHmacSHA256"/>
+        </insert>
+        <insert tableName="crypto_algorithm">
+            <column name="algorithm_id" value="1000504"/>
+            <column name="external_id" value="psGLvQpt9Q"/>
+            <column name="algorithm" value="AES/ECB/PKCS5Padding"/>
+            <column name="version" value="5"/>
+            <column name="key_length_in_bytes" value="256"/>
+            <column name="hash_iterations" value="1024"/>
+            <column name="skf_algorithm" value="PBKDF2WithHmacSHA256"/>
+        </insert>
+        <insert tableName="crypto_algorithm">
+            <column name="algorithm_id" value="1000505"/>
+            <column name="external_id" value="JcHZwvJMuc"/>
+            <column name="algorithm" value="JWE/GCM/256"/>
+            <column name="version" value="6"/>
+            <column name="key_length_in_bytes" value="256"/>
+            <column name="hash_iterations" value="1024"/>
+            <column name="skf_algorithm" value="PBKDF2WithHmacSHA256"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

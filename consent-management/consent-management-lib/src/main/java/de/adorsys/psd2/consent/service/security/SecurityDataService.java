@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.service.security;
 
 
-import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.AbstractCryptoProvider;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +57,10 @@ public class SecurityDataService {
     public Optional<String> encryptId(String originalId) {
         String consentKey = RandomStringUtils.random(16, true, true);
 
-        String compositeConsentId = concatWithSeparator(originalId, consentKey);
+        String compositeConsentId = concatWithSeparator(originalId, consentKey, consentDataCP().getExternalId());
+
         byte[] bytesCompositeConsentId = compositeConsentId.getBytes();
+
         Optional<String> encryptedId = identifierCP()
                                            .encryptData(bytesCompositeConsentId, serverKey)
                                            .map(EncryptedData::getData)
@@ -102,8 +104,8 @@ public class SecurityDataService {
      * @return response contains encrypted data
      */
     public Optional<EncryptedData> encryptConsentData(String encryptedId, byte[] aspspConsentData) {
-        return getConsentKeyByEncryptedId(encryptedId)
-                   .flatMap(consentKey -> consentDataCP().encryptData(aspspConsentData, consentKey));
+        return getDecryptedIdSetByEncryptedId(encryptedId)
+                   .flatMap(dta -> getEncryptedData(dta, aspspConsentData));
     }
 
     /**
@@ -114,8 +116,8 @@ public class SecurityDataService {
      * @return response contains decrypted data
      */
     public Optional<DecryptedData> decryptConsentData(String encryptedId, byte[] aspspConsentData) {
-        return getConsentKeyByEncryptedId(encryptedId)
-                   .flatMap(consentKey -> consentDataCP().decryptData(aspspConsentData, consentKey));
+        return getDecryptedIdSetByEncryptedId(encryptedId)
+                   .flatMap(dta -> getDecryptedData(dta, aspspConsentData));
     }
 
     /**
@@ -128,6 +130,23 @@ public class SecurityDataService {
         return consentId.contains(SEPARATOR);
     }
 
+    private Optional<DecryptedData> getDecryptedData(DecryptedIdSet decryptedIdSet, byte[] aspspConsentData) {
+        return cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(decryptedIdSet.getDataEncryptionProviderId())
+                   .flatMap(provider -> provider.decryptData(aspspConsentData, decryptedIdSet.getRandomSecretKey()));
+    }
+
+    private Optional<EncryptedData> getEncryptedData(DecryptedIdSet decryptedIdSet, byte[] aspspConsentData) {
+        return cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(decryptedIdSet.getDataEncryptionProviderId())
+                   .flatMap(provider -> provider.encryptData(aspspConsentData, decryptedIdSet.getRandomSecretKey()));
+    }
+
+    private Optional<DecryptedIdSet> getDecryptedIdSetByEncryptedId(String encryptedId) {
+        String defaultDataCryptoProviderId = cryptoProviderFactory.oldDefaultVersionDataCryptoProvider().getExternalId();
+
+        return decryptCompositeId(encryptedId)
+                   .map(cmpid -> new DecryptedIdSet(cmpid.split(SEPARATOR), defaultDataCryptoProviderId));
+    }
+
     private Optional<String> decryptCompositeId(String encryptedId) {
         String encryptedCompositeId = encryptedId.substring(0, encryptedId.indexOf(SEPARATOR));
 
@@ -138,17 +157,12 @@ public class SecurityDataService {
         }
 
         String algorithmVersion = encryptedId.substring(encryptedId.indexOf(SEPARATOR) + SEPARATOR.length());
-        Optional<CryptoProvider> provider = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(algorithmVersion);
+        Optional<AbstractCryptoProvider> provider = cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(algorithmVersion);
 
         return provider
                    .flatMap(prd -> prd.decryptData(bytesCompositeId, serverKey))
                    .map(ed -> new String(ed.getData()))
                    .filter(StringUtils::isAsciiPrintable);
-    }
-
-    private Optional<String> getConsentKeyByEncryptedId(String encryptedId) {
-        return decryptCompositeId(encryptedId)
-                   .map(comst -> comst.split(SEPARATOR)[1]);
     }
 
     private byte[] decode64(String raw, boolean urlsafe) {
@@ -164,23 +178,19 @@ public class SecurityDataService {
 
     private String addVersionToEncryptedId(String encryptedId) {
         // external Id is identifier of crypto method
-        String algorithmVersion = identifierCP().getAlgorithmVersion().getExternalId();
+        String algorithmVersion = identifierCP().getExternalId();
         return concatWithSeparator(encryptedId, algorithmVersion);
     }
 
-    private CryptoProvider consentDataCP() {
+    private AbstractCryptoProvider consentDataCP() {
         return cryptoProviderFactory.actualConsentDataCryptoProvider();
     }
 
-    private CryptoProvider identifierCP() {
+    private AbstractCryptoProvider identifierCP() {
         return cryptoProviderFactory.actualIdentifierCryptoProvider();
     }
 
-    private String concatWithSeparator(String leftPart, String rightPart) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(leftPart);
-        sb.append(SEPARATOR);
-        sb.append(rightPart);
-        return sb.toString();
+    private String concatWithSeparator(String... parts) {
+        return StringUtils.join(parts, SEPARATOR);
     }
 }

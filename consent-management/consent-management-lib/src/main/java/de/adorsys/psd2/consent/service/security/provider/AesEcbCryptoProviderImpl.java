@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service.security.provider;
 
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.BadPaddingException;
@@ -27,15 +28,23 @@ import java.security.Key;
 import java.util.Optional;
 
 @Slf4j
-public class AesEcbCryptoProviderImpl implements CryptoProvider {
-    private static final String METHOD = "AES/ECB/PKCS5Padding";
+@Value
+public class AesEcbCryptoProviderImpl extends AbstractCryptoProvider {
+    private final String algorithm;
+    private final String version;
+
+    public AesEcbCryptoProviderImpl(String externalId, String algorithm, String version, int keyLength, int hashIterations, String skfAlgorithm) {
+        super(externalId, keyLength, hashIterations, skfAlgorithm);
+        this.algorithm = algorithm;
+        this.version = version;
+    }
 
     @Override
     public Optional<EncryptedData> encryptData(byte[] data, String password) {
         try {
             Key secretKey = getSecretKey(password);
 
-            Cipher cipher = Cipher.getInstance(METHOD);
+            Cipher cipher = Cipher.getInstance(algorithm);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             byte[] encryptedData = cipher.doFinal(data);
 
@@ -52,7 +61,7 @@ public class AesEcbCryptoProviderImpl implements CryptoProvider {
         try {
             Key secretKey = getSecretKey(password);
 
-            Cipher cipher = Cipher.getInstance(METHOD);
+            Cipher cipher = Cipher.getInstance(algorithm);
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             byte[] decryptedData = cipher.doFinal(data);
 
@@ -66,8 +75,4 @@ public class AesEcbCryptoProviderImpl implements CryptoProvider {
         return Optional.empty();
     }
 
-    @Override
-    public CryptoProviderAlgorithmVersion getAlgorithmVersion() {
-        return new CryptoProviderAlgorithmVersion("bS6p6XvTWI", "AES/ECB/PKCS5Padding");
-    }
 }
