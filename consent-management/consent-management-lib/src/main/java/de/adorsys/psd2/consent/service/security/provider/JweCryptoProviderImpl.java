@@ -21,26 +21,36 @@ import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.AESEncrypter;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.util.Optional;
 
 @Slf4j
-public class JweCryptoProviderImpl implements CryptoProvider {
+@Value
+public class JweCryptoProviderImpl extends AbstractCryptoProvider {
     private static final EncryptionMethod METHOD = EncryptionMethod.A256GCM;
     private static final JWEAlgorithm ALGORITHM = JWEAlgorithm.A256GCMKW;
+    private final String algorithm;
+    private final String version;
+
+    public JweCryptoProviderImpl(String externalId, String algorithm, String version, int keyLength, int hashIterations, String skfAlgorithm) {
+        super(externalId, keyLength, hashIterations, skfAlgorithm);
+        this.algorithm = algorithm;
+        this.version = version;
+    }
 
     @Override
     public Optional<EncryptedData> encryptData(byte[] data, String password) {
         try {
             Payload payload = new Payload(data);
-            SecretKey key = getSecretKey(password);
+            Key secretKey = getSecretKey(password);
 
             JWEHeader header = new JWEHeader(ALGORITHM, METHOD);
             JWEObject jweObject = new JWEObject(header, payload);
-            JWEEncrypter encrypter = new AESEncrypter(key.getEncoded());
+            JWEEncrypter encrypter = new AESEncrypter(secretKey.getEncoded());
 
             jweObject.encrypt(encrypter);
             String encryptedData = jweObject.serialize();
@@ -57,10 +67,10 @@ public class JweCryptoProviderImpl implements CryptoProvider {
     @Override
     public Optional<DecryptedData> decryptData(byte[] data, String password) {
         try {
-            SecretKey key = getSecretKey(password);
+            Key secretKey = getSecretKey(password);
 
             JWEObject jweObject = JWEObject.parse(new String(data));
-            JWEDecrypter decrypter = new AESDecrypter(key.getEncoded());
+            JWEDecrypter decrypter = new AESDecrypter(secretKey.getEncoded());
             jweObject.decrypt(decrypter);
 
             return Optional.of(new DecryptedData(jweObject.getPayload().toBytes()));
@@ -69,10 +79,5 @@ public class JweCryptoProviderImpl implements CryptoProvider {
         }
 
         return Optional.empty();
-    }
-
-    @Override
-    public CryptoProviderAlgorithmVersion getAlgorithmVersion() {
-        return new CryptoProviderAlgorithmVersion("gQ8wkMeo93", "JWE/GCM/256");
     }
 }
