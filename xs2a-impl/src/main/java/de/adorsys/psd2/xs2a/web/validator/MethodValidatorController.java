@@ -29,10 +29,12 @@ public class MethodValidatorController {
 
     private Map<String, MethodValidator> methodValidatorContext = new HashMap<>();
     private List<MethodValidator> methodValidators;
+    private DefaultMethodValidatorImpl defaultMethodValidator;
 
     @Autowired
-    public MethodValidatorController(List<MethodValidator> methodValidators) {
+    public MethodValidatorController(List<MethodValidator> methodValidators, DefaultMethodValidatorImpl defaultMethodValidator) {
         this.methodValidators = methodValidators;
+        this.defaultMethodValidator = defaultMethodValidator;
 
         createMethodValidationContext();
     }
@@ -44,8 +46,8 @@ public class MethodValidatorController {
      * @param methodName from request
      * @return {@link MethodValidator}
      */
-    public Optional<MethodValidator> getMethod(String methodName) {
-        return Optional.ofNullable(methodValidatorContext.get(methodName));
+    public MethodValidator getMethod(String methodName) {
+        return Optional.ofNullable(methodValidatorContext.get(methodName)).orElse(defaultMethodValidator);
     }
 
     private void createMethodValidationContext() {

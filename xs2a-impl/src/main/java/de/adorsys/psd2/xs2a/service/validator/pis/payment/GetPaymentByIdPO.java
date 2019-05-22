@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
+import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndInfoProvider;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * Payment object that contains necessary information for validating payment in {@link GetPaymentByIdValidator}
  */
 @Value
-public class GetPaymentByIdPO implements TppInfoProvider {
+public class GetPaymentByIdPO implements PaymentTypeAndInfoProvider {
     @NotNull
     private final PisCommonPaymentResponse pisCommonPaymentResponse;
     private final PaymentType paymentType;

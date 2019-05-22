@@ -24,9 +24,7 @@ import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
-import de.adorsys.psd2.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
-import de.adorsys.psd2.xs2a.web.interceptor.HandlerInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.RequestValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
@@ -71,11 +69,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         configurer.setUseSuffixPatternMatch(false);
     }
 
-    @Bean
-    public RequestValidatorService requestValidatorService() {
-        return new RequestValidatorService();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Please, keep this interceptor's order, because it is important, that logging interceptors will be called before the validation ones to log all the requests (even wrong ones).
@@ -91,9 +84,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             .addPathPatterns(getAllXs2aEndpointPaths());
 
         registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
-
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), serviceTypeDiscoveryService, errorTypeMapper, errorMapperContainer, objectMapper))
-            .addPathPatterns(getAllXs2aEndpointPaths());
     }
 
     @Bean
