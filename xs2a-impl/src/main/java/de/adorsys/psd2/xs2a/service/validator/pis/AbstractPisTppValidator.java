@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.validator.pis;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
-import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
 import org.jetbrains.annotations.NotNull;
@@ -32,12 +31,19 @@ import org.springframework.stereotype.Component;
  * @param <T> type of object to be checked
  */
 @Component
-public abstract class AbstractPisTppValidator<T extends TppInfoProvider> implements BusinessValidator<T> {
+public abstract class AbstractPisTppValidator<T extends PaymentTypeAndInfoProvider> implements BusinessValidator<T> {
     private PisTppInfoValidator pisTppInfoValidator;
+    private PaymentTypeAndProductValidator paymentProductAndTypeValidator;
 
     @NotNull
     @Override
     public ValidationResult validate(@NotNull T object) {
+        ValidationResult productAndTypeValidationResult =
+            paymentProductAndTypeValidator.validateTypeAndProduct(object.getPaymentType(), object.getPaymentProduct());
+        if (productAndTypeValidationResult.isNotValid()) {
+            return productAndTypeValidationResult;
+        }
+
         TppInfo tppInfoInPayment = object.getTppInfo();
         ValidationResult tppValidationResult = pisTppInfoValidator.validateTpp(tppInfoInPayment);
         if (tppValidationResult.isNotValid()) {
@@ -56,7 +62,8 @@ public abstract class AbstractPisTppValidator<T extends TppInfoProvider> impleme
     protected abstract ValidationResult executeBusinessValidation(T paymentObject);
 
     @Autowired
-    public void setPisTppInfoValidator(PisTppInfoValidator pisTppInfoValidator) {
+    public void setPisValidators(PisTppInfoValidator pisTppInfoValidator, PaymentTypeAndProductValidator paymentProductAndTypeValidator) {
         this.pisTppInfoValidator = pisTppInfoValidator;
+        this.paymentProductAndTypeValidator = paymentProductAndTypeValidator;
     }
 }

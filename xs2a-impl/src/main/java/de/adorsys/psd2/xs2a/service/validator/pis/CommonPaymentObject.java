@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.service.validator.pis;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +26,29 @@ import org.jetbrains.annotations.NotNull;
  * Common payment object that contains necessary information for validating payment
  */
 @Value
-public class CommonPaymentObject implements TppInfoProvider {
+public class CommonPaymentObject implements PaymentTypeAndInfoProvider {
+    //
+    // TODO: this validation should be implemented not only for the pisCommonPaymentResponse, but for all methods in the
+    //  payment controller including authorisation, cancellation etc. To do that we need to pass the PaymentType and PaymentProduct
+    //  from the controller to all those methods.
+    //  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/849
+    //
+
     @NotNull
     private PisCommonPaymentResponse pisCommonPaymentResponse;
 
     @Override
     public TppInfo getTppInfo() {
         return pisCommonPaymentResponse.getTppInfo();
+    }
+
+    @Override
+    public PaymentType getPaymentType() {
+        return pisCommonPaymentResponse.getPaymentType();
+    }
+
+    @Override
+    public String getPaymentProduct() {
+        return pisCommonPaymentResponse.getPaymentProduct();
     }
 }

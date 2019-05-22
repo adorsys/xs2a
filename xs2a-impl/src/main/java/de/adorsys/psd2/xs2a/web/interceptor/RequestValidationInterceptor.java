@@ -28,7 +28,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * This interceptor is used for headers and body validation of incoming HTTP requests. The main purposes: collect the
@@ -62,18 +61,14 @@ public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             String methodName = handlerMethod.getMethod().getName();
 
-            Optional<MethodValidator> methodValidator = methodValidatorController.getMethod(methodName);
-            if (methodValidator.isPresent()) {
-                // TODO: think about changing the chain of void methods: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/813
-                methodValidator.get().validate(request, initialMessageError);
+            MethodValidator methodValidator = methodValidatorController.getMethod(methodName);
+            // TODO: think about changing the chain of void methods: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/813
+            methodValidator.validate(request, initialMessageError);
 
-                if (!initialMessageError.getTppMessages().isEmpty()) {
-                    // Last part of all validations: if there is at least one error - we build response with HTTP code 400.
-                    errorBuildingService.buildErrorResponse(response, initialMessageError);
-                    return false;
-                }
-            } else {
-                return true;
+            if (!initialMessageError.getTppMessages().isEmpty()) {
+                // Last part of all validations: if there is at least one error - we build response with HTTP code 400.
+                errorBuildingService.buildErrorResponse(response, initialMessageError);
+                return false;
             }
         }
         return true;
