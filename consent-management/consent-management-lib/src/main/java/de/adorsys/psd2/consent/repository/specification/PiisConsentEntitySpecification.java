@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Join;
 import java.time.LocalDate;
+import java.util.Currency;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
@@ -138,6 +140,23 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
     }
 
     /**
+     * Returns specification for PiisConsentEntity for filtering consents by Currency and Account Reference Selector.
+     *
+     * @param currency mandatory Currency
+     * @param selector mandatory Account Reference Selector
+     * @return resulting specification for PiisConsentEntity
+     */
+    public Specification<PiisConsentEntity> byCurrencyAndAccountReferenceSelector(@NotNull Currency currency, @NotNull AccountReferenceSelector selector) {
+        return (root, query, cb) -> {
+            Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
+            return Specifications
+                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, getAccountReferenceAttribute(selector.getAccountReferenceType()), selector.getAccountValue()))
+                       .and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, currency))
+                       .toPredicate(root, query, cb);
+        };
+    }
+
+    /**
      * Returns specification for PiisConsentEntity for filtering data by aspsp account id.
      *
      * <p>
@@ -185,9 +204,15 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
             AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
             Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
             return Specifications
-                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().name().toLowerCase(), selector.getAccountValue()))
+                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, getAccountReferenceAttribute(selector.getAccountReferenceType()), selector.getAccountValue()))
                        .and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, accountReference.getCurrency()))
                        .toPredicate(root, query, cb);
         };
+    }
+
+    private String getAccountReferenceAttribute(AccountReferenceType type) {
+        return AccountReferenceType.MASKED_PAN == type
+                   ? "maskedPan"
+                   : type.name().toLowerCase();
     }
 }

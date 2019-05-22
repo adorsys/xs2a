@@ -16,6 +16,7 @@
 
 package piis;
 
+import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
@@ -24,8 +25,11 @@ import de.adorsys.psd2.consent.repository.PiisConsentRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,10 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -65,6 +66,7 @@ public class PiisConsentIT {
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
     private static final String TPP_AUTHORITY_ID = "authority id";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu", null, "corpId", null);
 
     @Autowired
     private CmsAspspPiisService cmsAspspPiisServiceInternal;
@@ -72,6 +74,8 @@ public class PiisConsentIT {
     private EntityManager entityManager;
     @Autowired
     private PiisConsentRepository piisConsentRepository;
+    @Autowired
+    private PiisConsentService piisConsentService;
 
     @Test
     public void createPiisConsent_successWithNewStatus() {
@@ -127,10 +131,45 @@ public class PiisConsentIT {
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(1).getPsuData().getPsuId());
     }
 
+    @Test
+    public void getPiisConsentListByAccountIdentifier_Success() {
+        // Given
+        Set<AccountReferenceSelector> selectors = new HashSet<>();
+        selectors.add(createConsentAndGetSelector(AccountReferenceType.IBAN, "DE2310010010123456789"));
+        selectors.add(createConsentAndGetSelector(AccountReferenceType.BBAN, "DE2310010010123452343"));
+        selectors.add(createConsentAndGetSelector(AccountReferenceType.PAN, "1111222233334444"));
+        selectors.add(createConsentAndGetSelector(AccountReferenceType.MASKED_PAN, "111122xxxxxx4444"));
+        selectors.add(createConsentAndGetSelector(AccountReferenceType.MSISDN, "4905123123"));
+        flushAndClearPersistenceContext();
+
+        selectors.forEach(selector -> {
+            // When
+            List<PiisConsent> piisConsents = piisConsentService.getPiisConsentListByAccountIdentifier(EUR_CURRENCY, selector);
+            // Then
+            assertEquals(1, piisConsents.size());
+            AccountReference account = piisConsents.get(0).getAccount();
+            Assertions.assertThat(account).isNotNull();
+            assertEquals(selector, account.getUsedAccountReferenceSelector());
+        });
+    }
+
+    private AccountReferenceSelector createConsentAndGetSelector(AccountReferenceType accountReferenceType, String accountReferenceValue) {
+        AccountReference accountReference = new AccountReference(accountReferenceType, accountReferenceValue, EUR_CURRENCY);
+        CreatePiisConsentRequest request = buildCreatePiisConsentRequest(accountReference);
+        cmsAspspPiisServiceInternal.createConsent(PSU_ID_DATA, request);
+
+        return new AccountReferenceSelector(accountReferenceType, accountReferenceValue);
+    }
+
     @NotNull
     private CreatePiisConsentRequest buildCreatePiisConsentRequest() {
+        return buildCreatePiisConsentRequest(buildAccountReference());
+    }
+
+    @NotNull
+    private CreatePiisConsentRequest buildCreatePiisConsentRequest(AccountReference accountReference) {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest();
-        request.setAccount(buildAccountReference());
+        request.setAccount(accountReference);
         request.setValidUntil(LocalDate.now().plusDays(1));
         request.setAllowedFrequencyPerDay(1);
         request.setTppInfo(buildTppInfo());
