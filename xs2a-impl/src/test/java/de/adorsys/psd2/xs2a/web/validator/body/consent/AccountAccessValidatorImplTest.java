@@ -46,7 +46,7 @@ public class AccountAccessValidatorImplTest {
     @Before
     public void setUp() {
         jsonReader = new JsonReader();
-        consents = jsonReader.getObjectFromFile("json/validation/consents.json", Consents.class);
+        consents = jsonReader.getObjectFromFile("json/validation/ais/consents.json", Consents.class);
         messageError = new MessageError();
         request = new MockHttpServletRequest();
 
@@ -136,7 +136,7 @@ public class AccountAccessValidatorImplTest {
 
     @Test
     public void validate_allPsd2_error() {
-        consents = jsonReader.getObjectFromFile("json/validation/consents-allPsd2.json", Consents.class);
+        consents = jsonReader.getObjectFromFile("json/validation/ais/consents-allPsd2.json", Consents.class);
         validator = createValidator(consents);
 
         validator.validate(request, messageError);
@@ -147,7 +147,7 @@ public class AccountAccessValidatorImplTest {
 
     @Test
     public void validate_availableAccounts_error() {
-        consents = jsonReader.getObjectFromFile("json/validation/consents-availableAccounts.json", Consents.class);
+        consents = jsonReader.getObjectFromFile("json/validation/ais/consents-availableAccounts.json", Consents.class);
         validator = createValidator(consents);
 
         validator.validate(request, messageError);

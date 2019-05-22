@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 
 @Slf4j
@@ -57,6 +59,34 @@ public class JsonConverter {
         } catch (IOException e) {
             log.error("Can't convert json to object: {}", e.getMessage(), e);
         }
+        return Optional.empty();
+    }
+
+    /**
+     * Converts value from input stream into JSON and extracts its field by given name
+     *
+     * @param stream        input stream used to read JSON content
+     * @param fieldName     name of the JSON field to be extracted
+     * @param typeReference type reference of the field
+     * @param <T>           type of the field to be extracted
+     * @return value of the extracted field, if it was found in the valid JSON
+     */
+    public <T> Optional<T> toJsonField(InputStream stream, String fieldName, TypeReference<T> typeReference) {
+        try {
+            JsonNode jsonNode = objectMapper.readTree(stream);
+            JsonNode fieldNode = jsonNode.get(fieldName);
+
+            if (fieldNode == null) {
+                return Optional.empty();
+            }
+
+            T value = objectMapper.readValue(objectMapper.treeAsTokens(fieldNode), typeReference);
+            return Optional.ofNullable(value);
+
+        } catch (IOException e) {
+            log.info("Couldn't extract field {} from json: {}", fieldName, e.getMessage(), e);
+        }
+
         return Optional.empty();
     }
 }
