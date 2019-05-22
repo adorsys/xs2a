@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,6 @@ import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactor
 import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.UPDATE_PSU_AUTHENTICATION;
 import static de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.UPDATE_PSU_IDENTIFICATION;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 
@@ -200,7 +199,6 @@ public class EmbeddedAisAuthorizationServiceTest {
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, psuIdData))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
-        when(consent.getPsuIdDataList()).thenReturn(Collections.singletonList(psuIdData));
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(psuIdData, CONSENT_ID);
 
         assertThat(actualResponseOptional.isPresent()).isTrue();

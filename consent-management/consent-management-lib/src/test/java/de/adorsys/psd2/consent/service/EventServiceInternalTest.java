@@ -26,18 +26,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Optional;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventServiceInternalTest {
     private static final long EVENT_ID = 100;
-    private static final String DECRYPTED_ID = "0310318d-c87d-405b-bd2b-166af5124e1f";
 
     @InjectMocks
     private EventServiceInternal eventServiceInternal;
@@ -54,7 +50,6 @@ public class EventServiceInternalTest {
         when(eventMapper.mapToEventEntity(any())).thenReturn(buildEventEntity());
         when(eventRepository.save(any(EventEntity.class)))
             .thenReturn(buildEventEntity(EVENT_ID));
-        when(securityDataService.decryptId(anyString())).thenReturn(Optional.of(DECRYPTED_ID));
     }
 
     @Test

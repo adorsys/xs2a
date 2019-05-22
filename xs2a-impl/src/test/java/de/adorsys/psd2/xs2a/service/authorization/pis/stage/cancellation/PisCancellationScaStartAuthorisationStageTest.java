@@ -54,14 +54,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyListOf;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -132,7 +132,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
         when(getPisAuthorisationResponse.getPayments()).thenReturn(Collections.singletonList(PIS_PAYMENT));
         when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT)).thenReturn(XS2A_PAYMENT);
         when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(XS2A_PAYMENT, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
-        when(pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(PAYMENT_ID, TransactionStatus.RJCT)).thenReturn(Optional.of(true));
     }
 
     @Test
@@ -231,12 +230,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
                    .payload(payload)
                    .aspspConsentData(ASPSP_CONSENT_DATA)
                    .success();
-    }
-
-    private <T> SpiResponse<T> buildFailureSpiResponse(T payload) {
-        return SpiResponse.<T>builder()
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
-                   .fail(FAILURE_STATUS);
     }
 
     private SpiSinglePayment buildSpiPayment() {

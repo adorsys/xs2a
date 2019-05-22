@@ -67,8 +67,8 @@ import java.util.Optional;
 
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -252,7 +252,7 @@ public class ConsentCreation_successfulTest {
             .willReturn(Optional.of(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(scaApproach)));
         given(aspspDataService.readAspspConsentData(any(String.class)))
             .willReturn(Optional.of(new AspspConsentData(null, ENCRYPT_CONSENT_ID)));
-        given(aspspRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(ParameterizedTypeReference.class), any(String.class)))
+        given(aspspRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(ParameterizedTypeReference.class), any(String.class)))
             .willReturn(ResponseEntity.ok(new ArrayList<SpiAccountDetails>()));
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(Optional.of(new AuthorisationScaApproachResponse(scaApproach)));

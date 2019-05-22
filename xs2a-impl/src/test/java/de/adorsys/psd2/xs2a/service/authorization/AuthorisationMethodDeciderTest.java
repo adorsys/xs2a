@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
@@ -42,8 +42,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(true);
 
         //When
         boolean actualResult = authorisationMethodDecider.isExplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -57,8 +55,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = false;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(true);
 
         //When
         boolean actualResult = authorisationMethodDecider.isExplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -72,8 +68,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(false);
 
         //When
         boolean actualResult = authorisationMethodDecider.isExplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -87,8 +81,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = false;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(false);
 
         //When
         boolean actualResult = authorisationMethodDecider.isExplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -102,8 +94,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(true);
 
         //When
         boolean actualResult = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -117,8 +107,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = false;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(true);
 
         //When
         boolean actualResult = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -132,8 +120,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = true;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(false);
 
         //When
         boolean actualResult = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -147,8 +133,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = true;
         boolean tppExplicitAuthorisationPreferred = false;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(false);
 
         //When
         boolean actualResult = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -178,8 +162,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = false;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(true);
 
         //When
         boolean actualResult = authorisationMethodDecider.isExplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -208,8 +190,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = false;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(false);
 
         //When
         boolean actualResult = authorisationMethodDecider.isExplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -238,8 +218,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = false;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(true);
 
         //When
         boolean actualResult = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -253,8 +231,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = true;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(false);
 
         //When
         boolean actualResult = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);
@@ -268,8 +244,6 @@ public class AuthorisationMethodDeciderTest {
         //Given
         boolean multilevelScaRequired = false;
         boolean tppExplicitAuthorisationPreferred = false;
-        when(aspspProfileService.isSigningBasketSupported())
-            .thenReturn(false);
 
         //When
         boolean actualResult = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, multilevelScaRequired);

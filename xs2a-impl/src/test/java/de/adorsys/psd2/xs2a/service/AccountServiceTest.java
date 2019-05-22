@@ -61,7 +61,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
@@ -70,7 +70,6 @@ import java.util.*;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -101,8 +100,6 @@ public class AccountServiceTest {
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS = buildXs2aAccountReferenceWithoutAspspIds();
     private static final SpiTransactionReport SPI_TRANSACTION_REPORT = buildSpiTransactionReport();
-    private static final ResponseObject<AccountConsent> ERROR_ALLOWED_ACCOUNT_DATA_RESPONSE = buildErrorAllowedAccountDataResponse();
-    private static final ResponseObject<AccountConsent> SUCCESS_ALLOWED_ACCOUNT_DATA_RESPONSE = buildSuccessAllowedAccountDataResponse();
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(new SpiPsuData(null, null, null, null), new TppInfo(), UUID.randomUUID());
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOTH;
     private static final MessageError VALIDATION_ERROR =
@@ -179,10 +176,7 @@ public class AccountServiceTest {
         doNothing()
             .when(aisConsentDataService).updateAspspConsentData(ASPSP_CONSENT_DATA);
 
-        doNothing()
-            .when(aisConsentService).consentActionLog(anyString(), anyString(), any(ActionStatus.class), anyString(), anyBoolean());
-
-        when(spiContextDataProvider.provideWithPsuIdData(any(PsuIdData.class)))
+        when(spiContextDataProvider.provideWithPsuIdData(any()))
             .thenReturn(SPI_CONTEXT_DATA);
 
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
@@ -577,12 +571,6 @@ public class AccountServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(aisConsentDataService.getAspspConsentDataByConsentId(CONSENT_ID))
-            .thenReturn(ASPSP_CONSENT_DATA);
-
-        when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
-            .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
-
         ResponseObject<Xs2aBalancesReport> actualResponse = accountService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
 
         assertThat(actualResponse).isNotNull();
@@ -638,8 +626,6 @@ public class AccountServiceTest {
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
         when(balanceReportMapper.mapToXs2aBalancesReport(Collections.emptyList(), SPI_ACCOUNT_REFERENCE))
             .thenReturn(xs2aBalancesReport);
-        when(xs2aBalancesReport.getXs2aAccountReference())
-            .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
         when(consentMapper.mapToSpiAccountConsent(any()))
@@ -949,9 +935,6 @@ public class AccountServiceTest {
         when(accountSpi.requestTransactionForAccountByTransactionId(SPI_CONTEXT_DATA, TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
 
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
-
         when(spiToXs2aTransactionMapper.mapToXs2aTransaction(spiTransaction))
             .thenReturn(transactions);
 
@@ -980,8 +963,6 @@ public class AccountServiceTest {
             .thenReturn(SPI_ACCOUNT_CONSENT);
         when(accountSpi.requestTransactionForAccountByTransactionId(SPI_CONTEXT_DATA, TRANSACTION_ID, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(spiTransaction));
-        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.singletonList(spiTransaction), null))
-            .thenReturn(Optional.of(xs2aAccountReport));
         when(spiToXs2aTransactionMapper.mapToXs2aTransaction(spiTransaction))
             .thenReturn(transactions);
 
@@ -1050,7 +1031,6 @@ public class AccountServiceTest {
         // Given
         AccountConsent accountConsent = createConsent(false);
         prepationForGetAccountListRequest(accountConsent);
-        when(requestProviderService.isRequestFromTPP()).thenReturn(false);
 
         // When
         accountService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -1064,7 +1044,6 @@ public class AccountServiceTest {
         // Given
         AccountConsent accountConsent = createConsent( false);
         prepationForGetAccountListRequest(accountConsent);
-        when(requestProviderService.isRequestFromTPP()).thenReturn(true);
 
         // When
         accountService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);

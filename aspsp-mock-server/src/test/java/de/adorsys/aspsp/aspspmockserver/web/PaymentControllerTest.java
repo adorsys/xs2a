@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -37,11 +37,10 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Optional;
-import java.util.UUID;
 
 import static de.adorsys.psd2.aspsp.mock.api.common.AspspTransactionStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,10 +63,6 @@ public class PaymentControllerTest {
             .thenReturn(Optional.of(response));
         when(paymentService.addBulkPayments(any()))
             .thenReturn(Optional.of(bulkResponse));
-        when(paymentService.isPaymentExist(PAYMENT_ID))
-            .thenReturn(true);
-        when(paymentService.isPaymentExist(WRONG_PAYMENT_ID))
-            .thenReturn(false);
         when(paymentService.getPaymentStatusById(PAYMENT_ID))
             .thenReturn(Optional.of(ACCP));
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID))

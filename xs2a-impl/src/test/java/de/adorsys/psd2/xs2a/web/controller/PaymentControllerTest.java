@@ -36,7 +36,6 @@ import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.header.PaymentInitiationHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
@@ -49,7 +48,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -64,9 +63,7 @@ import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_403;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -90,8 +87,6 @@ public class PaymentControllerTest {
     private static final MessageError PIS_400_MESSAGE_ERROR = new MessageError(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR));
     private static final MessageError PIS_404_MESSAGE_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
     private static final boolean TPP_REDIRECT_PREFERRED_TRUE = true;
-    private static final ValidationResult VALID_VALIDATION_RESULT = ValidationResult.valid();
-    private static final ValidationResult INVALID_VALIDATION_RESULT = ValidationResult.invalid(PIS_400_MESSAGE_ERROR);
     private static final PaymentInitiationResponse PAYMENT_INITIATION_RESPONSE = new SinglePaymentInitiationResponse();
     private static final PaymentInitationRequestResponse201 PAYMENT_OBJECT = new PaymentInitationRequestResponse201();
     private static final ResponseHeaders RESPONSE_HEADERS = ResponseHeaders.builder().aspspScaApproach(ScaApproach.REDIRECT).build();
@@ -131,11 +126,6 @@ public class PaymentControllerTest {
     public void setUp() {
         when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
             .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
-        when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
-            .thenReturn(ResponseObject.builder().fail(PIS_403,
-                                                      of(RESOURCE_UNKNOWN_403)).build());
-        when(aspspProfileService.getPisRedirectUrlToAspsp())
-            .thenReturn(REDIRECT_LINK);
     }
 
     @Before
@@ -224,8 +214,6 @@ public class PaymentControllerTest {
 
     @Test
     public void getTransactionStatusById_WrongId() {
-        doReturn(new ResponseEntity<>(new MessageError(PIS_403,
-                                                       of(RESOURCE_UNKNOWN_403)), FORBIDDEN)).when(responseMapper).ok(any(), any());
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, WRONG_PAYMENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().fail(createMessageError(PIS_403, RESOURCE_UNKNOWN_403)).build());
         //Given:

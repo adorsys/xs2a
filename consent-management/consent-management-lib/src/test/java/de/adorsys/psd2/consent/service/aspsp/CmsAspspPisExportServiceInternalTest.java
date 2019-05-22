@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -46,7 +46,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -89,6 +88,11 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByTpp_success() {
         // Given
+        when(pisCommonPaymentDataSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            psuIdData,
+            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
@@ -110,9 +114,6 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
-        //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-
         // When
         Collection<CmsPayment> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
@@ -128,9 +129,6 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByTpp_failure_nullTppAuthorisationNumber() {
         // Given
-        //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-
         // When
         Collection<CmsPayment> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(null, CREATION_DATE_FROM,
@@ -146,6 +144,10 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByPsu_success() {
         // Given
+        when(pisCommonPaymentDataSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
@@ -167,10 +169,6 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByPsu_failure_wrongPsuIdData() {
         // Given
-        //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
-
         // When
         Collection<CmsPayment> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(wrongPsuIdData, CREATION_DATE_FROM,
@@ -215,6 +213,10 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByAccountId_success() {
         // Given
+        when(pisCommonPaymentDataSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
@@ -236,10 +238,6 @@ public class CmsAspspPisExportServiceInternalTest {
     @Test
     public void exportPaymentsByAccountId_failure_wrongAspspAccountId() {
         // Given
-        //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
-
         // When
         Collection<CmsPayment> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,

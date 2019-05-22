@@ -35,14 +35,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.util.*;
 
+import static de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceTest {
@@ -69,8 +69,6 @@ public class PaymentServiceTest {
 
     @Before
     public void setUp() {
-        when(paymentRepository.save(any(AspspPayment.class)))
-            .thenReturn(getAspspPayment(AMOUNT_TO_TRANSFER));
         when(paymentRepository.save(anyListOf(AspspPayment.class)))
             .thenReturn(Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER)));
         when(paymentRepository.exists(PAYMENT_ID))
@@ -79,10 +77,7 @@ public class PaymentServiceTest {
             .thenReturn(false);
         when(accountService.getPsuIdByIban(IBAN)).thenReturn(Optional.of(getAccountDetails().get(0).getResourceId()));
         when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
-        when(accountService.getAccountsByIban(WRONG_IBAN)).thenReturn(null);
-        when(paymentMapper.mapToAspspPayment(any(), any())).thenReturn(new AspspPayment());
         when(paymentMapper.mapToAspspSinglePayment(any(AspspPayment.class))).thenReturn(getAspspSinglePayment(AMOUNT_TO_TRANSFER));
-        when(paymentRepository.findOne(PAYMENT_ID)).thenReturn(getAspspPayment(AMOUNT_TO_TRANSFER));
         when(paymentRepository.findByPaymentIdOrBulkId(PAYMENT_ID, PAYMENT_ID)).thenReturn(Collections.singletonList(getAspspPayment(AMOUNT_TO_TRANSFER)));
 
         when(paymentRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(new AspspPayment()));
@@ -98,6 +93,8 @@ public class PaymentServiceTest {
         when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         //Given
         AspspSinglePayment expectedPayment = getAspspSinglePayment(AMOUNT_TO_TRANSFER);
+        when(paymentMapper.mapToAspspPayment(expectedPayment, SINGLE)).thenReturn(new AspspPayment());
+        when(paymentRepository.save(any(AspspPayment.class))).thenReturn(getAspspPayment(AMOUNT_TO_TRANSFER));
 
         //When
         Optional<AspspSinglePayment> aspspSinglePayment = paymentService.addPayment(expectedPayment);
@@ -109,7 +106,7 @@ public class PaymentServiceTest {
 
     @Test
     public void addPaymentInfo_Success() {
-        when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
+        when(paymentRepository.save(any(AspspPayment.class))).thenReturn(getAspspPayment(AMOUNT_TO_TRANSFER));
         //Given
         AspspPaymentInfo expectedPayment = getAspspPaymentInfo(AspspTransactionStatus.RCVD);
 
@@ -221,8 +218,6 @@ public class PaymentServiceTest {
 
     @Test
     public void initiatePaymentCancellation_Success() {
-        when(paymentRepository.save(getAspspPayment(AspspTransactionStatus.ACTC)))
-            .thenReturn(getAspspPayment(AspspTransactionStatus.ACTC));
         when(paymentRepository.findByPaymentIdOrBulkId(PAYMENT_ID, PAYMENT_ID)).thenReturn(Collections.singletonList(getAspspPayment(AspspTransactionStatus.ACTC, AMOUNT_TO_TRANSFER)));
 
         //Given

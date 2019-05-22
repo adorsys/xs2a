@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,8 +36,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountServiceTest {
@@ -71,8 +71,6 @@ public class AccountServiceTest {
         when(psuRepository.findPsuByAccountDetailsList_ResourceId(ACCOUNT_ID))
             .thenReturn(Optional.of(getPsuWithRightAccounts()));
         when(psuRepository.findPsuByAccountDetailsList_ResourceId(WRONG_ACCOUNT_ID))
-            .thenReturn(Optional.empty());
-        when(psuRepository.findPsuByAccountDetailsList_ResourceId(null))
             .thenReturn(Optional.empty());
 
         when(psuRepository.save(any(Psu.class)))

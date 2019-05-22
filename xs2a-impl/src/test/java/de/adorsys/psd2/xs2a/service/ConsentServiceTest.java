@@ -77,7 +77,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -87,8 +87,6 @@ import java.util.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -182,6 +180,7 @@ public class ConsentServiceTest {
     private GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
     @Mock
     private GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
+    private TppInfo tppInfo;
 
     @Before
     public void setUp() {
@@ -189,82 +188,40 @@ public class ConsentServiceTest {
         when(spiToXs2aAccountAccessMapper.mapToAccountAccess(any()))
             .thenReturn(Optional.of(getXs2aAccountAccess(Collections.singletonList(getXs2aReference(CORRECT_IBAN, CURRENCY)), null, null, false, false)));
 
-        //AisReportMock
-        doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), any(ActionStatus.class), anyString(), anyBoolean());
         //ByPSU-ID
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, buildTppInfo()))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, buildTppInfo()))
-            .thenReturn(CONSENT_ID);
+        tppInfo = buildTppInfo();
 
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), getReferenceList(), getReferenceList(), false, true)), PSU_ID_DATA, buildTppInfo()))
-            .thenReturn(CONSENT_ID);
         //ByAccess
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, buildTppInfo()))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
             .thenReturn(CONSENT_ID);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), PSU_ID_DATA, buildTppInfo()))
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, tppInfo))
             .thenReturn(CONSENT_ID);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), PSU_ID_DATA, buildTppInfo()))
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), PSU_ID_DATA, tppInfo))
             .thenReturn(CONSENT_ID);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), PSU_ID_DATA, buildTppInfo()))
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
             .thenReturn(CONSENT_ID);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), PSU_ID_DATA, buildTppInfo()))
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), PSU_ID_DATA, tppInfo))
             .thenReturn(CONSENT_ID);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), PSU_ID_DATA, buildTppInfo()))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), PSU_ID_DATA, buildTppInfo()))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), PSU_ID_DATA, buildTppInfo()))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), PSU_ID_DATA, buildTppInfo()))
-            .thenReturn(CONSENT_ID);
-        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
-            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), PSU_ID_DATA, buildTppInfo()))
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), PSU_ID_DATA, tppInfo))
             .thenReturn(CONSENT_ID);
 
         //GetConsentById
         when(aisConsentService.getInitialAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID, DATE, 0)));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID, DATE, 0)));
         when(aisConsentService.getAccountConsentById(CONSENT_ID_FINALISED)).thenReturn(Optional.of(getAccountConsentFinalised(CONSENT_ID, getXs2aAccountAccess(Collections.singletonList(getXs2aReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false)));
-        when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_YESTERDAY)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID_DATE_VALID_YESTERDAY, YESTERDAY, 0)));
-        when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_TODAY)).thenReturn(Optional.of(getAccountConsent(CONSENT_ID_DATE_VALID_TODAY, LocalDate.now(), 1)));
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
 
-        //GetStatusById
-        when(aisConsentService.getAccountConsentStatusById(CONSENT_ID))
-            .thenReturn(Optional.of(ConsentStatus.RECEIVED));
-        when(aisConsentService.getAccountConsentStatusById(WRONG_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        when(aspspProfileService.getConsentLifetime())
-            .thenReturn(0);
-
-        when(aspspProfileService.getAllPsd2Support())
-            .thenReturn(true);
-
-        when(aspspProfileService.isBankOfferedConsentSupported())
-            .thenReturn(true);
-        when(tppService.getTppId()).thenReturn(TPP_ID);
-        when(tppService.getTppInfo()).thenReturn(buildTppInfo());
+        when(tppService.getTppInfo()).thenReturn(tppInfo);
 
         when(aspspConsentDataService.getAspspConsentDataByConsentId(anyString()))
             .thenReturn(ASPSP_CONSENT_DATA);
 
         doNothing().when(aspspConsentDataService).updateAspspConsentData(any(AspspConsentData.class));
-
-        when(psuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
-            .thenReturn(SPI_PSU_DATA);
-
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(ScaApproach.EMBEDDED);
 
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
@@ -283,6 +240,11 @@ public class ConsentServiceTest {
             .thenReturn(ValidationResult.valid());
         when(getConsentAuthorisationScaStatusValidator.validate(any(CommonConsentObject.class)))
             .thenReturn(ValidationResult.valid());
+
+        SpiContextData spiContextData = new SpiContextData(SPI_PSU_DATA, tppInfo, UUID.randomUUID());
+        when(spiContextDataProvider.provide()).thenReturn(spiContextData);
+        when(spiContextDataProvider.provide(PSU_ID_DATA, tppInfo)).thenReturn(spiContextData);
+        when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(spiContextData);
     }
 
     @Test
@@ -368,9 +330,6 @@ public class ConsentServiceTest {
         //When:
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
-
-        when(aspspProfileService.getAllPsd2Support())
-            .thenReturn(false);
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
@@ -512,9 +471,6 @@ public class ConsentServiceTest {
         //When
         when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
             .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.PARAMETER_NOT_SUPPORTED)));
-
-        when(aspspProfileService.isBankOfferedConsentSupported())
-            .thenReturn(false);
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
@@ -843,8 +799,6 @@ public class ConsentServiceTest {
         when(aisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.of(new AccountConsentAuthorization()));
-        when(redirectAisAuthorizationService.createConsentAuthorization(any(), anyString()))
-            .thenReturn(Optional.of(new CreateConsentAuthorizationResponse()));
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(true);
 
@@ -904,7 +858,6 @@ public class ConsentServiceTest {
 
     @Test
     public void getConsentInitiationAuthorisation() {
-        when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         when(aisConsentService.getAuthorisationSubResources(anyString()))
             .thenReturn(Optional.of(Collections.singletonList(CONSENT_ID)));
 

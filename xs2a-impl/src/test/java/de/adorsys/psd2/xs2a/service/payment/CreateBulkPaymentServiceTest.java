@@ -51,12 +51,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -106,8 +105,6 @@ public class CreateBulkPaymentServiceTest {
             .thenReturn(RESPONSE);
         when(scaPaymentService.createBulkPayment(buildBulkPayment(), WRONG_TPP_INFO, "sepa-credit-transfers", WRONG_PSU_DATA))
             .thenReturn(buildSpiErrorForBulkPayment());
-        when(pisAspspDataService.getInternalPaymentIdByEncryptedString(anyString()))
-            .thenReturn(PAYMENT_ID);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO))
             .thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA))

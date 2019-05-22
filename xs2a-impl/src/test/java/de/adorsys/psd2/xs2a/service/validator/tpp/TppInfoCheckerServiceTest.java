@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -116,8 +116,6 @@ public class TppInfoCheckerServiceTest {
     @Test
     public void differsFromTppInRequest_withNullTppInfo_shouldReturnTrue() {
         // Given
-        TppInfo tppInfoInRequest = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID);
-        when(tppService.getTppInfo()).thenReturn(tppInfoInRequest);
 
         // When
         boolean result = tppInfoCheckerService.differsFromTppInRequest(null);
@@ -129,9 +127,6 @@ public class TppInfoCheckerServiceTest {
     @Test
     public void differsFromTppInRequest_withNullTppAuthorisationNumber_shouldReturnTrue() {
         // Given
-        TppInfo tppInfoInRequest = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID);
-        when(tppService.getTppInfo()).thenReturn(tppInfoInRequest);
-
         TppInfo tppInfo = buildTppInfo(null, DIFFERENT_AUTHORITY_ID);
 
         // When
@@ -144,9 +139,6 @@ public class TppInfoCheckerServiceTest {
     @Test
     public void differsFromTppInRequest_withNullTppAuthorityId_shouldReturnTrue() {
         // Given
-        TppInfo tppInfoInRequest = buildTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID);
-        when(tppService.getTppInfo()).thenReturn(tppInfoInRequest);
-
         TppInfo tppInfo = buildTppInfo(DIFFERENT_AUTHORISATION_NUMBER, null);
 
         // When

@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -39,7 +39,7 @@ public class Xs2aUpdatePaymentStatusAfterSpiServiceTest {
     @Test
     public void updatePaymentStatus_failed() {
         //Given
-        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(null,null))
+        when(updatePaymentStatusAfterSpiService.updatePaymentStatus(PAYMENT_ID,TRANSACTION_STATUS))
             .thenReturn(false);
 
         //When

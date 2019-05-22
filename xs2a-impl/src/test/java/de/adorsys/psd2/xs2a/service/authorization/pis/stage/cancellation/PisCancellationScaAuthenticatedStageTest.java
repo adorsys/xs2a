@@ -53,7 +53,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -225,9 +225,6 @@ public class PisCancellationScaAuthenticatedStageTest {
 
         when(spiAuthorizationCodeResult.isEmpty())
             .thenReturn(true);
-
-        when(spiErrorMapper.mapToErrorHolder(spiResponse, PIS_SERVICE_TYPE))
-            .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(PIS_400_ERROR_TYPE).build());
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationScaAuthenticatedStage.apply(request, response);
 

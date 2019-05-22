@@ -30,13 +30,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,7 +43,6 @@ public class CreatePisAuthorisationCancellationAspectTest {
 
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
-    private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
     private static final String ERROR_TEXT = "Error occurred while processing";
 
     @InjectMocks
@@ -67,7 +65,6 @@ public class CreatePisAuthorisationCancellationAspectTest {
     @Test
     public void createPisAuthorizationAspect() {
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
-        when(scaApproachResolver.getCancellationScaApproach(eq(AUTHORISATION_ID))).thenReturn(null);
 
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .body(response)

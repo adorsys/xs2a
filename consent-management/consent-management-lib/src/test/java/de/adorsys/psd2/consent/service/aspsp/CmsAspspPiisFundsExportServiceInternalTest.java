@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -39,7 +39,6 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,6 +82,11 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByTpp_success() {
         // Given
+        when(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            psuIdData,
+            SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -104,6 +108,11 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByTpp_success_nullInstanceId() {
         // Given
+        when(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            psuIdData,
+            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -125,9 +134,6 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-
         // When
         Collection<PiisConsent> piisConsents =
             cmsAspspPiisFundsExportServiceInternal.exportConsentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
@@ -169,6 +175,10 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByPsu_success() {
         // Given
+        when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -190,6 +200,10 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByPsu_success_nullInstanceId() {
         // Given
+        when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -211,9 +225,6 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByPsu_failure_wrongPsuIdData() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-
         // When
         Collection<PiisConsent> piisConsents =
             cmsAspspPiisFundsExportServiceInternal.exportConsentsByPsu(wrongPsuIdData, CREATION_DATE_FROM,
@@ -255,6 +266,10 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByAccountId_success() {
         // Given
+        when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -276,6 +291,10 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByAccountId__success_nullInstanceId() {
         // Given
+        when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
@@ -297,9 +316,6 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     @Test
     public void exportConsentsByAccountId_wrongAspspAccountId() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-
         // When
         Collection<PiisConsent> piisConsents =
             cmsAspspPiisFundsExportServiceInternal.exportConsentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
