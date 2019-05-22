@@ -36,3 +36,8 @@ From now on, we don't count the number of consent usages for recurring consent i
 == PSU-IP-Address header is mandatory in AIS consent creation request
 
 From now on, TPP must provide `PSU-IP-Address` header in AIS consent creation request.
+
+== Bugifx: XS2A returns error on creating authorisation if the request URL contains context path
+
+From now on, XS2A will correctly handle non-default context path in the URL and won't fail with an error on creating
+authorisation.
