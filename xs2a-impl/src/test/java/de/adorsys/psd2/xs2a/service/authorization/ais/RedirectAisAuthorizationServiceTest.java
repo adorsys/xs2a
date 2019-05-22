@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +43,6 @@ public class RedirectAisAuthorizationServiceTest {
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final List<String> STRING_LIST = Collections.singletonList(CONSENT_ID);
-    private static final Xs2aAuthorisationSubResources XS2A_AUTHORISATION_SUB_RESOURCES = new Xs2aAuthorisationSubResources(STRING_LIST);
     private static final UpdateConsentPsuDataReq UPDATE_CONSENT_PSU_DATA_REQ = new UpdateConsentPsuDataReq();
     private static final AccountConsentAuthorization ACCOUNT_CONSENT_AUTHORIZATION = new AccountConsentAuthorization();
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null);

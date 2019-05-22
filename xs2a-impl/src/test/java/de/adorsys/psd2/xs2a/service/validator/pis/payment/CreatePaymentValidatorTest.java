@@ -37,7 +37,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,8 +47,8 @@ import java.util.HashSet;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollectionOf;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyCollectionOf;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,8 +80,6 @@ public class CreatePaymentValidatorTest {
 
     @Before
     public void setUp() {
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
         when(supportedAccountReferenceValidator.validate(anyCollectionOf(AccountReference.class)))
             .thenReturn(ValidationResult.valid());
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());

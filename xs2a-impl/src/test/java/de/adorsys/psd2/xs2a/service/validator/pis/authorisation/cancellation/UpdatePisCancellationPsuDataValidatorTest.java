@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.UUID;
 
@@ -54,8 +54,6 @@ public class UpdatePisCancellationPsuDataValidatorTest {
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED, "Invalid TPP"));
     private static final MessageError BLOCKED_ENDPOINT_ERROR = new MessageError(PIS_403, of(SERVICE_BLOCKED));
 
-    private static final UUID X_REQUEST_ID = UUID.fromString("1af360bc-13cb-40ab-9aa0-cc0d6af4510c");
-
     @Mock
     private PisTppInfoValidator pisTppInfoValidator;
     @Mock
@@ -70,8 +68,6 @@ public class UpdatePisCancellationPsuDataValidatorTest {
     public void setUp() {
         // Inject pisTppInfoValidator via setter
         updatePisCancellationPsuDataValidator.setPisTppInfoValidator(pisTppInfoValidator);
-
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
 
         when(pisTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());

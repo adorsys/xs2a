@@ -26,19 +26,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PsuServiceTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String ASPSP_PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
-    private static final String ASPSP_PSU_ID_1 = "zz99999-9999-9999-9999-999999999999";
     private static final String WRONG_ASPSP_PSU_ID = "WRONG_ASPSP_PSU_ID";
     private static final String WRONG_PSU_ID = "zzz";
     private static final String PSU_ID = "aspsp";
@@ -64,11 +62,6 @@ public class PsuServiceTest {
         //findAll
         when(psuRepository.findAll()).thenReturn(Collections.singletonList(getPsu(ASPSP_PSU_ID, E_MAIL, PSU_ID, getDetails(false), getProducts())));
 
-        //findOne
-        when(psuRepository.findOne(ASPSP_PSU_ID)).thenReturn(getPsu(ASPSP_PSU_ID, E_MAIL, PSU_ID, getDetails(false), getProducts()));
-        when(psuRepository.findOne(ASPSP_PSU_ID_1)).thenReturn(getPsu(ASPSP_PSU_ID_1, E_MAIL, PSU_ID, getDetails(false), getProducts()));
-        when(psuRepository.findOne(WRONG_PSU_ID)).thenReturn(null);
-
         //findByIban
         when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN)).thenReturn(Optional.of(getPsu(ASPSP_PSU_ID, E_MAIL, PSU_ID, getDetails(false), getProducts())));
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN)).thenReturn(Optional.empty());
@@ -79,21 +72,12 @@ public class PsuServiceTest {
         when(keycloakService.registerClient(WRONG_PSU_ID, PASSWORD, E_MAIL)).thenReturn(true);
 
         //exists
-        when(psuRepository.exists(PSU_ID)).thenReturn(true);
-        when(psuRepository.exists(WRONG_PSU_ID)).thenReturn(false);
         when(psuRepository.exists(ASPSP_PSU_ID)).thenReturn(true);
         when(psuRepository.exists(WRONG_ASPSP_PSU_ID)).thenReturn(false);
-        doNothing().when(psuRepository).delete(PSU_ID);
 
         //save
-        when(psuRepository.save(getPsu(null, E_MAIL, PSU_ID, getDetails(false), getProducts())))
-            .thenReturn(getPsu(ASPSP_PSU_ID, E_MAIL, PSU_ID, getDetails(false), getProducts()));
         when(psuRepository.save(getPsu(null, E_MAIL, WRONG_PSU_ID, getDetails(false), getProducts())))
             .thenReturn(getPsu(ASPSP_PSU_ID, E_MAIL, WRONG_PSU_ID, getDetails(false), getProducts()));
-        when(psuRepository.save(getPsu(PSU_ID, E_MAIL, PSU_ID, getDetails(false), getProductsExt())))
-            .thenReturn(getPsu(ASPSP_PSU_ID, E_MAIL, PSU_ID, getDetails(false), getProductsExt()));
-        when(psuRepository.save(getPsu(ASPSP_PSU_ID_1, E_MAIL, PSU_ID, getDetails(true), getProductsExt())))
-            .thenReturn(getPsu(ASPSP_PSU_ID_1, E_MAIL, PSU_ID, getDetails(false), getProducts()));
     }
 
     @Test

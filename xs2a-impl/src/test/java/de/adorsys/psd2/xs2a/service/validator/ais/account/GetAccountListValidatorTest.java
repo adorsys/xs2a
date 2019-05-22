@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,8 +40,8 @@ import java.util.List;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.UNAUTHORIZED;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -103,8 +103,6 @@ public class GetAccountListValidatorTest {
         Xs2aAccountAccess accessWithBalances = buildXs2aAccountAccess(true);
         AccountConsent accountConsent = buildAccountConsent(accessWithBalances, TPP_INFO);
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
-            .thenReturn(ValidationResult.valid());
-        when(accountAccessValidator.validate(accountConsent, accountConsent.isWithBalance()))
             .thenReturn(ValidationResult.valid());
         when(accountAccessValidator.validate(any(), anyBoolean()))
             .thenReturn(ValidationResult.valid());

@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation.PisCancellationScaMethodSelectedStage;
 import de.adorsys.psd2.xs2a.service.consent.PisAspspDataService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.CmsToXs2aPaymentMapper;
@@ -44,7 +43,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
@@ -54,8 +53,8 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
 
@@ -149,10 +148,6 @@ public class PisCancellationScaMethodSelectedStageTest {
         pisPaymentInfo.setPaymentType(PaymentType.SINGLE);
         pisPaymentInfo.setPaymentId(paymentId);
         return pisPaymentInfo;
-    }
-
-    private PsuIdData buildPsuIdData() {
-        return new PsuIdData("id", "type", "corporate ID", "corporate type");
     }
 
     private List<PisPayment> getPisPayment() {

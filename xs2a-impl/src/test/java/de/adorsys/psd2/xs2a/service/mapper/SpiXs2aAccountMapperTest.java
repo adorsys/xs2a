@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

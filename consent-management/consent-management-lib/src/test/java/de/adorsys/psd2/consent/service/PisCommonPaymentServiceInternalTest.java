@@ -46,15 +46,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.PATC;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -146,7 +144,6 @@ public class PisCommonPaymentServiceInternalTest {
     @Test
     public void getAuthorisationByPaymentIdSuccess() {
         //When
-        when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID));
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
         when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisPaymentData.getPaymentData())).thenReturn(pisPaymentData.getPaymentData());
         //Then
@@ -160,7 +157,6 @@ public class PisCommonPaymentServiceInternalTest {
     @Test
     public void getAuthorisationByPaymentIdWrongPaymentId() {
         //When
-        when(securityDataService.decryptId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG)).thenReturn(Optional.empty());
         //Then
@@ -172,7 +168,6 @@ public class PisCommonPaymentServiceInternalTest {
     @Test
     public void getAuthorisationByPaymentIdWrongTransactionStatus() {
         //When
-        when(securityDataService.decryptId(PAYMENT_ID)).thenReturn(Optional.of(PAYMENT_ID_WRONG_TRANSACTION_STATUS));
         when(pisPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID_WRONG_TRANSACTION_STATUS)).thenReturn(Optional.empty());
         //Then

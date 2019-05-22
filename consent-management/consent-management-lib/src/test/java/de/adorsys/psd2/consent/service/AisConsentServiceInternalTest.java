@@ -37,7 +37,6 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
-import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -50,7 +49,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -60,7 +59,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -71,7 +69,6 @@ public class AisConsentServiceInternalTest {
     private static final String PSU_ID = "psu-id-1";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final PsuData PSU_DATA = new PsuData(PSU_ID, null, null, null);
-    private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
     private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String AUTHORISATION_NUMBER = "Test Authorisation Number";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -125,12 +122,6 @@ public class AisConsentServiceInternalTest {
         aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.RECEIVED);
         aisConsentAuthorisationList.add(aisConsentAuthorisation);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
-        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
-        when(securityDataService.decryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
-        when(securityDataService.encryptId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID));
-        when(securityDataService.encryptId(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.of(EXTERNAL_CONSENT_ID_NOT_EXIST));
-        when(securityDataService.encryptConsentData(EXTERNAL_CONSENT_ID, ENCRYPTED_CONSENT_DATA))
-            .thenReturn(Optional.of(new EncryptedData(ENCRYPTED_CONSENT_DATA)));
         when(tppInfoMapper.mapToTppInfoEntity(buildTppInfo())).thenReturn(buildTppInfoEntity());
         AisConsentAction action = buildAisConsentAction();
         when(aisConsentActionRepository.save(action)).thenReturn(action);
@@ -189,7 +180,6 @@ public class AisConsentServiceInternalTest {
     public void shouldReturnExternalId_WhenCreateConsentIsCalled() {
         // When
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
 
         // Then
@@ -204,7 +194,6 @@ public class AisConsentServiceInternalTest {
     public void createConsent_AdjustValidUntil_ZeroLifeTime() {
         // When
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
         int consentLifeTime = 0;
@@ -224,7 +213,6 @@ public class AisConsentServiceInternalTest {
     public void createConsent_AdjustValidUntil_NoAdjustment() {
         // When
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
         int consentLifeTime = 10;
@@ -244,7 +232,6 @@ public class AisConsentServiceInternalTest {
     public void createConsent_AdjustValidUntil_AdjustmentToLifeTime() {
         // When
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
 
         int consentLifeTime = 5;
@@ -299,7 +286,6 @@ public class AisConsentServiceInternalTest {
     public void updateConsentStatusById_UpdateFinalisedStatus_Fail() {
         //Given
         AisConsent finalisedConsent = buildFinalisedConsent();
-        when(securityDataService.decryptId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(FINALISED_CONSENT_ID));
         when(aisConsentRepository.findByExternalId(FINALISED_CONSENT_ID)).thenReturn(Optional.of(finalisedConsent));
 
         //When
@@ -351,9 +337,6 @@ public class AisConsentServiceInternalTest {
         when(aisConsentMocked.getTppInfo())
             .thenReturn(tppInfoMocked);
 
-        when(psuDataMocked.getPsuId())
-            .thenReturn(PSU_ID);
-
         when(tppInfoMocked.getAuthorisationNumber())
             .thenReturn(AUTHORISATION_NUMBER);
 
@@ -365,9 +348,6 @@ public class AisConsentServiceInternalTest {
 
         when(aisConsentMocked.getExternalId())
             .thenReturn(EXTERNAL_CONSENT_ID);
-
-        when(aisConsentRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, AUTHORISATION_ID, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.VALID)))
-            .thenReturn(Collections.emptyList());
 
         boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
 
@@ -441,16 +421,9 @@ public class AisConsentServiceInternalTest {
             .thenReturn(INSTANCE_ID);
         when(aisConsentMocked.getExternalId())
             .thenReturn(EXTERNAL_CONSENT_ID);
-        when(cmsPsuService.isPsuDataListEqual(psuDataList, anotherPsuDataList))
-            .thenReturn(false);
 
         AisConsent oldConsent = buildConsent(EXTERNAL_CONSENT_ID_NOT_EXIST, Collections.singletonList(anotherPsuDataMocked));
         List<AisConsent> oldConsents = Collections.singletonList(oldConsent);
-        when(aisConsentRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, AUTHORISATION_ID, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.VALID)))
-            .thenReturn(oldConsents);
-
-        when(aisConsentRepository.save(oldConsents))
-            .thenReturn(oldConsents);
 
         // When
         boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);

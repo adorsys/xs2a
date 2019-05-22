@@ -40,7 +40,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -55,9 +55,7 @@ import java.util.List;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountControllerTest {
@@ -95,7 +93,7 @@ public class AccountControllerTest {
         when(accountService.getAccountList(anyString(), anyBoolean(), anyString())).thenReturn(getXs2aAccountListHolder());
         when(accountService.getBalancesReport(anyString(), anyString(), anyString())).thenReturn(getBalanceReport());
         when(accountService.getAccountDetails(anyString(), any(), anyBoolean(), anyString())).thenReturn(getXs2aAccountDetailsHolder());
-        when(accountService.getTransactionDetails(anyString(), anyString(), anyString(), anyString())).thenReturn(buildTransaction());
+        when(accountService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), eq(REQUEST_URI))).thenReturn(buildTransaction());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
     }
 
@@ -231,11 +229,11 @@ public class AccountControllerTest {
         ;
 
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(anyString(), anyString(), anyString(), anyBoolean(), any(), any(), any(), any());
+            .when(accountService).getTransactionsReportByPeriod(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), any(), eq(REQUEST_URI));
 
         //When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
-                                                                                    null, null, null, null, "both", false,
+                                                                                    null, CONSENT_ID, null, null, "both", false,
                                                                                     false, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
@@ -255,12 +253,12 @@ public class AccountControllerTest {
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().fail(MESSAGE_ERROR_AIS_404).body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(anyString(), anyString(), anyString(), anyBoolean(), any(), any(), any(), any());
+            .when(accountService).getTransactionsReportByPeriod(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), any(), eq(REQUEST_URI));
 
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
-                                                                                    null, null, null, null, "both", false,
+                                                                                    null, CONSENT_ID, null, null, "both", false,
                                                                                     false, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
@@ -281,12 +279,12 @@ public class AccountControllerTest {
         transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
         transactionsReport.setResponseContentType("application/json");
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(anyString(), anyString(), anyString(), anyBoolean(), any(), any(), any(), any());
+            .when(accountService).getTransactionsReportByPeriod(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), any(), eq(REQUEST_URI));
 
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
-                                                                                    null, null, null, null, "both", false,
+                                                                                    null, CONSENT_ID, null, null, "both", false,
                                                                                     false, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
@@ -317,7 +315,7 @@ public class AccountControllerTest {
     @Test
     public void getTransactionDetails1_success() throws IOException {
         // Given
-        when(accountService.getTransactionDetails(anyString(), anyString(), anyString(), anyString())).thenReturn(buildTransactionWithError(MESSAGE_ERROR_AIS_404));
+        when(accountService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), eq(REQUEST_URI))).thenReturn(buildTransactionWithError(MESSAGE_ERROR_AIS_404));
         doReturn(new ResponseEntity<>(buildAccountReportWithError(ACCOUNT_REPORT_SOURCE, MESSAGE_ERROR_AIS_404).getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
 

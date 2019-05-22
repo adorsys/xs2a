@@ -42,7 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.UUID;
 
@@ -84,9 +84,6 @@ public class CommonDecoupledAisServiceTest {
 
     @Before
     public void setUp() {
-        when(request.getPsuData())
-            .thenReturn(PSU_ID_DATA);
-
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
 

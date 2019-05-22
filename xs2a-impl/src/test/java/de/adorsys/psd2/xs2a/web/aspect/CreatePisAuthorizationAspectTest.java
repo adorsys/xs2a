@@ -32,14 +32,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -79,7 +77,6 @@ public class CreatePisAuthorizationAspectTest {
     @Test
     public void createPisAuthorizationAspect_successOnCreatePisAuthorization() {
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
-        when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(null);
 
         responseObject = ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                              .body(createPisAuthorisationResponse)
@@ -95,7 +92,6 @@ public class CreatePisAuthorizationAspectTest {
     @Test
     public void updatePisAuthorizationAspect_successOnUpdateAuthorization() {
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
-        when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(null);
 
         responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                              .body(updatePisCommonPaymentPsuDataResponse)

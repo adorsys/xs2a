@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -40,7 +40,6 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,6 +82,13 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByTpp_success() {
         // Given
+        when(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(
+            TPP_AUTHORISATION_NUMBER,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            psuIdData,
+            DEFAULT_SERVICE_INSTANCE_ID
+        )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(aisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildAisConsent()));
@@ -104,10 +110,6 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
-        //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
-
         // When
         Collection<AisAccountConsent> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
@@ -136,6 +138,11 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByPsu_success() {
         // Given
+        when(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            DEFAULT_SERVICE_INSTANCE_ID
+        )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(aisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildAisConsent()));
@@ -156,10 +163,6 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByPsu_failure_wrongPsuIdData() {
         // Given
-        //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
-
         // When
         Collection<AisAccountConsent> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByPsu(wrongPsuIdData, CREATION_DATE_FROM,
@@ -202,6 +205,11 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByAccountId_success() {
         // Given
+        when(aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            DEFAULT_SERVICE_INSTANCE_ID
+        )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(aisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildAisConsent()));
@@ -222,10 +230,6 @@ public class CmsAspspAisExportServiceInternalTest {
     @Test
     public void exportConsentsByAccountId_failure_wrongAspspAccountId() {
         // Given
-        //noinspection unchecked
-        when(aisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.emptyList());
-
         // When
         Collection<AisAccountConsent> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
