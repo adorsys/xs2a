@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,8 +42,7 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @ActiveProfiles("integration-test")
 @RunWith(SpringRunner.class)
@@ -140,7 +138,6 @@ public class PiisConsentIT {
         selectors.add(createConsentAndGetSelector(AccountReferenceType.PAN, "1111222233334444"));
         selectors.add(createConsentAndGetSelector(AccountReferenceType.MASKED_PAN, "111122xxxxxx4444"));
         selectors.add(createConsentAndGetSelector(AccountReferenceType.MSISDN, "4905123123"));
-        flushAndClearPersistenceContext();
 
         selectors.forEach(selector -> {
             // When
@@ -148,7 +145,7 @@ public class PiisConsentIT {
             // Then
             assertEquals(1, piisConsents.size());
             AccountReference account = piisConsents.get(0).getAccount();
-            Assertions.assertThat(account).isNotNull();
+            assertNotNull(account);
             assertEquals(selector, account.getUsedAccountReferenceSelector());
         });
     }

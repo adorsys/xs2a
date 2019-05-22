@@ -69,15 +69,6 @@ public class PiisConsentServiceInternalTest {
 
     @Before
     public void setUp() {
-        when(piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(CURRENCY, SELECTOR_IBAN))
-            .thenReturn(SPECIFICATION_IBAN);
-        when(piisConsentRepository.findAll(SPECIFICATION_IBAN))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
-        when(piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(CURRENCY, SELECTOR_WRONG_IBAN))
-            .thenReturn(SPECIFICATION_WRONG_IBAN);
-        when(piisConsentRepository.findAll(SPECIFICATION_WRONG_IBAN))
-            .thenReturn(Collections.emptyList());
-
         List<PiisConsentEntity> validConsentEntities = Collections.singletonList(buildPiisConsentEntity());
         List<PiisConsent> validConsents = Collections.singletonList(buildPiisConsent());
         when(piisConsentMapper.mapToPiisConsentList(validConsentEntities)).thenReturn(validConsents);
@@ -86,6 +77,14 @@ public class PiisConsentServiceInternalTest {
     @Test
     public void getPiisConsentListByAccountIdentifier_Success() {
         // Given
+        when(piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(CURRENCY, SELECTOR_IBAN))
+            .thenReturn(SPECIFICATION_IBAN);
+        when(piisConsentRepository.findAll(SPECIFICATION_IBAN))
+            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
+        when(piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(CURRENCY, SELECTOR_WRONG_IBAN))
+            .thenReturn(SPECIFICATION_WRONG_IBAN);
+        when(piisConsentRepository.findAll(SPECIFICATION_WRONG_IBAN))
+            .thenReturn(Collections.emptyList());
         PiisConsent expected = buildPiisConsent();
 
         // When
