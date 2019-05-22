@@ -56,8 +56,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -104,8 +102,6 @@ public class CreateBulkPaymentServiceTest {
 
     @Before
     public void init() {
-        doNothing()
-            .when(initialSpiAspspConsentDataProvider).saveWith(any());
         BulkPaymentInitiationResponse buildBulkPaymentInitiationResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
 
         when(scaPaymentService.createBulkPayment(buildBulkPayment(), TPP_INFO, "sepa-credit-transfers", PSU_DATA)).thenReturn(buildBulkPaymentInitiationResponse);
@@ -195,7 +191,6 @@ public class CreateBulkPaymentServiceTest {
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody()).isEqualTo(expectedResponse);
     }
-
 
     private static BulkPayment buildBulkPayment() {
         BulkPayment payment = new BulkPayment();

@@ -161,7 +161,6 @@ public class CreatePeriodicPaymentTest {
         assertThat(actualResponse.getError().getTppMessage().getText()).isEqualTo(errorMessagesString);
     }
 
-
     @Test
     public void createPayment_emptyPaymentId_fail() {
         // Given
@@ -212,7 +211,6 @@ public class CreatePeriodicPaymentTest {
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.PAYMENT_FAILED);
     }
-
 
     private static PeriodicPayment buildPeriodicPayment() {
         PeriodicPayment payment = new PeriodicPayment();
