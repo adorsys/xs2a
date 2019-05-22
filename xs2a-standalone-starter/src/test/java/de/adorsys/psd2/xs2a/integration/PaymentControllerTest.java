@@ -62,8 +62,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -200,8 +199,8 @@ public class PaymentControllerTest {
             .willReturn(Optional.of(ScaStatus.RECEIVED));
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(Optional.of(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponse()));
-        when(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(any(String.class), eq(CmsAuthorisationType.CANCELLED)))
-            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(SCA_APPROACH)));
+        given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(any(String.class), eq(CmsAuthorisationType.CANCELLED)))
+            .willReturn(Optional.of(new AuthorisationScaApproachResponse(SCA_APPROACH)));
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildGetPaymentCancellationAuthorisationUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID));
         requestBuilder.headers(httpHeadersExplicit);

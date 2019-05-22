@@ -53,7 +53,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,7 +63,6 @@ public class AisAuthorisationServiceInternalTest {
     private static final String PSU_ID = "psu-id-1";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final PsuData PSU_DATA = new PsuData(PSU_ID, null, null, null);
-    private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;

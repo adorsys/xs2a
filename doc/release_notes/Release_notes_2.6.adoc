@@ -30,7 +30,12 @@ instead of `getRateContract`.
 From now on, the response is `403 CONSENT_UNKNOWN` on request ("Delete an Account Information Consent Object" DELETE `/v1/consents/{consentId}`) when consent was not found.
 
 == Counting frequencyPerDay only for one-off consent or for recurring consent without PSU IP address
+
 From now on, we don't count the number of consent usages for recurring consent if the `PSU-IP-Address` header is present in the request.
+
+== Updated mockito-core version to 2.27.0
+
+Maven dependency version of `mockito-core` was updated to 2.27.0 from 1.10.19. Deprecated import package of `MockitoJUnitRunner` was changed from `org.mockito.runners` to `org.mockito.junit`.
 
 == PSU-IP-Address header is mandatory in AIS consent creation request
 

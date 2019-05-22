@@ -60,7 +60,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -71,7 +70,6 @@ public class AisConsentServiceInternalTest {
     private static final String PSU_ID = "psu-id-1";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null);
     private static final PsuData PSU_DATA = new PsuData(PSU_ID, null, null, null);
-    private static final byte[] ENCRYPTED_CONSENT_DATA = "test data".getBytes();
     private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String AUTHORISATION_NUMBER = "Test Authorisation Number";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -125,6 +123,7 @@ public class AisConsentServiceInternalTest {
         aisConsentAuthorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, ScaStatus.RECEIVED);
         aisConsentAuthorisationList.add(aisConsentAuthorisation);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
+        when(tppInfoMapper.mapToTppInfoEntity(buildTppInfo())).thenReturn(buildTppInfoEntity());
         AisConsentAction action = buildAisConsentAction();
         when(aisConsentActionRepository.save(action)).thenReturn(action);
     }
@@ -350,7 +349,6 @@ public class AisConsentServiceInternalTest {
 
         when(aisConsentMocked.getExternalId())
             .thenReturn(EXTERNAL_CONSENT_ID);
-
 
         boolean result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
 

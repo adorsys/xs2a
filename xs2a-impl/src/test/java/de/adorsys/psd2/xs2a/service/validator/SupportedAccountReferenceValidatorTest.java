@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -99,6 +99,8 @@ public class SupportedAccountReferenceValidatorTest {
 
     @Test
     public void validate_emptyCollection_shouldReturnValid() {
+        // Given
+
         //When
         ValidationResult validationResult = supportedAccountReferenceValidator.validate(Collections.emptyList());
 

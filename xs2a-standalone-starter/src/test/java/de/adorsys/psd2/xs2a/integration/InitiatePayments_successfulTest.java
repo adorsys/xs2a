@@ -77,7 +77,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -107,7 +107,6 @@ public class InitiatePayments_successfulTest {
 
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final String ASPSP_ACCOUNT_ID = "33333-33333";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 

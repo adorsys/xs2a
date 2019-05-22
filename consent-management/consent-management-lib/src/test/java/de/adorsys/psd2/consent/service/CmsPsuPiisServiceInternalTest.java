@@ -41,7 +41,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -80,6 +80,8 @@ public class CmsPsuPiisServiceInternalTest {
 
     @Test
     public void getConsent_success() {
+        when(piisConsentEntitySpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findOne(any())).thenReturn(Optional.ofNullable(piisConsentEntity));
 
@@ -103,6 +105,8 @@ public class CmsPsuPiisServiceInternalTest {
     @Test
     public void getConsentsForPsu_success() {
         // Given
+        when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(piisConsentEntity));
         // When

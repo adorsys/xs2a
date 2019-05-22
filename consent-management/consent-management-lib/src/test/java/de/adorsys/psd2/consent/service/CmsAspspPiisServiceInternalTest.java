@@ -41,6 +41,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -51,7 +52,6 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 
@@ -141,9 +141,11 @@ public class CmsAspspPiisServiceInternalTest {
         PsuIdData psuIdData = buildPsuIdData();
         AccountReference accountReference = buildAccountReference();
 
+        when(piisConsentEntitySpecification.byPsuIdDataAndTppInfoAndAccountReference(psuIdData, tppInfo, accountReference))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         List<PiisConsentEntity> piisConsentEntities = Arrays.asList(buildPiisConsentEntity(), buildPiisConsentEntity());
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any())).thenReturn(piisConsentEntities);
+        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(piisConsentEntities);
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<PiisConsentEntity>> argumentCaptor = ArgumentCaptor.forClass((Class) List.class);
@@ -324,9 +326,11 @@ public class CmsAspspPiisServiceInternalTest {
     @Test
     public void getConsentsForPsu_Success() {
         // Given
-        //noinspection unchecked
-        when(piisConsentRepository.findAll(any())).thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PsuIdData psuIdData = buildPsuIdData(PSU_ID);
+        when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(piisConsentRepository.findAll(any(Specification.class)))
+            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expected = buildPiisConsent();
 
         // When
@@ -356,8 +360,10 @@ public class CmsAspspPiisServiceInternalTest {
     @Test
     public void terminateConsent_Success() {
         // Given
+        when(piisConsentEntitySpecification.byConsentIdAndInstanceId(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(piisConsentRepository.findOne(any())).thenReturn(Optional.ofNullable(buildPiisConsentEntity()));
+        when(piisConsentRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(buildPiisConsentEntity()));
         ArgumentCaptor<PiisConsentEntity> argumentCaptor = ArgumentCaptor.forClass(PiisConsentEntity.class);
 
         // When

@@ -60,8 +60,8 @@ import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyListOf;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -230,12 +230,6 @@ public class PisCancellationScaStartAuthorisationStageTest {
                    .payload(payload)
                    .aspspConsentData(ASPSP_CONSENT_DATA)
                    .success();
-    }
-
-    private <T> SpiResponse<T> buildFailureSpiResponse(T payload) {
-        return SpiResponse.<T>builder()
-                   .aspspConsentData(ASPSP_CONSENT_DATA)
-                   .fail(FAILURE_STATUS);
     }
 
     private SpiSinglePayment buildSpiPayment() {

@@ -29,13 +29,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventServiceInternalTest {
     private static final long EVENT_ID = 100;
-    private static final String DECRYPTED_ID = "0310318d-c87d-405b-bd2b-166af5124e1f";
 
     @InjectMocks
     private EventServiceInternal eventServiceInternal;
