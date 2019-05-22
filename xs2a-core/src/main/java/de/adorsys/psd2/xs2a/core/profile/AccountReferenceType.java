@@ -16,10 +16,42 @@
 
 package de.adorsys.psd2.xs2a.core.profile;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 public enum AccountReferenceType {
-    IBAN,
-    BBAN,
-    PAN,
-    MASKED_PAN,
-    MSISDN;
+    IBAN("iban"),
+    BBAN("bban"),
+    PAN("pan"),
+    MASKED_PAN("maskedPan"),
+    MSISDN("msisdn");
+
+    private static final Map<String, AccountReferenceType> container = new HashMap<>();
+
+    private String value;
+
+    static {
+        for (AccountReferenceType type : values()) {
+            container.put(type.getValue(), type);
+        }
+    }
+
+    @JsonCreator
+    AccountReferenceType(String value) {
+        this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    public static Optional<AccountReferenceType> getByValue(String name) {
+        return Optional.ofNullable(container.get(name));
+    }
 }
+
