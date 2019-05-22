@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.SupportedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +48,7 @@ import java.util.HashSet;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyCollectionOf;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,13 +67,16 @@ public class CreatePaymentValidatorTest {
     private static final AccountReference CREDITOR_ACCOUNT =
         new AccountReference(AccountReferenceType.IBAN, "debtor account", Currency.getInstance("EUR"));
 
+    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+
     @Mock
     private PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
     @Mock
     private SupportedAccountReferenceValidator supportedAccountReferenceValidator;
     @Mock
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
-
+    @Mock
+    private PaymentTypeAndProductValidator paymentProductAndTypeValidator;
 
     @InjectMocks
     private CreatePaymentValidator createPaymentValidator;
@@ -83,6 +86,8 @@ public class CreatePaymentValidatorTest {
         when(supportedAccountReferenceValidator.validate(anyCollectionOf(AccountReference.class)))
             .thenReturn(ValidationResult.valid());
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+            .thenReturn(ValidationResult.valid());
     }
 
     @Test
@@ -201,7 +206,7 @@ public class CreatePaymentValidatorTest {
     }
 
     private PaymentInitiationParameters buildPaymentInitiationParameters(PsuIdData psuIdData, PaymentType paymentType) {
-        return buildPaymentInitiationParameters(psuIdData, paymentType, null);
+        return buildPaymentInitiationParameters(psuIdData, paymentType, PAYMENT_PRODUCT);
     }
 
     private PaymentInitiationParameters buildPaymentInitiationParameters(PsuIdData psuIdData, PaymentType paymentType, String paymentProduct) {

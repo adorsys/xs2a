@@ -20,9 +20,9 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class MethodValidatorControllerTest {
 
@@ -31,23 +31,22 @@ public class MethodValidatorControllerTest {
         List<MethodValidator> methodValidators = new ArrayList<>();
         methodValidators.add(new ConsentMethodValidatorImpl(null, null));
         methodValidators.add(new PaymentMethodValidatorImpl(null, null));
-        MethodValidatorController controller = new MethodValidatorController(methodValidators);
+        DefaultMethodValidatorImpl defaultMethodValidator = new DefaultMethodValidatorImpl(null);
+        MethodValidatorController controller = new MethodValidatorController(methodValidators, defaultMethodValidator);
 
-        Optional<MethodValidator> methodValidator = controller.getMethod("_createConsent");
-        assertTrue(methodValidator.isPresent());
-        assertTrue(methodValidator.get() instanceof ConsentMethodValidatorImpl);
+        MethodValidator methodValidator = controller.getMethod("_createConsent");
+        assertTrue(methodValidator instanceof ConsentMethodValidatorImpl);
 
         methodValidator = controller.getMethod("_initiatePayment");
-        assertTrue(methodValidator.isPresent());
-        assertTrue(methodValidator.get() instanceof PaymentMethodValidatorImpl);
+        assertTrue(methodValidator instanceof PaymentMethodValidatorImpl);
 
         methodValidator = controller.getMethod("");
-        assertFalse(methodValidator.isPresent());
+        assertTrue(methodValidator instanceof DefaultMethodValidatorImpl);
 
         methodValidator = controller.getMethod(null);
-        assertFalse(methodValidator.isPresent());
+        assertTrue(methodValidator instanceof DefaultMethodValidatorImpl);
 
         methodValidator = controller.getMethod("unknown method");
-        assertFalse(methodValidator.isPresent());
+        assertNotNull(methodValidator);
     }
 }
