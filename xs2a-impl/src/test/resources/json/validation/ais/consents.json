@@ -1,0 +1,26 @@
+{
+  "access": {
+    "accounts": [
+      {
+        "currency": "EUR",
+        "iban": "DE80760700240271232400"
+      }
+    ],
+    "balances": [
+      {
+        "currency": "EUR",
+        "iban": "DE80760700240271232400"
+      }
+    ],
+    "transactions": [
+      {
+        "currency": "EUR",
+        "iban": "DE80760700240271232400"
+      }
+    ]
+  },
+  "combinedServiceIndicator": false,
+  "frequencyPerDay": 100,
+  "recurringIndicator": true,
+  "validUntil": "2019-10-10"
+}
