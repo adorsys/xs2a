@@ -81,10 +81,6 @@ public class PiisConsentServiceInternalTest {
             .thenReturn(SPECIFICATION_IBAN);
         when(piisConsentRepository.findAll(SPECIFICATION_IBAN))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
-        when(piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(CURRENCY, SELECTOR_WRONG_IBAN))
-            .thenReturn(SPECIFICATION_WRONG_IBAN);
-        when(piisConsentRepository.findAll(SPECIFICATION_WRONG_IBAN))
-            .thenReturn(Collections.emptyList());
         PiisConsent expected = buildPiisConsent();
 
         // When

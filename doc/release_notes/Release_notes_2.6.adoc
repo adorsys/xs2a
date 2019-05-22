@@ -52,4 +52,5 @@ From now on, attempting to create AIS consent (`POST /v1/consents`) with invalid
 `availableAccounts` properties in `access` property will result in `400 FORMAT_ERROR` being returned in the response.
 
 == Bugfix: Error "NO_PIIS_ACTIVATION" during Funds-Confirmations request was fixed
-Fixed the process of finding account during Funds-Confirmations request (`POST /v1/funds-confirmations`).
+Fixed the process of finding PIIS consents during Funds-Confirmations request (`POST /v1/funds-confirmations`), which caused `NO_PIIS_ACTIVATION` error to be returned in the response.
+This bug appeared only if ASPSP supported PIIS consent(`piisConsentSupported` property set to true in the profile).
