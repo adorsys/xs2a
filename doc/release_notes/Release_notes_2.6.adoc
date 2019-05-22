@@ -32,7 +32,6 @@ From now on, the response is `403 CONSENT_UNKNOWN` on request ("Delete an Accoun
 == Counting frequencyPerDay only for one-off consent or for recurring consent without PSU IP address
 From now on, we don't count the number of consent usages for recurring consent if the `PSU-IP-Address` header is present in the request.
 
-
 == PSU-IP-Address header is mandatory in AIS consent creation request
 
 From now on, TPP must provide `PSU-IP-Address` header in AIS consent creation request.
@@ -41,3 +40,8 @@ From now on, TPP must provide `PSU-IP-Address` header in AIS consent creation re
 
 From now on, XS2A will correctly handle non-default context path in the URL and won't fail with an error on creating
 authorisation.
+
+== Bugfix: AIS consent can be created with invalid `access` tag
+
+From now on, attempting to create AIS consent (`POST /v1/consents`) with invalid values for `allPsd2` or
+`availableAccounts` properties in `access` property will result in `400 FORMAT_ERROR` being returned in the response.

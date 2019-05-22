@@ -80,6 +80,17 @@ public class JsonReader {
     }
 
     /**
+     * @return byte array read from file
+     */
+    public byte[] getBytesFromFile(String fileName) {
+        try {
+            return IOUtils.toByteArray(getResourceAsStream(fileName));
+        } catch (Exception e) {
+            throw new ParseContentJsonReaderException("Exception during reading \'" + fileName + "\' file.");
+        }
+    }
+
+    /**
      * @return serialized object read from String
      */
     public <T> T getObjectFromString(String json, Class<T> name) {

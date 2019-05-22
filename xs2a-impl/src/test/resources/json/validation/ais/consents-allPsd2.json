@@ -1,0 +1,17 @@
+{
+  "access": {
+    "accounts": [
+      {
+        "currency": "EUR",
+        "iban": "DE80760700240271232400"
+      }
+    ],
+    "balances": [],
+    "transactions": [],
+    "allPsd2": "allAccounts"
+  },
+  "combinedServiceIndicator": false,
+  "frequencyPerDay": 10,
+  "recurringIndicator": true,
+  "validUntil": "2019-10-10"
+}
