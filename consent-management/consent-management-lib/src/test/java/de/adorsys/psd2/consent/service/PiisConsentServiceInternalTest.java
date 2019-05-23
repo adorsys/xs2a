@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
@@ -30,7 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -51,6 +53,10 @@ public class PiisConsentServiceInternalTest {
     private static final String PSU_CORPORATE_ID = "Some corporate id";
     private static final String PSU_CORPORATE_ID_TYPE = "Some corporate id type";
     private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
+    private static final AccountReferenceSelector SELECTOR_IBAN = new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN);
+    private static final AccountReferenceSelector SELECTOR_WRONG_IBAN = new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN);
+    private static final Specification<PiisConsentEntity> SPECIFICATION_IBAN = (root, cq, cb) -> null;
+    private static final Specification<PiisConsentEntity> SPECIFICATION_WRONG_IBAN = (root, criteriaQuery, criteriaBuilder) -> null;
 
     @Mock
     private PiisConsentRepository piisConsentRepository;
@@ -58,14 +64,11 @@ public class PiisConsentServiceInternalTest {
     private PiisConsentMapper piisConsentMapper;
     @InjectMocks
     private PiisConsentServiceInternal piisConsentServiceInternal;
+    @Mock
+    private PiisConsentEntitySpecification piisConsentEntitySpecification;
 
     @Before
     public void setUp() {
-        when(piisConsentRepository.findAllByAccountsIbanAndAccountsCurrency(IBAN, CURRENCY))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
-        when(piisConsentRepository.findAllByAccountsIbanAndAccountsCurrency(WRONG_IBAN, CURRENCY))
-            .thenReturn(Collections.emptyList());
-
         List<PiisConsentEntity> validConsentEntities = Collections.singletonList(buildPiisConsentEntity());
         List<PiisConsent> validConsents = Collections.singletonList(buildPiisConsent());
         when(piisConsentMapper.mapToPiisConsentList(validConsentEntities)).thenReturn(validConsents);
@@ -74,6 +77,10 @@ public class PiisConsentServiceInternalTest {
     @Test
     public void getPiisConsentListByAccountIdentifier_Success() {
         // Given
+        when(piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(CURRENCY, SELECTOR_IBAN))
+            .thenReturn(SPECIFICATION_IBAN);
+        when(piisConsentRepository.findAll(SPECIFICATION_IBAN))
+            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expected = buildPiisConsent();
 
         // When

@@ -17,28 +17,13 @@
 package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface PiisConsentRepository extends Xs2aCrudRepository<PiisConsentEntity, Long>, JpaSpecificationExecutor<PiisConsentEntity> {
     Optional<PiisConsentEntity> findByExternalId(String externalId);
-
-    Optional<PiisConsentEntity> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
-
-    List<PiisConsentEntity> findAllByAccountsIbanAndAccountsCurrency(String iban, Currency currency);
-
-    List<PiisConsentEntity> findAllByAccountsBbanAndAccountsCurrency(String bban, Currency currency);
-
-    List<PiisConsentEntity> findAllByAccountsMsisdnAndAccountsCurrency(String msisdn, Currency currency);
-
-    List<PiisConsentEntity> findAllByAccountsMaskedPanAndAccountsCurrency(String maskedPan, Currency currency);
-
-    List<PiisConsentEntity> findAllByAccountsPanAndAccountsCurrency(String pan, Currency currency);
 
     List<PiisConsentEntity> findByPsuDataPsuId(String psuId);
 }
