@@ -1,0 +1,4241 @@
+{
+	"info": {
+		"_postman_id": "36b14262-90fe-4db4-a6f5-5fb0177397cd",
+		"name": "PIS Payment requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Single",
+			"item": [
+				{
+					"name": "Single payment initiation EMBEDDED 0 SCA methods",
+					"item": [
+						{
+							"name": "0 Set embedded SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1 Payment initiation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Payment Id exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.test(\"Transaction Fee Indicator exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"msisdn\": \"+49(0)911 360698-0\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.00\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"msisdn\": \"+49(0)911 360698-0\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"city\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postalCode\": \"90543\",\n      \"street\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "2 Start the authorisation process for a payment initiation",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+										"exec": [
+											"pm.globals.unset(\"authorisation_id\");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+											"",
+											"pm.globals.set(\"authorisation_id\", authorisationId);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus \", () => {",
+											"    pm.expect(jsonData).to.have.property('scaStatus');",
+											"    const scaStatus = jsonData.scaStatus;",
+											"    pm.expect(scaStatus).to.eql('psuIdentified');",
+											"});",
+											"",
+											"pm.test(\"Links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+							},
+							"response": []
+						},
+						{
+							"name": "3 Update PSU data for payment initiation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
+										"exec": [
+											"pm.test('Status code is 200', () => {",
+											"   pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is finalised', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "4 Get Payment Initiation Authorisation Sub-Resources Request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "24a05f20-8df4-406f-9638-7694ffe5979c",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Read a list of all authorisation subresources IDs which have been created.  This function returns an array of hyperlinks to all generated authorisation sub-resources. "
+							},
+							"response": []
+						},
+						{
+							"name": "5 Read the SCA Status of the payment authorisation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ec7ce7b6-3c7d-4f8e-8f05-fea52fac37e3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This method returns the SCA status of a payment initiation's authorisation sub-resource. "
+							},
+							"response": []
+						},
+						{
+							"name": "6 Get Payment Information",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a30ec669-f747-467d-a73c-06e31f79f35d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Mandated fields exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('debtorAccount');",
+											"    pm.expect(jsonData).to.have.property('instructedAmount');",
+											"    pm.expect(jsonData).to.have.property('creditorAccount');",
+											"    pm.expect(jsonData).to.have.property('creditorName');",
+											"",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml, multipart/form-data"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								},
+								"description": "Returns the content of a payment object"
+							},
+							"response": []
+						},
+						{
+							"name": "7 Payment initiation status request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Test transaction status\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionStatus');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/status",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"status"
+									]
+								},
+								"description": "Check the transaction status of a payment initiation."
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Single payment initiation EMBEDDED 1 SCA method",
+					"item": [
+						{
+							"name": "0 Set embedded SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1 Payment initiation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Payment Id exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.test(\"Transaction Fee Indicator exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"msisdn\": \"+49(0)911 360698-0\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.00\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"msisdn\": \"+49(0)911 360698-0\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"city\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postalCode\": \"90543\",\n      \"street\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "2 Start the authorisation process for a payment initiation",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+										"exec": [
+											"pm.globals.unset(\"authorisation_id\");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+											"",
+											"pm.globals.set(\"authorisation_id\", authorisationId);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus \", () => {",
+											"    pm.expect(jsonData).to.have.property('scaStatus');",
+											"    const scaStatus = jsonData.scaStatus;",
+											"    pm.expect(scaStatus).to.eql('psuIdentified');",
+											"});",
+											"",
+											"pm.test(\"Links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+							},
+							"response": []
+						},
+						{
+							"name": "3 Update PSU data for payment initiation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is scaMethodSelected', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('scaMethodSelected');",
+											"});",
+											"",
+											"pm.test(\"Select authoriseTransaction method link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('authoriseTransaction');",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"});",
+											"",
+											"pm.test(\"Select chosenScaMethod exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('chosenScaMethod');",
+											"    const chosenScaMethod = jsonData.chosenScaMethod;",
+											"    ",
+											"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
+											"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS_OTP');",
+											"    ",
+											"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
+											"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
+											"});",
+											"",
+											"pm.test(\"Challenge data exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('challengeData');",
+											"    const challengeData = jsonData.challengeData;",
+											"    ",
+											"    pm.expect(challengeData).to.have.property('data');",
+											"    pm.expect(challengeData).to.have.property('imageLink');",
+											"    pm.expect(challengeData).to.have.property('otpMaxLength');",
+											"    pm.expect(challengeData).to.have.property('additionalInformation');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "4 Update PSU data for payment initiation finalized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d693df74-3b1a-40b9-a82f-f65b91a356d5",
+										"exec": [
+											"pm.test('Status code is 200', () => {",
+											"   pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is finalised', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"scaAuthenticationData\": \"EPtmTa\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "5 Get Payment Initiation Authorisation Sub-Resources Request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ef4667ac-3dac-4708-9349-51c833ff2ad2",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Read a list of all authorisation subresources IDs which have been created.  This function returns an array of hyperlinks to all generated authorisation sub-resources. "
+							},
+							"response": []
+						},
+						{
+							"name": "6 Read the SCA Status of the payment authorisation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ec7ce7b6-3c7d-4f8e-8f05-fea52fac37e3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This method returns the SCA status of a payment initiation's authorisation sub-resource. "
+							},
+							"response": []
+						},
+						{
+							"name": "7 Get Payment Information",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a30ec669-f747-467d-a73c-06e31f79f35d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Mandated fields exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('debtorAccount');",
+											"    pm.expect(jsonData).to.have.property('instructedAmount');",
+											"    pm.expect(jsonData).to.have.property('creditorAccount');",
+											"    pm.expect(jsonData).to.have.property('creditorName');",
+											"",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml, multipart/form-data"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								},
+								"description": "Returns the content of a payment object"
+							},
+							"response": []
+						},
+						{
+							"name": "8 Payment initiation status request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Test transaction status\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionStatus');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/status",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"status"
+									]
+								},
+								"description": "Check the transaction status of a payment initiation."
+							},
+							"response": []
+						}
+					],
+					"description": "Manual TAN copying required",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0a455e1a-829a-4002-a43b-31ad1347b3ed",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "08bad948-6b5e-4c65-b92a-851efd0c92bd",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Single payment initiation EMBEDDED multiple SCA methods",
+					"item": [
+						{
+							"name": "0. Set embedded SCA approac",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1 Payment initiation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Payment Id exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.test(\"Transaction Fee Indicator exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_multiple}}"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"msisdn\": \"+49(0)911 360698-0\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.00\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"msisdn\": \"+49(0)911 360698-0\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"city\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postalCode\": \"90543\",\n      \"street\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "2 Start the authorisation process for a payment initiation",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+										"exec": [
+											"pm.globals.unset(\"authorisation_id\");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+											"",
+											"pm.globals.set(\"authorisation_id\", authorisationId);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus \", () => {",
+											"    pm.expect(jsonData).to.have.property('scaStatus');",
+											"    const scaStatus = jsonData.scaStatus;",
+											"    pm.expect(scaStatus).to.eql('psuIdentified');",
+											"});",
+											"",
+											"pm.test(\"Links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_multiple}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+							},
+							"response": []
+						},
+						{
+							"name": "3 Update PSU data for payment initiation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
+										"exec": [
+											"pm.test('Status code is 200', () => {",
+											"   pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is psuAuthenticated', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('psuAuthenticated');",
+											"});",
+											"",
+											"pm.test(\"SelectAuthenticationMethod method link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('selectAuthenticationMethod');",
+											"});",
+											"",
+											"pm.test(\"scaMethods exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('scaMethods');",
+											"    const scaMethods = jsonData.scaMethods;",
+											"    ",
+											"    pm.expect(scaMethods.length).to.eql(2);",
+											"    ",
+											"    pm.expect(scaMethods[0]).to.have.property('authenticationType');",
+											"    pm.expect(scaMethods[0].authenticationType).to.eql('SMS_OTP');",
+											"",
+											"    pm.expect(scaMethods[0]).to.have.property('authenticationMethodId');",
+											"    pm.expect(scaMethods[0].authenticationMethodId).to.eql('sms');",
+											"    ",
+											"    pm.expect(scaMethods[1]).to.have.property('authenticationType');",
+											"    pm.expect(scaMethods[1].authenticationType).to.eql('PUSH_OTP');",
+											"    ",
+											"    pm.expect(scaMethods[1]).to.have.property('authenticationMethodId');",
+											"    pm.expect(scaMethods[1].authenticationMethodId).to.eql('push');",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_multiple}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "4 Update PSU data for payment initiation chose scaMethod",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "06e976dc-e44c-4b1c-bb72-abdf8230058c",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is scaMethodSelected', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('scaMethodSelected');",
+											"});",
+											"",
+											"pm.test(\"Select authoriseTransaction method link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('authoriseTransaction');",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"});",
+											"",
+											"pm.test(\"Select chosenScaMethod exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('chosenScaMethod');",
+											"    const chosenScaMethod = jsonData.chosenScaMethod;",
+											"    ",
+											"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
+											"    pm.expect(chosenScaMethod.authenticationType).to.eql('SMS_OTP');",
+											"    ",
+											"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
+											"    pm.expect(chosenScaMethod.authenticationMethodId).to.eql('sms');",
+											"});",
+											"",
+											"pm.test(\"Challenge data exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('challengeData');",
+											"    const challengeData = jsonData.challengeData;",
+											"    ",
+											"    pm.expect(challengeData).to.have.property('data');",
+											"    pm.expect(challengeData).to.have.property('imageLink');",
+											"    pm.expect(challengeData).to.have.property('otpMaxLength');",
+											"    pm.expect(challengeData).to.have.property('additionalInformation');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_multiple}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"authenticationMethodId\": \"sms\"        \n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "5 Update PSU data for payment initiation finalized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d693df74-3b1a-40b9-a82f-f65b91a356d5",
+										"exec": [
+											"pm.test('Status code is 200', () => {",
+											"   pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is finalised', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_multiple}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"scaAuthenticationData\": \"5uTmOJ\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "6 Get Payment Initiation Authorisation Sub-Resources Request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f3e03308-7fd2-47cd-96bb-9d187a805961",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Read a list of all authorisation subresources IDs which have been created.  This function returns an array of hyperlinks to all generated authorisation sub-resources. "
+							},
+							"response": []
+						},
+						{
+							"name": "7 Read the SCA Status of the payment authorisation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ec7ce7b6-3c7d-4f8e-8f05-fea52fac37e3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This method returns the SCA status of a payment initiation's authorisation sub-resource. "
+							},
+							"response": []
+						},
+						{
+							"name": "8 Get Payment Information",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a30ec669-f747-467d-a73c-06e31f79f35d",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Mandated fields exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('debtorAccount');",
+											"    pm.expect(jsonData).to.have.property('instructedAmount');",
+											"    pm.expect(jsonData).to.have.property('creditorAccount');",
+											"    pm.expect(jsonData).to.have.property('creditorName');",
+											"",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml, multipart/form-data"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								},
+								"description": "Returns the content of a payment object"
+							},
+							"response": []
+						},
+						{
+							"name": "9 Payment initiation status request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Test transaction status\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionStatus');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/status",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"status"
+									]
+								},
+								"description": "Check the transaction status of a payment initiation."
+							},
+							"response": []
+						}
+					],
+					"description": "Manual TAN copying required",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9a30e55e-4a44-4b65-81f6-a9dffad3b43f",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "07797f9b-330b-4339-9008-dab36c8e22a0",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Single payment cancellation EMBEDDED 0 SCA methods",
+					"item": [
+						{
+							"name": "0. Set embedded SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1. Payment initiation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "96d686a3-5f56-4cd2-b043-50dc3bf36d7c",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Payment Id exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.test(\"Transaction Fee Indicator exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "b4cbc456-5fd9-4fd5-a8cc-c601b228c824",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true",
+										"type": "text"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "2. Cancel payment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Transaction Status exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionStatus', 'CANC');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Cancel payment again - should return error",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"const jsonData = pm.response.json().tppMessages[0];",
+											"",
+											"pm.test(\"Transaction Status exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"type": "text",
+										"value": "true",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Single payment cancellation EMBEDDED 1 SCA method",
+					"item": [
+						{
+							"name": "0 Set embedded SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1. Payment initiation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "96d686a3-5f56-4cd2-b043-50dc3bf36d7c",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Payment Id exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.test(\"Transaction Fee Indicator exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "b4cbc456-5fd9-4fd5-a8cc-c601b228c824",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true",
+										"type": "text"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "2. Cancel payment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "56e8cdd1-748b-4146-adc7-20fff4f56a4f",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Transaction Status exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionStatus', 'CANC');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Cancel payment again - should return error Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b891d5cb-5fba-410f-9793-cc40df8bb179",
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"const jsonData = pm.response.json().tppMessages[0];",
+											"",
+											"pm.test(\"Transaction Status exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('code', 'RESOURCE_BLOCKED');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"type": "text",
+										"value": "true",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Single payment cancellation EMBEDDED multiple SCA methods",
+					"item": [
+						{
+							"name": "0. Set embedded SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1. Payment initiation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "96d686a3-5f56-4cd2-b043-50dc3bf36d7c",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Payment Id exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.test(\"Transaction Fee Indicator exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "b4cbc456-5fd9-4fd5-a8cc-c601b228c824",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true",
+										"type": "text"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_multiple}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 0,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"city\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postalCode\": 90431,\n  \"street\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "2. Cancel payment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8fbdf7b5-d69d-458e-ad0f-b7d67134ab03",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Transaction Status exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionStatus', 'CANC');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Single payment cancellation redirect URL expiration",
+					"item": [
+						{
+							"name": "1. Payment initiation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "96d686a3-5f56-4cd2-b043-50dc3bf36d7c",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Payment Id exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "b4cbc456-5fd9-4fd5-a8cc-c601b228c824",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true",
+										"type": "text"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Redirect-URI",
+										"value": "TPP-Redirect-URI",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Nok-Redirect-URI",
+										"value": "TPP-Nok-Redirect-URI",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"DE89370400440532013000\"\n },\n\"creditorName\": \"Telekom\",\n\"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Start cancellation authorisation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1eddaafd-18cd-4244-a860-794ddabe95a4",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"// const authorisationId = jsonData.links.startAuthorisationWithPsuAuthentication.split('/').pop();",
+											"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+											"",
+											"pm.globals.set(\"authorisation_id\", authorisationId);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus \", () => {",
+											"    pm.expect(jsonData).to.have.property('scaStatus');",
+											"    const scaStatus = jsonData.scaStatus;",
+											"    pm.expect(scaStatus).to.eql('psuIdentified');",
+											"});",
+											"",
+											"pm.test(\"Links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}/cancellation-authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"cancellation-authorisations"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Get payment by redirect id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "instance-id",
+										"value": "UNDEFINED",
+										"type": "text"
+									},
+									{
+										"key": "psu-id",
+										"value": "{{psu_id_none}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment//cancellation/redirect/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_cms}}"
+									],
+									"path": [
+										"psu-api",
+										"v1",
+										"payment",
+										"",
+										"cancellation",
+										"redirect",
+										"{{authorisation_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Bulk",
+			"item": [
+				{
+					"name": "Bulk payment initiation EMBEDDED 0 SCA methods",
+					"item": [
+						{
+							"name": "0 Set embedded SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1 Payment initiation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Payment Id exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.test(\"Transaction Fee Indicator exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2020-02-02\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE52500105173911841934\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE15500105172295759744\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"56\",\n            \"city\": \"Nürnberg\",\n            \"country\": \"DE\",\n            \"postalCode\": \"90543\",\n            \"street\": \"WBG Straße\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE03500105172351985719\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"74\",\n            \"city\": \"Dresden\",\n            \"country\": \"DE\",\n            \"postalCode\": \"01067\",\n            \"street\": \"Kaisergasse\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"bulk-payments",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "2 Start the authorisation process for a payment initiation",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+										"exec": [
+											"pm.globals.unset(\"authorisation_id\");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+											"",
+											"pm.globals.set(\"authorisation_id\", authorisationId);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus \", () => {",
+											"    pm.expect(jsonData).to.have.property('scaStatus');",
+											"    const scaStatus = jsonData.scaStatus;",
+											"    pm.expect(scaStatus).to.eql('psuIdentified');",
+											"});",
+											"",
+											"pm.test(\"Links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}/{{payment_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"bulk-payments",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+							},
+							"response": []
+						},
+						{
+							"name": "3 Update PSU data for payment initiation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
+										"exec": [
+											"pm.test('Status code is 200', () => {",
+											"   pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is finalised', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});",
+											"",
+											"pm.test(\"Select other links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('self');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"bulk-payments",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "4 Get Payment Initiation Authorisation Sub-Resources Request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "24a05f20-8df4-406f-9638-7694ffe5979c",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}/{{payment_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"bulk-payments",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Read a list of all authorisation subresources IDs which have been created.  This function returns an array of hyperlinks to all generated authorisation sub-resources. "
+							},
+							"response": []
+						},
+						{
+							"name": "5 Read the SCA Status of the payment authorisation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ec7ce7b6-3c7d-4f8e-8f05-fea52fac37e3",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"bulk-payments",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This method returns the SCA status of a payment initiation's authorisation sub-resource. "
+							},
+							"response": []
+						},
+						{
+							"name": "6 Get Payment Information",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a30ec669-f747-467d-a73c-06e31f79f35d",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Mandated fields exist\", () => {",
+											"    if (jsonData.payments !== undefined && jsonData.payments.length > 0) {",
+											"        jsonData.payments.forEach((entry) => {",
+											"            pm.expect(entry).to.have.property('instructedAmount');",
+											"            pm.expect(entry).to.have.property('creditorAccount');",
+											"            pm.expect(entry).to.have.property('creditorName');",
+											"        });",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml, multipart/form-data"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"bulk-payments",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								},
+								"description": "Returns the content of a payment object"
+							},
+							"response": []
+						},
+						{
+							"name": "7 Payment initiation status request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Test transaction status\", () => {",
+											"    pm.expect(jsonData).to.have.property('transactionStatus');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}/{{payment_id}}/status",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"bulk-payments",
+										"{{payment_product}}",
+										"{{payment_id}}",
+										"status"
+									]
+								},
+								"description": "Check the transaction status of a payment initiation."
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Periodic",
+			"item": [
+				{
+					"name": "1 Payment initiation request periodic",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Transcation status is RCVD\", () => {",
+									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+									"});",
+									"",
+									"pm.test(\"updatePsuAuthentication link exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+									"",
+									"    if (updatePsuAuthentication === undefined) {",
+									"       pm.expect().fail();",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Select other links exist\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    pm.expect(_links).to.have.property('status');",
+									"    pm.expect(_links).to.have.property('self');",
+									"    pm.expect(_links).to.have.property('scaStatus');",
+									"});",
+									"",
+									"pm.test(\"Payment Id exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('paymentId');",
+									"});",
+									"",
+									"pm.test(\"Transaction Fee Indicator exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+									"});",
+									"",
+									"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+									"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+								"exec": [
+									"pm.globals.unset(\"payment_id\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_none}}"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n\t\"creditorAccount\": {\n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"DE11760365688833114935\"\n\t},\n\t\"creditorAddress\": {\n\t\t\"street\": \"Breite Gasse\",\n\t\t\"buildingNumber\": \"34\",\n\t\t\"city\": \"Nürnberg\",\n\t\t\"postalCode\": \"90457\",\n\t\t\"country\": \"DE\"\n\t},\n\t\"creditorAgent\": \"BCENEVOD\", \n\t\"creditorName\": \"Vodafone\", \n\t\"dayOfExecution\": \"14\",\n\t\"debtorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"DE52500105173911841934\" \n\t},\n\t\"endDate\": \"9999-04-03\", \n\t\"endToEndIdentification\": \"VOD-123456789\",\n\t\"executionRule\": \"following\", \n\t\"frequency\": \"Monthly\", \n\t\"instructedAmount\": { \n\t\t\"amount\": \"44.99\",\n\t\t\"currency\": \"EUR\" \n\t},\n\t\"remittanceInformationUnstructured\": \"Ref. Number Vodafone-1222\",\n\t\"startDate\": \"9998-04-03\" \n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/periodic-payments/{{payment_product}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"periodic-payments",
+								"{{payment_product}}"
+							]
+						},
+						"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Future dated",
+			"item": [
+				{
+					"name": "1 Payment initiation request future dated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Transcation status is RCVD\", () => {",
+									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+									"});",
+									"",
+									"pm.test(\"updatePsuAuthentication link exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    var updatePsuAuthentication = _links.updatePsuAuthentication;",
+									"",
+									"    if (updatePsuAuthentication === undefined) {",
+									"       pm.expect().fail();",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Select other links exist\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    pm.expect(_links).to.have.property('status');",
+									"    pm.expect(_links).to.have.property('self');",
+									"    pm.expect(_links).to.have.property('scaStatus');",
+									"});",
+									"",
+									"pm.test(\"Payment Id exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('paymentId');",
+									"});",
+									"",
+									"pm.test(\"Transaction Fee Indicator exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('transactionFeeIndicator');",
+									"});",
+									"",
+									"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+									"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+								"exec": [
+									"pm.globals.unset(\"payment_id\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_none}}"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n\t\"endToEndIdentification\": \"WBG-123456789\",\n\t\"debtorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"DE11760365688833114935\"\n\t}, \n\t\"instructedAmount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"amount\": \"0.00\"\n\t},\n\t\"creditorAccount\": { \n\t\t\"currency\": \"EUR\",\n\t\t\"iban\": \"DE15500105172295759744\"\n\t},\n\t\"creditorAgent\" : \"AAAADEBBXXX\",\n\t\"creditorName\": \"WBG\", \n\t\"creditorAddress\": { \n\t\t\"buildingNumber\": \"56\", \n\t\t\"city\": \"Nürnberg\", \n\t\t\"country\": \"DE\", \n\t\t\"postalCode\": \"90543\", \n\t\t\"street\": \"WBG Straße\" \n\t},\n\t\"requestedExecutionDate\": \"9999-02-02\", \n\t\"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"{{payment_service}}",
+								"{{payment_product}}"
+							]
+						},
+						"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DTAZV",
+			"item": [
+				{
+					"name": "0. Update ASPSP profile setting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "67af457a-0c1a-44da-8b16-9af106584c29",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"frequencyPerDay\": 5,\n  \"combinedServiceIndicator\": false,\n  \"tppSignatureRequired\": false,\n  \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/\",\n  \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/\",\n  \"multicurrencyAccountLevel\": \"SUBACCOUNT\",\n  \"bankOfferedConsentSupport\": true,\n  \"availableBookingStatuses\": [\n    \"booked\",\n    \"pending\"\n  ],\n  \"supportedAccountReferenceFields\": [\n    \"IBAN\"\n  ],\n  \"consentLifetime\": 0,\n  \"transactionLifetime\": 0,\n  \"allPsd2Support\": true,\n  \"transactionsWithoutBalancesSupported\": true,\n  \"signingBasketSupported\": false,\n  \"paymentCancellationAuthorizationMandated\": false,\n  \"piisConsentSupported\": false,\n  \"deltaReportSupported\": false,\n  \"redirectUrlExpirationTimeMs\": 600000,\n  \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/\",\n  \"notConfirmedConsentExpirationPeriodMs\": 86400000,\n  \"notConfirmedPaymentExpirationPeriodMs\": 86400000,\n  \"supportedPaymentTypeAndProductMatrix\": {\n    \"payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\",\n      \"dtazv-payment\"\n    ],\n    \"periodic-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ],\n    \"bulk-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\"\n    ]\n  },\n  \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000,\n  \"availableAccountsConsentSupported\": true,\n  \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n  \"psuInInitialRequestMandated\": false,\n  \"forceXs2aBaseUrl\": false,\n  \"xs2aBaseUrl\": \"http://myhost.com/\"\n}\n"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_aspsp_profile}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"aspsp-profile",
+								"for-debug",
+								"aspsp-settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. DTAZV payment initiation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "85a31d81-7ce1-416b-aba4-c282e893f08f",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							},
+							{
+								"key": "TPP-Explicit-Authorisation-Preferred",
+								"value": "true",
+								"type": "text"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_none}}",
+								"type": "text"
+							},
+							{
+								"key": "TPP-Nok-Redirect-URI",
+								"value": "someuri",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "0256Q250400900088889999REMPEL ANDREAS                                                        WENDEL                             52147 KOELE                        19012404190124N0000000000                                                                    0768T25040090EUR008888999900000000000000   0000000000ICRAITRR                                                                                                                                                  DE TESTER1                                                               WENDEL 1234                        52134 KOELN                                                                                              /IT77W0853046040000439600007       EUR00000000000025500AZV 25,50 EURO                     TEST 777                                                                                                 00000000                         0100                                                              0                                                   000256Z000000000000025000000000000001                                                                                                                                                                                                                             "
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"payments",
+								"dtazv-payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get DTAZV payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "87a900c5-4b8d-4cbe-b5a7-eb78f80d709c",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*",
+								"type": "text"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}",
+								"type": "text"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment/{{payment_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"payments",
+								"dtazv-payment",
+								"{{payment_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Get DTAZV payment status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1daa4da4-da87-4f23-822c-9cffc9e68422",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}",
+								"type": "text"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/dtazv-payment/{{payment_id}}/status",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"payments",
+								"dtazv-payment",
+								"{{payment_id}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pain",
+			"item": [
+				{
+					"name": "Update ASPSP profile setting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "67af457a-0c1a-44da-8b16-9af106584c29",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"frequencyPerDay\": 5,\n  \"combinedServiceIndicator\": false,\n  \"tppSignatureRequired\": false,\n  \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/\",\n  \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/\",\n  \"multicurrencyAccountLevel\": \"SUBACCOUNT\",\n  \"bankOfferedConsentSupport\": true,\n  \"availableBookingStatuses\": [\n    \"booked\",\n    \"pending\"\n  ],\n  \"supportedAccountReferenceFields\": [\n    \"IBAN\"\n  ],\n  \"consentLifetime\": 0,\n  \"transactionLifetime\": 0,\n  \"allPsd2Support\": true,\n  \"transactionsWithoutBalancesSupported\": true,\n  \"signingBasketSupported\": false,\n  \"paymentCancellationAuthorizationMandated\": false,\n  \"piisConsentSupported\": false,\n  \"deltaReportSupported\": false,\n  \"redirectUrlExpirationTimeMs\": 600000,\n  \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/\",\n  \"notConfirmedConsentExpirationPeriodMs\": 86400000,\n  \"notConfirmedPaymentExpirationPeriodMs\": 86400000,\n  \"supportedPaymentTypeAndProductMatrix\": {\n    \"payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\",\n      \"pain.001-sepa-credit-transfers\"\n    ],\n    \"periodic-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\",\n      \"pain.001-sepa-credit-transfers\"\n    ],\n    \"bulk-payments\": [\n      \"sepa-credit-transfers\",\n      \"instant-sepa-credit-transfers\",\n      \"pain.001-sepa-credit-transfers\"\n    ]\n  },\n  \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000,\n  \"availableAccountsConsentSupported\": true,\n  \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n  \"psuInInitialRequestMandated\": false,\n  \"forceXs2aBaseUrl\": false,\n  \"xs2aBaseUrl\": \"http://myhost.com/\"\n}\n"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_aspsp_profile}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"aspsp-profile",
+								"for-debug",
+								"aspsp-settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate pain single payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aba475f0-c4a4-4b02-8e0f-9c447e9f7282",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+									"",
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/xml",
+								"type": "text"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}",
+								"type": "text"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}",
+								"type": "text"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_none}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\"> \n<CstmrCdtTrfInitn>\n<GrpHdr> \n<MsgId>MIPI-123456789RI-123456789</MsgId> \n<CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> \n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n<InitgPty>\n<Nm>PaymentInitiator</Nm> \n<Id><OrgId><Othr><Id>DE10000000012</Id>\n<SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>\n    </GrpHdr>\n    <PmtInf>\n<PmtInfId>BIPI-123456789RI-123456789</PmtInfId> \n<PmtMtd>TRF</PmtMtd>\n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum> \n<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> \n<ReqdExctnDt>2017-02-15</ReqdExctnDt>\n<Dbtr><Nm>PSU Name</Nm></Dbtr> \n<DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct> \n<ChrgBr>SLEV</ChrgBr>\n<CdtTrfTxInf>\n<PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId> \n<Amt><InstdAmt Ccy=\"EUR\">123</InstdAmt></Amt> \n<Cdtr><Nm>Merchant123</Nm></Cdtr>\n<CdtrAcct><Id><IBAN> DE23100120020123456789</IBAN></Id></CdtrAcct>\n<RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf> \n</CdtTrfTxInf>\n    </PmtInf>\n  </CstmrCdtTrfInitn>\n</Document>\n"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/payments/pain.001-sepa-credit-transfers",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"payments",
+								"pain.001-sepa-credit-transfers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate pain periodic payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8c4066d4-997c-4109-879e-9f92d8017a54",
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "multipart/form-data; boundary=--AaaBbbCcc"
+							},
+							{
+								"key": "X-Request-ID",
+								"type": "text",
+								"value": "{{x_request_id}}"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"type": "text",
+								"value": "{{ip_address}}"
+							},
+							{
+								"key": "PSU-ID",
+								"type": "text",
+								"value": "{{psu_id_none}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "xml_sct",
+									"value": "<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\">\n\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n<MsgId>MIPI-123456789RI-123456789</MsgId> <CreDtTm>2017-02-14T20:23:34.000Z</CreDtTm> <NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n\n<InitgPty>\n\n<Id><OrgId><Othr><Id>DE10000000012</Id>\n\n<SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id> </InitgPty>\n\n</GrpHdr>\n<PmtInf>\n<PmtInfId>BIPI-123456789RI-123456789</PmtInfId> <PmtMtd>TRF</PmtMtd>\n<NbOfTxs>1</NbOfTxs>\n<CtrlSum>123</CtrlSum>\n\n<PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf> <ReqdExctnDt>2017-02-15</ReqdExctnDt>\n<Dbtr><Nm>PSU Name</Nm></Dbtr> <DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct>\n\n<ChrgBr>SLEV</ChrgBr>\n<CdtTrfTxInf>\t\t\t\t\t\n<PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId>\n<Amt><InstdAmt Ccy=\"EUR\">123</InstdAmt></Amt>\n<Cdtr><Nm>Merchant123</Nm></Cdtr>\n<CdtrAcct><Id><IBAN>DE23100120020123456789</IBAN></Id></CdtrAcct>\n<RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf>\n\n      </CdtTrfTxInf>\n    </PmtInf>\t\t\t\t\t\n</CstmrCdtTrfInitn>\n</Document>",
+									"type": "text"
+								},
+								{
+									"key": "json_standingordermanagement",
+									"value": "{\"startDate\": \"2018-03-01\",\n \"frequency\": \"monthly\",\n \"executionRule\": \"latest\",\n \"dayOfExecution\": \"01\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/periodic-payments/pain.001-sepa-credit-transfers",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"periodic-payments",
+								"pain.001-sepa-credit-transfers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate pain bulk payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a8e40b6b-d743-4d78-908b-7dd9dadd56cb",
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/xml",
+								"type": "text"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}",
+								"type": "text"
+							},
+							{
+								"key": "PSU-IP-Address",
+								"value": "{{ip_address}}",
+								"type": "text"
+							},
+							{
+								"key": "PSU-ID",
+								"value": "{{psu_id_none}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Document\n   xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\"\n   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n      <MsgId>MessageId</MsgId>\n      <CreDtTm>2014-01-08T10:33:56</CreDtTm>\n      <NbOfTxs>3</NbOfTxs>\n      <CtrlSum>49.00</CtrlSum>\n      <InitgPty>\n        <Nm>Accountholder-Name</Nm>\n      </InitgPty>\n    </GrpHdr>\n    <PmtInf>\n      <PmtInfId>PaymentInformationId</PmtInfId>\n      <PmtMtd>TRF</PmtMtd>\n      <NbOfTxs>3</NbOfTxs>\n      <CtrlSum>49.00</CtrlSum>\n      <PmtTpInf>\n        <SvcLvl>\n          <Cd>SEPA</Cd>\n        </SvcLvl>\n      </PmtTpInf>\n      <ReqdExctnDt>2014-01-08</ReqdExctnDt>\n      <Dbtr>\n        <Nm>Accountholder-Name</Nm>\n      </Dbtr>\n      <DbtrAcct>\n        <Id>\n          <IBAN>NL72ABNC0123456789</IBAN>\n        </Id>\n      </DbtrAcct>\n      <DbtrAgt>\n        <FinInstnId>\n          <BIC>ABNCNL2A</BIC>\n        </FinInstnId>\n      </DbtrAgt>\n      <ChrgBr>SLEV</ChrgBr>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-1</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">13.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary1</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation1</Ustrd>\n          </RmtInf>\n      </CdtTrfTxInf>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-2</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">17.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary2</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation2</Ustrd>\n        </RmtInf>\n      </CdtTrfTxInf>\n      <CdtTrfTxInf>\n        <PmtId>\n          <EndToEndId>E2E-ID-3</EndToEndId>\n        </PmtId>\n        <Amt>\n          <InstdAmt Ccy=\"EUR\">19.00</InstdAmt>\n        </Amt>\n        <CdtrAgt>\n          <FinInstnId>\n            <BIC>INGBNL2A</BIC>\n          </FinInstnId>\n        </CdtrAgt>\n        <Cdtr>\n          <Nm>Beneficiary3</Nm>\n        </Cdtr>\n        <CdtrAcct>\n          <Id>\n            <IBAN>NL69INGB0123456789</IBAN>\n          </Id>\n        </CdtrAcct>\n        <RmtInf>\n          <Ustrd>RemittanceInformation3</Ustrd>\n        </RmtInf>\n      </CdtTrfTxInf>\n    </PmtInf>\n  </CstmrCdtTrfInitn>\n</Document>"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/pain.001-sepa-credit-transfers",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"bulk-payments",
+								"pain.001-sepa-credit-transfers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
