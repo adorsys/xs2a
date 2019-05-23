@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.service.security;
 
-import de.adorsys.psd2.consent.service.security.provider.AbstractCryptoProvider;
-import de.adorsys.psd2.consent.service.security.provider.CryptoProviderFactory;
+import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.CryptoProviderHolder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -45,14 +45,15 @@ public class SecurityDataServiceTest {
     private static final byte[] CONSENT_DATA = "Consent data".getBytes();
 
     private static final String CRYPTO_PROVIDER_ID = "mock";
+    private static final String CRYPTO_PROVIDER_DATA = "mock_CP_for_data";
     private static final String FAILING_CRYPTO_PROVIDER_ID = "failing";
     private static final String NON_EXISTING_CRYPT_PROVIDER_ID = "nonExisting";
-    private static final AbstractCryptoProvider CRYPTO_PROVIDER = new MockCryptoProvider(CRYPTO_PROVIDER_ID, false);
-    private static final AbstractCryptoProvider FAILING_CRYPTO_PROVIDER = new MockCryptoProvider(FAILING_CRYPTO_PROVIDER_ID,
+    private static final CryptoProvider CRYPTO_PROVIDER = new MockCryptoProvider(CRYPTO_PROVIDER_ID, false);
+    private static final CryptoProvider FAILING_CRYPTO_PROVIDER = new MockCryptoProvider(FAILING_CRYPTO_PROVIDER_ID,
                                                                                                  true);
 
     @Mock
-    private CryptoProviderFactory cryptoProviderFactory;
+    private CryptoProviderHolder cryptoProviderHolder;
     private SecurityDataService securityDataService;
 
     @Mock
@@ -64,25 +65,26 @@ public class SecurityDataServiceTest {
 
         when(environment.getProperty("server_key")).thenReturn(SERVER_KEY);
 
-        securityDataService = new SecurityDataService(environment, cryptoProviderFactory);
+        securityDataService = new SecurityDataService(environment, cryptoProviderHolder);
 
-        when(cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(CRYPTO_PROVIDER_ID))
+        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_ID))
             .thenReturn(Optional.of(CRYPTO_PROVIDER));
 
-        when(cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(FAILING_CRYPTO_PROVIDER_ID))
+        when(cryptoProviderHolder.getProviderById(CRYPTO_PROVIDER_DATA))
+            .thenReturn(Optional.of(CRYPTO_PROVIDER));
+
+        when(cryptoProviderHolder.getProviderById(FAILING_CRYPTO_PROVIDER_ID))
             .thenReturn(Optional.of(FAILING_CRYPTO_PROVIDER));
-        when(cryptoProviderFactory.getCryptoProviderByAlgorithmVersion(NON_EXISTING_CRYPT_PROVIDER_ID))
+        when(cryptoProviderHolder.getProviderById(NON_EXISTING_CRYPT_PROVIDER_ID))
             .thenReturn(Optional.empty());
-        when(cryptoProviderFactory.oldDefaultVersionDataCryptoProvider())
-            .thenReturn(CRYPTO_PROVIDER);
     }
 
     @Test
     public void getEncryptedId_Success() throws Exception {
         // Given
-        when(cryptoProviderFactory.actualIdentifierCryptoProvider())
+        when(cryptoProviderHolder.getDefaultIdProvider())
             .thenReturn(CRYPTO_PROVIDER);
-        when(cryptoProviderFactory.actualConsentDataCryptoProvider())
+        when(cryptoProviderHolder.getDefaultDataProvider())
             .thenReturn(CRYPTO_PROVIDER);
 
         // When
@@ -110,10 +112,10 @@ public class SecurityDataServiceTest {
     @Test
     public void getEncryptedId_Failure_EncryptionError() {
         // Given
-        when(cryptoProviderFactory.actualIdentifierCryptoProvider())
+        when(cryptoProviderHolder.getDefaultIdProvider())
             .thenReturn(FAILING_CRYPTO_PROVIDER);
 
-        when(cryptoProviderFactory.actualConsentDataCryptoProvider())
+        when(cryptoProviderHolder.getDefaultDataProvider())
             .thenReturn(FAILING_CRYPTO_PROVIDER);
 
         // When
@@ -251,7 +253,7 @@ public class SecurityDataServiceTest {
     }
 
     private String getEncryptedConsentId(String cryptoProviderId) {
-        String compositeId = CONSENT_ID + SEPARATOR + CONSENT_KEY;
+        String compositeId = CONSENT_ID + SEPARATOR + CONSENT_KEY+SEPARATOR +CRYPTO_PROVIDER_DATA;
         String encodedCompositeId = encodeToBase64(compositeId);
         return encodedCompositeId + SEPARATOR + cryptoProviderId;
     }

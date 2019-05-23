@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2019 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="rye@adorsys.com.ua" id="2019-05-22-1">
+        <comment>Extend table crypto_algorithm with columns 'encryptor_class' and 'encryptor_params'</comment>
+
+        <addColumn tableName="crypto_algorithm">
+            <column name="encryptor_class" type="VARCHAR(150)" defaultValue="UNDEFINED">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="crypto_algorithm">
+            <column name="encryptor_params" type="VARCHAR(150)" defaultValue="UNDEFINED">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="rye@adorsys.com.ua" id="2019-05-22-2">
+        <comment>Set values to c fields in crypto_algorithm
+        </comment>
+
+        <sql>
+            UPDATE crypto_algorithm
+            SET encryptor_class = 'de.adorsys.psd2.consent.service.security.provider.jwe.JweGsmInstanceFactoryImpl',
+            encryptor_params = 'JWE/GCM/256_#_3_#_256_#_65536_#_PBKDF2WithHmacSHA256'
+            WHERE  external_id = 'gQ8wkMeo93'
+        </sql>
+
+        <sql>
+            UPDATE crypto_algorithm
+            SET encryptor_class = 'de.adorsys.psd2.consent.service.security.provider.aes.AesEcbInstanceFactoryImpl',
+            encryptor_params = 'AES/GCM/NoPadding_#_1_#_256_#_65536_#_PBKDF2WithHmacSHA256'
+            WHERE  external_id = 'nML0IXWdMa'
+        </sql>
+
+        <sql>
+            UPDATE crypto_algorithm
+            SET encryptor_class = 'de.adorsys.psd2.consent.service.security.provider.aes.AesEcbInstanceFactoryImpl',
+            encryptor_params = 'AES/ECB/PKCS5Padding_#_2_#_256_#_65536_#_PBKDF2WithHmacSHA256'
+            WHERE  external_id = 'bS6p6XvTWI'
+        </sql>
+
+        <sql>
+            UPDATE crypto_algorithm
+            SET encryptor_class = 'de.adorsys.psd2.consent.service.security.provider.aes.AesEcbInstanceFactoryImpl',
+            encryptor_params = 'AES/ECB/PKCS5Padding_#_5_#_256_#_1024_#_PBKDF2WithHmacSHA256'
+            WHERE  external_id = 'psGLvQpt9Q'
+        </sql>
+        
+        <sql>
+            UPDATE crypto_algorithm
+            SET encryptor_class = 'de.adorsys.psd2.consent.service.security.provider.aes.AesEcbInstanceFactoryImpl',
+            encryptor_params = 'AES/GCM/NoPadding_#_4_#_256_#_1024_#_PBKDF2WithHmacSHA256'
+            WHERE  external_id = 'Ad3lmz9DZY'
+        </sql>
+        <sql>
+            UPDATE crypto_algorithm
+            SET encryptor_class = 'de.adorsys.psd2.consent.service.security.provider.jwe.JweGsmInstanceFactoryImpl',
+            encryptor_params = 'JWE/GCM/256_#_6_#_256_#_1024_#_PBKDF2WithHmacSHA256'
+            WHERE  external_id = 'JcHZwvJMuc'
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -17,29 +17,41 @@
 package de.adorsys.psd2.consent.service.security;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+/**
+ * Container for holding crypto information, extracted in the process of decrypting the ID
+ */
 @Data
-@NoArgsConstructor
 public class DecryptedIdSet {
-    private String decryptedCompositeId;
+    // Do not delete this constant! It is used in order to decrypt old aspsp consent data with previous algorithm (JWE/GCM/256 65536)
+    private static final String PREVIOUS_DATA_PROVIDER_ID = "gQ8wkMeo93";
     private String decryptedId;
     private String randomSecretKey;
     private String dataEncryptionProviderId;
 
-    public DecryptedIdSet(String[] idDataValues, String dataEncryptionProviderId) {
-        if (idDataValues.length > 0) {
-            this.decryptedId = idDataValues[0];
+    /**
+     * Constructs new instance of DecryptedIdSet from given parameters:
+     * <ul>
+     * <li>decrypted ID</li>
+     * <li>random secret key, used for encrypting data</li>
+     * <li>ID of the crypto provider, used for encrypting ASPSP consent data (if the value is omitted, it's assumed that
+     * old provider was used)</li>
+     * </ul>
+     *
+     * @param idDataValues values, extracted from the ID during decryption
+     */
+    public DecryptedIdSet(String... idDataValues) {
+        if (idDataValues.length < 2) {
+            throw new IllegalArgumentException("At least decrypted ID and secret key must be present");
         }
 
-        if (idDataValues.length > 1) {
-            this.randomSecretKey = idDataValues[1];
-        }
+        this.decryptedId = idDataValues[0];
+        this.randomSecretKey = idDataValues[1];
 
         if (idDataValues.length > 2) {
             this.dataEncryptionProviderId = idDataValues[2];
         } else {
-            this.dataEncryptionProviderId = dataEncryptionProviderId;
+            this.dataEncryptionProviderId = PREVIOUS_DATA_PROVIDER_ID;
         }
     }
 }
