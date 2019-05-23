@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
-import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
@@ -150,7 +149,7 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
         return (root, query, cb) -> {
             Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
             return Specifications
-                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, getAccountReferenceAttribute(selector.getAccountReferenceType()), selector.getAccountValue()))
+                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()))
                        .and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, currency))
                        .toPredicate(root, query, cb);
         };
@@ -204,15 +203,9 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
             AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
             Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
             return Specifications
-                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, getAccountReferenceAttribute(selector.getAccountReferenceType()), selector.getAccountValue()))
+                       .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()))
                        .and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, accountReference.getCurrency()))
                        .toPredicate(root, query, cb);
         };
-    }
-
-    private String getAccountReferenceAttribute(AccountReferenceType type) {
-        return AccountReferenceType.MASKED_PAN == type
-                   ? "maskedPan"
-                   : type.name().toLowerCase();
     }
 }
