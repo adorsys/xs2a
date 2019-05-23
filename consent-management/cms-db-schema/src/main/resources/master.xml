@@ -89,5 +89,6 @@
     <include relativeToChangelogFile="true"
              file="migration/0062-change-table-pis-payment-data-extend-end-to-end-identification.xml"/>
     <include relativeToChangelogFile="true" file="migration/0063-expand-table-crypto-algorithm-with-fields.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0064-expand-table-crypto-algorithm-with-fields-class-and-params.xml"/>
 
 </databaseChangeLog>

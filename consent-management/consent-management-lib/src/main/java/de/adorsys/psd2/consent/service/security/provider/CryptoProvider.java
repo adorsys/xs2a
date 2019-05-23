@@ -22,7 +22,28 @@ import de.adorsys.psd2.consent.service.security.EncryptedData;
 import java.util.Optional;
 
 public interface CryptoProvider {
+    /**
+     * Encrypts data with some crypto algorithm using password
+     *
+     * @param data     Raw data for encryption
+     * @param password Secret key to encrypt the data with
+     * @return encrypted data
+     */
     Optional<EncryptedData> encryptData(byte[] data, String password);
 
+    /**
+     * Decrypts data with some crypto algorithm using password
+     *
+     * @param data     Encrypted data for decryption
+     * @param password Secret key to decrypt the data with
+     * @return Raw data
+     */
     Optional<DecryptedData> decryptData(byte[] data, String password);
+
+    /**
+     * Returns crypto provider's id
+     *
+     * @return Id of crypto provider
+     */
+    String getCryptoProviderId();
 }

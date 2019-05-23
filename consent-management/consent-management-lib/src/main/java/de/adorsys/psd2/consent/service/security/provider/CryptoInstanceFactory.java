@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,14 @@
 
 package de.adorsys.psd2.consent.service.security.provider;
 
-import lombok.Value;
+public interface CryptoInstanceFactory {
 
-@Value
-public class CryptoProviderAlgorithmVersion {
-    private String externalId;
-    private String algorithmName;
+    /**
+     * Creates new instance of Crypto provider using given parameters
+     *
+     * @param cryptoProviderId Id of Crypto provider
+     * @param parameters Data for creating and initializing crypto providers
+     * @return instance of crypto provider
+     */
+    CryptoProvider initProvider(String cryptoProviderId, String parameters);
 }

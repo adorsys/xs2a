@@ -54,3 +54,23 @@ From now on, attempting to create AIS consent (`POST /v1/consents`) with invalid
 == Bugfix: Error "NO_PIIS_ACTIVATION" during Funds-Confirmations request was fixed
 Fixed the process of finding PIIS consents during Funds-Confirmations request (`POST /v1/funds-confirmations`), which caused `NO_PIIS_ACTIVATION` error to be returned in the response.
 This bug appeared only if ASPSP supported PIIS consent(`piisConsentSupported` property set to true in the profile).
+
+
+== Bugfix: Encryption performance doesn't correspond requirements. Refactoring encryption id and ASPSP Data
+
+From now on, `crypto_algorithm` table has flexible settings for crypto algorithms.
+In order to add new crypto algorithms with its settings one needs create new row in `crypto_algorithm` table which has to have mandatory fields:
+ - algorithm_id (uniq DB identifier)
+ - external_id (uniq any identifier)
+ - encryptor_class (full path to java class that implements `de.adorsys.psd2.consent.service.security.provider.CryptoInstanceFactory`)
+ - encryptor_params (string with necessary parameters for initializing new crypto provider)
+
+In existing providers the following formats of `encryptor_params` is used:
+`AES/ECB/PKCS5Padding\_#_5_#\_256_#\_1024_#_PBKDF2WithHmacSHA256`
+
+ - "\_#_" is string separator
+ - `AES/ECB/PKCS5Padding` is algorithm name
+ - `5` is algorithm version (could be any value)
+ - `256` is key length
+ - `1024` is number of iterations for hash generation
+ - `PBKDF2WithHmacSHA256` is algorithm for creating secret key

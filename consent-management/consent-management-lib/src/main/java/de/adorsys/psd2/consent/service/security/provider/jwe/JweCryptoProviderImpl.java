@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,46 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service.security.provider;
+package de.adorsys.psd2.consent.service.security.provider.jwe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.AESEncrypter;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
+import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
 @Slf4j
 @Value
-public class JweCryptoProviderImpl extends AbstractCryptoProvider {
+public class JweCryptoProviderImpl implements CryptoProvider {
     private static final EncryptionMethod METHOD = EncryptionMethod.A256GCM;
     private static final JWEAlgorithm ALGORITHM = JWEAlgorithm.A256GCMKW;
+    private final String cryptoProviderId;
     private final String algorithm;
     private final String version;
+    private final int keyLength;
+    private final int hashIterations;
+    private final String skfAlgorithm;
 
-    public JweCryptoProviderImpl(String externalId, String algorithm, String version, int keyLength, int hashIterations, String skfAlgorithm) {
-        super(externalId, keyLength, hashIterations, skfAlgorithm);
+    public JweCryptoProviderImpl(String cryptoProviderId, String algorithm, String version, int keyLength, int hashIterations, String skfAlgorithm) {
+        this.cryptoProviderId = cryptoProviderId;
         this.algorithm = algorithm;
         this.version = version;
+        this.keyLength = keyLength;
+        this.hashIterations = hashIterations;
+        this.skfAlgorithm = skfAlgorithm;
     }
 
     @Override
@@ -79,5 +93,17 @@ public class JweCryptoProviderImpl extends AbstractCryptoProvider {
         }
 
         return Optional.empty();
+    }
+
+    private SecretKey getSecretKey(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        byte[] salt = new byte[16];
+        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, hashIterations, keyLength);
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(skfAlgorithm);
+            SecretKey secretKey = factory.generateSecret(keySpec);
+            return new SecretKeySpec(secretKey.getEncoded(), "AES");
+        } finally {
+            keySpec.clearPassword();
+        }
     }
 }
