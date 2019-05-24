@@ -36,10 +36,10 @@ import java.util.stream.StreamSupport;
 @Configuration
 @EnableJpaRepositories("de.adorsys.psd2.consent.repository")
 public class CryptoConfig {
-    @Value("${encryption.defaultProvider.dataProvider}")
+    @Value("${encryption.defaultProvider.dataProvider:JcHZwvJMuc}")
     private String defaultDataProviderId;
 
-    @Value("${encryption.defaultProvider.idProvider}")
+    @Value("${encryption.defaultProvider.idProvider:psGLvQpt9Q}")
     private String defaultIdProviderId;
 
     @Bean
