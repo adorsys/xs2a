@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.service.security;
 
 
-import de.adorsys.psd2.consent.service.security.provider.AesEcbCryptoProviderImpl;
+import de.adorsys.psd2.consent.service.security.provider.aes.AesEcbCryptoProviderImpl;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ public class AesEcbCryptoProviderImplTest {
     private final String SERVER_KEY_3 = "mvL";
     private final String SERVER_KEY_80 = "mvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJBmvLBiZsiTbGwrfJB";
 
-    AesEcbCryptoProviderImpl aesGcmCryptoProvider = new AesEcbCryptoProviderImpl("bS6p6XvTWI", "AES/ECB/PKCS5Padding", "2", 256, 65536, "PBKDF2WithHmacSHA256");
+    AesEcbCryptoProviderImpl aesGcmCryptoProvider = new AesEcbCryptoProviderImpl("bS6p6XvTWI", "AES/ECB/PKCS5Padding", 256, 65536, "PBKDF2WithHmacSHA256");
 
     @Test
     public void encryptionDecryptionTest_password_16char() {
