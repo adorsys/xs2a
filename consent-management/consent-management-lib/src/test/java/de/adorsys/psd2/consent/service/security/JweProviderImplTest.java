@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service.security;
 
-import de.adorsys.psd2.consent.service.security.provider.JweCryptoProviderImpl;
+import de.adorsys.psd2.consent.service.security.provider.jwe.JweCryptoProviderImpl;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class JweProviderImplTest {
 
-    JweCryptoProviderImpl jweCryptoProvider = new JweCryptoProviderImpl("gQ8wkMeo93", "JWE/GCM/256", "3", 256, 32, "PBKDF2WithHmacSHA256");
+    JweCryptoProviderImpl jweCryptoProvider = new JweCryptoProviderImpl("gQ8wkMeo93", 256, 32, "PBKDF2WithHmacSHA256");
 
     @Test
     public void encryptionDecryptionJwe() {

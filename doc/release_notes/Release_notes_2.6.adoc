@@ -54,3 +54,8 @@ From now on, attempting to create AIS consent (`POST /v1/consents`) with invalid
 == Bugfix: Error "NO_PIIS_ACTIVATION" during Funds-Confirmations request was fixed
 Fixed the process of finding PIIS consents during Funds-Confirmations request (`POST /v1/funds-confirmations`), which caused `NO_PIIS_ACTIVATION` error to be returned in the response.
 This bug appeared only if ASPSP supported PIIS consent(`piisConsentSupported` property set to true in the profile).
+
+
+== Bugfix: Encryption performance doesn't correspond requirements
+
+Cryptography algorithms were adjusted in order to increase performance.
