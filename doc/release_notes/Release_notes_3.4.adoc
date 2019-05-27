@@ -1,10 +1,73 @@
-= Release notes v.3.4
+= Release notes v. 3.4
 
 == Table of Contents
 
 * Update version of spring-data-jpa to 2.1.8.RELEASE
+* Bugfix: `transactionFeeIndicator` tag is provided in payment initiation request even if it is not supported by Bank
+* Bugfix: Incorrect property name in the response to the AIS consent creation request
+* Update version of spring-data-jpa to 1.11.22.RELEASE
+* Bugfix: Periodic payment: requestedExecutionTime and requestedExecutionDate properties are set to the default values by mappers
+* Removed deprecated getters in SpiExchangeRate class
+* Bugfix: Delete a non-existing consent returns wrong http status code
+* Counting frequencyPerDay only for one-off consent or for recurring consent without PSU IP address
+* PSU-IP-Address header is mandatory in AIS consent creation request
+* Bugifx: XS2A returns error on creating authorisation if the request URL contains context path
+* Bugfix: AIS consent can be created with invalid `access` tag
+* Bugfix: Error "NO_PIIS_ACTIVATION" during Funds-Confirmations request was fixed
+* Bugfix: Encryption performance doesn't correspond requirements
+
 
 == Update version of spring-data-jpa to 2.1.8.RELEASE
 
 Fixed potential security vulnerability in a repository that have been granted security alert access.
 https://nvd.nist.gov/vuln/detail/CVE-2019-3797[Additional information exposure with Spring Data JPA derived queries]
+
+== Bugfix: `transactionFeeIndicator` tag is provided in payment initiation request even if it is not supported by Bank
+
+The tag will not be returned in payment initiation response if it is not supported by Bank.
+From now field SpiPaymentInitiationResponse.spiTransactionFeeIndicator has type Boolean (previous type was boolean).
+
+== Bugfix: Incorrect property name in the response to the AIS consent creation request
+
+From now on, the endpoint for consent creation (POST `/v1/consents`) returns correct response with field `psuMessage` instead of `message`.
+`SpiInitiateAisConsentResponse` was extended to contain `psuMessage`.
+
+== Bugfix: Periodic payment: requestedExecutionTime and requestedExecutionDate properties are set to the default values by mappers
+
+- Payment object has to set these fields to null if they are not present in the initial request
+- PisExecutionRule.PRECEEDING was renamed to PisExecutionRule.PRECEDING
+
+== Removed deprecated getters in SpiExchangeRate class
+
+Please use `getExchangeRate` instead of `getRate`, `getQuotationDate` instead of `getRateDate` and `getContractIdentification`
+instead of `getRateContract`.
+
+== Bugfix: Delete a non-existing consent returns wrong http status code
+
+From now on, the response is `403 CONSENT_UNKNOWN` on request ("Delete an Account Information Consent Object" DELETE `/v1/consents/{consentId}`) when consent was not found.
+
+== Counting frequencyPerDay only for one-off consent or for recurring consent without PSU IP address
+
+From now on, we don't count the number of consent usages for recurring consent if the `PSU-IP-Address` header is present in the request.
+
+== PSU-IP-Address header is mandatory in AIS consent creation request
+
+From now on, TPP must provide `PSU-IP-Address` header in AIS consent creation request.
+
+== Bugifx: XS2A returns error on creating authorisation if the request URL contains context path
+
+From now on, XS2A will correctly handle non-default context path in the URL and won't fail with an error on creating
+authorisation.
+
+== Bugfix: AIS consent can be created with invalid `access` tag
+
+From now on, attempting to create AIS consent (`POST /v1/consents`) with invalid values for `allPsd2` or
+`availableAccounts` properties in `access` property will result in `400 FORMAT_ERROR` being returned in the response.
+
+== Bugfix: Error "NO_PIIS_ACTIVATION" during Funds-Confirmations request was fixed
+Fixed the process of finding PIIS consents during Funds-Confirmations request (`POST /v1/funds-confirmations`), which caused `NO_PIIS_ACTIVATION` error to be returned in the response.
+This bug appeared only if ASPSP supported PIIS consent(`piisConsentSupported` property set to true in the profile).
+
+== Bugfix: Encryption performance doesn't correspond requirements
+
+Cryptography algorithms were adjusted in order to increase performance.
