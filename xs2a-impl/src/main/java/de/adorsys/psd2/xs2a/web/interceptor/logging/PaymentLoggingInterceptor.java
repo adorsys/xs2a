@@ -26,22 +26,29 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Optional;
+
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.X_REQUEST_ID;
 
 @RequiredArgsConstructor
 @Component
 public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
+    private static final String NOT_EXIST_IN_URI = "Not exist in URI";
     private final TppService tppService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        String paymentId = Optional.ofNullable(pathVariables)
+                               .map(vr -> vr.get("paymentId"))
+                               .orElse(NOT_EXIST_IN_URI);
 
         TppLogger.logRequest()
             .withParam("TPP ID", tppService.getTppId())
             .withParam("TPP IP", request.getRemoteAddr())
-            .withParam("X-Request-ID", request.getHeader("X-Request-ID"))
+            .withParam(X_REQUEST_ID, request.getHeader(X_REQUEST_ID))
             .withParam("URI", request.getRequestURI())
-            .withParam("Payment ID",  pathVariables.getOrDefault("paymentId", "Not exist in URI"))
+            .withParam("Payment ID", paymentId)
             .perform();
 
         return true;
@@ -51,7 +58,7 @@ public class PaymentLoggingInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         TppLogger.logResponse()
             .withParam("TPP ID", tppService.getTppId())
-            .withParam("X-Request-ID", response.getHeader("X-Request-ID"))
+            .withParam(X_REQUEST_ID, response.getHeader(X_REQUEST_ID))
             .withParam("Status", String.valueOf(response.getStatus()))
             .perform();
     }
