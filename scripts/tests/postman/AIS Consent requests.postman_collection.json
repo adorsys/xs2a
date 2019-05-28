@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e8db3f7f-6332-47f3-9246-06a2c740fc2e",
+		"_postman_id": "b7b0c9a5-bb8f-426d-9843-fb93541436de",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -892,7 +892,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"scaAuthenticationData\": \"hEjWQL\"\n}"
+									"raw": "{\n\t\"scaAuthenticationData\": \"{{tan}}\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
@@ -1607,7 +1607,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"scaAuthenticationData\": \"asKJcK\"\n}"
+									"raw": "{\n\t\"scaAuthenticationData\": \"{{tan}}\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
@@ -1986,7 +1986,7 @@
 									},
 									{
 										"key": "PSU-ID",
-										"value": "aspsp5"
+										"value": "{{psu_id_single_decoupled}}"
 									},
 									{
 										"key": "TPP-Explicit-Authorisation-Preferred",
@@ -2001,7 +2001,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE52500105173911841934\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE52500105173911841934\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE52500105173911841934\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"9999-10-10\"\n}"
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"9999-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -2074,7 +2074,7 @@
 									},
 									{
 										"key": "PSU-ID",
-										"value": "aspsp5"
+										"value": "{{psu_id_single_decoupled}}"
 									}
 								],
 								"body": {
@@ -2147,7 +2147,7 @@
 									},
 									{
 										"key": "PSU-ID",
-										"value": "aspsp5"
+										"value": "{{psu_id_single_decoupled}}"
 									}
 								],
 								"body": {
@@ -2340,7 +2340,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE52500105173911841934\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE52500105173911841934\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE52500105173911841934\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"9999-10-10\"\n}"
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_multiple}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_multiple}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_multiple}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"9999-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -2718,7 +2718,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n        \"msisdn\": \"+49(0)911 360698-0\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n        \"msisdn\": \"+49(0)911 360698-0\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n        \"msisdn\": \"+49(0)911 360698-0\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"9999-10-10\"\n}"
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"9999-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -2964,7 +2964,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"scaAuthenticationData\": \"OPjx40\"\n}"
+									"raw": "{\n\t\"scaAuthenticationData\": \"{{tan}}\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
@@ -3359,7 +3359,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n      \"access\": {\n        \"accounts\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE89370400440532013000\"\n          }\n        ],\n        \"balances\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE89370400440532013000\"\n          }\n        ],\n        \"transactions\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE89370400440532013000\"\n          }\n        ]\n      },\n      \"combinedServiceIndicator\": false,\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": true,\n      \"validUntil\": \"9999-12-31\"\n    }"
+									"raw": "{\n      \"access\": {\n        \"accounts\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ],\n        \"balances\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ],\n        \"transactions\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ]\n      },\n      \"combinedServiceIndicator\": false,\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": true,\n      \"validUntil\": \"9999-12-31\"\n    }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -4124,7 +4124,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"LU280019400644750000\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"LU280019400644750000\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"LU280019400644750000\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"9999-10-10\"\n}"
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"9999-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -4370,7 +4370,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"scaAuthenticationData\": \"Lef2t6\"\n}"
+									"raw": "{\n\t\"scaAuthenticationData\": \"{{tan}}\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
@@ -4946,7 +4946,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n      \"access\": {\n        \"accounts\": [\n          {\n            \"currency\": \"EUR\",\n    \t\t\"msisdn\": \"+49(0)911 360698-0\"\n          }\n        ],\n        \"balances\": [\n          {\n            \"currency\": \"EUR\",\n    \t\t\"msisdn\": \"+49(0)911 360698-0\"\n          }\n        ],\n        \"transactions\": [\n          {\n            \"currency\": \"EUR\",\n    \t\t\"msisdn\": \"+49(0)911 360698-0\"\n          }\n        ]\n      },\n      \"combinedServiceIndicator\": false,\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": false,\n      \"validUntil\": \"9999-10-10\"\n    }"
+									"raw": "{\n      \"access\": {\n        \"accounts\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ],\n        \"balances\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ],\n        \"transactions\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ]\n      },\n      \"combinedServiceIndicator\": false,\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": false,\n      \"validUntil\": \"9999-10-10\"\n    }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -5223,7 +5223,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n      \"access\": {\n        \"accounts\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE80760700240271232400\"\n          }\n        ],\n        \"balances\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE80760700240271232400\"\n          }\n        ],\n        \"transactions\": [\n          {\n            \"currency\": \"EUR\",\n            \"iban\": \"DE80760700240271232400\"\n          }\n        ]\n      },\n      \"combinedServiceIndicator\": false,\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": true,\n      \"validUntil\": \"9999-12-31\"\n    }"
+									"raw": "{\n      \"access\": {\n        \"accounts\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ],\n        \"balances\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ],\n        \"transactions\": [\n          {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          }\n        ]\n      },\n      \"combinedServiceIndicator\": false,\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": true,\n      \"validUntil\": \"9999-12-31\"\n    }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -5931,7 +5931,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"scaAuthenticationData\": \"rzLp62\"\n}"
+									"raw": "{\n\t\"scaAuthenticationData\": \"{{tan}}\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
