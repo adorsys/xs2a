@@ -18,12 +18,10 @@ package de.adorsys.psd2.consent.service.security.provider.aes;
 
 import de.adorsys.psd2.consent.service.security.provider.CryptoInstanceFactory;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
-@Data
 public class AesEcbInstanceFactoryImpl implements CryptoInstanceFactory {
     private static final String SEPARATOR = "_#_";
 
@@ -32,12 +30,11 @@ public class AesEcbInstanceFactoryImpl implements CryptoInstanceFactory {
         String[] paramsArr = StringUtils.split(parameters, SEPARATOR);
 
         String algorithm = getStringValueByIndex(paramsArr, 0, "AES/ECB/PKCS5Padding");
-        String version = getStringValueByIndex(paramsArr, 1, "1");
         int keyLength = getIntegerValueByIndex(paramsArr, 2, 256);
         int hashIterations = getIntegerValueByIndex(paramsArr, 3, 65536);
         String skfAlgorithm = getStringValueByIndex(paramsArr, 4, "PBKDF2WithHmacSHA256");
 
-        return new AesEcbCryptoProviderImpl(cryptoProviderId, algorithm, version, keyLength, hashIterations, skfAlgorithm);
+        return new AesEcbCryptoProviderImpl(cryptoProviderId, algorithm, keyLength, hashIterations, skfAlgorithm);
     }
 
     private String getStringValueByIndex(String[] paramsArr, int index, String defaultValue) {

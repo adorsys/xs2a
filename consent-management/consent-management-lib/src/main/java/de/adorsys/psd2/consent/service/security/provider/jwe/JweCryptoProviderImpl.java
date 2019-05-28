@@ -22,7 +22,6 @@ import com.nimbusds.jose.crypto.AESEncrypter;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
@@ -36,21 +35,16 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
 @Slf4j
-@Value
 public class JweCryptoProviderImpl implements CryptoProvider {
     private static final EncryptionMethod METHOD = EncryptionMethod.A256GCM;
     private static final JWEAlgorithm ALGORITHM = JWEAlgorithm.A256GCMKW;
     private final String cryptoProviderId;
-    private final String algorithm;
-    private final String version;
     private final int keyLength;
     private final int hashIterations;
     private final String skfAlgorithm;
 
-    public JweCryptoProviderImpl(String cryptoProviderId, String algorithm, String version, int keyLength, int hashIterations, String skfAlgorithm) {
+    public JweCryptoProviderImpl(String cryptoProviderId, int keyLength, int hashIterations, String skfAlgorithm) {
         this.cryptoProviderId = cryptoProviderId;
-        this.algorithm = algorithm;
-        this.version = version;
         this.keyLength = keyLength;
         this.hashIterations = hashIterations;
         this.skfAlgorithm = skfAlgorithm;
@@ -93,6 +87,11 @@ public class JweCryptoProviderImpl implements CryptoProvider {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public String getCryptoProviderId() {
+        return cryptoProviderId;
     }
 
     private SecretKey getSecretKey(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
