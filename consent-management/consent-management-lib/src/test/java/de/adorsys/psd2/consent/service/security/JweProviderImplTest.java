@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class JweProviderImplTest {
 
-    JweCryptoProviderImpl jweCryptoProvider = new JweCryptoProviderImpl("gQ8wkMeo93", "JWE/GCM/256", "3", 256, 32, "PBKDF2WithHmacSHA256");
+    JweCryptoProviderImpl jweCryptoProvider = new JweCryptoProviderImpl("gQ8wkMeo93", 256, 32, "PBKDF2WithHmacSHA256");
 
     @Test
     public void encryptionDecryptionJwe() {

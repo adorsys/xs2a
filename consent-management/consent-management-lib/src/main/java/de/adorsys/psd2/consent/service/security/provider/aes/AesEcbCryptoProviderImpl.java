@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.service.security.provider.aes;
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.BadPaddingException;
@@ -35,19 +34,16 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
 @Slf4j
-@Value
 public class AesEcbCryptoProviderImpl implements CryptoProvider {
     private final String cryptoProviderId;
     private final String algorithm;
-    private final String version;
     private final int keyLength;
     private final int hashIterations;
     private final String skfAlgorithm;
 
-    public AesEcbCryptoProviderImpl(String cryptoProviderId, String algorithm, String version, int keyLength, int hashIterations, String skfAlgorithm) {
+    public AesEcbCryptoProviderImpl(String cryptoProviderId, String algorithm, int keyLength, int hashIterations, String skfAlgorithm) {
         this.cryptoProviderId = cryptoProviderId;
         this.algorithm = algorithm;
-        this.version = version;
         this.keyLength = keyLength;
         this.hashIterations = hashIterations;
         this.skfAlgorithm = skfAlgorithm;
@@ -87,6 +83,11 @@ public class AesEcbCryptoProviderImpl implements CryptoProvider {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public String getCryptoProviderId() {
+        return cryptoProviderId;
     }
 
     private SecretKey getSecretKey(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {

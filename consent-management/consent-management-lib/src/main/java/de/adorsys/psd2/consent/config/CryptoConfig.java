@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +33,6 @@ import java.util.stream.StreamSupport;
 
 @Slf4j
 @Configuration
-@EnableJpaRepositories("de.adorsys.psd2.consent.repository")
 public class CryptoConfig {
     @Value("${encryption.defaultProvider.dataProvider:JcHZwvJMuc}")
     private String defaultDataProviderId;
@@ -48,6 +46,10 @@ public class CryptoConfig {
         CryptoProviderHolder cryptoProviderHolder = new CryptoProviderHolder(providerMap, defaultDataProviderId, defaultIdProviderId);
 
         validateDefaultProviders(cryptoProviderHolder.getDefaultDataProvider(), cryptoProviderHolder.getDefaultIdProvider());
+
+        log.info("Crypto providers are initialized: {}", cryptoProviderHolder.getInitializedProviders());
+        log.info("Provider for Data encryption by default: {}", cryptoProviderHolder.getDefaultDataProvider());
+        log.info("Provider for ID encryption by default: {}", cryptoProviderHolder.getDefaultIdProvider());
 
         return cryptoProviderHolder;
     }
@@ -78,9 +80,8 @@ public class CryptoConfig {
     private void validateDefaultProviders(CryptoProvider defaultDataProvider, CryptoProvider defaultIdProvider) {
         if (Objects.isNull(defaultDataProvider)
                 || Objects.isNull(defaultIdProvider)) {
-            log.info("Default providers are not initialized! DefaultDataProvider : {} , DefaultIdProvider {}", defaultDataProvider, defaultIdProvider);
+            log.error("Default providers are not initialized! DefaultDataProvider : {} , DefaultIdProvider {}", defaultDataProvider, defaultIdProvider);
             throw new IllegalArgumentException("Default providers are not initialized!");
-
         }
     }
 }

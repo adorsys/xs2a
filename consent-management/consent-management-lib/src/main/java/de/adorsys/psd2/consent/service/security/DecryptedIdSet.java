@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.consent.service.security;
 
-import lombok.Data;
+import lombok.Value;
 
 /**
  * Container for holding crypto information, extracted in the process of decrypting the ID
  */
-@Data
+@Value
 public class DecryptedIdSet {
     // Do not delete this constant! It is used in order to decrypt old aspsp consent data with previous algorithm (JWE/GCM/256 65536)
     private static final String PREVIOUS_DATA_PROVIDER_ID = "gQ8wkMeo93";
