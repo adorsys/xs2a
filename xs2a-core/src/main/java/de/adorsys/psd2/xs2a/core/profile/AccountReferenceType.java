@@ -19,30 +19,30 @@ package de.adorsys.psd2.xs2a.core.profile;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public enum AccountReferenceType {
-    IBAN("iban"),
-    BBAN("bban"),
-    PAN("pan"),
-    MASKED_PAN("maskedPan"),
-    MSISDN("msisdn");
-
-    private static final Map<String, AccountReferenceType> container = new HashMap<>();
+    IBAN(1, "iban", AccountReference::getIban, AccountReference::setIban),
+    BBAN(2, "bban", AccountReference::getBban, AccountReference::setBban),
+    PAN(3, "pan", AccountReference::getPan, AccountReference::setPan) ,
+    MSISDN(4, "msisdn", AccountReference::getMsisdn, AccountReference::setMsisdn),
+    MASKED_PAN(5, "maskedPan", AccountReference::getMaskedPan, AccountReference::setMaskedPan);
 
     private String value;
-
-    static {
-        for (AccountReferenceType type : values()) {
-            container.put(type.getValue(), type);
-        }
-    }
+    private int order;
+    private Function<AccountReference, String> getter;
+    private BiConsumer<AccountReference, String> setter;
 
     @JsonCreator
-    AccountReferenceType(String value) {
+    AccountReferenceType(int order, String value, Function<AccountReference, String> getter,
+                         BiConsumer<AccountReference, String> setter) {
+        this.order = order;
         this.value = value;
+        this.getter = getter;
+        this.setter = setter;
     }
 
     @JsonValue
@@ -50,8 +50,22 @@ public enum AccountReferenceType {
         return value;
     }
 
+    public int getOrder() {
+        return order;
+    }
+
     public static Optional<AccountReferenceType> getByValue(String name) {
-        return Optional.ofNullable(container.get(name));
+        return Arrays.stream(values())
+                   .filter(type -> type.getValue().equals(name))
+                   .findFirst();
+    }
+
+    public String getFieldValue(AccountReference accountReference) {
+        return getter.apply(accountReference);
+    }
+
+    public void setFieldValue(AccountReference accountReference, String fieldValue) {
+        setter.accept(accountReference, fieldValue);
     }
 }
 
