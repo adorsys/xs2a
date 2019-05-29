@@ -1,5 +1,5 @@
 {
-  "authenticationType": "SMS_OTP",
+  "authenticationType": "authType1",
   "authenticationVersion": "authVersion1",
   "authenticationMethodId": "authMethodId1",
   "name": "authName1",

@@ -171,7 +171,7 @@ public class PaymentModelMapperPsd2 {
                    .map(ch -> {
                        ChosenScaMethod method = new ChosenScaMethod();
                        method.setAuthenticationMethodId(ch.getAuthenticationMethodId());
-                       method.setAuthenticationType(AuthenticationType.fromValue(ch.getAuthenticationType()));
+                       method.setAuthenticationType(ch.getAuthenticationType());
                        return method;
                    }).orElse(null);
     }
