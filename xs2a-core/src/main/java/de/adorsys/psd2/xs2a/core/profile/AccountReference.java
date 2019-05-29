@@ -25,11 +25,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Comparator;
 import java.util.Currency;
-import java.util.HashSet;
 import java.util.Set;
-
-import static de.adorsys.psd2.xs2a.core.profile.AccountReferenceType.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Data
 @AllArgsConstructor
@@ -82,16 +82,8 @@ public class AccountReference {
      * @param aspspAccountId        Bank specific account ID
      */
     public AccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency, String resourceId, String aspspAccountId) {
-        if (accountReferenceType == IBAN) {
-            this.iban = accountReferenceValue;
-        } else if (accountReferenceType == BBAN) {
-            this.bban = accountReferenceValue;
-        } else if (accountReferenceType == PAN) {
-            this.pan = accountReferenceValue;
-        } else if (accountReferenceType == MSISDN) {
-            this.msisdn = accountReferenceValue;
-        } else if (accountReferenceType == MASKED_PAN) {
-            this.maskedPan = accountReferenceValue;
+        if (accountReferenceType != null) {
+            accountReferenceType.setFieldValue(this, accountReferenceValue);
         }
         this.currency = currency;
         this.resourceId = resourceId;
@@ -100,44 +92,18 @@ public class AccountReference {
 
     @JsonIgnore
     public AccountReferenceSelector getUsedAccountReferenceSelector() {
-        if (StringUtils.isNotBlank(iban)) {
-            return new AccountReferenceSelector(IBAN, this.iban);
-        }
-        if (StringUtils.isNotBlank(bban)) {
-            return new AccountReferenceSelector(BBAN, this.bban);
-        }
-        if (StringUtils.isNotBlank(pan)) {
-            return new AccountReferenceSelector(PAN, this.pan);
-        }
-        if (StringUtils.isNotBlank(msisdn)) {
-            return new AccountReferenceSelector(MSISDN, this.msisdn);
-        }
-        if (StringUtils.isNotBlank(maskedPan)) {
-            return new AccountReferenceSelector(MASKED_PAN, this.maskedPan);
-        }
-        throw new IllegalArgumentException("At least one account reference property must be set!");
+        return Stream.of(AccountReferenceType.values())
+                   .sorted(Comparator.comparingInt(AccountReferenceType::getOrder))
+                   .filter(type -> StringUtils.isNotBlank(type.getFieldValue(this)))
+                   .findFirst().map(type -> new AccountReferenceSelector(type, type.getFieldValue(this)))
+                   .orElseThrow(() -> new IllegalArgumentException("At least one account reference property must be set!"));
     }
 
     @JsonIgnore
     public Set<AccountReferenceType> getUsedAccountReferenceFields() {
-        Set<AccountReferenceType> usedFields = new HashSet<>();
+        return Stream.of(AccountReferenceType.values())
+                   .filter(type -> StringUtils.isNotBlank(type.getFieldValue(this)))
+                   .collect(Collectors.toSet());
 
-        if (StringUtils.isNotBlank(iban)) {
-            usedFields.add(IBAN);
-        }
-        if (StringUtils.isNotBlank(bban)) {
-            usedFields.add(BBAN);
-        }
-        if (StringUtils.isNotBlank(pan)) {
-            usedFields.add(PAN);
-        }
-        if (StringUtils.isNotBlank(msisdn)) {
-            usedFields.add(MSISDN);
-        }
-        if (StringUtils.isNotBlank(maskedPan)) {
-            usedFields.add(MASKED_PAN);
-        }
-        return usedFields;
     }
-
 }
