@@ -1,0 +1,17 @@
+= Release notes v.2.7
+
+== Table of Contents
+* Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
+
+== Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
+From now on, AIS endpoints that take consent ID as a path parameter will return `CONSENT_UNKNOWN` error with HTTP status
+ code `403` instead of `400` if the consent couldn't be located by the provided ID.
+
+The following endpoints were affected by this change:
+
+- Get Status Request (`GET /v1/consents/{consentId}/status`)
+- Delete an Account Information Consent Object (`DELETE /v1/consents/{consentId}`)
+- Start the authorisation process in context of an Account Information Consent Request (`POST /v1/consents/{consentId}/authorisations`)
+- Update PSU Data in context of an Account Information Consent Request (`PUT /v1/consents/{consentId}/authorisations/{authorisationId}`)
+- Get Authorisation Sub-Resources Request in context of an Account Information Consent Request (`GET /v1/consents/{consentId}/authorisations`)
+- Get SCA Status Request in context of an Account Information Consent Request (`GET /v1/consents/{consentId}/authorisations/{authorisationId}`)
