@@ -16,25 +16,31 @@
 
 package de.adorsys.psd2.xs2a.integration.builder;
 
+import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
+import org.springframework.web.util.UriComponentsBuilder;
+
 public class UrlBuilder {
     public static String buildInitiatePaymentUrl(String paymentType, String paymentProduct) {
         return "/v1/" + paymentType + "/" + paymentProduct + "/" ;
     }
 
     public static String buildGetPaymentInitiationScaStatusUrl(String paymentType, String paymentProduct, String encrPaymentId, String authorisationId) {
-        return "/v1/" + paymentType + "/" + paymentProduct + "/" + encrPaymentId + "/authorisations/" + authorisationId;
+        return UriComponentsBuilder.fromPath(UrlHolder.PIS_AUTHORISATION_LINK_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encrPaymentId, authorisationId)
+                   .toUriString();
     }
 
     public static String buildGetPaymentCancellationAuthorisationUrl(String paymentType, String paymentProduct, String encrPaymentId) {
-        return "/v1/" + paymentType + "/" + paymentProduct + "/" + encrPaymentId + "/cancellation-authorisations";
+        return UriComponentsBuilder.fromPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encrPaymentId)
+                   .toUriString();
     }
 
-    public static String buildGetTransactionsUrlWithoutSlash(String accountId) {
-        return "/v1/accounts/" + accountId + "/transactions" + "?bookingStatus=booked";
-    }
-
-    public static String buildGetTransactionsUrlWithSlash(String accountId) {
-        return "/v1/accounts/" + accountId + "/transactions/" + "?bookingStatus=booked";
+    public static String buildGetTransactionsUrl(String accountId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.ACCOUNT_TRANSACTIONS_URL)
+                   .queryParam("bookingStatus", "booked")
+                   .buildAndExpand(accountId)
+                   .toUriString();
     }
 
     public static String buildGetAccountList() {
@@ -43,5 +49,11 @@ public class UrlBuilder {
 
     public static String buildConsentCreation() {
         return "/v1/consents/";
+    }
+
+    public static String buildPaymentStartAuthorisationUrl(String paymentType, String paymentProduct, String encrPaymentId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.START_PIS_AUTHORISATION_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encrPaymentId)
+                   .toUriString();
     }
 }

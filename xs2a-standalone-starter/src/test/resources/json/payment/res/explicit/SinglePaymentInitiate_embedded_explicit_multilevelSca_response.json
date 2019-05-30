@@ -1,0 +1,16 @@
+{
+  "transactionStatus": "RCVD",
+  "paymentId": "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
+  "transactionFeeIndicator": false,
+  "_links": {
+    "startAuthorisationWithPsuAuthentication": {
+      "href": "http://localhost/v1/payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations"
+    },
+    "self": {
+      "href": "http://localhost/v1/payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI"
+    },
+    "status": {
+      "href": "http://localhost/v1/payments/sepa-credit-transfers/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/status"
+    }
+  }
+}

@@ -159,7 +159,7 @@ public class AccountControllerTest {
 
     @Test
     public void getTransactions_ShouldFail_WithoutEndSlash() throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionsUrlWithoutSlash(ACCOUNT_ID));
+        MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionsUrl(ACCOUNT_ID));
         requestBuilder.headers(httpHeaders);
 
         // When
@@ -173,7 +173,7 @@ public class AccountControllerTest {
     @Test
     public void getTransactions_ShouldFail_WithEndSlash() throws Exception {
         // Given
-        MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionsUrlWithSlash(ACCOUNT_ID));
+        MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionsUrl(ACCOUNT_ID));
         requestBuilder.headers(httpHeaders);
 
         // When

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
@@ -39,6 +40,7 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,17 +111,18 @@ public class PaymentControllerTest {
     private EventServiceEncrypted eventServiceEncrypted;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @MockBean
+    private SinglePaymentSpi singlePaymentSpi;
+    @MockBean
+    private AspspDataService aspspDataService;
 
     @Before
     public void init() {
         // common actions for all tests
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo())
-            .willReturn(TPP_INFO);
-        given(tppService.getTppId())
-            .willReturn(TPP_INFO.getAuthorisationNumber());
+        given(tppService.getTppInfo()).willReturn(TPP_INFO);
+        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.buildTppUniqueParamsHolder()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(Event.class)))
@@ -147,6 +150,7 @@ public class PaymentControllerTest {
     @Test
     public void getPaymentInitiationScaStatus_successful() throws Exception {
         // Given
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(ScaStatus.RECEIVED));
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
@@ -169,6 +173,7 @@ public class PaymentControllerTest {
     @Test
     public void cancelPaymentAuthorisation_successful() throws Exception {
         // Given
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(ScaStatus.RECEIVED));
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
@@ -193,6 +198,7 @@ public class PaymentControllerTest {
         // Given
         AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
         aspspSettings.setScaRedirectFlow(ScaRedirectFlow.OAUTH);
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(aspspProfileService.getAspspSettings())
             .willReturn(aspspSettings);
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
