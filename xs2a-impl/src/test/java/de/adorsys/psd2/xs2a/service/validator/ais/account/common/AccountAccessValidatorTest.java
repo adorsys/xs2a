@@ -30,7 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

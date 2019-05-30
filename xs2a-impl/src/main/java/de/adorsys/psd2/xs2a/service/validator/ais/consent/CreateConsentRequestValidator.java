@@ -35,9 +35,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SESSIONS_NOT_SUPPORTED;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SERVICE_INVALID_405;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SESSIONS_NOT_SUPPORTED;
 
 /**
  * Validator to be used for validating create consent request according to some business rules

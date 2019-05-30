@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.SERVICE_BLOCKED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_BLOCKED;
 
 /**
  * Validator to be used for validating create PIS cancellation authorisation request according to some business rules
