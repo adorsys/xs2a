@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.reader.JsonReader;
 import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
@@ -96,6 +97,7 @@ public class PisCommonPaymentServiceInternalTest {
     private final static PsuData PSU_DATA = new PsuData("id", "type", "corporate ID", "corporate type");
 
     private static final CreatePisAuthorisationRequest CREATE_PIS_AUTHORISATION_REQUEST = new CreatePisAuthorisationRequest(CmsAuthorisationType.CREATED, PSU_ID_DATA, ScaApproach.REDIRECT);
+    private static final JsonReader jsonReader = new JsonReader();
 
     @Before
     public void setUp() {
@@ -370,10 +372,7 @@ public class PisCommonPaymentServiceInternalTest {
 
     @NotNull
     private AspspSettings getAspspSettings() {
-        return new AspspSettings(1, false, false, null, null,
-                                 null, false, null, null, 1, 1, false,
-                                 false, false, false, false, false, 1, null,
-                                 1, 1, null, 1, false, false, false, false, null);
+        return jsonReader.getObjectFromFile("json/AspspSetting.json", AspspSettings.class);
     }
 
     private UpdatePisCommonPaymentPsuDataRequest buildUpdatePisCommonPaymentPsuDataRequest(ScaStatus status) {

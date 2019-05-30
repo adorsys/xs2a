@@ -28,7 +28,6 @@ setting:
  signingBasketSupported: false
  paymentCancellationAuthorizationMandated: false
  piisConsentSupported: false
- deltaReportSupported: false
  redirectUrlExpirationTimeMs: 600000
  notConfirmedConsentExpirationPeriodMs: 86400000
  notConfirmedPaymentExpirationPeriodMs: 86400000
@@ -48,3 +47,5 @@ setting:
  psuInInitialRequestMandated: false
  forceXs2aBaseUrl: false
  xs2aBaseUrl: http://myhost.com/
+ deltaListSupported: false
+ entryReferenceFromSupported: false

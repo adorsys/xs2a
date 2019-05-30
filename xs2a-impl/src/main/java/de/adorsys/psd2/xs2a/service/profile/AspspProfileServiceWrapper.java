@@ -226,6 +226,24 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().isCombinedServiceIndicator();
     }
 
+    /**
+     * Reads if 'deltaList' parameter in transaction report is supported from ASPSP profile service
+     *
+     * @return true if ASPSP supports 'deltaList' parameter in transaction report
+     */
+    public boolean isDeltaListSupported() {
+        return readAspspSettings().isDeltaListSupported();
+    }
+
+    /**
+     * Reads if 'entryReferenceFrom' parameter in transaction report is supported from ASPSP profile service
+     *
+     * @return true if ASPSP supports 'entryReferenceFrom' parameter in transaction report
+     */
+    public boolean isEntryReferenceFromSupported() {
+        return readAspspSettings().isEntryReferenceFromSupported();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

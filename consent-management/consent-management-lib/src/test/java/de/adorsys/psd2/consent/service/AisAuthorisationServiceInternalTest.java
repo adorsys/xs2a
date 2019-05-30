@@ -22,23 +22,19 @@ import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.consent.reader.JsonReader;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
-import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.ScaMethodMapper;
-import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
-import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,34 +69,22 @@ public class AisAuthorisationServiceInternalTest {
     private AisConsent aisConsent;
     private AisConsentAuthorization aisConsentAuthorisation;
     private List<AisConsentAuthorization> aisConsentAuthorisationList = new ArrayList<>();
+    private static final JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
     private AisAuthorisationServiceInternal aisAuthorisationServiceInternal;
     @Mock
-    private AisConsentMapper consentMapper;
-    @Mock
     private AisConsentRepository aisConsentRepository;
     @Mock
     private PsuDataMapper psuDataMapper;
-    @Mock
-    SecurityDataService securityDataService;
-    @Mock
-    private TppInfoMapper tppInfoMapper;
     @Mock
     private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
     private AisConsentAuthorisationRepository aisConsentAuthorisationRepository;
-
-    @Mock
-    private AisConsent aisConsentMocked;
-    @Mock
-    private TppInfoEntity tppInfoMocked;
     @Mock
     private PsuData psuDataMocked;
-    @Mock
-    private PsuData anotherPsuDataMocked;
     @Mock
     private CmsPsuService cmsPsuService;
 
@@ -333,15 +317,7 @@ public class AisAuthorisationServiceInternalTest {
 
     @NotNull
     private AspspSettings getAspspSettings() {
-        return getAspspSettings(1);
-    }
-
-    @NotNull
-    private AspspSettings getAspspSettings(int consentLifeTime) {
-        return new AspspSettings(1, false, false, null, null,
-                                 null, false, null, null, consentLifeTime, 1, false,
-                                 false, false, false, false, false, 1,
-                                 null, 1, 1, null, 1, false, false, false, false, null);
+        return jsonReader.getObjectFromFile("json/AspspSetting.json", AspspSettings.class);
     }
 
     private AisConsent buildConsent(String externalId) {
@@ -369,27 +345,9 @@ public class AisAuthorisationServiceInternalTest {
         return aisConsent;
     }
 
-    private TppInfo buildTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber("tpp-id-1");
-        return tppInfo;
-    }
-
-    private TppInfoEntity buildTppInfoEntity() {
-        TppInfoEntity tppInfoEntity = new TppInfoEntity();
-        tppInfoEntity.setAuthorisationNumber("tpp-id-1");
-        return tppInfoEntity;
-    }
-
     private AisConsentAuthorization buildAisConsentAuthorisationWithMethods(List<ScaMethod> scaMethods) {
         AisConsentAuthorization authorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS);
         authorisation.setAvailableScaMethods(scaMethods);
-        return authorisation;
-    }
-
-    private AisConsentAuthorization buildAisConsentAuthorisationWithScaApproach(ScaApproach scaApproach) {
-        AisConsentAuthorization authorisation = buildAisConsentAuthorisation(AUTHORISATION_ID, SCA_STATUS);
-        authorisation.setScaApproach(scaApproach);
         return authorisation;
     }
 

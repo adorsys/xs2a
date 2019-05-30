@@ -71,7 +71,7 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setSigningBasketSupported(aspspSettings.isSigningBasketSupported());
         setting.setPaymentCancellationAuthorizationMandated(aspspSettings.isPaymentCancellationAuthorizationMandated());
         setting.setPiisConsentSupported(aspspSettings.isPiisConsentSupported());
-        setting.setDeltaReportSupported(aspspSettings.isDeltaReportSupported());
+        setting.setDeltaListSupported(aspspSettings.isDeltaListSupported());
         setting.setRedirectUrlExpirationTimeMs(aspspSettings.getRedirectUrlExpirationTimeMs());
         setting.setPisPaymentCancellationRedirectUrlToAspsp(aspspSettings.getPisPaymentCancellationRedirectUrlToAspsp());
         setting.setNotConfirmedConsentExpirationPeriodMs(aspspSettings.getNotConfirmedConsentExpirationPeriodMs());
@@ -83,5 +83,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setPsuInInitialRequestMandated(aspspSettings.isPsuInInitialRequestMandated());
         setting.setForceXs2aBaseUrl(aspspSettings.isForceXs2aBaseUrl());
         setting.setXs2aBaseUrl(aspspSettings.getXs2aBaseUrl());
+        setting.setEntryReferenceFromSupported(aspspSettings.isEntryReferenceFromSupported());
     }
 }
