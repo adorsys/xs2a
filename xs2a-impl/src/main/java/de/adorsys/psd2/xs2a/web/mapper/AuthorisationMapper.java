@@ -30,7 +30,6 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -51,6 +50,7 @@ public class AuthorisationMapper {
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final AspspProfileService aspspProfileService;
     private final HrefLinkMapper hrefLinkMapper;
+    private final ScaMethodsMapper scaMethodsMapper;
 
     public Authorisations mapToAuthorisations(Xs2aAuthorisationSubResources xs2AAuthorisationSubResources) {
         Authorisations authorisations = new Authorisations();
@@ -177,7 +177,7 @@ public class AuthorisationMapper {
                                                                                  de.adorsys.psd2.xs2a.core.sca.ChallengeData challengeData, ScaStatus scaStatus) {
         return new UpdatePsuAuthenticationResponse()
                    ._links(hrefLinkMapper.mapToLinksMap(links))
-                   .scaMethods(getAvailableScaMethods(availableScaMethods))
+                   .scaMethods(scaMethodsMapper.mapToScaMethods(availableScaMethods))
                    .chosenScaMethod(mapToChosenScaMethod(chosenScaMethod))
                    .psuMessage(psuMessage)
                    .challengeData(coreObjectsMapper.mapToChallengeData(challengeData))
@@ -186,19 +186,6 @@ public class AuthorisationMapper {
                            .map(s -> de.adorsys.psd2.model.ScaStatus.valueOf(s.name()))
                            .orElse(null)
                    );
-    }
-
-    private ScaMethods getAvailableScaMethods(List<Xs2aAuthenticationObject> availableScaMethods) {
-        ScaMethods scaMethods = new ScaMethods();
-        if (CollectionUtils.isNotEmpty(availableScaMethods)) {
-            availableScaMethods.forEach(a -> scaMethods.add(new AuthenticationObject()
-                                                                .authenticationMethodId(a.getAuthenticationMethodId())
-                                                                .authenticationType(AuthenticationType.fromValue(a.getAuthenticationType()))
-                                                                .authenticationVersion(a.getAuthenticationVersion())
-                                                                .name(a.getName())
-                                                                .explanation(a.getExplanation())));
-        }
-        return scaMethods;
     }
 
     private ChosenScaMethod mapToChosenScaMethod(Xs2aAuthenticationObject xs2aAuthenticationObject) {

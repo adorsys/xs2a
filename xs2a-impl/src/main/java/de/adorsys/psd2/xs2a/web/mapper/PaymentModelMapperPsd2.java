@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
@@ -36,9 +35,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,6 +52,7 @@ public class PaymentModelMapperPsd2 {
     private final AmountModelMapper amountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
+    private final ScaMethodsMapper scaMethodsMapper;
 
     public Object mapToGetPaymentResponse(Object payment, PaymentType type, String paymentProduct) {
         if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
@@ -123,7 +121,7 @@ public class PaymentModelMapperPsd2 {
         response201.setPaymentId(response.getPaymentId());
         response201.setTransactionFees(amountModelMapper.mapToAmount(response.getTransactionFees()));
         response201.setTransactionFeeIndicator(response.getTransactionFeeIndicator());
-        response201.setScaMethods(mapToScaMethods(response.getScaMethods()));
+        response201.setScaMethods(scaMethodsMapper.mapToScaMethods(response.getScaMethods()));
         response201.setChallengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()));
         response201.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));
         response201.setPsuMessage(response.getPsuMessage());
@@ -144,7 +142,7 @@ public class PaymentModelMapperPsd2 {
     public PaymentInitiationCancelResponse202 mapToPaymentInitiationCancelResponse(CancelPaymentResponse cancelPaymentResponse) {
         PaymentInitiationCancelResponse202 response = new PaymentInitiationCancelResponse202();
         response.setTransactionStatus(mapToTransactionStatus(cancelPaymentResponse.getTransactionStatus()));
-        response.setScaMethods(mapToScaMethods(cancelPaymentResponse.getScaMethods()));
+        response.setScaMethods(scaMethodsMapper.mapToScaMethods(cancelPaymentResponse.getScaMethods()));
         response.setChosenScaMethod(mapToChosenScaMethod(cancelPaymentResponse.getChosenScaMethod()));
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(hrefLinkMapper.mapToLinksMap(cancelPaymentResponse.getLinks()));
@@ -166,33 +164,6 @@ public class PaymentModelMapperPsd2 {
         bulkPart.setCreditorAddress(accountModelMapper.mapToAddress12(payment.getCreditorAddress()));
         bulkPart.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         return bulkPart;
-    }
-
-    private ScaMethods mapToScaMethods(Xs2aAuthenticationObject... authenticationObjects) {
-        return Optional.ofNullable(authenticationObjects)
-                   .map(objects -> {
-                       ScaMethods scaMethods = new ScaMethods();
-                       Arrays.stream(objects)
-                           .map(this::mapToAuthenticationObject)
-                           .filter(Objects::nonNull)
-                           .forEach(scaMethods::add);
-                       return scaMethods;
-                   })
-                   .orElse(null);
-    }
-
-    private AuthenticationObject mapToAuthenticationObject(Xs2aAuthenticationObject xs2aAuthenticationObject) {
-        return Optional.ofNullable(xs2aAuthenticationObject)
-                   .map(a -> {
-                       AuthenticationObject psd2Authentication = new AuthenticationObject();
-                       psd2Authentication.setAuthenticationType(AuthenticationType.fromValue(a.getAuthenticationType()));
-                       psd2Authentication.setAuthenticationVersion(a.getAuthenticationVersion());
-                       psd2Authentication.setAuthenticationMethodId(a.getAuthenticationMethodId());
-                       psd2Authentication.setName(a.getName());
-                       psd2Authentication.setExplanation(a.getExplanation());
-                       return psd2Authentication;
-                   })
-                   .orElse(null);
     }
 
     private ChosenScaMethod mapToChosenScaMethod(Xs2aChosenScaMethod xs2aChosenScaMethod) {
