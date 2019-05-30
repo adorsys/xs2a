@@ -3,6 +3,7 @@
 == Table of Contents
 * Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 * Bugfix: Validate `entryReferenceFrom` and `deltaList` parameters in `Read Transaction List` request
+* Bugfix: Сreate consent request and update PSU authorisation request returns empty list of scaMethods in response
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 From now on, AIS endpoints that take consent ID as a path parameter will return `CONSENT_UNKNOWN` error with HTTP status
@@ -24,3 +25,10 @@ From now on, ASPSP Profile has two parameters: `deltaListSupported` and `entryRe
 When TPP sends request and it has either `entryReferenceFrom` or `deltaList` parameter, and ASPSP doesn't support them, then TPP will receive `400 Bad Request` error with `PARAMETER_NOT_SUPPORTED` code.
 If ASPSP supports both parameters and TPP sends request with these two parameters, it will also receive `400 Bad Request` error with `FORMAT_ERROR` code.
 
+== Bugfix: Сreate consent request and update PSU authorisation request returns empty list of scaMethods in response
+
+From now on, the responses for these requests don't include empty list of scaMethods in case when no SCA methods
+are returned from SPI level:
+
+- POST `/v1/consents`;
+- PUT `/v1/consents/{consent_id}/authorisations/{authorisation_id}`.

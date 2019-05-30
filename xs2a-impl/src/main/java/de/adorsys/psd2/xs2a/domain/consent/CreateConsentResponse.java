@@ -22,13 +22,15 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CreateConsentResponse {
     private final String consentStatus;
 
     private final String consentId;
 
-    private final Xs2aAuthenticationObject[] scaMethods;
+    private final List<Xs2aAuthenticationObject> scaMethods;
 
     private final Xs2aAuthenticationObject chosenScaMethod;
 
