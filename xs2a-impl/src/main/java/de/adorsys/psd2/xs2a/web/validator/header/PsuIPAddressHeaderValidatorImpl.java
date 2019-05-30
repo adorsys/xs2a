@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.PSU_IP_ADDRESS;
 
 @Component

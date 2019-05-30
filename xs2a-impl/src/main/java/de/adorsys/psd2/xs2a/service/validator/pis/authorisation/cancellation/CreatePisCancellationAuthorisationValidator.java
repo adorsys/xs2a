@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PSU_CREDENTIALS_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
 
 /**
  * Validator to be used for validating create PIS cancellation authorisation request according to some business rules

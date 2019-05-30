@@ -30,7 +30,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.PERIOD_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PERIOD_INVALID;
 
 @Component
 public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
