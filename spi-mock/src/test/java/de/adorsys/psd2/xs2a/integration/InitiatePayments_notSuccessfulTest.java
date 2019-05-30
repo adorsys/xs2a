@@ -146,7 +146,7 @@ public class InitiatePayments_notSuccessfulTest {
     private void makePreparations(ScaApproach scaApproach) {
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(AspspConsentData.class)))
-            .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse());
+            .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(false));
         given(consentRestTemplate.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class), any(String.class)))
             .willReturn(ResponseEntity.ok(Void.class));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
