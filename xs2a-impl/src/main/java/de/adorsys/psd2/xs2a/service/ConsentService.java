@@ -190,7 +190,7 @@ public class ConsentService {
 
         if (!validatedAccountConsentOptional.isPresent()) {
             return responseBuilder
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                       .fail(AIS_403, of(CONSENT_UNKNOWN_403))
                        .build();
         }
 
@@ -371,7 +371,7 @@ public class ConsentService {
 
         if (!accountConsent.isPresent()) {
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
+                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
         ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CommonConsentObject(accountConsent.get()));
@@ -391,7 +391,7 @@ public class ConsentService {
         return service.createConsentAuthorization(psuData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
                    .orElseGet(ResponseObject.<CreateConsentAuthorizationResponse>builder()
-                                  .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+                                  .fail(AIS_403, of(CONSENT_UNKNOWN_403))
                                   ::build);
     }
 
@@ -409,7 +409,7 @@ public class ConsentService {
 
         if (!accountConsent.isPresent()) {
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
+                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
         ValidationResult validationResult = updateConsentPsuDataValidator.validate(new CommonConsentObject(accountConsent.get()));
@@ -454,7 +454,7 @@ public class ConsentService {
         Optional<AccountConsent> accountConsent = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsent.isPresent()) {
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
+                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
         ValidationResult validationResult = getConsentAuthorisationsValidator.validate(new CommonConsentObject(accountConsent.get()));
@@ -484,7 +484,7 @@ public class ConsentService {
         Optional<AccountConsent> accountConsent = aisConsentService.getAccountConsentById(consentId);
         if (!accountConsent.isPresent()) {
             return ResponseObject.<ScaStatus>builder()
-                       .fail(AIS_400, of(CONSENT_UNKNOWN_400)).build();
+                       .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
         ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new CommonConsentObject(accountConsent.get()));
