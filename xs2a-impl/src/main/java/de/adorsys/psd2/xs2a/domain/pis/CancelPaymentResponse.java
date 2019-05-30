@@ -25,12 +25,13 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 public class CancelPaymentResponse {
     private boolean startAuthorisationRequired;
     private TransactionStatus transactionStatus;
-    private Xs2aAuthenticationObject[] scaMethods;
+    private List<Xs2aAuthenticationObject> scaMethods;
     private Xs2aChosenScaMethod chosenScaMethod;
     private ChallengeData challengeData;
     @NotNull
