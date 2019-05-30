@@ -17,14 +17,12 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -81,7 +79,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.Period;
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
@@ -107,9 +104,6 @@ public class ConsentServiceTest {
     private static final LocalDate DATE = LocalDate.now().plusDays(1);
     private static final boolean EXPLICIT_PREFERRED = true;
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(new byte[0], "Some Consent ID");
-    private static final String CONSENT_ID_DATE_VALID_YESTERDAY = "c966f143-f6a2-41db-9036-8abaeeef3af8";
-    private static final String CONSENT_ID_DATE_VALID_TODAY = "d4716922-9bbb-45b9-92e3-6ca868ac29d7";
-    private static final LocalDate YESTERDAY = LocalDate.now().minus(Period.ofDays(1));
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = new SpiPsuData(CORRECT_PSU_ID, null, null, null);
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
@@ -118,6 +112,8 @@ public class ConsentServiceTest {
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.MAX;
     private static final MessageError VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
+    private static final MessageError CONSENT_UNKNOWN_403_ERROR =
+        new MessageError(ErrorType.AIS_403, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403));
 
     @InjectMocks
     private ConsentService consentService;
@@ -597,14 +593,16 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_Failure() {
+    public void getAccountConsentsStatusById_withUnknownConsent_shouldReturnConsentUnknownError() {
         //Given:
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
+
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID);
+
         //Then:
-        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.AIS_400);
+        assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
     }
 
     @Test
@@ -668,14 +666,15 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentsById_Failure() {
+    public void getAccountConsentsById_withUnknownConsent_shouldReturnConsentUnknownError() {
         //Given:
         when(aisConsentService.getInitialAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
 
         //When:
         ResponseObject response = consentService.getAccountConsentById(WRONG_CONSENT_ID);
+
         //Than:
-        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.AIS_403);
+        assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
     }
 
     @Test
@@ -730,15 +729,16 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void deleteAccountConsentsById_Failure() {
+    public void deleteAccountConsentsById_withUnknownConsent_shouldReturnConsentUnknownError() {
         //Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
+
         //When:
         ResponseObject response = consentService.deleteAccountConsentsById(WRONG_CONSENT_ID);
+
         //Than:
-        assertThat(response.getError().getErrorType()).isEqualTo(ErrorType.AIS_403);
-        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.CONSENT_UNKNOWN_403);
+        assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
     }
 
     @Test
@@ -792,6 +792,19 @@ public class ConsentServiceTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
+    @Test
+    public void createAisAuthorisation_withUnknownConsent_shouldReturnConsentUnknownError() {
+        //Given:
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(Optional.empty());
+
+        //When:
+        ResponseObject response = consentService.createAisAuthorisation(PSU_ID_DATA, WRONG_CONSENT_ID, "");
+
+        //Then:
+        assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
     }
 
     @Test
@@ -857,6 +870,24 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void updateConsentPsuData_withUnknownConsent_shouldReturnConsentUnknownError() {
+        //Given:
+        UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(WRONG_CONSENT_ID, AUTHORISATION_ID);
+
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, WRONG_CONSENT_ID))
+            .thenReturn(true);
+
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(Optional.empty());
+
+        //When:
+        ResponseObject response = consentService.updateConsentPsuData(updateConsentPsuDataReq);
+
+        //Then:
+        assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
+    }
+
+    @Test
     public void getConsentInitiationAuthorisation() {
         when(aisConsentService.getAuthorisationSubResources(anyString()))
             .thenReturn(Optional.of(Collections.singletonList(CONSENT_ID)));
@@ -893,6 +924,19 @@ public class ConsentServiceTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
+    @Test
+    public void getConsentInitiationAuthorisations_withUnknownConsent_shouldReturnConsentUnknownError() {
+        //Given:
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(Optional.empty());
+
+        //When:
+        ResponseObject response = consentService.getConsentInitiationAuthorisations(WRONG_CONSENT_ID);
+
+        //Then:
+        assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
     }
 
     @Test
@@ -956,6 +1000,19 @@ public class ConsentServiceTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);
+    }
+
+    @Test
+    public void getConsentAuthorisationScaStatus_withUnknownConsent_shouldReturnConsentUnknownError() {
+        //Given:
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(Optional.empty());
+
+        //When:
+        ResponseObject response = consentService.getConsentAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID);
+
+        //Then:
+        assertThat(response.getError()).isEqualTo(CONSENT_UNKNOWN_403_ERROR);
     }
 
     /**
@@ -1032,9 +1089,13 @@ public class ConsentServiceTest {
     }
 
     private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {
+        return buildUpdateConsentPsuDataReq(CONSENT_ID, AUTHORISATION_ID);
+    }
+
+    private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq(String consentId, String authorisationid) {
         UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-        request.setAuthorizationId(AUTHORISATION_ID);
-        request.setConsentId(CONSENT_ID);
+        request.setConsentId(consentId);
+        request.setAuthorizationId(authorisationid);
         return request;
     }
 
