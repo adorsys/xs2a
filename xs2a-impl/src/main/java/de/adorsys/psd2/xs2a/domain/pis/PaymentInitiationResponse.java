@@ -31,6 +31,8 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public abstract class PaymentInitiationResponse {
@@ -41,7 +43,7 @@ public abstract class PaymentInitiationResponse {
     private Boolean transactionFeeIndicator;
     private boolean multilevelScaRequired;
     private String paymentId;
-    private Xs2aAuthenticationObject[] scaMethods;
+    private List<Xs2aAuthenticationObject> scaMethods;
     private ChallengeData challengeData;
     private String psuMessage;
     private MessageErrorCode[] tppMessages;

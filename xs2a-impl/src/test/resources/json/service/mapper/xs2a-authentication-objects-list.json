@@ -1,0 +1,8 @@
+{
+  "authenticationType": "SMS_OTP",
+  "authenticationVersion": "authVersion1",
+  "authenticationMethodId": "authMethodId1",
+  "name": "authName1",
+  "explanation": "authExplanation1",
+  "decoupled": false
+}

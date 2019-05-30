@@ -39,6 +39,7 @@ public class ConsentModelMapper {
     private final ObjectMapper objectMapper;
     public final AccountModelMapper accountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
+    private final ScaMethodsMapper scaMethodsMapper;
 
     public CreateConsentReq mapToCreateConsentReq(Consents consent) {
         return Optional.ofNullable(consent)
@@ -72,7 +73,7 @@ public class ConsentModelMapper {
                             new ConsentsResponse201()
                                 .consentStatus(ConsentStatus.fromValue(cnst.getConsentStatus()))
                                 .consentId(cnst.getConsentId())
-                                .scaMethods(mapToScaMethodsOuter(cnst))
+                                .scaMethods(scaMethodsMapper.mapToScaMethods(cnst.getScaMethods()))
                                 ._links(hrefLinkMapper.mapToLinksMap(cnst.getLinks()))
                                 .psuMessage(cnst.getPsuMessage())
                    )
@@ -91,23 +92,6 @@ public class ConsentModelMapper {
                                 .consentStatus(ConsentStatus.fromValue(consent.getConsentStatus().getValue()))
                    )
                    .orElse(null);
-    }
-
-    private ScaMethods mapToScaMethodsOuter(CreateConsentResponse createConsentResponse) {
-        List<AuthenticationObject> authList = Optional.ofNullable(createConsentResponse.getScaMethods())
-                                                  .map(arr -> Arrays.stream(arr)
-                                                                  .map(au -> new AuthenticationObject()
-                                                                                 .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType()))
-                                                                                 .authenticationVersion(au.getAuthenticationVersion())
-                                                                                 .authenticationMethodId(au.getAuthenticationMethodId())
-                                                                                 .name(au.getName())
-                                                                                 .explanation(au.getExplanation()))
-                                                                  .collect(Collectors.toList()))
-                                                  .orElseGet(Collections::emptyList);
-        ScaMethods scaMethods = new ScaMethods();
-        scaMethods.addAll(authList);
-
-        return scaMethods;
     }
 
     private Xs2aAccountAccess mapToAccountAccessInner(AccountAccess accountAccess) {
