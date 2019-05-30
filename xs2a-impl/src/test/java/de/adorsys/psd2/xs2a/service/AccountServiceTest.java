@@ -50,6 +50,7 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.*;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountTransactionsRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -107,7 +108,9 @@ public class AccountServiceTest {
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOTH;
     private static final MessageError VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
-
+    private static final String ENTRY_REFERENCE_FROM = "777";
+    private static final Boolean DELTA_LIST = Boolean.FALSE;
+    private static final Xs2aTransactionsReportByPeriodRequest XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST = new Xs2aTransactionsReportByPeriodRequest(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST);
     private static final JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
@@ -188,7 +191,7 @@ public class AccountServiceTest {
             .thenReturn(ValidationResult.valid());
         when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
             .thenReturn(ValidationResult.valid());
-        when(getTransactionsReportValidator.validate(any(CommonAccountRequestObject.class)))
+        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
         when(getTransactionDetailsValidator.validate(any(CommonAccountTransactionsRequestObject.class)))
             .thenReturn(ValidationResult.valid());
@@ -673,10 +676,10 @@ public class AccountServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(getTransactionsReportValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI)))
+        when(getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST)))
             .thenReturn(ValidationResult.invalid(CONSENT_INVALID_MESSAGE_ERROR));
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -711,7 +714,7 @@ public class AccountServiceTest {
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(SPI_TRANSACTION_REPORT), ServiceType.AIS))
             .thenReturn(ErrorHolder.builder(FORMAT_ERROR_CODE).errorType(ErrorType.AIS_400).build());
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -729,10 +732,10 @@ public class AccountServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(getTransactionsReportValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI)))
+        when(getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST)))
             .thenReturn(ValidationResult.invalid(CONSENT_INVALID_MESSAGE_ERROR));
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
@@ -775,7 +778,7 @@ public class AccountServiceTest {
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
 
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
 
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isFalse();
@@ -818,7 +821,7 @@ public class AccountServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI);
+        accountService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
 
         // Then
         verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
@@ -833,14 +836,14 @@ public class AccountServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
 
-        when(getTransactionsReportValidator.validate(any(CommonAccountRequestObject.class)))
+        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI);
+        ResponseObject<Xs2aTransactionsReport> actualResponse = accountService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
 
         // Then
-        verify(getTransactionsReportValidator).validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
+        verify(getTransactionsReportValidator).validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST));
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError()).isEqualTo(VALIDATION_ERROR);

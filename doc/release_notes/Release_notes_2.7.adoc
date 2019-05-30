@@ -2,6 +2,7 @@
 
 == Table of Contents
 * Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
+* Bugfix: Validate `entryReferenceFrom` and `deltaList` parameters in `Read Transaction List` request
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 From now on, AIS endpoints that take consent ID as a path parameter will return `CONSENT_UNKNOWN` error with HTTP status
@@ -15,3 +16,11 @@ The following endpoints were affected by this change:
 - Update PSU Data in context of an Account Information Consent Request (`PUT /v1/consents/{consentId}/authorisations/{authorisationId}`)
 - Get Authorisation Sub-Resources Request in context of an Account Information Consent Request (`GET /v1/consents/{consentId}/authorisations`)
 - Get SCA Status Request in context of an Account Information Consent Request (`GET /v1/consents/{consentId}/authorisations/{authorisationId}`)
+
+== Bugfix: Validate `entryReferenceFrom` and `deltaList` parameters in `Read Transaction List` request
+
+Parameter `deltaReportSupported` was removed from ASPSP Profile.
+From now on, ASPSP Profile has two parameters: `deltaListSupported` and `entryReferenceFromSupported` that indicate the support of corresponding parameters in `Read Transaction List` request `GET /v1/accounts/{account-id}/transactions`.
+When TPP sends request and it has either `entryReferenceFrom` or `deltaList` parameter, and ASPSP doesn't support them, then TPP will receive `400 Bad Request` error with `PARAMETER_NOT_SUPPORTED` code.
+If ASPSP supports both parameters and TPP sends request with these two parameters, it will also receive `400 Bad Request` error with `FORMAT_ERROR` code.
+
