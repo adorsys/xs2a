@@ -23,7 +23,6 @@ import de.adorsys.psd2.model.AccountList;
 import de.adorsys.psd2.model.AccountReport;
 import de.adorsys.psd2.model.ReadAccountBalanceResponse200;
 import de.adorsys.psd2.xs2a.component.JsonConverter;
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
@@ -231,7 +230,7 @@ public class AccountControllerTest {
         ;
 
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING), eq(REQUEST_URI));
+            .when(accountService).getTransactionsReportByPeriod(any(Xs2aTransactionsReportByPeriodRequest.class));
 
         //When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
@@ -255,7 +254,7 @@ public class AccountControllerTest {
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().fail(MESSAGE_ERROR_AIS_404).body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING), eq(REQUEST_URI));
+            .when(accountService).getTransactionsReportByPeriod(any(Xs2aTransactionsReportByPeriodRequest.class));
 
 
         // When
@@ -281,7 +280,7 @@ public class AccountControllerTest {
         transactionsReport.setAccountReport(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), null));
         transactionsReport.setResponseContentType("application/json");
         doReturn(ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build())
-            .when(accountService).getTransactionsReportByPeriod(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), anyBoolean(), any(), any(), eq(BookingStatus.PENDING), eq(REQUEST_URI));
+            .when(accountService).getTransactionsReportByPeriod(any(Xs2aTransactionsReportByPeriodRequest.class));
 
 
         // When

@@ -17,11 +17,11 @@
 package de.adorsys.psd2.aspsp.profile.config;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -119,9 +119,9 @@ public class BankProfileSetting {
     private boolean piisConsentSupported;
 
     /**
-     * If the option is set to "true", than Delta report is supported
+     * If the option is set to "true", that ASPSP supports reading transactions report with `deltaList` option
      */
-    private boolean deltaReportSupported;
+    private boolean deltaListSupported;
 
     /**
      * The limit of an expiration time of redirect url set in milliseconds
@@ -182,4 +182,9 @@ public class BankProfileSetting {
      * This field indicates what variant of Redirect approach will be used
      */
     private ScaRedirectFlow scaRedirectFlow;
+
+    /**
+     * If the option is set to "true", that ASPSP supports reading transactions report with `entryReferenceFrom` option
+     */
+    private boolean entryReferenceFromSupported;
 }

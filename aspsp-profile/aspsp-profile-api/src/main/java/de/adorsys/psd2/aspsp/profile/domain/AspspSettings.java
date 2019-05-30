@@ -45,7 +45,6 @@ public class AspspSettings {
     private boolean signingBasketSupported;
     private boolean paymentCancellationAuthorizationMandated;
     private boolean piisConsentSupported;
-    private boolean deltaReportSupported;
     private long redirectUrlExpirationTimeMs;
     private String pisPaymentCancellationRedirectUrlToAspsp;
     private long notConfirmedConsentExpirationPeriodMs;
@@ -58,4 +57,6 @@ public class AspspSettings {
     private boolean forceXs2aBaseUrl;
     private String xs2aBaseUrl;
     private ScaRedirectFlow scaRedirectFlow;
+    private boolean deltaListSupported;
+    private boolean entryReferenceFromSupported;
 }
