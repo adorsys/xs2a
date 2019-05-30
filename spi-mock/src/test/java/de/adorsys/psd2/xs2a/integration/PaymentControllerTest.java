@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.aspsp.xs2a.spi.ASPSPXs2aApplication;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.EventServiceEncrypted;
@@ -37,6 +38,7 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,7 +88,7 @@ public class PaymentControllerTest {
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CANCELLATION_ID = "cancellationId";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
-    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
+    private static final ScaApproach REDIRECT_SCA_APPROACH = ScaApproach.REDIRECT;
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     private static final String CANCELLATION_AUTHORISATIONS_RESP = "/json/payment/res/explicit/SinglePaymentCancellationAuth_response.json";
@@ -104,17 +106,18 @@ public class PaymentControllerTest {
     private EventServiceEncrypted eventServiceEncrypted;
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @MockBean
+    private SinglePaymentSpi singlePaymentSpi;
+    @MockBean
+    private AspspDataService aspspDataService;
 
     @Before
     public void init() {
         // common actions for all tests
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppService.getTppInfo())
-            .willReturn(TPP_INFO);
-        given(tppService.getTppId())
-            .willReturn(TPP_INFO.getAuthorisationNumber());
+        given(tppService.getTppInfo()).willReturn(TPP_INFO);
+        given(tppService.getTppId()).willReturn(TPP_INFO.getAuthorisationNumber());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.buildTppUniqueParamsHolder()))
             .willReturn(false);
         given(eventServiceEncrypted.recordEvent(any(Event.class)))
@@ -142,12 +145,13 @@ public class PaymentControllerTest {
     @Test
     public void getPaymentInitiationScaStatus_successful() throws Exception {
         // Given
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(REDIRECT_SCA_APPROACH));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(ScaStatus.RECEIVED));
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(Optional.of(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponse()));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, CmsAuthorisationType.CREATED))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(SCA_APPROACH)));
+            .willReturn(Optional.of(new AuthorisationScaApproachResponse(REDIRECT_SCA_APPROACH)));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetPaymentInitiationScaStatusUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID, AUTHORISATION_ID));
         requestBuilder.headers(httpHeadersExplicit);
@@ -164,12 +168,13 @@ public class PaymentControllerTest {
     @Test
     public void cancelPaymentAuthorisation_successful() throws Exception {
         // Given
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(REDIRECT_SCA_APPROACH));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, CmsAuthorisationType.CREATED))
             .willReturn(Optional.of(ScaStatus.RECEIVED));
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(Optional.of(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponse()));
         given(pisCommonPaymentServiceEncrypted.getAuthorisationScaApproach(CANCELLATION_ID, CmsAuthorisationType.CANCELLED))
-            .willReturn(Optional.of(new AuthorisationScaApproachResponse(SCA_APPROACH)));
+            .willReturn(Optional.of(new AuthorisationScaApproachResponse(REDIRECT_SCA_APPROACH)));
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildGetPaymentCancellationAuthorisationUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID));
         requestBuilder.headers(httpHeadersExplicit);

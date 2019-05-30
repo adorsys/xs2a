@@ -28,12 +28,13 @@ public class SpiPaymentInitiationResponseBuilder {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
 
-    public static SpiResponse<SpiSinglePaymentInitiationResponse> buildSinglePaymentResponse() {
+    public static SpiResponse<SpiSinglePaymentInitiationResponse> buildSinglePaymentResponse(boolean multiLevelSca) {
         SpiSinglePaymentInitiationResponse response = new SpiSinglePaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);
         response.setTransactionStatus(TransactionStatus.RCVD);
         response.setAspspAccountId(ASPSP_ACCOUNT_ID);
         response.setSpiTransactionFeeIndicator(false);
+        response.setMultilevelScaRequired(multiLevelSca);
         return buildSpiResponse(response);
     }
 
