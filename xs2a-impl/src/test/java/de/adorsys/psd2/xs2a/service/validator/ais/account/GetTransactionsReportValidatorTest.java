@@ -23,10 +23,11 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +38,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
-import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.UNAUTHORIZED;
+import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,12 +50,23 @@ public class GetTransactionsReportValidatorTest {
     private static final String ACCOUNT_ID = "account id";
     private static final String REQUEST_URI = "/accounts";
     private static final boolean WITH_BALANCE = false;
+    private static final String ENTRY_REFERENCE_FROM = "";
+    private static final Boolean DELTA_LIST = Boolean.FALSE;
 
     private static final MessageError TPP_VALIDATION_ERROR =
         new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
 
     private static final MessageError PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
+
+    private static final MessageError ENTRY_REFERENCE_FROM_PARAMETER_NOT_SUPPORTED_ERROR =
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED, GetTransactionsReportValidator.ENTRY_REFERENCE_FROM_NOT_SUPPORTED_ERROR_TEXT));
+
+    private static final MessageError DELTA_LIST_PARAMETER_NOT_SUPPORTED_ERROR =
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED, GetTransactionsReportValidator.DELTA_LIST_NOT_SUPPORTED_ERROR_TEXT));
+
+    private static final MessageError ONE_DELTA_REPORT_PARAMETER_CAN_BE_PRESENT_ERROR =
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR, GetTransactionsReportValidator.ONE_DELTA_REPORT_CAN_BE_PRESENT_ERROR_TEXT));
 
     @InjectMocks
     private GetTransactionsReportValidator getTransactionsReportValidator;
@@ -66,9 +77,10 @@ public class GetTransactionsReportValidatorTest {
     private AisTppInfoValidator aisTppInfoValidator;
     @Mock
     private PermittedAccountReferenceValidator permittedAccountReferenceValidator;
-
     @Mock
     private AccountReference accountReference;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
 
     @Before
     public void setUp() {
@@ -79,6 +91,8 @@ public class GetTransactionsReportValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(aisTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+        when(aspspProfileService.isDeltaListSupported()).thenReturn(false);
+        when(aspspProfileService.isEntryReferenceFromSupported()).thenReturn(false);
     }
 
     @Test
@@ -89,7 +103,7 @@ public class GetTransactionsReportValidatorTest {
             .thenReturn(ValidationResult.invalid(PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
 
         // When
-        ValidationResult validationResult = getTransactionsReportValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST));
 
         // Then
         verify(permittedAccountReferenceValidator).validate(accountConsent, accountConsent.getAccess().getTransactions(), ACCOUNT_ID, WITH_BALANCE);
@@ -109,7 +123,7 @@ public class GetTransactionsReportValidatorTest {
             .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getTransactionsReportValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST));
 
         // Then
         verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -125,7 +139,7 @@ public class GetTransactionsReportValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
 
         // When
-        ValidationResult validationResult = getTransactionsReportValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST));
 
         // Then
         verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
@@ -133,6 +147,79 @@ public class GetTransactionsReportValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withDeltaListNoSupported_shouldReturnInvalid() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(aspspProfileService.isDeltaListSupported()).thenReturn(false);
+
+        // When
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, Boolean.TRUE));
+
+        // Then
+        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(DELTA_LIST_PARAMETER_NOT_SUPPORTED_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withEntryReferenceFromNoSupported_shouldReturnInvalid() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(aspspProfileService.isEntryReferenceFromSupported()).thenReturn(false);
+
+        // When
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, "777", DELTA_LIST));
+
+        // Then
+        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(ENTRY_REFERENCE_FROM_PARAMETER_NOT_SUPPORTED_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withDeltaListAndEntryReferenceFromNoSupported_shouldReturnInvalid() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(aspspProfileService.isDeltaListSupported()).thenReturn(false);
+        when(aspspProfileService.isEntryReferenceFromSupported()).thenReturn(false);
+
+        // When
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, "777", Boolean.TRUE));
+
+        // Then
+        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        MessageError messageError = new MessageError(ErrorType.AIS_400,
+                                                     ENTRY_REFERENCE_FROM_PARAMETER_NOT_SUPPORTED_ERROR.getTppMessage(),
+                                                     DELTA_LIST_PARAMETER_NOT_SUPPORTED_ERROR.getTppMessage());
+        assertEquals(messageError, validationResult.getMessageError());
+    }
+
+    @Test
+    public void validate_withOneDeltaReportParameterCanBePresent_shouldReturnInvalid() {
+        // Given
+        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        when(aspspProfileService.isDeltaListSupported()).thenReturn(true);
+        when(aspspProfileService.isEntryReferenceFromSupported()).thenReturn(true);
+
+        // When
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, "777", Boolean.TRUE));
+
+        // Then
+        verify(aisTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(ONE_DELTA_REPORT_PARAMETER_CAN_BE_PRESENT_ERROR, validationResult.getMessageError());
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

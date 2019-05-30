@@ -492,8 +492,8 @@ public class AisConsentServiceInternalTest {
     private AspspSettings getAspspSettings(int consentLifeTime) {
         return new AspspSettings(1, false, false, null, null,
                                  null, false, null, null, consentLifeTime, 1, false,
-                                 false, false, false, false, false, 1,
-                                 null, 1, 1, null, 1, false, false, false, false, null);
+                                 false, false, false, false, 1,
+                                 null, 1, 1, null, 1, false, false, false, false, null, false, false);
     }
 
     private AisConsent buildConsent(String externalId) {

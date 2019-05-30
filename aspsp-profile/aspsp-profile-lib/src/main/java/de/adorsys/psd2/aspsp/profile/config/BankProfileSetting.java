@@ -118,9 +118,9 @@ public class BankProfileSetting {
     private boolean piisConsentSupported;
 
     /**
-     * If the option is set to "true", than Delta report is supported
+     * If the option is set to "true", that ASPSP supports reading transactions report with `deltaList` option
      */
-    private boolean deltaReportSupported;
+    private boolean deltaListSupported;
 
     /**
      * The limit of an expiration time of redirect url set in milliseconds
@@ -176,4 +176,9 @@ public class BankProfileSetting {
      * This url is used as base url for TPP Links in case when `forceXs2aBaseLinksUrl` property is set to "true"
      */
     private String xs2aBaseUrl;
+
+    /**
+     * If the option is set to "true", that ASPSP supports reading transactions report with `entryReferenceFrom` option
+     */
+    private boolean entryReferenceFromSupported;
 }

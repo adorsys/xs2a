@@ -50,7 +50,6 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isSigningBasketSupported(),
             setting.isPaymentCancellationAuthorizationMandated(),
             setting.isPiisConsentSupported(),
-            setting.isDeltaReportSupported(),
             setting.getRedirectUrlExpirationTimeMs(),
             setting.getPisPaymentCancellationRedirectUrlToAspsp(),
             setting.getNotConfirmedConsentExpirationPeriodMs(),
@@ -61,7 +60,9 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isScaByOneTimeAvailableAccountsConsentRequired(),
             setting.isPsuInInitialRequestMandated(),
             setting.isForceXs2aBaseUrl(),
-            setting.getXs2aBaseUrl()
+            setting.getXs2aBaseUrl(),
+            setting.isDeltaListSupported(),
+            setting.isEntryReferenceFromSupported()
         );
     }
 

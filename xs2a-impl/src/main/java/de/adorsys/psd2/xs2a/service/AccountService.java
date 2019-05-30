@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -44,6 +43,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.*;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountTransactionsRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
@@ -305,25 +305,13 @@ public class AccountService {
      * "dateFrom" and "dateTo".  The ASPSP might add balance information, if transaction lists without balances are
      * not supported.     *
      *
-     * @param accountId     String representing a PSU`s Account at ASPSP
-     * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since
-     *                      v1.1
-     * @param acceptHeader  String representing of requested accept header
-     * @param consentId     String representing an AccountConsent identification
-     * @param dateFrom      ISO Date representing the value of desired start date of AccountReport
-     * @param dateTo        ISO Date representing the value of desired end date of AccountReport (if omitted is set
-     *                      to current date)
-     * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses
-     * @param requestUri    the URI of incoming request
+     * @param request Xs2aTransactionsReportByPeriodRequest object which contains information for building Xs2aTransactionsReport
      * @return TransactionsReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances
      * sections is added
      */
-    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(String consentId, String accountId,
-                                                                                String acceptHeader,
-                                                                                boolean withBalance, LocalDate dateFrom,
-                                                                                LocalDate dateTo,
-                                                                                BookingStatus bookingStatus,
-                                                                                String requestUri) {
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(Xs2aTransactionsReportByPeriodRequest request) {
+        String consentId = request.getConsentId();
+
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRANSACTION_LIST_REQUEST_RECEIVED);
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
@@ -333,9 +321,12 @@ public class AccountService {
                        .build();
         }
 
+        String accountId = request.getAccountId();
+        String requestUri = request.getRequestUri();
+        boolean withBalance = request.isWithBalance();
         AccountConsent accountConsent = accountConsentOptional.get();
-
-        ValidationResult validationResult = getTransactionsReportValidator.validate(new CommonAccountRequestObject(accountConsent, accountId, withBalance, requestUri));
+        TransactionsReportByPeriodObject validatorObject = new TransactionsReportByPeriodObject(accountConsent, accountId, withBalance, requestUri, request.getEntryReferenceFrom(), request.getDeltaList());
+        ValidationResult validationResult = getTransactionsReportValidator.validate(validatorObject);
         if (validationResult.isNotValid()) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(validationResult.getMessageError())
@@ -349,6 +340,8 @@ public class AccountService {
                        .build();
         }
 
+        LocalDate dateFrom = request.getDateFrom();
+        LocalDate dateTo = request.getDateTo();
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
         validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
@@ -360,9 +353,9 @@ public class AccountService {
 
         SpiResponse<SpiTransactionReport> spiResponse = accountSpi.requestTransactionsForAccount(
             contextData,
-            acceptHeader,
+            request.getAcceptHeader(),
             isTransactionsShouldContainBalances, dateFrom, dateToChecked,
-            bookingStatus,
+            request.getBookingStatus(),
             requestedAccountReference.get(),
             consentMapper.mapToSpiAccountConsent(accountConsent),
             aisConsentDataService.getAspspConsentDataByConsentId(consentId));

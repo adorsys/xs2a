@@ -50,6 +50,10 @@ public class ValidationResult {
         return new ValidationResult(false, new MessageError(errorType, tppMessageInformation));
     }
 
+    public static ValidationResult invalid(@NotNull ErrorType errorType, TppMessageInformation... tppMessageInformations) {
+        return new ValidationResult(false, new MessageError(errorType, tppMessageInformations));
+    }
+
     private ValidationResult(boolean valid, @Nullable MessageError messageError) {
         this.valid = valid;
         this.messageError = messageError;

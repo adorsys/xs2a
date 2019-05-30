@@ -58,7 +58,7 @@ public class AspspProfileServiceTest {
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
-    private static final boolean DELTA_REPORT_SUPPORTED = false;
+    private static final boolean DELTA_LIST_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
@@ -69,6 +69,7 @@ public class AspspProfileServiceTest {
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
     private static final boolean FORCE_XS2A_BASE_URL = false;
     private static final String XS2A_BASE_URL = "http://myhost.com/";
+    private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -210,6 +211,15 @@ public class AspspProfileServiceTest {
         Assertions.assertThat(actualResponse.getXs2aBaseUrl()).isEqualTo(XS2A_BASE_URL);
     }
 
+    @Test
+    public void getEntryReferenceFromSupported_success() {
+        //When:
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+
+        //Then:
+        Assertions.assertThat(actualResponse.isEntryReferenceFromSupported()).isEqualTo(ENTRY_REFERENCE_FROM_SUPPORTED);
+    }
+
     private BankProfileSetting buildBankProfileSetting() {
         BankProfileSetting setting = new BankProfileSetting();
         setting.setFrequencyPerDay(FREQUENCY_PER_DAY);
@@ -229,7 +239,7 @@ public class AspspProfileServiceTest {
         setting.setSigningBasketSupported(SIGNING_BASKET_SUPPORTED);
         setting.setPaymentCancellationAuthorizationMandated(PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
         setting.setPiisConsentSupported(PIIS_CONSENT_SUPPORTED);
-        setting.setDeltaReportSupported(DELTA_REPORT_SUPPORTED);
+        setting.setDeltaListSupported(DELTA_LIST_SUPPORTED);
         setting.setRedirectUrlExpirationTimeMs(REDIRECT_URL_EXPIRATION_TIME_MS);
         setting.setScaApproaches(Collections.singletonList(REDIRECT_APPROACH));
         setting.setNotConfirmedConsentExpirationPeriodMs(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
@@ -241,6 +251,7 @@ public class AspspProfileServiceTest {
         setting.setPsuInInitialRequestMandated(PSU_IN_INITIAL_REQUEST_MANDATED);
         setting.setForceXs2aBaseUrl(FORCE_XS2A_BASE_URL);
         setting.setXs2aBaseUrl(XS2A_BASE_URL);
+        setting.setEntryReferenceFromSupported(ENTRY_REFERENCE_FROM_SUPPORTED);
         return setting;
     }
 

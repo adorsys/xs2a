@@ -44,7 +44,7 @@ public class AspspSettingsBuilder {
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
     private static final boolean PIIS_CONSENT_SUPPORTED = false;
-    private static final boolean DELTA_REPORT_SUPPORTED = false;
+    private static final boolean DELTA_LIST_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS = 86400000;
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS = 86400000;
@@ -56,6 +56,7 @@ public class AspspSettingsBuilder {
     private static final boolean PSU_IN_INITIAL_REQUEST_MANDATED = false;
     private static final boolean FORCE_XS2A_BASE_URL = false;
     private static final String XS2A_BASEURL = "http://myhost.com/";
+    private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
 
     public static AspspSettings buildAspspSettings() {
         return new AspspSettings(
@@ -75,7 +76,6 @@ public class AspspSettingsBuilder {
             SIGNING_BASKET_SUPPORTED,
             PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
             PIIS_CONSENT_SUPPORTED,
-            DELTA_REPORT_SUPPORTED,
             REDIRECT_URL_EXPIRATION_TIME_MS,
             PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP,
             NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS,
@@ -86,7 +86,9 @@ public class AspspSettingsBuilder {
             SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED,
             PSU_IN_INITIAL_REQUEST_MANDATED,
             FORCE_XS2A_BASE_URL,
-            XS2A_BASEURL);
+            XS2A_BASEURL,
+            DELTA_LIST_SUPPORTED,
+            ENTRY_REFERENCE_FROM_SUPPORTED);
     }
 
     public static AspspSettings buildAspspSettingsWithForcedXs2aBaseUrl(String xs2aBaseUrl) {
@@ -107,7 +109,6 @@ public class AspspSettingsBuilder {
             SIGNING_BASKET_SUPPORTED,
             PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
             PIIS_CONSENT_SUPPORTED,
-            DELTA_REPORT_SUPPORTED,
             REDIRECT_URL_EXPIRATION_TIME_MS,
             PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP,
             NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS,
@@ -118,7 +119,9 @@ public class AspspSettingsBuilder {
             SCA_BY_ONE_TIME_AVAILABLE_ACCOUNTS_CONSENT_REQUIRED,
             PSU_IN_INITIAL_REQUEST_MANDATED,
             true,
-            xs2aBaseUrl);
+            xs2aBaseUrl,
+            DELTA_LIST_SUPPORTED,
+            ENTRY_REFERENCE_FROM_SUPPORTED);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
