@@ -85,6 +85,6 @@ public class XRequestIdHeaderValidatorImplTest {
         validator.validate(headers, messageError);
 
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_WRONG_HEADER, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(ERROR_TEXT_WRONG_HEADER, messageError.getTppMessage().getText());
     }
 }

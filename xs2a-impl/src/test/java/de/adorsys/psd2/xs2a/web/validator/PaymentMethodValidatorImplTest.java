@@ -23,8 +23,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 public class PaymentMethodValidatorImplTest {
 
@@ -37,5 +36,6 @@ public class PaymentMethodValidatorImplTest {
         assertEquals("_initiatePayment", methodValidator.getMethodName());
         assertSame(headerValidators, methodValidator.getHeaderValidators());
         assertSame(bodyValidators, methodValidator.getBodyValidators());
+        assertTrue(methodValidator.getQueryParameterValidators().isEmpty());
     }
 }
