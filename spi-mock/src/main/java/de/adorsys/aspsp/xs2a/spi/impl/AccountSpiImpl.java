@@ -28,12 +28,14 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -53,6 +55,7 @@ public class AccountSpiImpl implements AccountSpi {
     // Test data is used there for testing purposes to have the possibility to see if AccountSpiImpl is being invoked from xs2a.
     // TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
+    private static final String DEFAULT_ACCEPT_MEDIA_TYPE = MediaType.APPLICATION_JSON_VALUE;
 
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")
@@ -122,23 +125,20 @@ public class AccountSpiImpl implements AccountSpi {
                                               .buildAndExpand(uriParams);
 
             List<SpiTransaction> transactions = getFilteredTransactions(uriComponents, bookingStatus);
-            List<SpiAccountBalance> balances = null;
-
-            if (withBalance) {
-                balances = accountDetails.getBalances();
-            }
+            List<SpiAccountBalance> balances = getBalances(withBalance, accountDetails);
 
             SpiResponse.SpiResponseBuilder<SpiTransactionReport> responseBuilder =
                 SpiResponse.<SpiTransactionReport>builder()
                     .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()));
-            if (acceptMediaType.contains(SpiTransactionReport.RESPONSE_TYPE_JSON)) {
+            String responseMediaType = StringUtils.isNotBlank(acceptMediaType) ? acceptMediaType : DEFAULT_ACCEPT_MEDIA_TYPE;
+            if (responseMediaType.contains(SpiTransactionReport.RESPONSE_TYPE_JSON)) {
                 SpiTransactionReport transactionReport = new SpiTransactionReport(transactions,
                                                                                   balances,
                                                                                   SpiTransactionReport.RESPONSE_TYPE_JSON,
                                                                                   null
                 );
                 responseBuilder = responseBuilder.payload(transactionReport);
-            } else if (acceptMediaType.contains(SpiTransactionReport.RESPONSE_TYPE_TEXT)) {
+            } else if (responseMediaType.contains(SpiTransactionReport.RESPONSE_TYPE_TEXT)) {
 
                 StringBuilder textResponseBuilder = new StringBuilder();
                 int transactionsCount = transactions.size();
@@ -177,6 +177,13 @@ public class AccountSpiImpl implements AccountSpi {
             return SpiResponse.<SpiTransactionReport>builder()
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
+    }
+
+    private List<SpiAccountBalance> getBalances(boolean withBalance, SpiAccountDetails accountDetails) {
+        if (withBalance) {
+            return accountDetails.getBalances();
+        }
+        return null;
     }
 
     @Override

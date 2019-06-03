@@ -55,4 +55,5 @@ public class AspspSettings {
     private String xs2aBaseUrl;
     private boolean deltaListSupported;
     private boolean entryReferenceFromSupported;
+    private List<String> supportedTransactionApplicationTypes;
 }

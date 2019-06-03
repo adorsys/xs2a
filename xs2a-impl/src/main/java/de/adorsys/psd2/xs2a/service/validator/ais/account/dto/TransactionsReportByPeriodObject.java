@@ -32,6 +32,7 @@ public class TransactionsReportByPeriodObject implements TppInfoProvider {
     private String requestUri;
     private String entryReferenceFrom;
     private Boolean deltaList;
+    private String acceptHeader;
 
     @Override
     public TppInfo getTppInfo() {
