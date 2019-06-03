@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.validator;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -36,14 +38,20 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractMethodValidatorTest {
+    private static final String QUERY_PARAMETER_NAME = "some-query-param";
+    private static final String QUERY_PARAMETER_VALUE = "some value";
 
     @Mock
     private HeaderValidator headerValidator;
     @Mock
     private BodyValidator bodyValidator;
+    @Mock
+    private QueryParameterValidator queryParameterValidator;
 
     @Captor
     private ArgumentCaptor<Map<String, String>> headersCaptor;
+    @Captor
+    private ArgumentCaptor<Map<String, List<String>>> queryParametersCaptor;
 
 
     private MethodValidator methodValidator;
@@ -56,9 +64,11 @@ public class AbstractMethodValidatorTest {
         messageError = new MessageError();
         request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
+        request.addParameter(QUERY_PARAMETER_NAME, QUERY_PARAMETER_VALUE);
 
         methodValidator = new AbstractMethodValidator(Collections.singletonList(headerValidator),
-                                                      Collections.singletonList(bodyValidator)) {
+                                                      Collections.singletonList(bodyValidator),
+                                                      Collections.singletonList(queryParameterValidator)) {
             @Override
             public String getMethodName() {
                 return "method_name";
@@ -72,8 +82,10 @@ public class AbstractMethodValidatorTest {
 
         verify(headerValidator, times(1)).validate(headersCaptor.capture(), eq(messageError));
         verify(bodyValidator, times(1)).validate(eq(request), eq(messageError));
+        verify(queryParameterValidator, times(1)).validate(queryParametersCaptor.capture(), eq(messageError));
 
         assertEquals(1, headersCaptor.getValue().size());
         assertEquals("application/json", headersCaptor.getValue().get("Content-Type"));
+        assertEquals(Collections.singletonList(QUERY_PARAMETER_VALUE), queryParametersCaptor.getValue().get(QUERY_PARAMETER_NAME));
     }
 }
