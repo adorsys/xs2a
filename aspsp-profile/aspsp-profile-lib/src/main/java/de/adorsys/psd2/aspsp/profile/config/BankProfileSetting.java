@@ -187,4 +187,9 @@ public class BankProfileSetting {
      * If the option is set to "true", that ASPSP supports reading transactions report with `entryReferenceFrom` option
      */
     private boolean entryReferenceFromSupported;
+
+    /**
+     * Transaction application types supported by ASPSP, such as JSON, XML or TEXT
+     */
+    private List<String> supportedTransactionApplicationTypes = new ArrayList<>();
 }

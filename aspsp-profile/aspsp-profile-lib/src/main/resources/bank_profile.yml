@@ -47,3 +47,5 @@ setting:
  scaRedirectFlow: REDIRECT
  deltaListSupported: false
  entryReferenceFromSupported: false
+ supportedTransactionApplicationTypes:
+   - JSON

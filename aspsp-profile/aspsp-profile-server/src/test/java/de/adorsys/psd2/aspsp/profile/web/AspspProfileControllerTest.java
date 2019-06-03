@@ -71,6 +71,7 @@ public class AspspProfileControllerTest {
     private static final boolean FORCE_XS2A_BASE_URL = false;
     private static final String XS2A_BASEURL = "http://myhost.com/";
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
+    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("JSON", "XML");
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
 
     @InjectMocks
@@ -144,7 +145,8 @@ public class AspspProfileControllerTest {
             XS2A_BASEURL,
             SCA_REDIRECT_FLOW,
             DELTA_LIST_SUPPORTED,
-            ENTRY_REFERENCE_FROM_SUPPORTED);
+            ENTRY_REFERENCE_FROM_SUPPORTED,
+            SUPPORTED_TRANSACTION_APPLICATION_TYPES);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

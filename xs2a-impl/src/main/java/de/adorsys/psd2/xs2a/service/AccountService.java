@@ -325,7 +325,7 @@ public class AccountService {
         String requestUri = request.getRequestUri();
         boolean withBalance = request.isWithBalance();
         AccountConsent accountConsent = accountConsentOptional.get();
-        TransactionsReportByPeriodObject validatorObject = new TransactionsReportByPeriodObject(accountConsent, accountId, withBalance, requestUri, request.getEntryReferenceFrom(), request.getDeltaList());
+        TransactionsReportByPeriodObject validatorObject = new TransactionsReportByPeriodObject(accountConsent, accountId, withBalance, requestUri, request.getEntryReferenceFrom(), request.getDeltaList(), request.getAcceptHeader());
         ValidationResult validationResult = getTransactionsReportValidator.validate(validatorObject);
         if (validationResult.isNotValid()) {
             return ResponseObject.<Xs2aTransactionsReport>builder()

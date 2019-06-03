@@ -47,3 +47,5 @@ setting:
  xs2aBaseUrl: http://myhost.com/
  scaRedirectFlow: REDIRECT
  additionalField: 1
+ supportedTransactionApplicationTypes:
+   - JSON
