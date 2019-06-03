@@ -43,8 +43,8 @@ import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.*;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountTransactionsRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -325,7 +325,7 @@ public class AccountService {
         String requestUri = request.getRequestUri();
         boolean withBalance = request.isWithBalance();
         AccountConsent accountConsent = accountConsentOptional.get();
-        TransactionsReportByPeriodObject validatorObject = new TransactionsReportByPeriodObject(accountConsent, accountId, withBalance, requestUri, request.getEntryReferenceFrom(), request.getDeltaList());
+        TransactionsReportByPeriodObject validatorObject = new TransactionsReportByPeriodObject(accountConsent, accountId, withBalance, requestUri, request.getEntryReferenceFrom(), request.getDeltaList(), request.getAcceptHeader());
         ValidationResult validationResult = getTransactionsReportValidator.validate(validatorObject);
         if (validationResult.isNotValid()) {
             return ResponseObject.<Xs2aTransactionsReport>builder()

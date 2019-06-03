@@ -66,14 +66,14 @@ public abstract class AbstractHeaderValidatorImpl {
                                                            String.format(ERROR_TEXT_ABSENT_HEADER, getHeaderName())));
         }
 
-        String contentType = headers.get(getHeaderName());
-        if (Objects.isNull(contentType)) {
+        String header = headers.get(getHeaderName());
+        if (Objects.isNull(header)) {
             return ValidationResult.invalid(
                 errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR,
                                                            String.format(ERROR_TEXT_NULL_HEADER, getHeaderName())));
         }
 
-        if (StringUtils.isBlank(contentType)) {
+        if (StringUtils.isBlank(header)) {
             return ValidationResult.invalid(
                 errorBuildingService.buildErrorType(), TppMessageInformation.of(FORMAT_ERROR,
                                                            String.format(ERROR_TEXT_BLANK_HEADER, getHeaderName())));

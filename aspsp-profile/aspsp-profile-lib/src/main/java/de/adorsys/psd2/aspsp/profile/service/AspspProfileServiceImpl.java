@@ -62,7 +62,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.isForceXs2aBaseUrl(),
             setting.getXs2aBaseUrl(),
             setting.isDeltaListSupported(),
-            setting.isEntryReferenceFromSupported()
+            setting.isEntryReferenceFromSupported(),
+            setting.getSupportedTransactionApplicationTypes()
         );
     }
 

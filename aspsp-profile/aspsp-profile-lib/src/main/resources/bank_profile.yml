@@ -49,3 +49,5 @@ setting:
  xs2aBaseUrl: http://myhost.com/
  deltaListSupported: false
  entryReferenceFromSupported: false
+ supportedTransactionApplicationTypes:
+   - JSON

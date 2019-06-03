@@ -49,3 +49,5 @@ setting:
  forceXs2aBaseUrl: false
  xs2aBaseUrl: http://myhost.com/
  additionalField: 1
+ supportedTransactionApplicationTypes:
+   - JSON

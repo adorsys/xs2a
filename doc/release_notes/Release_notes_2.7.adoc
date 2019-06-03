@@ -6,6 +6,7 @@
 * Bugfix: Сreate consent request and update PSU authorisation request returns empty list of scaMethods in response
 * Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 * Bugfix: `creditorAddress` property is provided to the SPI in payment object even if it was not present in the request
+* Added validation of accept header for getting transaction list (`GET /v1/accounts/{account-id}/transactions`)
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 From now on, AIS endpoints that take consent ID as a path parameter will return `CONSENT_UNKNOWN` error with HTTP status
@@ -45,3 +46,11 @@ To be considered valid, this parameter should be present in request and have a v
 
 Parameter `creditorAddress` in `de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment` and `de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment`
 will be to set to null if it is absent in the `initiatePayment` request (`POST /v1/{payment-service}/{payment-product}`)
+
+== Added validation of accept header for getting transaction list (`GET /v1/accounts/{account-id}/transactions`)
+
+Configuration property `supportedTransactionApplicationTypes` was added to bank profile with list of supported headers (JSON, XML, TEXT).
+
+* `Accept` header (if it is presented in request) should be one of application/json, application/xml or text/plain and configured in bank profile.
+* If property `supportedTransactionApplicationTypes` is not configured validation will not be applied and header can be one of JSON, XML, TEXT as in specification.
+* If header `Accept` is not provided in request - respond with JSON format.
