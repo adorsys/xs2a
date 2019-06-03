@@ -83,7 +83,6 @@ public class AisConsentServiceInternal implements AisConsentService {
             return Optional.empty();
         }
         AisConsent consent = createConsentFromRequest(request);
-        consent.setExternalId(UUID.randomUUID().toString());
         AisConsent saved = aisConsentRepository.save(consent);
 
         if (saved.getId() != null) {
@@ -286,6 +285,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
 
         AisConsent consent = new AisConsent();
+        consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(RECEIVED);
         consent.setAllowedFrequencyPerDay(request.getAllowedFrequencyPerDay());
         consent.setTppFrequencyPerDay(request.getRequestedFrequencyPerDay());
@@ -301,6 +301,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setAisConsentRequestType(getRequestTypeFromAccess(request.getAccess()));
         consent.setAvailableAccounts(request.getAccess().getAvailableAccounts());
         consent.setAllPsd2(request.getAccess().getAllPsd2());
+        consent.setLastActionDate(LocalDate.now());
         return consent;
     }
 

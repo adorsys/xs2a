@@ -4,6 +4,7 @@
 * Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 * Bugfix: Validate `entryReferenceFrom` and `deltaList` parameters in `Read Transaction List` request
 * Bugfix: Сreate consent request and update PSU authorisation request returns empty list of scaMethods in response
+* Bugfix: `Get Consent` request doesn't return mandated `lastActionDate` attribute in response body
 * Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 * Bugfix: `creditorAddress` property is provided to the SPI in payment object even if it was not present in the request
 * Added validation of accept header for getting transaction list (`GET /v1/accounts/{account-id}/transactions`)
@@ -35,6 +36,12 @@ are returned from SPI level:
 
 - POST `/v1/consents`;
 - PUT `/v1/consents/{consent_id}/authorisations/{authorisation_id}`.
+
+== Bugfix: `Get Consent` request doesn't return mandated `lastActionDate` attribute in response body
+
+Until now, when TPP made first `Get Consent` request, `lastActionDate` field was absent in the response.
+From now on, the value of the `lastActionDate` field is set to the current date when AIS Consent is created and will always be present in the `Get Consent` response.
+
 
 == Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 

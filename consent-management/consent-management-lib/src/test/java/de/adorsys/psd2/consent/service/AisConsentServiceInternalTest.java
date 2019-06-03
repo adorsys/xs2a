@@ -249,6 +249,21 @@ public class AisConsentServiceInternalTest {
     }
 
     @Test
+    public void createConsent_checkLastActionDate() {
+        //Given
+        when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
+        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
+        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
+
+        //When
+        aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
+
+        //Then
+        verify(aisConsentRepository).save(argument.capture());
+        assertEquals(LocalDate.now(), argument.getValue().getLastActionDate());
+    }
+
+    @Test
     public void updateAccountAccessById() {
         // When
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
