@@ -28,7 +28,8 @@ import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.web.validator.header.AbstractHeaderValidatorImpl.*;
 import static de.adorsys.psd2.xs2a.web.validator.header.XRequestIdHeaderValidatorImpl.ERROR_TEXT_WRONG_HEADER;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class XRequestIdHeaderValidatorImplTest {
 
@@ -84,6 +85,6 @@ public class XRequestIdHeaderValidatorImplTest {
         validator.validate(headers, messageError);
 
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(String.format(ERROR_TEXT_WRONG_HEADER, validator.getHeaderName()), messageError.getTppMessage().getText());
+        assertEquals(ERROR_TEXT_WRONG_HEADER, messageError.getTppMessage().getText());
     }
 }

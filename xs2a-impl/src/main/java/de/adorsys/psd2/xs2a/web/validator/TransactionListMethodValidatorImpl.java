@@ -16,24 +16,21 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import de.adorsys.psd2.xs2a.web.validator.body.consent.ConsentBodyValidator;
-import de.adorsys.psd2.xs2a.web.validator.header.ConsentHeaderValidator;
-import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
+import de.adorsys.psd2.xs2a.web.validator.header.account.TransactionListHeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.query.account.TransactionListQueryParamsValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
 @Component
-public class ConsentMethodValidatorImpl extends AbstractMethodValidator<ConsentHeaderValidator, ConsentBodyValidator, QueryParameterValidator> {
+public class TransactionListMethodValidatorImpl extends AbstractMethodValidator<TransactionListHeaderValidator, BodyValidator, TransactionListQueryParamsValidator> {
+    private static final String METHOD_NAME = "_getTransactionList";
 
-    private static final String METHOD_NAME = "_createConsent";
-
-    @Autowired
-    public ConsentMethodValidatorImpl(List<ConsentHeaderValidator> headerValidators,
-                                      List<ConsentBodyValidator> bodyValidators) {
-        super(headerValidators, bodyValidators, Collections.emptyList());
+    protected TransactionListMethodValidatorImpl(List<TransactionListHeaderValidator> headerValidators,
+                                                 List<TransactionListQueryParamsValidator> queryParamsValidator) {
+        super(headerValidators, Collections.emptyList(), queryParamsValidator);
     }
 
     @Override
