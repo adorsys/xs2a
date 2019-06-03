@@ -109,6 +109,7 @@ public class PaymentController implements PaymentApi {
                                              .orElseGet(ResponseObject.builder()
                                                             .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))::build);
 
+        //TODO Don't provide "creditorAddress" field in "getPaymentInformation" response if it was absent in "initiatePayment" request https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/869
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(ResponseObject.builder().body(paymentModelMapperPsd2.mapToGetPaymentResponse(serviceResponse.getBody(), PaymentType.getByValue(paymentService).get(),

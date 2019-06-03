@@ -207,20 +207,6 @@ public class AccountModelMapper {
         return targetAddress;
     }
 
-    public Xs2aAddress mapToXs2aAddress(Address address) {
-        return Optional.ofNullable(address)
-                   .map(a -> {
-                       Xs2aAddress targetAddress = new Xs2aAddress();
-                       targetAddress.setStreet(a.getStreet());
-                       targetAddress.setBuildingNumber(a.getBuildingNumber());
-                       targetAddress.setCity(a.getCity());
-                       targetAddress.setPostalCode(a.getPostalCode());
-                       targetAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
-                       return targetAddress;
-                   })
-                   .orElseGet(Xs2aAddress::new);
-    }
-
     public TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport) {
         TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
         transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));

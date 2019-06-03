@@ -48,6 +48,6 @@ public class Xs2aAddressMapperTest {
     public void mapToXs2aAddress_nullValue() {
         Xs2aAddress xs2aAddress = xs2aAddressMapper.mapToXs2aAddress(null);
 
-        assertEquals(new Xs2aAddress(), xs2aAddress);
+        assertEquals(null, xs2aAddress);
     }
 }
