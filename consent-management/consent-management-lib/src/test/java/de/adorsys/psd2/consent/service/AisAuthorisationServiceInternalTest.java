@@ -20,7 +20,6 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.ScaMethod;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
@@ -174,7 +173,7 @@ public class AisAuthorisationServiceInternalTest {
         //Given
         ArgumentCaptor<AisConsentAuthorization> argument = ArgumentCaptor.forClass(AisConsentAuthorization.class);
         //noinspection unchecked
-        ArgumentCaptor<List<AisConsentAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List<AisConsentAuthorization>> failedAuthorisationsArgument = ArgumentCaptor.forClass((Class) List.class);
 
         when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings());
         when(aisConsentAuthorisationRepository.save(any(AisConsentAuthorization.class))).thenReturn(aisConsentAuthorisation);
@@ -188,7 +187,7 @@ public class AisAuthorisationServiceInternalTest {
         aisConsentAuthorisationRequest.setScaStatus(aisConsentAuthorisation.getScaStatus());
 
         // When
-        Optional<CreateAisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternal.createAuthorizationWithResponse(EXTERNAL_CONSENT_ID, aisConsentAuthorisationRequest);
+        Optional<String> actual = aisAuthorisationServiceInternal.createAuthorization(EXTERNAL_CONSENT_ID, aisConsentAuthorisationRequest);
 
         // Then
         assertTrue(actual.isPresent());

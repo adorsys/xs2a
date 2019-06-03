@@ -36,6 +36,17 @@ import java.util.Optional;
  */
 interface AisConsentAuthorisationServiceBase {
     /**
+     * Creates consent authorization
+     *
+     * @param consentId id of consent
+     * @param request   needed parameters for creating consent authorization
+     * @return String authorization id
+     */
+    @Deprecated
+    //TODO in sprint 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
+    Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request);
+
+    /**
      * Creates consent authorization and return response object
      *
      * @param consentId id of consent

@@ -61,6 +61,8 @@ public class AisAuthorisationServiceInternalEncryptedTest {
             .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID))
             .thenReturn(Optional.empty());
+        when(aisConsentAuthorisationService.createAuthorization(DECRYPTED_CONSENT_ID, buildAisConsentAuthorisationRequest()))
+            .thenReturn(Optional.of(AUTHORISATION_ID));
         when(aisConsentAuthorisationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, DECRYPTED_CONSENT_ID))
             .thenReturn(Optional.of(buildAisConsentAuthorizationResponse()));
         when(aisConsentAuthorisationService.updateConsentAuthorization(AUTHORISATION_ID, buildAisConsentAuthorisationRequest()))
@@ -70,6 +72,49 @@ public class AisAuthorisationServiceInternalEncryptedTest {
 
         when(aisConsentAuthorisationService.getAuthorisationScaStatus(DECRYPTED_CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
+    }
+
+    @Test
+    public void createAuthorization_success() {
+        // Given
+        AisConsentAuthorizationRequest request = buildAisConsentAuthorisationRequest();
+
+        // When
+        Optional<String> actual = aisAuthorisationServiceInternalEncrypted.createAuthorization(ENCRYPTED_CONSENT_ID, request);
+
+        // Then
+        assertTrue(actual.isPresent());
+
+        assertEquals(AUTHORISATION_ID, actual.get());
+        verify(aisConsentAuthorisationService, times(1)).createAuthorization(DECRYPTED_CONSENT_ID, request);
+    }
+
+    @Test
+    public void createAuthorization_internalServiceFailed() {
+        when(aisConsentAuthorisationService.createAuthorization(any(), any())).thenReturn(Optional.empty());
+
+        // Given
+        AisConsentAuthorizationRequest request = buildAisConsentAuthorisationRequest();
+
+        // When
+        Optional<String> actual = aisAuthorisationServiceInternalEncrypted.createAuthorization(ENCRYPTED_CONSENT_ID, request);
+
+        // Then
+        assertFalse(actual.isPresent());
+        verify(aisConsentAuthorisationService, times(1)).createAuthorization(DECRYPTED_CONSENT_ID, request);
+    }
+
+    @Test
+    public void createAuthorization_decryptionFailed() {
+        // Given
+        AisConsentAuthorizationRequest request = buildAisConsentAuthorisationRequest();
+
+        // When
+        Optional<String> actual = aisAuthorisationServiceInternalEncrypted.createAuthorization(UNDECRYPTABLE_CONSENT_ID, request);
+
+        // Then
+        assertFalse(actual.isPresent());
+        verify(aisConsentAuthorisationService, never()).createAuthorization(any(), any());
     }
 
     @Test
