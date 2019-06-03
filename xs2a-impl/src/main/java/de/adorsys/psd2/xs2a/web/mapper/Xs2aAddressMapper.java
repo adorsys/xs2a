@@ -24,7 +24,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring",
-    nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+    nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL)
 public interface Xs2aAddressMapper {
 
     @Mapping(target = "country", source = "address", qualifiedByName = "mapToXs2aCountryCode")

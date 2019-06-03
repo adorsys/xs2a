@@ -27,6 +27,10 @@ import java.util.Optional;
 public class Xs2aToSpiAddressMapper {
 
     public SpiAddress mapToSpiAddress(Xs2aAddress address) {
+        if (address == null) {
+            return null;
+        }
+
         return new SpiAddress(
             address.getStreet(),
             address.getBuildingNumber(),
