@@ -68,6 +68,26 @@ public class AisAuthorisationServiceInternal implements AisConsentAuthorisationS
      *
      * @param consentId id of consent
      * @param request   needed parameters for creating consent authorization
+     * @return String authorization id
+     */
+    @Override
+    @Transactional
+    @Deprecated //TODO in sprint 2.7 Remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/805
+    public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
+        return aisConsentRepository.findByExternalId(consentId)
+                   .filter(con -> !con.getConsentStatus().isFinalisedStatus())
+                   .map(aisConsent -> {
+                       closePreviousAuthorisationsByPsu(aisConsent.getAuthorizations(), request.getPsuData());
+                       AisConsentAuthorization newAuthorisation = saveNewAuthorization(aisConsent, request);
+                       return newAuthorisation.getExternalId();
+                   });
+    }
+
+    /**
+     * Create consent authorization
+     *
+     * @param consentId id of consent
+     * @param request   needed parameters for creating consent authorization
      * @return CreateAisConsentAuthorizationResponse object with authorization id and scaStatus
      */
     @Override
