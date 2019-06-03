@@ -70,51 +70,39 @@ public class AspspProfileServiceTest {
     private static final boolean FORCE_XS2A_BASE_URL = false;
     private static final String XS2A_BASE_URL = "http://myhost.com/";
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
+    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("JSON", "XML");
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
 
     @Mock
     private ProfileConfiguration profileConfiguration;
+    private AspspSettings actualResponse;
 
     @Before
     public void setUpAccountServiceMock() {
         when(profileConfiguration.getSetting()).thenReturn(buildBankProfileSetting());
+
+        actualResponse = aspspProfileService.getAspspSettings();
     }
 
     @Test
     public void getPisRedirectUrlToAspsp_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getPisRedirectUrlToAspsp()).isEqualTo(PIS_REDIRECT_LINK);
     }
 
     @Test
     public void getPisPaymentCancellationRedirectUrlToAspsp_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getPisPaymentCancellationRedirectUrlToAspsp()).isEqualTo(PIS_CANCELLATION_REDIRECT_LINK);
     }
 
     @Test
     public void getAisRedirectUrlToAspsp_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getAisRedirectUrlToAspsp()).isEqualTo(AIS_REDIRECT_LINK);
     }
 
     @Test
     public void getAvailablePaymentTypes_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getSupportedPaymentTypeAndProductMatrix()).isEqualTo(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX);
     }
 
@@ -129,95 +117,62 @@ public class AspspProfileServiceTest {
 
     @Test
     public void getRedirectUrlExpirationTimeMs_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getRedirectUrlExpirationTimeMs()).isEqualTo(REDIRECT_URL_EXPIRATION_TIME_MS);
     }
 
     @Test
     public void getFrequencyPerDay_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getFrequencyPerDay()).isEqualTo(FREQUENCY_PER_DAY);
     }
 
     @Test
     public void getNotConfirmedConsentExpirationPeriodMs_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getNotConfirmedConsentExpirationPeriodMs()).isEqualTo(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
     }
 
     @Test
     public void getNotConfirmedPaymentExpirationPeriodMs_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getNotConfirmedPaymentExpirationPeriodMs()).isEqualTo(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
     }
 
+    @Test
     public void getPaymentCancellationRedirectUrlExpirationTimeMs_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getPaymentCancellationRedirectUrlExpirationTimeMs()).isEqualTo(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
     }
 
+    @Test
     public void getAvailableAccountsConsentSupported_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.isAvailableAccountsConsentSupported()).isEqualTo(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED);
     }
 
+    @Test
     public void getScaByOneTimeAvailableAccountsConsentRequired_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.isScaByOneTimeAvailableAccountsConsentRequired()).isEqualTo(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED);
     }
 
+    @Test
     public void getPsuInInitialRequestMandated_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.isPsuInInitialRequestMandated()).isEqualTo(PSU_IN_INITIAL_REQUEST_MANDATED);
     }
 
+    @Test
     public void getForceXs2aBaseUrl_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.isForceXs2aBaseUrl()).isEqualTo(FORCE_XS2A_BASE_URL);
     }
 
+    @Test
     public void getXs2aBaseUrl_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.getXs2aBaseUrl()).isEqualTo(XS2A_BASE_URL);
     }
 
     @Test
     public void getEntryReferenceFromSupported_success() {
-        //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
-
-        //Then:
         Assertions.assertThat(actualResponse.isEntryReferenceFromSupported()).isEqualTo(ENTRY_REFERENCE_FROM_SUPPORTED);
+    }
+
+    @Test
+    public void supportedTransactionApplicationTypes_success() {
+        Assertions.assertThat(actualResponse.getSupportedTransactionApplicationTypes()).isEqualTo(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
     }
 
     private BankProfileSetting buildBankProfileSetting() {
@@ -252,6 +207,7 @@ public class AspspProfileServiceTest {
         setting.setForceXs2aBaseUrl(FORCE_XS2A_BASE_URL);
         setting.setXs2aBaseUrl(XS2A_BASE_URL);
         setting.setEntryReferenceFromSupported(ENTRY_REFERENCE_FROM_SUPPORTED);
+        setting.setSupportedTransactionApplicationTypes(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
         return setting;
     }
 

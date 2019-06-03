@@ -63,7 +63,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.getXs2aBaseUrl(),
             setting.getScaRedirectFlow(),
             setting.isDeltaListSupported(),
-            setting.isEntryReferenceFromSupported()
+            setting.isEntryReferenceFromSupported(),
+            setting.getSupportedTransactionApplicationTypes()
         );
     }
 

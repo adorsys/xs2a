@@ -60,6 +60,7 @@ public class AspspSettingsBuilder {
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW_OAUTH = ScaRedirectFlow.OAUTH;
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
+    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("JSON", "XML");
 
     public static AspspSettings buildAspspSettings() {
         return new AspspSettings(
@@ -92,7 +93,8 @@ public class AspspSettingsBuilder {
             XS2A_BASEURL,
             SCA_REDIRECT_FLOW,
             DELTA_LIST_SUPPORTED,
-            ENTRY_REFERENCE_FROM_SUPPORTED);
+            ENTRY_REFERENCE_FROM_SUPPORTED,
+            SUPPORTED_TRANSACTION_APPLICATION_TYPES);
     }
 
     public static AspspSettings buildAspspSettingsWithForcedXs2aBaseUrl(String xs2aBaseUrl) {
@@ -126,7 +128,8 @@ public class AspspSettingsBuilder {
             xs2aBaseUrl,
             SCA_REDIRECT_FLOW,
             DELTA_LIST_SUPPORTED,
-            ENTRY_REFERENCE_FROM_SUPPORTED);
+            ENTRY_REFERENCE_FROM_SUPPORTED,
+            SUPPORTED_TRANSACTION_APPLICATION_TYPES);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

@@ -72,6 +72,7 @@ public class AspspProfileUpdateServiceImplTest {
     private static final String XS2A_BASE_URL = "http://myhost.com/";
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
+    private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("JSON", "XML");
 
     @InjectMocks
     private AspspProfileUpdateServiceImpl aspspProfileUpdateService;
@@ -100,7 +101,7 @@ public class AspspProfileUpdateServiceImplTest {
                                                                         MULTICURRENCY_ACCOUNT_LEVEL, BANK_OFFERED_CONSENT_SUPPORT, AVAILABLE_BOOKING_STATUSES, SUPPORTED_ACCOUNT_REFERENCE_FIELDS, CONSENT_LIFETIME, TRANSACTION_LIFETIME, ALL_PSD_2_SUPPORT,
                                                                         TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED, SIGNING_BASKET_SUPPORTED, PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED, PIIS_CONSENT_SUPPORTED, REDIRECT_URL_EXPIRATION_TIME_MS,
                                                                         PIS_CANCELLATION_REDIRECT_LINK, NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS, NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS, SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX, PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS,
-                                                                        AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED, SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, PSU_IN_INITIAL_REQUEST_MANDATED, FORCE_XS2A_BASE_URL, XS2A_BASE_URL, SCA_REDIRECT_FLOW, DELTA_LIST_SUPPORTED, ENTRY_REFERENCE_FROM_SUPPORTED));
+                                                                        AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED, SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, PSU_IN_INITIAL_REQUEST_MANDATED, FORCE_XS2A_BASE_URL, XS2A_BASE_URL, SCA_REDIRECT_FLOW, DELTA_LIST_SUPPORTED, ENTRY_REFERENCE_FROM_SUPPORTED, SUPPORTED_TRANSACTION_APPLICATION_TYPES));
 
         //Then:
         BankProfileSetting setting = profileConfiguration.getSetting();
@@ -134,6 +135,7 @@ public class AspspProfileUpdateServiceImplTest {
         Assertions.assertThat(setting.getXs2aBaseUrl()).isEqualTo(XS2A_BASE_URL);
         Assertions.assertThat(setting.getScaRedirectFlow()).isEqualTo(SCA_REDIRECT_FLOW);
         Assertions.assertThat(setting.isEntryReferenceFromSupported()).isEqualTo(ENTRY_REFERENCE_FROM_SUPPORTED);
+        Assertions.assertThat(setting.getSupportedTransactionApplicationTypes()).isEqualTo(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

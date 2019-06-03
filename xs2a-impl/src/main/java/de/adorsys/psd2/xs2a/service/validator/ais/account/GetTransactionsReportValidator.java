@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.TransactionReportAcceptHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class GetTransactionsReportValidator extends AbstractAisTppValidator<Tran
     private final PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     private final AccountConsentValidator accountConsentValidator;
     private final AspspProfileServiceWrapper aspspProfileService;
+    private final TransactionReportAcceptHeaderValidator transactionReportAcceptHeaderValidator;
 
     /**
      * Validates get transactions report request
@@ -59,6 +61,11 @@ public class GetTransactionsReportValidator extends AbstractAisTppValidator<Tran
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(TransactionsReportByPeriodObject requestObject) {
+        ValidationResult acceptHeaderValidationResult = transactionReportAcceptHeaderValidator.validate(requestObject.getAcceptHeader());
+        if (acceptHeaderValidationResult.isNotValid()) {
+            return acceptHeaderValidationResult;
+        }
+
         ValidationResult validationResult = validateTransactionReportParameters(requestObject.getEntryReferenceFrom(), requestObject.getDeltaList());
         if (validationResult.isNotValid()) {
             return validationResult;
