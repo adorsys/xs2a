@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.response;
+package de.adorsys.psd2.xs2a.core.error;
 
-/**
- * @deprecated since 3.5. Use SpiResponse::errors instead
- */
-@Deprecated
-public enum SpiResponseStatus {
-    SUCCESS,
-    TECHNICAL_FAILURE,
-    UNAUTHORIZED_FAILURE,
-    LOGICAL_FAILURE,
-    NOT_SUPPORTED
+import lombok.Value;
+
+@Value
+public class TppMessage {
+    private final MessageErrorCode errorCode;
+    private final String messageText;
+    private final Object[] messageTextArgs;
+
+    public TppMessage(MessageErrorCode errorCode, String messageText, Object... messageTextArgs) {
+        this.errorCode = errorCode;
+        this.messageText = messageText;
+        this.messageTextArgs = messageTextArgs;
+    }
 }

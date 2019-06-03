@@ -17,10 +17,13 @@
 package de.adorsys.psd2.xs2a.spi.domain.response;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
 
 public class SpiResponseTest {
 
@@ -59,15 +62,6 @@ public class SpiResponseTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void builder_should_fail_on_failure_with_null_status() {
-        SpiResponse.SpiResponseBuilder<Object> builder = SpiResponse.builder();
-
-        //noinspection ConstantConditions
-        builder
-            .fail(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void constructor_should_fail_without_payload() {
         //noinspection ConstantConditions
         new SpiResponse<>(null, SOME_ASPSP_CONSENT_DATA);
@@ -102,4 +96,39 @@ public class SpiResponseTest {
         assertFalse(spiResponse.isSuccessful());
     }
 
+    @Test
+    public void builder_build_transfers_every_field() {
+        SpiResponse.SpiResponseBuilder<String> builder = SpiResponse.builder();
+        SpiResponse<String> response =
+            builder
+            .payload("some payload")
+            .message("some message 1")
+            .message(Arrays.asList("Some message 2", "Some message 3"))
+            .error(new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400, "Consent Unknown", "reason"))
+            .error(Arrays.asList(new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400, "Consent Unknown", "reason")))
+            .build();
+
+        assertEquals("some payload", response.getPayload());
+        assertFalse(response.isSuccessful());
+        assertTrue(response.hasError());
+        assertEquals(5, response.getMessages().size());
+        assertEquals(5, response.getErrors().size());
+        assertEquals(SpiResponseStatus.LOGICAL_FAILURE, response.getResponseStatus());
+    }
+
+    @Test
+    public void builder_build_success_response() {
+        SpiResponse.SpiResponseBuilder<String> builder = SpiResponse.builder();
+        SpiResponse<String> response =
+            builder
+            .payload("some payload")
+            .build();
+
+        assertEquals("some payload", response.getPayload());
+        assertTrue(response.isSuccessful());
+        assertFalse(response.hasError());
+        assertEquals(0, response.getMessages().size());
+        assertEquals(0, response.getErrors().size());
+        assertEquals(SpiResponseStatus.SUCCESS, response.getResponseStatus());
+    }
 }

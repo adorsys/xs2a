@@ -1,3 +1,17 @@
 = Release notes v. 3.5
 
 == Table of Contents
+* Return extended errors from SPI Level: changes in SpiResponse
+
+== Return extended errors from SPI Level: changes in SpiResponse
+Before these changes errors in the SPI Level were bound to four possible values: TECHNICAL_FAILURE,
+UNAUTHORIZED_FAILURE, LOGICAL_FAILURE, NOT_SUPPORTED.
+
+For some use cases this is not enough and SPI Developer may need to provide another error or even list of errors.
+For this reason SpiResponse class is changed: now it provides a list of errors, that contain TppMessage container.
+SPI Developer may provide several errors with own error code. Error codes are bound to the NextGenPSD2 Specification.
+HTTP error code will be identified by first error in the list.
+
+For this reason SpiResponseStatus is now deprecated and will be removed after some version. Success path means no errors in the list.
+Unsuccess path means at least one error in the errors list in SpiResponse.
+Also SpiResponse will support only builder in the future. No constructors will be supported anymore.

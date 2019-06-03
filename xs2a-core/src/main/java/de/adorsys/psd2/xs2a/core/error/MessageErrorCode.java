@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public enum MessageErrorCode {
+    SERVICE_NOT_SUPPORTED(406), // Requested service or it's part is not supported by ASPSP
     CERTIFICATE_INVALID(401),  // "The contents of the signature/corporate seal certificate are not matching PSD2 general PSD2 or attribute requirements
     CERTIFICATE_EXPIRED(401),  //Signature/corporate seal certificate is expired
     CERTIFICATE_BLOCKED(401),  //Signature/corporate seal certificate has been blocked by the ASPSP

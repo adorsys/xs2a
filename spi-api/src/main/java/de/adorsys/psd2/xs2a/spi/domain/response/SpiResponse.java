@@ -17,6 +17,8 @@
 package de.adorsys.psd2.xs2a.spi.domain.response;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import lombok.Value;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,9 +27,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus.LOGICAL_FAILURE;
 import static de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus.SUCCESS;
+import static java.util.stream.Collectors.toList;
 
 @Value
 public class SpiResponse<T> {
@@ -52,15 +58,17 @@ public class SpiResponse<T> {
 
     /**
      * A status of execution result. Is used to provide correct answer to TPP.
+     * @deprecated since 3.5. Use MessageErrorCode in errors list instead.
      */
+    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
     private SpiResponseStatus responseStatus;
 
     /**
-     * An optional message that can be returned to explain response status in details. XS2A Service may use it to
+     * Optional messages that can be returned to explain an error in details. XS2A Service will use it to
      * provide the error explanation to TPP
      */
     @NotNull
-    private final List<String> messages = new ArrayList<>();
+    private final List<TppMessage> errors = new ArrayList<>();
 
     /**
      * @param payload
@@ -72,7 +80,10 @@ public class SpiResponse<T> {
      *         - Status of the processing call. Defaults to error.
      * @param messages
      *         - Optional messages to be provided to the TPP.
+     * @deprecated since 3.5. Use Builder instead
+     * @see #builder()
      */
+    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
     public SpiResponse(T payload, @Nullable @Deprecated AspspConsentData aspspConsentData,
                        SpiResponseStatus responseStatus, List<String> messages
                       ) {
@@ -83,10 +94,17 @@ public class SpiResponse<T> {
         this.aspspConsentData = aspspConsentData;
         this.responseStatus = responseStatus;
         if (CollectionUtils.isNotEmpty(messages)) {
-            this.messages.addAll(messages);
+            this.errors.addAll(messagesToErrors(this.responseStatus, messages));
         }
     }
 
+    /**
+     * @param payload reposnse payload
+     * @param aspspConsentData deprecated
+     * @deprecated since 3.5. Use Builder instead
+     * @see #builder()
+     */
+    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
     public SpiResponse(@NotNull T payload, @Nullable @Deprecated AspspConsentData aspspConsentData) {
         this(payload, aspspConsentData, SUCCESS, null);
     }
@@ -95,7 +113,7 @@ public class SpiResponse<T> {
         this.payload = builder.payload;
         this.aspspConsentData = builder.aspspConsentData;
         this.responseStatus = builder.responseStatus;
-        this.messages.addAll(builder.messages);
+        this.errors.addAll(builder.errors);
     }
 
     public static VoidResponse voidResponse() {
@@ -107,18 +125,64 @@ public class SpiResponse<T> {
     }
 
     public boolean hasError() {
-        return responseStatus != SUCCESS || payload == null;
+        return !errors.isEmpty() || responseStatus != SUCCESS|| payload == null;
     }
 
     public boolean isSuccessful() {
-        return responseStatus == SUCCESS && payload != null;
+        return errors.isEmpty() && responseStatus == SUCCESS && payload != null;
+    }
+
+    /**
+     * @return List of error messages
+     * @deprecated since 3.5
+     */
+    @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
+    public List<String> getMessages() {
+        return errors.stream()
+            .map(TppMessage::getMessageText)
+            .collect(toList());
+    }
+
+    //TODO remove with messages removal https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
+    private static List<TppMessage> messagesToErrors(SpiResponseStatus responseStatus, Collection<String> messages) {
+        if (CollectionUtils.isEmpty(messages)) {
+            return Collections.emptyList();
+        }
+        MessageErrorCode messageErrorCode = getErrorCodeByStatus(responseStatus);
+
+        return messages.stream()
+                .map(m -> new TppMessage(messageErrorCode, m))
+                .collect(toList());
+    }
+
+    @NotNull
+    //TODO remove with messages removal https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
+    private static MessageErrorCode getErrorCodeByStatus(SpiResponseStatus responseStatus) {
+        MessageErrorCode messageErrorCode = MessageErrorCode.FORMAT_ERROR;
+        if (responseStatus != null) {
+            switch (responseStatus) {
+                case NOT_SUPPORTED:
+                    messageErrorCode = MessageErrorCode.PARAMETER_NOT_SUPPORTED;
+                    break;
+                case TECHNICAL_FAILURE:
+                    messageErrorCode = MessageErrorCode.INTERNAL_SERVER_ERROR;
+                    break;
+                case UNAUTHORIZED_FAILURE:
+                    messageErrorCode = MessageErrorCode.PSU_CREDENTIALS_INVALID;
+                    break;
+                case LOGICAL_FAILURE:
+                default:
+                    messageErrorCode = MessageErrorCode.FORMAT_ERROR;
+            }
+        }
+        return messageErrorCode;
     }
 
     public static class SpiResponseBuilder<T> {
         private T payload;
         private AspspConsentData aspspConsentData;
-        private SpiResponseStatus responseStatus = SUCCESS;
-        private List<String> messages = new ArrayList<>();
+        private SpiResponseStatus responseStatus;
+        private List<TppMessage> errors = new ArrayList<>();
 
         private SpiResponseBuilder() {
         }
@@ -140,20 +204,60 @@ public class SpiResponse<T> {
             return this;
         }
 
+        /**
+         * @param message message to add
+         * @return SpiResponseBuilder
+         * @deprecated since 3.5. Use error instead
+         * @see #error(TppMessage)
+         */
+        @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
         public SpiResponseBuilder<T> message(@NotNull String message) {
+            MessageErrorCode messageErrorCode = getErrorCodeByStatus(this.responseStatus);
             if (StringUtils.isNotBlank(message)) {
-                this.messages.add(message);
+                this.errors.add(new TppMessage(messageErrorCode, message, null));
             }
             return this;
         }
 
+        /**
+         * @param messages messages to add
+         * @return SpiResponseBuilder
+         * @deprecated since 3.5. Use error instead
+         * @see #error(List)
+         */
+        @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
         public SpiResponseBuilder<T> message(List<String> messages) {
             if (CollectionUtils.isNotEmpty(messages)) {
-                this.messages.addAll(messages);
+                this.errors.addAll(messagesToErrors(this.responseStatus, messages));
             }
             return this;
         }
 
+        public SpiResponseBuilder<T> error(@NotNull TppMessage error) {
+            this.errors.add(error);
+            return this;
+        }
+
+        public SpiResponseBuilder<T> error(List<TppMessage> errors) {
+            if (CollectionUtils.isNotEmpty(errors)) {
+                this.errors.addAll(errors);
+            }
+            return this;
+        }
+
+        public SpiResponse<T> build() {
+            if (this.responseStatus == null) {
+                this.responseStatus = this.errors.isEmpty() ? SUCCESS : LOGICAL_FAILURE;
+            }
+            return new SpiResponse<>(this);
+        }
+
+        /**
+         * @return SpiResponse object
+         * @deprecated since 3.5. Use build instead
+         * @see #build()
+         */
+        @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
         public SpiResponse<T> success() {
             if (payload == null) {
                 throw new IllegalStateException("Response payload cannot be null");
@@ -162,11 +266,14 @@ public class SpiResponse<T> {
             return new SpiResponse<>(this);
         }
 
-        public SpiResponse<T> fail(@NotNull SpiResponseStatus responseStatus) {
-            //noinspection ConstantConditions - we cannot be sure that @NotNull annotation will be processed be external developer
-            if (responseStatus == null) {
-                throw new IllegalArgumentException("responseStatus cannot be null");
-            }
+        /**
+         * @param responseStatus deprecated
+         * @return SpiResponse object
+         * @deprecated since 3.5. Use build instead
+         * @see #build()
+         */
+        @Deprecated //TODO remove not earlier that 3.8 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/392
+        public SpiResponse<T> fail(@Deprecated @NotNull SpiResponseStatus responseStatus) {
             this.responseStatus = responseStatus;
             return new SpiResponse<>(this);
         }
