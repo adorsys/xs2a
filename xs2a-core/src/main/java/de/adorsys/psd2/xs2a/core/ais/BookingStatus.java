@@ -19,6 +19,9 @@ package de.adorsys.psd2.xs2a.core.ais;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum BookingStatus {
     PENDING("pending"),
     BOOKED("booked"),
@@ -43,5 +46,11 @@ public enum BookingStatus {
             }
         }
         throw new IllegalArgumentException();
+    }
+
+    public static Optional<BookingStatus> getByValue(String value) {
+        return Arrays.stream(BookingStatus.values())
+                   .filter(bs -> bs.value.equalsIgnoreCase(value))
+                   .findFirst();
     }
 }
