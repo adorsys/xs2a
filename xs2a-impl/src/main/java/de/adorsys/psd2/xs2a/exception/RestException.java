@@ -22,18 +22,13 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class RestException extends RuntimeException {
-    private HttpStatus httpStatus;
-    private String message;
-    private MessageErrorCode messageErrorCode = MessageErrorCode.INTERNAL_SERVER_ERROR;
+    private final HttpStatus httpStatus;
+    private final String message;
+    private final MessageErrorCode messageErrorCode;
 
-    public RestException(HttpStatus httpStatus, String message) {
-        this.httpStatus = httpStatus;
-        this.message = message;
-    }
-
-    public RestException(MessageErrorCode messageErrorCode) {
+    public RestException(MessageErrorCode messageErrorCode, String message) {
         this.messageErrorCode = messageErrorCode;
         this.httpStatus = HttpStatus.valueOf(messageErrorCode.getCode());
-        this.message = httpStatus.getReasonPhrase();
+        this.message = message;
     }
 }
