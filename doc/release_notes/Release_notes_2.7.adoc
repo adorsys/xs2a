@@ -12,6 +12,7 @@
 * Bugfix: Payment Cancellation Request update
 * Bugfix: Periodic payment can be created with invalid `dayOfExecution` tag
 * Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
+* Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -95,3 +96,12 @@ starting or updating the AIS consent or PIS payment authorisation. Links `startA
 `updatePsuAuthentication` will be returned instead. The reason for that: our implementation already supports password
 receiving on startAuthorisation, therefore no need to separate Identification (PSU-ID) and Authentication (Password).
 
+
+== Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
+
+From now on, mandatory `bookingStatus` query parameter is being validated in `Read Transaction List` request
+(`GET /v1/accounts/{account-id}/transactions {query-parameters}`).
+
+To be considered valid, `bookingStatus` value from the request should be supported by the ASPSP, meaning that it should
+be listed in the `availableBookingStatuses` property in the ASPSP profile.
+ If the ASPSP doesn't support particular value, `400 PARAMETER_NOT_SUPPORTED` error will be returned in the response.

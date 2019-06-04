@@ -2,6 +2,7 @@
 
 == Table of Contents
 * Return extended errors from SPI Level: changes in SpiResponse
+* Add TPP info endpoint in `csm-aspsp` API
 
 == Return extended errors from SPI Level: changes in SpiResponse
 Before these changes errors in the SPI Level were bound to four possible values: TECHNICAL_FAILURE,
@@ -15,3 +16,7 @@ HTTP error code will be identified by first error in the list.
 For this reason SpiResponseStatus is now deprecated and will be removed after some version. Success path means no errors in the list.
 Unsuccess path means at least one error in the errors list in SpiResponse.
 Also SpiResponse will support only builder in the future. No constructors will be supported anymore.
+
+== Add TPP info endpoint in `csm-aspsp` API
+
+From now on, the endpoint for getting information by TPP (GET `aspsp-api/v1/tpp/{tpp-id}`) is created.

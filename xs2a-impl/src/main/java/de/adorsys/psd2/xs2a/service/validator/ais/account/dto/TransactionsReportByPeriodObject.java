@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.dto;
 
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
@@ -33,6 +34,7 @@ public class TransactionsReportByPeriodObject implements TppInfoProvider {
     private String entryReferenceFrom;
     private Boolean deltaList;
     private String acceptHeader;
+    private BookingStatus bookingStatus;
 
     @Override
     public TppInfo getTppInfo() {
