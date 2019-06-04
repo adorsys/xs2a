@@ -81,22 +81,14 @@ public class PaymentInitiationLinks extends AbstractLinks {
 
             if (isSigningBasketSupported) { // no more data needs to be updated
                 setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
-
-            } else if (paymentRequestParameters.getPsuData().isEmpty()) {
-                setStartAuthorisationWithPsuIdentification(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
             } else {
                 setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
             }
         } else {
             setScaStatus(
                 buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
-            if (paymentRequestParameters.getPsuData().isEmpty()) {
-                setUpdatePsuIdentification(
-                    buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
-            } else {
-                setUpdatePsuAuthentication(
-                    buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
-            }
+            setUpdatePsuAuthentication(
+                buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
         }
     }
 

@@ -11,6 +11,7 @@
 * Bugfix: `Get Consent` request doesn't return mandated `lastActionDate` attribute in response body
 * Bugfix: Payment Cancellation Request update
 * Bugfix: Periodic payment can be created with invalid `dayOfExecution` tag
+* Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -86,4 +87,11 @@ Added new `TPP-Explicit-Authorisation-Preferred` header to the endpoint for paym
 
 From now on, while creating the periodic payment (`POST /v1/periodic-payments/{payment-product}`) the `dayOfExecution` field is validated:
 it has to be a string representation of a day of the month (1-31), violating this returns `400 FORMAT_ERROR`.
+
+== Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
+
+From now on, XS2A would not return links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` during
+starting or updating the AIS consent or PIS payment authorisation. Links `startAuthorisationWithPsuAuthentication` and
+`updatePsuAuthentication` will be returned instead. The reason for that: our implementation already supports password
+receiving on startAuthorisation, therefore no need to separate Identification (PSU-ID) and Authentication (Password).
 

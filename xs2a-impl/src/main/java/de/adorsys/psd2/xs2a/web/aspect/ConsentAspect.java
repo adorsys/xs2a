@@ -67,7 +67,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
             boolean isExplicitMethod = authorisationMethodDecider.isExplicitMethod(explicitPreferred, body.isMultilevelScaRequired());
             body.setLinks(new CreateConsentLinks(getHttpUrl(), scaApproachResolver, body, redirectLinkBuilder,
                                                  isExplicitMethod,
-                                                 psuData, getScaRedirectFlow()));
+                                                 getScaRedirectFlow()));
             return result;
         }
         return enrichErrorTextMessage(result);
