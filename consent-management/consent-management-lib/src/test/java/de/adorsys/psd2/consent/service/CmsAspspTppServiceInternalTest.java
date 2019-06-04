@@ -16,9 +16,13 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
+import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.mapper.TppStopListMapper;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,11 +52,19 @@ public class CmsAspspTppServiceInternalTest {
     private TppStopListRepository stopListRepository;
     @Mock
     private TppStopListMapper tppStopListMapper;
+    @Mock
+    private TppInfoRepository tppInfoRepository;
+    @Mock
+    private TppInfoMapper tppInfoMapper;
 
     @Mock
     private TppStopListEntity tppStopListEntity;
     @Mock
     private TppStopListRecord tppStopListRecord;
+    @Mock
+    private TppInfoEntity tppInfoEntity;
+    @Mock
+    private TppInfo tppInfo;
 
     @Test
     public void getTppStopListRecord_Fail_TppEntityIsNotExistInDB() {
@@ -137,6 +149,30 @@ public class CmsAspspTppServiceInternalTest {
 
         assertTrue(isUnblocked);
         verify(stopListRepository).save(tppStopListEntity);
+    }
+
+    @Test
+    public void getTppInfoRecord_Fail_TppEntityIsNotExistInDB() {
+        when(tppInfoRepository.findFirstByAuthorisationNumberAndAuthorityIdAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID, INSTANCE_ID))
+            .thenReturn(Optional.empty());
+
+        Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER_NOT_EXISTING, AUTHORITY_ID, INSTANCE_ID);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void getTppInfoRecord_Success_TppEntityIsExistInDB() {
+        when(tppInfoRepository.findFirstByAuthorisationNumberAndAuthorityIdAndInstanceId(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID))
+            .thenReturn(Optional.of(tppInfoEntity));
+
+        when(tppInfoMapper.mapToTppInfo(tppInfoEntity))
+            .thenReturn(tppInfo);
+
+        Optional<TppInfo> result = cmsAspspTppService.getTppInfo(AUTHORISATION_NUMBER, AUTHORITY_ID, INSTANCE_ID);
+
+        assertTrue(result.isPresent());
+        assertEquals(tppInfo, result.get());
     }
 
     private TppStopListEntity buildBlockedTppStopListEntity(String authorisationNumber, String authorityId, String instanceId, Duration blockingDuration) {

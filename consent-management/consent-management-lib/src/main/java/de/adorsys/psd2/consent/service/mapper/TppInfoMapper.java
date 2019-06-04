@@ -56,7 +56,7 @@ public class TppInfoMapper {
                    }).orElse(null);
     }
 
-    TppInfo mapToTppInfo(TppInfoEntity tppInfoEntity) {
+    public TppInfo mapToTppInfo(TppInfoEntity tppInfoEntity) {
         return Optional.ofNullable(tppInfoEntity)
                    .map(tpp -> {
                        TppInfo tppInfo = new TppInfo();

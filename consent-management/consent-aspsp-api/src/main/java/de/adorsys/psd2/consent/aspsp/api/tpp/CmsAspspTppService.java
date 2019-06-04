@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.aspsp.api.tpp;
 
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,4 +61,15 @@ public interface CmsAspspTppService {
      * @return <code>true</code> if TPP was found and unlock was done. <code>false</code> otherwise.
      */
     boolean unblockTpp(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
+
+    /**
+     * Loads TPP info record by TPP ID
+     *
+     * @param tppAuthorisationNumber ID of TPP to load
+     * @param nationalAuthorityId    National competent authority ID
+     * @param instanceId             optional ID of particular service instance
+     * @return TPP info object if found in DB
+     */
+    @NotNull
+    Optional<TppInfo> getTppInfo(@NotNull String tppAuthorisationNumber, @NotNull String nationalAuthorityId, @NotNull String instanceId);
 }
