@@ -34,6 +34,11 @@ public class AspspAuthenticationObject {
         this(authenticationType, authenticationMethodId, false);
     }
 
+    public AspspAuthenticationObject(String authenticationType, String authenticationMethodId, String name) {
+        this(authenticationType, authenticationMethodId, false);
+        this.name = name;
+    }
+
     @JsonCreator
     @PersistenceConstructor
     public AspspAuthenticationObject(@JsonProperty("authenticationType") String authenticationType, @JsonProperty("authenticationMethodId") String authenticationMethodId, @JsonProperty("decoupled") boolean decoupled) {

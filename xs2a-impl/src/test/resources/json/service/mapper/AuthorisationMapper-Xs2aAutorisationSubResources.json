@@ -1,0 +1,7 @@
+{
+  "authorisationIds": [
+    "sms",
+    "chip",
+    "custom"
+  ]
+}

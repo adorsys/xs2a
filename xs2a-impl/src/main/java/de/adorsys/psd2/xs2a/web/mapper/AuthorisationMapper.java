@@ -193,7 +193,7 @@ public class AuthorisationMapper {
                    .map(ch -> {
                        ChosenScaMethod method = new ChosenScaMethod();
                        method.setAuthenticationMethodId(ch.getAuthenticationMethodId());
-                       method.setAuthenticationType(AuthenticationType.fromValue(ch.getAuthenticationType()));
+                       method.setAuthenticationType(ch.getAuthenticationType());
                        method.setAuthenticationVersion(ch.getAuthenticationVersion());
                        method.setName(ch.getName());
                        method.setExplanation(ch.getExplanation());

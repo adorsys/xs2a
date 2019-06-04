@@ -4127,11 +4127,6 @@ components:
           - 'PUSH_OTP': An OTP is pushed to a dedicated authentication APP and displayed to the PSU.
         
       type: string
-      enum:
-        - "SMS_OTP"
-        - "CHIP_OTP"
-        - "PHOTO_OTP"
-        - "PUSH_OTP"
 
     authenticationObject:
       description: |

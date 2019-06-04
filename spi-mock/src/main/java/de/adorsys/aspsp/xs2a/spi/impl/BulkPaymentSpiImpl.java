@@ -166,7 +166,8 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
         AspspConsentData responseData = aspspConsentData;
 
         if (aspspConsentData.getAspspConsentData() != null) {
-            Optional<Map<String, Boolean>> authMapOptional = jsonConverter.toObject(aspspConsentData.getAspspConsentData(), new TypeReference<Map<String, Boolean>>() {});
+            Optional<Map<String, Boolean>> authMapOptional = jsonConverter.toObject(aspspConsentData.getAspspConsentData(), new TypeReference<Map<String, Boolean>>() {
+            });
 
             if (authMapOptional.isPresent()) {
                 Map<String, Boolean> authMap = authMapOptional.get();
@@ -225,7 +226,8 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
 
             if (aspspConsentData.getAspspConsentData() != null) {
-                Optional<Map<String, Boolean>> authMapOptional = jsonConverter.toObject(aspspConsentData.getAspspConsentData(), new TypeReference<Map<String, Boolean>>() {});
+                Optional<Map<String, Boolean>> authMapOptional = jsonConverter.toObject(aspspConsentData.getAspspConsentData(), new TypeReference<Map<String, Boolean>>() {
+                });
 
                 if (authMapOptional.isPresent()) {
                     Map<String, Boolean> authMap = authMapOptional.get();
