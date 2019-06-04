@@ -43,8 +43,6 @@ Update PSU Data for `Payment initiation`
 Update PSU Data for `Payment cancellation`
 Update PSU Data for `Consent`
 
-
-
 == Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 
 From now on, mandatory `bookingStatus` query parameter is being validated in `Read Transaction List` request
