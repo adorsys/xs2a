@@ -11,6 +11,9 @@
 * Bugfix: `Get Consent` request doesn't return mandated `lastActionDate` attribute in response body
 * Bugfix: Payment Cancellation Request update
 * Bugfix: Periodic payment can be created with invalid `dayOfExecution` tag
+* Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
+* Bugfix: `creditorAddress` property is provided to the SPI in payment object even if it was not present in the request
+* Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -58,7 +61,7 @@ To be considered valid, this parameter should be present in request and have a v
 == Bugfix: `creditorAddress` property is provided to the SPI in payment object even if it was not present in the request
 
 Parameter `creditorAddress` in `de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment` and `de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment`
-will be to set to null if it is absent in the `initiatePayment` request (`POST /v1/{payment-service}/{payment-product}`)
+will be set to null if it is absent in the `initiatePayment` request (`POST /v1/{payment-service}/{payment-product}`)
 
 == Added validation of accept header for getting transaction list (`GET /v1/accounts/{account-id}/transactions`)
 
@@ -72,6 +75,14 @@ Configuration property `supportedTransactionApplicationTypes` was added to bank 
 
 Until now, when TPP made first `Get Consent` request, `lastActionDate` field was absent in the response.
 From now on, the value of the `lastActionDate` field is set to the current date when AIS Consent is created and will always be present in the `Get Consent` response.
+will be set to null if it is absent in the `initiatePayment` request (`POST /v1/{payment-service}/{payment-product}`)
+
+== Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
+
+From now on, XS2A would not return links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` during
+starting or updating the AIS consent or PIS payment authorisation. Links `startAuthorisationWithPsuAuthentication` and
+`updatePsuAuthentication` will be returned instead. The reason for that: our implementation already supports password
+receiving on startAuthorisation, therefore no need to separate Identification (PSU-ID) and Authentication (Password).
 
 == Bugfix: Payment Cancellation Request update
 

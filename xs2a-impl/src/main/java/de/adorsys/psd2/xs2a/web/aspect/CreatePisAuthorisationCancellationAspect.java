@@ -50,7 +50,7 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
         if (!result.hasError()) {
             Xs2aCreatePisCancellationAuthorisationResponse body = result.getBody();
             body.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                                paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId(), psuData));
+                                                                paymentType.getValue(), paymentProduct, paymentId, body.getAuthorisationId()));
             return result;
         }
         return enrichErrorTextMessage(result);

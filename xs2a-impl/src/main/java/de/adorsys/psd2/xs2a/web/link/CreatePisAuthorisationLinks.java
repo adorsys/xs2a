@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -36,7 +35,6 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
         String paymentId = createRequest.getPaymentId();
         String paymentService = createRequest.getPaymentService();
         String paymentProduct = createRequest.getPaymentProduct();
-        PsuIdData psuData = createRequest.getPsuData();
 
         setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
         setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
@@ -44,11 +42,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
         ScaApproach initiationScaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(initiationScaApproach)) {
             String path = UrlHolder.PIS_AUTHORISATION_LINK_URL;
-            if (psuData.isEmpty()) {
-                setUpdatePsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorisationId));
-            } else {
-                setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorisationId));
-            }
+            setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorisationId));
         } else if (initiationScaApproach == REDIRECT) {
             String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId);
             setScaRedirect(scaRedirectLink);
