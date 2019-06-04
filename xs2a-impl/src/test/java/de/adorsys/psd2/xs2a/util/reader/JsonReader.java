@@ -52,7 +52,7 @@ public class JsonReader {
         try {
             return objectMapper.readValue(resourcePath, name);
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing.");
+            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. " + e.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public class JsonReader {
         try {
             return objectMapper.readValue(resourcePath, name);
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing.");
+            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. "  + e.getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ public class JsonReader {
         try {
             return objectMapper.readValue(json, name);
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing.");
+            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. "  + e.getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ public class JsonReader {
             return objectMapper.readValue(json,
                                           objectMapper.getTypeFactory().constructCollectionType(List.class, name));
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing.");
+            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing. "  + e.getMessage());
         }
     }
 
@@ -119,7 +119,7 @@ public class JsonReader {
             return objectMapper.readValue(resourcePath,
                                           objectMapper.getTypeFactory().constructCollectionType(List.class, name));
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing.");
+            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing. "  + e.getMessage());
         }
     }
 

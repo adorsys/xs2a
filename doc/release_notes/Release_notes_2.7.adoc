@@ -4,6 +4,7 @@
 * Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 * Bugfix: Validate `entryReferenceFrom` and `deltaList` parameters in `Read Transaction List` request
 * Bugfix: Сreate consent request and update PSU authorisation request returns empty list of scaMethods in response
+* Bugfix: Accept `AuthenticationType` from ASPSP even if it is not described in Specification
 * Bugfix: `Get Consent` request doesn't return mandated `lastActionDate` attribute in response body
 * Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 * Bugfix: `creditorAddress` property is provided to the SPI in payment object even if it was not present in the request
@@ -36,6 +37,14 @@ are returned from SPI level:
 
 - POST `/v1/consents`;
 - PUT `/v1/consents/{consent_id}/authorisations/{authorisation_id}`.
+
+== Bugfix: Accept Authentication Type from ASPSP even if it is not described in Specification
+
+From now on, `ASPSP` can provide `Authentication Types` (`SMS_OTP`, `OTHER_OTP`) of `SCA methods`, which are not described in `Specification`.
+There is possibility to accept `Authentication Types` from `ASPSP` and process them to `XS2A` response on following requests:
+Update PSU Data for `Payment initiation`
+Update PSU Data for `Payment cancellation`
+Update PSU Data for `Consent`
 
 == Bugfix: `Get Consent` request doesn't return mandated `lastActionDate` attribute in response body
 
