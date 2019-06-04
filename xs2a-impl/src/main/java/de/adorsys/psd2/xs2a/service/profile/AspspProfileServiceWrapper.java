@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.profile;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
@@ -242,6 +243,15 @@ public class AspspProfileServiceWrapper {
      */
     public boolean isEntryReferenceFromSupported() {
         return readAspspSettings().isEntryReferenceFromSupported();
+    }
+
+    /**
+     * Retrieves a list of available booking statuses from the ASPSP profile service
+     *
+     * @return list of available booking statuses
+     */
+    public List<BookingStatus> getAvailableBookingStatuses() {
+        return readAspspSettings().getAvailableBookingStatuses();
     }
 
     private AspspSettings readAspspSettings() {

@@ -95,7 +95,7 @@
     },
     {
       "key": "booking_status",
-      "value": "both",
+      "value": "booked",
       "description": {
         "content": "",
         "type": "text/plain"
