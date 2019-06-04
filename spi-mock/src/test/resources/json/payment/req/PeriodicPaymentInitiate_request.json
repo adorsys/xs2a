@@ -26,5 +26,5 @@
   "endDate": "2020-02-01",
   "executionRule": "preceeding",
   "frequency": "Annual",
-  "dayOfExecution": "2"
+  "dayOfExecution": "31"
 }
