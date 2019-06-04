@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.xs2a.component.JsonConverter;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.exception.MessageError;
@@ -52,8 +54,12 @@ public class PaymentBodyValidatorImplTest {
     private static final String INVALID_PAYMENT_SERVICE = "invalid payment service";
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
+    private static final String WRONG_DAY_OF_MONTH = "666";
+
     private static final MessageError DESERIALISATION_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Cannot deserialize the request body"));
+    private static final MessageError DAY_OF_EXECUTION_WRONG_VALUE_ERROR =
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Value 'dayOfExecution' should be a number of day in month"));
 
     private PaymentBodyValidatorImpl validator;
     private MessageError messageError;
@@ -66,11 +72,13 @@ public class PaymentBodyValidatorImplTest {
     private ObjectMapper objectMapper;
     @Mock
     private PaymentTypeValidator paymentTypeValidator;
+    @Mock
+    private JsonConverter jsonConverter;
 
     @Before
     public void setUp() {
         messageError = new MessageError(ErrorType.PIS_400);
-        validator = new PaymentBodyValidatorImpl(new ErrorBuildingServiceMock(ErrorType.PIS_400), objectMapper, paymentTypeValidatorContext, standardPaymentProductsResolver);
+        validator = new PaymentBodyValidatorImpl(new ErrorBuildingServiceMock(ErrorType.PIS_400), objectMapper, paymentTypeValidatorContext, standardPaymentProductsResolver, jsonConverter);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(PAIN_PAYMENT_PRODUCT)))
             .thenReturn(true);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(JSON_PAYMENT_PRODUCT)))
@@ -115,6 +123,27 @@ public class PaymentBodyValidatorImplTest {
 
         // Then
         assertEquals(DESERIALISATION_ERROR, messageError);
+    }
+
+    @Test
+    public void validate_dayOfExecutionWrongValue_shouldReturnError() throws IOException {
+        // Given
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
+        mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
+
+        Object paymentBody = new Object();
+        when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
+            .thenReturn(paymentBody);
+        when(jsonConverter.toJsonField(any(InputStream.class), anyString(), any(TypeReference.class))).thenReturn(Optional.of(WRONG_DAY_OF_MONTH));
+        when(paymentTypeValidatorContext.getValidator(PAYMENT_SERVICE))
+            .thenReturn(Optional.of(paymentTypeValidator));
+
+        // When
+        validator.validate(mockRequest, messageError);
+
+        // Then
+        assertEquals(DAY_OF_EXECUTION_WRONG_VALUE_ERROR, messageError);
     }
 
     @Test
