@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -29,7 +28,7 @@ public class CreateConsentLinks extends AbstractLinks {
 
     public CreateConsentLinks(String httpUrl, ScaApproachResolver scaApproachResolver,
                               CreateConsentResponse response, RedirectLinkBuilder redirectLinkBuilder,
-                              boolean isExplicitMethod, PsuIdData psuData) {
+                              boolean isExplicitMethod) {
         super(httpUrl);
 
         String consentId = response.getConsentId();
@@ -44,7 +43,7 @@ public class CreateConsentLinks extends AbstractLinks {
                                       : scaApproachResolver.getInitiationScaApproach(authorisationId);
 
         if (EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproach)) {
-            buildLinkForEmbeddedAndDecoupledScaApproach(response, psuData, consentId, authorizationId, isExplicitMethod);
+            buildLinkForEmbeddedAndDecoupledScaApproach(response, consentId, authorizationId, isExplicitMethod);
         } else if (ScaApproach.REDIRECT == scaApproach) {
             if (isExplicitMethod) {
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
@@ -55,7 +54,7 @@ public class CreateConsentLinks extends AbstractLinks {
         }
     }
 
-    private void buildLinkForEmbeddedAndDecoupledScaApproach(CreateConsentResponse response, PsuIdData psuData,
+    private void buildLinkForEmbeddedAndDecoupledScaApproach(CreateConsentResponse response,
                                                              String consentId, String authorizationId,
                                                              boolean isExplicitMethod) {
         if (isExplicitMethod) {
@@ -64,20 +63,13 @@ public class CreateConsentLinks extends AbstractLinks {
 
             if (isSigningBasketSupported) { // no more data needs to be updated
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
-            } else if (psuData.isEmpty()) {
-                setStartAuthorisationWithPsuIdentification(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             } else {
                 setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             }
         } else {
             setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
-            if (psuData.isEmpty()) {
-                setUpdatePsuIdentification(
-                    buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
-            } else {
-                setUpdatePsuAuthentication(
-                    buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
-            }
+            setUpdatePsuAuthentication(
+                buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
         }
     }
 }

@@ -71,7 +71,7 @@ public class CreatePisAuthorisationLinksTest {
 
         expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
         expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setUpdatePsuIdentification("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
 
@@ -98,7 +98,7 @@ public class CreatePisAuthorisationLinksTest {
 
         expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
         expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
-        expectedLinks.setUpdatePsuIdentification("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
+        expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
 
