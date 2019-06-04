@@ -71,8 +71,7 @@ import java.util.*;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_400;
-import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.PIS_404;
+import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -442,13 +441,13 @@ public class PaymentServiceTest {
         when(pisCommonPaymentResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
         doReturn(Optional.of(spiPayment))
             .when(spiPaymentFactory).createSpiPaymentByPaymentType(eq(Collections.singletonList(pisPayment)), eq(PAYMENT_PRODUCT), any(PaymentType.class));
-        when(cancelPaymentService.initiatePaymentCancellation(any(), eq(spiPayment), eq(PAYMENT_ID)))
+        when(cancelPaymentService.initiatePaymentCancellation(any(), eq(spiPayment), eq(PAYMENT_ID), eq(false)))
             .thenReturn(ResponseObject.<CancelPaymentResponse>builder()
                             .body(getCancelPaymentResponse(true, CANC))
                             .build());
 
         // When
-        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+        ResponseObject<CancelPaymentResponse> actual = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false);
 
         // Then
         assertThat(actual.getBody()).isNotNull();
@@ -464,7 +463,7 @@ public class PaymentServiceTest {
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
         // When
-        paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+        paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
@@ -480,7 +479,7 @@ public class PaymentServiceTest {
         PaymentType paymentType = PaymentType.SINGLE;
 
         // When
-        ResponseObject actualResponse = paymentService.cancelPayment(paymentType, PAYMENT_PRODUCT, PAYMENT_ID);
+        ResponseObject actualResponse = paymentService.cancelPayment(paymentType, PAYMENT_PRODUCT, PAYMENT_ID, false);
 
         // Then
         verify(cancelPaymentValidator).validate(new CancelPaymentPO(invalidPisCommonPaymentResponse, paymentType, PAYMENT_PRODUCT));
@@ -497,7 +496,7 @@ public class PaymentServiceTest {
             .thenReturn(Optional.empty());
 
         // When
-        ResponseObject actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
+        ResponseObject actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID, false);
 
         // Then
         assertThat(actualResult.hasError()).isTrue();
@@ -512,12 +511,12 @@ public class PaymentServiceTest {
             .thenReturn(Optional.of(getFinalisedPisCommonPayment()));
 
         // When
-        ResponseObject<CancelPaymentResponse> actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+        ResponseObject<CancelPaymentResponse> actualResult = paymentService.cancelPayment(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false);
 
         // Then
         assertThat(actualResult.getError()).isNotNull();
-        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_400);
-        assertThat(actualResult.getError().getTppMessages().contains(of(RESOURCE_BLOCKED))).isTrue();
+        assertThat(actualResult.getError().getErrorType()).isEqualTo(PIS_CANC_405);
+        assertThat(actualResult.getError().getTppMessages().contains(of(CANCELLATION_INVALID))).isTrue();
     }
 
     private SpiResponse<TransactionStatus> buildSpiResponseTransactionStatus() {

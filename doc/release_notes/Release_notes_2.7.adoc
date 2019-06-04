@@ -6,6 +6,7 @@
 * Bugfix: Сreate consent request and update PSU authorisation request returns empty list of scaMethods in response
 * Bugfix: Accept `AuthenticationType` from ASPSP even if it is not described in Specification
 * Bugfix: `Get Consent` request doesn't return mandated `lastActionDate` attribute in response body
+* Bugfix: Payment Cancellation Request update
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 From now on, AIS endpoints that take consent ID as a path parameter will return `CONSENT_UNKNOWN` error with HTTP status
@@ -66,3 +67,12 @@ Configuration property `supportedTransactionApplicationTypes` was added to bank 
 
 Until now, when TPP made first `Get Consent` request, `lastActionDate` field was absent in the response.
 From now on, the value of the `lastActionDate` field is set to the current date when AIS Consent is created and will always be present in the `Get Consent` response.
+
+== Bugfix: Payment Cancellation Request update
+
+From now on, the endpoint for payment cancellation (DELETE `/v1/{payment_service}/{payment_product}/{payment_id}`) returns :
+ - response code 405 and message `CANCELLATION_INVALID` in case when payment has finalized status
+ - response code 204 and no response body in response in case when SCA is not required
+ - response code 202 and links in response body according current SCA approach in case when SCA is required
+
+Added new `TPP-Explicit-Authorisation-Preferred` header to the endpoint for payment cancellation.
