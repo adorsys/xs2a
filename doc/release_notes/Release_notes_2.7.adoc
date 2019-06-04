@@ -13,6 +13,8 @@
 * Bugfix: Periodic payment can be created with invalid `dayOfExecution` tag
 * Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
 * Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
+* Delete `accounts` field in PiisConsentEntity, deprecated methods and `piis_consent_acc_reference` table
+* Delete `createAuthorization` method in AisConsentAuthorisationServiceBase
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -105,3 +107,12 @@ From now on, mandatory `bookingStatus` query parameter is being validated in `Re
 To be considered valid, `bookingStatus` value from the request should be supported by the ASPSP, meaning that it should
 be listed in the `availableBookingStatuses` property in the ASPSP profile.
  If the ASPSP doesn't support particular value, `400 PARAMETER_NOT_SUPPORTED` error will be returned in the response.
+
+== Delete "accounts" field in PiisConsentEntity, deprecated methods and "piis_consent_acc_reference" table
+
+Table `piis_consent_acc_reference` and field in `PiisConsentEntity` were removed as deprecated.
+
+== Delete `createAuthorization` method in AisConsentAuthorisationServiceBase
+
+Method `createAuthorization` in AisConsentAuthorisationServiceBase was removed. From now on,
+createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) method will be used instead.
