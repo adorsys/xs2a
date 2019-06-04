@@ -44,26 +44,22 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private static final String DAY_OF_EXECUTION_FIELD_NAME = "dayOfExecution";
     private static final String DAY_OF_MONTH_REGEX = "([1-9]|[12]\\d|3[01])";
     private static final String DAY_OF_EXECUTION_WRONG_VALUE_ERROR = "Value 'dayOfExecution' should be a number of day in month";
-    private static final String DAY_OF_EXECUTION_IN_THE_PAST_ERROR = "Value 'dayOfExecution' should not be in the past";
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 
     private PaymentTypeValidatorContext paymentTypeValidatorContext;
 
     private final JsonConverter jsonConverter;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
-    private final CalendarService calendarService;
 
     @Autowired
     public PaymentBodyValidatorImpl(ErrorBuildingService errorBuildingService, ObjectMapper objectMapper,
                                     PaymentTypeValidatorContext paymentTypeValidatorContext,
                                     StandardPaymentProductsResolver standardPaymentProductsResolver,
-                                    JsonConverter jsonConverter,
-                                    CalendarService calendarService) {
+                                    JsonConverter jsonConverter) {
         super(errorBuildingService, objectMapper);
         this.paymentTypeValidatorContext = paymentTypeValidatorContext;
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.jsonConverter = jsonConverter;
-        this.calendarService = calendarService;
     }
 
     @Override
@@ -106,30 +102,18 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         validateDayOfExecutionValue(dayOfExecution, messageError);
     }
 
-    private void validateDayOfExecutionValue(Object value, MessageError messageError) {
+    private void validateDayOfExecutionValue(String value, MessageError messageError) {
         if (value == null) {
             return;
         }
 
         if (!isNumberADayOfMonth(value)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, DAY_OF_EXECUTION_WRONG_VALUE_ERROR));
-            // Because we cannot compare not number with current day.
-            return;
-        }
-
-        if (!isInTheFuture(value)) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.EXECUTION_DATE_INVALID, DAY_OF_EXECUTION_IN_THE_PAST_ERROR));
         }
     }
 
-    private boolean isNumberADayOfMonth(@NotNull Object value) {
-        return value instanceof String && ((String) value).matches(DAY_OF_MONTH_REGEX);
-    }
-
-    private boolean isInTheFuture(@NotNull Object value) {
-        int dayOfMonth = calendarService.getDayOfMonth();
-
-        return value instanceof String && Byte.valueOf((String) value) >= dayOfMonth;
+    private boolean isNumberADayOfMonth(@NotNull String value) {
+        return value.matches(DAY_OF_MONTH_REGEX);
     }
 
     private String extractDayOfExecution(HttpServletRequest request, MessageError messageError) {

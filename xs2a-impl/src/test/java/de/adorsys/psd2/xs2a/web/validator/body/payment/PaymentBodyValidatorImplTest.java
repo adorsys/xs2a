@@ -54,13 +54,10 @@ public class PaymentBodyValidatorImplTest {
     private static final String INVALID_PAYMENT_SERVICE = "invalid payment service";
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
-    private static final String FIRST_DAY_OF_MONTH = "1";
     private static final String WRONG_DAY_OF_MONTH = "666";
 
     private static final MessageError DESERIALISATION_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Cannot deserialize the request body"));
-    private static final MessageError DAY_OF_EXECUTION_IN_THE_PAST_ERROR =
-        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.EXECUTION_DATE_INVALID, "Value 'dayOfExecution' should not be in the past"));
     private static final MessageError DAY_OF_EXECUTION_WRONG_VALUE_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR, "Value 'dayOfExecution' should be a number of day in month"));
 
@@ -77,13 +74,11 @@ public class PaymentBodyValidatorImplTest {
     private PaymentTypeValidator paymentTypeValidator;
     @Mock
     private JsonConverter jsonConverter;
-    @Mock
-    private CalendarService calendarService;
 
     @Before
     public void setUp() {
         messageError = new MessageError(ErrorType.PIS_400);
-        validator = new PaymentBodyValidatorImpl(new ErrorBuildingServiceMock(ErrorType.PIS_400), objectMapper, paymentTypeValidatorContext, standardPaymentProductsResolver, jsonConverter, calendarService);
+        validator = new PaymentBodyValidatorImpl(new ErrorBuildingServiceMock(ErrorType.PIS_400), objectMapper, paymentTypeValidatorContext, standardPaymentProductsResolver, jsonConverter);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(PAIN_PAYMENT_PRODUCT)))
             .thenReturn(true);
         when(standardPaymentProductsResolver.isRawPaymentProduct(eq(JSON_PAYMENT_PRODUCT)))
@@ -132,28 +127,6 @@ public class PaymentBodyValidatorImplTest {
 
     @Test
     public void validate_dayOfExecutionWrongValue_shouldReturnError() throws IOException {
-        // Given
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
-        mockRequest.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
-
-        Object paymentBody = new Object();
-        when(objectMapper.readValue(mockRequest.getInputStream(), Object.class))
-            .thenReturn(paymentBody);
-        when(jsonConverter.toJsonField(any(InputStream.class), anyString(), any(TypeReference.class))).thenReturn(Optional.of(FIRST_DAY_OF_MONTH));
-        when(paymentTypeValidatorContext.getValidator(PAYMENT_SERVICE))
-            .thenReturn(Optional.of(paymentTypeValidator));
-        when(calendarService.getDayOfMonth()).thenReturn(2);
-
-        // When
-        validator.validate(mockRequest, messageError);
-
-        // Then
-        assertEquals(DAY_OF_EXECUTION_IN_THE_PAST_ERROR, messageError);
-    }
-
-    @Test
-    public void validate_dayOfExecutionInThePast_shouldReturnError() throws IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
