@@ -9,6 +9,7 @@
 * Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 * Bugfix: `creditorAddress` property is provided to the SPI in payment object even if it was not present in the request
 * Added validation of accept header for getting transaction list (`GET /v1/accounts/{account-id}/transactions`)
+* Bugfix: Payment Cancellation Request update
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 From now on, AIS endpoints that take consent ID as a path parameter will return `CONSENT_UNKNOWN` error with HTTP status
@@ -70,3 +71,12 @@ Configuration property `supportedTransactionApplicationTypes` was added to bank 
 * `Accept` header (if it is presented in request) should be one of application/json, application/xml or text/plain and configured in bank profile.
 * If property `supportedTransactionApplicationTypes` is not configured validation will not be applied and header can be one of JSON, XML, TEXT as in specification.
 * If header `Accept` is not provided in request - respond with JSON format.
+
+== Bugfix: Payment Cancellation Request update
+
+From now on, the endpoint for payment cancellation (DELETE `/v1/{payment_service}/{payment_product}/{payment_id}`) returns :
+ - response code 405 and message `CANCELLATION_INVALID` in case when payment has finalized status
+ - response code 204 and no response body in response in case when SCA is not required
+ - response code 202 and links in response body according current SCA approach in case when SCA is required
+
+Added new `TPP-Explicit-Authorisation-Preferred` header to the endpoint for payment cancellation.

@@ -270,9 +270,10 @@ public class PaymentService {
      * @param paymentType        type of payment (payments, bulk-payments, periodic-payments)
      * @param paymentProduct     payment product used for payment creation (e.g. sepa-credit-transfers, instant-sepa-credit-transfers...)
      * @param encryptedPaymentId ASPSP identifier of the payment
+     * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
      * @return Response containing information about cancelled payment or corresponding error
      */
-    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
+    public ResponseObject<CancelPaymentResponse> cancelPayment(PaymentType paymentType, String paymentProduct, String encryptedPaymentId, Boolean tppExplicitAuthorisationPreferred) {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
@@ -292,7 +293,7 @@ public class PaymentService {
 
         if (isFinalisedPayment(pisCommonPaymentResponse)) {
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_400, of(RESOURCE_BLOCKED))
+                       .fail(PIS_CANC_405, of(CANCELLATION_INVALID))
                        .build();
         }
 
@@ -321,7 +322,7 @@ public class PaymentService {
         }
 
         List<PsuIdData> psuData = pisCommonPaymentResponse.getPsuData();
-        return cancelPaymentService.initiatePaymentCancellation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId);
+        return cancelPaymentService.initiatePaymentCancellation(readPsuIdDataFromList(psuData), spiPayment, encryptedPaymentId, tppExplicitAuthorisationPreferred);
     }
 
     private boolean isFinalisedPayment(PisCommonPaymentResponse response) {
