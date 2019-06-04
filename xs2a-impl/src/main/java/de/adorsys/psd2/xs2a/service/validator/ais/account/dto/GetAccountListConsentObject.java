@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator.ais.account;
+package de.adorsys.psd2.xs2a.service.validator.ais.account.dto;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.GetAccountListValidator;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 

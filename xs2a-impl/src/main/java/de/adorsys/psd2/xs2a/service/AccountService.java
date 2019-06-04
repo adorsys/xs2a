@@ -41,10 +41,7 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.*;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountTransactionsRequestObject;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.*;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -325,7 +322,12 @@ public class AccountService {
         String requestUri = request.getRequestUri();
         boolean withBalance = request.isWithBalance();
         AccountConsent accountConsent = accountConsentOptional.get();
-        TransactionsReportByPeriodObject validatorObject = new TransactionsReportByPeriodObject(accountConsent, accountId, withBalance, requestUri, request.getEntryReferenceFrom(), request.getDeltaList(), request.getAcceptHeader());
+        TransactionsReportByPeriodObject validatorObject = new TransactionsReportByPeriodObject(accountConsent, accountId,
+                                                                                                withBalance, requestUri,
+                                                                                                request.getEntryReferenceFrom(),
+                                                                                                request.getDeltaList(),
+                                                                                                request.getAcceptHeader(),
+                                                                                                request.getBookingStatus());
         ValidationResult validationResult = getTransactionsReportValidator.validate(validatorObject);
         if (validationResult.isNotValid()) {
             return ResponseObject.<Xs2aTransactionsReport>builder()

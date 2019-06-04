@@ -14,6 +14,7 @@
 * Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 * Bugfix: `creditorAddress` property is provided to the SPI in payment object even if it was not present in the request
 * Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
+* Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -98,3 +99,12 @@ Added new `TPP-Explicit-Authorisation-Preferred` header to the endpoint for paym
 From now on, while creating the periodic payment (`POST /v1/periodic-payments/{payment-product}`) the `dayOfExecution` field is validated:
 it has to be a string representation of a day of the month (1-31), violating this returns `400 FORMAT_ERROR`.
 
+
+== Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
+
+From now on, mandatory `bookingStatus` query parameter is being validated in `Read Transaction List` request
+(`GET /v1/accounts/{account-id}/transactions {query-parameters}`).
+
+To be considered valid, `bookingStatus` value from the request should be supported by the ASPSP, meaning that it should
+be listed in the `availableBookingStatuses` property in the ASPSP profile.
+ If the ASPSP doesn't support particular value, `400 PARAMETER_NOT_SUPPORTED` error will be returned in the response.
