@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
@@ -33,7 +32,7 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
     private ScaRedirectFlow scaRedirectFlow;
 
     public PisAuthorisationCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                             String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData, ScaRedirectFlow scaRedirectFlow) {
+                                             String paymentService, String paymentProduct, String paymentId, String authorizationId, ScaRedirectFlow scaRedirectFlow) {
         super(httpUrl);
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.scaRedirectFlow = scaRedirectFlow;
@@ -43,7 +42,7 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
 
         ScaApproach cancellationScaApproach = scaApproachResolver.getCancellationScaApproach(authorizationId);
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(cancellationScaApproach)) {
-            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorizationId, psuData);
+            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorizationId);
         } else if (cancellationScaApproach == REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorizationId);
         } else if (cancellationScaApproach == OAUTH) {
@@ -51,13 +50,9 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
         }
     }
 
-    private void addEmbeddedDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId, PsuIdData psuData) {
+    private void addEmbeddedDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId) {
         String path = UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL;
-        if (psuData.isEmpty()) {
-            setUpdatePsuIdentification(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
-        } else {
-            setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
-        }
+        setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
     }
 
     private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId) {
