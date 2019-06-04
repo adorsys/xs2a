@@ -27,7 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
@@ -35,7 +35,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 @Component
 @RequiredArgsConstructor
 public class ErrorMapperContainer {
-    private final Map<ErrorType, Psd2ErrorMapper> mapperContainer = new HashMap<>();
+    private final Map<ErrorType, Psd2ErrorMapper> mapperContainer = new EnumMap<>(ErrorType.class);
 
     private final PIS400ErrorMapper pis400ErrorMapper;
     private final PIS401ErrorMapper pis401ErrorMapper;
@@ -124,7 +124,7 @@ public class ErrorMapperContainer {
         Psd2ErrorMapper psd2ErrorMapper = mapperContainer.get(error.getErrorType());
 
         return new ErrorBody(psd2ErrorMapper.getMapper()
-                                 .apply(error), psd2ErrorMapper.getErrorStatus());
+            .apply(error), psd2ErrorMapper.getErrorStatus());
     }
 
     @Value

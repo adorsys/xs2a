@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
 import org.springframework.stereotype.Component;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +28,7 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType.*;
 
 @Component
 public class ServiceTypeToErrorTypeMapper {
-    private final static Map<ServiceType, Map<Integer, ErrorType>> serviceTypeToHttpCodeAndErrorType;
+    private static final Map<ServiceType, Map<Integer, ErrorType>> serviceTypeToHttpCodeAndErrorType;
 
     static {
         Map<Integer, ErrorType> aisHttpCodeToErrorType = new HashMap<>();
@@ -71,7 +72,7 @@ public class ServiceTypeToErrorTypeMapper {
         sbHttpCodeToErrorType.put(415, SB_415);
         sbHttpCodeToErrorType.put(500, SB_500);
 
-        serviceTypeToHttpCodeAndErrorType = new HashMap<>();
+        serviceTypeToHttpCodeAndErrorType = new EnumMap<>(ServiceType.class);
         serviceTypeToHttpCodeAndErrorType.put(AIS, aisHttpCodeToErrorType);
         serviceTypeToHttpCodeAndErrorType.put(PIS, pisHttpCodeToErrorType);
         serviceTypeToHttpCodeAndErrorType.put(PIIS, piisHttpCodeToErrorType);
