@@ -1,0 +1,14 @@
+{
+  "startAuthorisationRequired": true,
+  "transactionStatus": "ACCP",
+  "paymentId": "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGz",
+  "paymentType": "payments",
+  "paymentProduct": "product",
+  "psuData": {
+    "psuId": "psu Id",
+    "psuIdType": "psuId Type",
+    "psuCorporateId": "psu Corporate Id",
+    "psuCorporateIdType": "psuCorporate Id Type"
+  },
+  "_links": null
+}

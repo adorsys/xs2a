@@ -210,6 +210,7 @@ public class PaymentService {
     public Optional<AspspPaymentCancellationResponse> cancelPayment(String paymentId) {
         List<AspspPayment> payments = paymentRepository.findByPaymentIdOrBulkId(paymentId, paymentId);
         if (CollectionUtils.isEmpty(payments)) {
+            log.warn("Wrong payment ID {} ", paymentId);
             return Optional.empty();
         }
 
@@ -229,6 +230,7 @@ public class PaymentService {
     public Optional<AspspPaymentCancellationResponse> initiatePaymentCancellation(String paymentId) {
         List<AspspPayment> payments = paymentRepository.findByPaymentIdOrBulkId(paymentId, paymentId);
         if (CollectionUtils.isEmpty(payments)) {
+            log.warn("Wrong payment ID {} ", paymentId);
             return Optional.empty();
         }
 
