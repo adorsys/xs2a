@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -44,9 +45,11 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_400;
 @Component
 @RequiredArgsConstructor
 public class GetTransactionsReportValidator extends AbstractAisTppValidator<TransactionsReportByPeriodObject> {
-    static final String ENTRY_REFERENCE_FROM_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'entryReferenceFrom' is not supported by ASPSP";
-    static final String DELTA_LIST_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'deltaList' is not supported by ASPSP";
-    static final String ONE_DELTA_REPORT_CAN_BE_PRESENT_ERROR_TEXT = "Only one delta report query parameter can be present in request";
+    private static final String ENTRY_REFERENCE_FROM_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'entryReferenceFrom' is not supported by ASPSP";
+    private static final String DELTA_LIST_NOT_SUPPORTED_ERROR_TEXT = "Parameter 'deltaList' is not supported by ASPSP";
+    private static final String ONE_DELTA_REPORT_CAN_BE_PRESENT_ERROR_TEXT = "Only one delta report query parameter can be present in request";
+    private static final String BOOKING_STATUS_NOT_SUPPORTED_ERROR_TEXT = "bookingStatus '%s' is not supported by ASPSP";
+
     private final PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     private final AccountConsentValidator accountConsentValidator;
     private final AspspProfileServiceWrapper aspspProfileService;
@@ -80,6 +83,12 @@ public class GetTransactionsReportValidator extends AbstractAisTppValidator<Tran
             return permittedAccountReferenceValidationResult;
         }
 
+        BookingStatus bookingStatus = requestObject.getBookingStatus();
+        if (isNotSupportedBookingStatus(bookingStatus)) {
+            return ValidationResult.invalid(AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED,
+                                                                              String.format(BOOKING_STATUS_NOT_SUPPORTED_ERROR_TEXT, bookingStatus.getValue())));
+        }
+
         return accountConsentValidator.validate(accountConsent, requestObject.getRequestUri());
     }
 
@@ -109,5 +118,10 @@ public class GetTransactionsReportValidator extends AbstractAisTppValidator<Tran
         return tppMessageInformationList.isEmpty()
                    ? ValidationResult.valid()
                    : ValidationResult.invalid(AIS_400, tppMessageInformationList.toArray(new TppMessageInformation[0]));
+    }
+
+    private boolean isNotSupportedBookingStatus(BookingStatus bookingStatus) {
+        return !aspspProfileService.getAvailableBookingStatuses()
+                    .contains(bookingStatus);
     }
 }

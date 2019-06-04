@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetAccountListConsentObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisTppInfoValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,10 +41,7 @@ import java.util.List;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.UNAUTHORIZED;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetAccountListValidatorTest {
