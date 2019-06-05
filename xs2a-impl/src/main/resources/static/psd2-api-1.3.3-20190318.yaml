@@ -4869,6 +4869,14 @@ components:
       items:
         $ref: "#/components/schemas/cancellationId"
 
+    cancellations:
+        description: An array of all cancellationIds
+        type: object
+        required:
+        - cancellationIds
+        properties:
+            cancellationIds:
+                $ref: "#/components/schemas/cancellationList"
 
     bicfi: 
       description: |
@@ -10838,10 +10846,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/cancellationList"
+            $ref: "#/components/schemas/cancellations"
           examples:
             "Example 1":
-              $ref: "#/components/examples/cancellationListExample"
+              $ref: "#/components/examples/cancellationsExample"
 
 
     OK_200_AccountDetails:
@@ -12929,7 +12937,7 @@ components:
           "authorisationIds": ["123auth456"]
         }
     
-    cancellationListExample:
+    cancellationsExample:
       value:
         { 
           "cancellationIds": ["123auth456"]
