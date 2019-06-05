@@ -233,7 +233,7 @@ public class PaymentController implements PaymentApi {
                                         String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation, Boolean tppExplicitAuthorisationPreferred) {
 
         ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
-                                                                    .map(type -> xs2aPaymentService.cancelPayment(type, paymentProduct, paymentId, tppExplicitAuthorisationPreferred))
+                                                                    .map(type -> xs2aPaymentService.cancelPayment(type, paymentProduct, paymentId, BooleanUtils.isTrue(tppExplicitAuthorisationPreferred)))
                                                                     .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
                                                                                    .fail(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR))::build);
 
