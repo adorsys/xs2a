@@ -219,4 +219,15 @@ public class AisConsent extends InstanceDependableEntity {
         }
         usages.add(aisConsentUsage);
     }
+
+    /**
+     * Checks, whether the consent is non-recurring and was used any time before today. Currently non-recurring consent
+     * allows to perform read operations only within the day, it was used first time.
+     *
+     * @return Returns true if consent is non-recurrent and has no usages before today, false otherwise.
+     */
+    public boolean isNonReccuringAlreadyUsed() {
+        return !recurringIndicator && usages.stream()
+                                          .anyMatch(u -> u.getUsageDate().isBefore(LocalDate.now()));
+    }
 }

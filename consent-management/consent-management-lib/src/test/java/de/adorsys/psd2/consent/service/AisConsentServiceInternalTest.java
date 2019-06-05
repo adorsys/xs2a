@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAction;
 import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
+import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
@@ -174,6 +175,26 @@ public class AisConsentServiceInternalTest {
         // Assert
         assertTrue(retrievedConsent.isPresent());
         verify(aisConsentRepository, never()).save(any(AisConsent.class));
+    }
+
+    @Test
+    public void getAisAccountConsentById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+        // Given
+        AisConsent consent = buildUsedNonRecurringConsent();
+
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(consent));
+        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
+            .thenReturn(consent);
+
+        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+
+        // When
+        aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
+
+        // Then
+        verify(aisConsentRepository).save(aisConsentCaptor.capture());
+        assertEquals(ConsentStatus.EXPIRED, aisConsentCaptor.getValue().getConsentStatus());
     }
 
     @Test
@@ -478,6 +499,79 @@ public class AisConsentServiceInternalTest {
         aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false));
         //Then
         verify(aisConsentUsageService, never()).incrementUsage(aisConsent, REQUEST_URI);
+    }
+
+    @Test
+    public void checkConsentAndSaveActionLog_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+        // Given
+        AisConsent consent = buildUsedNonRecurringConsent();
+
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(consent));
+        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
+            .thenReturn(consent);
+
+        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+
+        // When
+        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, "/uri", false));
+
+        // Then
+        verify(aisConsentRepository).save(aisConsentCaptor.capture());
+        assertEquals(ConsentStatus.EXPIRED, aisConsentCaptor.getValue().getConsentStatus());
+    }
+
+    @Test
+    public void getConsentStatusById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+        // Given
+        AisConsent consent = buildUsedNonRecurringConsent();
+
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(consent));
+        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
+            .thenReturn(consent);
+
+        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+
+        // When
+        Optional<ConsentStatus> consentStatusById = aisConsentService.getConsentStatusById(EXTERNAL_CONSENT_ID);
+
+        // Then
+        verify(aisConsentRepository).save(aisConsentCaptor.capture());
+        assertEquals(ConsentStatus.EXPIRED, aisConsentCaptor.getValue().getConsentStatus());
+
+        assertTrue(consentStatusById.isPresent());
+        assertEquals(ConsentStatus.EXPIRED, consentStatusById.get());
+    }
+
+    @Test
+    public void getInitialAisAccountConsentById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
+        // Given
+        AisConsent consent = buildUsedNonRecurringConsent();
+
+        when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+            .thenReturn(Optional.of(consent));
+
+        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+
+        // When
+        aisConsentService.getInitialAisAccountConsentById(EXTERNAL_CONSENT_ID);
+
+        // Then
+        verify(aisConsentRepository).save(aisConsentCaptor.capture());
+        assertEquals(ConsentStatus.EXPIRED, aisConsentCaptor.getValue().getConsentStatus());
+    }
+
+    @NotNull
+    private AisConsent buildUsedNonRecurringConsent() {
+        AisConsent consent = buildConsent(EXTERNAL_CONSENT_ID);
+
+        AisConsentUsage usage = new AisConsentUsage();
+        usage.setUsageDate(LocalDate.of(2019, 6, 3));
+
+        consent.setUsages(Collections.singletonList(usage));
+        consent.setConsentStatus(ConsentStatus.VALID);
+        return consent;
     }
 
     private AisConsentAction buildAisConsentAction() {
