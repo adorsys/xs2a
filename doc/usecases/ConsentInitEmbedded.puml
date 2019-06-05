@@ -26,7 +26,7 @@ note left
 end note
 |||
 XS2A->CMS: Create authorisation sub-resource
-XS2A-->TPP:Start authorisation response\n"link_StartAuthorisation"
+XS2A-->TPP:Start authorisation response\n"link_updatePsuWithAuthentication"
 deactivate XS2A
 |||
 TPP-->PSU: Feedback to the customer\n"Please enter your User-id & password"
@@ -34,18 +34,8 @@ TPP-->PSU: Feedback to the customer\n"Please enter your User-id & password"
 PSU->TPP: PSU provide User-id & password
 deactivate PSU
 |||
-TPP->XS2A: REST Call Update PSU data (Identification)\n"PUT/v1/consents/{consentId}/authorisations/\n{authorisationId}"
-activate XS2A
-|||
-XS2A->CMS: REST Call UpdateAisAuthorisation
-activate CMS
-|||
-CMS-->XS2A: UpdateAisAuthorisation Response
-deactivate CMS
-|||
-XS2A-->TPP: UpdatePsuAuthenticationResponse
-|||
 TPP->XS2A: REST Call Update PSU data (Authentication)\n"PUT/v1/consents/{consent-id}/authorisations/\n{authorisationId}"
+activate XS2A
 |||
 XS2A->SPI: Java Call AisConsentSpi
 activate SPI
