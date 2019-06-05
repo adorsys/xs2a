@@ -287,7 +287,7 @@ public class PaymentController implements PaymentApi {
         ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> serviceResponse = paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(paymentId);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.ok(serviceResponse, consentModelMapper::mapToCancellationList);
+                   : responseMapper.ok(serviceResponse, consentModelMapper::mapToCancellations);
     }
 
     @Override

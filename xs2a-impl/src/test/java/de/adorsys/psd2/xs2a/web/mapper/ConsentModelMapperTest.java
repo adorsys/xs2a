@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import de.adorsys.psd2.model.AuthenticationObject;
-import de.adorsys.psd2.model.ConsentsResponse201;
-import de.adorsys.psd2.model.ScaMethods;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -91,6 +89,19 @@ public class ConsentModelMapperTest {
         // Then
         checkCommonFields(actual);
         assertNull(actual.getScaMethods());
+    }
+
+    @Test
+    public void mapToCancellations() {
+        //Given
+        List<String> cancellationIds = Arrays.asList("c0121ca2-ab3a-4564-b915-6e40e8b40f50", "743d0a45-7233-4fbf-9799-c657f327836c");
+        //When
+        Cancellations cancellations = consentModelMapper.mapToCancellations(new Xs2aPaymentCancellationAuthorisationSubResource(cancellationIds));
+        //Then
+        assertNotNull(cancellations);
+        CancellationList cancellationList = cancellations.getCancellationIds();
+        assertNotNull(cancellationList);
+        assertEquals(cancellationIds, new ArrayList<>(cancellationList));
     }
 
     private void checkCommonFields(ConsentsResponse201 actual) {
