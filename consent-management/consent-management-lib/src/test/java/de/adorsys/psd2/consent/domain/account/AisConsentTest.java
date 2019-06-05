@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class AisConsentTest {
     @Test
     public void isWrongConsentData_shouldReturnTrue_emptyPsuDataList() {
         // Given
-        AisConsent aisConsent = buildAisConsent(Collections.emptyList(), TPP_INFO);
+        AisConsent aisConsent = buildAisConsent(Collections.emptyList(), TPP_INFO, false);
 
         // When
         boolean actual = aisConsent.isWrongConsentData();
@@ -48,7 +50,7 @@ public class AisConsentTest {
     @Test
     public void isWrongConsentData_shouldReturnTrue_tppInfoNull() {
         // Given
-        AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), null);
+        AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), null, false);
 
         // When
         boolean actual = aisConsent.isWrongConsentData();
@@ -60,7 +62,7 @@ public class AisConsentTest {
     @Test
     public void isWrongConsentData_shouldReturnFalse() {
         // Given
-        AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO);
+        AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO, false);
 
         // When
         boolean actual = aisConsent.isWrongConsentData();
@@ -69,10 +71,56 @@ public class AisConsentTest {
         assertFalse(actual);
     }
 
-    private AisConsent buildAisConsent(List<PsuData> psuDataList, TppInfoEntity tppInfoEntity) {
+    @Test
+    public void isNonReccuringAlreadyUsed_shouldReturnFalse_recurringConsent() {
+        // Given
+        AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO, true);
+
+        // When
+        boolean actual = aisConsent.isNonReccuringAlreadyUsed();
+
+        // Then
+        assertFalse(actual);
+    }
+
+    @Test
+    public void isNonReccuringAlreadyUsed_shouldReturnFalse_nonRecurringWithoutOldUsages() {
+        // Given
+        AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO, false);
+        aisConsent.setUsages(Collections.singletonList(buildAisConsentUsage(LocalDate.now())));
+
+        // When
+        boolean actual = aisConsent.isNonReccuringAlreadyUsed();
+
+        // Then
+        assertFalse(actual);
+    }
+
+    @Test
+    public void isNonReccuringAlreadyUsed_shouldReturnTrue_nonRecurringWithOldUsages() {
+        // Given
+        AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO, false);
+        aisConsent.setUsages(Arrays.asList(buildAisConsentUsage(LocalDate.now()),
+                                           buildAisConsentUsage(LocalDate.now().minusDays(1))));
+
+        // When
+        boolean actual = aisConsent.isNonReccuringAlreadyUsed();
+
+        // Then
+        assertTrue(actual);
+    }
+
+    private AisConsent buildAisConsent(List<PsuData> psuDataList, TppInfoEntity tppInfoEntity, boolean recurringIndicator) {
         AisConsent consent = new AisConsent();
         consent.setPsuDataList(psuDataList);
         consent.setTppInfo(tppInfoEntity);
+        consent.setRecurringIndicator(recurringIndicator);
         return consent;
+    }
+
+    private AisConsentUsage buildAisConsentUsage(LocalDate usageDate) {
+        AisConsentUsage usage = new AisConsentUsage();
+        usage.setUsageDate(usageDate);
+        return usage;
     }
 }
