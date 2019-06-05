@@ -19,6 +19,7 @@
 * Delete `createAuthorization` method in AisConsentAuthorisationServiceBase
 * Bugfix: `Get Cancellation Authorisation Sub-Resources` request (`GET /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`) returns wrong JSON format
 * Bugfix: `authorisationId` field is not provided in the responses
+* Bugfix: Fixed count usage of frequencyPerDay for one-off consents for every account endpoint
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -134,3 +135,19 @@ From now on, while getting the response for these requests:
 
 the response has `authorisationId` field.
 
+
+== Bugfix: Fixed count usage of frequencyPerDay for one-off consents for every account endpoint
+
+`frequencyPerDay` is counted per unique resource for each endpoint when `recurringIndicator` of the consent is set to `false`.
+Every access on the following endpoints is counted by one-off consent, where pagination on transactions are resulting
+in counting all accesses to this transaction report as one access:
+
+* `GET /v1/accounts`;
+* `GET /v1/accounts/account-id` per account-id;
+* `GET /v1/accounts/account-id/transactions` per account-id;
+* `GET /v1/accounts/account-id/balances` per account-id;
+* `GET /v1/accounts/account-id/transactions/transaction-id` per account-id and transaction-id, if applicable.
+
+Also, a new scheduled task was added in CMS to be executed by Spring Scheduler. To set up the periodicity of this task
+execution, the new property `used-non-recurring-consent-expiration.cron.expression` was added to the
+`application.properties` file(current value is set to run at the top of every hour of every day).
