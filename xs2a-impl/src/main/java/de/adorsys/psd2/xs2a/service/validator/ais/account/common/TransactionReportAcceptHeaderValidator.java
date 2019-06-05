@@ -40,10 +40,12 @@ import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.REQUESTED_FORMATS_INV
 @Component
 @RequiredArgsConstructor
 public class TransactionReportAcceptHeaderValidator {
+    private static final String WILDCARD_ACCEPT_HEADER = "*/*";
+
     private final AspspProfileService aspspProfileService;
 
     public ValidationResult validate(String acceptHeader) {
-        if (StringUtils.isNotBlank(acceptHeader)) {
+        if (StringUtils.isNotBlank(acceptHeader) && !WILDCARD_ACCEPT_HEADER.equals(acceptHeader)) {
             List<String> supportedTransactionApplicationTypes = aspspProfileService.getAspspSettings().getSupportedTransactionApplicationTypes();
 
             if (!isAtLeastOneAcceptHeaderSupported(supportedTransactionApplicationTypes, acceptHeader)) {

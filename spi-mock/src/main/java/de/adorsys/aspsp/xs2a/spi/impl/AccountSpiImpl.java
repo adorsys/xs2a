@@ -56,6 +56,7 @@ public class AccountSpiImpl implements AccountSpi {
     // TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private static final String DEFAULT_ACCEPT_MEDIA_TYPE = MediaType.APPLICATION_JSON_VALUE;
+    private static final String WILDCARD_ACCEPT_HEADER = "*/*";
 
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")
@@ -130,7 +131,7 @@ public class AccountSpiImpl implements AccountSpi {
             SpiResponse.SpiResponseBuilder<SpiTransactionReport> responseBuilder =
                 SpiResponse.<SpiTransactionReport>builder()
                     .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()));
-            String responseMediaType = StringUtils.isNotBlank(acceptMediaType) ? acceptMediaType : DEFAULT_ACCEPT_MEDIA_TYPE;
+            String responseMediaType = processAcceptMediaType(acceptMediaType);
             if (responseMediaType.contains(SpiTransactionReport.RESPONSE_TYPE_JSON)) {
                 SpiTransactionReport transactionReport = new SpiTransactionReport(transactions,
                                                                                   balances,
@@ -177,6 +178,11 @@ public class AccountSpiImpl implements AccountSpi {
             return SpiResponse.<SpiTransactionReport>builder()
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
+    }
+
+    private String processAcceptMediaType(String acceptMediaType) {
+        return StringUtils.isBlank(acceptMediaType) || WILDCARD_ACCEPT_HEADER.equals(acceptMediaType) ?
+                   DEFAULT_ACCEPT_MEDIA_TYPE : acceptMediaType;
     }
 
     private List<SpiAccountBalance> getBalances(boolean withBalance, SpiAccountDetails accountDetails) {
