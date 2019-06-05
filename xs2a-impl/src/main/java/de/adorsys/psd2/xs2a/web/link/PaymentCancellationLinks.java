@@ -70,22 +70,13 @@ public class PaymentCancellationLinks extends AbstractLinks {
         String authorisationId = body.getAuthorizationId();
 
         if (isExplicitMethod) {
-            if (body.getPsuData().isEmpty()) {
-                setStartAuthorisationWithPsuIdentification(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
-            } else {
-                setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
-            }
+            setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
         } else {
             setScaStatus(
                 buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
 
-            if (body.getPsuData().isEmpty()) {
-                setUpdatePsuIdentification(
-                    buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
-            } else {
-                setUpdatePsuAuthentication(
-                    buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
-            }
+            setUpdatePsuAuthentication(
+                buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         }
     }
 
