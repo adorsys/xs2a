@@ -157,6 +157,7 @@ public class AuthorisationMapper {
                                          : createUpdateConsentsPsuDataLink(csar);
                        return new StartScaprocessResponse()
                                   .scaStatus(coreObjectsMapper.mapToModelScaStatus(csar.getScaStatus()))
+                                  .authorisationId(csar.getAuthorisationId())
                                   ._links(hrefLinkMapper.mapToLinksMap(csar.getResponseLinkType().getValue(), link));
                    })
                    .orElse(null);
