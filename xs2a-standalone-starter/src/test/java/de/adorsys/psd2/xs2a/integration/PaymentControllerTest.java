@@ -59,7 +59,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.eq;
@@ -218,6 +220,29 @@ public class PaymentControllerTest {
         resultActions.andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(IOUtils.resourceToString(CANCELLATION_AUTHORISATIONS_REDIRECT_OAUTH_RESP, UTF_8)));
+    }
+
+    @Test
+    public void getPaymentInitiationCancellationAuthorisationInformation() throws Exception {
+        // Given
+        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
+        given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
+            .willReturn(Optional.of(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponse()));
+
+        List<String> cancellationIds = Arrays.asList("c0121ca2-ab3a-4564-b915-6e40e8b40f50", "743d0a45-7233-4fbf-9799-c657f327836c");
+        given(pisCommonPaymentServiceEncrypted.getAuthorisationsByPaymentId(ENCRYPT_PAYMENT_ID, CmsAuthorisationType.CANCELLED))
+            .willReturn(Optional.of(cancellationIds));
+
+        MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetPaymentInitiationCancellationAuthorisationInformationUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID));
+        requestBuilder.headers(httpHeadersExplicit);
+
+        // When
+        ResultActions resultActions = mockMvc.perform(requestBuilder);
+
+        //Then
+        resultActions.andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(IOUtils.resourceToString("/json/payment/res/Cancellations.json", UTF_8)));
     }
 
     private PsuIdData getPsuIdData() {

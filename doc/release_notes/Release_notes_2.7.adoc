@@ -15,6 +15,7 @@
 * Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 * Delete `accounts` field in PiisConsentEntity, deprecated methods and `piis_consent_acc_reference` table
 * Delete `createAuthorization` method in AisConsentAuthorisationServiceBase
+* Bugfix: `Get Cancellation Authorisation Sub-Resources` request (`GET /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`) returns wrong JSON format
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -116,3 +117,7 @@ Table `piis_consent_acc_reference` and field in `PiisConsentEntity` were removed
 
 Method `createAuthorization` in AisConsentAuthorisationServiceBase was removed. From now on,
 createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest request) method will be used instead.
+
+== Bugfix: `Get Cancellation Authorisation Sub-Resources` request (`GET /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`) returns wrong JSON format
+
+From now on, `Get Cancellation Authorisation Sub-Resources` request returns correct response with `cancellationIds` field, that contains list of cancellation authorisations
