@@ -77,4 +77,13 @@ public class TransactionReportAcceptHeaderValidatorTest {
         actual = validator.validate("");
         assertTrue(actual.isValid());
     }
+
+    @Test
+    public void validate_acceptHeaderIsWildcard_success() {
+        ValidationResult actual = validator.validate("*/*");
+        assertTrue(actual.isValid());
+
+        actual = validator.validate("");
+        assertTrue(actual.isValid());
+    }
 }
