@@ -64,6 +64,7 @@ public class ConsentModelMapper {
     public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisCancellationAuthorisationResponse response) {
         return new StartScaprocessResponse()
                    .scaStatus(coreObjectsMapper.mapToModelScaStatus(response.getScaStatus()))
+                   .authorisationId(response.getAuthorisationId())
                    ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()));
     }
 

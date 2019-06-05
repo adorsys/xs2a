@@ -16,6 +16,7 @@
 * Delete `accounts` field in PiisConsentEntity, deprecated methods and `piis_consent_acc_reference` table
 * Delete `createAuthorization` method in AisConsentAuthorisationServiceBase
 * Bugfix: `Get Cancellation Authorisation Sub-Resources` request (`GET /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`) returns wrong JSON format
+* Bugfix: `authorisationId` field is not provided in the responses
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -121,3 +122,13 @@ createAuthorizationWithResponse(String consentId, AisConsentAuthorizationRequest
 == Bugfix: `Get Cancellation Authorisation Sub-Resources` request (`GET /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`) returns wrong JSON format
 
 From now on, `Get Cancellation Authorisation Sub-Resources` request returns correct response with `cancellationIds` field, that contains list of cancellation authorisations
+
+== Bugfix: `authorisationId` field is not provided in the responses
+
+From now on, while getting the response for these requests:
+ - AIS consent starting authorisation,
+ - PIS payment starting authorisation,
+ - PIS payment cancellation authorisation
+
+the response has `authorisationId` field.
+
