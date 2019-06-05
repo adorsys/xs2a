@@ -56,4 +56,10 @@ public class UrlBuilder {
                    .buildAndExpand(paymentType, paymentProduct, encrPaymentId)
                    .toUriString();
     }
+
+    public static String buildGetPaymentInitiationCancellationAuthorisationInformationUrl(String paymentType, String paymentProduct, String encrPaymentId) {
+        return UriComponentsBuilder.fromPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL)
+                   .buildAndExpand(paymentType, paymentProduct, encrPaymentId)
+                   .toUriString();
+    }
 }
