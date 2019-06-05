@@ -27,10 +27,8 @@ toc::[]
 == Architecture
 xref:architecture/index.adoc[Architecture documentation]
 
-
-== Use cases
-
-
+== XS2A. Details of realisation
+xref:xs2a features description.adoc[Documentation]
 
 include::version_policy.adoc[]
 
