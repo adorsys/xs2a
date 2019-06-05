@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.event.EventType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -155,7 +154,9 @@ public class AccountService {
         ResponseObject<Xs2aAccountListHolder> response =
             ResponseObject.<Xs2aAccountListHolder>builder().body(xs2aAccountListHolder).build();
 
-        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.ACCOUNT, response, requestUri);
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId,
+                                           createActionStatus(withBalance, TypeAccess.ACCOUNT, response),
+                                           requestUri, needsToUpdateUsage(accountConsent));
 
         return response;
     }
@@ -226,7 +227,9 @@ public class AccountService {
         ResponseObject<Xs2aAccountDetailsHolder> response =
             ResponseObject.<Xs2aAccountDetailsHolder>builder().body(xs2aAccountDetailsHolder).build();
 
-        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.ACCOUNT, response, requestUri);
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId,
+                                           createActionStatus(withBalance, TypeAccess.ACCOUNT, response),
+                                           requestUri, needsToUpdateUsage(accountConsent));
 
         return response;
     }
@@ -291,7 +294,9 @@ public class AccountService {
         ResponseObject<Xs2aBalancesReport> response =
             ResponseObject.<Xs2aBalancesReport>builder().body(balancesReport).build();
 
-        writeLogAndCheckConsent(consentId, false, accountConsent, TypeAccess.BALANCE, response, requestUri);
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId,
+                                           createActionStatus(false, TypeAccess.BALANCE, response),
+                                           requestUri, needsToUpdateUsage(accountConsent));
 
         return response;
     }
@@ -396,7 +401,9 @@ public class AccountService {
         ResponseObject<Xs2aTransactionsReport> response =
             ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build();
 
-        writeLogAndCheckConsent(consentId, withBalance, accountConsent, TypeAccess.TRANSACTION, response, requestUri);
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId,
+                                           createActionStatus(withBalance, TypeAccess.TRANSACTION, response),
+                                           requestUri, needsToUpdateUsage(accountConsent));
 
         return response;
     }
@@ -467,14 +474,11 @@ public class AccountService {
                 .body(transactions)
                 .build();
 
-        writeLogAndCheckConsent(consentId, false, accountConsent, TypeAccess.TRANSACTION, response, requestUri);
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId,
+                                           createActionStatus(false, TypeAccess.TRANSACTION, response),
+                                           requestUri, needsToUpdateUsage(accountConsent));
 
         return response;
-    }
-
-    private void writeLogAndCheckConsent(String consentId, boolean withBalance, AccountConsent accountConsent, TypeAccess typeAccess, ResponseObject response, String requestUri) {
-        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, typeAccess, response), requestUri, needsToUpdateUsage(accountConsent));
-        checkAndExpireConsentIfOneAccessType(accountConsent, consentId);
     }
 
     private boolean needsToUpdateUsage(AccountConsent accountConsent) {
@@ -493,12 +497,6 @@ public class AccountService {
                    .filter(accountReference -> StringUtils.equals(accountReference.getResourceId(), resourceId))
                    .findFirst()
                    .map(xs2aToSpiAccountReferenceMapper::mapToSpiAccountReference);
-    }
-
-    private void checkAndExpireConsentIfOneAccessType(AccountConsent accountConsent, String encryptedConsentId) {
-        if (accountConsent.isOneAccessType()) {
-            aisConsentService.updateConsentStatus(encryptedConsentId, ConsentStatus.EXPIRED);
-        }
     }
 
     private SpiContextData getSpiContextData(List<PsuIdData> psuIdDataList) {

@@ -23,6 +23,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,4 +49,15 @@ public interface AisConsentRepository extends CrudRepository<AisConsent, Long>, 
                                                        @Param("instanceId") String instanceId,
                                                        @Param("newConsentId") String newConsentId,
                                                        @Param("consentStatuses") Set<ConsentStatus> consentStatuses);
+
+    @Query(
+        "select distinct c from ais_consent c " +
+            "inner join ais_consent_usage u " +
+            "on c.id = u.consent.id " +
+            "where c.recurringIndicator = false " +
+            "and c.consentStatus in :consentStatuses " +
+            "and u.usageDate < :currentDate"
+    )
+    List<AisConsent> findUsedNonRecurringConsents(@Param("consentStatuses") Set<ConsentStatus> consentStatuses,
+                                                  @Param("currentDate") LocalDate currentDate);
 }
