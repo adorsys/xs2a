@@ -42,7 +42,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     private static final String PAYMENT_SERVICE_PATH_VAR = "payment-service";
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
     private static final String DAY_OF_EXECUTION_FIELD_NAME = "dayOfExecution";
-    private static final String DAY_OF_MONTH_REGEX = "([1-9]|[12]\\d|3[01])";
+    private static final String DAY_OF_MONTH_REGEX = "(0?[1-9]|[12]\\d|3[01])";
     private static final String DAY_OF_EXECUTION_WRONG_VALUE_ERROR = "Value 'dayOfExecution' should be a number of day in month";
     private static final String BODY_DESERIALIZATION_ERROR = "Cannot deserialize the request body";
 

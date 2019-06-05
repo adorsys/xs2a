@@ -16,13 +16,18 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
+import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +39,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 
@@ -45,6 +49,9 @@ public class AuthorisationMapperTest {
     private static final String SELF_LINK = "self";
     private static final String HREF = "href";
     private static final String LOCALHOST_LINK = "http://localhost";
+    private static final String CONSENT_ID = "consent ID";
+    private static final String AUTHORISATION_ID = "authorisation ID";
+
     private static final de.adorsys.psd2.model.ScaStatus SCA_STATUS = de.adorsys.psd2.model.ScaStatus.RECEIVED;
 
     private JsonReader jsonReader = new JsonReader();
@@ -61,9 +68,17 @@ public class AuthorisationMapperTest {
     @Mock
     private CoreObjectsMapper coreObjectsMapper;
 
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
+
+    @Mock
+    private RedirectLinkBuilder redirectLinkBuilder;
+
     @Before
     public void setUp() {
         when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
+        when(hrefLinkMapper.mapToLinksMap(anyString(), anyString())).thenReturn(buildLinks());
+
         when(coreObjectsMapper.mapToModelScaStatus(any(ScaStatus.class))).thenReturn(SCA_STATUS);
     }
 
@@ -135,6 +150,29 @@ public class AuthorisationMapperTest {
         assertEquals(expectedUpdatePsuAuthenticationResponse.getPsuMessage(), actualUpdatePsuAuthenticationResponse.getPsuMessage());
         assertNotNull(actualUpdatePsuAuthenticationResponse.getChallengeData());
         assertEquals(expectedUpdatePsuAuthenticationResponse.getScaStatus(), actualUpdatePsuAuthenticationResponse.getScaStatus());
+    }
+
+    @Test
+    public void mapToAisCreateOrUpdateAuthorisationResponse_for_CreateConsentAuthorizationResponse() {
+        // Given
+        CreateConsentAuthorizationResponse createConsentAuthorizationResponse =
+            jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-CreateConsentAuthorisationResponse.json", CreateConsentAuthorizationResponse.class);
+
+        StartScaprocessResponse expected =
+            jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-start-scaprocess-response-expected.json", StartScaprocessResponse.class);
+
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        when((redirectLinkBuilder.buildConsentScaRedirectLink(CONSENT_ID, AUTHORISATION_ID))).thenReturn(LOCALHOST_LINK);
+
+        ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
+                                                                   .body(createConsentAuthorizationResponse)
+                                                                   .build();
+        // When
+        StartScaprocessResponse actualStartScaProcessResponse =
+            (StartScaprocessResponse) mapper.mapToAisCreateOrUpdateAuthorisationResponse(responseObject);
+
+        // Then
+        assertEquals(expected, actualStartScaProcessResponse);
     }
 
     private void assertThatChosenScaMethodsEquals(ChosenScaMethod expectedChosenScaMethod, ChosenScaMethod actualChosenScaMethod) {

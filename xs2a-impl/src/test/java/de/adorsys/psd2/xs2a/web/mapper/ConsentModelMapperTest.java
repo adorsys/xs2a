@@ -17,8 +17,11 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import org.junit.Before;
@@ -40,6 +43,7 @@ public class ConsentModelMapperTest {
 
     private final static String CONSENT_STATUS = "received";
     private final static String CONSENT_ID = "S7tlYXaar8j7l5IMK89iNJB8SkG5ricoOaEYHyku_AO9BF6MIP29SN_tXtDvaQb3c8b_NsohCWlFlYN0ds8u89WFnjze07vwpAgFM45MlQk=_=_psGLvQpt9Q";
+    private final static String AUTHORISATION_ID = "authorisation ID";
     private final static String PSU_MESSAGE = "This test message is created in ASPSP and directed to PSU";
     private final static String SELF_LINK = "self";
     private final static String HREF = "href";
@@ -54,12 +58,16 @@ public class ConsentModelMapperTest {
     @Mock
     private ScaMethodsMapper scaMethodsMapper;
 
+    @Mock
+    private CoreObjectsMapper coreObjectsMapper;
+
     private CreateConsentResponse createConsentResponseWithScaMethods;
     private CreateConsentResponse createConsentResponseWithoutScaMethods;
+    private JsonReader jsonReader;
 
     @Before
     public void setUp() {
-        JsonReader jsonReader = new JsonReader();
+        jsonReader = new JsonReader();
         createConsentResponseWithScaMethods = jsonReader.getObjectFromFile("json/service/mapper/create-consent-response-with-sca-methods.json", CreateConsentResponse.class);
         createConsentResponseWithoutScaMethods = jsonReader.getObjectFromFile("json/service/mapper/create-consent-response-without-sca-methods.json", CreateConsentResponse.class);
 
@@ -104,6 +112,21 @@ public class ConsentModelMapperTest {
         assertEquals(cancellationIds, new ArrayList<>(cancellationList));
     }
 
+    @Test
+    public void mapToStartScaProcessResponse_success() {
+        // Given
+        when(coreObjectsMapper.mapToModelScaStatus(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)).thenReturn(de.adorsys.psd2.model.ScaStatus.RECEIVED);
+        StartScaprocessResponse expected =
+            jsonReader.getObjectFromFile("json/service/mapper/AuthorisationMapper-start-scaprocess-response-expected.json", StartScaprocessResponse.class);
+        Xs2aCreatePisCancellationAuthorisationResponse xs2aCreatePisCancellationAuthorisationResponse = buildXs2aCreatePisCancellationAuthorisationResponse();
+
+        // When
+        StartScaprocessResponse actual = consentModelMapper.mapToStartScaProcessResponse(xs2aCreatePisCancellationAuthorisationResponse);
+
+        // Then
+        assertEquals(expected, actual);
+    }
+
     private void checkCommonFields(ConsentsResponse201 actual) {
         assertNotNull(actual);
         assertEquals(CONSENT_STATUS, actual.getConsentStatus().toString());
@@ -118,5 +141,9 @@ public class ConsentModelMapperTest {
 
     private Map<String, Map<String, String>> buildLinks() {
         return Collections.singletonMap(SELF_LINK, Collections.singletonMap(HREF, LOCALHOST_LINK));
+    }
+
+    private Xs2aCreatePisCancellationAuthorisationResponse buildXs2aCreatePisCancellationAuthorisationResponse() {
+        return new Xs2aCreatePisCancellationAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, PaymentType.SINGLE);
     }
 }
