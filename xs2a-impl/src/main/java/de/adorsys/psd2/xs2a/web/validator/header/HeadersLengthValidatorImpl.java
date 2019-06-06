@@ -18,13 +18,13 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.HEADERS_MAP;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.HEADERS_MAX_LENGTHS;
 
 
 @Component
@@ -45,33 +45,27 @@ public class HeadersLengthValidatorImpl extends AbstractHeaderValidatorImpl
 
     @Override
     public void validate(Map<String, String> inputHeaders, MessageError messageError) {
-        Map<Integer, List<String>> wrongLengthHeadersMap = new HashMap<>();
-
-        HEADERS_MAP.forEach((maxLength, listOfHeadersToValidate) -> validateByLength(inputHeaders, listOfHeadersToValidate, wrongLengthHeadersMap, maxLength));
-
-        if (MapUtils.isNotEmpty(wrongLengthHeadersMap)) {
-            getResultWithError(messageError, wrongLengthHeadersMap);
+        for (Map.Entry<String, String> header : inputHeaders.entrySet()) {
+            if (isHeaderExceedsLength(header)) {
+                String resultingMessage = prepareErrorMessage(header.getKey());
+                errorBuildingService.enrichMessageError(messageError, resultingMessage);
+            }
         }
     }
 
-    private void validateByLength(Map<String, String> headers, String[] headersToBeValidated, Map<Integer, List<String>> wrongLengthHeadersMap, int length) {
-        headers.forEach((k, v) -> {
-            if (Arrays.stream(headersToBeValidated).anyMatch(h -> h.equalsIgnoreCase(k)) && v.length() > length) {
-                if (!wrongLengthHeadersMap.containsKey(length)) {
-                    wrongLengthHeadersMap.put(length, new ArrayList<String>() {{
-                        add(k);
-                    }});
-                } else {
-                    wrongLengthHeadersMap.get(length).add(k);
-                }
-            }
-        });
+    private boolean isHeaderExceedsLength(Map.Entry<String, String> header) {
+        String headerName = header.getKey();
+        String headerValue = header.getValue();
+        if (headerName == null || headerValue == null) {
+            return false; // no header - no length check
+        }
+        String headerNameLowerCase = headerName.toLowerCase();
+        Set<String> headersToValidate = HEADERS_MAX_LENGTHS.keySet();
+        return headersToValidate.contains(headerNameLowerCase)
+                        && headerValue.length() > HEADERS_MAX_LENGTHS.get(headerNameLowerCase);
     }
 
-    private void getResultWithError(MessageError messageError, Map<Integer, List<String>> wrongLengthHeadersMap) {
-        wrongLengthHeadersMap.forEach((length, listOfHeaders) -> listOfHeaders.forEach(h -> {
-            String resultingMessage = String.format(HEADER_LENGTH_ERROR_TEXT, h, length);
-            errorBuildingService.enrichMessageError(messageError, resultingMessage);
-        }));
+    private String prepareErrorMessage(String headerNameLowerCase) {
+        return String.format(HEADER_LENGTH_ERROR_TEXT, headerNameLowerCase, HEADERS_MAX_LENGTHS.get(headerNameLowerCase));
     }
 }
