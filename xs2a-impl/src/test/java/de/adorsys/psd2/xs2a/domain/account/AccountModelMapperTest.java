@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.psd2.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
+import de.adorsys.psd2.xs2a.util.reader.JsonReader;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,9 +46,10 @@ public class AccountModelMapperTest {
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String HREF = "href";
 
+    private JsonReader jsonReader = new JsonReader();
+
     @Mock
     private AmountModelMapper amountModelMapper;
-
     @Mock
     private HrefLinkMapper hrefLinkMapper;
 
@@ -244,6 +246,38 @@ public class AccountModelMapperTest {
 
         Map links = result.getLinks();
         assertEquals("{" + HREF + "=" + accountReport.getLinks().getScaOAuth() + "}", links.get("scaOAuth").toString());
+    }
+
+    @Test
+    public void mapToTransactionsResponse200Json_withEmptyTransactionsInAccountReport_shouldReturnNullLists() {
+        // Given
+        when(hrefLinkMapper.mapToLinksMap(null))
+            .thenReturn(null);
+
+        Xs2aAccountReport xs2aAccountReport = jsonReader.getObjectFromFile("json/service/mapper/account/xs2a-account-report-empty-transactions.json", Xs2aAccountReport.class);
+        AccountReport emptyAccountReport = new AccountReport();
+
+        // When
+        AccountReport actualAccountReport = accountModelMapper.mapToAccountReport(xs2aAccountReport);
+
+        // Then
+        assertEquals(emptyAccountReport, actualAccountReport);
+    }
+
+    @Test
+    public void mapToTransactionsResponse200Json_withNullPendingTransactionInAccountReport_shouldReturnNullList() {
+        // Given
+        when(hrefLinkMapper.mapToLinksMap(null))
+            .thenReturn(null);
+
+        Xs2aAccountReport xs2aAccountReport = jsonReader.getObjectFromFile("json/service/mapper/account/xs2a-account-report-null-pending-transactions.json", Xs2aAccountReport.class);
+        AccountReport accountReportWithBookedTransaction = jsonReader.getObjectFromFile("json/service/mapper/account/account-report-booked-transaction.json", AccountReport.class);
+
+        // When
+        AccountReport actualAccountReport = accountModelMapper.mapToAccountReport(xs2aAccountReport);
+
+        // Then
+        assertEquals(accountReportWithBookedTransaction, actualAccountReport);
     }
 
     private Xs2aBalance createBalance() {

@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+// TODO split mapper into smaller part https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/875
 public class AccountModelMapper {
     private final AmountModelMapper amountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
@@ -131,17 +133,8 @@ public class AccountModelMapper {
     }
 
     public AccountReport mapToAccountReport(Xs2aAccountReport accountReport) {
-        TransactionList booked = new TransactionList();
-        List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
-                                                          .map(ts -> ts.stream().map(this::mapToTransaction).collect(Collectors.toList()))
-                                                          .orElseGet(ArrayList::new);
-        booked.addAll(bookedTransactions);
-
-        TransactionList pending = new TransactionList();
-        List<TransactionDetails> pendingTransactions = Optional.ofNullable(accountReport.getPending())
-                                                           .map(ts -> ts.stream().map(this::mapToTransaction).collect(Collectors.toList()))
-                                                           .orElseGet(ArrayList::new);
-        pending.addAll(pendingTransactions);
+        TransactionList booked = mapToTransactionList(accountReport.getBooked());
+        TransactionList pending = mapToTransactionList(accountReport.getPending());
 
         return new AccountReport()
                    .booked(booked)
@@ -267,5 +260,19 @@ public class AccountModelMapper {
         exchangeRate.quotationDate(xs2aExchangeRate.getQuotationDate());
 
         return exchangeRate;
+    }
+
+    private @Nullable TransactionList mapToTransactionList(@Nullable List<Transactions> transactions) {
+        if (CollectionUtils.isEmpty(transactions)) {
+            return null;
+        }
+
+        List<TransactionDetails> transactionDetails = transactions.stream()
+                                                          .map(this::mapToTransaction)
+                                                          .collect(Collectors.toList());
+
+        TransactionList transactionList = new TransactionList();
+        transactionList.addAll(transactionDetails);
+        return transactionList;
     }
 }

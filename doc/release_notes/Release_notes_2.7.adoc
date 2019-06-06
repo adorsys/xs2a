@@ -12,12 +12,12 @@
 * Bugfix: Payment Cancellation Request update
 * Bugfix: Periodic payment can be created with invalid `dayOfExecution` tag
 * Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
-* Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
 * Delete `accounts` field in PiisConsentEntity, deprecated methods and `piis_consent_acc_reference` table
 * Delete `createAuthorization` method in AisConsentAuthorisationServiceBase
 * Bugfix: `Get Cancellation Authorisation Sub-Resources` request (`GET /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations`) returns wrong JSON format
 * Bugfix: `authorisationId` field is not provided in the responses
 * Bugfix: Fixed count usage of frequencyPerDay for one-off consents for every account endpoint
+* Bugfix: `Read Transaction List` request returns empty lists with transactions
 
 == Bugfix: Consent-related endpoints return incorrect HTTP status code on providing unknown consent ID
 
@@ -60,12 +60,15 @@ Update PSU Data for `Consent`
 
 From now on, mandatory `bookingStatus` query parameter is being validated in `Read Transaction List` request
 (`GET /v1/accounts/{account-id}/transactions {query-parameters}`).
-To be considered valid, this parameter should be present in request and have a valid value (`booked`, `pending` or `both`).
+To be considered valid, this parameter should be present in request, have a valid value (`booked`, `pending` or `both`) and be supported by the ASPSP.
+ASPSP can indicate supported values by adding them to the `availableBookingStatuses` property in the ASPSP profile.
+If `bookingStatus` parameter has invalid value, `400 FORMAT_ERROR` error will be returned in the response.
+If value is correct, but is not supported by the ASPSP, `400 PARAMETER_NOT_SUPPORTED` error will be returned instead.
 
 == Bugfix: `creditorAddress` property is provided to the SPI in payment object even if it was not present in the request
 
 Parameter `creditorAddress` in `de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment` and `de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment`
-will be to set to null if it is absent in the `initiatePayment` request (`POST /v1/{payment-service}/{payment-product}`)
+will be set to null if it is absent in the `initiatePayment` request (`POST /v1/{payment-service}/{payment-product}`)
 
 == Added validation of accept header for getting transaction list (`GET /v1/accounts/{account-id}/transactions`)
 
@@ -79,6 +82,14 @@ Configuration property `supportedTransactionApplicationTypes` was added to bank 
 
 Until now, when TPP made first `Get Consent` request, `lastActionDate` field was absent in the response.
 From now on, the value of the `lastActionDate` field is set to the current date when AIS Consent is created and will always be present in the `Get Consent` response.
+will be set to null if it is absent in the `initiatePayment` request (`POST /v1/{payment-service}/{payment-product}`)
+
+== Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
+
+From now on, XS2A would not return links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` during
+starting or updating the AIS consent or PIS payment authorisation. Links `startAuthorisationWithPsuAuthentication` and
+`updatePsuAuthentication` will be returned instead. The reason for that: our implementation already supports password
+receiving on startAuthorisation, therefore no need to separate Identification (PSU-ID) and Authentication (Password).
 
 == Bugfix: Payment Cancellation Request update
 
@@ -93,23 +104,6 @@ Added new `TPP-Explicit-Authorisation-Preferred` header to the endpoint for paym
 
 From now on, while creating the periodic payment (`POST /v1/periodic-payments/{payment-product}`) the `dayOfExecution` field is validated:
 it has to be a string representation of a day of the month (1-31), violating this returns `400 FORMAT_ERROR`.
-
-== Bugfix: Links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` should be never used in responses
-
-From now on, XS2A would not return links `startAuthorisationWithPsuIdentification` and `updatePsuIdentification` during
-starting or updating the AIS consent or PIS payment authorisation. Links `startAuthorisationWithPsuAuthentication` and
-`updatePsuAuthentication` will be returned instead. The reason for that: our implementation already supports password
-receiving on startAuthorisation, therefore no need to separate Identification (PSU-ID) and Authentication (Password).
-
-
-== Bugfix: Validate `bookingStatus` query parameter in `Read Transaction List` request
-
-From now on, mandatory `bookingStatus` query parameter is being validated in `Read Transaction List` request
-(`GET /v1/accounts/{account-id}/transactions {query-parameters}`).
-
-To be considered valid, `bookingStatus` value from the request should be supported by the ASPSP, meaning that it should
-be listed in the `availableBookingStatuses` property in the ASPSP profile.
- If the ASPSP doesn't support particular value, `400 PARAMETER_NOT_SUPPORTED` error will be returned in the response.
 
 == Delete "accounts" field in PiisConsentEntity, deprecated methods and "piis_consent_acc_reference" table
 
@@ -133,7 +127,6 @@ From now on, while getting the response for these requests:
 
 the response has `authorisationId` field.
 
-
 == Bugfix: Fixed count usage of frequencyPerDay for one-off consents for every account endpoint
 
 `frequencyPerDay` is counted per unique resource for each endpoint when `recurringIndicator` of the consent is set to `false`.
@@ -149,3 +142,8 @@ in counting all accesses to this transaction report as one access:
 Also, a new scheduled task was added in CMS to be executed by Spring Scheduler. To set up the periodicity of this task
 execution, the new property `used-non-recurring-consent-expiration.cron.expression` was added to the
 `application.properties` file(current value is set to run at the top of every hour of every day).
+
+== Bugfix: `Read Transaction List` request returns empty lists with transactions
+
+From now on, response to the `Read Transaction List` request (`GET /v1/accounts/{account-id}/transactions`) will no longer
+return empty lists with transactions, if they weren't provided by the ASPSP.
