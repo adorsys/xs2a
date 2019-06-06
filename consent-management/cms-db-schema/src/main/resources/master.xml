@@ -81,7 +81,6 @@
     <include relativeToChangelogFile="true" file="migration/0055-add-card-columns-to-piis_consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0056-add-account-column-to-piis_consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0057-transfer-first-account-from-accounts-to-account-in-piis-consent.xml"/>
-    <include relativeToChangelogFile="true" file="migration/0058-drop-table-piis_consent-acc-reference.xml"/>
     <include relativeToChangelogFile="true" file="migration/0059-remove-usage-counter-column-from-ais-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0060-add-request-uri-column-to-ais-consent-usage.xml"/>
     <include relativeToChangelogFile="true" file="migration/0061-change-table-account-reference-extend-iban.xml"/>
@@ -89,5 +88,7 @@
              file="migration/0062-change-table-pis-payment-data-extend-end-to-end-identification.xml"/>
     <include relativeToChangelogFile="true" file="migration/0063-expand-table-crypto-algorithm-with-fields.xml"/>
     <include relativeToChangelogFile="true" file="migration/0064-expand-table-crypto-algorithm-with-fields-class-and-params.xml"/>
+    <!-- moved this patсh to the end of the list according to order of applying-->
+    <include relativeToChangelogFile="true" file="migration/0058-drop-table-piis_consent-acc-reference.xml"/>
 
 </databaseChangeLog>
