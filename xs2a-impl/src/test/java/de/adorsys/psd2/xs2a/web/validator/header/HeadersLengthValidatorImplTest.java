@@ -22,18 +22,17 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.HEADERS_MAP;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.HEADERS_MAX_LENGTHS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class HeadersLengthValidatorImplTest {
 
     private static final String CORRECT_HEADER_VALUE = "correct_value";
-    private static final String TOO_LONG_HEADER_VALUE = "DSFDGHJKLKJHGFCVBNMDSFDGHJKLLKJHGFCVBNMDSFDGHJKLKJHGFCVBNM";
+    private static final String TOO_LONG_HEADER_VALUE = "DSFDGHJKLKJHGFCVBNMDSFDGHJKLLKJHGFCVBNMDSFDGHJKLKJHGFCVBNMDSFDGHJKLKJHGFCVBNMDSFDGHJKLLKJHGFCVBNMDSFDGHJKLKJHGFCVBNMDSFDGHJKLKJHGFCVBNMDSFDGHJKLLKJHGFCVBNMDSFDGHJKLKJHGFCVBNMDSFDGHJKLKJHGFCVBNMDSFDGHJKLLKJHGFCVBNMDSFDGHJKLKJHGFCVBNMDSFDGHJKLKJHGFCVBNMDSFDGHJKLLKJHGFCVBNMDSFDGHJKLKJHGFCVBNM";
 
     private HeadersLengthValidatorImpl validator;
     private MessageError messageError;
@@ -55,21 +54,27 @@ public class HeadersLengthValidatorImplTest {
 
     @Test
     public void validate_allLengthsAreCorrect() {
-        HEADERS_MAP.forEach((length, listOfHeaders) -> {
-            Arrays.stream(listOfHeaders)
-                .forEach(h -> headers.put(h, CORRECT_HEADER_VALUE));
-            validator.validate(headers, messageError);
-            assertTrue(messageError.getTppMessages().isEmpty());
+        HEADERS_MAX_LENGTHS.forEach((header, length) -> {
+            headers.put(header, CORRECT_HEADER_VALUE);
         });
+        validator.validate(headers, messageError);
+        assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
     public void validate_lengthHasErrors() {
-        HEADERS_MAP.forEach((length, listOfHeaders) -> {
-            Arrays.stream(listOfHeaders)
-                .forEach(h -> headers.put(h, TOO_LONG_HEADER_VALUE));
-            validator.validate(headers, messageError);
-            assertEquals(listOfHeaders.length, messageError.getTppMessages().size());
+        HEADERS_MAX_LENGTHS.forEach((header, length) -> {
+            headers.put(header, TOO_LONG_HEADER_VALUE);
         });
+        validator.validate(headers, messageError);
+        assertEquals(HEADERS_MAX_LENGTHS.size(), messageError.getTppMessages().size());
     }
+
+    @Test
+    public void check_that_headersList_contains_only_lowercase() {
+        for (String header: HEADERS_MAX_LENGTHS.keySet()) {
+            assertEquals(header, header.toLowerCase());
+        }
+    }
+
 }
