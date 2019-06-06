@@ -1,0 +1,17 @@
+{
+  "booked": [
+    {
+      "transactionId": "some transaction id",
+      "transactionAmount": {
+        "currency": "EUR",
+        "amount": "20"
+      },
+      "debtorAccount": {
+        "iban": "DE89370400440532013000"
+      },
+      "creditorAccount": {
+        "iban": "DE89370400440532013000"
+      }
+    }
+  ]
+}
