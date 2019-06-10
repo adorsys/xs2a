@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,41 +18,14 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Component
-public class SpiToXs2aAccountReferenceMapper {
+@Mapper(componentModel = "spring")
+public interface SpiToXs2aAccountReferenceMapper {
 
-    public List<AccountReference> mapToXs2aAccountReferences(List<SpiAccountReference> references) {
-        if (CollectionUtils.isEmpty(references)) {
-            return Collections.emptyList();
-        }
-        return references.stream()
-                   .map(r -> mapToXs2aAccountReference(r).orElse(null))
-                   .filter(Objects::nonNull)
-                   .collect(Collectors.toList());
-    }
+    AccountReference mapToXs2aAccountReference(SpiAccountReference spiAccountRef);
 
-    public Optional<AccountReference> mapToXs2aAccountReference(SpiAccountReference spiAccountRef) {
-        return Optional.ofNullable(spiAccountRef)
-                   .map(a -> {
-                       AccountReference accRef = new AccountReference();
-                       accRef.setAspspAccountId(a.getAspspAccountId());
-                       accRef.setResourceId(a.getResourceId());
-                       accRef.setIban(a.getIban());
-                       accRef.setBban(a.getBban());
-                       accRef.setPan(a.getPan());
-                       accRef.setMaskedPan(a.getMaskedPan());
-                       accRef.setMsisdn(a.getMsisdn());
-                       accRef.setCurrency(a.getCurrency());
-                       return Optional.of(accRef);
-                   }).orElseGet(Optional::empty);
-    }
+    List<AccountReference> mapToXs2aAccountReferences(List<SpiAccountReference> references);
 }

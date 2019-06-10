@@ -288,8 +288,8 @@ public class AccountService {
                        .build();
         }
 
-        Xs2aBalancesReport balancesReport = balanceReportMapper.mapToXs2aBalancesReport(spiResponse.getPayload(),
-                                                                                        requestedAccountReference.get());
+        Xs2aBalancesReport balancesReport = balanceReportMapper.mapToXs2aBalancesReport(requestedAccountReference.get(),
+                                                                                        spiResponse.getPayload());
 
         ResponseObject<Xs2aBalancesReport> response =
             ResponseObject.<Xs2aBalancesReport>builder().body(balancesReport).build();
@@ -394,7 +394,7 @@ public class AccountService {
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(report.orElseGet(() -> new Xs2aAccountReport(Collections.emptyList(),
                                                                                          Collections.emptyList(), null)));
-        transactionsReport.setAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference.get()).orElse(null));
+        transactionsReport.setAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference.get()));
         transactionsReport.setBalances(balanceMapper.mapToXs2aBalanceList(spiTransactionReport.getBalances()));
         transactionsReport.setResponseContentType(spiTransactionReport.getResponseContentType());
 
