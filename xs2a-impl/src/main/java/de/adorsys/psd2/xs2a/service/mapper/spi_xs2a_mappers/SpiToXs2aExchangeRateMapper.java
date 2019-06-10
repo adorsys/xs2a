@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,40 +18,14 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiExchangeRate;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
+import org.mapstruct.Mapper;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Component
-public class SpiToXs2aExchangeRateMapper {
+@Mapper(componentModel = "spring")
+public interface SpiToXs2aExchangeRateMapper {
 
-    public Xs2aExchangeRate mapToExchangeRate(SpiExchangeRate spiExchangeRate) {
-        return Optional.ofNullable(spiExchangeRate)
-                   .map(e -> {
-                       Xs2aExchangeRate exchangeRate = new Xs2aExchangeRate();
-                       exchangeRate.setContractIdentification(spiExchangeRate.getContractIdentification());
-                       exchangeRate.setUnitCurrency(spiExchangeRate.getUnitCurrency());
-                       exchangeRate.setExchangeRate(spiExchangeRate.getExchangeRate());
-                       exchangeRate.setSourceCurrency(spiExchangeRate.getSourceCurrency());
-                       exchangeRate.setTargetCurrency(spiExchangeRate.getTargetCurrency());
-                       exchangeRate.setQuotationDate(spiExchangeRate.getQuotationDate());
+    Xs2aExchangeRate mapToExchangeRate(SpiExchangeRate spiExchangeRate);
 
-                       return exchangeRate;
-                   })
-                   .orElse(null);
-    }
-
-    public List<Xs2aExchangeRate> mapToExchangeRateList(List<SpiExchangeRate> spiExchangeRates) {
-        if (CollectionUtils.isEmpty(spiExchangeRates)) {
-            return new ArrayList<>();
-        }
-
-        return spiExchangeRates.stream()
-                   .map(this::mapToExchangeRate)
-                   .collect(Collectors.toList());
-    }
+    List<Xs2aExchangeRate> mapToExchangeRateList(List<SpiExchangeRate> spiExchangeRateList);
 }

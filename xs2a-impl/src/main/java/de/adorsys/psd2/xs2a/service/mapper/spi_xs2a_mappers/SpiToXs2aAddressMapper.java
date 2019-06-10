@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,20 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValueMappingStrategy;
 
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
 
-@Component
-public class SpiToXs2aAddressMapper {
+@Mapper(componentModel = "spring", imports = {Xs2aCountryCode.class},
+    nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+public interface SpiToXs2aAddressMapper {
 
-    public Xs2aAddress mapToAddress(@NotNull SpiAddress creditorAddress) {
-        return Optional.ofNullable(creditorAddress)
-            .map(a -> {
-                Xs2aAddress address = new Xs2aAddress();
-                address.setCountry(new Xs2aCountryCode(a.getCountry()));
-                address.setPostalCode(a.getPostalCode());
-                address.setCity(a.getCity());
-                address.setStreet(a.getStreet());
-                address.setBuildingNumber(a.getBuildingNumber());
-                return address;
-            })
-            .orElseGet(Xs2aAddress::new);
+    @Mapping(target = "country", source = "address", qualifiedByName = "mapToXs2aCountryCode")
+    Xs2aAddress mapToAddress(@NotNull SpiAddress address);
+
+    default Xs2aCountryCode mapToXs2aCountryCode(SpiAddress address) {
+        return new Xs2aCountryCode(address.getCountry());
     }
 }

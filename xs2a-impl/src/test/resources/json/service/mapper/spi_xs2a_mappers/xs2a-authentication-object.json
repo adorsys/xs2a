@@ -1,0 +1,8 @@
+{
+  "authenticationType": "authenticationType",
+  "authenticationMethodId": "authenticationMethodId",
+  "authenticationVersion": "authenticationVersion",
+  "name": "name",
+  "explanation": "explanation",
+  "decoupled": true
+}
