@@ -594,7 +594,7 @@ public class AccountServiceTest {
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
 
-        when(balanceReportMapper.mapToXs2aBalancesReport(Collections.emptyList(), SPI_ACCOUNT_REFERENCE))
+        when(balanceReportMapper.mapToXs2aBalancesReport(SPI_ACCOUNT_REFERENCE, Collections.emptyList()))
             .thenReturn(xs2aBalancesReport);
 
         when(xs2aBalancesReport.getXs2aAccountReference())
@@ -626,7 +626,7 @@ public class AccountServiceTest {
             .thenReturn(ASPSP_CONSENT_DATA);
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, SPI_ACCOUNT_REFERENCE, SPI_ACCOUNT_CONSENT, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
-        when(balanceReportMapper.mapToXs2aBalancesReport(Collections.emptyList(), SPI_ACCOUNT_REFERENCE))
+        when(balanceReportMapper.mapToXs2aBalancesReport(SPI_ACCOUNT_REFERENCE, Collections.emptyList()))
             .thenReturn(xs2aBalancesReport);
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
@@ -763,7 +763,7 @@ public class AccountServiceTest {
             .thenReturn(Optional.of(xs2aAccountReport));
 
         when(referenceMapper.mapToXs2aAccountReference(SPI_ACCOUNT_REFERENCE))
-            .thenReturn(Optional.of(XS2A_ACCOUNT_REFERENCE));
+            .thenReturn(XS2A_ACCOUNT_REFERENCE);
 
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
@@ -805,7 +805,7 @@ public class AccountServiceTest {
         when(transactionsToAccountReportMapper.mapToXs2aAccountReport(Collections.emptyList(), null))
             .thenReturn(Optional.of(xs2aAccountReport));
         when(referenceMapper.mapToXs2aAccountReference(SPI_ACCOUNT_REFERENCE))
-            .thenReturn(Optional.of(XS2A_ACCOUNT_REFERENCE));
+            .thenReturn(XS2A_ACCOUNT_REFERENCE);
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
             .thenReturn(SPI_ACCOUNT_REFERENCE);
         when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))

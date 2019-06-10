@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,10 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-import java.util.Optional;
+@Mapper(componentModel = "spring")
+public interface SpiToXs2aAmountMapper {
 
-@Component
-public class SpiToXs2aAmountMapper {
-
-    public Xs2aAmount mapToXs2aAmount(SpiAmount spiAmount) {
-        return Optional.ofNullable(spiAmount)
-                   .map(a -> {
-                       Xs2aAmount amount = new Xs2aAmount();
-                       amount.setAmount(a.getAmount().toString());
-                       amount.setCurrency(a.getCurrency());
-                       return amount;
-                   })
-                   .orElse(null);
-    }
+    Xs2aAmount mapToXs2aAmount(SpiAmount spiAmount);
 }

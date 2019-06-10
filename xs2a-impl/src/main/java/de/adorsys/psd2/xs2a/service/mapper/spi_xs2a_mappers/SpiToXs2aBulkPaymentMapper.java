@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,40 +17,14 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
-import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+@Mapper(componentModel = "spring", uses = {SpiToXs2aAccountReferenceMapper.class, SpiToXs2aSinglePaymentMapper.class})
+public interface SpiToXs2aBulkPaymentMapper {
 
-@Component
-@RequiredArgsConstructor
-public class SpiToXs2aBulkPaymentMapper {
-    private final SpiToXs2aAccountReferenceMapper spiToXs2aAccountReferenceMapper;
-    private final SpiToXs2aSinglePaymentMapper spiToXs2aSinglePaymentMapper;
-
-    public BulkPayment mapToXs2aBulkPayment(@NotNull SpiBulkPayment payment) {
-        BulkPayment bulk = new BulkPayment();
-        bulk.setPaymentId(payment.getPaymentId());
-        bulk.setBatchBookingPreferred(payment.getBatchBookingPreferred());
-        bulk.setRequestedExecutionDate(payment.getRequestedExecutionDate());
-        bulk.setRequestedExecutionTime(payment.getRequestedExecutionTime());
-        bulk.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()).orElse(null));
-        bulk.setTransactionStatus(payment.getPaymentStatus());
-        bulk.setPayments(mapToListXs2aSinglePayments(payment.getPayments()));
-        bulk.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
-        return bulk;
-    }
-
-    private List<SinglePayment> mapToListXs2aSinglePayments(List<SpiSinglePayment> payments) {
-        return Optional.ofNullable(payments)
-                   .map(p -> p.stream().map(spiToXs2aSinglePaymentMapper::mapToXs2aSinglePayment).collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
-    }
+    @Mapping(target = "psuDataList", ignore = true)
+    @Mapping(target = "transactionStatus", source = "paymentStatus")
+    BulkPayment mapToXs2aBulkPayment(SpiBulkPayment payment);
 }

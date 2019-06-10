@@ -1,0 +1,8 @@
+{
+  "sourceCurrency": "EUR",
+  "exchangeRate": "12",
+  "unitCurrency": "UAH",
+  "targetCurrency": "USD",
+  "quotationDate": "2019-05-28",
+  "contractIdentification": "contractIdentification"
+}
