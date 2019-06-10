@@ -1,0 +1,10 @@
+{
+  "balanceAmount": {
+    "currency": "EUR",
+    "amount": "1.06"
+  },
+  "balanceType": "AUTHORISED",
+  "lastChangeDateTime": "2018-03-31T15:16:16.374",
+  "referenceDate": "2019-03-21",
+  "lastCommittedTransaction": "lastCommittedTransaction"
+}

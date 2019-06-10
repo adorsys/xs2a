@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,13 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class SpiToXs2aPaymentInfoMapper {
+@Mapper(componentModel = "spring")
+public interface SpiToXs2aPaymentInfoMapper {
 
-    public PisPaymentInfo mapToXs2aPaymentInfo(SpiPaymentInfo paymentInfo) {
-        PisPaymentInfo info = new PisPaymentInfo();
-        info.setPaymentId(paymentInfo.getPaymentId());
-        info.setPaymentProduct(paymentInfo.getPaymentProduct());
-        info.setPaymentType(paymentInfo.getPaymentType());
-        info.setTransactionStatus(paymentInfo.getStatus());
-        info.setPaymentData(paymentInfo.getPaymentData());
-        info.setStatusChangeTimestamp(paymentInfo.getStatusChangeTimestamp());
-        return info;
-    }
+    @Mapping(target = "psuDataList", ignore = true)
+    @Mapping(target = "transactionStatus", source = "status")
+    PisPaymentInfo mapToXs2aPaymentInfo(SpiPaymentInfo paymentInfo);
 }

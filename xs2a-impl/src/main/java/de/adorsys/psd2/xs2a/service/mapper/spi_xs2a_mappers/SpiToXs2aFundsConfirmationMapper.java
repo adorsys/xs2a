@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,10 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class SpiToXs2aFundsConfirmationMapper {
-    public FundsConfirmationResponse mapToFundsConfirmationResponse(SpiFundsConfirmationResponse spiResponse) {
-        FundsConfirmationResponse fundsConfirmationResponse = new FundsConfirmationResponse();
-        fundsConfirmationResponse.setFundsAvailable(spiResponse.isFundsAvailable());
-        return fundsConfirmationResponse;
-    }
+@Mapper(componentModel = "spring")
+public interface SpiToXs2aFundsConfirmationMapper {
+
+    FundsConfirmationResponse mapToFundsConfirmationResponse(SpiFundsConfirmationResponse spiResponse);
 }

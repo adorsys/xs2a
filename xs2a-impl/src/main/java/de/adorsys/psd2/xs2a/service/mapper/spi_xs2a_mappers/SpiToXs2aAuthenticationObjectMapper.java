@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,16 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValueMappingStrategy;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Component
-public class SpiToXs2aAuthenticationObjectMapper {
-    public Xs2aAuthenticationObject mapToXs2aAuthenticationObject(SpiAuthenticationObject authenticationObject) {
-        Xs2aAuthenticationObject object = new Xs2aAuthenticationObject();
-        object.setAuthenticationType(authenticationObject.getAuthenticationType());
-        object.setAuthenticationMethodId(authenticationObject.getAuthenticationMethodId());
-        object.setAuthenticationVersion(authenticationObject.getAuthenticationVersion());
-        object.setName(authenticationObject.getName());
-        object.setExplanation(authenticationObject.getExplanation());
-        object.setDecoupled(authenticationObject.isDecoupled());
-        return object;
-    }
+@Mapper(componentModel = "spring",
+    nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+public interface SpiToXs2aAuthenticationObjectMapper {
 
-    public List<Xs2aAuthenticationObject> mapToXs2aListAuthenticationObject(List<SpiAuthenticationObject> authenticationObjects) {
-        return authenticationObjects.stream()
-                   .map(this::mapToXs2aAuthenticationObject)
-                   .collect(Collectors.toList());
-    }
+    Xs2aAuthenticationObject mapToXs2aAuthenticationObject(SpiAuthenticationObject authenticationObject);
+
+    List<Xs2aAuthenticationObject> mapToXs2aListAuthenticationObject(List<SpiAuthenticationObject> authenticationObjects);
 }
-

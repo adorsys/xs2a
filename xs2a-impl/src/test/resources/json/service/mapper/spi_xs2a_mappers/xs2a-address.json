@@ -1,0 +1,9 @@
+{
+  "buildingNumber": "56",
+  "city": "Nürnberg",
+  "country": {
+    "code": "DE"
+  },
+  "postalCode": "90543",
+  "street": "WBG Straße"
+}
