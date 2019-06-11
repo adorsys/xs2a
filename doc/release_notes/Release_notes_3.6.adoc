@@ -2,8 +2,20 @@
 
 == Table of Contents
 * Update version of jackson-databind to 2.9.9
+* Forced mode for starting authorisation
 
 == Update version of jackson-databind to 2.9.9
 
 Fixed a Polymorphic Typing issue that was discovered in FasterXML jackson-databind 2.x before 2.9.9.
 https://nvd.nist.gov/vuln/detail/CVE-2019-12086[Additional information about this issue]
+
+== Forced mode for starting authorisation
+
+From now on, new field is present in bank_profile configuration - `startAuthorisationMode`. This field has 3 possible values:
+
+ - `auto` - allows using default flow (based on `tppExplicitAuthorisationPreferred` header and `signingBasketSupported`
+         bank_profile configuration property);
+ - `explicit` - forces explicit mode;
+ - `implicit` - forces implicit mode.
+
+Default value is `auto`.

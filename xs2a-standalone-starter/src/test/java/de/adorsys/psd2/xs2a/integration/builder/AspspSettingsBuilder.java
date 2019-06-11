@@ -22,6 +22,7 @@ import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 
 import java.util.*;
 
@@ -58,9 +59,9 @@ public class AspspSettingsBuilder {
     private static final boolean FORCE_XS2A_BASE_URL = false;
     private static final String XS2A_BASEURL = "http://myhost.com/";
     private static final ScaRedirectFlow SCA_REDIRECT_FLOW = ScaRedirectFlow.REDIRECT;
-    private static final ScaRedirectFlow SCA_REDIRECT_FLOW_OAUTH = ScaRedirectFlow.OAUTH;
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
     private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("JSON", "XML");
+    private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
 
     public static AspspSettings buildAspspSettings() {
         return new AspspSettings(
@@ -94,7 +95,8 @@ public class AspspSettingsBuilder {
             SCA_REDIRECT_FLOW,
             DELTA_LIST_SUPPORTED,
             ENTRY_REFERENCE_FROM_SUPPORTED,
-            SUPPORTED_TRANSACTION_APPLICATION_TYPES);
+            SUPPORTED_TRANSACTION_APPLICATION_TYPES,
+            START_AUTHORISATION_MODE);
     }
 
     public static AspspSettings buildAspspSettingsWithForcedXs2aBaseUrl(String xs2aBaseUrl) {
@@ -129,7 +131,8 @@ public class AspspSettingsBuilder {
             SCA_REDIRECT_FLOW,
             DELTA_LIST_SUPPORTED,
             ENTRY_REFERENCE_FROM_SUPPORTED,
-            SUPPORTED_TRANSACTION_APPLICATION_TYPES);
+            SUPPORTED_TRANSACTION_APPLICATION_TYPES,
+            START_AUTHORISATION_MODE);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

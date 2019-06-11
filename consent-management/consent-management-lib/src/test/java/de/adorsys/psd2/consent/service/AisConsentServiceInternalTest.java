@@ -41,6 +41,7 @@ import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -602,7 +603,7 @@ public class AisConsentServiceInternalTest {
         return new AspspSettings(1, false, false, null, null,
                                  null, false, null, null, consentLifeTime, 1, false,
                                  false, false, false, false, 1,
-                                 null, 1, 1, null, 1, false, false, false, false, null, ScaRedirectFlow.REDIRECT, false, false, null);
+                                 null, 1, 1, null, 1, false, false, false, false, null, ScaRedirectFlow.REDIRECT, false, false, null, StartAuthorisationMode.AUTO);
     }
 
     private AisConsent buildConsent(String externalId) {

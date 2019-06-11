@@ -24,6 +24,7 @@ import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,6 +72,8 @@ public class AspspProfileServiceTest {
     private static final String XS2A_BASE_URL = "http://myhost.com/";
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
     private static final List<String> SUPPORTED_TRANSACTION_APPLICATION_TYPES = Arrays.asList("JSON", "XML");
+    private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
+
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
@@ -175,6 +178,11 @@ public class AspspProfileServiceTest {
         Assertions.assertThat(actualResponse.getSupportedTransactionApplicationTypes()).isEqualTo(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
     }
 
+    @Test
+    public void getStartAuthorisationMode() {
+        Assertions.assertThat(actualResponse.getStartAuthorisationMode()).isEqualTo(START_AUTHORISATION_MODE);
+    }
+
     private BankProfileSetting buildBankProfileSetting() {
         BankProfileSetting setting = new BankProfileSetting();
         setting.setFrequencyPerDay(FREQUENCY_PER_DAY);
@@ -208,6 +216,7 @@ public class AspspProfileServiceTest {
         setting.setXs2aBaseUrl(XS2A_BASE_URL);
         setting.setEntryReferenceFromSupported(ENTRY_REFERENCE_FROM_SUPPORTED);
         setting.setSupportedTransactionApplicationTypes(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
+        setting.setStartAuthorisationMode(START_AUTHORISATION_MODE.getValue());
         return setting;
     }
 

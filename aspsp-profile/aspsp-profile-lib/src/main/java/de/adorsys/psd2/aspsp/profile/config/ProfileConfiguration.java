@@ -19,6 +19,7 @@ package de.adorsys.psd2.aspsp.profile.config;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,6 +39,7 @@ public class ProfileConfiguration implements InitializingBean {
         setDefaultScaApproach(ScaApproach.REDIRECT);
         setDefaultBookingStatus(BOOKED);
         setDefaultScaRedirectFlow();
+        setDefaultStartAuthorisationMode();
     }
 
     private void setDefaultScaApproach(ScaApproach scaApproach) {
@@ -49,6 +51,12 @@ public class ProfileConfiguration implements InitializingBean {
     private void setDefaultScaRedirectFlow() {
         if (Objects.isNull(setting.getScaRedirectFlow())) {
             setting.setScaRedirectFlow(ScaRedirectFlow.REDIRECT);
+        }
+    }
+
+    private void setDefaultStartAuthorisationMode() {
+        if (Objects.isNull(setting.getStartAuthorisationMode())) {
+            setting.setStartAuthorisationMode(StartAuthorisationMode.AUTO.getValue());
         }
     }
 

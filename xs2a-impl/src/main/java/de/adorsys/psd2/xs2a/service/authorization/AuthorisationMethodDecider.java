@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization;
 
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,25 +27,42 @@ public class AuthorisationMethodDecider {
     private final AspspProfileServiceWrapper aspspProfileService;
 
     /**
-     * Decides whether explicit authorisation method will be used based on tppExplicitAuthorisationPreferred and signingBasketSupported values.
-     * Explicit authorisation will be used in case if tppExplicitAuthorisationPreferred = true and signingBasketSupported = true or in case of multilevel SCA
+     * Decides whether explicit authorisation method will be used based on bank_profile configuration and
+     * tppExplicitAuthorisationPreferred, signingBasketSupported values.
+     * <p>
+     * Explicit authorisation will be used if:
+     * <p>
+     * - bank_profile configuration field 'startAuthorisationMode' is set to 'explicit';
+     * - bank_profile configuration field 'startAuthorisationMode' is set to 'auto' and
+     * tppExplicitAuthorisationPreferred = true and signingBasketSupported = true or in case of multilevel SCA
      *
      * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
-     * @param multilevelScaRequired does response have multilevel SCA
+     * @param multilevelScaRequired             does response have multilevel SCA
      * @return is explicit method of authorisation will be used
      */
     public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {
-        return multilevelScaRequired
-                   || tppExplicitAuthorisationPreferred && aspspProfileService.isSigningBasketSupported();
+        StartAuthorisationMode startAuthorisationMode = aspspProfileService.getStartAuthorisationMode();
+        if (StartAuthorisationMode.AUTO.equals(startAuthorisationMode)) {
+            return multilevelScaRequired
+                       || tppExplicitAuthorisationPreferred && aspspProfileService.isSigningBasketSupported();
+        }
+        return StartAuthorisationMode.EXPLICIT.equals(startAuthorisationMode);
     }
 
     /**
-     * Decides whether implicit authorisation method will be used based on tppExplicitAuthorisationPreferred and signingBasketSupported values.
-     * Implicit authorisation will be used in all the cases where tppExplicitAuthorisationPreferred or signingBasketSupported not equals true
+     * Decides whether implicit authorisation method will be used based on bank_profile configuration and
+     * tppExplicitAuthorisationPreferred and signingBasketSupported values.
+     * <p>
+     * Implicit authorisation will be used if:
+     * <p>
+     * - bank_profile configuration field 'startAuthorisationMode' is set to 'implicit';
+     * - bank_profile configuration field 'startAuthorisationMode' is set to 'auto' and
+     * tppExplicitAuthorisationPreferred = false and signingBasketSupported = false.
+     * <p>
      * Implicit approach is impossible in case of multilevel SCA
      *
-     * @param tppExplicitAuthorisationPreferred value of tpp's choice of authorisation method
-     * @param multilevelScaRequired does response have multilevel SCA
+     * @param tppExplicitAuthorisationPreferred value of TPP's choice of authorisation method
+     * @param multilevelScaRequired             does response have multilevel SCA
      * @return is implicit method of authorisation will be used
      */
     public boolean isImplicitMethod(boolean tppExplicitAuthorisationPreferred, boolean multilevelScaRequired) {

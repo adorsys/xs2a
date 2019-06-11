@@ -49,3 +49,4 @@ setting:
  entryReferenceFromSupported: false
  supportedTransactionApplicationTypes:
    - JSON
+ startAuthorisationMode: auto
