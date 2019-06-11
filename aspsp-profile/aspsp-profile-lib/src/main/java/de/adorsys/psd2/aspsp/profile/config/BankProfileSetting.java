@@ -192,4 +192,9 @@ public class BankProfileSetting {
      * Transaction application types supported by ASPSP, such as JSON, XML or TEXT
      */
     private List<String> supportedTransactionApplicationTypes = new ArrayList<>();
+
+    /**
+     * The mode of authorisation from the ASPSP profile service.
+     */
+    private String startAuthorisationMode;
 }

@@ -19,6 +19,7 @@ package de.adorsys.psd2.aspsp.profile.domain;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -60,4 +61,5 @@ public class AspspSettings {
     private boolean deltaListSupported;
     private boolean entryReferenceFromSupported;
     private List<String> supportedTransactionApplicationTypes;
+    private StartAuthorisationMode startAuthorisationMode;
 }

@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +65,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             setting.getScaRedirectFlow(),
             setting.isDeltaListSupported(),
             setting.isEntryReferenceFromSupported(),
-            setting.getSupportedTransactionApplicationTypes()
+            setting.getSupportedTransactionApplicationTypes(),
+            StartAuthorisationMode.getByValue(setting.getStartAuthorisationMode())
         );
     }
 

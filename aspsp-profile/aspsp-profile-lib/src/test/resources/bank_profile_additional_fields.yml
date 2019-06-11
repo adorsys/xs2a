@@ -49,3 +49,4 @@ setting:
  additionalField: 1
  supportedTransactionApplicationTypes:
    - JSON
+ startAuthorisationMode: auto

@@ -86,5 +86,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
         setting.setScaRedirectFlow(aspspSettings.getScaRedirectFlow());
         setting.setEntryReferenceFromSupported(aspspSettings.isEntryReferenceFromSupported());
         setting.setSupportedTransactionApplicationTypes(aspspSettings.getSupportedTransactionApplicationTypes());
+        setting.setStartAuthorisationMode(aspspSettings.getStartAuthorisationMode().getValue());
     }
 }
