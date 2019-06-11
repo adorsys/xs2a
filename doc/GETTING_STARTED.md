@@ -79,7 +79,7 @@ $ mvn liquibase:update
 Now, once PostgreSQL-server is running on port `5432` you may run consent-management-system server:
 ```bash
 $ cd consent-management/cms-standalone-service
-$ mvn -Drun.arguments=--server_key=12345678 spring-boot:run
+$ mvn spring-boot:run -Dspring-boot.run.arguments=--server_key=12345678
 ```
 Open a browser on page [http://localhost:38080/swagger-ui.html](http://localhost:38080/swagger-ui.html)
 
