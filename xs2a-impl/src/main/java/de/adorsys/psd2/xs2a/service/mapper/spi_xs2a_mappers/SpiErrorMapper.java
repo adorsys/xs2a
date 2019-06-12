@@ -16,24 +16,38 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
-public class SpiErrorMapper {
-    private final SpiResponseStatusToXs2aMessageErrorCodeMapper spiToXs2aMessageErrorCodeMapper;
-    private final SpiResponseToServiceAndErrorTypeMapper spiToServiceAndErrorTypeMapper;
+import java.util.List;
 
+@Component
+public class SpiErrorMapper {
     public ErrorHolder mapToErrorHolder(SpiResponse<?> spiResponse, ServiceType serviceType) {
-        SpiResponseStatus responseStatus = spiResponse.getResponseStatus();
-        return ErrorHolder.builder(spiToXs2aMessageErrorCodeMapper.mapToMessageErrorCode(responseStatus))
-                   .errorType(spiToServiceAndErrorTypeMapper.mapToErrorType(responseStatus, serviceType))
-                   .messages(spiResponse.getMessages())
-                   .build();
+        List<TppMessage> errors = spiResponse.getErrors();
+
+        if (errors.isEmpty()) {
+            throw new IllegalArgumentException("SPI response must contain errors for mapping");
+        }
+
+        TppMessage firstTppMessage = errors.get(0);
+
+        TppMessageInformation[] tppMessages = errors.stream()
+                                                  .map(this::mapToMessageError)
+                                                  .toArray(TppMessageInformation[]::new);
+
+        ErrorType errorType = ErrorType.getByServiceTypeAndErrorCode(serviceType, firstTppMessage.getErrorCode().getCode())
+                                  .orElse(null);
+
+        return ErrorHolder.builder(errorType).tppMessages(tppMessages).build();
+    }
+
+    private TppMessageInformation mapToMessageError(TppMessage tppMessage) {
+        return TppMessageInformation.of(tppMessage.getErrorCode(), tppMessage.getMessageText());
     }
 }

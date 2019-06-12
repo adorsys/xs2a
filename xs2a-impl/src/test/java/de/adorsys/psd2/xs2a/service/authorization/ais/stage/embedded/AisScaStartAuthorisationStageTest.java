@@ -35,7 +35,6 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -100,8 +99,6 @@ public class AisScaStartAuthorisationStageTest {
     private AisConsentSpi aisConsentSpi;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
-    @Mock
-    private SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     @Mock
     private Xs2aToSpiPsuDataMapper psuDataMapper;
     @Mock

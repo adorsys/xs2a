@@ -18,36 +18,30 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseToServiceAndErrorTypeMapper;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpiErrorMapperTest {
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData(null, "777");
-
     @InjectMocks
     private SpiErrorMapper spiErrorMapper;
-    @Mock
-    private SpiResponseStatusToXs2aMessageErrorCodeMapper spiToXs2aMessageErrorCodeMapper;
-    @Mock
-    private SpiResponseToServiceAndErrorTypeMapper spiToServiceAndErrorTypeMapper;
 
     @Test
     public void mapToErrorHolder() {
@@ -55,15 +49,73 @@ public class SpiErrorMapperTest {
         String message = "error";
         MessageErrorCode messageErrorCode = MessageErrorCode.PSU_CREDENTIALS_INVALID;
         ErrorType errorType = ErrorType.PIS_401;
-        SpiResponse spiResponse = new SpiResponse<>(null, ASPSP_CONSENT_DATA, SpiResponseStatus.UNAUTHORIZED_FAILURE, Collections.singletonList(message));
-        when(spiToXs2aMessageErrorCodeMapper.mapToMessageErrorCode(spiResponse.getResponseStatus())).thenReturn(messageErrorCode);
-        when(spiToServiceAndErrorTypeMapper.mapToErrorType(spiResponse.getResponseStatus(), ServiceType.PIS)).thenReturn(errorType);
+        SpiResponse spiResponse = SpiResponse.builder()
+                                      .error(new TppMessage(messageErrorCode, message))
+                                      .build();
+        TppMessageInformation expectedTppMessage = TppMessageInformation.of(messageErrorCode, message);
+
         //When:
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+
         //Then:
         assertNotNull(errorHolder);
-        assertEquals(errorHolder.getErrorCode(), messageErrorCode);
-        assertEquals(errorHolder.getErrorType(), errorType);
-        assertEquals(errorHolder.getMessage(), message);
+        assertEquals(Collections.singletonList(expectedTppMessage), errorHolder.getTppMessageInformationList());
+        assertEquals(errorType, errorHolder.getErrorType());
+    }
+
+    @Test
+    public void mapToErrorHolder_withoutExplicitErrorsInSpiResponse() {
+        //Given:
+        String message = "error";
+        MessageErrorCode messageErrorCode = MessageErrorCode.PSU_CREDENTIALS_INVALID;
+        ErrorType errorType = ErrorType.PIS_401;
+        SpiResponse spiResponse = new SpiResponse<>(null, ASPSP_CONSENT_DATA, SpiResponseStatus.UNAUTHORIZED_FAILURE, Collections.singletonList(message));
+
+        //When:
+        ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+
+        //Then:
+        assertNotNull(errorHolder);
+        assertEquals(messageErrorCode, errorHolder.getErrorCode());
+        assertEquals(errorType, errorHolder.getErrorType());
+        assertEquals(message, errorHolder.getMessage());
+    }
+
+    @Test
+    public void mapToErrorHolder_withMultipleErrorsInResponse() {
+        //Given:
+        ErrorType firstErrorType = ErrorType.PIS_400;
+        String firstMessage = "first error";
+        MessageErrorCode firstErrorCode = MessageErrorCode.FORMAT_ERROR;
+        TppMessage firstError = new TppMessage(firstErrorCode, firstMessage);
+
+
+        MessageErrorCode secondErrorCode = MessageErrorCode.CANCELLATION_INVALID;
+        String secondMessage = "second error";
+        TppMessage secondError = new TppMessage(secondErrorCode, secondMessage);
+
+        SpiResponse spiResponse = SpiResponse.builder()
+                                      .error(Arrays.asList(firstError, secondError))
+                                      .build();
+
+        TppMessageInformation expectedFirstTppMessage = TppMessageInformation.of(firstErrorCode, firstMessage);
+        TppMessageInformation expectedSecondTppMessage = TppMessageInformation.of(secondErrorCode, secondMessage);
+
+        //When:
+        ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+
+        //Then:
+        assertNotNull(errorHolder);
+        assertEquals(Arrays.asList(expectedFirstTppMessage, expectedSecondTppMessage), errorHolder.getTppMessageInformationList());
+        assertEquals(firstErrorType, errorHolder.getErrorType());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void mapToErrorHolder_withoutErrors_shouldThrowIllegalArgumentException() {
+        //Given:
+        SpiResponse spiResponse = SpiResponse.<String>builder().payload("some payload").build();
+
+        //When:
+        spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
     }
 }
