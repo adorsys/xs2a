@@ -1,5 +1,9 @@
 {
   "authorisationId": "authorisation ID",
   "scaStatus": "received",
-  "_links": {}
+  "_links": {
+    "self": {
+      "href": "http://localhost"
+    }
+  }
 }

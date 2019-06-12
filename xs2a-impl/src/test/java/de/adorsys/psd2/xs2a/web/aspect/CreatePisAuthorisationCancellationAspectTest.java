@@ -72,7 +72,7 @@ public class CreatePisAuthorisationCancellationAspectTest {
         ResponseObject<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse =
             aspect.createPisAuthorizationAspect(responseObject, PAYMENT_ID, null, PaymentType.SINGLE, PAYMENT_PRODUCT);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(response, times(1)).setLinks(any(PisAuthorisationCancellationLinks.class));
 
         assertFalse(actualResponse.hasError());

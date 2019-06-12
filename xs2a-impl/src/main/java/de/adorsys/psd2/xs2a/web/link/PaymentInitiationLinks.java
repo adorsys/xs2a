@@ -52,30 +52,26 @@ public class PaymentInitiationLinks extends AbstractLinks {
         String paymentService = paymentRequestParameters.getPaymentType().getValue();
         String paymentProduct = paymentRequestParameters.getPaymentProduct();
         String paymentId = body.getPaymentId();
+        String authorisationId = body.getAuthorizationId();
+        // TODO refactor isSigningBasketSupported https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/811
+        boolean isSigningBasketSupported = !body.isMultilevelScaRequired();
 
         setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
         setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
 
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproach)) {
-            addEmbeddedDecoupledRelatedLinks(paymentRequestParameters, body);
+            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, isSigningBasketSupported);
         } else if (scaApproach == REDIRECT) {
-            addRedirectRelatedLinks(paymentRequestParameters, body);
+            addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         } else if (scaApproach == OAUTH) {
             setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
     }
 
-    private void addEmbeddedDecoupledRelatedLinks(PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
-        String paymentService = paymentRequestParameters.getPaymentType().getValue();
-        String paymentProduct = paymentRequestParameters.getPaymentProduct();
-        String paymentId = body.getPaymentId();
-        String authorizationId = body.getAuthorizationId();
-
+    private void addEmbeddedDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId,
+                                                  String authorisationId, boolean isSigningBasketSupported) {
         if (isExplicitMethod) {
-            // TODO refactor isSigningBasketSupported https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/811
-            boolean isSigningBasketSupported = !body.isMultilevelScaRequired();
-
             if (isSigningBasketSupported) { // no more data needs to be updated
                 setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
             } else {
@@ -83,22 +79,17 @@ public class PaymentInitiationLinks extends AbstractLinks {
             }
         } else {
             setScaStatus(
-                buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
+                buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
             setUpdatePsuAuthentication(
-                buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
+                buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         }
     }
 
-    private void addRedirectRelatedLinks(PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body) {
-        String paymentService = paymentRequestParameters.getPaymentType().getValue();
-        String paymentProduct = paymentRequestParameters.getPaymentProduct();
-        String paymentId = body.getPaymentId();
-        String authorisationId = body.getAuthorizationId();
-
+    private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
         if (isExplicitMethod) {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
         } else {
-            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(body.getPaymentId(), authorisationId);
+            String scaRedirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, authorisationId);
             setScaRedirect(scaRedirectLink);
             setScaStatus(
                 buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));

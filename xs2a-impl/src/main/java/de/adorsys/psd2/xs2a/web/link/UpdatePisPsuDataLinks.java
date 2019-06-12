@@ -33,19 +33,19 @@ public class UpdatePisPsuDataLinks extends AbstractLinks {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
 
-        setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
-        setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
+        String authorisationLink = buildAuthorisationLink(request);
+        setScaStatus(authorisationLink);
 
         if (isScaStatusMethodAuthenticated(scaStatus)) {
-            setSelectAuthenticationMethod(buildAuthorisationLink(request));
+            setSelectAuthenticationMethod(authorisationLink);
 
             // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
         } else if (isScaStatusMethodSelected(chosenScaMethod, scaStatus) && isEmbeddedScaApproach(request.getAuthorisationId())) {
-            setAuthoriseTransaction(buildAuthorisationLink(request));
+            setAuthoriseTransaction(authorisationLink);
         } else if (isScaStatusFinalised(scaStatus)) {
-            setScaStatus(buildAuthorisationLink(request));
+            setScaStatus(authorisationLink);
         } else if (isScaStatusMethodIdentified(scaStatus)) {
-            setUpdatePsuAuthentication(buildAuthorisationLink(request));
+            setUpdatePsuAuthentication(authorisationLink);
         }
     }
 

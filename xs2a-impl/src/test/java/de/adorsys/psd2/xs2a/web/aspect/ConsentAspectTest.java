@@ -83,7 +83,7 @@ public class ConsentAspectTest {
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true, null);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(createConsentResponse, times(1)).setLinks(any(CreateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -112,7 +112,7 @@ public class ConsentAspectTest {
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -133,12 +133,14 @@ public class ConsentAspectTest {
 
     @Test
     public void invokeCreateConsentPsuDataAspect_wrongResponseType() {
+        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(createConsentAuthorisationResponse)
                                                                    .build();
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
-        verify(aspspProfileService, never()).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
 
         assertFalse(actualResponse.hasError());
         assertEquals(responseObject, actualResponse);
@@ -167,7 +169,7 @@ public class ConsentAspectTest {
                                                                           .build();
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());

@@ -83,7 +83,7 @@ public class CreatePisAuthorizationAspectTest {
                              .build();
         ResponseObject actualResponse = aspect.createPisAuthorizationAspect(responseObject, request);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(createPisAuthorisationResponse, times(1)).setLinks(any(CreatePisAuthorisationLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -98,7 +98,7 @@ public class CreatePisAuthorizationAspectTest {
                              .build();
         ResponseObject actualResponse = aspect.createPisAuthorizationAspect(responseObject, request);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updatePisCommonPaymentPsuDataResponse, times(1)).setLinks(any(UpdatePisAuthorisationLinks.class));
 
         assertFalse(actualResponse.hasError());

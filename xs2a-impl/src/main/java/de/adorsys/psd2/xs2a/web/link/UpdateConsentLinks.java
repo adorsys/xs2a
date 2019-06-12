@@ -31,22 +31,18 @@ public class UpdateConsentLinks extends AbstractLinks {
         String authorisationId = response.getAuthorisationId();
         ScaStatus scaStatus = response.getScaStatus();
 
-        setSelf(buildPath(UrlHolder.CONSENT_LINK_URL, consentId));
-        setStatus(buildPath(UrlHolder.CONSENT_STATUS_URL, consentId));
+        String authorisationLink = buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId);
+        setScaStatus(authorisationLink);
 
         if (scaStatus == ScaStatus.PSUAUTHENTICATED) {
-            setSelectAuthenticationMethod(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
+            setSelectAuthenticationMethod(authorisationLink);
         } else if (scaStatus == ScaStatus.SCAMETHODSELECTED) {
             ScaApproach scaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
-            if (scaApproach == ScaApproach.DECOUPLED) {
-                setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
-            } else {
-                setAuthoriseTransaction(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
+            if (scaApproach != ScaApproach.DECOUPLED) {
+                setAuthoriseTransaction(authorisationLink);
             }
-        } else if (scaStatus == ScaStatus.FINALISED) {
-            setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
         } else if (scaStatus == ScaStatus.PSUIDENTIFIED) {
-            setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
+            setStartAuthorisationWithPsuAuthentication(authorisationLink);
         }
     }
 }

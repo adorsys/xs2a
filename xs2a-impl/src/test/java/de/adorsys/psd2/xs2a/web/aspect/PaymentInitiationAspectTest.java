@@ -79,7 +79,7 @@ public class PaymentInitiationAspectTest {
                              .build();
         ResponseObject actualResponse = aspect.createPaymentAspect(responseObject, null, requestParameters);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(paymentInitiationResponse, times(1)).setLinks(any(PaymentInitiationLinks.class));
 
         assertFalse(actualResponse.hasError());
