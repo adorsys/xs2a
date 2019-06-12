@@ -16,8 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import de.adorsys.psd2.api.ConsentApi;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -26,29 +24,18 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.*;
-
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthorisationMapper {
     private final CoreObjectsMapper coreObjectsMapper;
-    private final ScaApproachResolver scaApproachResolver;
-    private final RedirectLinkBuilder redirectLinkBuilder;
-    private final AspspProfileService aspspProfileService;
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
 
@@ -150,27 +137,11 @@ public class AuthorisationMapper {
     private StartScaprocessResponse mapToStartScaProcessResponse(
         CreateConsentAuthorizationResponse createResponse) {
         return Optional.ofNullable(createResponse)
-                   .map(csar -> {
-                       boolean redirectApproachUsed = scaApproachResolver.resolveScaApproach() == REDIRECT;
-                       String link = redirectApproachUsed
-                                         ? redirectLinkBuilder.buildConsentScaRedirectLink(csar.getConsentId(), csar.getAuthorisationId())
-                                         : createUpdateConsentsPsuDataLink(csar);
-                       return new StartScaprocessResponse()
-                                  .scaStatus(coreObjectsMapper.mapToModelScaStatus(csar.getScaStatus()))
-                                  .authorisationId(csar.getAuthorisationId())
-                                  ._links(hrefLinkMapper.mapToLinksMap(csar.getResponseLinkType().getValue(), link));
-                   })
+                   .map(csar -> new StartScaprocessResponse()
+                              .scaStatus(coreObjectsMapper.mapToModelScaStatus(csar.getScaStatus()))
+                              .authorisationId(csar.getAuthorisationId())
+                              ._links(hrefLinkMapper.mapToLinksMap(csar.getLinks())))
                    .orElse(null);
-    }
-
-    private String createUpdateConsentsPsuDataLink(CreateConsentAuthorizationResponse csar) {
-        URI uri = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(null, csar.getConsentId(), csar.getAuthorisationId(), null, null, null, null, null, null, null, null, null,
-                                                                           null, null, null, null, null, null, null, null, null)).toUri();
-
-        UriComponentsBuilder uriComponentsBuilder = aspspProfileService.getAspspSettings().isForceXs2aBaseUrl()
-                                                        ? UriComponentsBuilder.fromHttpUrl(aspspProfileService.getAspspSettings().getXs2aBaseUrl()).path(uri.getPath())
-                                                        : UriComponentsBuilder.fromUri(uri);
-        return uriComponentsBuilder.toUriString();
     }
 
     private UpdatePsuAuthenticationResponse buildUpdatePsuAuthenticationResponse(Links links, List<Xs2aAuthenticationObject> availableScaMethods,
