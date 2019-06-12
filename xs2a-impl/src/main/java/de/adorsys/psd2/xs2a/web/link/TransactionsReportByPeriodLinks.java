@@ -20,9 +20,13 @@ import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
 
 public class TransactionsReportByPeriodLinks extends AbstractLinks {
 
-    public TransactionsReportByPeriodLinks(String httpUrl, String accountId) {
+    public TransactionsReportByPeriodLinks(String httpUrl, String accountId, boolean withBalance) {
         super(httpUrl);
 
         setAccount(buildPath(UrlHolder.ACCOUNT_LINK_URL, accountId));
+
+        if (withBalance) {
+            setBalances(buildPath(UrlHolder.ACCOUNT_BALANCES_URL, accountId));
+        }
     }
 }

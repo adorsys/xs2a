@@ -1,0 +1,12 @@
+{
+  "consentId": "some consent id",
+  "accountId": "some account id",
+  "acceptHeader": "application/json",
+  "withBalance": true,
+  "dateFrom": "2018-01-01",
+  "dateTo": "2019-06-11",
+  "bookingStatus": "booked",
+  "requestUri": "/v1/accounts",
+  "entryReferenceFrom": "777",
+  "deltaList": false
+}

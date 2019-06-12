@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1eecf4ae-546e-4ba3-8df6-67385978e975",
+		"_postman_id": "1608f438-9fd2-447d-9c83-e7c803547ef4",
 		"name": "AIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -4370,7 +4370,15 @@
 											"            pm.expect(jsonData).to.have.property('balances');",
 											"        }",
 											"    }",
-											"});"
+											"});",
+											"",
+											"pm.test(\"Links exist\", function () {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    ",
+											"    pm.expect(jsonData._links).to.have.property('download');",
+											"    pm.expect(jsonData._links).to.have.property('balances');",
+											"});",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -5324,7 +5332,15 @@
 											"            pm.expect(jsonData).to.have.property('balances');",
 											"        }",
 											"    }",
-											"});"
+											"});",
+											"",
+											"pm.test(\"Links exist\", function () {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    ",
+											"    pm.expect(jsonData._links).to.have.property('download');",
+											"    pm.expect(jsonData._links).to.have.property('balances');",
+											"});",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -9086,7 +9102,15 @@
 									"            pm.expect(jsonData).to.have.property('balances');",
 									"        }",
 									"    }",
-									"});"
+									"});",
+									"",
+									"pm.test(\"Links exist\", function () {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    ",
+									"    pm.expect(jsonData._links).to.have.property('download');",
+									"    pm.expect(jsonData._links).to.have.property('balances');",
+									"});",
+									""
 								],
 								"type": "text/javascript"
 							}

@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TransactionsReportByPeriodLinksTest {
 
@@ -34,10 +34,23 @@ public class TransactionsReportByPeriodLinksTest {
     }
 
     @Test
-    public void success() {
-        TransactionsReportByPeriodLinks links = new TransactionsReportByPeriodLinks(HTTP_URL, ACCOUNT_ID);
+    public void success_noBalance() {
+        boolean withOutBalance = false;
+
+        TransactionsReportByPeriodLinks links = new TransactionsReportByPeriodLinks(HTTP_URL, ACCOUNT_ID, withOutBalance);
 
         expectedLinks.setAccount("http://url/v1/accounts/33333-999999999");
+        assertEquals(expectedLinks, links);
+    }
+
+    @Test
+    public void success_with_balance() {
+        boolean withBalance = true;
+
+        TransactionsReportByPeriodLinks links = new TransactionsReportByPeriodLinks(HTTP_URL, ACCOUNT_ID, withBalance);
+
+        expectedLinks.setAccount("http://url/v1/accounts/33333-999999999");
+        expectedLinks.setBalances("http://url/v1/accounts/33333-999999999/balances");
         assertEquals(expectedLinks, links);
     }
 }

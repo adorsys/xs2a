@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.*;
@@ -36,7 +35,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.time.LocalDate;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.domain.MessageErrorCode.CONSENT_UNKNOWN_400;
@@ -53,6 +51,8 @@ public class AccountAspectTest {
     private static final String RESOURCE_ID = "some resource id";
     private static final String REQUEST_URI = "/v1/accounts";
     private static final String ERROR_TEXT = "Error occurred while processing";
+    private Xs2aTransactionsReportByPeriodRequest xs2aTransactionsReportByPeriodRequest;
+    JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
     private AccountAspect aspect;
@@ -72,7 +72,6 @@ public class AccountAspectTest {
 
     @Before
     public void setUp() {
-        JsonReader jsonReader = new JsonReader();
         aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         accountConsent = jsonReader.getObjectFromFile("json/aspect/account_consent.json", AccountConsent.class);
         accountDetails = jsonReader.getObjectFromFile("json/aspect/account_details.json", Xs2aAccountDetails.class);
@@ -136,18 +135,18 @@ public class AccountAspectTest {
         assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
 
+
     @Test
     public void getTransactionsReportByPeriod_successHugeReport() {
+        xs2aTransactionsReportByPeriodRequest = jsonReader.getObjectFromFile("json/Xs2aTransactionsReportByPeriodRequest.json", Xs2aTransactionsReportByPeriodRequest.class);
+
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         when(transactionsReport.isTransactionReportHuge()).thenReturn(true);
 
         responseObject = ResponseObject.<Xs2aTransactionsReport>builder()
                              .body(transactionsReport)
                              .build();
-        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, CONSENT_ID, ACCOUNT_ID,
-                                                                             null, true, LocalDate.now(),
-                                                                             LocalDate.now(), BookingStatus.BOOKED,
-                                                                             REQUEST_URI);
+        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, xs2aTransactionsReportByPeriodRequest);
 
         verify(aspspProfileService, times(1)).getAspspSettings();
         verify(transactionsReport, times(1)).setLinks(any(TransactionsReportByPeriodHugeLinks.class));
@@ -157,6 +156,8 @@ public class AccountAspectTest {
 
     @Test
     public void getTransactionsReportByPeriod_successNotHugeReport() {
+        xs2aTransactionsReportByPeriodRequest = jsonReader.getObjectFromFile("json/Xs2aTransactionsReportByPeriodRequest.json", Xs2aTransactionsReportByPeriodRequest.class);
+
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
         when(transactionsReport.isTransactionReportHuge()).thenReturn(false);
         when(transactionsReport.getAccountReport()).thenReturn(accountReport);
@@ -164,10 +165,7 @@ public class AccountAspectTest {
         responseObject = ResponseObject.<Xs2aTransactionsReport>builder()
                              .body(transactionsReport)
                              .build();
-        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, CONSENT_ID, ACCOUNT_ID,
-                                                                             null, true, LocalDate.now(),
-                                                                             LocalDate.now(), BookingStatus.BOOKED,
-                                                                             REQUEST_URI);
+        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, xs2aTransactionsReportByPeriodRequest);
 
         verify(aspspProfileService, times(1)).getAspspSettings();
         verify(accountReport, times(1)).setLinks(any(TransactionsReportByPeriodLinks.class));
@@ -177,15 +175,15 @@ public class AccountAspectTest {
 
     @Test
     public void getTransactionsReportByPeriod_withError_shouldAddTextErrorMessage() {
+        xs2aTransactionsReportByPeriodRequest = jsonReader.getObjectFromFile("json/Xs2aTransactionsReportByPeriodRequest.json", Xs2aTransactionsReportByPeriodRequest.class);
         when(messageService.getMessage(any())).thenReturn(ERROR_TEXT);
 
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
-        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, CONSENT_ID, ACCOUNT_ID,
-                                                                             null, true, LocalDate.now(),
-                                                                             LocalDate.now(), BookingStatus.BOOKED,
-                                                                             REQUEST_URI);
+
+
+        ResponseObject actualResponse = aspect.getTransactionsReportByPeriod(responseObject, xs2aTransactionsReportByPeriodRequest);
 
         assertTrue(actualResponse.hasError());
         assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
@@ -215,5 +213,4 @@ public class AccountAspectTest {
         assertTrue(actualResponse.hasError());
         assertEquals(ERROR_TEXT, actualResponse.getError().getTppMessage().getText());
     }
-
 }
