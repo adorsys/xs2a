@@ -119,7 +119,7 @@ public class PaymentCancellationAspectTest {
                              .build();
         ResponseObject<CancelPaymentResponse>  actualResponse = aspect.cancelPayment(responseObject, PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID, false);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
 
         assertFalse(actualResponse.hasError());
         assertEquals(actualResponse.getBody().getLinks(), links);

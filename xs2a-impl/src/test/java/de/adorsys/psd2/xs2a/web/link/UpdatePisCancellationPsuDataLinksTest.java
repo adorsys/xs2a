@@ -68,8 +68,7 @@ public class UpdatePisCancellationPsuDataLinksTest {
     public void isScaStatusMethodAuthenticated() {
         links = new UpdatePisCancellationPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.PSUAUTHENTICATED, authenticationObject);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setSelectAuthenticationMethod("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -78,8 +77,7 @@ public class UpdatePisCancellationPsuDataLinksTest {
     public void isAnotherScaStatus_failed() {
         links = new UpdatePisCancellationPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.FAILED, authenticationObject);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
 
@@ -87,8 +85,7 @@ public class UpdatePisCancellationPsuDataLinksTest {
     public void isScaStatusMethodSelectedAndNotDecoupled() {
         links = new UpdatePisCancellationPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.SCAMETHODSELECTED, authenticationObject);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setAuthoriseTransaction("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -99,8 +96,7 @@ public class UpdatePisCancellationPsuDataLinksTest {
 
         links = new UpdatePisCancellationPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.RECEIVED, authenticationObject);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setAuthoriseTransaction("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -109,8 +105,6 @@ public class UpdatePisCancellationPsuDataLinksTest {
     public void isScaStatusFinalised() {
         links = new UpdatePisCancellationPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.FINALISED, authenticationObject);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
         expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }

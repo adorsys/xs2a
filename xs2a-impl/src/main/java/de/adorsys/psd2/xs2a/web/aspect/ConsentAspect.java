@@ -22,15 +22,13 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
+import de.adorsys.psd2.xs2a.web.link.CreateAisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdateConsentLinks;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +76,9 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
             if (result.getBody() instanceof UpdateConsentPsuDataResponse) {
                 UpdateConsentPsuDataResponse body = (UpdateConsentPsuDataResponse) result.getBody();
                 body.setLinks(buildLinksForUpdateConsentResponse(body));
+            } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
+                CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
+                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder));
             }
             return result;
         }

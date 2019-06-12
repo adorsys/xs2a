@@ -32,24 +32,23 @@ public class CreateConsentLinks extends AbstractLinks {
         super(httpUrl);
 
         String consentId = response.getConsentId();
-        String authorizationId = response.getAuthorizationId();
+        String authorisationId = response.getAuthorizationId();
 
         setSelf(buildPath(UrlHolder.CONSENT_LINK_URL, consentId));
         setStatus(buildPath(UrlHolder.CONSENT_STATUS_URL, consentId));
 
-        String authorisationId = response.getAuthorizationId();
         ScaApproach scaApproach = authorisationId == null
                                       ? scaApproachResolver.resolveScaApproach()
                                       : scaApproachResolver.getInitiationScaApproach(authorisationId);
 
         if (EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproach)) {
-            buildLinkForEmbeddedAndDecoupledScaApproach(response, consentId, authorizationId, isExplicitMethod);
+            buildLinkForEmbeddedAndDecoupledScaApproach(response, consentId, authorisationId, isExplicitMethod);
         } else if (ScaApproach.REDIRECT == scaApproach) {
             if (isExplicitMethod) {
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             } else {
-                setScaRedirect(redirectLinkBuilder.buildConsentScaRedirectLink(consentId, authorizationId));
-                setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorizationId));
+                setScaRedirect(redirectLinkBuilder.buildConsentScaRedirectLink(consentId, authorisationId));
+                setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
             }
         }
     }

@@ -30,26 +30,20 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
     private RedirectLinkBuilder redirectLinkBuilder;
 
     public PisAuthorisationCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                             String paymentService, String paymentProduct, String paymentId, String authorizationId) {
+                                             String paymentService, String paymentProduct, String paymentId, String authorisationId) {
         super(httpUrl);
         this.redirectLinkBuilder = redirectLinkBuilder;
 
-        setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
-        setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
+        setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
 
-        ScaApproach cancellationScaApproach = scaApproachResolver.getCancellationScaApproach(authorizationId);
+        ScaApproach cancellationScaApproach = scaApproachResolver.getCancellationScaApproach(authorisationId);
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(cancellationScaApproach)) {
-            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorizationId);
+            setUpdatePsuAuthentication(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         } else if (cancellationScaApproach == REDIRECT) {
-            addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorizationId);
+            addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         } else if (cancellationScaApproach == OAUTH) {
             setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
-    }
-
-    private void addEmbeddedDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId) {
-        String path = UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL;
-        setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, authorizationId));
     }
 
     private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorizationId) {

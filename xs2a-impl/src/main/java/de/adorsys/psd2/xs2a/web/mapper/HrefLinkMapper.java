@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 // TODO Use HrefType instead of HrefLinkMapper https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/777
@@ -55,19 +54,5 @@ public class HrefLinkMapper {
                 Map.Entry::getKey,
                 e -> Collections.singletonMap(HREF, e.getValue())
             ));
-    }
-
-    /**
-     * Maps Link name and url to HrefType Link as Singleton Map
-     *
-     * @param name String, link name
-     * @param link String link url
-     * @return Map with link name and href value.
-     * Returned Map with added 'href' to link value.
-     */
-    public Map<String, Map<String, String>> mapToLinksMap(String name, String link) {
-        return Optional.ofNullable(link)
-                   .map(l -> Collections.singletonMap(name, Collections.singletonMap(HREF, l)))
-                   .orElseGet(() -> Collections.singletonMap(name, null));
     }
 }

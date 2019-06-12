@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -59,8 +60,9 @@ public abstract class AbstractLinkAspect<T> {
     }
 
     String getHttpUrl() {
-        return aspspProfileService.getAspspSettings().isForceXs2aBaseUrl()
-                   ? aspspProfileService.getAspspSettings().getXs2aBaseUrl()
+        AspspSettings aspspSettings = aspspProfileService.getAspspSettings();
+        return aspspSettings.isForceXs2aBaseUrl()
+                   ? aspspSettings.getXs2aBaseUrl()
                    : linkTo(getControllerClass()).toString();
     }
 

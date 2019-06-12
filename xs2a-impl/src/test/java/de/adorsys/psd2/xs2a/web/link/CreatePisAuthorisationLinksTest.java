@@ -69,8 +69,7 @@ public class CreatePisAuthorisationLinksTest {
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, request, AUTHORISATION_ID);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -84,8 +83,7 @@ public class CreatePisAuthorisationLinksTest {
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, request, AUTHORISATION_ID);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -96,8 +94,7 @@ public class CreatePisAuthorisationLinksTest {
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, request, AUTHORISATION_ID);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -111,8 +108,7 @@ public class CreatePisAuthorisationLinksTest {
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, request, AUTHORISATION_ID);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -124,8 +120,7 @@ public class CreatePisAuthorisationLinksTest {
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, request, AUTHORISATION_ID);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setScaRedirect(REDIRECT_LINK);
         assertEquals(expectedLinks, links);
     }
@@ -136,8 +131,7 @@ public class CreatePisAuthorisationLinksTest {
 
         links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, request, AUTHORISATION_ID);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
 }

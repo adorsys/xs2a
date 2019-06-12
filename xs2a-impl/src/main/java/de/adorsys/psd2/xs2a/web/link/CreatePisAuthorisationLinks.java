@@ -36,8 +36,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
         String paymentService = createRequest.getPaymentService();
         String paymentProduct = createRequest.getPaymentProduct();
 
-        setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
-        setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
+        setScaStatus(buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
 
         ScaApproach initiationScaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(initiationScaApproach)) {

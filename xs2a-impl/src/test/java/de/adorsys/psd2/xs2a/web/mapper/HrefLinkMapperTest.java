@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -37,40 +36,6 @@ public class HrefLinkMapperTest {
     public void setUp() {
         ObjectMapper objectMapper = new ObjectMapper();
         hrefMapper = new HrefLinkMapper(objectMapper);
-    }
-
-    @Test
-    public void mapToLinksMapWhenStringString() {
-        //When:
-        Map<String, Map<String, String>> linkMap = hrefMapper.mapToLinksMap(LINK_NAME, LINK_PATH);
-        Map<String, String> hrefMap = linkMap.get(LINK_NAME);
-
-        //Then:
-        assertNotNull(linkMap);
-        assertFalse(linkMap.isEmpty());
-        assertEquals(1, linkMap.size());
-        assertTrue(linkMap.containsKey(LINK_NAME));
-
-        assertNotNull(hrefMap);
-        assertFalse(hrefMap.isEmpty());
-        assertEquals(1, hrefMap.size());
-        assertTrue(hrefMap.containsKey(HREF));
-        assertTrue(hrefMap.containsValue(LINK_PATH));
-    }
-
-    @Test
-    public void mapToLinksMapWhenStringNull() {
-        //When:
-        Map<String, Map<String, String>> linkMap = hrefMapper.mapToLinksMap(LINK_NAME, null);
-        Map<String, String> hrefMap = linkMap.get(LINK_NAME);
-
-        //Then:
-        assertNotNull(linkMap);
-        assertFalse(linkMap.isEmpty());
-        assertEquals(1, linkMap.size());
-        assertTrue(linkMap.containsKey(LINK_NAME));
-
-        assertNull(hrefMap);
     }
 
     @Test
