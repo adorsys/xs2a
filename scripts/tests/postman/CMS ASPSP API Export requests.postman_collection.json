@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b1dec47a-98c9-48a1-97a3-207ce1a279a1",
+		"_postman_id": "b4d9975b-713c-4ca8-85cf-e9fa3d732904",
 		"name": "CMS ASPSP API Export requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -49,37 +49,48 @@
 						"header": [
 							{
 								"key": "Accept",
-								"value": "*/*"
+								"value": "*/*",
+								"type": "text"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"type": "text"
 							},
 							{
 								"key": "date",
-								"value": "Sun, 11 Aug 2019 15:02:37 GMT"
+								"value": "Sun, 11 Aug 2019 15:02:37 GMT",
+								"type": "text"
 							},
 							{
 								"key": "tpp-qwac-certificate",
-								"value": "qwac certificate"
+								"value": "qwac certificate",
+								"type": "text"
 							},
 							{
 								"key": "x-request-id",
-								"value": "{{x_request_id}}"
+								"value": "{{x_request_id}}",
+								"type": "text"
 							},
 							{
 								"key": "PSU-ID",
-								"value": "{{psu_id_none}}"
+								"value": "{{psu_id_none}}",
+								"type": "text"
 							},
 							{
 								"key": "TPP-Explicit-Authorisation-Preferred",
-								"type": "text",
-								"value": "true"
+								"value": "true",
+								"type": "text"
+							},
+							{
+								"key": "psu-ip-address",
+								"value": "{{ip_address}}",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"access\": {\n        \"accounts\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"LU280019400644750000\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"LU280019400644750000\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"LU280019400644750000\"\n            }\n        ]\n    },\n    \"combinedServiceIndicator\": false,\n    \"frequencyPerDay\": 400,\n    \"recurringIndicator\": true,\n    \"validUntil\": \"9999-12-31\"\n}"
+							"raw": "{\n    \"access\": {\n        \"accounts\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"LU280019400644750000\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"LU280019400644750000\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"LU280019400644750000\"\n            }\n        ]\n    },\n    \"combinedServiceIndicator\": false,\n    \"frequencyPerDay\": 400,\n    \"recurringIndicator\": true,\n    \"validUntil\": \"2021-12-31\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -130,10 +141,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/redirect/{{redirect_id}}",
 							"protocol": "{{protocol}}",
@@ -171,7 +178,59 @@
 									"        return consent.id === pm.globals.get(\"consent_id\");",
 									"    });",
 									"    pm.expect(consent).not.eql(undefined);",
-									"});"
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c7a63bd2-7b8f-44d9-91f4-cf140c8d520c",
+								"exec": [
+									"",
+									"var end = new Date();",
+									"",
+									"",
+									"var dd_end = end.getDate();",
+									"var mm_end = end.getMonth()+1; ",
+									"var yyyy_end = end.getFullYear();",
+									"if(dd_end<10) ",
+									"{",
+									"    dd_end='0'+dd_end;",
+									"} ",
+									"",
+									"if(mm_end<10) ",
+									"{",
+									"    mm_end='0'+mm_end;",
+									"} ",
+									"//==========================",
+									"var start = new Date(end-(3600*24*1000));",
+									"var dd_start = start.getDate();",
+									"var mm_start = start.getMonth()+1; ",
+									"var yyyy_start = start.getFullYear();",
+									"if(dd_start<10) ",
+									"{",
+									"    dd_start='0'+dd_start;",
+									"} ",
+									"",
+									"if(mm_start<10) ",
+									"{",
+									"    mm_start='0'+mm_start;",
+									"} ",
+									"",
+									"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+									"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+									"",
+									"",
+									"console.log(\"startFormat : \"+ startFormat);",
+									"console.log(\"endFormat : \"+ endFormat);",
+									"",
+									"pm.globals.set(\"startFormat\", startFormat);",
+									"pm.globals.set(\"endFormat\", endFormat);",
+									"",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -205,27 +264,20 @@
 							},
 							{
 								"key": "Start-Date",
-								"value": "2019-01-17",
-								"type": "text",
-								"disabled": true
+								"value": "{{startFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "End-Date",
-								"value": "2019-01-16",
-								"type": "text",
-								"disabled": true
+								"value": "{{endFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "Instance-ID",
 								"value": "UNDEFINED",
-								"type": "text",
-								"disabled": true
+								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/ais/consents/psu",
 							"protocol": "{{protocol}}",
@@ -266,6 +318,57 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "44d2b66e-ee81-436f-bafd-002ecdcbbe0d",
+								"exec": [
+									"",
+									"var end = new Date();",
+									"",
+									"",
+									"var dd_end = end.getDate();",
+									"var mm_end = end.getMonth()+1; ",
+									"var yyyy_end = end.getFullYear();",
+									"if(dd_end<10) ",
+									"{",
+									"    dd_end='0'+dd_end;",
+									"} ",
+									"",
+									"if(mm_end<10) ",
+									"{",
+									"    mm_end='0'+mm_end;",
+									"} ",
+									"//==========================",
+									"var start = new Date(end-(3600*24*1000));",
+									"var dd_start = start.getDate();",
+									"var mm_start = start.getMonth()+1; ",
+									"var yyyy_start = start.getFullYear();",
+									"if(dd_start<10) ",
+									"{",
+									"    dd_start='0'+dd_start;",
+									"} ",
+									"",
+									"if(mm_start<10) ",
+									"{",
+									"    mm_start='0'+mm_start;",
+									"} ",
+									"",
+									"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+									"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+									"",
+									"",
+									"console.log(\"startFormat : \"+ startFormat);",
+									"console.log(\"endFormat : \"+ endFormat);",
+									"",
+									"pm.globals.set(\"startFormat\", startFormat);",
+									"pm.globals.set(\"endFormat\", endFormat);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -274,8 +377,7 @@
 							{
 								"key": "PSU-ID",
 								"value": "{{psu_id_none}}",
-								"type": "text",
-								"disabled": true
+								"type": "text"
 							},
 							{
 								"key": "PSU-ID-Type",
@@ -297,27 +399,20 @@
 							},
 							{
 								"key": "Start-Date",
-								"value": "2019-01-01",
-								"type": "text",
-								"disabled": true
+								"value": "{{startFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "End-Date",
-								"value": "2019-01-16",
-								"type": "text",
-								"disabled": true
+								"value": "{{endFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "Instance-ID",
 								"value": "UNDEFINED",
-								"type": "text",
-								"disabled": true
+								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/ais/consents/tpp/{{tpp_id}}",
 							"protocol": "{{protocol}}",
@@ -351,6 +446,57 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "101feacd-60b5-4758-8781-a572f710c448",
+								"exec": [
+									"",
+									"var end = new Date();",
+									"",
+									"",
+									"var dd_end = end.getDate();",
+									"var mm_end = end.getMonth()+1; ",
+									"var yyyy_end = end.getFullYear();",
+									"if(dd_end<10) ",
+									"{",
+									"    dd_end='0'+dd_end;",
+									"} ",
+									"",
+									"if(mm_end<10) ",
+									"{",
+									"    mm_end='0'+mm_end;",
+									"} ",
+									"//==========================",
+									"var start = new Date(end-(3600*24*1000));",
+									"var dd_start = start.getDate();",
+									"var mm_start = start.getMonth()+1; ",
+									"var yyyy_start = start.getFullYear();",
+									"if(dd_start<10) ",
+									"{",
+									"    dd_start='0'+dd_start;",
+									"} ",
+									"",
+									"if(mm_start<10) ",
+									"{",
+									"    mm_start='0'+mm_start;",
+									"} ",
+									"",
+									"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+									"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+									"",
+									"",
+									"console.log(\"startFormat : \"+ startFormat);",
+									"console.log(\"endFormat : \"+ endFormat);",
+									"",
+									"pm.globals.set(\"startFormat\", startFormat);",
+									"pm.globals.set(\"endFormat\", endFormat);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -358,27 +504,21 @@
 						"header": [
 							{
 								"key": "Start-Date",
-								"type": "text",
-								"value": "2019-01-01",
-								"disabled": true
+								"value": "{{startFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "End-Date",
-								"type": "text",
-								"value": "2019-01-16",
-								"disabled": true
+								"value": "{{endFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "Instance-ID",
-								"type": "text",
 								"value": "UNDEFINED",
+								"type": "text",
 								"disabled": true
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/ais/consents/account/{{aspsp_account_id}}",
 							"protocol": "{{protocol}}",
@@ -524,10 +664,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/redirect/{{redirect_id}}",
 							"protocol": "{{protocol}}",
@@ -568,6 +704,57 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1620a4e5-e064-4703-88a4-5997c344188a",
+								"exec": [
+									"",
+									"var end = new Date();",
+									"",
+									"",
+									"var dd_end = end.getDate();",
+									"var mm_end = end.getMonth()+1; ",
+									"var yyyy_end = end.getFullYear();",
+									"if(dd_end<10) ",
+									"{",
+									"    dd_end='0'+dd_end;",
+									"} ",
+									"",
+									"if(mm_end<10) ",
+									"{",
+									"    mm_end='0'+mm_end;",
+									"} ",
+									"//==========================",
+									"var start = new Date(end-(3600*24*1000));",
+									"var dd_start = start.getDate();",
+									"var mm_start = start.getMonth()+1; ",
+									"var yyyy_start = start.getFullYear();",
+									"if(dd_start<10) ",
+									"{",
+									"    dd_start='0'+dd_start;",
+									"} ",
+									"",
+									"if(mm_start<10) ",
+									"{",
+									"    mm_start='0'+mm_start;",
+									"} ",
+									"",
+									"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+									"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+									"",
+									"",
+									"console.log(\"startFormat : \"+ startFormat);",
+									"console.log(\"endFormat : \"+ endFormat);",
+									"",
+									"pm.globals.set(\"startFormat\", startFormat);",
+									"pm.globals.set(\"endFormat\", endFormat);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -575,50 +762,43 @@
 						"header": [
 							{
 								"key": "PSU-ID",
-								"type": "text",
-								"value": "{{psu_id_none}}"
+								"value": "{{psu_id_none}}",
+								"type": "text"
 							},
 							{
 								"key": "PSU-ID-Type",
-								"type": "text",
 								"value": "some type",
+								"type": "text",
 								"disabled": true
 							},
 							{
 								"key": "PSU-Corporate-ID",
-								"type": "text",
 								"value": "",
+								"type": "text",
 								"disabled": true
 							},
 							{
 								"key": "PSU-Corporate-ID- Type",
-								"type": "text",
 								"value": "",
+								"type": "text",
 								"disabled": true
 							},
 							{
 								"key": "Start-Date",
-								"type": "text",
-								"value": "2019-01-01",
-								"disabled": true
+								"value": "{{startFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "End-Date",
-								"type": "text",
-								"value": "2019-01-16",
-								"disabled": true
+								"value": "{{endFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "Instance-ID",
-								"type": "text",
 								"value": "UNDEFINED",
-								"disabled": true
+								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/pis/payments/psu",
 							"protocol": "{{protocol}}",
@@ -659,6 +839,57 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "609e8616-6664-4e38-a9b5-f76375b9c7d1",
+								"exec": [
+									"",
+									"var end = new Date();",
+									"",
+									"",
+									"var dd_end = end.getDate();",
+									"var mm_end = end.getMonth()+1; ",
+									"var yyyy_end = end.getFullYear();",
+									"if(dd_end<10) ",
+									"{",
+									"    dd_end='0'+dd_end;",
+									"} ",
+									"",
+									"if(mm_end<10) ",
+									"{",
+									"    mm_end='0'+mm_end;",
+									"} ",
+									"//==========================",
+									"var start = new Date(end-(3600*24*1000));",
+									"var dd_start = start.getDate();",
+									"var mm_start = start.getMonth()+1; ",
+									"var yyyy_start = start.getFullYear();",
+									"if(dd_start<10) ",
+									"{",
+									"    dd_start='0'+dd_start;",
+									"} ",
+									"",
+									"if(mm_start<10) ",
+									"{",
+									"    mm_start='0'+mm_start;",
+									"} ",
+									"",
+									"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+									"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+									"",
+									"",
+									"console.log(\"startFormat : \"+ startFormat);",
+									"console.log(\"endFormat : \"+ endFormat);",
+									"",
+									"pm.globals.set(\"startFormat\", startFormat);",
+									"pm.globals.set(\"endFormat\", endFormat);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -666,51 +897,43 @@
 						"header": [
 							{
 								"key": "PSU-ID",
-								"type": "text",
 								"value": "{{psu_id_none}}",
-								"disabled": true
+								"type": "text"
 							},
 							{
 								"key": "PSU-ID-Type",
-								"type": "text",
 								"value": "some type",
+								"type": "text",
 								"disabled": true
 							},
 							{
 								"key": "PSU-Corporate-ID",
-								"type": "text",
 								"value": "",
+								"type": "text",
 								"disabled": true
 							},
 							{
 								"key": "PSU-Corporate-ID- Type",
-								"type": "text",
 								"value": "",
+								"type": "text",
 								"disabled": true
 							},
 							{
 								"key": "Start-Date",
-								"type": "text",
-								"value": "2019-01-01",
-								"disabled": true
+								"value": "{{startFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "End-Date",
-								"type": "text",
-								"value": "2019-01-16",
-								"disabled": true
+								"value": "{{endFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "Instance-ID",
-								"type": "text",
 								"value": "UNDEFINED",
-								"disabled": true
+								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/pis/payments/tpp/{{tpp_id}}",
 							"protocol": "{{protocol}}",
@@ -743,6 +966,57 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e1f2e06a-1ba5-4143-9302-291e37d552ab",
+								"exec": [
+									"",
+									"var end = new Date();",
+									"",
+									"",
+									"var dd_end = end.getDate();",
+									"var mm_end = end.getMonth()+1; ",
+									"var yyyy_end = end.getFullYear();",
+									"if(dd_end<10) ",
+									"{",
+									"    dd_end='0'+dd_end;",
+									"} ",
+									"",
+									"if(mm_end<10) ",
+									"{",
+									"    mm_end='0'+mm_end;",
+									"} ",
+									"//==========================",
+									"var start = new Date(end-(3600*24*1000));",
+									"var dd_start = start.getDate();",
+									"var mm_start = start.getMonth()+1; ",
+									"var yyyy_start = start.getFullYear();",
+									"if(dd_start<10) ",
+									"{",
+									"    dd_start='0'+dd_start;",
+									"} ",
+									"",
+									"if(mm_start<10) ",
+									"{",
+									"    mm_start='0'+mm_start;",
+									"} ",
+									"",
+									"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+									"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+									"",
+									"",
+									"console.log(\"startFormat : \"+ startFormat);",
+									"console.log(\"endFormat : \"+ endFormat);",
+									"",
+									"pm.globals.set(\"startFormat\", startFormat);",
+									"pm.globals.set(\"endFormat\", endFormat);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -750,27 +1024,20 @@
 						"header": [
 							{
 								"key": "Start-Date",
-								"type": "text",
-								"value": "2019-01-01",
-								"disabled": true
+								"value": "{{startFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "End-Date",
-								"type": "text",
-								"value": "2019-01-16",
-								"disabled": true
+								"value": "{{endFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "Instance-ID",
-								"type": "text",
 								"value": "UNDEFINED",
-								"disabled": true
+								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/pis/payments/account/{{aspsp_account_id}}",
 							"protocol": "{{protocol}}",
@@ -842,7 +1109,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"accounts\": [\n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    }\n  ],\n  \"allowedFrequencyPerDay\": 4,\n  \"tppInfo\": {\n    \"authorisationNumber\": \"{{tpp_id}}\",\n    \"authorityId\": \"authority id\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"9999-10-10\"\n}"
+							"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    }\n  ,\n  \"allowedFrequencyPerDay\": 4,\n  \"tppInfo\": {\n    \"authorisationNumber\": \"{{tpp_id}}\",\n    \"authorityId\": \"authority id\",\n    \"tppRedirectUri\": {\n      \"nokUri\": \"Nok redirect URI\",\n      \"uri\": \"Redirect URI\"\n    },\n    \"tppRoles\": [\n      \"PISP\"\n    ]\n  },\n  \"validUntil\": \"2021-10-10\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -931,10 +1198,6 @@
 								"disabled": true
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/psu",
 							"protocol": "{{protocol}}",
@@ -1023,10 +1286,6 @@
 								"disabled": true
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/tpp/{{tpp_id}}",
 							"protocol": "{{protocol}}",
@@ -1060,6 +1319,57 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "01805dda-cb75-4402-abac-e17e4cb10c09",
+								"exec": [
+									"",
+									"var end = new Date();",
+									"",
+									"",
+									"var dd_end = end.getDate();",
+									"var mm_end = end.getMonth()+1; ",
+									"var yyyy_end = end.getFullYear();",
+									"if(dd_end<10) ",
+									"{",
+									"    dd_end='0'+dd_end;",
+									"} ",
+									"",
+									"if(mm_end<10) ",
+									"{",
+									"    mm_end='0'+mm_end;",
+									"} ",
+									"//==========================",
+									"var start = new Date(end-(3600*24*1000));",
+									"var dd_start = start.getDate();",
+									"var mm_start = start.getMonth()+1; ",
+									"var yyyy_start = start.getFullYear();",
+									"if(dd_start<10) ",
+									"{",
+									"    dd_start='0'+dd_start;",
+									"} ",
+									"",
+									"if(mm_start<10) ",
+									"{",
+									"    mm_start='0'+mm_start;",
+									"} ",
+									"",
+									"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+									"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+									"",
+									"",
+									"console.log(\"startFormat : \"+ startFormat);",
+									"console.log(\"endFormat : \"+ endFormat);",
+									"",
+									"pm.globals.set(\"startFormat\", startFormat);",
+									"pm.globals.set(\"endFormat\", endFormat);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -1067,27 +1377,20 @@
 						"header": [
 							{
 								"key": "Start-Date",
-								"value": "2019-02-05",
-								"type": "text",
-								"disabled": true
+								"value": "{{startFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "End-Date",
-								"value": "2019-02-05",
-								"type": "text",
-								"disabled": true
+								"value": "{{endFormat}}",
+								"type": "text"
 							},
 							{
 								"key": "Instance-ID",
 								"value": "UNDEFINED",
-								"type": "text",
-								"disabled": true
+								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/account/{{aspsp_account_id}}",
 							"protocol": "{{protocol}}",
