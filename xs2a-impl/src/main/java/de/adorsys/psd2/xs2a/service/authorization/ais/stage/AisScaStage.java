@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -45,7 +44,6 @@ public abstract class AisScaStage<T, R> implements Function<T, R> {
     protected final AisConsentDataService aisConsentDataService;
     protected final AisConsentSpi aisConsentSpi;
     protected final Xs2aAisConsentMapper aisConsentMapper;
-    protected final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     protected final Xs2aToSpiPsuDataMapper psuDataMapper;
     protected final SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper;
     protected final SpiErrorMapper spiErrorMapper;

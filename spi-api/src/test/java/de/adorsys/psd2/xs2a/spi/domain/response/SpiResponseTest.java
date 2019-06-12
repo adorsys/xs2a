@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -97,16 +98,29 @@ public class SpiResponseTest {
     }
 
     @Test
+    public void second_constructor_with_null_payload_should_generate_error_message2() {
+        // Given
+        TppMessage errorMessage = new TppMessage(MessageErrorCode.FORMAT_ERROR, "");
+
+        // When
+        SpiResponse<String> response = new SpiResponse<>(null, null, SpiResponseStatus.LOGICAL_FAILURE, Collections.emptyList());
+
+        // Then
+        assertTrue(response.hasError());
+        assertEquals(Collections.singletonList(errorMessage), response.getErrors());
+    }
+
+    @Test
     public void builder_build_transfers_every_field() {
         SpiResponse.SpiResponseBuilder<String> builder = SpiResponse.builder();
         SpiResponse<String> response =
             builder
-            .payload("some payload")
-            .message("some message 1")
-            .message(Arrays.asList("Some message 2", "Some message 3"))
-            .error(new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400, "Consent Unknown", "reason"))
-            .error(Arrays.asList(new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400, "Consent Unknown", "reason")))
-            .build();
+                .payload("some payload")
+                .message("some message 1")
+                .message(Arrays.asList("Some message 2", "Some message 3"))
+                .error(new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400, "Consent Unknown", "reason"))
+                .error(Arrays.asList(new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400, "Consent Unknown", "reason")))
+                .build();
 
         assertEquals("some payload", response.getPayload());
         assertFalse(response.isSuccessful());
@@ -121,8 +135,8 @@ public class SpiResponseTest {
         SpiResponse.SpiResponseBuilder<String> builder = SpiResponse.builder();
         SpiResponse<String> response =
             builder
-            .payload("some payload")
-            .build();
+                .payload("some payload")
+                .build();
 
         assertEquals("some payload", response.getPayload());
         assertTrue(response.isSuccessful());
@@ -130,5 +144,54 @@ public class SpiResponseTest {
         assertEquals(0, response.getMessages().size());
         assertEquals(0, response.getErrors().size());
         assertEquals(SpiResponseStatus.SUCCESS, response.getResponseStatus());
+    }
+
+    @Test
+    public void builder_build_should_generate_message_on_fail() {
+        // When
+        SpiResponse<String> response = SpiResponse.<String>builder().fail(SpiResponseStatus.LOGICAL_FAILURE);
+
+        // Then
+        assertTrue(response.hasError());
+        assertFalse(response.getErrors().isEmpty());
+    }
+
+    @Test
+    public void builder_build_should_generate_message_on_error() {
+        // Given
+        TppMessage errorMessage = new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400, "");
+
+        // When
+        SpiResponse<String> response = SpiResponse.<String>builder().error(errorMessage).build();
+
+        // Then
+        assertTrue(response.hasError());
+        assertEquals(Collections.singletonList(errorMessage), response.getErrors());
+    }
+
+    @Test
+    public void builder_build_with_null_payload_should_generate_error_message() {
+        // Given
+        TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "");
+
+        // When
+        SpiResponse<String> response = SpiResponse.<String>builder().payload(null).build();
+
+        // Then
+        assertTrue(response.hasError());
+        assertEquals(Collections.singletonList(errorMessage), response.getErrors());
+    }
+
+    @Test
+    public void builder_build_without_payload_should_generate_error_message() {
+        // Given
+        TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "");
+
+        // When
+        SpiResponse<String> response = SpiResponse.<String>builder().build();
+
+        // Then
+        assertTrue(response.hasError());
+        assertEquals(Collections.singletonList(errorMessage), response.getErrors());
     }
 }

@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.junit.Test;
@@ -48,8 +47,6 @@ public class AisScaFinalisedStageTest {
     private AisConsentSpi aisConsentSpi;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
-    @Mock
-    private SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     @Mock
     private Xs2aToSpiPsuDataMapper psuDataMapper;
     @Mock
