@@ -22,20 +22,11 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import org.mapstruct.Mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ScaMethodsMapper {
 
-    default ScaMethods mapToScaMethods(List<Xs2aAuthenticationObject> xs2aAuthenticationObjects) {
-        if (xs2aAuthenticationObjects == null) {
-            return  null;
-        }
-
-        return xs2aAuthenticationObjects.stream()
-                                 .map(this::mapToAuthenticationObject)
-                                 .collect(Collectors.toCollection(ScaMethods::new));
-    }
+    ScaMethods mapToScaMethods(List<Xs2aAuthenticationObject> xs2aAuthenticationObjects);
 
     AuthenticationObject mapToAuthenticationObject(Xs2aAuthenticationObject xs2aAuthenticationObject);
 }

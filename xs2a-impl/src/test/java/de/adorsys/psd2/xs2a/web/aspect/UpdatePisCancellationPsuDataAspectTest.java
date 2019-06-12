@@ -73,7 +73,7 @@ public class UpdatePisCancellationPsuDataAspectTest {
                              .build();
         ResponseObject actualResponse = aspect.updatePisCancellationAuthorizationAspect(responseObject, request);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(updatePisCommonPaymentPsuDataResponse, times(1)).setLinks(any(UpdatePisCancellationPsuDataLinks.class));
 
         assertFalse(actualResponse.hasError());

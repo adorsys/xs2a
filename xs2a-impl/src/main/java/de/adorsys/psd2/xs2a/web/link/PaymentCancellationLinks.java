@@ -49,26 +49,22 @@ public class PaymentCancellationLinks extends AbstractLinks {
         String paymentId = body.getPaymentId();
         String paymentService = body.getPaymentType().getValue();
         String paymentProduct = body.getPaymentProduct();
+        String authorisationId = body.getAuthorizationId();
 
         setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
         setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
 
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproach)) {
-            addEmbeddedDecoupledRelatedLinks(body);
+            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         } else if (scaApproach == REDIRECT) {
-            addRedirectRelatedLinks(body);
+            addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         } else if (scaApproach == OAUTH) {
             setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
     }
 
-    private void addEmbeddedDecoupledRelatedLinks(CancelPaymentResponse body) {
-        String paymentId = body.getPaymentId();
-        String paymentService = body.getPaymentType().getValue();
-        String paymentProduct = body.getPaymentProduct();
-        String authorisationId = body.getAuthorizationId();
-
+    private void addEmbeddedDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
         if (isExplicitMethod) {
             setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
         } else {
@@ -80,12 +76,7 @@ public class PaymentCancellationLinks extends AbstractLinks {
         }
     }
 
-    private void addRedirectRelatedLinks(CancelPaymentResponse body) {
-        String paymentId = body.getPaymentId();
-        String paymentService = body.getPaymentType().getValue();
-        String paymentProduct = body.getPaymentProduct();
-        String authorisationId = body.getAuthorizationId();
-
+    private void addRedirectRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
         if (isExplicitMethod) {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
         } else {

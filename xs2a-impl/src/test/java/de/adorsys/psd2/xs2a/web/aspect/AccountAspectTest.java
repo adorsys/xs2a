@@ -87,7 +87,7 @@ public class AccountAspectTest {
                              .build();
         ResponseObject actualResponse = aspect.getAccountDetailsAspect(responseObject, CONSENT_ID, ACCOUNT_ID, true, REQUEST_URI);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         assertNotNull(accountDetails.getLinks());
         assertTrue(accountDetails.getLinks() instanceof AccountDetailsLinks);
 
@@ -116,7 +116,7 @@ public class AccountAspectTest {
                              .build();
         ResponseObject actualResponse = aspect.getAccountDetailsListAspect(responseObject, CONSENT_ID, true, REQUEST_URI);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         assertNotNull(accountDetails.getLinks());
         assertTrue(accountDetails.getLinks() instanceof AccountDetailsLinks);
 
@@ -149,7 +149,7 @@ public class AccountAspectTest {
                                                                              LocalDate.now(), BookingStatus.BOOKED,
                                                                              REQUEST_URI);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(transactionsReport, times(1)).setLinks(any(TransactionsReportByPeriodHugeLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -169,7 +169,7 @@ public class AccountAspectTest {
                                                                              LocalDate.now(), BookingStatus.BOOKED,
                                                                              REQUEST_URI);
 
-        verify(aspspProfileService, times(2)).getAspspSettings();
+        verify(aspspProfileService, times(1)).getAspspSettings();
         verify(accountReport, times(1)).setLinks(any(TransactionsReportByPeriodLinks.class));
 
         assertFalse(actualResponse.hasError());

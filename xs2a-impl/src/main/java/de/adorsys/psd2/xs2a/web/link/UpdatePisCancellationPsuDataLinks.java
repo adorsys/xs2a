@@ -33,15 +33,13 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
 
-        setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
-        setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, request.getPaymentService(), request.getPaymentProduct(), request.getPaymentId()));
+        String authorisationLink = buildAuthorisationLink(request);
+        setScaStatus(authorisationLink);
 
         if (isScaStatusMethodAuthenticated(scaStatus)) {
-            setSelectAuthenticationMethod(buildAuthorisationLink(request));
+            setSelectAuthenticationMethod(authorisationLink);
         } else if (isScaStatusMethodSelected(chosenScaMethod, scaStatus) || isDecoupledScaApproach(request)) {
-            setAuthoriseTransaction(buildAuthorisationLink(request));
-        } else if (isScaStatusFinalised(scaStatus)) {
-            setScaStatus(buildAuthorisationLink(request));
+            setAuthoriseTransaction(authorisationLink);
         }
     }
 
@@ -52,10 +50,6 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {
 
     private boolean isDecoupledScaApproach(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         return scaApproachResolver.getCancellationScaApproach(request.getAuthorisationId()) == ScaApproach.DECOUPLED;
-    }
-
-    private boolean isScaStatusFinalised(ScaStatus scaStatus) {
-        return scaStatus == ScaStatus.FINALISED;
     }
 
     private boolean isScaStatusMethodSelected(Xs2aAuthenticationObject chosenScaMethod, ScaStatus scaStatus) {

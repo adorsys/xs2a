@@ -62,8 +62,7 @@ public class PisAuthorisationCancellationLinksTest {
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -76,8 +75,7 @@ public class PisAuthorisationCancellationLinksTest {
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -90,8 +88,7 @@ public class PisAuthorisationCancellationLinksTest {
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -104,8 +101,7 @@ public class PisAuthorisationCancellationLinksTest {
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setUpdatePsuAuthentication("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
     }
@@ -119,8 +115,6 @@ public class PisAuthorisationCancellationLinksTest {
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       ScaRedirectFlow.REDIRECT);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
         expectedLinks.setScaRedirect(REDIRECT_LINK);
         expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         assertEquals(expectedLinks, links);
@@ -134,8 +128,7 @@ public class PisAuthorisationCancellationLinksTest {
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
                                                       null);
 
-        expectedLinks.setSelf("http://url/v1/payments/sepa-credit-transfers/1111111111111");
-        expectedLinks.setStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
+        expectedLinks.setScaStatus("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda");
         expectedLinks.setScaOAuth("scaOAuth");
         assertEquals(expectedLinks, links);
     }

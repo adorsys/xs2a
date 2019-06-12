@@ -33,34 +33,24 @@ public class UpdatePisAuthorisationLinks extends AbstractLinks {
         super(httpUrl);
 
         ScaStatus scaStatus = response.getScaStatus();
-        String paymentId = createRequest.getPaymentId();
-        String paymentService = createRequest.getPaymentService();
-        String paymentProduct = createRequest.getPaymentProduct();
 
-        setSelf(buildPath(UrlHolder.PAYMENT_LINK_URL, paymentService, paymentProduct, paymentId));
-        setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
+        String authorisationLink = buildAuthorisationLink(response, createRequest);
+        setScaStatus(authorisationLink);
 
         if (isScaStatusMethodAuthenticated(scaStatus)) {
-            setSelectAuthenticationMethod(buildAuthorisationLink(response, createRequest));
-
+            setSelectAuthenticationMethod(authorisationLink);
             // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/722
         } else if (isScaStatusMethodSelected(response.getChosenScaMethod(), scaStatus) &&
                        scaApproachResolver.getInitiationScaApproach(response.getAuthorisationId()) == EMBEDDED) {
-            setAuthoriseTransaction(buildAuthorisationLink(response, createRequest));
-        } else if (isScaStatusFinalised(scaStatus)) {
-            setScaStatus(buildAuthorisationLink(response, createRequest));
+            setAuthoriseTransaction(authorisationLink);
         } else if (isScaStatusMethodIdentified(scaStatus)) {
-            setUpdatePsuAuthentication(buildAuthorisationLink(response, createRequest));
+            setUpdatePsuAuthentication(authorisationLink);
         }
     }
 
     private String buildAuthorisationLink(Xs2aUpdatePisCommonPaymentPsuDataResponse response, Xs2aCreatePisAuthorisationRequest createRequest) {
         return buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, createRequest.getPaymentService(),
                          createRequest.getPaymentProduct(), createRequest.getPaymentId(), response.getAuthorisationId());
-    }
-
-    private boolean isScaStatusFinalised(ScaStatus scaStatus) {
-        return scaStatus == ScaStatus.FINALISED;
     }
 
     private boolean isScaStatusMethodSelected(Xs2aAuthenticationObject chosenScaMethod, ScaStatus scaStatus) {
