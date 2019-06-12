@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5268b179-ee87-47b7-ad43-d3abc64f60a9",
+		"_postman_id": "dfa9b50f-f056-4f84-a51e-eb5b4955cc75",
 		"name": "ASPSP profile requests",
 		"description": "Examples of requests for updating the ASPSP profile (set SCA approach, change some configurations etc).",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -233,10 +233,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/",
 							"protocol": "{{protocol}}",

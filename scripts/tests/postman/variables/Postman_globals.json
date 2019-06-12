@@ -1,159 +1,109 @@
 {
-  "id": "a8377665-5ee7-412e-8c23-903724aba9b5",
-  "values": [
-    {
-      "key": "x_request_id",
-      "value": "2f77a125-aa7a-45c0-b414-cea25a116035",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "psu_id_password",
-      "value": "zzz",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "ip_address",
-      "value": "1.1.1.1",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "tpp_id",
-      "value": "PSDDE-FAKENCA-87B2AC",
-      "description": "",
-      "enabled": true
-    },
-    {
-      "key": "transaction_id",
-      "value": "0001",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "cancellation_id",
-      "value": "004fa9f8-ca3d-4196-a83a-85a4e998240c",
-      "enabled": true
-    },
-    {
-      "key": "startAuthorisation",
-      "value": null,
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "basket_id",
-      "value": "",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "payment_service",
-      "value": "payments",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "payment_product",
-      "value": "sepa-credit-transfers",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "with_balance",
-      "value": "true",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "booking_status",
-      "value": "booked",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "payment_service_bulk",
-      "value": "bulk-payments",
-      "description": {
-        "content": "",
-        "type": "text/plain"
-      },
-      "enabled": true
-    },
-    {
-      "key": "internal_payment_id",
-      "value": "",
-      "enabled": true
-    },
-    {
-      "key": "internal_consent_id",
-      "value": "",
-      "enabled": true
-    },
-    {
-      "key": "payment_id",
-      "value": "",
-      "enabled": true
-    },
-    {
-      "key": "authorisation_id",
-      "value": "",
-      "enabled": true
-    },
-    {
-      "key": "consent_id",
-      "value": "",
-      "enabled": true
-    },
-    {
-      "key": "redirect_id",
-      "value": "",
-      "enabled": true
-    },
-    {
-      "key": "account_id",
-      "value": "",
-      "enabled": true
-    },
-    {
-      "key": "resource_id",
-      "value": "",
-      "enabled": true
-    }
-  ],
-  "name": "My Workspace Globals",
-  "_postman_variable_scope": "globals",
-  "_postman_exported_at": "2019-03-14T12:16:21.290Z",
-  "_postman_exported_using": "Postman/7.0.4"
+	"id": "f8e48449-5286-46cb-8cc4-f98651afa9c3",
+	"values": [
+		{
+			"key": "x_request_id",
+			"value": "2f77a125-aa7a-45c0-b414-cea25a116035",
+			"enabled": true
+		},
+		{
+			"key": "psu_id_password",
+			"value": "zzz",
+			"enabled": true
+		},
+		{
+			"key": "ip_address",
+			"value": "1.1.1.1",
+			"enabled": true
+		},
+		{
+			"key": "tpp_id",
+			"value": "PSDDE-FAKENCA-87B2AC",
+			"enabled": true
+		},
+		{
+			"key": "transaction_id",
+			"value": "0001",
+			"enabled": true
+		},
+		{
+			"key": "cancellation_id",
+			"value": "004fa9f8-ca3d-4196-a83a-85a4e998240c",
+			"enabled": true
+		},
+		{
+			"key": "startAuthorisation",
+			"value": null,
+			"enabled": true
+		},
+		{
+			"key": "basket_id",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "payment_service",
+			"value": "payments",
+			"enabled": true
+		},
+		{
+			"key": "payment_product",
+			"value": "sepa-credit-transfers",
+			"enabled": true
+		},
+		{
+			"key": "with_balance",
+			"value": "true",
+			"enabled": true
+		},
+		{
+			"key": "booking_status",
+			"value": "both",
+			"enabled": true
+		},
+		{
+			"key": "payment_service_bulk",
+			"value": "bulk-payments",
+			"enabled": true
+		},
+		{
+			"key": "internal_payment_id",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "internal_consent_id",
+			"value": "64d4e2ef-2a05-4e65-b620-8211f188c84b",
+			"enabled": true
+		},
+		{
+			"key": "payment_id",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "authorisation_id",
+			"value": "23cb5edc-e0d3-44a1-9a06-6332e8cf587b",
+			"enabled": true
+		},
+		{
+			"key": "consent_id",
+			"value": "38Z-fEMaSryrqNsMHiBSJs2Da8qerBV0l7boLT1Kjpz_t2Cn2lS00vT98EhcagLb78pdXOE_PTVwHf1Zg5G6CXPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q",
+			"enabled": true
+		},
+		{
+			"key": "redirect_id",
+			"value": "23cb5edc-e0d3-44a1-9a06-6332e8cf587b",
+			"enabled": true
+		},
+		{
+			"key": "account_id",
+			"value": "11111-999999999",
+			"enabled": true
+		}
+	],
+	"name": "My Workspace Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2019-06-12T06:30:32.898Z",
+	"_postman_exported_using": "Postman/7.1.1"
 }
