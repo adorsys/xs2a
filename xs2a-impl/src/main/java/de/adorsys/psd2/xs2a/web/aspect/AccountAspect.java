@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.*;
@@ -32,7 +31,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -68,16 +66,16 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args( consentId, accountId, acceptHeader, withBalance, dateFrom, dateTo, bookingStatus, requestUri)", returning = "result", argNames = "result,consentId,accountId,acceptHeader,withBalance,dateFrom,dateTo,bookingStatus,requestUri")
-    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, String consentId, String accountId, String acceptHeader, boolean withBalance, LocalDate dateFrom, LocalDate dateTo, BookingStatus bookingStatus, String requestUri) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args(request)", returning = "result", argNames = "result,request")
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, Xs2aTransactionsReportByPeriodRequest request) {
         if (!result.hasError()) {
             Xs2aTransactionsReport transactionsReport = result.getBody();
 
             if (transactionsReport.isTransactionReportHuge()) {
-                transactionsReport.setLinks(new TransactionsReportByPeriodHugeLinks(getHttpUrl(), accountId));
+                transactionsReport.setLinks(new TransactionsReportByPeriodHugeLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance()));
             } else {
                 Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
-                accountReport.setLinks(new TransactionsReportByPeriodLinks(getHttpUrl(), accountId));
+                accountReport.setLinks(new TransactionsReportByPeriodLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance()));
             }
 
             return result;
