@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded;
 
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -28,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
@@ -40,7 +40,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAuthenticationObjectMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -63,9 +62,9 @@ import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.AIS_401;
 @Service("AIS_RECEIVED")
 public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
     private final SpiContextDataProvider spiContextDataProvider;
-    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
     private final ScaApproachResolver scaApproachResolver;
     private final CommonDecoupledAisService commonDecoupledAisService;
+    private final AisScaAuthorisationService aisScaAuthorisationService;
 
     private static final String MESSAGE_ERROR_NO_PSU = "Please provide the PSU identification data";
 
@@ -77,15 +76,15 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
                                             Xs2aToSpiPsuDataMapper psuDataMapper,
                                             SpiToXs2aAuthenticationObjectMapper spiToXs2aAuthenticationObjectMapper,
                                             SpiContextDataProvider spiContextDataProvider,
-                                            AspspProfileServiceWrapper aspspProfileServiceWrapper,
                                             SpiErrorMapper spiErrorMapper,
                                             ScaApproachResolver scaApproachResolver,
-                                            CommonDecoupledAisService commonDecoupledAisService) {
+                                            CommonDecoupledAisService commonDecoupledAisService,
+                                            AisScaAuthorisationService aisScaAuthorisationService) {
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper, spiToXs2aAuthenticationObjectMapper, spiErrorMapper);
         this.spiContextDataProvider = spiContextDataProvider;
-        this.aspspProfileServiceWrapper = aspspProfileServiceWrapper;
         this.scaApproachResolver = scaApproachResolver;
         this.commonDecoupledAisService = commonDecoupledAisService;
+        this.aisScaAuthorisationService = aisScaAuthorisationService;
     }
 
     /**
@@ -134,9 +133,7 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
 
         String authorisationId = request.getAuthorizationId();
 
-        // TODO Extract common consent validation from AIS Embedded and Decoupled stages https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/677
-        if (isOneFactorAuthorisation(accountConsent)) {
-
+        if (aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent.isConsentForAllAvailableAccounts(), accountConsent.isOneAccessType())) {
             aisConsentService.updateConsentStatus(consentId, ConsentStatus.VALID);
 
             UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, authorisationId);
@@ -167,13 +164,6 @@ public class AisScaReceivedAuthorisationStage extends AisScaStage<UpdateConsentP
             aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
             return response;
         }
-    }
-
-    private boolean isOneFactorAuthorisation(AccountConsent accountConsent) {
-        return accountConsent.getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS
-                   && accountConsent.isOneAccessType()
-                   && !aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()
-                   && !accountConsent.isMultilevelScaRequired();
     }
 
     private UpdateConsentPsuDataResponse applyIdentification(UpdateConsentPsuDataReq request) {

@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais.stage.decoupled;
 
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -28,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorizationResponseLinkType;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -37,7 +37,6 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -96,11 +95,11 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
-    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private CommonDecoupledAisService commonDecoupledAisService;
+    @Mock
+    private AisScaAuthorisationService aisScaAuthorisationService;
 
     @Before
     public void setUp() {
@@ -141,13 +140,11 @@ public class AisDecoupledScaStartAuthorisationStageTest {
     @Test
     public void apply_AllAvailableAccounts_Success() {
         //Given
+        when(aisScaAuthorisationService.isOneFactorAuthorisation(true, true)).thenReturn(true);
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
-        when(accountConsent.getAisConsentRequestType())
-            .thenReturn(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
+        when(accountConsent.isConsentForAllAvailableAccounts()).thenReturn(true);
         when(accountConsent.isOneAccessType())
             .thenReturn(true);
-        when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired())
-            .thenReturn(false);
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
             .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
         //When
@@ -157,6 +154,23 @@ public class AisDecoupledScaStartAuthorisationStageTest {
         assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
         verify(aisConsentService, times(1)).updateConsentStatus(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
+    }
+
+    @Test
+    public void apply_AllAvailableAccounts_SuccessScaRequiredTrue() {
+        //Given
+        when(accountConsent.isOneAccessType())
+            .thenReturn(true);
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, spiAccountConsent, ASPSP_CONSENT_DATA))
+            .thenReturn(buildSuccessSpiResponse(SpiAuthorisationStatus.SUCCESS));
+        when(commonDecoupledAisService.proceedDecoupledApproach(eq(request), eq(spiAccountConsent), any(PsuIdData.class)))
+            .thenReturn(buildUpdateConsentPsuDataResponse());
+        //When
+        UpdateConsentPsuDataResponse actualResponse = scaReceivedAuthorisationStage.apply(request);
+        //Then
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.getScaStatus()).isEqualTo(ScaStatus.SCAMETHODSELECTED);
+        verify(aisConsentService, never()).updateConsentStatus(eq(CONSENT_ID), any(ConsentStatus.class));
     }
 
     @Test

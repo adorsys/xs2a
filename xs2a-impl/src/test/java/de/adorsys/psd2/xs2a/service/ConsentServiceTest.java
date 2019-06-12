@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.exception.MessageCategory;
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.RedirectAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
@@ -176,6 +177,8 @@ public class ConsentServiceTest {
     private GetConsentAuthorisationsValidator getConsentAuthorisationsValidator;
     @Mock
     private GetConsentAuthorisationScaStatusValidator getConsentAuthorisationScaStatusValidator;
+    @Mock
+    private AisScaAuthorisationService aisScaAuthorisationService;
     private TppInfo tppInfo;
 
     @Before
@@ -246,6 +249,7 @@ public class ConsentServiceTest {
     @Test
     public void createAccountConsentsWithResponse_Success_AllAccounts() {
         //Given:
+        ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
@@ -263,6 +267,64 @@ public class ConsentServiceTest {
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
         CreateConsentResponse response = responseObj.getBody();
         //Then:
+        verify(authorisationMethodDecider, atLeastOnce()).isImplicitMethod(anyBoolean(), argumentCaptor.capture());
+        assertFalse(argumentCaptor.getValue());
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+        assertThat(response.getPsuMessage()).isEqualTo(TEST_PSU_MESSAGE);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_Success_AllAccountsSpiMultilevelTrueScaRequiredFalse() {
+        //Given:
+        ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
+        );
+
+        //When:
+        when(aisScaAuthorisationService.isOneFactorAuthorisation(true, true)).thenReturn(true);
+        when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
+            .thenReturn(createValidationResult(true, null));
+
+        when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), true, TEST_PSU_MESSAGE))
+                            .aspspConsentData(ASPSP_CONSENT_DATA)
+                            .success());
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
+        CreateConsentResponse response = responseObj.getBody();
+        //Then:
+        verify(authorisationMethodDecider, atLeastOnce()).isImplicitMethod(anyBoolean(), argumentCaptor.capture());
+        assertFalse(argumentCaptor.getValue());
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+        assertThat(response.getPsuMessage()).isEqualTo(TEST_PSU_MESSAGE);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_Success_AllAccountsSpiMultilevelTrueScaRequiredTrue() {
+        //Given:
+        ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
+        );
+
+        //When:
+        when(aisScaAuthorisationService.isOneFactorAuthorisation(true, true)).thenReturn(false);
+        when(createConsentRequestValidator.validate(new CreateConsentRequestObject(req, PSU_ID_DATA)))
+            .thenReturn(createValidationResult(true, null));
+
+        when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), true, TEST_PSU_MESSAGE))
+                            .aspspConsentData(ASPSP_CONSENT_DATA)
+                            .success());
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED, buildTppRedirectUri());
+        CreateConsentResponse response = responseObj.getBody();
+        //Then:
+        verify(authorisationMethodDecider, atLeastOnce()).isImplicitMethod(anyBoolean(), argumentCaptor.capture());
+        assertTrue(argumentCaptor.getValue());
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(response.getPsuMessage()).isEqualTo(TEST_PSU_MESSAGE);
     }
