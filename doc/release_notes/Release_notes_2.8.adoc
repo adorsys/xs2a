@@ -5,6 +5,7 @@
 * Bugfix: Wrong links in start authorisation response
 * Bugfix: Balances link is not present in Read Transaction List with Balances
 * Bugfix: Ignore multilevel flag for one-off Consent on Account List of Available Accounts when SCA is not needed
+* Bugfix: Changed the allowed length for some HTTP headers
 
 == Update version of jackson-databind to 2.9.9
 
@@ -20,6 +21,12 @@ From now on, all authorisation responses will contain `scaStatus` link instead o
 From now on, the endpoint for reading transaction list (POST `/v1/accounts/{{account_id}}/transactions?withBalance=true`) returns correct response with link `balances`.
 
 == Bugfix: Ignore multilevel flag for one-off Consent on Account List of Available Accounts when SCA is not needed
+
 When TPP sends `Create AIS Consent` request (`POST /v1/consents`) for one-off Consent on Account List of Available Accounts and for this request ASPSP
 returns SpiInitiateAisConsentResponse with `multilevelScaRequired` parameter set to true, if in ASPSP Profile parameter `scaByOneTimeAvailableAccountsConsentRequired`
 set to false, then `multilevelScaRequired` parameter will be ignored because SCA is not needed at all.
+
+== Bugfix: Changed the allowed length for some HTTP headers
+
+From now on, while sending HTTP requests to the XS2A the maximum length of `tpp-redirect-uri` and `tpp-nok-redirect-uri`
+headers is extended to 255 symbols. Header `authorization` is not validated for length.
