@@ -31,6 +31,7 @@ public class Xs2aAccountAccess {
     private List<AccountReference> transactions;
     private AccountAccessType availableAccounts;
     private AccountAccessType allPsd2;
+    private AccountAccessType availableAccountsWithBalances;
 
     @JsonIgnore
     public boolean isNotEmpty() {
@@ -38,6 +39,7 @@ public class Xs2aAccountAccess {
                      && CollectionUtils.isEmpty(balances)
                      && CollectionUtils.isEmpty(transactions)
                      && allPsd2 == null
-                     && availableAccounts == null);
+                     && availableAccounts == null
+                     && availableAccountsWithBalances == null);
     }
 }

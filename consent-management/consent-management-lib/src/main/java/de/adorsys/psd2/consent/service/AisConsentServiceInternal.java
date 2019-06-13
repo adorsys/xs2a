@@ -301,6 +301,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setAisConsentRequestType(getRequestTypeFromAccess(request.getAccess()));
         consent.setAvailableAccounts(request.getAccess().getAvailableAccounts());
         consent.setAllPsd2(request.getAccess().getAllPsd2());
+        consent.setAvailableAccountsWithBalances(request.getAccess().getAvailableAccountsWithBalances());
         consent.setLastActionDate(LocalDate.now());
         return consent;
     }
@@ -319,7 +320,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     private AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
         if (accessInfo.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
             return AisConsentRequestType.GLOBAL;
-        } else if (EnumSet.of(AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
+        } else if (AccountAccessType.ALL_ACCOUNTS == accessInfo.getAvailableAccounts()
+                       || AccountAccessType.ALL_ACCOUNTS == accessInfo.getAvailableAccountsWithBalances()) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
         } else if (isEmptyAccess(accessInfo)) {
             return AisConsentRequestType.BANK_OFFERED;

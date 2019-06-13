@@ -20,6 +20,7 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
@@ -124,6 +125,17 @@ public class ConsentModelMapperTest {
         StartScaprocessResponse actual = consentModelMapper.mapToStartScaProcessResponse(xs2aCreatePisCancellationAuthorisationResponse);
 
         // Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void mapToCreateConsentReq_AvailableAccountsWithBalances() {
+        //Given
+        Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
+        CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAvailableAccountsWithBalances.json", CreateConsentReq.class);
+        //When
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent);
+        //Then
         assertEquals(expected, actual);
     }
 

@@ -4421,12 +4421,11 @@ components:
         availableAccounts:
           description: |
             Optional if supported by API provider.
-            
-            Only the values "allAccounts" or "allAccountsWithBalances" is admitted.
+
+            Only the value "allAccounts" is admitted.
           type: string
           enum:
             - "allAccounts"
-            - "allAccountsWithBalances"
         allPsd2:
           description: |
             Optional if supported by API provider.
@@ -4435,6 +4434,14 @@ components:
           type: string
           enum:
             - "allAccounts"
+        availableAccountsWithBalances:
+          description: |
+            Optional if supported by API provider.
+
+            Only the value "allAccounts" is admitted.
+          type: string
+          enum:
+          - "allAccounts"
 
     cashAccountType:
       description: |

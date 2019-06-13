@@ -91,7 +91,7 @@ public class AccountAccessValidatorTest {
     }
 
     private AccountConsent buildAccountConsentEmptyAccesses() {
-        return new AccountConsent("id", new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null), false, null, 0,
+        return new AccountConsent("id", new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null), false, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), buildTppInfo(), null, false,
                                   Collections.emptyList(), null, Collections.emptyMap());

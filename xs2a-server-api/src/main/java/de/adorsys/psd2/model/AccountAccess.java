@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Requested access services for a consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-04-08T13:20:46.558844+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-06-13T12:17:38.965151+03:00[Europe/Kiev]")
 
 public class AccountAccess   {
   @JsonProperty("accounts")
@@ -49,12 +49,10 @@ public class AccountAccess   {
   private List<AccountReference> transactions = null;
 
   /**
-   * Optional if supported by API provider.  Only the values \"allAccounts\" or \"allAccountsWithBalances\" is admitted. 
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
    */
   public enum AvailableAccountsEnum {
-    ALLACCOUNTS("allAccounts"),
-    
-    ALLACCOUNTSWITHBALANCES("allAccountsWithBalances");
+    ALLACCOUNTS("allAccounts");
 
     private String value;
 
@@ -113,6 +111,38 @@ public class AccountAccess   {
 
   @JsonProperty("allPsd2")
   private AllPsd2Enum allPsd2 = null;
+
+  /**
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   */
+  public enum AvailableAccountsWithBalancesEnum {
+    ALLACCOUNTS("allAccounts");
+
+    private String value;
+
+    AvailableAccountsWithBalancesEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static AvailableAccountsWithBalancesEnum fromValue(String text) {
+      for (AvailableAccountsWithBalancesEnum b : AvailableAccountsWithBalancesEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
+  @JsonProperty("availableAccountsWithBalances")
+  private AvailableAccountsWithBalancesEnum availableAccountsWithBalances = null;
 
   public AccountAccess accounts(List<AccountReference> accounts) {
     this.accounts = accounts;
@@ -213,10 +243,11 @@ public class AccountAccess   {
   }
 
   /**
-   * Optional if supported by API provider.  Only the values \"allAccounts\" or \"allAccountsWithBalances\" is admitted. 
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
    * @return availableAccounts
   **/
-  @ApiModelProperty(value = "Optional if supported by API provider.  Only the values \"allAccounts\" or \"allAccountsWithBalances\" is admitted. ")
+  @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
+
 
 
   @JsonProperty("availableAccounts")
@@ -240,6 +271,7 @@ public class AccountAccess   {
   @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
 
 
+
   @JsonProperty("allPsd2")
   public AllPsd2Enum getAllPsd2() {
     return allPsd2;
@@ -247,6 +279,28 @@ public class AccountAccess   {
 
   public void setAllPsd2(AllPsd2Enum allPsd2) {
     this.allPsd2 = allPsd2;
+  }
+
+  public AccountAccess availableAccountsWithBalances(AvailableAccountsWithBalancesEnum availableAccountsWithBalances) {
+    this.availableAccountsWithBalances = availableAccountsWithBalances;
+    return this;
+  }
+
+  /**
+   * Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. 
+   * @return availableAccountsWithBalances
+  **/
+  @ApiModelProperty(value = "Optional if supported by API provider.  Only the value \"allAccounts\" is admitted. ")
+
+
+
+  @JsonProperty("availableAccountsWithBalances")
+  public AvailableAccountsWithBalancesEnum getAvailableAccountsWithBalances() {
+    return availableAccountsWithBalances;
+  }
+
+  public void setAvailableAccountsWithBalances(AvailableAccountsWithBalancesEnum availableAccountsWithBalances) {
+    this.availableAccountsWithBalances = availableAccountsWithBalances;
   }
 
 
@@ -263,12 +317,13 @@ public class AccountAccess   {
         Objects.equals(this.balances, accountAccess.balances) &&
         Objects.equals(this.transactions, accountAccess.transactions) &&
         Objects.equals(this.availableAccounts, accountAccess.availableAccounts) &&
-        Objects.equals(this.allPsd2, accountAccess.allPsd2);
+        Objects.equals(this.allPsd2, accountAccess.allPsd2) &&
+        Objects.equals(this.availableAccountsWithBalances, accountAccess.availableAccountsWithBalances);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(accounts, balances, transactions, availableAccounts, allPsd2);
+    return Objects.hash(accounts, balances, transactions, availableAccounts, allPsd2, availableAccountsWithBalances);
   }
 
   @Override
@@ -281,6 +336,7 @@ public class AccountAccess   {
     sb.append("    transactions: ").append(toIndentedString(transactions)).append("\n");
     sb.append("    availableAccounts: ").append(toIndentedString(availableAccounts)).append("\n");
     sb.append("    allPsd2: ").append(toIndentedString(allPsd2)).append("\n");
+    sb.append("    availableAccountsWithBalances: ").append(toIndentedString(availableAccountsWithBalances)).append("\n");
     sb.append("}");
     return sb.toString();
   }
