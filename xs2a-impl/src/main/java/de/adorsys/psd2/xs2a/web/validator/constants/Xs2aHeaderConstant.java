@@ -29,7 +29,6 @@ public class Xs2aHeaderConstant {
     public static final String PSU_ID_TYPE = "psu-id-type";
     public static final String PSU_CORPORATE_ID = "psu-corporate-id";
     public static final String PSU_CORPORATE_ID_TYPE = "psu-corporate-id-type";
-    public static final String AUTHORISATION = "authorization";
 
     public static final String TPP_REDIRECT_PREFERRED = "tpp-redirect-preferred";
     public static final String TPP_REDIRECT_URI = "tpp-redirect-uri";
@@ -39,7 +38,8 @@ public class Xs2aHeaderConstant {
 
     public static final String TPP_REJECTION_NO_FUNDS_PREFERRED = "tpp-rejection-no funds-preferred";
 
-    // This map holds arrays of HTTP headers to be validated for max length. Key is the maximum length of the header.
+    // This map holds arrays of HTTP headers to be validated for max length. Key is the header name, value is the
+    // maximum allowed length of this header.
     public static final Map<String, Integer> HEADERS_MAX_LENGTHS = new HashMap<>();
 
     static {
@@ -47,8 +47,11 @@ public class Xs2aHeaderConstant {
         HEADERS_MAX_LENGTHS.put(PSU_ID_TYPE, 50);
         HEADERS_MAX_LENGTHS.put(PSU_CORPORATE_ID, 50);
         HEADERS_MAX_LENGTHS.put(PSU_CORPORATE_ID_TYPE, 50);
-        HEADERS_MAX_LENGTHS.put(TPP_REDIRECT_URI, 140);
-        HEADERS_MAX_LENGTHS.put(TPP_NOK_REDIRECT_URI, 140);
+
+        // These 2 values are limited by CMS columns length:
+        HEADERS_MAX_LENGTHS.put(TPP_REDIRECT_URI, 255);
+        HEADERS_MAX_LENGTHS.put(TPP_NOK_REDIRECT_URI, 255);
+
         HEADERS_MAX_LENGTHS.put(PSU_IP_ADDRESS, 140);
     }
 
