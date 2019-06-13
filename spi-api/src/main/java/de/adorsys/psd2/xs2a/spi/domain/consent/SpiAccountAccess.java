@@ -34,12 +34,14 @@ public class SpiAccountAccess {
     private List<SpiAccountReference> transactions;
     private AccountAccessType availableAccounts;
     private AccountAccessType allPsd2;
+    private AccountAccessType availableAccountsWithBalances;
 
     public boolean isEmpty() {
         return CollectionUtils.isEmpty(this.accounts)
                    && CollectionUtils.isEmpty(this.balances)
                    && CollectionUtils.isEmpty(this.transactions)
                    && this.allPsd2 == null
-                   && this.availableAccounts == null;
+                   && this.availableAccounts == null
+                   && this.availableAccountsWithBalances == null;
     }
 }

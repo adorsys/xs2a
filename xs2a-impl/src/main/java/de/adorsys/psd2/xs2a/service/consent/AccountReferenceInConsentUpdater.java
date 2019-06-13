@@ -73,7 +73,7 @@ public class AccountReferenceInConsentUpdater {
             balances.addAll(enrichAccountReferences(accountDetail, existingAccess.getBalances()));
             transactions.addAll(enrichAccountReferences(accountDetail, existingAccess.getTransactions()));
         }
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accounts, balances, transactions, existingAccess.getAvailableAccounts(), existingAccess.getAllPsd2());
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(accounts, balances, transactions, existingAccess.getAvailableAccounts(), existingAccess.getAllPsd2(), existingAccess.getAvailableAccountsWithBalances());
 
         return aisConsentService.updateAspspAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(xs2aAccountAccess));
     }

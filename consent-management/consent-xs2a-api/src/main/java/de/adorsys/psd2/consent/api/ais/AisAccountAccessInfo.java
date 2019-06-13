@@ -44,4 +44,7 @@ public class AisAccountAccessInfo {
 
     @ApiModelProperty(value = "Consent on all accounts, balances and transactions of psu", example = "ALL_ACCOUNTS")
     private AccountAccessType allPsd2;
+
+    @ApiModelProperty(value = "Consent on all available accounts with balances of psu", example = "ALL_ACCOUNTS")
+    private AccountAccessType availableAccountsWithBalances;
 }

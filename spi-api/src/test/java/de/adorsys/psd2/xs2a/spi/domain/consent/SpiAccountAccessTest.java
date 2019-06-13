@@ -33,10 +33,10 @@ public class SpiAccountAccessTest {
     public void isEmpty() {
         //given:
         List<SpiAccountAccess> listOfAccesses = Arrays.asList(
-            new SpiAccountAccess(null, null, null, null, null),              //all fields are null
-            new SpiAccountAccess(Collections.emptyList(), null, null, null, null),    //accounts are present as empty list
-            new SpiAccountAccess(null, Collections.emptyList(), null, null, null),    //balances are present as empty list
-            new SpiAccountAccess(null, null, Collections.emptyList(), null, null)       //transactions are present as empty list
+            new SpiAccountAccess(null, null, null, null, null, null),              //all fields are null
+            new SpiAccountAccess(Collections.emptyList(), null, null, null, null, null),    //accounts are present as empty list
+            new SpiAccountAccess(null, Collections.emptyList(), null, null, null, null),    //balances are present as empty list
+            new SpiAccountAccess(null, null, Collections.emptyList(), null, null, null)       //transactions are present as empty list
         );
         //then:
         listOfAccesses
@@ -47,11 +47,12 @@ public class SpiAccountAccessTest {
     public void isEmpty_NotEmpty_Access() {
         //given:
         List<SpiAccountAccess> listOfAccesses = Arrays.asList(
-            new SpiAccountAccess(Collections.singletonList(getReference()), null, null, null, null),    //accounts are present
-            new SpiAccountAccess(null, Collections.singletonList(getReference()), null, null, null),    //accounts are present
-            new SpiAccountAccess(null, null, Collections.singletonList(getReference()), null, null),      //balances are present
-            new SpiAccountAccess(null, null, null, AccountAccessType.ALL_ACCOUNTS, null),                  //availableAccount flag is present
-            new SpiAccountAccess(null, null, null, null, AccountAccessType.ALL_ACCOUNTS)           //allPsd2 flag is present
+            new SpiAccountAccess(Collections.singletonList(getReference()), null, null, null, null, null),    //accounts are present
+            new SpiAccountAccess(null, Collections.singletonList(getReference()), null, null, null, null),    //accounts are present
+            new SpiAccountAccess(null, null, Collections.singletonList(getReference()), null, null, null),      //balances are present
+            new SpiAccountAccess(null, null, null, AccountAccessType.ALL_ACCOUNTS, null, null),                  //availableAccount flag is present
+            new SpiAccountAccess(null, null, null, null, AccountAccessType.ALL_ACCOUNTS, null),       //allPsd2 flag is present
+            new SpiAccountAccess(null, null, null, null, null, AccountAccessType.ALL_ACCOUNTS)           //availableAccountWithBalances flag is present
         );
         //then:
         listOfAccesses

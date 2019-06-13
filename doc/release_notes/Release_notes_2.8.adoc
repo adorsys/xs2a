@@ -6,6 +6,7 @@
 * Bugfix: Balances link is not present in Read Transaction List with Balances
 * Bugfix: Ignore multilevel flag for one-off Consent on Account List of Available Accounts when SCA is not needed
 * Bugfix: Changed the allowed length for some HTTP headers
+* Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
 
 == Update version of jackson-databind to 2.9.9
 
@@ -30,3 +31,7 @@ set to false, then `multilevelScaRequired` parameter will be ignored because SCA
 
 From now on, while sending HTTP requests to the XS2A the maximum length of `tpp-redirect-uri` and `tpp-nok-redirect-uri`
 headers is extended to 255 symbols. Header `authorization` is not validated for length.
+
+== Bugfix: Error on creating AIS consent with availableAccountsWithBalances attribute in the access property
+From now on, TPP is able to create AIS consent with `availableAccountsWithBalances` attribute in the access property.
+As a result, creation of AIS Consent with `allAccountsWithBalances` value in `availableAccounts` field is no longer allowed.
