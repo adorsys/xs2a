@@ -1,0 +1,25 @@
+= Release notes v.2.8
+
+== Table of Contents
+* Update version of jackson-databind to 2.9.9
+* Bugfix: Wrong links in start authorisation response
+* Bugfix: Balances link is not present in Read Transaction List with Balances
+* Bugfix: Ignore multilevel flag for one-off Consent on Account List of Available Accounts when SCA is not needed
+
+== Update version of jackson-databind to 2.9.9
+
+Fixed a Polymorphic Typing issue that was discovered in FasterXML jackson-databind 2.x before 2.9.9.
+https://nvd.nist.gov/vuln/detail/CVE-2019-12086[Additional information about this issue]
+
+== Bugfix: Wrong links in start authorisation response
+
+From now on, all authorisation responses will contain `scaStatus` link instead of `self` and `status`.
+
+== Bugfix: Balances link is not present in Read Transaction List with Balances
+
+From now on, the endpoint for reading transaction list (POST `/v1/accounts/{{account_id}}/transactions?withBalance=true`) returns correct response with link `balances`.
+
+== Bugfix: Ignore multilevel flag for one-off Consent on Account List of Available Accounts when SCA is not needed
+When TPP sends `Create AIS Consent` request (`POST /v1/consents`) for one-off Consent on Account List of Available Accounts and for this request ASPSP
+returns SpiInitiateAisConsentResponse with `multilevelScaRequired` parameter set to true, if in ASPSP Profile parameter `scaByOneTimeAvailableAccountsConsentRequired`
+set to false, then `multilevelScaRequired` parameter will be ignored because SCA is not needed at all.

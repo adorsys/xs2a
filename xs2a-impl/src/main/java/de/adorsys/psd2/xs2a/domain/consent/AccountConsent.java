@@ -81,4 +81,9 @@ public class AccountConsent {
     public boolean isOneAccessType() {
         return !recurringIndicator;
     }
+
+    @JsonIgnore
+    public boolean isConsentForAllAvailableAccounts() {
+        return getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
+    }
 }
