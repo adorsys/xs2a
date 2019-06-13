@@ -54,7 +54,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -72,7 +75,6 @@ import java.util.Optional;
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -96,6 +98,7 @@ public class ConsentCreation_successfulTest {
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";
     private static final String GLOBAL_CONSENT_REQUEST_JSON_PATH = "/json/account/req/GlobalConsent.json";
     private static final String ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH = "/json/account/req/AllAvailableAccountConsent.json";
+    private static final String ALL_AVAILABLE_WITH_BALANCES_ACCOUNT_CONSENT_REQUEST_JSON_PATH = "/json/account/req/AllAvailableWithBalancesAccountConsent.json";
     private static final String CREATE_CONSENT_IMPLICIT_EMBEDDED_RESPONSE_PATH = "/json/account/res/CreateAisConsent_implicit_embedded_response.json";
     private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH = "/json/account/res/CreateAisConsent_implicit_redirect_response.json";
     private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_OAUTH_RESPONSE_PATH = "/json/account/res/CreateAisConsent_implicit_redirect_oauth_response.json";
@@ -208,6 +211,11 @@ public class ConsentCreation_successfulTest {
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
+    @Test
+    public void creation_all_available_with_balances_account_consent_implicit_redirect_successful() throws Exception {
+        consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_WITH_BALANCES_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH);
+    }
+
     // =============== EXPLICIT MODE
     //
     @Test
@@ -248,6 +256,11 @@ public class ConsentCreation_successfulTest {
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
+    @Test
+    public void creation_all_available_with_balances_account_consent_explicit_redirect_successful() throws Exception {
+        consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_WITH_BALANCES_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
+    }
+
     private void consentCreation_successful(HttpHeaders headers, ScaApproach scaApproach, String requestJsonPath, String responseJsonPath) throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
@@ -255,8 +268,10 @@ public class ConsentCreation_successfulTest {
             .willReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
         given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
             .willReturn(Optional.of(ENCRYPT_CONSENT_ID));
+
         given(aisConsentServiceEncrypted.getInitialAisAccountConsentById(any(String.class)))
             .willReturn(Optional.of(AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, mapper)));
+
         given(aisConsentServiceEncrypted.getAisAccountConsentById(any(String.class)))
             .willReturn(Optional.of(AisConsentBuilder.buildAisAccountConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, mapper)));
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(any(String.class), any(String.class)))

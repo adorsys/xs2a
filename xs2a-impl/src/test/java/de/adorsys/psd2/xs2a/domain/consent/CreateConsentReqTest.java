@@ -64,7 +64,7 @@ public class CreateConsentReqTest {
     }
 
     private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, null, null);
+        return new Xs2aAccountAccess(accounts, balances, transactions, null, null, null);
     }
 
     private List<AccountReference> getRefs(int qty) {

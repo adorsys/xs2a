@@ -153,6 +153,6 @@ public class GetAccountDetailsValidatorTest {
     }
 
     private Xs2aAccountAccess buildXs2aAccountAccess() {
-        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null);
+        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null);
     }
 }

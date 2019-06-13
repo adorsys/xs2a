@@ -36,6 +36,7 @@ public class SpiToXs2aAccountAccessMapper {
                                 spiToXs2aAccountReferenceMapper.mapToXs2aAccountReferences(aa.getBalances()),
                                 spiToXs2aAccountReferenceMapper.mapToXs2aAccountReferences(aa.getTransactions()),
                                 aa.getAvailableAccounts(),
-                                aa.getAllPsd2()));
+                                aa.getAllPsd2(),
+                                aa.getAvailableAccountsWithBalances()));
     }
 }

@@ -40,7 +40,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
-import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 public class AisConsentBuilder {
@@ -92,7 +91,8 @@ public class AisConsentBuilder {
                                 aa.getBalances(),
                                 aa.getTransactions(),
                                 availableAccounts != null ? availableAccounts.name() : null,
-                                access.getAllPsd2() != null ? access.getAllPsd2().name() : null
+                                access.getAllPsd2() != null ? access.getAllPsd2().name() : null,
+                                access.getAvailableAccountsWithBalances() != null ? access.getAvailableAccountsWithBalances().name() : null
                             )
                    )
                    .orElse(null);
@@ -113,7 +113,7 @@ public class AisConsentBuilder {
         }
 
         AccountAccessType availableAccounts = access.getAvailableAccounts();
-        if (availableAccounts == ALL_ACCOUNTS || availableAccounts == ALL_ACCOUNTS_WITH_BALANCES) {
+        if (availableAccounts == ALL_ACCOUNTS) {
             aisConsentRequestType = AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
         }
         return aisConsentRequestType;
